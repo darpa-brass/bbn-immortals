@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>com.securboration</groupId>
+		<artifactId>immortals</artifactId>
+		<version>r2.0.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<artifactId>immortals-ontologies-package</artifactId>
+	<packaging>jar</packaging>
+	
+	<name>IMMoRTALS ontology packaging project</name>
+	<url>https://dsl-external.bbn.com/tracsvr/immortals</url>
+
+	<dependencies>
+		<!-- 
+		Note: 
+		all dependencies are virtual (exist only to enforce build ordering) 
+		-->
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-generate</artifactId>
+			<version>${immortals.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-instances-generate</artifactId>
+			<version>${immortals.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	
+
+	<properties>
+		<local-repo-root>${project.basedir}/../../..</local-repo-root>
+	</properties>
+
+
+	<repositories>
+		<!-- blank -->
+	</repositories>
+
+	<profiles>
+		<!-- blank -->
+	</profiles>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<plugins>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.10</version>
+				<executions>
+					<execution>
+						<id>add-resource</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/../ontology-static/ontology</directory>
+									<targetPath>ontology/static</targetPath>
+								</resource>
+								<resource>
+									<directory>${project.basedir}/../ontology-generate/target/classes/ontology</directory>
+									<targetPath>ontology/immortals-vocab</targetPath>
+								</resource>
+								<resource>
+									<directory>${project.basedir}/../ontology-instances-generate/target/classes/ontology</directory>
+									<targetPath>ontology/immortals-instances</targetPath>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<!-- 
+			Exclude the classes used to create the triples, they should be included 
+			as a separate dependency on the api project (i.e., this jar will contain only
+			the generated triples).
+			-->
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>default-jar</id><!-- mandatory name -->
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>com/securboration/immortals/Anchor.class</include>
+								<include>/**/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>

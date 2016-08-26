@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>com.securboration</groupId>
+		<artifactId>immortals</artifactId>
+		<version>r2.0.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<artifactId>immortals-ontologies-instances-generate</artifactId>
+	<packaging>jar</packaging>
+	
+	<name>IMMoRTALS ontology generation project (instances)</name>
+	<url>https://dsl-external.bbn.com/tracsvr/immortals</url>
+
+	<dependencies>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-annotation-parser</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-vocab</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-vocab-instances</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-object-to-triples</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>${commons-compress.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-debug-all</artifactId>
+			<version>${asm.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>${json.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+	
+
+	<properties>
+		<local-repo-root>${project.basedir}/../../..</local-repo-root>
+	</properties>
+
+
+	<repositories>
+		<!-- blank -->
+	</repositories>
+
+	<profiles>
+		<!-- blank -->
+	</profiles>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.securboration</groupId>
+						<artifactId>immortals-ontologies-vocab</artifactId>
+						<version>${immortals.version}</version>
+						<scope>compile</scope>
+					</dependency>
+					
+					<dependency>
+						<groupId>com.securboration</groupId>
+						<artifactId>immortals-ontologies-vocab-instances</artifactId>
+						<version>${immortals.version}</version>
+						<scope>compile</scope>
+					</dependency>
+					
+					<dependency>
+						<groupId>com.securboration</groupId>
+						<artifactId>immortals-annotation-parser</artifactId>
+						<version>${immortals.version}</version>
+						<scope>compile</scope>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<!--
+						Generate triples from the compiled artifacts stored at ${local-repo-root}/shared/IMMORTALS_REPO/mil
+						-->
+						<id>instances-to-triples</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.InstancesToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology</argument><!-- output ontology here -->
+								<argument>${immortals.version}</argument><!-- IMMoRTALS ontology version -->
+								<argument>${local-repo-root}</argument><!-- path to local IMMoRTALS project repository -->
+								<argument>${repo.url}</argument><!-- URL of remote IMMoRTALS project repository -->
+								<argument>${immortals-lib.version}</argument><!-- the version of libraries to examine, all others will be filtered -->
+								
+								<!-- The following is a variable length list of source directories against which we can resolve artifacts discovered in bytecode -->
+								
+								<!-- ATAKLite -->
+								<argument>${local-repo-root}/client/ATAKLite/src</argument>
+								
+								<!-- core -->
+								<argument>${local-repo-root}/shared/modules/core/src/main/java</argument>
+								
+								<!-- datatypes -->
+								<argument>${local-repo-root}/shared/modules/datatypes/Coordinates/src/main/java</argument>
+								
+								<!-- dfus -->
+								<argument>${local-repo-root}/shared/modules/dfus/ImageUtilsAndroid/src/main/java</argument>
+								<argument>${local-repo-root}/shared/modules/dfus/LocationProviderAndroidGpsBuiltIn/src/main/java</argument>
+								<argument>${local-repo-root}/shared/modules/dfus/LocationProviderBluetoothGpsSimulated/src/main/java</argument>
+								<argument>${local-repo-root}/shared/modules/dfus/LocationProviderManualSimulated/src/main/java</argument>
+								<argument>${local-repo-root}/shared/modules/dfus/LocationProviderSaasmSimulated/src/main/java</argument>
+								<argument>${local-repo-root}/shared/modules/dfus/LocationProviderUsbGpsSimulated/src/main/java</argument>
+								
+								<!-- converters -->
+								<argument>${local-repo-root}/shared/modules/javatypeconverters/CoordinateLocationConverter/src/main/java</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<!--
+						Generate triples from the deployment model
+						-->
+						<id>deployment-to-triples</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.DeploymentToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/parsed-from-webgme-models</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${local-repo-root}</argument>
+								<argument>models/sample_android/resource/webgme/immortals_kds_dm_v02_a02.json</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<!--
+						Parse annotations from existing IMMoRTALS code repo
+						-->
+						<id>parse-annotations</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.annotationparser.main.Main</mainClass>
+							<arguments>
+								<argument>${immortals.version}</argument>
+								<argument>${local-repo-root}/shared/IMMORTALS_REPO/mil/darpa</argument>
+								<argument>${project.basedir}/target/classes/ontology/parsed-from-annotations</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+				</executions>
+				
+			</plugin>
+
+
+			<!-- 
+			Exclude the classes used to create the triples, they should be included 
+			as a separate dependency on the api project (i.e., this jar will contain only
+			the generated triples).
+			-->
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>default-jar</id><!-- mandatory name -->
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>ontology/**/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>

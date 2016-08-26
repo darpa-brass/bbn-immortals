@@ -1,0 +1,48 @@
+Intent breakout 
+
+IMMoRTALS meeting attendees:
+	Jacob, Fred, Peter
+	
+Other attendees:
+	MIT: Konrad, "spacer earring guy"
+	"Formal methods MIT guy" (not LL)
+	Several people from BAE
+	
+
+Notes [Jacob]:
+	Difference between discovery of intent for ground up vs ad hoc (ie new software vs 
+		legacy systems)
+	Multiple intent profiles possible for a single application, even a simple one
+		our team handles this with mission requirements
+	
+	Thoughts during discussion:
+		Intent for a machine can be expressed as a bag of invariants
+			Some approaches for producing this invariant bag are more elegant than 
+			  others (less enumeration is more elegant in my mind)
+			
+			White-box view: invariant slices through application (e.g., properties 
+			  binding to code)
+			Black-box view: invariants visible only to external observer (e.g., mission 
+			  req)
+			
+			Weights (rather than booleans) on invariants enable us to achieve graceful 
+			  degredation
+		
+		Intent expressed as invariants can always be validated (are the invariants respected?)
+			
+		Graph of invariants with propagation rules:
+			Graph edges are data flows/control flows
+			Dataflow:f->g->h
+			invariant:f :: bz2Compressed propagates to g but not to h
+	
+	
+
+		Our team does a poor job discovering intent/forward assumption is too strong
+		
+		None of the teams have a good grasp of intent
+			BAE's FIDL is overly simplistic and a burden on programmers
+			
+			CMU's HPC work is  domain-specific and only works for very well-structured 
+			  computation-oriented problems
+
+	

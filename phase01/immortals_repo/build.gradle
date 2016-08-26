@@ -1,0 +1,127 @@
+apply from: 'shared/common.gradle'
+
+Exec dslClean = task('dslClean', type: Exec) {
+    group = 'Immortals'
+    description = 'Cleans the DSL. If the proper Haskell tools are not installed this will fail!'
+    workingDir = IMMORTALS_ROOT + 'dsl/resource-dsl'
+    executable = 'stack'
+    args = ['clean']
+}
+
+Exec dslBuild = task dslBuild(type: Exec) {
+    group = 'Immortals'
+    description = 'Builds the DSL. If the proper Haskell tools are not installed this will fail!'
+    workingDir = IMMORTALS_ROOT + 'dsl/resource-dsl'
+    executable = 'stack'
+    args = ['build']
+}
+
+Exec dslSetup = task dslSetup(type: Exec) {
+    group = 'Immortals'
+    description = 'Sets up the environment to build the DSL. If the proper Haskell tools are not installed this will fail!'
+    workingDir = IMMORTALS_ROOT + 'dsl/resource-dsl'
+    executable = 'stack'
+    args = ['setup']
+}
+
+
+
+Exec oldOntologyClean = task('oldOntologyClean', type: Exec) {
+    workingDir = IMMORTALS_ROOT + 'brainstorming/spiral0'
+    executable = 'mvn'
+    args = ['clean']
+}
+
+Exec oldOntologyBuild = task('oldOntologyBuild', type: Exec) {
+    workingDir = IMMORTALS_ROOT + 'brainstorming/spiral0'
+    executable = 'mvn'
+    args = ['install']
+}
+
+Exec publishAdsl = task('publishAdsl', type: Exec) {
+    group = 'Immortals'
+    description = 'Builds and publishes the knowledge-repo ADSL to the local IMMORTALS_REPO.'
+    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
+    executable = 'mvn'
+    args = ['-pl', 'vocabulary/dsl-generate', '-am', 'clean', 'install']
+}
+
+Exec knowledgeRepoClean = task('knowledgeRepoClean', type: Exec) {
+    group = 'Immortals'
+    description = "Cleans the knowledge-repo"
+    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
+    executable = 'mvn'
+    args = ['clean']
+}
+
+Exec knowledgeRepoBuild = task('knowledgeRepoBuild', type: Exec) {
+    group = 'Immortals'
+    description = 'Builds the knowledge-repo'
+    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
+    executable = 'mvn'
+    args = ['install']
+}
+
+GradleBuild modulesPublish = task('modulesPublish', type: GradleBuild) {
+    group = 'Immortals'
+    description = '(Re)publish all modules in the local IMMORTALS_REPO'
+    buildFile = IMMORTALS_ROOT + 'shared/modules/build.gradle'
+    tasks = ['publish']
+}
+
+GradleBuild modulesPublishIfMissing = task('modulesPublishIfMissing', type: GradleBuild) {
+    group = 'Immortals'
+    description = 'Publish all modules in the local IMMORTALS_REPO if they appear incomplete.'
+    buildFile = IMMORTALS_ROOT + 'shared/modules/build.gradle'
+    tasks = ['init']
+}
+
+GradleBuild modulesClean = task('modulesClean', type: GradleBuild) {
+    group = 'Immortals'
+    description = 'Clean all modules and removes them from the local IMMORTALS_REPO'
+    buildFile = IMMORTALS_ROOT + 'shared/modules/build.gradle'
+    tasks = ['clean']
+}
+
+task init {
+    // If the ADSL does not exist in the repository, publish it
+    if ({
+        String adslPublishPath = IMMORTALS_ROOT + 'shared/IMMORTALS_REPO/com/securboration/immortals-adsl-generate/'
+        return !(new File(adslPublishPath + 'maven-metadata-local.xml').exists() &&
+                new File(adslPublishPath + 'r2.0.0/immortals-adsl-generate-r2.0.0.jar').exists() &&
+                new File(adslPublishPath + 'r2.0.0/immortals-adsl-generate-r2.0.0.pom').exists()
+        )
+    }()) {
+        publishAdsl.execute()
+    }
+
+    modulesPublishIfMissing.execute()
+}
+
+DefaultTask buildAll = task('buildAll') {
+    group = 'Immortals'
+    description = 'Builds _everything_ within the immortals repo'
+    finalizedBy(publishAdsl)
+    finalizedBy(modulesPublish)
+    finalizedBy(dslSetup)
+    finalizedBy(dslBuild)
+    finalizedBy(knowledgeRepoBuild)
+    finalizedBy(':server:Marti:build')
+    finalizedBy(':client:ATAKLite:build')
+    finalizedBy(':das:das-service:build')
+    finalizedBy(':das:das-analysis:modulerunner-android:build')
+    finalizedBy(':das:das-analysis:modulerunner-java:build')
+}
+
+DefaultTask cleanAll = task('cleanAll') {
+    group = 'Immortals'
+    description = 'Cleans _everything_ within the immortals repo'
+    finalizedBy(':server:Marti:clean')
+    finalizedBy(':client:ATAKLite:clean')
+    finalizedBy(':das:das-service:clean')
+    finalizedBy(':das:das-analysis:modulerunner-android:clean')
+    finalizedBy(':das:das-analysis:modulerunner-java:clean')
+    finalizedBy(modulesClean)
+    finalizedBy(knowledgeRepoClean)
+    finalizedBy(dslClean)
+}

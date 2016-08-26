@@ -1,0 +1,30 @@
+apply plugin: 'java'
+apply from: 'dependencies.gradle'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src', 'src-gen']
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "Marti-immortals",
+                "Implementation-Version": "$defaultSoftwarePublishVersion",
+                "Main-Class": "com.bbn.marti.service.MartiMain"
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    destinationDir = file('./')
+    archiveName = "Marti-immortals.jar"
+}
+
+clean {
+    delete fileTree(dir: './', includes: ['build', 'Marti-immortals.jar'])
+}
+
+dependencies {
+}

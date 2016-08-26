@@ -1,0 +1,36 @@
+[{
+    "_id": "vu-isis",
+    "projects": {},
+    "type": "Organization",
+    "admins": [],
+    "info": {}
+}, {
+    "_id": "bbn",
+    "projects": {},
+    "type": "Organization",
+    "admins": [],
+    "info": {}
+}, {
+    "_id": "securboration",
+    "projects": {},
+    "type": "Organization",
+    "admins": [],
+    "info": {}
+}, {
+    "_id": "immortals",
+    "admins": [],
+    "info": {},
+    "projects": {
+        "fred+immortals_dm_v02": {
+            "read": true,
+            "write": false,
+            "delete": false
+        },
+        "fred+immortals_dm_v03": {
+            "read": true,
+            "write": true,
+            "delete": false
+        }
+    },
+    "type": "Organization"
+}]

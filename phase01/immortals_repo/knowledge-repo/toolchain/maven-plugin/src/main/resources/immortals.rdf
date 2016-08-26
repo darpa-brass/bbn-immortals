@@ -1,0 +1,240 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:immortals="http://securboration.com/immortals#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+  xml:base="http://securboration.com/immortals">
+  <owl:Ontology rdf:about="">
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Created with TopBraid Composer</owl:versionInfo>
+    <owl:imports rdf:resource="http://purl.org/dc/elements/1.1/"/>
+    <owl:imports rdf:resource="http://purl.org/dc/terms/"/>
+    <owl:imports rdf:resource="http://topbraid.org/schema/schema-single-range"/>
+    <owl:imports rdf:resource="http://www.w3.org/2003/01/geo/wgs84_pos"/>
+  </owl:Ontology>
+  <rdfs:Datatype rdf:ID="HasClasspath">
+    <rdfs:subClassOf>
+      <rdfs:Datatype rdf:ID="JvmBytecodeProperty"/>
+    </rdfs:subClassOf>
+    <rdfs:domain>
+      <owl:Class rdf:ID="BytecodeAnalysisPackage"/>
+    </rdfs:domain>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasClasspath datatype property</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that an analysis package has a classpath</rdfs:comment>
+    <rdfs:range>
+      <owl:Class rdf:ID="Classpath"/>
+    </rdfs:range>
+  </rdfs:Datatype>
+  <rdfs:Datatype rdf:ID="HasCompilationArtifact">
+    <rdfs:subClassOf>
+      <rdfs:Datatype rdf:about="#JvmBytecodeProperty"/>
+    </rdfs:subClassOf>
+    <rdfs:range>
+      <owl:Class rdf:ID="CompilationArtifact"/>
+    </rdfs:range>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasCompilationArtifact datatype property</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a classpath has associated compilation artifacts</rdfs:comment>
+    <rdfs:domain>
+      <owl:Class rdf:about="#Classpath"/>
+    </rdfs:domain>
+  </rdfs:Datatype>
+  <rdfs:Datatype rdf:ID="HasBase64Encoding">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain>
+      <owl:Class rdf:ID="BinaryClass"/>
+    </rdfs:domain>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasCompilationArtifact datatype property</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a classpath has associated compilation artifacts</rdfs:comment>
+    <rdfs:subClassOf>
+      <rdfs:Datatype rdf:about="#JvmBytecodeProperty"/>
+    </rdfs:subClassOf>
+  </rdfs:Datatype>
+  <rdfs:Datatype rdf:ID="HasUuid">
+    <rdfs:subClassOf>
+      <rdfs:Datatype rdf:about="#JvmBytecodeProperty"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a classpath has associated compilation artifacts</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasCompilationArtifact datatype property</rdfs:label>
+    <rdfs:domain>
+      <owl:Class rdf:ID="SoftwareAbstraction"/>
+    </rdfs:domain>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </rdfs:Datatype>
+  <rdfs:Datatype rdf:about="#JvmBytecodeProperty">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasCompilationArtifact datatype property</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a classpath has associated compilation artifacts</rdfs:comment>
+  </rdfs:Datatype>
+  <rdfs:Datatype rdf:ID="HasFunctionality">
+    <rdfs:subClassOf rdf:resource="#JvmBytecodeProperty"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a classpath has associated compilation artifacts</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasCompilationArtifact datatype property</rdfs:label>
+    <rdfs:domain>
+      <owl:Class rdf:ID="LogicalStructure"/>
+    </rdfs:domain>
+    <rdfs:range>
+      <owl:Class rdf:ID="Functionality"/>
+    </rdfs:range>
+  </rdfs:Datatype>
+  <rdfs:Datatype rdf:ID="HasNestedCompositeCompilationArtifact">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a composite compilation artifact may contain nested compilation artifacts</rdfs:comment>
+    <rdfs:domain>
+      <owl:Class rdf:ID="CompositeCompilationArtifact"/>
+    </rdfs:domain>
+    <rdfs:range>
+      <owl:Class rdf:about="#CompositeCompilationArtifact"/>
+    </rdfs:range>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasNestedCompositeCompilationArtifact datatype property</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#JvmBytecodeProperty"/>
+  </rdfs:Datatype>
+  <rdfs:Datatype rdf:ID="FunctionalityDescriptor">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasCompilationArtifact datatype property</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a classpath has associated compilation artifacts</rdfs:comment>
+  </rdfs:Datatype>
+  <rdfs:Datatype rdf:ID="HasClass">
+    <rdfs:subClassOf rdf:resource="#JvmBytecodeProperty"/>
+    <rdfs:range>
+      <owl:Class rdf:about="#BinaryClass"/>
+    </rdfs:range>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasCompilationArtifact datatype property</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a classpath has associated compilation artifacts</rdfs:comment>
+    <rdfs:domain>
+      <owl:Class rdf:about="#CompositeCompilationArtifact"/>
+    </rdfs:domain>
+  </rdfs:Datatype>
+  <owl:Class rdf:ID="JAR">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#CompositeCompilationArtifact"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="JvmBytecodeAbstraction">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#SoftwareAbstraction"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="Method">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#LogicalStructure"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#LogicalStructure">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#JvmBytecodeAbstraction"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Arg">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="LocalVariable"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Functionality">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasCompilationArtifact datatype property</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a classpath has associated compilation artifacts</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#SoftwareAbstraction"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#BytecodeAnalysisPackage">
+    <rdfs:subClassOf rdf:resource="#JvmBytecodeAbstraction"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >A Universally Unique Identifier (UUID)</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >UUID</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="AtomicCompilationArtifact">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasCompilationArtifact datatype property</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a classpath has associated compilation artifacts</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#CompilationArtifact"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="WAR">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#CompositeCompilationArtifact"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="Field">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#LogicalStructure"/>
+  </owl:Class>
+  <owl:Class rdf:about="#BinaryClass">
+    <rdfs:subClassOf rdf:resource="#AtomicCompilationArtifact"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="#LocalVariable">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#LogicalStructure"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Class">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#LogicalStructure"/>
+  </owl:Class>
+  <owl:Class rdf:ID="This">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#LocalVariable"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Classpath">
+    <rdfs:subClassOf rdf:resource="#JvmBytecodeAbstraction"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="#CompositeCompilationArtifact">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >HasCompilationArtifact datatype property</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Specifies that a classpath has associated compilation artifacts</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#CompilationArtifact"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#CompilationArtifact">
+    <rdfs:subClassOf rdf:resource="#JvmBytecodeAbstraction"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="#SoftwareAbstraction">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Functionality</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+  </owl:Class>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->

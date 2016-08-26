@@ -1,0 +1,286 @@
+@prefix : <http://bbn.com/immortals#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://bbn.com/immortals> a owl:Ontology .
+# 
+# 
+# #################################################################
+# #
+# #    Object Properties
+# #
+# #################################################################
+# 
+# 
+# http://bbn.com/immortals#configuredBy
+
+:configuredBy a owl:ObjectProperty ;
+	rdfs:domain :CodeLibrary ;
+	rdfs:range _:genid1 .
+
+_:genid1 a owl:Restriction ;
+	owl:onProperty :configuredBy ;
+	owl:someValuesFrom :Parameter .
+# 
+# http://bbn.com/immortals#library
+
+:library a owl:ObjectProperty ;
+	rdfs:domain :CodeFragment ;
+	rdfs:range _:genid2 .
+
+_:genid2 a owl:Restriction ;
+	owl:onProperty :library ;
+	owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+	owl:onClass :CodeLibrary .
+# 
+# http://bbn.com/immortals#mappedTo
+
+:mappedTo a owl:ObjectProperty ;
+	rdfs:domain :DataType ;
+	rdfs:range :LanguageMapping .
+# 
+# http://bbn.com/immortals#producesOutput
+
+:producesOutput a owl:ObjectProperty ;
+	rdfs:domain :ControlPoint ;
+	rdfs:range :DataType .
+# 
+# http://bbn.com/immortals#takesInput
+
+:takesInput a owl:ObjectProperty ;
+	rdfs:domain :ControlPoint ;
+	rdfs:range :DataType .
+# 
+# http://bbn.com/immortals#trafficProfile
+
+:trafficProfile a owl:ObjectProperty ;
+	rdfs:domain :ControlPoint ;
+	rdfs:range :PerformanceProfile .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Data properties
+# #
+# #################################################################
+# 
+# 
+# http://bbn.com/immortals#codeIdentifier
+
+:codeIdentifier a owl:DatatypeProperty ;
+	rdfs:domain :ControlPoint ;
+	rdfs:range xsd:string .
+# 
+# http://bbn.com/immortals#expression
+
+:expression a owl:DatatypeProperty ;
+	rdfs:domain :PerformanceProfile ;
+	rdfs:range rdf:XMLLiteral .
+# 
+# http://bbn.com/immortals#language
+
+:language a owl:DatatypeProperty ;
+	rdfs:domain :LanguageMapping ;
+	rdfs:range xsd:string .
+# 
+# http://bbn.com/immortals#languageType
+
+:languageType a owl:DatatypeProperty ;
+	rdfs:domain :LanguageMapping ;
+	rdfs:range xsd:string .
+# 
+# http://bbn.com/immortals#libraryType
+
+:libraryType a owl:DatatypeProperty ;
+	rdfs:domain :CodeLibrary ;
+	rdfs:range xsd:string .
+# 
+# http://bbn.com/immortals#parameterName
+
+:parameterName a owl:DatatypeProperty ;
+	rdfs:domain :Parameter ;
+	rdfs:range xsd:string .
+# 
+# http://bbn.com/immortals#parameterValue
+
+:parameterValue a owl:DatatypeProperty ;
+	rdfs:domain :Parameter ;
+	rdfs:range xsd:string .
+# 
+# http://bbn.com/immortals#source
+
+:source a owl:DatatypeProperty ;
+	rdfs:domain :CodeFragment ;
+	rdfs:range xsd:string .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Classes
+# #
+# #################################################################
+# 
+# 
+# http://bbn.com/immortals#CodeFragment
+
+:CodeFragment a owl:Class .
+# 
+# http://bbn.com/immortals#CodeLibrary
+
+:CodeLibrary a owl:Class .
+# 
+# http://bbn.com/immortals#ControlPoint
+
+:ControlPoint a owl:Class ;
+	rdfs:subClassOf :CodeFragment ;
+	owl:disjointWith :DataType ;
+	rdfs:comment "A location in code where a pipeline can be implemented."^^xsd:string .
+# 
+# http://bbn.com/immortals#DataType
+
+:DataType a owl:Class ;
+	rdfs:subClassOf :CodeFragment .
+# 
+# http://bbn.com/immortals#LanguageMapping
+
+:LanguageMapping a owl:Class .
+# 
+# http://bbn.com/immortals#Parameter
+
+:Parameter a owl:Class .
+# 
+# http://bbn.com/immortals#PerformanceProfile
+
+:PerformanceProfile a owl:Class ;
+	rdfs:comment "Formal characterization that can be associated with an artifact like control points to describe its expected or actual performance."^^xsd:string .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Individuals
+# #
+# #################################################################
+# 
+# 
+# http://bbn.com/immortals#CI
+
+:CI a owl:NamedIndividual , :ControlPoint ;
+	:library :immortals ;
+	:producesOutput :CoTMessage ;
+	:takesInput :CoTMessageByteBuffer ;
+	:trafficProfile :f1 ;
+	:codeIdentifier "e4a5058c-f846-4a2b-9706-39128c6b826f"^^xsd:string ;
+	:source "<https://dsl-external.bbn.com/svn/immortals/trunk/client/ATAKLite/src/com/bbn/ataklite/ReadHandler.java>"^^xsd:string .
+# 
+# http://bbn.com/immortals#CO
+
+:CO a owl:NamedIndividual , :ControlPoint ;
+	:library :immortals ;
+	:producesOutput :CoTMessageByteBuffer ;
+	:takesInput :Location ;
+	:trafficProfile :f2 ;
+	:codeIdentifier "b4098601-c130-4e10-b769-315e47b2e4b1"^^xsd:string ;
+	:source "<https://dsl-external.bbn.com/svn/immortals/trunk/client/ATAKLite/src/com/bbn/ataklite/SACommunicationService.java>"^^xsd:string .
+# 
+# http://bbn.com/immortals#CoTMessage
+
+:CoTMessage a owl:NamedIndividual , :DataType ;
+	:mappedTo :CoTMessageMapping .
+# 
+# http://bbn.com/immortals#CoTMessageByteBuffer
+
+:CoTMessageByteBuffer a owl:NamedIndividual , :DataType ;
+	:mappedTo :CoTMessageByteBufferMapping .
+# 
+# http://bbn.com/immortals#CoTMessageByteBufferMapping
+
+:CoTMessageByteBufferMapping a owl:NamedIndividual , :LanguageMapping ;
+	:library :immortals ;
+	:language "Java"^^xsd:string ;
+	:languageType "java.nio.ByteBuffer"^^xsd:string ;
+	:source "<Android/sdk/platforms/android-22/android.jar>"^^xsd:string .
+# 
+# http://bbn.com/immortals#CoTMessageMapping
+
+:CoTMessageMapping a owl:NamedIndividual , :LanguageMapping ;
+	:library :immortals ;
+	:language "Java"^^xsd:string ;
+	:languageType "com.bbn.ataklite.CoTMessage"^^xsd:string ;
+	:source "<https://dsl-external.bbn.com/svn/immortals/trunk/client/ATAKLite/src/com/bbn/ataklite/CoTMessage.java>"^^xsd:string .
+# 
+# http://bbn.com/immortals#Location
+
+:Location a owl:NamedIndividual , :DataType ;
+	:mappedTo :LocationMapping .
+# 
+# http://bbn.com/immortals#LocationMapping
+
+:LocationMapping a owl:NamedIndividual , :LanguageMapping ;
+	:language "Java"^^xsd:string ;
+	:languageType "android.location.Location"^^xsd:string ;
+	:source "<Android/sdk/platforms/android-22/android.jar>"^^xsd:string .
+# 
+# http://bbn.com/immortals#SI
+
+:SI a owl:NamedIndividual , :ControlPoint ;
+	:library :immortals ;
+	:producesOutput :CoTMessage ;
+	:takesInput :CoTMessageByteBuffer ;
+	:trafficProfile :f3 ;
+	:codeIdentifier "4f82857a-2b00-4dec-b39f-993d9e2e3f80"^^xsd:string ;
+	:source "<https://dsl-external.bbn.com/svn/immortals/trunk/server/core/src/com/bbn/marti/immortals/pipelines/TcpTransportToCotChannelData>"^^xsd:string .
+# 
+# http://bbn.com/immortals#SO
+
+:SO a owl:NamedIndividual , :ControlPoint ;
+	:library :immortals ;
+	:producesOutput :CoTMessageByteBuffer ;
+	:takesInput :CoTMessage ;
+	:trafficProfile :f4 ;
+	:codeIdentifier "2e7a88fe-cfa8-4503-a57e-9114f6557ad3"^^xsd:string ;
+	:source "<https://dsl-external.bbn.com/svn/immortals/trunk/server/core/src/com/bbn/marti/immortals/pipelines/TcpTransportToCotChannelData>"^^xsd:string .
+# 
+# http://bbn.com/immortals#f1
+
+:f1 a owl:NamedIndividual , :PerformanceProfile ;
+	:expression "<math xmlns='http://www.w3.org/1998/Math/MathML'><apply><times /><ci>messagerate</ci><apply><plus /><ci>numberclients</ci><cn type='integer'>-1</cn></apply></apply></math>"^^rdf:XMLLiteral ;
+	rdfs:comment "(numberclients-1) * messagerate" .
+# 
+# http://bbn.com/immortals#f2
+
+:f2 a owl:NamedIndividual , :PerformanceProfile ;
+	:expression "<math xmlns='http://www.w3.org/1998/Math/MathML'><ci>messagerate</ci></math>"^^rdf:XMLLiteral ;
+	rdfs:comment "messagerate" .
+# 
+# http://bbn.com/immortals#f3
+
+:f3 a owl:NamedIndividual , :PerformanceProfile ;
+	:expression "<math xmlns='http://www.w3.org/1998/Math/MathML'><apply><times /><ci>messagerate</ci><ci>numberclients</ci></apply></math>"^^rdf:XMLLiteral ;
+	rdfs:comment "numberclients * messagerate" .
+# 
+# http://bbn.com/immortals#f4
+
+:f4 a owl:NamedIndividual , :PerformanceProfile ;
+	:expression "<math xmlns='http://www.w3.org/1998/Math/MathML'><apply><times /><ci>numberclients</ci><apply><times /><ci>messagerate</ci><apply><plus /><ci>numberclients</ci><cn type='integer'>-1</cn></apply></apply></apply></math>"^^rdf:XMLLiteral ;
+	rdfs:comment "((numberclients-1) * messagerate) * numberclients" .
+# 
+# http://bbn.com/immortals#immortals
+
+:immortals a owl:NamedIndividual , :CodeLibrary ;
+	:configuredBy :immortalsSource ;
+	:libraryType "Subversion"^^xsd:string .
+# 
+# http://bbn.com/immortals#immortalsSource
+
+:immortalsSource a owl:NamedIndividual , :Parameter ;
+	:parameterName "url"^^xsd:string ;
+	:parameterValue "<https://dsl-external.bbn.com/svn/immortals>"^^xsd:string .
+# 
+# Generated by the OWL API (version 4.1.3.20151118-2017) https://github.com/owlcs/owlapi

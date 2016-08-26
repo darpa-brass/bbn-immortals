@@ -1,0 +1,160 @@
+
+;; https://github.com/edn-format/edn
+;;
+;; How to use tags to mark up the lists
+;; https://www.safaribooksonline.com/library/view/clojure-cookbook/9781449366384/
+;; ... ch04.html#sec_local_io_clojure_data_to_disk
+;;
+{
+  :tag :system
+  :deployment {
+    :version "custom"
+
+    :comment
+      "It is presumed that this deployment model will be agumented
+      with other models, such as the the network structure.
+      This entire model is very prescriptive and should be
+      considered as derivative data.
+
+      The model is a simple client :server architecture.
+        Three clients communicating to a central server.
+        The central :server distributes the messages back to the clients.
+        This is not a true multicast but so the clients
+        will need to subscribe to the server."
+    :frames [
+      {
+        :tag :frame
+        :name "client frame"
+        :uuid "clientFrame"
+        :nodes [
+          {
+            :tag :component
+            :purpose "android service"
+            :uuid "saUserComp"
+            :name "situational awareness user component"
+            :resources [
+              {:action :consumes :type :permission :value "internet"}
+              {:action :consumes :type :memory :value "(20MB 50MB)"}]}
+
+          {
+            :tag :artifact
+            :name "saUserInterface"
+            :uuid "saUserArt"
+            :purpose "android application"
+            :location "situational_awareness.apk"
+            :artifacts [
+              {:tag :artifact :name "resources.arsc" :type "compiled resources" :uuid "arsc"}
+              {:tag :artifact :name "res" :type "uncompiled resources" :uuid "res"}
+              {:tag :artifact :name "AndroidManifest.xml" :type "deployment spec" :uuid "amx"}]}
+
+          {
+            :tag :environment
+            :name "android_env_1" :uuid "android_env_1"
+            :purpose "execution environment"}
+
+          {
+            :tag :device
+            :name "mobile_device_A" :uuid "md_A"
+            :purpose "mobile device"
+            :resources [
+              {:action :provides :type :permission :value "internet"}
+              {:action :provides :type :memory :value "10MB"}]}
+
+          {
+            :tag :device
+            :name "mobile_device_B" :uuid "md_B"
+            :purpose "mobile device"
+            :resources [
+              {:action :provides :type :permission :value "internet"}
+              {:action :provides :type :memory :value "25MB)"}]}
+
+          {
+            :tag :device
+            :name "mobile_device_C" :uuid "md_C"
+            :purpose "mobile device"
+            :resources [
+              {:action :provides :type :permission :value "internet"}
+              {:action :provides :type :memory :value "200MB)"}]}
+            ]
+
+        :edges [
+          {:tag :manifest :src "arsc" :dst "saUserComp"}
+          {:tag :deploy  :src "saUser" :dst "android_env_1"}
+
+          {:tag :instance :src "android_env_1" :dst "mdev_A"}
+          {:tag :instance :src "android_env_1" :dst "mdev_B"}
+          {:tag :instance :src "android_env_1" :dst "mdev_C"}
+          ]}
+
+      {
+        :tag :frame
+        :name "server frame"
+        :uuid "serverFrame"
+        :nodes [
+          { :tag :component
+            :purpose "service"
+            :name "situational awareness distributor component" :uuid "saDistComp"
+            :resources [
+              {:tag :consumes :type :permission :value "internet"}
+              {:tag :consumes :type :memory :value "(200MB 500MB)"}]}
+
+          { :tag :artifact
+            :name "saDistributor" :uuid "saDistArt"
+            :purpose "server application"
+            :location "situational_awareness.exe"}
+
+          { :tag :environment
+            :name "linux_env_1" :uuid "linux_env_1"
+            :purpose "execution environment"}
+
+          { :tag :environment
+            :name "server_1" :uuid "svr_1"
+            :purpose "internet server"
+            :resources [
+              {:dir :provides :type :permission :value "internet"}
+              {:dir :provides :type :memory :value "8GB"}]}]
+
+         :edges  [
+            {:tag :manifest :src "saDistArt" :dst "saDistComp"}
+            {:tag :deploy :src "saDistArt" :dst "linux_env_1"}
+            {:tag :instance :src "linux_env_1" :dst "svr_1"} ]
+
+        }]
+
+  :network {
+    :comment
+      "The network loads should be specified rather than
+      prescribed as done here.
+      This is very inflexible and does not reflect the intent.
+      That being said a streaming system with m views
+      produces data stores with much derived data.
+      A good example of this approach is 'samza' or 'storm'
+      http://samza.apache.org/
+      http://storm.apache.org/
+      https://en.wikipedia.org/wiki/Materialized_view "
+
+    :links [
+      {
+        :tag :link
+        :client "mdev_A" :server "svr_1" :tag "tcp"
+        :loads [
+           {:tag :load :topic "saSub" :size "24B" :rate "0.001" :dir "up"}
+           {:tag :load :topic "sa" :size "24B" :rate "7" :dir "up"}
+           {:tag :load :topic "sa" :size "76B" :rate "7" :dir "down"} ]}
+
+      {
+        :tag :link
+        :client "mdev_B" :server "svr_1" :tag "tcp"
+        :loads [
+          {:tag :load :topic "saSub" :size "24B" :rate "0.001" :dir "up"}
+          {:tag :load :topic "sa" :size "24B" :rate "7" :dir "up"}
+          {:tag :load :topic "sa" :size "76B" :rate "7" :dir "down"} ]}
+
+      {
+        :tag :link
+        :client "mdev_C" :server "svr_1" :tag "tcp"
+        :loads [
+          {:tag :load :topic "saSub" :size "24B" :rate "0.001" :dir "up"}
+          {:tag :load :topic "sa" :size "24B" :rate "7" :dir "up"}
+          {:tag :load :topic "sa" :size "76B" :rate "7" :dir "down"} ]}
+          ]}}}

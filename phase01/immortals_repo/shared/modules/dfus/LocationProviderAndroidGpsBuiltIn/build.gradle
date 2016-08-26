@@ -1,0 +1,4 @@
+dependencies {
+    compile 'mil.darpa.immortals.datatypes:Coordinates:' + defaultImmortalsDependencyVersion
+    compile files(androidSDKJar)
+}

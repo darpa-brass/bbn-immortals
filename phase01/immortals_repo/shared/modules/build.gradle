@@ -1,0 +1,169 @@
+apply plugin: 'java'
+
+apply from: "../common.gradle"
+
+// Configuration for DFU jars  Do not change this unless you know what you are doing since it will impact _ALL_ subprojects! Extends the "allprojects" settings above.
+subprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.7
+
+    apply plugin: 'maven-publish'
+    apply plugin: 'maven'
+
+    version "$defaultModulePublishVersion"
+
+    publishing {
+        publications {
+            JavaComponent(MavenPublication) {
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                url "$localRepoPath"
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java']
+            }
+        }
+        test {
+            java {
+                srcDirs = ['src/test/java']
+            }
+        }
+    }
+
+    dependencies {
+        compile 'com.securboration:immortals-adsl-generate:+'
+        compile 'com.google.code.findbugs:jsr305:3.0.1'
+        compile 'com.google.code.gson:gson:2.5'
+        compile 'log4j:log4j:1.2.17'
+        testCompile group: 'junit', name: 'junit', version: '4.11'
+    }
+
+    test {
+        testLogging {
+            showStandardStreams = true
+        }
+    }
+
+    clean.doLast {
+        String publishDir = localRepoPath +
+                ((String) rootGroup).replaceAll('\\.', '/') +
+                project.getPath().replace(':', '/') + '/'
+
+        String[] artifacts = [
+                'maven-metadata.xml',
+                'maven-metadata.xml.md5',
+                'maven-metadata.xml.sha1',
+                defaultSoftwarePublishVersion + '/' +  project.name + '-' + defaultSoftwarePublishVersion + '.jar',
+                defaultSoftwarePublishVersion + '/' +  project.name + '-' + defaultSoftwarePublishVersion + '.jar.md5',
+                defaultSoftwarePublishVersion + '/' +  project.name + '-' + defaultSoftwarePublishVersion + '.jar.sha1',
+                defaultSoftwarePublishVersion + '/' +  project.name + '-' + defaultSoftwarePublishVersion + '.pom',
+                defaultSoftwarePublishVersion + '/' +  project.name + '-' + defaultSoftwarePublishVersion + '.pom.md5',
+                defaultSoftwarePublishVersion + '/' +  project.name + '-' + defaultSoftwarePublishVersion + '.pom.sha1',
+        ]
+
+        for (String artifact : artifacts) {
+            File f = new File(publishDir + artifact)
+            if (f.exists()) {
+                f.delete()
+            }
+        }
+
+        FileTree fileTree = fileTree(dir: publishDir);
+
+        if (fileTree.isEmpty()) {
+            new File(publishDir).deleteDir()
+        } else {
+            println('The publish directory for "' + project.getPath() + '" is not empty! Please update the cleaning scripts!')
+        }
+
+
+    }
+
+}
+
+String coreDependency = rootGroup + ':core:' + defaultImmortalsCoreDependencyVersion
+
+// Configuration for the core library. Extends the "subprojects" settings above.
+configure(allprojects.findAll { it.path.equals('core') }) {
+    group rootGroup
+    version $defaultModulePublishVersion
+
+}
+
+// Configuration that impacts all subprojects in the datatypes folder. Extends the "subprojects" settings above.
+configure(subprojects.findAll { it.path.startsWith(':datatypes:') || it.path.startsWith('datatypes:') }) {
+    group rootGroup + '.datatypes'
+
+    dependencies {
+        compile coreDependency
+    }
+}
+
+// Configuration that impacts all projects in the dfus folder. Extends the "subprojects" settings above.
+configure(subprojects.findAll { it.path.startsWith(':dfus:') || it.path.startsWith('dfus:') }) {
+    group rootGroup + '.dfus'
+
+    dependencies {
+        compile coreDependency
+    }
+}
+
+// Configuration that impacts all projects in the javatypeconverters folder. Extends the "subprojects" settings above.
+configure(subprojects.findAll {
+    it.path.startsWith(':javatypeconverters:') || it.path.startsWith('javatypeconverters:')
+}) {
+    group rootGroup + '.javatypeconverters'
+
+    dependencies {
+        compile coreDependency
+    }
+}
+
+// Configuration that impacts all projects in the dfus folder. Extends the "subprojects" settings above.
+configure(subprojects.findAll { it.path.startsWith(':misc:') || it.path.startsWith('misc:') }) {
+    group rootGroup + '.misc'
+
+    dependencies {
+        compile coreDependency
+    }
+}
+
+/**
+ * If known necessary files are missing from one of the subprojects, this will return true
+ */
+Closure repositoryIncomplete = {
+    for (Project subProject : subprojects) {
+
+        String publishDir = localRepoPath +
+                ((String) rootGroup).replaceAll('\\.', '/') +
+                subProject.getPath().replace(':', '/') + '/'
+
+        String xmlFile = publishDir + 'maven-metadata.xml'
+        String pomFile = publishDir + defaultSoftwarePublishVersion + '/' + subProject.getName() + '-' + defaultSoftwarePublishVersion + '.pom'
+        String jarFile = publishDir + defaultSoftwarePublishVersion + '/' + subProject.getName() + '-' + defaultSoftwarePublishVersion + '.jar'
+
+        if (!((new File(xmlFile)).exists() && (new File(pomFile)).exists() && (new File(jarFile)).exists())) {
+            return true;
+            break;
+        }
+
+    }
+    return false;
+}
+
+DefaultTask init = task('init', description: "If the repository appears to be incomplete, this will re-publish all modules.", group: 'Immortals') {
+    if (repositoryIncomplete()) {
+        println("The modules appear to be incomplete. Forcing (re)publish.")
+        finalizedBy(subprojects.publish)
+    } else {
+        println("The modules appear to be properly deployed.  Leaving alone.")
+    }
+}

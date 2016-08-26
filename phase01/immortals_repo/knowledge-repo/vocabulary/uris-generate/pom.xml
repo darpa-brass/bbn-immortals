@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>com.securboration</groupId>
+		<artifactId>immortals</artifactId>
+		<version>r2.0.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<artifactId>immortals-uris-generate</artifactId>
+	<packaging>jar</packaging>
+	
+	<name>IMMoRTALS uri constants generation project</name>
+	<url>https://dsl-external.bbn.com/tracsvr/immortals</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-uri-generator</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+	
+
+	<properties>
+		<local-repo-root>${project.basedir}/../../..</local-repo-root>
+	</properties>
+
+	<repositories>
+		<!-- blank -->
+	</repositories>
+
+	<profiles>
+		<!-- blank -->
+	</profiles>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.securboration</groupId>
+						<artifactId>immortals-uri-generator</artifactId>
+						<version>${immortals.version}</version>
+						<scope>compile</scope>
+					</dependency>
+				</dependencies>
+				<executions>
+					<!--
+					Generate a class containing constant strings from URIs in ontologies
+					-->
+					<execution>
+						<id>ontologies-to-java-constants</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.generate.uris.GenerateUriConstants</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/generated-sources</argument>
+								<argument>${project.basedir}/../ontology-static/ontology/third-party</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.10</version>
+				<executions>
+					<execution>
+						<id>add-generated-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.basedir}/target/generated-sources</source>
+							</sources>
+						</configuration>
+						</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>

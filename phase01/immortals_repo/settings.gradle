@@ -1,0 +1,8 @@
+include 'server:Marti'
+include 'client:ATAKLite'
+include 'das:das-service'
+include 'das:das-analysis'
+include 'das:das-analysis:modulerunner-android'
+include 'das:das-analysis:modulerunner-java'
+include 'das:infrastructure:LoggingServer'
+

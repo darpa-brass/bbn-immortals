@@ -1,0 +1,94 @@
+digraph {
+
+    subgraph cluster_MA {
+        graph[label="MainActivity"]
+        MA_mapDisplayFragment[label="mapDisplayFragment"]
+        MA_listDisplayFragment[label="listDisplayFragment"]
+        MA_displayToast[label="<display toast>"]
+
+        subgraph cluster_SACommunicationServiceReceiver {
+            graph[label="SACommunicationServiceReceiver"]
+            MA_SACSR_onReceive[label="onReceive"]
+        }
+
+        subgraph cluster_MonitoredEntityManager {
+            graph[label="MonitoredEntityManager"]
+            MEM_addOrUpdateExternalEntityLocation[label="addOrUpdateExternalEntityLocation"]
+            MEM_addOrUpdateExternalEntityImages[label="addOrUpdateExternalEntityImages"]
+            MEM_updateMyLocation[label="updateMyLocation"]
+            MEM_analyticsListener[label="AnalyticsListener"]
+            MEM_listeners[label="[listeners]"]
+
+            MEM_addOrUpdateExternalEntityLocation -> MEM_listeners
+            MEM_addOrUpdateExternalEntityImages -> MEM_listeners
+            MEM_updateMyLocation -> MEM_listeners
+            MEM_listeners -> MEM_analyticsListener
+        }
+
+        MA_SACSR_onReceive -> MA_displayToast
+        MA_SACSR_onReceive -> MEM_updateMyLocation
+        MA_SACSR_onReceive -> MEM_addOrUpdateExternalEntityImages
+        MA_SACSR_onReceive -> MEM_addOrUpdateExternalEntityLocation
+        MEM_listeners -> MA_mapDisplayFragment
+        MEM_listeners -> MA_listDisplayFragment
+    }
+
+    subgraph cluster_SACommunicationService {
+        graph[label="SACommunicationService"]
+        SACS_onHandleIntent[label="onHandleIntent"]
+        SACS_startBroadcastingLatestSA[label="startBroadcastingLatestSA"]
+
+        subgraph cluster_staticSACommunicationService {
+            graph[label="static"]
+
+
+            SACS_cotMessageReceivedFromNetwork[label="cotMessageReceivedFromNetwork"]
+            SACS_startActionSendImage[label="startActionSendImage"]
+        }
+
+        intent_ACTION_BROADCAST_IMAGE_UPDATE[label="[ACTION_BROADCAST_IMAGE_UPDATE]"]
+        intent_ACTION_BROADCAST_FIELD_UPDATE[label="[ACTION_BROADCAST_FIELD_UPDATE]"]
+        intent_ACTION_SEND_IMAGE[label="[ACTION_SEND_IMAGE]"]
+
+        /*SACS_onHandleIntent[label="onHandleIntent"]*/
+        /*SACS_ImagePipeline[label="ImagePipeline"]*/
+
+        subgraph cluster_SAIB {
+            graph[label="SAIntentBroadcaster"]
+            SAIB_displayMessage[label="displayMessage"]
+            SAIB_broadcastFieldUpdate[label="broadcastFieldUpdate"]
+            SAIB_broadcastImageUpdate[label="broadcastImageUpdate"]
+            SAIB_broadcastSelfLocationUpdate[label="broadcastSelfLocationUpdate"]
+        }
+
+        SACS_startBroadcastingLatestSA -> SAIB_broadcastSelfLocationUpdate
+        SACS_onHandleIntent -> SAIB_broadcastFieldUpdate
+        SACS_onHandleIntent -> SAIB_broadcastImageUpdate
+
+        SACS_cotMessageReceivedFromNetwork -> intent_ACTION_BROADCAST_IMAGE_UPDATE
+        SACS_cotMessageReceivedFromNetwork -> intent_ACTION_BROADCAST_FIELD_UPDATE
+        intent_ACTION_BROADCAST_FIELD_UPDATE -> SACS_onHandleIntent
+        intent_ACTION_BROADCAST_IMAGE_UPDATE -> SACS_onHandleIntent
+    }
+
+
+    intent_FIELD_LOCATION_UPDATE[label="[FIELD_LOCATION_UPDATE]"]
+    intent_FIELD_IMAGE_UPDATE[label="[FIELD_IMAGE_UPDATE]"]
+    intent_SELF_LOCATION_UPDATE[label="[SELF_LOCATION_UPDATE]"]
+    intent_DISPLAY_MESSAGE[label="[DISPLAY_MESSAGE]"]
+
+
+    SACS_startActionSendImage -> intent_ACTION_SEND_IMAGE
+    SAIB_displayMessage -> intent_DISPLAY_MESSAGE
+    SAIB_broadcastImageUpdate -> intent_FIELD_IMAGE_UPDATE
+    SAIB_broadcastFieldUpdate -> intent_FIELD_LOCATION_UPDATE
+    SAIB_broadcastSelfLocationUpdate -> intent_SELF_LOCATION_UPDATE
+
+    intent_ACTION_SEND_IMAGE -> SACS_onHandleIntent
+
+    intent_SELF_LOCATION_UPDATE -> MA_SACSR_onReceive
+    intent_FIELD_IMAGE_UPDATE -> MA_SACSR_onReceive
+    intent_FIELD_LOCATION_UPDATE -> MA_SACSR_onReceive
+    intent_DISPLAY_MESSAGE -> MA_SACSR_onReceive
+
+}
