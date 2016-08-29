@@ -13,11 +13,14 @@ fi;
 echo 'blacklist cirrus' >> /etc/modprobe.d/blacklist-cirrus.conf
 update-initramfs -u -k all
 
+echo "immortals" > /etc/hostname
+echo "127.0.0.1 immortals" >> /etc/hosts
+
 ANDROID_BUILD_TOOLS_VERSION="21.1.2"
 
 # The android sdk components to install
 ANDROID_SDK_INSTALLS="tools,platform-tools,build-tools-21.1.2,android-21,android-23,extra-android-m2repository,extra-android-support,extra-google-google_play_services,extra-google-m2repository"
-# ,sys-img-x86_64-android-21,sys-img-x86_64-android-23"
+ANDROID_EMULATOR_INSTALLS="sys-img-x86_64-android-21,sys-img-x86_64-android-23"
 
 INSTALLATION_DIR=/opt
 
@@ -48,12 +51,15 @@ source ~/.bashrc
 apt-get update
 apt-get install apt-transport-https ca-certificates -y
 
+
+
 ######## Install Docker ########
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" > /etc/apt/sources.list.d/docker.list
 apt-get update
 apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual -y
 apt-get install docker-engine -y
+
 
 
 ######## Install Java ########
@@ -66,12 +72,11 @@ echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | su
 apt-get install -y oracle-java8-installer
 
 echo 'export JAVA_HOME=/usr/lib/jvm/java-8-oracle' >> ~/.bashrc
-#echo 'export PATH=${JAVA_HOME}/bin:${PATH}' >> ~/.bashrc
 source ~/.bashrc
 
 
-#Install the Android SDK
 
+#Install the Android SDK
 dpkg --add-architecture i386
 apt-get update -y
 apt-get install -y libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libpulse0 libx11-6:i386 libx11-6 libgl1-mesa-glx
@@ -86,25 +91,23 @@ fi
 
 tar xvzf "setup_resources/${ANDROID_SDK_INSTALLER}" -C /opt/
 
-echo 'export ANDROID_HOME=/opt/android-sdk-linux' >> ~/.bashrc
+echo 'export ANDROID_HOME=${ANDROID_HOME}' >> ~/.bashrc
 source ~/.bashrc
-#echo 'export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools' >> ~/.bashrc
 
-ln -s ${ANDROID_HOME}/platform-tools/adb /opt/bin/adb
-ln -s ${ANDROID_HOME}/tools/android /opt/bin/android
-ln -s ${ANDROID_HOME}/tools/ddms /opt/bin/ddms
-ln -s ${ANDROID_HOME}/tools/emulator /opt/bin/emulator
-ln -s ${ANDROID_HOME}/tools/emulator64-arm /opt/bin/emulator64-arm
-ln -s ${ANDROID_HOME}/tools/emulator64-x86 /opt/bin/emulator64-x86
-#ln -s ${ANDROID_HOME}/tools/emulator-x86 /opt/bin/emulator-x86
-ln -s ${ANDROID_HOME}/tools/mksdcard /opt/bin/mksdcard
-ln -s ${ANDROID_HOME}/tools/monitor /opt/bin/monitor
+echo y | ${ANDROID_HOME}tools/android update sdk --no-ui -a --filter ${ANDROID_SDK_INSTALLS}
 
+if [ $ANDROID_EMULATOR_INSTALLS ];then
+    echo y | ${ANDROID_HOME}tools/android update sdk --no-ui -a --filter ${ANDROID_EMULATOR_INSTALLS}
+fi
 
-
-echo y | android update sdk --no-ui -a --filter ${ANDROID_SDK_INSTALLS}
-
-
+ln -s ${ANDROID_HOME}tools/android /opt/bin/android
+ln -s ${ANDROID_HOME}tools/ddms /opt/bin/ddms
+ln -s ${ANDROID_HOME}tools/emulator /opt/bin/emulator
+ln -s ${ANDROID_HOME}tools/emulator64-arm /opt/bin/emulator64-arm
+ln -s ${ANDROID_HOME}tools/emulator64-x86 /opt/bin/emulator64-x86
+ln -s ${ANDROID_HOME}tools/mksdcard /opt/bin/mksdcard
+ln -s ${ANDROID_HOME}tools/monitor /opt/bin/monitor
+ln -s ${ANDROID_HOME}platform-tools/adb /opt/bin/adb
 
 
 
@@ -118,8 +121,8 @@ unzip "setup_resources/${GRADLE_INSTALLER}" -d /opt
 
 echo "export GRADLE_HOME=${GRADLE_HOME}" >> ~/.bashrc
 ln -s ${GRADLE_HOME}/bin/gradle /opt/bin/gradle
-#echo 'export PATH=${PATH}:${GRADLE_HOME}/bin' >> ~/.bashrc
-#source ~/.bashrc
+
+
 
 ######## Install Fuseki ########
 if [ ! -e "setup_resources/${FUSEKI_INSTALLER}" ];then
@@ -128,12 +131,11 @@ fi
 tar xvzf "setup_resources/${FUSEKI_INSTALLER}" -C /opt/
 
 echo "export FUSEKI_HOME=${FUSEKI_HOME}" >> ~/.bashrc
-#echo 'export PATH=${PATH}:${FUSEKI_HOME}/bin' >> ~/.bashrc
 source ~/.bashrc
 
 
+
 ######## Install Haskell ########
-#apt-get install haskell-platform -y
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 575159689BEFB442
 echo 'deb http://download.fpcomplete.com/ubuntu trusty main'|sudo tee /etc/apt/sources.list.d/fpco.list
 apt-get update
@@ -150,42 +152,15 @@ fi
 unzip "setup_resources/${Z3_INSTALLER}" -d /opt/
 ln -s ${Z3_HOME}/bin/z3 /opt/bin/z3
 
-#echo "export Z3_HOME=${FUSEKI_HOME}" >> ~/.bashrc
-#echo 'export PATH=${PATH}:${Z3_HOME}/bin' >> ~/.bashrc
-#source ~/.bashrc
 
+
+######## Install Maven ########
 apt-get install maven -y
 
 
 
-
-
-
-#mkdir /opt/adb
-
-#ln -s ${JAVA_HOME}/bin/jar /opt/bin/jar
-#ln -s ${JAVA_HOME}/bin/java /opt/bin/java
-#ln -s ${JAVA_HOME}/bin/javac /opt/bin/javac
-
-
-
-
-#cd ../
-#gradle
-#gradle dslSetup
-
-#service docker start
-
-# Here, the tarball should be fetched and placed in the user's home directory
-
-if [ ! -e docker/android_docker/setup_resources ];then mkdir docker/android_docker/setup_resources;fi
-cp setup_resources/${ANDROID_SDK_INSTALLER} docker/android_docker/setup_resources/
-exec setup_docker_images.sh
-
+######## Perform the initial build to populate the dependency tree
 cd ../
-gradle
-gradle dslSetup
-gradle buildAll
-# While building the docker images, it may look like it has hanged while downloading and setting up the android sdk components, but it works as of 08/25/16
-#exec build.sh
-
+${GRADLE_HOME}/bin/gradle
+${GRADLE_HOME}/bin/gradle dslSetup
+${GRADLE_HOME}/bin/gradle buildAll
