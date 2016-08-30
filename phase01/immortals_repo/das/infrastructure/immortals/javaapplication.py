@@ -1,4 +1,5 @@
 
+import atexit
 import logging
 import os
 import signal
@@ -6,20 +7,19 @@ import signal
 from javaplatform import JavaPlatform
 from utils import path_helper
 
-def _exit_handler(signal, frame):
+def _exit_handler():
     for application in _instances.values():
         if application.is_application_running:
             application.stop_application()
 
-
-signal.signal(signal.SIGINT, _exit_handler)
+atexit.register(_exit_handler)
 
 _instances = {}
 
 
 class JavaApplication:
 
-    def __init__(self, execution_path, application_configuration, wipe_existing_environment):
+    def __init__(self, execution_path, application_configuration):
         if application_configuration.instance_identifier in _instances:
             raise Exception('A JavaApplication with the identifier "' + application_configuration.instance_identifier + '" has already been defined!')
         else:
@@ -28,7 +28,7 @@ class JavaApplication:
         self.instance_identifier = application_configuration.instance_identifier
         self.application_identifier = application_configuration.application_identifier
         self.is_application_running = False
-        self.environment = JavaPlatform(execution_path, application_configuration, wipe_existing_environment)
+        self.environment = JavaPlatform(execution_path, application_configuration)
         self.config = application_configuration
         self.root_path = execution_path
         self.jar_filepath = path_helper(False, self.root_path, os.path.basename(self.config.executable_filepath))

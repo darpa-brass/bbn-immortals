@@ -10,6 +10,7 @@ import subprocess
 import threading
 import time
 
+from immortalsglobals import ImmortalsGlobals
 from packages import commentjson
 from packages.commentjson import JSONLibraryException
 
@@ -40,7 +41,6 @@ def _exit_handler():
             pass
 
 atexit.register(_exit_handler)
-
 
 _adb_has_been_reinitialized = False
 _adb_identifier_count = 0
@@ -74,53 +74,47 @@ def _generate_emulator_identifier():
 
 class AndroidEmulatorInstance(deploymentplatform.DeploymentPlatform):
 
-    def __init__(self, execution_path, application_configuration, clobber_existing):
+    def __init__(self, execution_path, application_configuration):
         self.config = application_configuration
         self.identifier = application_configuration.instance_identifier
         self.adb_device_identifier = _generate_emulator_identifier()
         self.android_environment = application_configuration.deployment_platform_environment
         self.display_ui = configurationmanager.Configuration.display_ui
-        self.clobber_existing = clobber_existing
         self.execution_path = execution_path
         self.console_port = get_formatted_string_value(_emulator_name_template, self.adb_device_identifier, 'CONSOLEPORT')
         self.sdcard_filepath = None
         self.emulator_is_running = False
         self.is_application_running = False
 
+        self.emuhelper = emuhelper.EmuHelper(self.adb_device_identifier, self)
+        self.adbhelper = adbhelper.AdbHelper(self.adb_device_identifier, self)
+
 
     def platform_setup(self):
         global _adb_has_been_reinitialized
-
-        self.emuhelper = emuhelper.EmuHelper(self.adb_device_identifier, self)
-        self.adbhelper = adbhelper.AdbHelper(self.adb_device_identifier, self)
 
         if not _adb_has_been_reinitialized:
             self.adbhelper.restart_adb_server()
             _adb_has_been_reinitialized = True
 
-        logging.debug('Setting up ' + self.android_environment + ' for ' + self.identifier + ' with clobber_existing=' + str(self.clobber_existing))
+        logging.debug('Setting up ' + self.android_environment + ' for ' + self.identifier)
 
         is_known = self.adbhelper.is_known()
         is_running = self._emulator_exists()
         console_port = get_formatted_string_value(_emulator_name_template, self.adb_device_identifier, 'CONSOLEPORT')
 
-
-        if is_running:
-            if self.clobber_existing:
-                _halt_identifiers.append(self.adb_device_identifier)
+        if ImmortalsGlobals.wipe_existing_environment:
+            if is_running:
                 self._kill_emulator()
                 is_running = False
-        else:
-            _halt_identifiers.append(self.adb_device_identifier)
 
-        if is_known:
-            if self.clobber_existing:
-                _remove_identifiers.append(self.adb_device_identifier)
+            if is_known:
                 self._delete_emulator()
                 self.is_known = False
-        else:
-            _remove_identifiers.append(self.adb_device_identifier)
 
+        if not ImmortalsGlobals.keep_constructed_environment_running:
+            _halt_identifiers.append(self.adb_device_identifier)
+            _remove_identifiers.append(self.adb_device_identifier)
 
         sdcard_filepath = os.path.join(self.execution_path, self.identifier + '_sdcard.img')
         cmd = ['mksdcard', '12M', sdcard_filepath]
@@ -150,10 +144,12 @@ class AndroidEmulatorInstance(deploymentplatform.DeploymentPlatform):
         self.adbhelper.start_process(self.config.package_identifier + '/' + self.config.main_activity)
         self.is_application_running = True
 
-        self.logcat_process = self.adbhelper.logcat_with_tag(True, 'ImmortalsAnalytics')
-        self.listening_thread = threading.Thread(target=self._monitor_output, args=(event_listener,))
-        self.listening_thread.daemon = True
-        self.listening_thread.start()
+        if event_listener is not None:
+            self.logcat_process = self.adbhelper.logcat_with_tag(True, 'ImmortalsAnalytics')
+            self.listening_thread = threading.Thread(target=self._monitor_output, args=(event_listener,))
+            self.listening_thread.daemon = True
+            self.listening_thread.start()
+
         time.sleep(2)
 
 
@@ -163,7 +159,7 @@ class AndroidEmulatorInstance(deploymentplatform.DeploymentPlatform):
 
 
     def platform_teardown(self):
-        if self.adb_device_identifier in _halt_identifiers or self.adb_device_identifier in _remove_identifiers:
+        if self.adb_device_identifier in _halt_identifiers:
             self._kill_emulator()
             self.emulator_is_running = False
 
@@ -195,15 +191,15 @@ class AndroidEmulatorInstance(deploymentplatform.DeploymentPlatform):
 
             try:
                 value = commentjson.loads(line)
+                if (value['type'] == 'ClientShutdown' or not self.logcat_process.poll() is None):
+                    is_shutdown = True
+
+                event_listener(self.identifier, value)
+
             except JSONLibraryException:
                 if is_shutdown:
                     # If it has shut down we don't care if this freaks out
                     pass
-
-            if (value['type'] == 'ClientShutdown' or not self.logcat_process.poll() is None):
-                is_shutdown = True
-
-            event_listener(self.identifier, value)
 
         self.platform_teardown()
 

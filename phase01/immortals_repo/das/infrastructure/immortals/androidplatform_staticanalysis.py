@@ -14,10 +14,10 @@ _CONTAINER_NAME = os.environ['USER'] + '-ds'
 
 class AndroidStaticAnalysisInstance(deploymentplatform.DeploymentPlatform):
 
-    def __init__(self, execution_path, application_configuration, clobber_existing):
+    def __init__(self, execution_path, application_configuration):
         self.execution_path = execution_path
         self.config = application_configuration
-        self.docker = docker.DockerInstance(execution_path, application_configuration, clobber_existing)
+        self.docker = docker.DockerInstance(execution_path, application_configuration)
         self.identifier = application_configuration.instance_identifier
 
 

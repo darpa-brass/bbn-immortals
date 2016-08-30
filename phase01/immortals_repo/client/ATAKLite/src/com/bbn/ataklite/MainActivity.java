@@ -338,6 +338,7 @@ public class MainActivity extends Activity implements MonitoredEntityFragment.On
 
     @Override
     protected void onDestroy() {
+        Analytics.log(Analytics.newEvent(AnalyticsEventType.ClientShutdown, Analytics.getOwnSourceIdentifier(), "MainActivity"));
         entityManager.shutdown();
         super.onDestroy();
         stopService(new Intent(getBaseContext(), SACommunicationService.class));

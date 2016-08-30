@@ -6,6 +6,7 @@ import shutil
 import signal
 import subprocess
 
+from immortalsglobals import ImmortalsGlobals
 from utils import replace
 
 _ID_JAR_FILEPATH = '$JAR_FILEPATH!'
@@ -24,10 +25,9 @@ signal.signal(signal.SIGINT, _exit_handler)
 
 class JavaPlatform:
 
-    def __init__(self, execution_path, application_configuration, wipe_existing):
+    def __init__(self, execution_path, application_configuration):
         self.identifier = application_configuration.instance_identifier
         self.java_environment_identifier =  application_configuration.deployment_platform_environment
-        self.wipe_existing = wipe_existing
         self.runtime_path = execution_path
 
         if self.java_environment_identifier == 'java_local':
@@ -51,9 +51,10 @@ class JavaPlatform:
 
 
     def platform_setup(self):
-        logging.debug('Setting up ' + self.java_environment_identifier + ' for ' + self.identifier + ' with wipe_existing=' + str(self.wipe_existing))
+        logging.debug('Setting up ' + self.java_environment_identifier + ' for ' + self.identifier)
+        logging.debug('Setting up ' + self.java_environment_identifier + ' for ' + self.identifier)
 
-        if self.wipe_existing:
+        if ImmortalsGlobals.wipe_existing_environment:
             if os.path.exists(self.runtime_path):
                 shutil.rmtree(self.runtime_path)
 

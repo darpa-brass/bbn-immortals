@@ -43,9 +43,9 @@ _CMD_COPY_TO_DOCKER = ('sudo', 'docker', 'cp', _IDSOURCE_FILE, _IDCONTAINER_NAME
 
 class AndroidDockerEmulatorInstance(deploymentplatform.DeploymentPlatform):
 
-    def __init__(self, execution_path, application_configuration, clobber_existing):
-        self.docker = docker.DockerInstance(execution_path, application_configuration, clobber_existing)
-        self.emulator = androidplatform_emulator.AndroidEmulatorInstance(execution_path, application_configuration, clobber_existing)
+    def __init__(self, execution_path, application_configuration):
+        self.docker = docker.DockerInstance(execution_path, application_configuration)
+        self.emulator = androidplatform_emulator.AndroidEmulatorInstance(execution_path, application_configuration)
         self.emulator.call = self.docker.call
         self.emulator.Popen = self.docker.Popen
         self.emulator.check_output = self.docker.check_output

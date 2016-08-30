@@ -9,6 +9,7 @@ import sys
 import threading
 import time
 
+from immortalsglobals import ImmortalsGlobals
 from packages import commentjson
 from packages.commentjson import JSONLibraryException
 
@@ -27,7 +28,7 @@ _instances = {}
 
 class AndroidApplication:
 
-    def __init__(self, execution_path, application_configuration, wipe_existing_environment):
+    def __init__(self, execution_path, application_configuration):
         if application_configuration.instance_identifier in _instances:
             raise Exception('An AndroidApplication with the identifier "' + application_configuration.instance_identifier + '" has already been defined!')
         else:
@@ -36,7 +37,7 @@ class AndroidApplication:
         self.application_identifier = application_configuration.application_identifier
         self.instance_identifier = application_configuration.instance_identifier
         self.is_application_running = False
-        self.platform = platformhelper.create_platform_instance(execution_path, application_configuration, wipe_existing_environment)
+        self.platform = platformhelper.create_platform_instance(execution_path, application_configuration)
         self.config = application_configuration
         self.root_path = execution_path
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Environment;
 import android.util.Log;
+import com.bbn.ataklite.ATAKLite;
 import com.bbn.ataklite.ATAKLiteConfig;
 import com.bbn.ataklite.CoTMessage;
 import com.bbn.ataklite.net.Dispatcher;
@@ -20,8 +21,9 @@ import mil.darpa.immortals.core.analytics.Analytics;
 import mil.darpa.immortals.core.analytics.AnalyticsEventType;
 import mil.darpa.immortals.core.synthesis.ObjectPipeMultiplexerHead;
 import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterface;
-import mil.darpa.immortals.dfus.images.BitmapDownsizer;
+import mil.darpa.immortals.datatypes.Coordinates;
 import mil.darpa.immortals.dfus.images.BitmapReader;
+import mil.darpa.immortals.javatypeconverters.CoordinateLocationConverter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -184,6 +186,7 @@ public class SACommunicationService extends IntentService {
      * Handle action SEND_IMAGE in the provided background thread with the provided parameters.
      */
     private void handleActionSendImage(String imageFilepath, Location location) {
+        Analytics.log(Analytics.newEvent(AnalyticsEventType.MyImageSent, ATAKLite.getConfigInstance().callsign, CoordinateLocationConverter.toCoordinates(location)));
         imageSender.write(imageFilepath, location);
     }
 
@@ -210,16 +213,20 @@ public class SACommunicationService extends IntentService {
                     while ((message = byteCotifyer.produce()) != null) {
 
                         // TODO: add the provider to the CoTMessage object
-                        Location location = new Location("");
-
-                        location.setAltitude(message.getAltitude());
-                        location.setLatitude(message.getLatitude());
-                        location.setLongitude(message.getLongitude());
+                        Coordinates coordinates = new Coordinates(
+                                message.getLatitude(),
+                                message.getLongitude(),
+                                null,
+                                null,
+                                message.getTime(),
+                                message.getHow()
+                        );
 
 
                         byte[] imageData = message.getImageData();
 
                         if (imageData != null) {
+                            Analytics.log(Analytics.newEvent(AnalyticsEventType.FieldImageReceived, message.getUid(), coordinates));
 
                             String imageName = message.getUid() + "-" + System.currentTimeMillis() + ".jpg";
 
@@ -236,10 +243,11 @@ public class SACommunicationService extends IntentService {
 
                             // Not currently used, will probably need to add additional parts of the control point and/or integrate it with the Image Output control point
                             String imagePath = imageFile.getAbsolutePath();
-                            intentBroadcaster.broadcastImageUpdate(mil.darpa.immortals.javatypeconverters.CoordinateLocationConverter.toCoordinates(location), message.getUid(), imagePath);
+                            intentBroadcaster.broadcastImageUpdate(coordinates, message.getUid(), imagePath);
 
                         } else {
-                            intentBroadcaster.broadcastFieldUpdate(mil.darpa.immortals.javatypeconverters.CoordinateLocationConverter.toCoordinates(location), message.getUid());
+                            Analytics.log(Analytics.newEvent(AnalyticsEventType.FieldLocationUpdated, message.getUid(), coordinates));
+                            intentBroadcaster.broadcastFieldUpdate(coordinates, message.getUid());
                         }
                     }
 
@@ -357,6 +365,10 @@ public class SACommunicationService extends IntentService {
                     // 2B997763-CB0F-426B-88D2-4E5995E79A8A-replaceEnd
 
                     if (coordinates != null) {
+
+                        Analytics.log(Analytics.newEvent(AnalyticsEventType.MyLocationProduced, Analytics.getOwnSourceIdentifier(), coordinates));
+
+
                         // TODO: This conversion should probably be a separately defined converter of sorts.
                         CoTMessage message = new CoTMessage(mil.darpa.immortals.javatypeconverters.CoordinateLocationConverter.toLocation(coordinates), config.callsign);
 

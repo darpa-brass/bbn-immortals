@@ -17,8 +17,8 @@ Root is (ab)used and used for everything at the moment since it runs in a self-c
     `$ chown -R root:root immortals_repo`
 3.  Navigate to harness within the extracted directory
     `$ cd ~/immortals_repo/harness`
-4.  Execute the configuration script
-    `$ ./system_setup.sh`
+4.  Execute the configuration script (The ". ./" syntax is very important to ensure the proper environment variables are applied within the script by the modified ~/.bashrc)
+    `$ . ./system_setup.sh`
 
 ## Offline DAS Initialization
 1.  As root, navigate to ~/immortals_repo/das/
@@ -31,3 +31,16 @@ Root is (ab)used and used for everything at the moment since it runs in a self-c
 2.  For example, using curl, the following command would submit a configuration to the server for synthesis from within the immortals_root:
     `$ curl -H "Content-Type:application/json" -X POST --data-binary @das/das-service/sample_das_input.txt http://localhost:8080/bbn/das/deployment-model`
 3.  Activity can be observed on the screen used to start das.py
+
+## Offline Scenario execution
+1.  Navigate to ~/immortals_repo/das/infrastructure
+1.  Execute the following command:
+    `$ ./scenariorunner.py -w -r client-test-location`
+
+## Offline DAS Validation
+1.  Navigate to ~/immortals_repo/das/das-analysis
+2.  Execute the following command:
+   `$ java -jar LoggingServer.jar -c validate client-location-share client-location-produce`
+3.  Execute the Offline Scenario execution
+4.  When the scenario execution has finished, hit Ctrl-C on the logging server to get the results.
+

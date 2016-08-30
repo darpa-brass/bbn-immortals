@@ -111,6 +111,7 @@ DefaultTask buildAll = task('buildAll') {
     finalizedBy(':das:das-service:build')
     finalizedBy(':das:das-analysis:modulerunner-android:build')
     finalizedBy(':das:das-analysis:modulerunner-java:build')
+    finalizedBy(':das:das-analysis:build')
 }
 
 DefaultTask cleanAll = task('cleanAll') {

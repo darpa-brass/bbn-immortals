@@ -3,6 +3,7 @@ package mil.darpa.immortals.analysis.analytics;
 import org.apache.log4j.*;
 import org.apache.log4j.net.SocketNode;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -32,33 +33,61 @@ public class Log4jAnalyticsServer {
 
     private final int port;
 
-    public Log4jAnalyticsServer(int port, @Nullable String logFilepath) {
-        try {
+    public Log4jAnalyticsServer(int port) {
+//        try {
             this.port = port;
             BasicConfigurator.configure();
 
-            immortalsAnalyticsLogger.setAdditivity(false);
+//            if (logFilepath == null) {
+//
+//                ConsoleAppender appender = new ConsoleAppender(
+//                        new PatternLayout("%m%n")
+//                );
+//                immortalsAnalyticsLogger.addAppender(appender);
+//
+//            } else {
+//
+//                FileAppender fileAppender = new FileAppender(
+//                        new PatternLayout("%m%n"),
+//                        logFilepath);
+//                immortalsAnalyticsLogger.addAppender(fileAppender);
+//
+//            }
 
-            if (logFilepath == null) {
-
-                ConsoleAppender appender = new ConsoleAppender(
-                        new PatternLayout("%m%n")
-                );
-                immortalsAnalyticsLogger.addAppender(appender);
-
-            } else {
-
-                FileAppender fileAppender = new FileAppender(
-                        new PatternLayout("%m%n"),
-                        logFilepath);
-                immortalsAnalyticsLogger.addAppender(fileAppender);
-
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
+//
+//    public Log4jAnalyticsServer(int port, @Nonnull ValidatorAppender[] appenders) {
+//        this.port = port;
+//        BasicConfigurator.configure();
+//        immortalsAnalyticsLogger.setAdditivity(false);
+//
+//        for (ValidatorAppender appender : appenders) {
+//            immortalsAnalyticsLogger.addAppender(appender);
+//        }
+//    }
+
+    public void initFileLogger(@Nonnull String logFilepath) throws IOException {
+        FileAppender fileAppender = new FileAppender(
+                new PatternLayout("%m%n"),
+                logFilepath);
+        immortalsAnalyticsLogger.addAppender(fileAppender);
+    }
+
+    public void initConsoleLogger() {
+        ConsoleAppender appender = new ConsoleAppender(
+                new PatternLayout("%m%n")
+        );
+        immortalsAnalyticsLogger.addAppender(appender);
+    }
+
+    public void addValidator(@Nonnull ValidatorAppender validatorAppender) {
+        immortalsAnalyticsLogger.addAppender(validatorAppender);
+    }
+
+//    public void addValidation
 
     public void start() {
         logger.info("Starting log4j server on port " + port + ".");

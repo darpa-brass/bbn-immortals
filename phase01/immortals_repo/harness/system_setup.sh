@@ -91,7 +91,7 @@ fi
 
 tar xvzf "setup_resources/${ANDROID_SDK_INSTALLER}" -C /opt/
 
-echo 'export ANDROID_HOME=${ANDROID_HOME}' >> ~/.bashrc
+echo "export ANDROID_HOME=${ANDROID_HOME}" >> ~/.bashrc
 source ~/.bashrc
 
 echo y | ${ANDROID_HOME}tools/android update sdk --no-ui -a --filter ${ANDROID_SDK_INSTALLS}

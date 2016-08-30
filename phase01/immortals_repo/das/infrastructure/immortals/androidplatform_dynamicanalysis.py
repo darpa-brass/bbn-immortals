@@ -61,9 +61,9 @@ class AndroidDynamicAnalysisInstance(deploymentplatform.DeploymentPlatform):
         return False
 
 
-    def __init__(self, execution_path, application_configuration, clobber_existing):
-        self.docker = docker.DockerInstance(execution_path, application_configuration, clobber_existing)
-        self.emulator = androidplatform_emulator.AndroidEmulatorInstance(execution_path, application_configuration, clobber_existing)
+    def __init__(self, execution_path, application_configuration):
+        self.docker = docker.DockerInstance(execution_path, application_configuration)
+        self.emulator = androidplatform_emulator.AndroidEmulatorInstance(execution_path, application_configuration)
         self.emulator.call = self.docker.call
         self.emulator.Popen = self.docker.Popen
         self.emulator.check_output = self.docker.check_output

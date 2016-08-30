@@ -8,16 +8,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.stream.JsonWriter;
-import mil.darpa.immortals.core.analytics.Analytics;
-import mil.darpa.immortals.core.analytics.AnalyticsEventType;
 import mil.darpa.immortals.dfus.LatestSaFileByteReader;
 import mil.darpa.immortals.dfus.LatestSaFileByteWriter;
-import mil.darpa.immortals.dfus.compression.GzipCompressor;
-import mil.darpa.immortals.dfus.crypto.jca.JcaAesEncryptor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -175,7 +174,6 @@ public class MonitoredEntityManager {
 
         entity.updateLocation(newLocation);
 
-        Analytics.log(Analytics.newEvent(AnalyticsEventType.FieldLocationUpdated, identifier, newLocation));
 
         for (EntityChangeListener listener : listeners) {
             listener.onExternalEntityLocationAddedOrChanged(identifier, newLocation);
@@ -202,8 +200,6 @@ public class MonitoredEntityManager {
 
         entity.addImageUrl(imageUrl, newLocation);
 
-        Analytics.log((Analytics.newEvent(AnalyticsEventType.ImageReceived, identifier, newLocation)));
-
 
         for (EntityChangeListener listener : listeners) {
             listener.onExternalEntityImageAdded(identifier, newLocation, imageUrl);
@@ -221,7 +217,6 @@ public class MonitoredEntityManager {
     public synchronized void updateMyLocation(@Nonnull Location newLocation) {
         myself.updateLocation(newLocation);
 
-        Analytics.log(Analytics.newEvent(AnalyticsEventType.MyLocationUpdated, Analytics.getOwnSourceIdentifier(), newLocation));
 
         for (EntityChangeListener listener : listeners) {
             listener.onMyLocationChanged(newLocation);

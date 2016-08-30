@@ -25,6 +25,19 @@
     // The port to connect to
     "port" : 8088
   },
+  // The configuration settings for analytics.
+  "analyticsConfig" : {
+    // The Target.
+    // Options supported:
+    //    "DEFAULT" - The default platform analytics, Which is Log.i("ImmortalsAnalytics", <data.) in this case.
+    //    "STDOUT" - Standard Output
+    //    "NET_LOG4J - Log4j server. If selected, a url and port must be specified.
+    "target" : "NET_LOG4J",
+    // The URL for network logging targets
+    "url" : "10.0.2.2",
+    // The port for network logging targets
+    "port" : 7707
+  },
   // Various settings related to testing
   "testSettings" : {
     // If both imageBroadcast settings are defined and valid, the sample image will be sent at periodic intervals to the server
