@@ -1,83 +1,34 @@
 package mil.darpa.immortals.dfus.images;
 
 import android.graphics.Bitmap;
-import com.securboration.immortals.ontology.core.TruthConstraint;
-import com.securboration.immortals.ontology.functionality.dataproperties.ImageFidelityType;
-import com.securboration.immortals.ontology.functionality.dataproperties.ImpactType;
-import com.securboration.immortals.ontology.functionality.imageprocessor.AspectImageProcessorProcessImage;
-import com.securboration.immortals.ontology.functionality.imageprocessor.ImageProcessor;
-import com.securboration.immortals.ontology.resources.compute.Cpu;
-import com.securboration.immortals.ontology.resources.memory.PhysicalMemoryResource;
-import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
-import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
-import mil.darpa.immortals.annotation.dsl.ontology.functionality.compression.LossyTransformation;
-import mil.darpa.immortals.annotation.dsl.ontology.functionality.dataproperties.ImageFidelityImpact;
-import mil.darpa.immortals.core.synthesis.ObjectPipe;
-import mil.darpa.immortals.core.synthesis.interfaces.ReadableObjectPipeInterface;
-import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
 
 /**
  * Created by awellman@bbn.com on 6/22/16.
  */
-@DfuAnnotation(
-        functionalityBeingPerformed = ImageProcessor.class,
-        resourceDependencies = {
-                Cpu.class,
-                PhysicalMemoryResource.class
-        }
-)
-public class BitmapDownsizer extends ObjectPipe<Bitmap, Bitmap> {
+public class BitmapDownsizer implements ConsumingPipe<Bitmap> {
 
-    private double targetMegapixels;
+    private final double targetMegapixels;
+    private final ConsumingPipe<Bitmap> next;
 
-    @FunctionalAspectAnnotation(
-            aspect = AspectImageProcessorProcessImage.class
-    )
-    @LossyTransformation
-    public BitmapDownsizer(double targetMegapixels, WriteableObjectPipeInterface<Bitmap> next) {
-        super(next);
+    public BitmapDownsizer(double targetMegapixels, ConsumingPipe<Bitmap> next) {
         this.targetMegapixels = targetMegapixels;
-    }
-
-    @FunctionalAspectAnnotation(
-            aspect = AspectImageProcessorProcessImage.class
-    )
-    @LossyTransformation
-    public BitmapDownsizer(double targetMegapixels, ReadableObjectPipeInterface<Bitmap> previous) {
-        super(previous);
-        this.targetMegapixels = targetMegapixels;
-    }
-
-    @FunctionalAspectAnnotation(aspect = AspectImageProcessorProcessImage.class)
-    @ImageFidelityImpact(
-            truthConstraint = TruthConstraint.USUALLY_TRUE,
-            fidelityImpacts = {
-                    ImpactType.DECREASES
-            },
-            fidelityDimensions = {
-                    ImageFidelityType.PIXEL_FIDELITY
-            }
-    )
-
-    @Override
-    protected Bitmap process(
-            Bitmap bitmap
-    ) {
-        return ImageUtilsAndroid.resizeBitmap(bitmap, targetMegapixels);
+        this.next = next;
     }
 
     @Override
-    protected Bitmap flushToOutput() {
-        return null;
+    public void consume(Bitmap input) {
+        Bitmap output = ImageUtilsAndroid.resizeBitmap(input, targetMegapixels);
+        next.consume(output);
     }
 
     @Override
-    protected void preNextClose() {
-
+    public void flushPipe() {
+        next.flushPipe();
     }
 
     @Override
-    public int getBufferSize() {
-        throw new RuntimeException("Not supported!");
+    public void closePipe() {
+        next.closePipe();
     }
 }

@@ -72,10 +72,16 @@
 							<resources>
 								<resource>
 									<directory>${project.basedir}/../ontology-static/ontology</directory>
+									<excludes>
+										<exclude>third-party/**.*</exclude>
+									</excludes>
 									<targetPath>ontology/static</targetPath>
 								</resource>
 								<resource>
 									<directory>${project.basedir}/../ontology-generate/target/classes/ontology</directory>
+									<excludes>
+										<exclude>immortals_scratchpad.ttl</exclude>
+									</excludes>
 									<targetPath>ontology/immortals-vocab</targetPath>
 								</resource>
 								<resource>

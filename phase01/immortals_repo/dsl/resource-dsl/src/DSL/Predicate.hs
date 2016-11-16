@@ -1,20 +1,18 @@
-{-# LANGUAGE
-      DeriveGeneric,
-      MultiParamTypeClasses
-  #-}
-
 module DSL.Predicate where
 
 import Prelude hiding (LT,GT)
 
+import Data.Data (Data,Typeable)
+import GHC.Generics (Generic)
+
+import Data.Function (on)
 import Data.Set (Set)
 import qualified Data.Set as Set
 
-import Data.Function (on)
 import Data.SBV
-import GHC.Generics (Generic)
 
 import DSL.Environment
+import DSL.Name
 import DSL.Primitive
 import DSL.SAT
 
@@ -25,14 +23,21 @@ import DSL.SAT
 
 -- ** Abstract syntax
 
--- | Boolean predicates with variable references.
+-- | Unary boolean predicates.
 data Pred
+     = UPred            -- ^ trivial predicate on unit value
+     | BPred Var BExpr  -- ^ predicate on boolean value
+     | IPred Var BExpr  -- ^ predicate on integer value
+  deriving (Data,Eq,Generic,Read,Show,Typeable)
+
+-- | Boolean expressions with variable references.
+data BExpr
      = BLit Bool
      | BRef Var
-     | OpB  B_B  Pred
-     | OpBB BB_B Pred Pred
+     | OpB  B_B  BExpr
+     | OpBB BB_B BExpr BExpr
      | OpIB II_B IExpr IExpr
-  deriving (Eq,Generic,Show)
+  deriving (Data,Eq,Generic,Read,Show,Typeable)
 
 -- | Integer expressions with variable references.
 data IExpr
@@ -40,17 +45,17 @@ data IExpr
      | IRef Var
      | OpI  I_I  IExpr
      | OpII II_I IExpr IExpr
-  deriving (Eq,Generic,Show)
+  deriving (Data,Eq,Generic,Read,Show,Typeable)
 
--- | The set of boolean variables referenced in a boolean predicate.
-boolVars :: Pred -> Set Var
+-- | The set of boolean variables referenced in a boolean expression.
+boolVars :: BExpr -> Set Var
 boolVars (BRef v)     = Set.singleton v
 boolVars (OpB _ e)    = boolVars e
 boolVars (OpBB _ l r) = boolVars l `Set.union` boolVars r
 boolVars _            = Set.empty
 
--- | The set of integer variables referenced in a boolean predicate.
-intVars :: Pred -> Set Var
+-- | The set of integer variables referenced in a boolean expression.
+intVars :: BExpr -> Set Var
 intVars (BLit _)     = Set.empty
 intVars (BRef _)     = Set.empty
 intVars (OpB _ e)    = intVars e
@@ -62,11 +67,24 @@ intVars (OpIB _ l r) = intVars' l `Set.union` intVars' r
     intVars' (OpI _ e)    = intVars' e
     intVars' (OpII _ l r) = intVars' l `Set.union` intVars' r
 
+-- | Rename a variable in a expression.
+renameVar :: Var -> Var -> BExpr -> BExpr
+renameVar _   _   p@(BLit _)   = p
+renameVar old new p@(BRef v)   = if v == old then BRef new else p
+renameVar old new (OpB o e)    = OpB o (renameVar old new e)
+renameVar old new (OpBB o l r) = OpBB o (renameVar old new l) (renameVar old new r)
+renameVar old new (OpIB o l r) = OpIB o (renameVar' l) (renameVar' r)
+  where
+    renameVar' p@(ILit _)   = p
+    renameVar' p@(IRef v)   = if v == old then IRef new else p
+    renameVar' (OpI o e)    = OpI o (renameVar' e)
+    renameVar' (OpII o l r) = OpII o (renameVar' l) (renameVar' r)
+
 
 -- ** Syntactic sugar
 
--- Use SBV's Boolean type class for boolean predicates.
-instance Boolean Pred where
+-- Use SBV's Boolean type class for boolean expressions.
+instance Boolean BExpr where
   true  = BLit True
   false = BLit False
   bnot  = OpB Not
@@ -92,25 +110,26 @@ instance PrimI IExpr where
   (.%) = OpII Mod
 
 -- Integer comparison primitives.
-instance Prim Pred IExpr where
+instance Prim BExpr IExpr where
   (.<)  = OpIB LT
   (.<=) = OpIB LTE
   (.==) = OpIB Equ
+  (./=) = OpIB Neq
   (.>=) = OpIB GTE
   (.>)  = OpIB GT
 
 
 -- ** Substitution
 
--- | Substitute a boolean variable in a boolean predicate.
-substB :: Var -> Bool -> Pred -> Pred
+-- | Substitute a boolean variable in a boolean expression.
+substB :: Var -> Bool -> BExpr -> BExpr
 substB v b e@(BRef w)   = if w == v then BLit b else e
 substB v b (OpB o e)    = OpB o (substB v b e)
 substB v b (OpBB o l r) = OpBB o (substB v b l) (substB v b r)
 substB _ _ e            = e
 
--- | Substitute an integer variable in a boolean predicate.
-substI :: Var -> Int -> Pred -> Pred
+-- | Substitute an integer variable in a boolean expression.
+substI :: Var -> Int -> BExpr -> BExpr
 substI _ _ e@(BLit _)   = e
 substI _ _ e@(BRef _)   = e
 substI v i (OpB o e)    = OpB o (substI v i e)
@@ -125,35 +144,50 @@ substI v i (OpIB o l r) = OpIB o (substI' l) (substI' r)
 
 -- ** Evaluation to plain and symbolic values
 
--- | Evaluate a boolean predicate to either a ground or symbolic boolean,
+-- | Construct an environment with fresh symbolic values for each variable.
+symEnv :: (Name -> Symbolic b) -> Set Name -> Symbolic (Env Var b)
+symEnv f s = fmap (envFromList . zip vs) (mapM f vs)
+  where vs = Set.toList s
+
+-- | Evaluate a predicate against a primitive value.
+evalPred :: Env Var Bool -> Env Var Int -> Pred -> PVal -> Bool
+evalPred _  _  UPred       Unit  = true
+evalPred mb mi (BPred x e) (B b) = evalBExpr (envExtend x b mb) mi e
+evalPred mb mi (IPred x e) (I i) = evalBExpr mb (envExtend x i mi) e
+evalPred _ _ p v = error $ unlines
+    [ "evalPred: type error"
+    , "  predicate: " ++ show p
+    , "  value: " ++ show v ]
+
+-- | Evaluate a boolean expression to either a ground or symbolic boolean,
 --   given a corresponding dictionary of comparison operators and
 --   environments binding all of the variables.
-evalPred :: Prim b i => Env b -> Env i -> Pred -> b
-evalPred _  _  (BLit b)     = fromBool b
-evalPred mb _  (BRef v)     = assumeFound (envLookup v mb)
-evalPred mb mi (OpB o e)    = opB_B o (evalPred mb mi e)
-evalPred mb mi (OpBB o l r) = (opBB_B o `on` evalPred mb mi) l r
-evalPred mb mi (OpIB o l r) = (opII_B o `on` evalIExpr mi) l r
+evalBExpr :: Prim b i => Env Var b -> Env Var i -> BExpr -> b
+evalBExpr _  _  (BLit b)     = fromBool b
+evalBExpr mb _  (BRef v)     = assumeSuccess (envLookup v mb)
+evalBExpr mb mi (OpB o e)    = opB_B o (evalBExpr mb mi e)
+evalBExpr mb mi (OpBB o l r) = (opBB_B o `on` evalBExpr mb mi) l r
+evalBExpr _  mi (OpIB o l r) = (opII_B o `on` evalIExpr mi) l r
 
 -- | Evaluate an integer expression to either a ground or symbolic integer,
 --   given an environment binding all of the variables.
-evalIExpr :: PrimI i => Env i -> IExpr -> i
+evalIExpr :: PrimI i => Env Var i -> IExpr -> i
 evalIExpr _ (ILit i)     = fromIntegral i
-evalIExpr m (IRef v)     = assumeFound (envLookup v m)
+evalIExpr m (IRef v)     = assumeSuccess (envLookup v m)
 evalIExpr m (OpI o e)    = opI_I o (evalIExpr m e)
 evalIExpr m (OpII o l r) = (opII_I o `on` evalIExpr m) l r
 
--- | Evaluate a boolean predicate to a ground boolean.
-predToBool :: Env Bool -> Env Int -> Pred -> Bool
-predToBool = evalPred
+-- | Evaluate a boolean expression to a ground boolean.
+toBool :: Env Var Bool -> Env Var Int -> BExpr -> Bool
+toBool = evalBExpr
 
--- | Evaluate a boolean predicate to a symbolic boolean.
-predToSBool :: Env SBool -> Env SInt32 -> Pred -> SBool
-predToSBool = evalPred
+-- | Evaluate a boolean expression to a symbolic boolean.
+toSBool :: Env Var SBool -> Env Var SInt32 -> BExpr -> SBool
+toSBool = evalBExpr
 
--- Enable satisfiability checking of predicates.
-instance SAT Pred where
+-- Enable satisfiability checking of boolean expressions.
+instance SAT BExpr where
   toSymbolic e = do
     mb <- symEnv sBool (boolVars e)
     mi <- symEnv sInt32 (intVars e)
-    return (predToSBool mb mi e)
+    return (toSBool mb mi e)

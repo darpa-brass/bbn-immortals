@@ -3,6 +3,7 @@ package mil.darpa.immortals.core.analytics;
 import com.google.gson.Gson;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 
 /**
@@ -18,7 +19,7 @@ public class Analytics {
     private static LinkedList<AnalyticsEvent> logQueue;
 
     // TODO: Use this re reuse events instead of unnecessarily create new objects
-    public static AnalyticsEvent newEvent(@Nonnull AnalyticsEventType type, @Nonnull String remoteEventSource, @Nonnull Object data) {
+    public static AnalyticsEvent newEvent(@Nonnull AnalyticsEventType type, @Nonnull String remoteEventSource, @Nullable Object data) {
         return new AnalyticsEvent(type, sourceIdentifier, remoteEventSource, data);
     }
 

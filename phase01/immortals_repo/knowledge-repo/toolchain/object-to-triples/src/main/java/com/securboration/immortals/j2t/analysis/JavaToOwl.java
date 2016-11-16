@@ -4,7 +4,9 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.ontology.OntModel;
@@ -13,13 +15,13 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDFS;
 
 import com.securboration.immortals.annotations.helper.AnnotationHelper;
 import com.securboration.immortals.o2t.analysis.ObjectToTriples;
 import com.securboration.immortals.o2t.etc.ExceptionWrapper;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.ontology.pojos.markup.Ignore;
 
@@ -59,6 +61,87 @@ public class JavaToOwl {
         return true;
     }
     
+    private Class<?> getMaximallyDisjointClassAlongC2(
+            Class<?> c1,
+            Class<?> c2
+            ){
+        
+        if(c1.isAssignableFrom(c2)){
+            throw new RuntimeException("expected disjoint classes");
+        }
+        
+        if(c2.isAssignableFrom(c1)){
+            throw new RuntimeException("expected disjoint classes");
+        }
+        
+        boolean stop = false;
+        Class<?> last = c2;
+        while(!stop){
+            if(c2 == null){
+                throw new RuntimeException("no disjoint class found");
+            } else if (c2.isAssignableFrom(c1)){
+                return last;
+            } else {
+                last = c2;
+                c2 = c2.getSuperclass();
+            }
+        }
+        
+        throw new RuntimeException("this should never be reached");
+    }
+    
+    private void addDisjointAxioms(List<Class<?>> classes){
+        
+        if(!context.isAddDisjointAssertions()){
+            return;
+        }
+        
+        for(Class<?> c1:classes){
+            for(Class<?> c2:classes){
+                if(c1 == c2){
+                    continue;
+                }
+                
+                if(c1.isAssignableFrom(c2)){
+                    continue;
+                }
+                
+                if(c2.isAssignableFrom(c1)){
+                    continue;
+                }
+                
+                if(c1.isEnum()){
+                    continue;
+                }
+                
+                if(c2.isEnum()){
+                    continue;
+                }
+                
+                //c1 is disjoint from c2
+                Resource rc1 = 
+                        OntologyHelper.getResourceForType(
+                            context, 
+                            model, 
+                            c1
+                            );
+                
+                Resource rc2 = 
+                        OntologyHelper.getResourceForType(
+                            context, 
+                            model, 
+                            getMaximallyDisjointClassAlongC2(
+                                c1,
+                                c2
+                                )
+                            );
+                
+                model.add(rc1, OWL.disjointWith, rc2);
+            }
+        }
+        
+    }
+    
     /**
      * 
      * @param analyzeThese
@@ -68,6 +151,8 @@ public class JavaToOwl {
      * @throws ClassNotFoundException
      */
     public Model analyze() throws ClassNotFoundException {
+        
+        final List<Class<?>> classes = new ArrayList<>();
         
         for(String classPath:context.getClassPaths()){
             final File targetDir = new File(classPath);
@@ -99,17 +184,24 @@ public class JavaToOwl {
                             " because of a skip prefix match");
                     continue;
                 }
-    
+                
+                classes.add(context.getClassloader().loadClass(className));
                 analyzeClass(className);
             }
+            
+            addDisjointAxioms(classes);
     
             ExceptionWrapper.wrap(() -> {
     
-                OntologyHelper.addMetadata(context,model,ns,outputHere);
+                OntologyHelper.addAutogenerationMetadata(context,model,ns,outputHere);
                 OntologyHelper.setNamespacePrefixes(context,model);
     
                 final String serializedOntology = 
-                        OntologyHelper.serializeModel(model, outputLang);
+                        OntologyHelper.serializeModel(
+                            model, 
+                            outputLang,
+                            context.isValidateOntology()
+                            );
     
                 if(outputHere != null){
                     context.getLog().info(
@@ -130,11 +222,15 @@ public class JavaToOwl {
 
         ExceptionWrapper.wrap(() -> {
 
-            OntologyHelper.addMetadata(context,model,ns,outputHere);
+            OntologyHelper.addAutogenerationMetadata(context,model,ns,outputHere);
             OntologyHelper.setNamespacePrefixes(context,model);
 
             final String serializedOntology = 
-                    OntologyHelper.serializeModel(model, outputLang);
+                    OntologyHelper.serializeModel(
+                        model, 
+                        outputLang,
+                        context.isValidateOntology()
+                        );
 
             if(outputHere != null){
                 context.getLog().info(
@@ -186,6 +282,7 @@ public class JavaToOwl {
         
         if(AnnotationHelper.containsAnnotation(c,ConceptInstance.class)){
             instantiateConcept(c);
+            return;
         }
         
         if(c.isEnum()){
@@ -210,7 +307,8 @@ public class JavaToOwl {
                 context,
                 model,
                 classResource,
-                getTriplesFromClass(c));
+                AnnotationHelper.getTriples(c)
+                );
         
         if((superClass==null) || superClass.equals(Object.class)){
             //it's an Object or its super class is Object so make it a base 
@@ -244,17 +342,9 @@ public class JavaToOwl {
                     context,
                     model,
                     fieldProperty,
-                    getTriplesFromField(f)
+                    AnnotationHelper.getTriples(f)
                     );
         }
-    }
-    
-    private static Triple[] getTriplesFromClass(Class<?> c){
-        return c.getAnnotationsByType(Triple.class);
-    }
-    
-    private static Triple[] getTriplesFromField(Field f){
-        return f.getAnnotationsByType(Triple.class);
     }
 
 }

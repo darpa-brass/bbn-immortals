@@ -34,9 +34,8 @@ dependencies {
     compile 'mil.darpa.immortals.dfus:LocationProviderSaasmSimulated:+'
     compile 'mil.darpa.immortals.dfus:LocationProviderUsbGpsSimulated:+'
     compile 'mil.darpa.immortals.javatypeconverters:CoordinateLocationConverter:+'
-
     compile 'org.apache.velocity:velocity:1.7'
-    compile 'org.apache.jena:jena-tdb:3.0.1'
+    compile 'org.apache.jena:apache-jena-libs:3.1.0'
     compile 'javax.json:javax.json-api:1.0'
     compile 'org.glassfish:javax.json:1.0.4'
     compile 'org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.22.2'
@@ -44,4 +43,7 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.7'
     compile 'asm:asm:3.3.1'
     testCompile 'junit:junit:4.9'
+	compile 'mil.darpa.immortals.das:source-composer:+'
+	compile 'org.apache.commons:commons-jexl:2.0'
+	compile 'org.apache.commons:commons-math3:3.6.1'
 }

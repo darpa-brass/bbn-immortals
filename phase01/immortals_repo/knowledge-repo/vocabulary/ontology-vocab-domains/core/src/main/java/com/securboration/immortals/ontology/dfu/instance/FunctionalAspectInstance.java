@@ -41,6 +41,11 @@ public class FunctionalAspectInstance {
      * The return value mappings
      */
     private ReturnValueToSemanticTypeBinding returnValueToSemanticType;
+    
+    /**
+     * A recipe for using the aspect
+     */
+    private String recipe;
 
     
     public String getMethodPointer() {
@@ -104,6 +109,18 @@ public class FunctionalAspectInstance {
     public void setResourceDependencies(
             Class<? extends Resource>[] resourceDependencies) {
         this.resourceDependencies = resourceDependencies;
+    }
+
+
+    
+    public String getRecipe() {
+        return recipe;
+    }
+
+
+    
+    public void setRecipe(String recipe) {
+        this.recipe = recipe;
     }
     
     

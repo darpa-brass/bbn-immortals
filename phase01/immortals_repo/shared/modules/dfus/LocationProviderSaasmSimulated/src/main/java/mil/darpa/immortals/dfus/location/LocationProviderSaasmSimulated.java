@@ -1,19 +1,20 @@
 package mil.darpa.immortals.dfus.location;
 
 import android.content.Context;
+import android.hardware.usb.UsbManager;
 import android.os.Environment;
 import com.google.gson.Gson;
 import com.securboration.immortals.ontology.functionality.locationprovider.GetCurrentLocationAspect;
 import com.securboration.immortals.ontology.functionality.locationprovider.InitializeAspect;
 import com.securboration.immortals.ontology.functionality.locationprovider.LocationProvider;
-import com.securboration.immortals.ontology.resources.gps.GpsReceiverSaasm;
-import com.securboration.immortals.ontology.resources.gps.GpsSatellite;
-import com.securboration.immortals.ontology.resources.gps.SaasmReceiver;
+import com.securboration.immortals.ontology.resources.UsbResource;
+import com.securboration.immortals.ontology.resources.gps.GpsSatelliteConstellation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
 import mil.darpa.immortals.annotation.dsl.ontology.resources.gps.properties.TrustedProperty;
 import mil.darpa.immortals.core.analytics.Analytics;
 import mil.darpa.immortals.core.analytics.AnalyticsEventType;
+import mil.darpa.immortals.core.synthesis.annotations.dfu.SynthesisAndroidContext;
 import mil.darpa.immortals.datatypes.Coordinates;
 
 import javax.annotation.Nonnull;
@@ -25,25 +26,18 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by awellman@bbn.com on 2/12/16.
  */
-//@Dfu(functionalityUri = Semantics.Functionality_LocationProvider_SAASM,
-//        resourceDependencies = @ResourceDependencies(
-//                dependencyUris = {
-//                        Semantics.Ecosystem_Data_SAASMCryptoKey,
-//                        Semantics.Ecosystem_Environment_GPSSatellites,
-//                        Semantics.Ecosystem_Hardware_USBInput
-//                }
-//        ))
 @DfuAnnotation(
         functionalityBeingPerformed = LocationProvider.class,
         resourceDependencies = {
-                GpsSatellite.class,
-                GpsReceiverSaasm.class
+                GpsSatelliteConstellation.class,
+                UsbResource.class
         }
 )
 @TrustedProperty
 public class LocationProviderSaasmSimulated {
 
-    private static final String providerIdentifier = "LocationProviderSaasmSimulated";
+    private static final String PROFILE_IDENTIFIER = "LocationProviderSaasmSimulated";
+    private static final String HOW = "m-r-p";
 
     private LocationProviderSimulatedImpl locationProvider;
 
@@ -52,12 +46,21 @@ public class LocationProviderSaasmSimulated {
 
     //    @SynthesisInit
     @FunctionalAspectAnnotation(aspect = InitializeAspect.class)
-    public void initialize(Context context) {
+    public void initialize(@SynthesisAndroidContext Context context) {
         try {
-            locationProvider = new LocationProviderSimulatedImpl(providerIdentifier, providerIdentifier + ".json");
+            locationProvider = new LocationProviderSimulatedImpl(HOW, PROFILE_IDENTIFIER + ".json");
         } catch (RuntimeException e) {
-            Analytics.log(Analytics.newEvent(AnalyticsEventType.DfuMissmatchError, providerIdentifier, e.getMessage()));
+            Analytics.log(Analytics.newEvent(AnalyticsEventType.DfuMissmatchError, PROFILE_IDENTIFIER, e.getMessage()));
             locationProvider = null;
+        }
+
+        try {
+            if (locationProvider != null) {
+                UsbManager usbManager = (UsbManager) context.getSystemService(context.USB_SERVICE);
+                usbManager.getDeviceList();
+            }
+        } catch (Exception e) {
+            Analytics.log(Analytics.newEvent(AnalyticsEventType.UnexepctedIgnorableError, PROFILE_IDENTIFIER, "Unable to get USB device list!"));
         }
     }
 
@@ -85,27 +88,25 @@ public class LocationProviderSaasmSimulated {
 
         private final MockLocationBehaviorProfile behaviorProfile;
 
-        private final String providerIdentifier;
+        private final String how;
 
         private final long startTime;
 
-        public LocationProviderSimulatedImpl(@Nonnull String providerIdentifier, @Nonnull String profileFileName) {
+        public LocationProviderSimulatedImpl(@Nonnull String how, @Nonnull String profileFileName) {
             startTime = System.currentTimeMillis();
-            this.providerIdentifier = providerIdentifier;
+            this.how = how;
 
             MockLocationBehaviorProfile newProfile = null;
             // The use of this code indicates the "hardware" (file) is available.
             try {
                 File inputFile = new File(Environment.getExternalStorageDirectory(), "ataklite/" + profileFileName);
 
-//                if (inputFile.exists()) {
                 FileReader fr = new FileReader(inputFile);
                 Gson gson = new Gson();
 
                 newProfile = gson.fromJson(fr, MockLocationBehaviorProfile.class);
-//                }
             } catch (Exception e) {
-                System.err.println("Unexpected exception: Requirements to use '" + providerIdentifier + "' have not been met!");
+                System.err.println("Unexpected exception: Requirements to use '" + profileFileName + "' have not been met!");
                 throw new RuntimeException(e);
             } finally {
                 behaviorProfile = newProfile;
@@ -142,7 +143,7 @@ public class LocationProviderSaasmSimulated {
                     break;
             }
 
-            return new Coordinates(latitude, longitude, null, null, currentTime, providerIdentifier);
+            return new Coordinates(latitude, longitude, null, null, currentTime, how);
         }
 
         public enum MockLocationCountry {

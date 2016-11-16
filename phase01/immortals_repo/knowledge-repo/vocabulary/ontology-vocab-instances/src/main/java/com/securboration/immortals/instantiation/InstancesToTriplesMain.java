@@ -19,7 +19,8 @@ import com.securboration.immortals.o2t.analysis.ObjectPrinter;
 import com.securboration.immortals.o2t.analysis.ObjectToTriples;
 import com.securboration.immortals.o2t.etc.ExceptionWrapper;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
-import com.securboration.immortals.ontology.bytecode.BytecodeArtifact;
+import com.securboration.immortals.ontology.bytecode.JarArtifact;
+import com.securboration.immortals.ontology.bytecode.application.Classpath;
 
 /**
  * Aggregation for the POJO instantiations to convert to triples. Performs the
@@ -50,13 +51,14 @@ public class InstancesToTriplesMain {
         final String projectRoot = args[2];//root of IMMoRTALS SVN checkout
         final String repoUrl = args[3];//url of checked-out SVN repo
         final String immortalsLibVersion = args[4];//version of SVN repo to use
+        final String[] validPrefixes = args[5].split(",");//valid repo path prefixes
         
         /*
          * List of directories containing .java files that were compiled into
          * JARs in the local repository.  These must be provided at the root
          * of the classpath.
          */
-        final int N = 5;
+        final int N = 6;
         final String[] sourceRoots = new String[args.length - N];
         System.arraycopy(args, N, sourceRoots, 0, args.length-N);
 
@@ -72,7 +74,8 @@ public class InstancesToTriplesMain {
         InstancesToTriplesMain.annotationsToTriples = 
                 getAnnotationsToTriples(config);
 
-        Map<String, Object> namedInstances = getNamedInstances();
+        Map<String, Object> namedInstances = getNamedInstances(validPrefixes);
+        
         for (String key : namedInstances.keySet()) {
             final String outputPath = outputBasePath + "/" + key + ".ttl";
             
@@ -85,7 +88,12 @@ public class InstancesToTriplesMain {
             
             FileUtils.writeStringToFile(
                     new File(outputPath),
-                    OntologyHelper.serializeModel(model, "Turtle"));
+                    OntologyHelper.serializeModel(
+                        model, 
+                        "Turtle",
+                        config.isValidateOntology()
+                        )
+                    );
         }
 
     }
@@ -97,14 +105,16 @@ public class InstancesToTriplesMain {
         return new AnnotationsToTriples(uriMappings);
     }
 
-    private static Map<String, Object> getNamedInstances() throws IOException {
+    private static Map<String, Object> getNamedInstances(final String[] relativeBasePaths) throws IOException {
         final Map<String, Object> map = new HashMap<>();
         
         //ingest JARs from the shared repository
-        addJarModels(
-            "shared/IMMORTALS_REPO/mil",
-            map
-            );
+        for(String relativeBasePath:relativeBasePaths){
+            addJarModels(
+                relativeBasePath,
+                map
+                );
+        }
     
         // TODO: ideally there would be a cleaner intermediate bytecode
         //artifact for us to analyze
@@ -146,7 +156,7 @@ public class InstancesToTriplesMain {
         System.out.println(
                 "indexing classpath " + classpathRoot.getAbsolutePath());
         
-        BytecodeArtifact artifact = 
+        Classpath artifact = 
                 JarIngestor.ingest(
                         classpathRoot, 
                         sourceFinder, 
@@ -178,11 +188,15 @@ public class InstancesToTriplesMain {
         }
         
         for(File jar:FileUtils.listFiles(jarDir, new String[]{"jar"}, true)){
-            System.out.println("indexing jar " + jar.getAbsolutePath() + " (" + jar.length()  + "B)");
+            System.out.println(
+                "indexing jar " + jar.getAbsolutePath() + 
+                " (" + jar.length()  + "B)"
+                );
             
-            BytecodeArtifact artifact = 
+            JarArtifact artifact = 
                     JarIngestor.ingest(
-                            FileUtils.readFileToByteArray(jar), 
+                            FileUtils.readFileToByteArray(jar),
+                            jar.getName(),
                             null,
                             null,
                             null,
@@ -194,7 +208,8 @@ public class InstancesToTriplesMain {
             
             map.put(
                     "bytecode/"+jar.getName(),
-                    artifact);
+                    artifact
+                    );
         }
     }
 

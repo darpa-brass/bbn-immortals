@@ -1,6 +1,6 @@
 package mil.darpa.immortals.core.synthesis.adapters;
 
-import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,10 +10,10 @@ import java.util.Arrays;
  * Allows simple function-based implementation of a single part of a pipeline
  * Created by awellman@bbn.com on 6/21/16.
  */
-public class PipeToOutputStream extends OutputStream implements WriteableObjectPipeInterface<byte[]> {
-    private final WriteableObjectPipeInterface nextObjectPipe;
+public class PipeToOutputStream extends OutputStream implements ConsumingPipe<byte[]> {
+    private final ConsumingPipe nextObjectPipe;
 
-    public PipeToOutputStream(WriteableObjectPipeInterface<byte[]> next) {
+    public PipeToOutputStream(ConsumingPipe<byte[]> next) {
         this.nextObjectPipe = next;
     }
 

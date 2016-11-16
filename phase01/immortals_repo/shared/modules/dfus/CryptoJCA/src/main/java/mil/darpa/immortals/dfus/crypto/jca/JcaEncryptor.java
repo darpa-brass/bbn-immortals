@@ -2,7 +2,7 @@ package mil.darpa.immortals.dfus.crypto.jca;
 
 import mil.darpa.immortals.core.synthesis.adapters.OutputStreamPipe;
 import mil.darpa.immortals.core.synthesis.adapters.PipeToOutputStream;
-import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
 
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
@@ -12,11 +12,11 @@ import java.security.GeneralSecurityException;
  */
 public class JcaEncryptor extends OutputStreamPipe {
     private OutputStream outputStream;
-    private WriteableObjectPipeInterface<byte[]> pipe;
+    private ConsumingPipe<byte[]> pipe;
 
     private OutputStream cryptoStream;
 
-    public JcaEncryptor(String encryptionKey, final String cipherAlgorithm, WriteableObjectPipeInterface<byte[]> consumer) {
+    public JcaEncryptor(String encryptionKey, final String cipherAlgorithm, ConsumingPipe<byte[]> consumer) {
         this(encryptionKey, cipherAlgorithm, (OutputStream) new PipeToOutputStream(consumer));
     }
 

@@ -123,6 +123,21 @@ echo "export GRADLE_HOME=${GRADLE_HOME}" >> ~/.bashrc
 ln -s ${GRADLE_HOME}/bin/gradle /opt/bin/gradle
 
 
+if [ ! -e "~/.gradle/wrapper/dists" ];then
+    mkdir -p ~/.gradle/wrapper/dists
+fi
+
+if [ ! -e "~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp" ];then
+    mkdir -p ~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp
+    wget "https://services.gradle.org/distributions/gradle-2.2-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp/
+fi
+
+
+if [ ! -e "~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm" ];then
+    mkdir -p ~/.gradle/wrapper/dists/gradle-2.8-bin/ca0flae0itb57he40lyj6fhpp
+    wget "https://services.gradle.org/distributions/gradle-2.8-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm/
+fi
+
 
 ######## Install Fuseki ########
 if [ ! -e "setup_resources/${FUSEKI_INSTALLER}" ];then
@@ -156,6 +171,10 @@ ln -s ${Z3_HOME}/bin/z3 /opt/bin/z3
 
 ######## Install Maven ########
 apt-get install maven -y
+
+######## Install other deps ########
+apt-get install python3-pip
+pip install rdflib
 
 
 

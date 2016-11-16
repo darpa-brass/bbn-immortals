@@ -11,15 +11,15 @@ import com.securboration.immortals.ontology.core.Resource;
  */
 public class BytecodeLibrary extends Resource {
     
-    private JarArtifact library;
+    private BytecodeArtifactCoordinate library;
 
     
-    public JarArtifact getLibrary() {
+    protected BytecodeArtifactCoordinate getLibrary() {
         return library;
     }
 
     
-    public void setLibrary(JarArtifact library) {
+    protected void setLibrary(BytecodeArtifactCoordinate library) {
         this.library = library;
     }
     

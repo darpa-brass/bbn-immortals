@@ -23,16 +23,19 @@ public class IngestMain {
      * 
      * @param args
      *            args[0] is the name of a graph to create, args[1] is the path
-     *            to a jar file to ingest into the named graph, args[2...] are
-     *            valid suffixes to use for ingesting models
+     *            to a jar file to ingest into the named graph, args[2] is the
+     *            namespace of the graph, args[3] is the version of the graph,
+     *            args[4...] are valid suffixes to use for ingesting models
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
         
         final String graphName = args[0];
         final String jarPath = args[1];
-        final String[] suffixes = new String[args.length-2];
-        System.arraycopy(args, 2, suffixes, 0, suffixes.length);
+        final String namespace = args[2];
+        final String version = args[3];
+        final String[] suffixes = new String[args.length-4];
+        System.arraycopy(args, 4, suffixes, 0, suffixes.length);
         
         RepositoryConfiguration repoConfig = 
                 new RepositoryConfiguration();
@@ -44,10 +47,11 @@ public class IngestMain {
                 "using repository @ %s\n",
                 repoConfig.getRepositoryBaseUrl());
         
-        
         JarIngestor.ingest(
                 repo,
                 FileUtils.readFileToByteArray(new File(jarPath)), 
+                namespace,
+                version,
                 graphName, 
                 suffixes
                 );

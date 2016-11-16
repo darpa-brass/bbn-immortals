@@ -64,6 +64,13 @@ public class SourceFinder {
                 getPath(projectRoot);
         
         for(String sourceRoot:sourceRoots){
+            if(!new File(sourceRoot).exists()){
+                System.err.println(
+                    "provided src dir does not exist: " + sourceRoot
+                    );
+                continue;
+            }
+            
             final String rootFilePath = getPath(sourceRoot);
             
             for(File f:FileUtils.listFiles(new File(sourceRoot), new String[]{"java"}, true)){

@@ -3,6 +3,7 @@ package mil.darpa.immortals.core;
 /**
  * Created by awellman@bbn.com on 2/10/16.
  */
+@Deprecated
 public class Semantics {
     private static final String ROOT_URI = "file://darpa.mil/immortals/r1.0/";
 

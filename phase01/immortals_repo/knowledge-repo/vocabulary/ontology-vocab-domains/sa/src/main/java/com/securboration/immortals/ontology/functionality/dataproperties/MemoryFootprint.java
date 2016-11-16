@@ -9,5 +9,17 @@ import com.securboration.immortals.ontology.functionality.datatype.DataProperty;
  *
  */
 public class MemoryFootprint extends DataProperty {
+    
+    private int sizeInBytes;
+
+    
+    public int getSizeInBytes() {
+        return sizeInBytes;
+    }
+
+    
+    public void setSizeInBytes(int sizeInBytes) {
+        this.sizeInBytes = sizeInBytes;
+    }
 
 }

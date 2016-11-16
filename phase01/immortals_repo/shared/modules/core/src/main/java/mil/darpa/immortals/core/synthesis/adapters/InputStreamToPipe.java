@@ -1,6 +1,6 @@
 package mil.darpa.immortals.core.synthesis.adapters;
 
-import mil.darpa.immortals.core.synthesis.interfaces.ReadableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ProducingPipe;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +10,7 @@ import java.util.Arrays;
  * Allows simple function-based implementation of a single part of a pipeline
  * Created by awellman@bbn.com on 6/21/16.
  */
-public class InputStreamToPipe extends InputStream implements ReadableObjectPipeInterface<byte[]> {
+public class InputStreamToPipe extends InputStream implements ProducingPipe<byte[]> {
     public static final int DEFAULT_BUFFER_SIZE =  16384;
 
     private final int bufferSize;

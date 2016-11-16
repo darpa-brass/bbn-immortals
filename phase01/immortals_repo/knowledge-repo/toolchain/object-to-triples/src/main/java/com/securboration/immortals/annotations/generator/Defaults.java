@@ -49,7 +49,7 @@ public class Defaults {
         }
         
         if(c.isEnum()){
-            return c.getName() + "." + c.getEnumConstants()[0];
+            return c.getCanonicalName()+ "." + c.getEnumConstants()[0];
         }
         
         if((f.getType() == Class.class) && f.getGenericType().getTypeName().contains(" extends ")){
@@ -58,7 +58,13 @@ public class Defaults {
             
             String className = parts[1].replace(">", "");
             
+            className = className.replace("$", ".");
+            
             return className + ".class";
+        }
+        
+        if((f.getType() == Class.class)){
+            return c.getCanonicalName() + ".class";
         }
         
 //        if(c == Class.class){

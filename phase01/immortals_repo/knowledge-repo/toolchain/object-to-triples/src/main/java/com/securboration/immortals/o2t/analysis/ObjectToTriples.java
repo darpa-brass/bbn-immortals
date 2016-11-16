@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.ontology.DataRange;
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -21,9 +22,11 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.objectweb.asm.Type;
 
+import com.securboration.immortals.annotations.helper.AnnotationHelper;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
 import com.securboration.immortals.o2t.etc.ExceptionWrapper;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
+import com.securboration.immortals.ontology.annotations.triples.Triple;
 
 /**
  * Utility class that converts an object instance to triples
@@ -55,13 +58,23 @@ public class ObjectToTriples {
             
             converter.analyze(o,analysisContext);
             
-            OntologyHelper.addMetadata(config,analysisContext.model,config.getTargetNamespace(),config.getOutputFile());
-            OntologyHelper.setNamespacePrefixes(config,analysisContext.model);               
+            OntologyHelper.addAutogenerationMetadata(
+                config,
+                analysisContext.model,
+                config.getTargetNamespace(),
+                config.getOutputFile()
+                );
+            
+            OntologyHelper.setNamespacePrefixes(
+                config,
+                analysisContext.model
+                );               
             
             final String serializedOntology = 
                     OntologyHelper.serializeModel(
                             analysisContext.model, 
-                            config.getOutputLanguage()
+                            config.getOutputLanguage(),
+                            config.isValidateOntology()
                             );
             
             if(config.getOutputFile() == null){
@@ -100,26 +113,13 @@ public class ObjectToTriples {
                 return objectsToNames.get(o);
             }
             
-            String suffix = "-"+UUID.randomUUID().toString();
             if(OntologyHelper.isConceptInstance(o.getClass())){
-                suffix = OntologyHelper.getInstanceId(o.getClass());
-                
-                //test if the class URI has already been suffixed
-                if(classUri.endsWith(suffix)){
-                    objectsToNames.put(o, classUri);
-                    return classUri;
-                }
+                objectsToNames.put(o, classUri);
+                return classUri;
             }
             
-            String name = classUri+suffix;
-            
-            
+            String name = classUri + "-"+UUID.randomUUID().toString();
             objectsToNames.put(o, name);
-            
-            if(classUri.endsWith(suffix)){
-                throw new RuntimeException(
-                    "uri " + classUri + " already ends with " + suffix);
-            }
             
             return name;
         }
@@ -137,12 +137,15 @@ public class ObjectToTriples {
         
         final OntModel model;
         
+        final OntModel resourceModel = 
+                ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+        
         private final NamingContext namingContext;
         Map<Object,Resource> instancesToResources = new HashMap<>();
         
         AnalysisContext(NamingContext namingContext){
             this.namingContext = namingContext;
-            this.model = ModelFactory.createOntologyModel();
+            this.model = ModelFactory.createOntologyModel(OntModelSpec.RDFS_MEM);
         }
         
         private Resource findResourceForInstance(Object instance){
@@ -180,23 +183,26 @@ public class ObjectToTriples {
                     throw new RuntimeException(e);
                 }
                 Resource r = 
-                        analysisContext.model.createResource(resourceName);                
-                
+                        analysisContext.model.createResource(resourceName);
                 return r;
             }
             
             return getResourceForType(Type.getType(c));
         }
         
+        
+        
         private Resource getResourceForType(Type t){
             
             final String internalName = t.getClassName();
             
-            return OntologyHelper.getResourceForType(
+            Resource r = OntologyHelper.getResourceForType(
                     context,
-                    analysisContext.model,
+                    analysisContext.resourceModel,
                     internalName
                     );
+            
+            return r;
         }
         
         private Literal getPrimitiveLiteral(Object instance){
@@ -297,7 +303,6 @@ public class ObjectToTriples {
                             );
             Resource r = 
                     analysisContext.model.createResource(resourceName);
-            
             if(OntologyHelper.isConceptInstance(c)){
                 Class<?> p = c.getSuperclass();
                 if(p != null){
@@ -313,7 +318,14 @@ public class ObjectToTriples {
             
             
             if(t.getSort()==Type.ARRAY){
-                r.addProperty(RDFS.comment,"an instance of array type " + c.getName() + " with hash=" + instance.hashCode());
+                
+                if(context.isAddPojoProvenance()){
+                    r.addProperty(
+                        RDFS.comment,
+                        "an instance of array type " + c.getName() + 
+                        " with hash=" + instance.hashCode()
+                        );
+                }
                 
                 Property p = 
                         analysisContext.model.createProperty(
@@ -361,17 +373,47 @@ public class ObjectToTriples {
             else if(t.getSort()==Type.OBJECT){
                 
                 if(!OntologyHelper.isConceptInstance(c)){
-                    r.addProperty(
-                        RDFS.comment,
-                        "an instance of object type " + 
-                        c.getName() + 
-                        " with hash=" + 
-                        instance.hashCode());
+                    
+                    if(context.isAddPojoProvenance()){
+                        r.addProperty(
+                            RDFS.comment,
+                            "an instance of object type " + 
+                            c.getName() + 
+                            " with hash=" + 
+                            instance.hashCode());
+                    }
+                    
+                    if(context.isAddKeys()){
+                        r.addProperty(
+                            OntologyHelper.getUuidProperty(
+                                context, 
+                                analysisContext.model
+                                ),
+                            analysisContext.model.createTypedLiteral(
+                                r.getURI().substring(r.getURI().length()-36)
+                                )
+                            );//add a uuid property to the instance
+                    }
                 } else {
-                    r.addProperty(
-                        RDFS.comment, 
-                        "a concept instance derived from POJO class " +
-                        c.getName());
+                    
+                    if(context.isAddPojoProvenance()){
+                        r.addProperty(
+                            RDFS.comment, 
+                            "a concept instance derived from POJO class " +
+                            c.getName()
+                            );
+                    }
+                    
+                    Triple[] triples = AnnotationHelper.getTriples(c);
+                    if(triples != null && triples.length > 0){
+                        OntologyHelper.addTriples(
+                            context, 
+                            analysisContext.model, 
+                            r, 
+                            triples
+                            );
+                    }
+                    
                 }
             }
             
@@ -455,10 +497,9 @@ public class ObjectToTriples {
             
             Resource fieldOwner = 
                     instantiate(objectFieldOwner.getValue()).asResource();
-            
             Property p = OntologyHelper.getPropertyForField(
                     context,
-                    analysisContext.model,
+                    analysisContext.resourceModel,
                     objectFieldValue.getFieldName(), 
                     Type.getType(objectFieldValue.getPossibleType()));
             

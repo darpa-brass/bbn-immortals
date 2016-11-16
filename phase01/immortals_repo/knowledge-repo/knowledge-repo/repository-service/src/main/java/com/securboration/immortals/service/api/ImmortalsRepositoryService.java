@@ -1,5 +1,6 @@
 package com.securboration.immortals.service.api;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +8,7 @@ import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.securboration.immortals.deployment.parser3.Parser;
-import com.securboration.immortals.deployment.pojos.DeploymentParser;
-import com.securboration.immortals.i2t.ontology.ModelToTriples;
-import com.securboration.immortals.i2t.ontology.ModelToTriples.NamingContext;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
 import com.securboration.immortals.repo.api.RepositoryUnsafe;
@@ -51,30 +49,27 @@ public class ImmortalsRepositoryService {
     private ObjectToTriplesConfiguration o2tc;
     
     /**
-     * Pushes a deployment model to the triple store
-     * @param json a JSON serialization of a deployment model produced by GME
+     * Pushes a deployment model provided as a TTL string to the triple store
+     * @param ttl a TTL serialization of a deployment model produced by GME
      * @return a URI for the graph in which the deployment model was saved
      */
     @RequestMapping(
             method = RequestMethod.POST,
             value="/pushDeploymentModel",
-            consumes=MediaType.APPLICATION_JSON_VALUE,
+            consumes=MediaType.ALL_VALUE,//TODO: should be "text/turtle",
             produces=MediaType.TEXT_PLAIN_VALUE
             )
-    public String pushDeploymentModel(
+    public String pushDeploymentModelTTL(
             @RequestBody
-            String json
+            String ttl
             ){
-        DeploymentParser p = new Parser();
+        Model model = ModelFactory.createDefaultModel();
         
-        p.parse(json);
-        
-        Model model = ModelToTriples.convert(
-                o2tc, 
-                p.getTypes(), 
-                p.getInstances(), 
-                new NamingContext()
-                );
+        model.read(
+            new ByteArrayInputStream(ttl.getBytes()), 
+            null, 
+            "TURTLE"
+            );
         
         final String graphName = 
                 Helper.getImmortalsUuid(properties);
@@ -98,19 +93,25 @@ public class ImmortalsRepositoryService {
         
         logger.info("bootstrapping...");
         
+        final String version = properties.getImmortalsVersion();
+        
         InputStream jarStream = 
                 this.getClass().getClassLoader().getResourceAsStream(
-                    "ontology/immortals-ontologies-package-r2.0.0.jar");
+                    "ontology/immortals-ontologies-package-" + version + ".jar");
         
         ByteArrayOutputStream jarBytes = new ByteArrayOutputStream();
         IOUtils.copy(jarStream, jarBytes);
         
         final String graphName = 
                 Helper.getImmortalsUuid(properties);
+       
+        final String ns = properties.getImmortalsNs();
         
         JarIngestor.ingest(
             repository, 
-            jarBytes.toByteArray(), 
+            jarBytes.toByteArray(),
+            ns,
+            version,
             graphName, 
             ".ttl"
             );
@@ -227,7 +228,7 @@ public class ImmortalsRepositoryService {
             ExceptionWrapper.wrap(()->{
                 sb.append(String.format("dump of graph [%s]\n", graphName));
                 sb.append(String.format("----------------------------------\n"));
-                sb.append(String.format(OntologyHelper.serializeModel(model, "Turtle")));
+                sb.append(String.format(OntologyHelper.serializeModel(model, "Turtle",false)));
                 sb.append(String.format("----------------------------------\n"));
             });
             

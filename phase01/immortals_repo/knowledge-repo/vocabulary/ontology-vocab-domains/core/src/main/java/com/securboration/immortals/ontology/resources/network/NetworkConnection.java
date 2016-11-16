@@ -25,6 +25,11 @@ public class NetworkConnection extends IOResource {
      * The network over which communication occurs
      */
     private NetworkStackAbstraction network;
+    
+    /**
+     * True iff this is a one-way connection from local to remote
+     */
+    private boolean isOneWay;
 
     public ExecutionPlatform getLocalDevice() {
         return localDevice;
@@ -48,6 +53,16 @@ public class NetworkConnection extends IOResource {
 
     public void setNetwork(NetworkStackAbstraction network) {
         this.network = network;
+    }
+
+    
+    public boolean isOneWay() {
+        return isOneWay;
+    }
+
+    
+    public void setOneWay(boolean isOneWay) {
+        this.isOneWay = isOneWay;
     }
 
 }

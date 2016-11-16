@@ -3,8 +3,14 @@ package com.securboration.immortals.generate.uris;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -22,24 +28,21 @@ public class GenerateUriConstants {
     
     public static void main(String[] args) throws IOException{
         
-        //args[0] is the output dir
-        //args[1]...args[n] are directories containing ontologies
+        //args[0] is the output dir base
+        //args[1] is the name of the generated class
+        //args[2]...args[n] are directories containing ontologies
         
-//        args = new String[]{
-//                "../ontology-static/ontology/third-party"
-//        };
+        StringBuilder javaFile = new StringBuilder();
+        StringBuilder jsFile = new StringBuilder();
         
-        StringBuilder sb = new StringBuilder();
-        generateClassHeader(sb);
+        generateClassHeader(args[1],javaFile);
         
-        for(int i=1;i<args.length;i++){
+        for(int i=2;i<args.length;i++){
             String path = args[i];
             File dir = new File(path);
             
             FileUtils.listFiles(dir, null, true).forEach(f->{
                 try{
-                    System.out.printf("processing %s\n", f.getAbsolutePath());
-                    
                     final String name = FilenameUtils.removeExtension(f.getName());
                     
                     Model m = getModel(f);
@@ -54,25 +57,98 @@ public class GenerateUriConstants {
                             propertyUris
                             );
                     
-                    generateInternalClass(sb,name,classUris,propertyUris);
+                    generateJavaClass(
+                        javaFile,
+                        name,
+                        new TreeSet<>(classUris),
+                        new TreeSet<>(propertyUris)
+                        );
+                    
+                    generateJavaScript(
+                        jsFile,
+                        name,
+                        new TreeSet<>(classUris),
+                        new TreeSet<>(propertyUris)
+                        );
                 } catch(IOException e) {
                     throw new RuntimeException(e);
                 }
             });
         }
         
-        generateClassFooter(sb);
+        generateClassFooter(javaFile);
         
-        FileUtils.writeStringToFile(getOutputFile(args[0]), sb.toString());
+        FileUtils.writeStringToFile(
+            getJavaOutputFile(args[0],args[1]), 
+            javaFile.toString()
+            );
+        
+        FileUtils.writeStringToFile(
+            getJsOutputFile(args[0],args[1]), 
+            jsFile.toString()
+            );
     }
     
-    private static File getOutputFile(String outputDir){
+    private static File getJavaOutputFile(
+            String outputDir,
+            String className
+            ){
         final String basePath = new File(outputDir).getAbsolutePath();
         
-        return new File(basePath + "/com/securboration/immortals/uris/Uris.java");
+        return new File(basePath + "/" + className.replace(".", "/") + ".java");
     }
     
-    private static void generateInternalClass(
+    private static File getJsOutputFile(
+            String outputDir,
+            String className
+            ){
+        final String basePath = new File(outputDir).getAbsolutePath();
+        
+        return new File(basePath + "/" + className.replace(".", "/") + ".js");
+    }
+    
+    private static Iterator<String> iterator(Set<String> classUris){
+        Map<String,String> map = new HashMap<>();
+        
+        for(String s:classUris){
+            map.put(getFieldNameFromUri(s), s);
+        }
+        
+        List<String> ordered = new ArrayList<>();
+        new TreeSet<>(map.keySet()).iterator().forEachRemaining(i->{
+            ordered.add(map.get(i));
+        });
+        
+        return ordered.iterator();
+    }
+    
+    private static void generateJavaScript(
+            StringBuilder sb, 
+            String name, 
+            Set<String> classUris, 
+            Set<String> propertyUris
+            ){
+        sb.append("var ");
+        sb.append(name);
+        sb.append(" = {");
+        sb.append("\n");
+        
+        iterator(classUris).forEachRemaining(s->{
+            sb.append("    " + getFieldNameFromUri(s) + " : \"" + s + "\",");
+            sb.append("//a class URI");
+            sb.append("\n");
+        });
+        sb.append("\n");
+        iterator(propertyUris).forEachRemaining(s->{
+            sb.append("    " + getFieldNameFromUri(s) + " : \"" + s + "\",");
+            sb.append("//a property URI");
+            sb.append("\n");
+        });
+        
+        sb.append("}\n");
+    }
+    
+    private static void generateJavaClass(
             StringBuilder sb, 
             String name, 
             Set<String> classUris, 
@@ -82,12 +158,19 @@ public class GenerateUriConstants {
         
         sb.append("  public static class " + name + " {\n");
         
-        Set<String> all = new LinkedHashSet<>();
-        all.addAll(classUris);
-        all.addAll(propertyUris);
-        for(String s:all){
-            sb.append("    public static final String " + getFieldNameFromUri(s) + " = \"" + s + "\";\n");
-        }
+        iterator(classUris).forEachRemaining(s->{
+            System.out.println(s);
+            sb.append("    public static final String " + getFieldNameFromUri(s) + " = \"" + s + "\";");
+            sb.append("//a class URI");
+            sb.append("\n");
+        });
+        sb.append("\n");
+        iterator(propertyUris).forEachRemaining(s->{
+            System.out.println(s);
+            sb.append("    public static final String " + getFieldNameFromUri(s) + " = \"" + s + "\";");
+            sb.append("//a property URI");
+            sb.append("\n");
+        });
         
         sb.append("  }\n");
     }
@@ -106,11 +189,25 @@ public class GenerateUriConstants {
         }
     }
     
-    private static void generateClassHeader(StringBuilder sb){
-        sb.append("package com.securboration.immortals.uris;");
+    private static void generateClassHeader(
+            final String className,
+            StringBuilder sb
+            ){
+        
+        final String packageName = 
+                className.substring(0,className.lastIndexOf("."));
+        
+        final String classPart = 
+                className.substring(className.lastIndexOf(".")+1);
+        
+        sb.append("package ");
+        sb.append(packageName);
+        sb.append(";\n");
         sb.append("\n\n");
         
-        sb.append("public class Uris{");
+        sb.append("public class ");
+        sb.append(classPart);
+        sb.append("{");
     }
     
     private static void generateClassFooter(StringBuilder sb){
@@ -127,14 +224,19 @@ public class GenerateUriConstants {
         //class URIs
         {
             final String q = 
+                    "PREFIX owl:  <http://www.w3.org/2002/07/owl#>\r\n" +
                     "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n" +
                     "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n" +
                     "SELECT ?c\r\n" + 
                     "WHERE {\r\n" + 
-                    "  ?c rdf:type rdfs:Class.\r\n" +
+                    "  { ?c a rdfs:Class. } UNION { ?c a owl:Class. } \r\n" +
                     "}";
             
             executeSelect(m,q,s->{
+                if(s.get("c").isAnon()){
+                    return;
+                }
+                
                 final String uri = s.get("c").asResource().getURI();
                 
                 System.out.printf("\tfound class URI: %s\n", uri);

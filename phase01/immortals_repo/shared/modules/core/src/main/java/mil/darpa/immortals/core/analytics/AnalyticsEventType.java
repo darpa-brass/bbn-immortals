@@ -11,5 +11,11 @@ public enum AnalyticsEventType {
     ClientStart,
     ClientShutdown,
     DfuMissmatchError,
-    UnexepctedIgnorableError
+    UnexepctedIgnorableError,
+    Tooling_ValidationServerStarted,
+    Tooling_ValidationServerStopped,
+    Tooling_ValidationServerClientConnected,
+    Tooling_ValidationServerClientDisconnected,
+    Tooling_ValidationFinished,
+    Analysis_EventOccurred
 }

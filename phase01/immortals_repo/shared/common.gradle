@@ -1,5 +1,4 @@
 // This is the location for variables shared throughout the whole project (including different root projects)
-apply plugin: 'maven'
 
 ext {
     // The group identifier for immortals components
@@ -10,6 +9,11 @@ ext {
 
     // The location of the repository to store published immortals modules (DFUs, converters, datatypes, etc.)
     localRepoPath = IMMORTALS_ROOT + "shared/IMMORTALS_REPO/"
+
+    synthPath = "${IMMORTALS_ROOT}/PRODUCTS/"
+    synthModulePath = "${synthPath}/modules/"
+    synthModuleDfuPath = "${synthModulePath}/dfus/"
+    synthRepoPath = "${synthPath}/IMMORTALS_REPO/"
 
     // The location of the repository that stores external dependencies in the repo
     cacheRepoPath = IMMORTALS_ROOT + "shared/REMOTE_CACHE_REPO/"
@@ -41,32 +45,39 @@ ext {
     // The target Android version to publish for. Don't forget to update this in the AndroidManifest!
     androidTargetSdkVersion = 21
 
-    // The java source compatibility to use
-    javaSourceCompantibility = 1.8
-
     // The default publish version for items that are maven repository-bound.
     defaultModulePublishVersion = "1.0-LOCAL"
 
+    // The java source compatibility to use for applications and DFUs (1.7 is necessary due to analysis limitations)
+    dfuAndApplicationsJavaSourceCompatibility = 1.7
+
+    toolJavaSourceCompatibility = 1.8
+
     // sfl4j is used everywhere. With umpteen versions. That are fully backwards compatible (1.5.7+ onwards, with small breakages leading up to that) This is to simplify management of that artifact project-wide
-    slf4jCloneVersion = '1.7.12'
+    //slf4jCloneVersion = '1.7.12'
+    slf4jVersion = '1.7.21'
+
 }
 
-allprojects {
+apply plugin: 'maven'
+
     // The default group for all artifacts to be published under
-    group rootGroup
+group rootGroup
 
-    // The repositories. Using local-only.
-    repositories {
-        // Uncomment this to get files from the local maven cache
-        // mavenLocal()
-        // Uncomment this to get files from MavenCentral
-        mavenCentral()
+// The repositories. Using local-only.
+repositories {
+    // Uncomment this to get files from the local maven cache
+    // mavenLocal()
+    // Uncomment this to get files from MavenCentral
+    mavenCentral()
 
-        maven {
-            url "$localRepoPath"
-        }
-        maven {
-            url "$cacheRepoPath"
-        }
+    maven {
+        url "$localRepoPath"
+    }
+    maven {
+        url "$synthRepoPath"
+    }
+    maven {
+        url 'https://repo.gradle.org/gradle/libs-releases'
     }
 }

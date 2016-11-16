@@ -32,6 +32,7 @@ import com.securboration.immortals.ontology.property.Property;
 
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
+import mil.darpa.immortals.annotation.dsl.ontology.dfu.instance.Recipe;
 
 public class AnnotationParser implements BytecodeArtifactVisitor {
     
@@ -197,6 +198,28 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
         }
     }
     
+    private static AnnotationNode getRecipeAnnotation(MethodNode mn){
+        
+        List<AnnotationNode> recipeAnnotations = 
+                AnnotationHelper.getAnnotationsOfType(
+                    mn.visibleAnnotations, 
+                    Recipe.class
+                    );
+        
+        if(recipeAnnotations.size() == 0){
+            return null;
+        }
+        
+        if(recipeAnnotations.size() > 1){
+            throw new RuntimeException(
+                "found multiple Recipe annotations on " + mn.name + 
+                " but expected at most 1"
+                );
+        }
+        
+        return recipeAnnotations.get(0);
+    }
+    
     private static AnnotationNode getFunctionalAspectAnnotation(MethodNode mn){
         
         List<AnnotationNode> methodAnnotations = 
@@ -346,6 +369,19 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
             
             FunctionalAspectInstance aspect = new FunctionalAspectInstance();
             
+            {//add the recipe value
+                AnnotationNode a = getRecipeAnnotation(mn);
+                
+                if(a != null){
+                    Map<String,Object> map = 
+                            AnnotationHelper.getAnnotationKeyValues(a);
+                    
+                    String recipe = (String)map.get(Keys.recipe);
+                    
+                    aspect.setRecipe(recipe);
+                }
+            }
+            
             final Class<? extends FunctionalAspect> abstractAspect = 
                     methodsToAspects.get(mn);
             FunctionalAspect abstractAspectInstance = 
@@ -439,6 +475,9 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
         
         private static final String tag = 
                 "@mil/darpa/immortals/annotation/dsl/ontology/dfu/annotation/DfuAnnotation|tag";
+        
+        private static final String recipe = 
+                "@mil/darpa/immortals/annotation/dsl/ontology/dfu/instance/Recipe|recipe";
     }
     
     private static Class<?> getClassFromAnnotationType(final String value){

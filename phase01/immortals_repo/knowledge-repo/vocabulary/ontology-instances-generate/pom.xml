@@ -83,7 +83,171 @@
 	</repositories>
 
 	<profiles>
-		<!-- blank -->
+		<profile>
+			<id>oldIngestWebGme</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.4.0</version>
+						<dependencies>
+							<dependency>
+								<groupId>com.securboration</groupId>
+								<artifactId>immortals-ontologies-vocab</artifactId>
+								<version>${immortals.version}</version>
+								<scope>compile</scope>
+							</dependency>
+							
+							<dependency>
+								<groupId>com.securboration</groupId>
+								<artifactId>immortals-ontologies-vocab-instances</artifactId>
+								<version>${immortals.version}</version>
+								<scope>compile</scope>
+							</dependency>
+							
+							<dependency>
+								<groupId>com.securboration</groupId>
+								<artifactId>immortals-annotation-parser</artifactId>
+								<version>${immortals.version}</version>
+								<scope>compile</scope>
+							</dependency>
+						</dependencies>
+						
+						<executions>
+							<execution>
+								<!--
+								Generate triples from the deployment model
+								-->
+								<id>deployment-to-triples</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>com.securboration.immortals.instantiation.DeploymentToTriplesMain</mainClass>
+									<arguments>
+										<argument>${project.basedir}/target/classes/ontology/parsed-from-webgme-models</argument>
+										<argument>${immortals.version}</argument>
+										<argument>${local-repo-root}</argument>
+										<argument>models/sample_android/resource/webgme/immortals_kds_dm_v02_a02.json</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>includeBytecodeModels</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.4.0</version>
+						<dependencies>
+							<dependency>
+								<groupId>com.securboration</groupId>
+								<artifactId>immortals-ontologies-vocab</artifactId>
+								<version>${immortals.version}</version>
+								<scope>compile</scope>
+							</dependency>
+							
+							<dependency>
+								<groupId>com.securboration</groupId>
+								<artifactId>immortals-ontologies-vocab-instances</artifactId>
+								<version>${immortals.version}</version>
+								<scope>compile</scope>
+							</dependency>
+							
+							<dependency>
+								<groupId>com.securboration</groupId>
+								<artifactId>immortals-annotation-parser</artifactId>
+								<version>${immortals.version}</version>
+								<scope>compile</scope>
+							</dependency>
+						</dependencies>
+						<executions>
+							<execution>
+								<!--
+								Generate triples from ASM bytecode models
+								-->
+								<id>create-fine-grained-bytecode-models</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>com.securboration.immortals.instantiation.annotationparser.bytecode.Main</mainClass>
+									<arguments>
+										<argument>${immortals.version}</argument>
+										<argument>${local-repo-root}/shared/IMMORTALS_REPO/mil/darpa</argument>
+										<argument>${project.basedir}/target/classes/ontology/bytecode-structure</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>includeAstModels</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.4.0</version>
+						<dependencies>
+							<dependency>
+								<groupId>com.securboration</groupId>
+								<artifactId>immortals-ontologies-vocab</artifactId>
+								<version>${immortals.version}</version>
+								<scope>compile</scope>
+							</dependency>
+							
+							<dependency>
+								<groupId>com.securboration</groupId>
+								<artifactId>immortals-ontologies-vocab-instances</artifactId>
+								<version>${immortals.version}</version>
+								<scope>compile</scope>
+							</dependency>
+							
+							<dependency>
+								<groupId>com.securboration</groupId>
+								<artifactId>immortals-annotation-parser</artifactId>
+								<version>${immortals.version}</version>
+								<scope>compile</scope>
+							</dependency>
+						</dependencies>
+						<executions>
+							<execution>
+								<!--
+								Generate triples from AST models
+								-->
+								<id>create-ast-models</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>com.securboration.immortals.instantiation.ast.Main</mainClass>
+									<arguments>
+										<argument>${immortals.version}</argument>
+										<argument>${local-repo-root}/client</argument>
+										<argument>${project.basedir}/target/classes/ontology/ast</argument>
+										<argument>R.,SACommunicationService.</argument><!-- filter these problematic files -->
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<build>
@@ -134,6 +298,7 @@
 								<argument>${local-repo-root}</argument><!-- path to local IMMoRTALS project repository -->
 								<argument>${repo.url}</argument><!-- URL of remote IMMoRTALS project repository -->
 								<argument>${immortals-lib.version}</argument><!-- the version of libraries to examine, all others will be filtered -->
+								<argument>shared/IMMORTALS_REPO/mil/darpa/immortals/dfus,shared/IMMORTALS_REPO/mil/darpa/immortals/datatypes,shared/IMMORTALS_REPO/mil/darpa/immortals/core</argument><!--relative paths to look in for bytecode to ingest-->
 								
 								<!-- The following is a variable length list of source directories against which we can resolve artifacts discovered in bytecode -->
 								
@@ -162,26 +327,6 @@
 					
 					<execution>
 						<!--
-						Generate triples from the deployment model
-						-->
-						<id>deployment-to-triples</id>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>java</goal>
-						</goals>
-						<configuration>
-							<mainClass>com.securboration.immortals.instantiation.DeploymentToTriplesMain</mainClass>
-							<arguments>
-								<argument>${project.basedir}/target/classes/ontology/parsed-from-webgme-models</argument>
-								<argument>${immortals.version}</argument>
-								<argument>${local-repo-root}</argument>
-								<argument>models/sample_android/resource/webgme/immortals_kds_dm_v02_a02.json</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					
-					<execution>
-						<!--
 						Parse annotations from existing IMMoRTALS code repo
 						-->
 						<id>parse-annotations</id>
@@ -193,7 +338,7 @@
 							<mainClass>com.securboration.immortals.annotationparser.main.Main</mainClass>
 							<arguments>
 								<argument>${immortals.version}</argument>
-								<argument>${local-repo-root}/shared/IMMORTALS_REPO/mil/darpa</argument>
+								<argument>${local-repo-root}/shared/IMMORTALS_REPO/mil/darpa/immortals/dfus,${local-repo-root}/shared/IMMORTALS_REPO/mil/darpa/immortals/datatypes,${local-repo-root}/shared/IMMORTALS_REPO/mil/darpa/immortals/core</argument>
 								<argument>${project.basedir}/target/classes/ontology/parsed-from-annotations</argument>
 							</arguments>
 						</configuration>
@@ -231,5 +376,6 @@
 		</plugins>
 
 	</build>
+	
 
 </project>

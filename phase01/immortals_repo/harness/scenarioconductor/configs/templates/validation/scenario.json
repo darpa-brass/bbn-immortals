@@ -1,0 +1,18 @@
+{
+    "durationSeconds": "{TIMEOUT}",
+    "deploymentApplications": [
+        {
+            "application": "marti",
+            "instanceIdentifier": "marti_{IDENT}_000",
+            "deploymentEnvironment": "java",
+            "buildSubdir": "applications/server/Marti",
+            "executableFile": "applications/server/Marti/Marti-immortals.jar"
+        }
+    ],
+    "validatorIdentifiers": [
+        "client-location-share",
+        "client-location-produce",
+        "client-image-share",
+        "client-image-produce"
+    ]
+}

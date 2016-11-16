@@ -1,0 +1,12 @@
+{
+//  "classPackageIdentifier" : "mil.darpa.immortals.dfus.crypto.jca.JcaAesDecryptionInputStream",
+  "classPackageIdentifier" : "mil.darpa.immortals.dfus.crypto.jca.JcaBlowfishDecryptionInputStream",
+  "aspect" : "com.securboration.immortals.ontology.functionality.alg.encryption.AspectCipherDecrypt",
+  "functionalityBeingPerformed" : "com.securboration.immortals.ontology.functionality.alg.encryption.Cipher",
+  "constructorParameterMap": {
+    "mil.darpa.immortals.annotation.dsl.ontology.functionality.alg.encryption.EncryptionKey": "fGPgAeiHCivZqzJnESrasQ==",
+    "mil.darpa.immortals.annotation.dsl.ontology.functionality.Input" : "$PROVIDED_BY_APPLICATION!"
+  },
+  "initializationParameterMap": {},
+  "executionParameterMap": {}
+}

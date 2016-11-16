@@ -95,7 +95,8 @@ public class ObjectToTriplesTest {
         System.out.println(
                 OntologyHelper.serializeModel(
                         m, 
-                        "Turtle"
+                        "Turtle",
+                        false
                         ));
         
         printDividerEnd(tag);

@@ -34,6 +34,11 @@ public class DependencyCoordinate {
 		this.version = version;
 	}
 	
+	@Override
+	public String toString() {
+		return getGroupId() + ":" + getArtifactId() + ":" + getVersion();
+	}
+
 	private String groupId;
 	private String artifactId;
 	private String version;

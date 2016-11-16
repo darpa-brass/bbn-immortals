@@ -70,6 +70,7 @@
 							<mainClass>com.securboration.immortals.generate.uris.GenerateUriConstants</mainClass>
 							<arguments>
 								<argument>${project.basedir}/target/generated-sources</argument>
+								<argument>com.securboration.immortals.uris.Uris</argument>
 								<argument>${project.basedir}/../ontology-static/ontology/third-party</argument>
 							</arguments>
 						</configuration>

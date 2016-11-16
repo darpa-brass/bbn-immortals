@@ -3,7 +3,7 @@ package com.securboration.immortals.ontology.cp;
 import com.securboration.immortals.ontology.annotations.triples.Literal;
 import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.constraint.ValueCriterionType;
-import com.securboration.immortals.ontology.metrics.MeasuredValue;
+import com.securboration.immortals.ontology.metrics.Metric;
 import com.securboration.immortals.uris.Uris.rdfs;
 
 @Triple(
@@ -17,40 +17,38 @@ public class MissionSpec extends SoftwareSpec {
     
     private String humanReadableForm;
     
-    private ValueCriterionType valueCriterion;
+    private ValueCriterionType assertionCriterion;
     
-    private MeasuredValue rightValue;
-
-    
-    public ValueCriterionType getValueCriterion() {
-        return valueCriterion;
-    }
-
-    
-    public void setValueCriterion(ValueCriterionType operator) {
-        this.valueCriterion = operator;
-    }
-
-    
-    public MeasuredValue getRightValue() {
-        return rightValue;
-    }
-
-    
-    public void setRightValue(MeasuredValue rightValue) {
-        this.rightValue = rightValue;
-    }
-
+    private Metric rightValue;
 
     
     public String getHumanReadableForm() {
         return humanReadableForm;
     }
 
-
     
     public void setHumanReadableForm(String humanReadableForm) {
         this.humanReadableForm = humanReadableForm;
+    }
+
+    
+    public ValueCriterionType getAssertionCriterion() {
+        return assertionCriterion;
+    }
+
+    
+    public void setAssertionCriterion(ValueCriterionType assertionCriterion) {
+        this.assertionCriterion = assertionCriterion;
+    }
+
+    
+    public Metric getRightValue() {
+        return rightValue;
+    }
+
+    
+    public void setRightValue(Metric rightValue) {
+        this.rightValue = rightValue;
     }
 
 }

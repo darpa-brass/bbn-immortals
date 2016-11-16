@@ -2,14 +2,11 @@ package mil.darpa.immortals.dfus.images;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import com.securboration.immortals.ontology.functionality.imageprocessor.AspectImageProcessorProcessImage;
 import com.securboration.immortals.ontology.functionality.imageprocessor.ImageProcessor;
 import com.securboration.immortals.ontology.resources.DiskResource;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
-import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
-import mil.darpa.immortals.core.synthesis.ObjectPipe;
-import mil.darpa.immortals.core.synthesis.interfaces.ReadableObjectPipeInterface;
-import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterface;
+import mil.darpa.immortals.annotation.dsl.ontology.functionality.Output;
+import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
 
 /**
  * Created by awellman@bbn.com on 6/22/16.
@@ -20,36 +17,27 @@ import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterfac
                 DiskResource.class
         }
 )
-public class BitmapReader extends ObjectPipe<String, Bitmap> {
+public class BitmapReader implements ConsumingPipe<String> {
 
-    @FunctionalAspectAnnotation(
-            aspect = AspectImageProcessorProcessImage.class
-    )
-    public BitmapReader(WriteableObjectPipeInterface<Bitmap> next) {
-        super(next);
-    }
+    private ConsumingPipe<Bitmap> next;
 
-    public BitmapReader(ReadableObjectPipeInterface<String> previous) {
-        super(previous);
+    public BitmapReader(@Output ConsumingPipe<Bitmap> next) {
+        this.next = next;
     }
 
     @Override
-    protected Bitmap process(String imageLocation) {
-        return BitmapFactory.decodeFile(imageLocation);
+    public void consume(String input) {
+        Bitmap output = BitmapFactory.decodeFile(input);
+        next.consume(output);
     }
 
     @Override
-    protected Bitmap flushToOutput() {
-        return null;
+    public void flushPipe() {
+        next.flushPipe();
     }
 
     @Override
-    protected void preNextClose() {
-
-    }
-
-    @Override
-    public int getBufferSize() {
-        throw new RuntimeException("Not supported!");
+    public void closePipe() {
+        next.closePipe();
     }
 }

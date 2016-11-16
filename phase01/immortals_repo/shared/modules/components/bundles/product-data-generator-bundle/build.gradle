@@ -1,0 +1,4 @@
+apply plugin: immortals.CoreDefinitions
+apply plugin: immortals.JavaDfuWithoutAndroid
+apply plugin: immortals.DfuBase
+apply plugin: immortals.PublishJavaDfu

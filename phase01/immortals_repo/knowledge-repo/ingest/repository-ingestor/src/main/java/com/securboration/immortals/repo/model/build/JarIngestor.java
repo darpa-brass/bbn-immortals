@@ -18,6 +18,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
 import com.securboration.immortals.repo.api.RepositoryUnsafe;
 
@@ -54,6 +55,8 @@ public class JarIngestor {
     public static void ingest(
             RepositoryUnsafe client,
             byte[] jar, 
+            String namespace,
+            String version,
             String graphName,
             String... validSuffixes
             ) throws IOException {
@@ -78,6 +81,15 @@ public class JarIngestor {
             aggregateModel.add(model);
         }
         
+        ObjectToTriplesConfiguration c = 
+                new ObjectToTriplesConfiguration(version);
+        
+        OntologyHelper.addOntologyMetadata(
+            c,
+            aggregateModel,
+            "IMMoRTALS ontology"
+            );
+        
         log("about to push an aggregate model derived from [%d] sub models into graph [%s]\n",models.size(),graphName);
         
         client.pushGraph(aggregateModel,graphName);
@@ -87,9 +99,16 @@ public class JarIngestor {
         log("retrieving graph %s",graphName);
         
         Model retrievedModel = client.getGraph(graphName);
+        
+        
+        
         FileUtils.writeStringToFile(
                 new File("./"+graphName+".ttl"),
-                OntologyHelper.serializeModel(retrievedModel, "Turtle")
+                OntologyHelper.serializeModel(
+                    retrievedModel, 
+                    "Turtle", 
+                    c.isValidateOntology()
+                    )
                 );
         
         log("done retrieving graph %s",graphName);
@@ -130,7 +149,7 @@ public class JarIngestor {
         return false;
     }
 
-    private static void openJar(
+    public static void openJar(
             InputStream jarWithDependenciesPath,
             Collection<String> validSuffixes,
             Map<String,byte[]> models

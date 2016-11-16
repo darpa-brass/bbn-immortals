@@ -19,13 +19,12 @@
     }],
     "PLI": {
       "quantifier": "all",
-      "report_rate": 3
+      "report_rate": {"min": 3}
     },
     "image": {
       "quantifier": "all",
       "report rate": 4,
       "resolution": "1024x1290",
-      "color": "#FF3322",
       "grayscale": true
     },
     "functionalityPoints": [{

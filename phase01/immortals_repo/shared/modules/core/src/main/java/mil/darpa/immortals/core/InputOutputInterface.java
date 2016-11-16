@@ -5,5 +5,6 @@ package mil.darpa.immortals.core;
  *
  * @author petersamouelian
  */
+@Deprecated
 public interface InputOutputInterface<INPUT,OUTPUT> extends InputProviderInterface<INPUT>, OutputProviderInterface<OUTPUT> {
 }

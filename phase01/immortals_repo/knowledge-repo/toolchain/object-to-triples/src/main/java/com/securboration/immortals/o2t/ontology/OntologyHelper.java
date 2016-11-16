@@ -31,19 +31,20 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.OWL2;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.securboration.immortals.annotations.helper.AnnotationHelper;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
 import com.securboration.immortals.ontology.annotations.RdfsComment;
 import com.securboration.immortals.ontology.annotations.etc.Constants;
 import com.securboration.immortals.ontology.annotations.triples.FieldReference;
 import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
+import com.securboration.immortals.validation.ModelValidator;
 
 /**
  * Simple utility class for reading/writing semantic models
@@ -54,6 +55,8 @@ import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 public class OntologyHelper {
     private static Logger logger = LoggerFactory
             .getLogger(OntologyHelper.class);
+    
+    private static String IMMORTALS_BASE_CLASS_NAME = "ImmortalsBaseClass";
 
     /**
      * Serializes the provided model to the provided language
@@ -62,11 +65,22 @@ public class OntologyHelper {
      *            a model to serialize
      * @param outputLanguage
      *            a language to serialize to (e.g., RDF/XML)
+     * @param validate
+     *            iff true, validate the ontology (NOTE: this may be quite time
+     *            consuming!)
      * @return the serialized model
      * @throws IOException
      */
-    public static String serializeModel(Model m, String outputLanguage)
-            throws IOException {
+    public static String serializeModel(
+            Model m, 
+            String outputLanguage, 
+            boolean validate
+            ) throws IOException {
+        
+        if(validate){
+            ModelValidator.validateModel(m, System.out);
+        }
+        
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         m.write(output, outputLanguage);
 
@@ -156,7 +170,76 @@ public class OntologyHelper {
         return sb.toString();
     }
     
-    public static void addMetadata(
+    private static String getUri(final String ns,final String name){
+        return ns.replace("#", "")+name;
+    }
+    
+    private static void addImports(
+            Model m,
+            Resource ontology,
+            String...imports
+            ){
+        for(String i:imports){
+            ontology.addProperty(OWL.imports, m.getResource(i));
+        }
+    }
+    
+    public static Resource addOntologyMetadata(
+            ObjectToTriplesConfiguration context, 
+            Model m,
+            final String name
+            ){
+        Resource r = m.getResource(context.getTargetNamespace());
+        
+        r.addProperty(RDF.type, OWL2.Ontology);
+        
+        r.addLiteral(
+            OWL2.versionIRI,
+            context.getTargetNamespace()
+            );
+        
+        addImports(
+            m,
+            r
+//            ,"http://www.w3.org/2002/07/owl",
+//            "http://www.w3.org/1999/02/22-rdf-syntax-ns",
+//            "http://www.w3.org/2000/01/rdf-schema",
+//            "http://www.w3.org/2004/02/skos/core"
+            );
+        
+        final Property desc = 
+                m.createProperty("http://purl.org/dc/elements/1.1/description");
+        
+        final Property title = 
+                m.createProperty("http://purl.org/dc/elements/1.1/title");
+        
+        r.addLiteral(
+            desc, 
+            "This is the IMMoRTALS ontology, used to describe software and " +
+            "the ecosystem in which it executes"
+            );
+        r.addProperty(
+            title, 
+            name
+            );
+        
+        //add key assertion
+        if(context.isAddKeys()){
+            m.getResource(
+                OntologyHelper.makeUriName(
+                    context, 
+                    IMMORTALS_BASE_CLASS_NAME
+                    )
+                ).addProperty(
+                OWL2.hasKey, 
+                getUuidProperty(context,m)
+                );
+        }
+        
+        return r;
+    }
+    
+    public static void addAutogenerationMetadata(
             ObjectToTriplesConfiguration context,
             Model m,
             final String namespace,
@@ -166,26 +249,32 @@ public class OntologyHelper {
             return;
         }
         
-        Resource r = 
-                outputFile == null ? 
-                        m.getResource(namespace.replace("#", "")+"#"+UUID.randomUUID().toString())
-                        :
-                        m.getResource(namespace.replace("#", "")+"#"+outputFile.getName());
-        
-        //r.addProperty(RDF.type, OWL.Ontology);
+        final String name;
+        if(outputFile != null){
+            String fileName = outputFile.getName();
+            name = fileName.substring(0,fileName.indexOf("."));
+        } else {
+            name = UUID.randomUUID().toString();
+        }
+
+        Resource r =
+            m.createResource(
+                getUri(
+                    context.getTargetNamespace(),
+                    "#AutogenerationMetadata-" + name
+                    )
+                );
+                
         r.addProperty(
-            RDF.type, 
-            m.getResource(
-                namespace.replace("#", "")+"#OntologyFragmentMetadata"
+            RDF.type,
+            getUri(
+                context.getTargetNamespace(), 
+                "#AutogenerationMetadata"
                 )
             );
-                        
+                  
         //built in metadata
         {
-            r.addLiteral(
-                    OWL.versionInfo, 
-                    context.getVersion());
-            
             r.addLiteral(
                     RDFS.comment, 
                     "Automatically generated from bytecode by the "
@@ -194,11 +283,6 @@ public class OntologyHelper {
                     + "generated. If changes are required, instead edit the "
                     + "POJO(s) from which this file was generated."
                     );
-            
-            r.addLiteral(
-                RDFS.comment, 
-                "Metadata about an ontology fragment this graph contains."
-                );
         }
         
         //custom metadata
@@ -206,7 +290,8 @@ public class OntologyHelper {
             Map<String,Object> metadata = new LinkedHashMap<>();
             
             if(outputFile != null){
-                metadata.put("Ontology_file", outputFile.getAbsolutePath());
+                metadata.put("Ontology_file_path", outputFile.getAbsolutePath());
+                metadata.put("Ontology_file_name", outputFile.getName());
             } else {
                 metadata.put("Ontology_file", "none specified");
             }
@@ -283,17 +368,20 @@ public class OntologyHelper {
     private static Property getPropertyForType(
             ObjectToTriplesConfiguration context,
             Model model,
-            Type t,
+            Type fieldType,
             String fieldName
             ){
         
         fieldName = fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
         
-        if(t.getSort() == Type.METHOD){
-            throw new RuntimeException("not expecting a method desc but found " + t.getDescriptor());
+        if(fieldType.getSort() == Type.METHOD){
+            throw new RuntimeException(
+                "not expecting a method desc but found " + 
+                        fieldType.getDescriptor()
+                );
         }
         
-        String className = t.getClassName();
+        String className = fieldType.getClassName();
         
         if(className.contains(".")){
             className = className.substring(className.lastIndexOf(".")+1);
@@ -306,7 +394,15 @@ public class OntologyHelper {
         } 
         className = className.replace("$", ".");
         
-        return model.createProperty(context.getTargetNamespace()+"#has"+fieldName+"_"+className);
+        if(context.isIncludeTypeWithProperties()){
+            return model.createProperty(
+                context.getTargetNamespace()+"#has"+fieldName+"_"+className
+                );
+        } else {
+            return model.createProperty(
+                context.getTargetNamespace()+"#has"+fieldName
+                );
+        }
     }
     
     public static Property getPropertyForField(
@@ -330,6 +426,35 @@ public class OntologyHelper {
         
         Type t = Type.getType(f.getType());
         
+        final boolean isPossiblyClass = 
+                !(isPrimitive(mappings,t));
+        
+        final boolean isClass = 
+                isPossiblyClass && isClass(context,t);
+        
+        if(isClass){
+            
+            if(t.getSort() == Type.ARRAY){
+                t = t.getElementType();
+            }
+            
+            final String genericDescriptor = f.getGenericType().getTypeName();
+            if(genericDescriptor.contains(" extends ")){
+                final int index = genericDescriptor.lastIndexOf(" extends ");
+                
+                String desc = genericDescriptor.substring(
+                    index+9,//9 = length of string " extends "
+                    genericDescriptor.length()-1
+                    );
+                
+                desc = "L"+desc.replace(".", "/")+";";
+                
+                if(!desc.contains("[")){
+                    t = Type.getType(desc);
+                }
+            }
+        }
+        
         RDFNode classResource = analyzeType(context,model,t);
         
         Property p = 
@@ -341,18 +466,77 @@ public class OntologyHelper {
         
         if(isPrimitive(mappings,t)){
             p.addProperty(RDF.type, OWL.DatatypeProperty);
+        } else if(isClass){
+            p.addProperty(RDF.type, RDF.Property);
         } else if(isEnum(context,t)){
             p.addProperty(RDF.type, OWL.DatatypeProperty);
         } else {
             p.addProperty(RDF.type, OWL.ObjectProperty);
         }
-        p.addProperty(RDFS.range, classResource);
-        p.addProperty(RDFS.domain, ownerClass);
+        
+        if(context.isAddDomainRangeToProperties()){
+            p.addProperty(RDFS.domain, ownerClass);
+            
+            if(isPossiblyClass && isClass(context,t)){
+                //it is a class, which means it can either be a class or an 
+                // instance of a class
+                RDFList list = model.createList(new RDFNode[]{
+                        classResource
+                });
+                
+                p.addProperty(
+                    RDFS.range, 
+                    model.createIntersectionClass(null, list)
+                    );
+            } else {
+                //it's not a class
+                p.addProperty(RDFS.range, classResource);
+            }
+        }
         
         //pull a comment from an annotation
         final String comment = getFieldComments(f);
         if (comment != null) {
             p.addLiteral(RDFS.comment, comment);
+        }
+        
+        if(context.isAddFieldRestrictions()){//TODO
+            ownerClass.addProperty(
+                RDFS.subClassOf, 
+                model.createAllValuesFromRestriction(
+                    null, 
+                    p, 
+                    classResource.asResource()
+                    )
+                );
+            
+            if(!f.getType().isArray()){
+                ownerClass.addProperty(
+                    RDFS.subClassOf, 
+                    model.createMinCardinalityRestriction(
+                        null, 
+                        p, 
+                        0
+                        )
+                    );
+                ownerClass.addProperty(
+                    RDFS.subClassOf, 
+                    model.createMaxCardinalityRestriction(
+                        null, 
+                        p, 
+                        1
+                        )
+                    );
+            } else {
+                ownerClass.addProperty(
+                    RDFS.subClassOf, 
+                    model.createMinCardinalityRestriction(
+                        null, 
+                        p, 
+                        0
+                        )
+                    );
+            }
         }
         
         return p;
@@ -375,25 +559,43 @@ public class OntologyHelper {
         return true;
     }
     
-//    private static boolean isPrimitive(Type t){
-//        if(t.getSort() == Type.OBJECT){
-//            return false;
-//        }
-//        
-//        if(t.getSort() == Type.ARRAY){
-//            return false;
-//        }
-//        
-//        return true;
-//    }
-    
     private static boolean isEnum(ObjectToTriplesConfiguration context,Type t) {
         
         if(t.getSort() == Type.ARRAY){
+            
+            if(context.shouldFlattenArrays() && t.getDimensions() == 1){
+                return getClass(context,t.getElementType()).isEnum();
+            }
+            
             return false;
         }
         
         return getClass(context,t).isEnum();
+    }
+    
+    private static boolean isClass(
+            ObjectToTriplesConfiguration context, 
+            Type t
+            ){
+        
+        if(t.getSort() == Type.ARRAY){
+            
+            if(context.shouldFlattenArrays() && t.getDimensions() == 1){
+                return isClass(context,t.getElementType());
+            }
+            
+            return false;
+        }
+        
+        if(t.getDescriptor().equals(Type.getDescriptor(Class.class))){
+            return true;
+        }
+        
+        if(Class.class.isAssignableFrom(getClass(context,t))){
+            return true;
+        }
+        
+        return false;
     }
     
     private static Class<?> getClass(ObjectToTriplesConfiguration context,Type t){
@@ -417,7 +619,7 @@ public class OntologyHelper {
         return model.createTypedLiteral(value);
     }
     
-    private static DataRange getRange(
+    private static DataRange getRangeForEnum(
             ObjectToTriplesConfiguration context, 
             OntModel model, 
             Type t
@@ -467,6 +669,15 @@ public class OntologyHelper {
                 }
             }
             
+            if(context.shouldFlattenArrays()){
+                throw new RuntimeException(
+                    "Encountered a multi-dimensional array but " +
+                    "shouldFlattenArrays is TRUE; it isn't possible " +
+                    "to flatten a multi-dimensional array so raising " +
+                    "an exception."
+                    );
+            }
+            
             
             //create an array wrapper
             
@@ -487,23 +698,26 @@ public class OntologyHelper {
             Property p = 
                     getPropertyForType(context,model,elementType,"Element");
             
-            if(isPrimitive(mappings,t.getElementType())){
-                p.addProperty(RDF.type, OWL.DatatypeProperty);
-            } else {
-                p.addProperty(RDF.type, OWL.ObjectProperty);
+            if(context.isAddDomainRangeToProperties()){
+                if(isPrimitive(mappings,t.getElementType())){
+                    p.addProperty(RDF.type, OWL.DatatypeProperty);
+                } else if(isEnum(context,t.getElementType())){
+                    p.addProperty(RDF.type, OWL.DatatypeProperty);
+                } else {
+                    p.addProperty(RDF.type, OWL.ObjectProperty);
+                }
+                
+                p.addProperty(RDFS.range, analyzeType(context,model,elementType));
+                p.addProperty(RDFS.domain, arrayResource);
             }
-            
-            p.addProperty(RDFS.range, analyzeType(context,model,elementType));
-            p.addProperty(RDFS.domain, arrayResource);
             
             return arrayResource;
             
         } else if(t.getSort()==Type.OBJECT){
             
             if(isEnum(context,t)){
-                return getRange(context,model,t);
-            }
-            
+                return getRangeForEnum(context,model,t);
+            } 
             return OntologyHelper.getResourceForType(context,model,t.getClassName());
         }
         
@@ -514,7 +728,7 @@ public class OntologyHelper {
             ObjectToTriplesConfiguration config,
             OntModel model
             ){
-        return getResourceForType(config,model,"ImmortalsBaseClass");
+        return getResourceForType(config,model,IMMORTALS_BASE_CLASS_NAME);
     }
     
     public static Resource getBaseProperty(
@@ -522,6 +736,18 @@ public class OntologyHelper {
             OntModel model
             ){
         return getResourceForType(config,model,"ImmortalsBaseProperty");
+    }
+    
+    public static Property getUuidProperty(
+            ObjectToTriplesConfiguration config,
+            Model model
+            ){
+        return model.createProperty(
+            OntologyHelper.makeUriName(
+                config, 
+                "hasImmortalsUuid"
+                )
+            );
     }
     
     public static Resource getArrayResource(
@@ -553,17 +779,6 @@ public class OntologyHelper {
                   Type.getType(c).getClassName());
     }
     
-    //TODO: cleanup
-    public static String getInstanceId(Class<?> c){
-        ConceptInstance instanceAnnotation = 
-                AnnotationHelper.getAnnotationOfType(
-                    c,
-                    ConceptInstance.class
-                    );
-        
-        return "~instance"+instanceAnnotation.id();
-    }
-    
     private static Resource getResourceForType(
             ObjectToTriplesConfiguration context, 
             OntModel model, 
@@ -573,11 +788,7 @@ public class OntologyHelper {
         final String baseName = Type.getType(c).getClassName();
 
         if (isConceptInstance) {
-            final String name = 
-                    baseName + "-" + 
-                    getInstanceId(c);
-            
-            final String uri = OntologyHelper.makeUriName(context, name);
+            final String uri = OntologyHelper.makeUriName(context, baseName);
             
             return model.createResource(uri);
         }
@@ -935,10 +1146,6 @@ public class OntologyHelper {
         map.put(
                 Type.getType(Calendar.class), 
                 model.getResource(XSDDatatype.XSDdateTime.getURI()));
-        
-        map.put(
-                Type.getType(Class.class), 
-                RDFS.Class);
         
         
         return map;

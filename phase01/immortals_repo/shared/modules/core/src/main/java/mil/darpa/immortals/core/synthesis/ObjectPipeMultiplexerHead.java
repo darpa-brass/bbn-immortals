@@ -1,6 +1,6 @@
 package mil.darpa.immortals.core.synthesis;
 
-import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
 
 /**
  * This class allows for synchronized access to a {@link ObjectPipeMultiplexerTail} to ensure data is properly sent together
@@ -9,10 +9,10 @@ import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterfac
  */
 public class ObjectPipeMultiplexerHead<InputType0, InputType1> {
 
-    private final WriteableObjectPipeInterface<InputType0> pipe0;
-    private final WriteableObjectPipeInterface<InputType1> pipe1;
+    private final ConsumingPipe<InputType0> pipe0;
+    private final ConsumingPipe<InputType1> pipe1;
 
-    public ObjectPipeMultiplexerHead(WriteableObjectPipeInterface<InputType0> pipe0, WriteableObjectPipeInterface<InputType1> pipe1) {
+    public ObjectPipeMultiplexerHead(ConsumingPipe<InputType0> pipe0, ConsumingPipe<InputType1> pipe1) {
         this.pipe0 = pipe0;
         this.pipe1 = pipe1;
     }

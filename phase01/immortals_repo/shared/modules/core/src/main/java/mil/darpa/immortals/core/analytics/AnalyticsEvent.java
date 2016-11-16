@@ -15,10 +15,10 @@ public class AnalyticsEvent {
 
     public AnalyticsEventType type;
     public final String eventSource;
-    public String eventRemoteSource;
-    public String dataType;
-    public Object data;
-    public long eventId;
+    public final String eventRemoteSource;
+    public final String dataType;
+    public final String data;
+    public final long eventId;
 
     private static Gson getGson() {
         if (_gson == null) {
@@ -28,12 +28,8 @@ public class AnalyticsEvent {
     }
 
     protected AnalyticsEvent(@Nonnull AnalyticsEventType type, @Nonnull String eventSource, @Nonnull String eventRemoteSource, @Nonnull Object data) {
-        this.eventSource = eventSource;
-        update(type, eventRemoteSource, data);
-    }
-
-    private void update(@Nonnull AnalyticsEventType type, @Nonnull String eventRemoteSource, @Nonnull Object data) {
         this.type = type;
+        this.eventSource = eventSource;
         this.eventRemoteSource = eventRemoteSource;
         this.eventId = eventIdCounter.getAndIncrement();
 

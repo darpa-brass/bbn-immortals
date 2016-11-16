@@ -1,4 +1,11 @@
-apply from: 'shared/common.gradle'
+import java.nio.file.Files
+import java.nio.file.Paths
+
+String IMMORTALS_ROOT = buildscript.sourceFile.getParent() + '/'
+
+allprojects {
+    apply from: IMMORTALS_ROOT + 'shared/common.gradle'
+}
 
 Exec dslClean = task('dslClean', type: Exec) {
     group = 'Immortals'
@@ -24,26 +31,12 @@ Exec dslSetup = task dslSetup(type: Exec) {
     args = ['setup']
 }
 
-
-
-Exec oldOntologyClean = task('oldOntologyClean', type: Exec) {
-    workingDir = IMMORTALS_ROOT + 'brainstorming/spiral0'
-    executable = 'mvn'
-    args = ['clean']
-}
-
-Exec oldOntologyBuild = task('oldOntologyBuild', type: Exec) {
-    workingDir = IMMORTALS_ROOT + 'brainstorming/spiral0'
-    executable = 'mvn'
-    args = ['install']
-}
-
 Exec publishAdsl = task('publishAdsl', type: Exec) {
     group = 'Immortals'
     description = 'Builds and publishes the knowledge-repo ADSL to the local IMMORTALS_REPO.'
     workingDir = IMMORTALS_ROOT + 'knowledge-repo'
     executable = 'mvn'
-    args = ['-pl', 'vocabulary/dsl-generate', '-am', 'clean', 'install']
+    args = ['-pl', 'vocabulary/dsl-generate', '-DskipTests', '-am', 'clean', 'install']
 }
 
 Exec knowledgeRepoClean = task('knowledgeRepoClean', type: Exec) {
@@ -51,7 +44,7 @@ Exec knowledgeRepoClean = task('knowledgeRepoClean', type: Exec) {
     description = "Cleans the knowledge-repo"
     workingDir = IMMORTALS_ROOT + 'knowledge-repo'
     executable = 'mvn'
-    args = ['clean']
+    args = ['-DskipTests', 'clean']
 }
 
 Exec knowledgeRepoBuild = task('knowledgeRepoBuild', type: Exec) {
@@ -59,7 +52,7 @@ Exec knowledgeRepoBuild = task('knowledgeRepoBuild', type: Exec) {
     description = 'Builds the knowledge-repo'
     workingDir = IMMORTALS_ROOT + 'knowledge-repo'
     executable = 'mvn'
-    args = ['install']
+    args = ['-DskipTests', 'install']
 }
 
 GradleBuild modulesPublish = task('modulesPublish', type: GradleBuild) {
@@ -73,7 +66,15 @@ GradleBuild modulesPublishIfMissing = task('modulesPublishIfMissing', type: Grad
     group = 'Immortals'
     description = 'Publish all modules in the local IMMORTALS_REPO if they appear incomplete.'
     buildFile = IMMORTALS_ROOT + 'shared/modules/build.gradle'
-    tasks = ['init']
+    tasks = ['publishIfUnpublished']
+}
+
+// Construct the synthesis directory structure if necessary
+GradleBuild constructSynthesisDirectory = task('constructSynthesisDirectory', type: GradleBuild) {
+    group = 'Immortals'
+    description = 'Construct the directory structure for synthesized DFUs and applications'
+    buildFile = IMMORTALS_ROOT + 'shared/modules/build.gradle'
+    tasks = ['constructSynthesisDirectory']
 }
 
 GradleBuild modulesClean = task('modulesClean', type: GradleBuild) {
@@ -95,7 +96,26 @@ task init {
         publishAdsl.execute()
     }
 
+    // Publish the modules if necessary
     modulesPublishIfMissing.execute()
+
+    // Determine the proper python subprocess module to use
+    if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
+        copy {
+            from 'harness/scenarioconductor/packages/_posixsubprocess.so.linux'
+            into 'harness/scenarioconductor/packages/'
+            rename { String fileName -> '_posixsubprocess.so' }
+        }
+
+    } else if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+        copy {
+            from 'harness/scenarioconductor/packages/_posixsubprocess.so.osx'
+            into  'harness/scenarioconductor/packages/'
+            rename { String fileName -> '_posixsubprocess.so' }
+        }
+    }
+
+
 }
 
 DefaultTask buildAll = task('buildAll') {
@@ -106,23 +126,23 @@ DefaultTask buildAll = task('buildAll') {
     finalizedBy(dslSetup)
     finalizedBy(dslBuild)
     finalizedBy(knowledgeRepoBuild)
-    finalizedBy(':server:Marti:build')
-    finalizedBy(':client:ATAKLite:build')
+    finalizedBy(':applications:server:Marti:build')
+    finalizedBy(':applications:client:ATAKLite:build')
     finalizedBy(':das:das-service:build')
-    finalizedBy(':das:das-analysis:modulerunner-android:build')
-    finalizedBy(':das:das-analysis:modulerunner-java:build')
-    finalizedBy(':das:das-analysis:build')
 }
 
 DefaultTask cleanAll = task('cleanAll') {
     group = 'Immortals'
     description = 'Cleans _everything_ within the immortals repo'
-    finalizedBy(':server:Marti:clean')
-    finalizedBy(':client:ATAKLite:clean')
+    finalizedBy(':applications:server:Marti:clean')
+    finalizedBy(':applications:client:ATAKLite:clean')
     finalizedBy(':das:das-service:clean')
-    finalizedBy(':das:das-analysis:modulerunner-android:clean')
-    finalizedBy(':das:das-analysis:modulerunner-java:clean')
     finalizedBy(modulesClean)
     finalizedBy(knowledgeRepoClean)
     finalizedBy(dslClean)
+}
+
+DefaultTask deploy = task('deploy') {
+    finalizedBy(buildAll)
+    finalizedBy(':applications:client:ATAKLite:clean')
 }

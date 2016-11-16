@@ -1,15 +1,16 @@
 package mil.darpa.immortals.core.synthesis;
 
-import mil.darpa.immortals.core.synthesis.interfaces.ReadableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ProducingPipe;
 
 /**
  * Allows simple function-based implementation of a single part of a pipeline
  * Created by awellman@bbn.com on 6/21/16.
  */
-public abstract class ReadableObjectPipe<InputType, OutputType> implements ReadableObjectPipeInterface<OutputType> {
-    private final ReadableObjectPipeInterface<InputType> previous;
+@Deprecated
+public abstract class ReadableObjectPipe<InputType, OutputType> implements ProducingPipe<OutputType> {
+    private final ProducingPipe<InputType> previous;
 
-    public ReadableObjectPipe(ReadableObjectPipeInterface<InputType> previous) {
+    public ReadableObjectPipe(ProducingPipe<InputType> previous) {
         this.previous = previous;
     }
 

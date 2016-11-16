@@ -1,10 +1,48 @@
 package com.securboration.immortals.annotations.helper;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.securboration.immortals.ontology.annotations.triples.Triple;
+import com.securboration.immortals.ontology.annotations.triples.Triples;
+
 public class AnnotationHelper {
+    
+    public static Triple[] getTriples(Class<?> c){
+        
+        List<Triple> triples = new ArrayList<>();
+        
+        for(Triple t:c.getAnnotationsByType(Triple.class)){
+            triples.add(t);
+        }
+        
+        for(Triples ts:c.getAnnotationsByType(Triples.class)){
+            for(Triple t:ts.value()){
+                triples.add(t);
+            }
+        }
+        
+        return triples.toArray(new Triple[]{});
+    }
+    
+    public static Triple[] getTriples(Field f){
+        
+        List<Triple> triples = new ArrayList<>();
+        
+        for(Triple t:f.getAnnotationsByType(Triple.class)){
+            triples.add(t);
+        }
+        
+        for(Triples ts:f.getAnnotationsByType(Triples.class)){
+            for(Triple t:ts.value()){
+                triples.add(t);
+            }
+        }
+        
+        return triples.toArray(new Triple[]{});
+    }
 
     public static <T extends Annotation> T getAnnotationOfType(
             Class<?> annotatedClass,

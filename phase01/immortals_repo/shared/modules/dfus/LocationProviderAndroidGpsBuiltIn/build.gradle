@@ -1,4 +1,9 @@
+apply plugin: immortals.CoreDefinitions
+apply plugin: immortals.JavaDfu
+apply plugin: immortals.DfuBase
+apply plugin: immortals.PublishJavaDfu
+
 dependencies {
-    compile 'mil.darpa.immortals.datatypes:Coordinates:' + defaultImmortalsDependencyVersion
+    compile project(':datatypes:Coordinates')
     compile files(androidSDKJar)
 }

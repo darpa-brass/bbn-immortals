@@ -18,17 +18,6 @@ import com.securboration.immortals.semanticweaver.ObjectMapper;
 
 public class Main {
     
-    private static String[] getTestArgs(){
-        
-        return new String[]{
-                "r2.0.0",
-                "C:/Users/Securboration/Desktop/code/immortals/trunk/shared/IMMORTALS_REPO/mil/darpa",
-//                "C:/Users/Securboration/Desktop/code/immortals/trunk/knowledge-repo/vocabulary/ontology-generate/target/classes/ontology",
-                "./target/classes/ontology/individuals",
-        };
-        
-    }
-    
     /**
      * args[0]: version
      * args[1]: a dir to recursively traverse containing JARs to process
@@ -38,23 +27,28 @@ public class Main {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-//        args = getTestArgs();//TODO
         
         final String version = args[0];
-        final File jarDir = new File(args[1]);
+        final String[] jarDirs = args[1].split(",");
         final File outputDir = new File(args[2]);
         
-//        final File modelDir = new File(args[3]);
-//        
-//        
-//        Model model = ModelReader.getAggregateModel(modelDir);
-//        QueryableModel queryEngine = new QueryableModel(model);
-//        
-//        Console.log("read %d triples\n",model.size());
-        
-        
-        {//JAR mode
+        for(String dir:jarDirs){
+            
+            final File jarDir = new File(dir);
+            
+            //JAR mode
             Console.log("searching %s",jarDir.getAbsolutePath());
+            
+            if(!jarDir.exists()){
+                Console.log(
+                    "jar dir does not exist, skipping annotation parsing " +
+                    "of %s\n", 
+                    jarDir.getAbsolutePath()
+                    );
+                
+                return;
+            }
+            
             Collection<File> jars = 
                     FileUtils.listFiles(
                         jarDir, 
@@ -91,7 +85,7 @@ public class Main {
                     jarModel.add(objectModel);
                 }
                 
-                OntologyHelper.addMetadata(
+                OntologyHelper.addAutogenerationMetadata(
                     config, 
                     jarModel, 
                     config.getTargetNamespace(), 
@@ -99,7 +93,11 @@ public class Main {
                     );
                 
                 final String serialized = 
-                        OntologyHelper.serializeModel(jarModel, "TTL");
+                        OntologyHelper.serializeModel(
+                            jarModel, 
+                            "TTL", 
+                            config.isValidateOntology()
+                            );
                 
                 Console.log(
                     "model for jar %s:\n%s\n", 

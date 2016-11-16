@@ -67,7 +67,7 @@ public class MainTest {
                 jarModel.add(objectModel);
             }
             
-            OntologyHelper.addMetadata(
+            OntologyHelper.addAutogenerationMetadata(
                 config, 
                 jarModel, 
                 config.getTargetNamespace(), 
@@ -78,7 +78,11 @@ public class MainTest {
 //            if(true){throw new RuntimeException("intentional");}
             
             final String serialized = 
-                    OntologyHelper.serializeModel(jarModel, "TTL");
+                    OntologyHelper.serializeModel(
+                        jarModel, 
+                        "TTL",
+                        config.isValidateOntology()
+                        );
             
             Console.log("model for classpath:\n%s\n",serialized);
         }

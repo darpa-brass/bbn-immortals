@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
@@ -78,14 +79,25 @@ public class PojoMappingContext {
      *             if something goes wrong
      */
     public String convertAdded(SemanticSyntax outputFormat) throws IOException{
-        
-        Model master = ModelFactory.createOntologyModel();
-        
+        return OntologyHelper.serializeModel(
+            getCurrentModel(), 
+            outputFormat.getName(), 
+            false
+            );
+    }
+    
+    public Model getCurrentModel(){
+        Model master = ModelFactory.createOntologyModel(OntModelSpec.RDFS_MEM);
+        OntModelSpec s;
         for(Object o:objectsToMap){
             master.add(ObjectToTriples.convert(config, o));
         }
         
-        return OntologyHelper.serializeModel(master, outputFormat.getName());
+        return master;
+    }
+    
+    public ObjectToTriplesConfiguration getConfiguration(){
+        return config;
     }
 
 }

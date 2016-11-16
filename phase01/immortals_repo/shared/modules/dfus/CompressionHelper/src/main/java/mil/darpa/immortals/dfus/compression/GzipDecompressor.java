@@ -2,7 +2,7 @@ package mil.darpa.immortals.dfus.compression;
 
 import mil.darpa.immortals.core.synthesis.adapters.InputStreamPipe;
 import mil.darpa.immortals.core.synthesis.adapters.PipeToInputStream;
-import mil.darpa.immortals.core.synthesis.interfaces.ReadableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ProducingPipe;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +14,7 @@ public class GzipDecompressor extends InputStreamPipe {
 
     private InputStream decompressionStream;
 
-    public GzipDecompressor(ReadableObjectPipeInterface<byte[]> producer) {
+    public GzipDecompressor(ProducingPipe<byte[]> producer) {
         this((InputStream) new PipeToInputStream(producer));
     }
 

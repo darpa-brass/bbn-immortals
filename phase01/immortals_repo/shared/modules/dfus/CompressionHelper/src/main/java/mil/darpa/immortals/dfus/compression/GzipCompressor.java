@@ -3,7 +3,7 @@ package mil.darpa.immortals.dfus.compression;
 
 import mil.darpa.immortals.core.synthesis.adapters.OutputStreamPipe;
 import mil.darpa.immortals.core.synthesis.adapters.PipeToOutputStream;
-import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,7 +15,7 @@ public class GzipCompressor extends OutputStreamPipe {
 
     private final OutputStream compressionStream;
 
-    public GzipCompressor(WriteableObjectPipeInterface<byte[]> consumer) {
+    public GzipCompressor(ConsumingPipe<byte[]> consumer) {
         this((OutputStream) new PipeToOutputStream(consumer));
     }
 

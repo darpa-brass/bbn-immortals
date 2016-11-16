@@ -2,7 +2,7 @@ package mil.darpa.immortals.dfus.crypto.jca;
 
 import mil.darpa.immortals.core.synthesis.adapters.InputStreamPipe;
 import mil.darpa.immortals.core.synthesis.adapters.PipeToInputStream;
-import mil.darpa.immortals.core.synthesis.interfaces.ReadableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ProducingPipe;
 
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -13,7 +13,7 @@ import java.security.GeneralSecurityException;
 public class JcaDecryptor extends InputStreamPipe {
     private InputStream cryptoStream;
 
-    public JcaDecryptor(String encryptionKey, final String cipherAlgorithm, ReadableObjectPipeInterface<byte[]> producer) {
+    public JcaDecryptor(String encryptionKey, final String cipherAlgorithm, ProducingPipe<byte[]> producer) {
         this(encryptionKey, cipherAlgorithm, (InputStream) new PipeToInputStream(producer));
     }
 

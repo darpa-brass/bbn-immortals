@@ -18,6 +18,7 @@
 		<repo.url>https://dsl-external.bbn.com/svn/immortals/trunk</repo.url>
 		<immortals.version>r2.0.0</immortals.version>
 		<immortals-lib.version>0.0.3</immortals-lib.version>
+		<immortals-ns>http://darpa.mil/immortals/ontology</immortals-ns>
 		
 		<!-- 
 		Every module in the project should override this property 
@@ -38,6 +39,9 @@
 		<commons-compress.version>1.9</commons-compress.version>
 		<commons-io.version>2.4</commons-io.version>
 		<commons-lang.version>3.4</commons-lang.version>
+		
+		<!-- javaparser -->
+		<javaparser.version>2.5.1</javaparser.version>
 		
 		<!-- jena -->
 		<jena.version>3.0.0</jena.version>
@@ -87,12 +91,14 @@
 		<module>vocabulary/ontology-package</module>
 		<module>vocabulary/dsl-generate</module>
 		<module>vocabulary/uris-generate</module>
+		<module>vocabulary/uris-generate-immortals</module>
 		<module>vocabulary/ontology-vocab-aggregated</module>
 		
 		<module>vocabulary/ontology-vocab-domains/bytecode</module>
 		<module>vocabulary/ontology-vocab-domains/core</module>
 		<module>vocabulary/ontology-vocab-domains/sa</module>
 		<module>vocabulary/ontology-vocab-domains/cp</module>
+		<module>vocabulary/ontology-vocab-domains/scratchpad</module>
 		
 		<!-- mechanisms for interacting with the knowledge repository -->
 		<module>knowledge-repo/repository-api</module>
@@ -100,6 +106,9 @@
 		
 		<!-- map objects to semantic constructs -->
 		<module>toolchain/semantic-object-mapper</module>
+		
+		<!-- tests -->
+		<module>tests/test-das-workflow</module>
 		
 		<!-- generates Java classes containing constants linked to ontology URIs for consumption by WebGME -->
 		<!--<module>vocabulary/uris-generate-webgme</module>-->

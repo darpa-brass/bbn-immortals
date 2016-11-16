@@ -1,0 +1,74 @@
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: immortals.PublishJavaDfu
+
+publishing {
+    publications {
+        FatJavaComponent(MavenPublication) {
+            artifact jar
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "SourceComposer",
+                "Implementation-Version": defaultSoftwarePublishVersion
+    }
+    baseName = project.name + '-all'
+
+    from {
+        configurations.compile.filter {!it.name.endsWith("android.jar")}.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+dependencies {
+    compile 'dom4j:dom4j:1.6.1'
+    compile 'org.apache.commons:commons-csv:1.1'
+    compile 'commons-io:commons-io:1.4'
+    compile project(':components:bundles:product-data-generator-bundle')
+    compile project(':components:bundles:product-analysis-bundle-base')
+    compile project(':components:bundles:product-analysis-bundle-android')
+//    compile project(':components:bundles:harness-interface-bundle')
+//    compile project.files(project.androidSDKJar)
+    compile project(':components:bundles:android-dummy-files')
+    compile project(':dfus:LocationProviderAndroidGpsBuiltIn')
+    compile project(':dfus:LocationProviderBluetoothGpsSimulated')
+    compile project(':dfus:LocationProviderManualSimulated')
+    compile project(':dfus:LocationProviderSaasmSimulated')
+    compile project(':dfus:LocationProviderUsbGpsSimulated')
+    compile project(':dfus:ImageUtilsAndroid')
+    compile project(':das:build-bridge')
+//    compile 'com.android.support:appcompat-v7:21.0.3'
+//    compile 'com.android.support:support-v4:21.0.3'
+}
+
+task buildRunnable(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'SourceComposer',
+                'Implementation-Version': '1.3.3.7',
+                'Main-Class': 'mil.darpa.immortals.das.sourcecomposer.Main'
+    }
+    baseName = project.name + '-executable'
+    from {
+        configurations.compile.filter {!it.name.endsWith("android.jar")}.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    with jar
+}
+
+task copyJars(type: Copy) {
+    from('build/libs') {
+        include('*.jar')
+    }
+    into('.')
+}
+
+
+configurations.compile.collect { println it }
+
+buildRunnable.finalizedBy(copyJars)
+jar.finalizedBy(copyJars)

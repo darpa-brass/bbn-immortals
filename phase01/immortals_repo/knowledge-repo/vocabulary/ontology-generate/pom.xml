@@ -189,6 +189,28 @@
 							</arguments>
 						</configuration>
 					</execution>
+					
+					<!--
+					Generate triples from java classes: scratchpad
+					-->
+					<execution>
+						<id>java-to-triples-scratchpad</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_scratchpad.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/scratchpad/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/scratchpad/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
 				</executions>
 				
 			</plugin>

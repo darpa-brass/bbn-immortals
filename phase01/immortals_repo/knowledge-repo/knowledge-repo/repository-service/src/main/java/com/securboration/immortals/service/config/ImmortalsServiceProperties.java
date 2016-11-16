@@ -15,6 +15,7 @@ import com.securboration.immortals.service.api.types.ImmortalsServiceType;
  *
  */
 public class ImmortalsServiceProperties extends ImmortalsServiceType {
+    
     public ImmortalsServiceProperties() {
         super();
     }
@@ -28,6 +29,9 @@ public class ImmortalsServiceProperties extends ImmortalsServiceType {
             "fusekiUrl";
     public static final String IMMORTALS_VERSION_PROPERTY_KEY = 
             "immortalsVersion";
+    public static final String IMMORTALS_NS_KEY = 
+            "immortalsNs";
+    
 
     // values //
     @Value("${" + FUSEKI_ENDPOINT_PROPERTY_KEY
@@ -38,9 +42,21 @@ public class ImmortalsServiceProperties extends ImmortalsServiceType {
     
     @Value("${" + IMMORTALS_VERSION_PROPERTY_KEY
             + ":" 
-            + "r1.0.0"
+            + "r2.0.0"
             + "}")
     private String immortalsVersion;
+    
+    @Value("${" + IMMORTALS_NS_KEY
+        + ":" 
+        + "http://darpa.mil/immortals/ontology"
+        + "}")
+    private String immortalsNs;
+    
+    private int localServerPort = 
+            System.getProperty("server.port") == null ? 
+                    8080 
+                    : 
+                    Integer.parseInt(System.getProperty("server.port"));
 
     
     public String getFusekiEndpointUrl() {
@@ -49,5 +65,15 @@ public class ImmortalsServiceProperties extends ImmortalsServiceType {
 
     public String getImmortalsVersion() {
         return immortalsVersion;
+    }
+
+    
+    public String getImmortalsNs() {
+        return immortalsNs;
+    }
+
+    
+    public int getLocalServerPort() {
+        return localServerPort;
     }
 }

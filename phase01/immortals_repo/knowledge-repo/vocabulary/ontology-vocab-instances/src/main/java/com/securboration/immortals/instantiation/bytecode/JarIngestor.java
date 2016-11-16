@@ -37,18 +37,22 @@ import org.w3c.dom.Document;
 
 import com.securboration.immortals.instantiation.bytecode.SourceFinder.SourceInfo;
 import com.securboration.immortals.instantiation.bytecode.printing.MethodPrinter;
+import com.securboration.immortals.o2t.etc.ArrayHelper;
 import com.securboration.immortals.o2t.etc.ExceptionWrapper;
 import com.securboration.immortals.ontology.bytecode.AClass;
 import com.securboration.immortals.ontology.bytecode.AField;
 import com.securboration.immortals.ontology.bytecode.AMethod;
 import com.securboration.immortals.ontology.bytecode.AnAnnotation;
 import com.securboration.immortals.ontology.bytecode.AnnotationKeyValuePair;
-import com.securboration.immortals.ontology.bytecode.BytecodeArtifact;
 import com.securboration.immortals.ontology.bytecode.BytecodeArtifactCoordinate;
 import com.securboration.immortals.ontology.bytecode.BytecodeVersion;
+import com.securboration.immortals.ontology.bytecode.ClassArtifact;
 import com.securboration.immortals.ontology.bytecode.ClassStructure;
+import com.securboration.immortals.ontology.bytecode.ClasspathElement;
+import com.securboration.immortals.ontology.bytecode.ClasspathResource;
 import com.securboration.immortals.ontology.bytecode.JarArtifact;
 import com.securboration.immortals.ontology.bytecode.Modifier;
+import com.securboration.immortals.ontology.bytecode.application.Classpath;
 
 /**
  * Ingests a binary bytecode artifact
@@ -63,6 +67,7 @@ public class JarIngestor {
     
     private static final boolean SKIP_ANNOTATIONS = false;//TODO
     private static final boolean INCLUDE_BYTECODE = false;//TODO
+    private static final boolean INCLUDE_BINARY = false;//TODO
     
     private static void log(String format,Object...args){
         System.out.println(String.format(format, args));//TODO
@@ -127,26 +132,31 @@ public class JarIngestor {
         return c;
     }
     
-    public static BytecodeArtifact ingest(
+    public static Classpath ingest(
             File dirContainingClasses,
             SourceFinder sourceFinder,
             AnnotationsToTriples annotationsToTriples
             ) throws IOException {
-
-        JarArtifact artifact = new JarArtifact();
-
+        
         JarIngestor ingestor = 
                 new JarIngestor(sourceFinder,annotationsToTriples);
-
-        ingestor.openNakedClasspathDir(dirContainingClasses, artifact);
         
-        return artifact;
+        Classpath classpath = new Classpath();
+        
+        ingestor.openNakedClasspathDir(
+            dirContainingClasses, 
+            classpath
+            );
+        
+        return classpath;
     }
     
     /**
      * 
      * @param jar
      *            a jar to ingest. It may contain nested jars.
+     * @param name 
+     *            the name of the jar
      * @param groupId
      *            the group portion of the coordinate
      * @param artifactId
@@ -158,8 +168,9 @@ public class JarIngestor {
      * @return a model of the bytecode structure
      * @throws IOException
      */
-    public static BytecodeArtifact ingest(
+    public static JarArtifact ingest(
             byte[] jar,
+            String name,
             String groupId,
             String artifactId,
             String version,
@@ -169,7 +180,12 @@ public class JarIngestor {
         
         JarArtifact artifact = new JarArtifact();
         
-//        artifact.setBinaryForm(jar);
+        if(INCLUDE_BINARY){
+            artifact.setBinaryForm(jar);
+        }
+        artifact.setHash(hash(jar));
+        artifact.setName(name);
+        
         artifact.setCoordinate(new BytecodeArtifactCoordinate());
         
         artifact.getCoordinate().setGroupId(groupId);
@@ -359,62 +375,88 @@ public class JarIngestor {
         }
     }
     
-    private static JarArtifact createNestedJar(JarArtifact parent){
+    private static JarArtifact createNestedJar(
+            JarArtifact parent
+            ){
+        
+        JarArtifact child = new JarArtifact();
+        
         //TODO: O(N) insertion
-        JarArtifact[] nestedJars = parent.getNestedJars();
+        parent.setJarContents(
+            (ClasspathElement[])ArrayHelper.append(
+                parent.getJarContents(), 
+                ClasspathElement.class, 
+                child
+                )
+            );
         
-        if(nestedJars == null){
-            nestedJars = new JarArtifact[1];
-            parent.setNestedJars(nestedJars);
-        }
-        
-        if(nestedJars[nestedJars.length-1] != null){
-            JarArtifact[] newNestedJars = 
-                    Arrays.copyOf(nestedJars, nestedJars.length * 2);
-            
-            nestedJars = newNestedJars;
-            parent.setNestedJars(nestedJars);
-        }
-        
-        Integer index = null;
-        for(int i=0;i<nestedJars.length;i++){
-            if(nestedJars[i]==null){
-                index = i;
-                break;
-            }
-        }
-        
-        JarArtifact returnValue = new JarArtifact();
-        nestedJars[index] = returnValue;
-        
-        return returnValue;
+        return child;
     }
     
     private void openNakedClasspathDir(
             File classpathRoot,
-            JarArtifact artifact
+            Classpath classpath
             ) throws IOException{
+        
         log("indexing classpath...\n", classpathRoot);
 
-        List<AClass> classes = new ArrayList<>();
+        final String prefix = classpathRoot.getAbsolutePath();
+
+        List<ClasspathElement> elements = new ArrayList<>();
         
-        for(File f:FileUtils.listFiles(classpathRoot, new String[]{"class"}, true)){
-            byte[] bytecode = FileUtils.readFileToByteArray(f);
+        for(File f:FileUtils.listFiles(classpathRoot, new String[]{}, true)){
             
-            AClass aClass = 
-                    processClass(
-                            hash(bytecode),
-                            getClassNode(bytecode));
+            byte[] binary = FileUtils.readFileToByteArray(f);
             
-            classes.add(aClass);
+            final ClasspathElement e;
             
-            setVersionInfo(
-                    bytecode,
+            if(f.getName().endsWith(".class")){
+                //it's a class
+                
+                AClass aClass = 
+                        processClass(
+                                hash(binary),
+                                getClassNode(binary));
+                
+                setVersionInfo(
+                    binary,
                     aClass
                     );//TODO
+                
+                ClassArtifact c = new ClassArtifact();
+                c.setClassModel(aClass);
+                
+                e = c;
+            } else if(f.getName().endsWith(".jar")){
+                //it's a jar
+                
+                JarArtifact j = new JarArtifact();
+                
+                openJar(new ByteArrayInputStream(binary),j);
+                
+                e = j;
+            } else {
+                //it's a resource
+                
+                e = new ClasspathResource();
+            }
+            
+            if(INCLUDE_BINARY){
+                e.setBinaryForm(binary);
+            }
+            
+            String name = f.getAbsolutePath().substring(prefix.length());
+            if(name.startsWith("/") || name.startsWith("\\")){
+                name = name.substring(1);
+            }
+            
+            e.setHash(hash(binary));
+            e.setName(name);
+            e.setName(f.getPath());
+            elements.add(e);
         }
         
-        artifact.setClasses(classes.toArray(new AClass[]{}));
+        classpath.setElement(elements.toArray(new ClasspathElement[]{}));
     }
 
     private void openJar(
@@ -423,12 +465,12 @@ public class JarIngestor {
             ) throws IOException{
         log("indexing jar...\n", jarWithDependenciesPath);
 
-        List<AClass> classes = new ArrayList<>();
+        List<ClasspathElement> resources = new ArrayList<>();
         
         try(JarArchiveInputStream inJar = new JarArchiveInputStream(jarWithDependenciesPath);)
         {
             final int MAX_SIZE = 
-                    1024*1024//1MB
+                    1024*1024//1MiB
                     *64;
             
             byte[] buffer = new byte[MAX_SIZE];
@@ -442,10 +484,16 @@ public class JarIngestor {
                     stop = true;
                 } else {
                     if (jarEntry.getSize() > MAX_SIZE) {
-                        throw new RuntimeException("jar entry too large, > " + MAX_SIZE);
-                    } else if (jarEntry.getSize() == 0) {
+                        throw new RuntimeException(
+                            "jar entry too large, > " + MAX_SIZE);
+                    } else if (jarEntry.isDirectory()) {
+                        // do nothing, the entry is not a file
+                    } else if (jarEntry.isUnixSymlink()) {
                         // do nothing, the entry is not a file
                     } else {
+                        
+                        final ClasspathElement element;
+                        
                         final int length = IOUtils.read(inJar, buffer);
                         byte[] jarContent = new byte[length];
     
@@ -454,33 +502,48 @@ public class JarIngestor {
                         if(jarEntry.getName().endsWith(".jar")) {
                             log("found a nested jar: " + jarEntry.getName());
                             
-                            //it's a nested jar, recurse
-                            openJar(
-                                    new ByteArrayInputStream(jarContent),
-                                    createNestedJar(artifact)
-                                    );
-                        } else if (jarEntry.getName().endsWith(".class")) {
-//                            log("found a class: " + jarEntry.getName());
+                            JarArtifact j = createNestedJar(artifact);
                             
-                            //it's a class, process it
+                            //it's a nested jar, recurse
+                            openJar(new ByteArrayInputStream(jarContent),j);
+                            
+                            element = j;
+                        } else if (jarEntry.getName().endsWith(".class")) {
+                            //it's a class
+                            
                             AClass aClass = 
                                     processClass(
                                             hash(jarContent),
                                             getClassNode(jarContent));
                             
-                            classes.add(aClass);
-                            
                             setVersionInfo(
-                                    jarContent,
-                                    aClass
-                                    );//TODO
+                                jarContent,
+                                aClass
+                                );//TODO
+                            
+                            ClassArtifact c = new ClassArtifact();
+                            c.setClassModel(aClass);
+
+                            element = c;
+                        } else {
+                            //it's a resource
+                            
+                            element = new ClasspathResource();
                         }
+                        
+                        element.setName(jarEntry.getName());
+                        element.setHash(hash(jarContent));
+                        if(INCLUDE_BINARY){
+                            element.setBinaryForm(jarContent);
+                        }
+                        
+                        resources.add(element);
                     }
                 }
             }
         }
         
-        artifact.setClasses(classes.toArray(new AClass[]{}));
+        artifact.setJarContents(resources.toArray(new ClasspathElement[]{}));
     }
     
     private static void setVersionInfo(

@@ -1,28 +1,22 @@
 #!/usr/bin/env python
 
-import sys
-
-sys.path.append('../das/infrastructure/src')
-
-
-from infrastructure.immortals.configurationmanager import Configuration as config
-from infrastructure.immortals.configurationmanager import DAS_ROOT
-
-
-
-import argparse
 import os
 import subprocess
 import signal
 import sys
 import time
 
+sys.path.append('./scenarioconductor')
+
+from scenarioconductor.configurationmanager import Configuration as config
+from scenarioconductor.configurationmanager import DAS_ROOT
 
 RUNDIR = config.runtime_rootpath
 
 fuseki_process = None
 repository_service_process = None
 das_process = None
+
 
 def exit_handler(signal, frame):
     print "Exit request detected. shutting down processes..."
@@ -53,7 +47,8 @@ def start_fuseki():
     stderr = os.path.join(RUNDIR, 'fuseki_stderr.txt')
 
     with open(stdout, 'w') as f_stdout, open(stderr, 'w') as f_stderr:
-        fuseki_process = subprocess.Popen(['bash', server_script, '--update', '--mem', '--port=' + port,'/ds'], env=env, stdout=f_stdout, stderr=f_stderr, stdin=None)
+        fuseki_process = subprocess.Popen(['bash', server_script, '--update', '--mem', '--port=' + port, '/ds'],
+                                          env=env, stdout=f_stdout, stderr=f_stderr, stdin=None)
 
     print 'Fuseki is starting.... \nFor stdout, please see "' + stdout + '". \n For stderr, please see "' + stderr + '".\n\n'
 
@@ -61,7 +56,6 @@ def start_fuseki():
 
 
 def start_repository_service():
-
     war = config.repository_service.executable_filepath
     path = config.repository_service.rootpath
 
@@ -70,7 +64,8 @@ def start_repository_service():
     stderr = os.path.join(RUNDIR, 'repository_service_stderr.txt')
 
     with open(stdout, 'w') as r_stdout, open(stderr, 'w') as r_stderr:
-        repository_service_process = subprocess.Popen(['java', '-Dserver.port=' + port, '-jar', war], cwd=path, stdout=r_stdout, stderr=r_stderr, stdin=None)
+        repository_service_process = subprocess.Popen(['java', '-Dserver.port=' + port, '-jar', war], cwd=path,
+                                                      stdout=r_stdout, stderr=r_stderr, stdin=None)
 
     print 'immortals-repository-service is starting.... \nFor stdout, please see "' + stdout + '". \n For stderr, please see "' + stderr + '".\n\n'
 

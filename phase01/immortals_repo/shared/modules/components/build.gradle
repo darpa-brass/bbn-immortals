@@ -1,0 +1,14 @@
+subprojects {
+    apply plugin: 'maven'
+
+    repositories {
+        mavenCentral()
+        maven {
+            url "$System.env.ANDROID_HOME/extras/android/m2repository"
+        }
+        maven {
+            url 'https://repo.gradle.org/gradle/libs-releases'
+        }
+    }
+}
+

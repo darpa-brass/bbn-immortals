@@ -57,6 +57,11 @@
 			<version>${commons-io.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.github.javaparser</groupId>
+			<artifactId>javaparser-core</artifactId>
+			<version>${javaparser.version}</version>
+		</dependency>
 	</dependencies>
 
 	<properties>

@@ -1,0 +1,26 @@
+{
+    "application": "ATAKLite",
+    "instanceIdentifier": "ATAKLite-{sessionIdentifier}_{CCID}-{CID}",
+    "deploymentPlatformEnvironment": "android_emulator",
+    "buildRoot": "PRODUCTS/{sessionIdentifier}/applications/client/ATAKLite-{sessionIdentifier}/",
+    "executableFile": "PRODUCTS/{sessionIdentifier}/applications/client/ATAKLite-{sessionIdentifier}/ATAKLite-{sessionIdentifier}-debug.apk",
+    "applicationDeploymentDirectory" : "{deploymentDirectory}{instanceIdentifier}/",
+    "configurationTemplateFilepath" : "harness/scenarioconductor/configs/templates/validation/ATAKLite-Config.json",
+    "configurationTargetFilepath" : "/sdcard/ataklite/ATAKLite-Config.json",
+    "packageIdentifier": "com.bbn.ataklite",
+    "mainActivity": "com.bbn.ataklite.MainActivity",
+    "permissions": [
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE"
+    ],
+    "files": {
+        "harness/scenarioconductor/configs/templates/validation/sample_image.jpg": "/sdcard/ataklite/sample_image.jpg",
+        "harness/scenarioconductor/configs/location/LocationProviderBluetoothGpsSimulated.json": "/sdcard/ataklite/LocationProviderBluetoothGpsSimulated.json",
+        "harness/scenarioconductor/configs/location/LocationProviderManualSimulated.json": "/sdcard/ataklite/LocationProviderManualSimulated.json",
+        "harness/scenarioconductor/configs/location/LocationProviderSaasmSimulated.json": "/sdcard/ataklite/LocationProviderSaasmSimulated.json",
+        "harness/scenarioconductor/configs/location/LocationProviderUsbGpsSimulated.json": "/sdcard/ataklite/LocationProviderUsbGpsSimulated.json"
+    },
+    "properties": {}
+}

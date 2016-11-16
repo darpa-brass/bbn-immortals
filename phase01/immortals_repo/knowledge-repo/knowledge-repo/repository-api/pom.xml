@@ -35,6 +35,20 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-semantic-object-mapper</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-uris-generate-immortals</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>apache-jena-libs</artifactId>
 			<version>${jena.version}</version>
@@ -47,6 +61,13 @@
 			<artifactId>jena-core</artifactId>
 			<version>${jena.version}</version>
 			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
 		</dependency>
 		
 	</dependencies>

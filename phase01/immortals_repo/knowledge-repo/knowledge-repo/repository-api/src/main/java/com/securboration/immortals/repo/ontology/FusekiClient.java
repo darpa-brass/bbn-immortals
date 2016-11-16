@@ -15,6 +15,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.jena.sparql.modify.UpdateProcessRemote;
 import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateRequest;
 
 /**
  * Simple Fuseki client for connecting to a dataset (a collection of graphs)
@@ -68,9 +69,16 @@ public class FusekiClient {
      * Executes an UPDATE SPARQL command
      * @param sparql an UPDATE query to execute
      */
-    public void executeUpdate(final String sparql) {
+    public void executeUpdate(final String...sparql) {
+        
+        UpdateRequest request = UpdateFactory.create();
+        
+        for(String s:sparql){
+            request.add(s);
+        }
+        
         new UpdateProcessRemote(
-                UpdateFactory.create().add(sparql), 
+                request, 
                 fusekiServiceUpdateUrl, 
                 null
                 ).execute();
@@ -147,6 +155,17 @@ public class FusekiClient {
     
     /**
      * 
+     * @param fromGraph the URI of a graph to copy from
+     * @param toGraph the URI of the graph to copy to.  Any existing graph with
+     * this URI will be overwritten.
+     */
+    public void copy(String fromGraph, String toGraph){
+        executeUpdate("COPY <"+fromGraph+"> TO <"+toGraph+">");
+        
+    }
+    
+    /**
+     * 
      * @param graphName
      *            the name of the graph or null if the default graph
      * @return the graph stored in the fuseki triple store with the indicated
@@ -166,8 +185,18 @@ public class FusekiClient {
      * Sets the current fuseki model
      * @param m the model to set
      */
-    public void setModel(Model m,String graphName) {
+    public String setModel(Model m,String graphName) {
         getAccessor().putModel(graphName,m);
+        
+        return graphName;
+    }
+    
+    /**
+     * Sets the current fuseki model
+     * @param m the model to add to an existing named model
+     */
+    public void addToModel(Model m,String graphName) {
+        getAccessor().add(graphName,m);
     }
 
     /**

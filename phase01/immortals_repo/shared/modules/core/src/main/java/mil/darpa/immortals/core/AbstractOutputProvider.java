@@ -6,6 +6,7 @@ import java.util.LinkedList;
 /**
  * Created by awellman@bbn.com on 12/21/15.
  */
+@Deprecated
 public class AbstractOutputProvider<OUTPUT> implements OutputProviderInterface<OUTPUT> {
 
     private LinkedList<InputProviderInterface<OUTPUT>> handlers = new LinkedList<>();

@@ -56,12 +56,14 @@ public class FunctionalitySpec extends SoftwareSpec {
         this.functionalityPerformed = functionalityPerformed;
         this.propertyConstraint = propertyConstraint;
         
-        int counter = 0;
-        for(PropertyConstraint p:propertyConstraint){
-            ExplicitNumericOrderingMechanism n = 
-                    new ExplicitNumericOrderingMechanism();
-            n.setPrecedence(counter++);
-            p.setPrecedenceOfConstraint(n);
+        if(propertyConstraint.length > 1){
+            int counter = 0;
+            for(PropertyConstraint p:propertyConstraint){
+                ExplicitNumericOrderingMechanism n = 
+                        new ExplicitNumericOrderingMechanism();
+                n.setPrecedence(counter++);
+                p.setPrecedenceOfConstraint(n);
+            }
         }
     }
     

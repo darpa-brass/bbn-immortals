@@ -101,7 +101,13 @@ public class AnnotationGenerator {
                 continue;
             }
             
-            fields.addAll(Arrays.asList(c.getDeclaredFields()));
+            for(Field f:c.getDeclaredFields()){
+                if(f.isSynthetic()){
+                    continue;
+                }
+                fields.add(f);
+            }
+            
             c = c.getSuperclass();
         }
         
@@ -134,7 +140,7 @@ public class AnnotationGenerator {
             Class<?> c
             ){
         if(isPrimitive(c)){
-            return c.getTypeName();
+            return c.getCanonicalName();
         }
         
         if(c.isArray()){
@@ -147,11 +153,15 @@ public class AnnotationGenerator {
         }
         
         if(c.isArray() && isPrimitive(c.getComponentType())){
-            return c.getTypeName();
+            return c.getCanonicalName();
         }
         
         final String elementName = 
-                c.isArray() ? c.getComponentType().getName() : c.getName();
+                c.isArray() ? c.getComponentType().getCanonicalName() : c.getCanonicalName();
+                
+        if(elementName.contains("$")){
+            throw new RuntimeException(elementName);//TODO
+        }
         
         StringBuilder commonPrefix = new StringBuilder();
         String[] parts1 = packagePrefix.split("\\.");
@@ -172,7 +182,7 @@ public class AnnotationGenerator {
             commonPrefix.deleteCharAt(commonPrefix.length()-1);
         }
         
-        return packagePrefix + c.getTypeName().replace(commonPrefix.toString(), "").replace("com.securboration.immortals", "");
+        return packagePrefix + c.getCanonicalName().replace(commonPrefix.toString(), "").replace("com.securboration.immortals", "");
     }
     
     private void generateSemanticLinks(
@@ -323,6 +333,8 @@ public class AnnotationGenerator {
         sb.append(c.getSimpleName());
         sb.append("{\n");
         
+        Map<String,Class<?>> fieldsToTypes = new HashMap<>();
+        
         fieldIterator(c).forEachRemaining((f)->{
             
             Class<?> elementType = f.getType();
@@ -336,7 +348,10 @@ public class AnnotationGenerator {
             }
             
             if(elementType.equals(Class.class)){
-                sb.append("  public " + f.getGenericType().getTypeName() + " " + f.getName() + "()");
+                String genericName = f.getGenericType().getTypeName();
+                genericName = genericName.replace("$", ".");
+                
+                sb.append("  public " + genericName + " " + f.getName() + "()");
             } else {
                 
 //                if(isPrimitive(elementType)){
@@ -386,7 +401,7 @@ public class AnnotationGenerator {
     }
     
     private void appendClass(StringBuilder sb,Class<?> c){
-        sb.append("  public static final Class<?> BACKING_POJO = " + c.getName() + ".class;\n");
+        sb.append("  public static final Class<?> BACKING_POJO = " + c.getCanonicalName() + ".class;\n");
     }
     
     private String generateAnnotationClassInternal(
@@ -485,6 +500,9 @@ public class AnnotationGenerator {
                 return;
             }
             
+            System.out.println(
+                "discovered an @GenerateAnnotation class: " + c.getName());
+            
             collectFieldTypes(c);
         }
         
@@ -498,15 +516,24 @@ public class AnnotationGenerator {
         }
         
         private void collectFieldTypes(Class<?> c){
-            
+            collectFieldTypes(c,new HashSet<>());
+        }
+        
+//        private void TODO(){}
+        
+        private void collectFieldTypes(
+                Class<?> c,
+                Set<Class<?>> visitedAlready
+                ){
             if(c.isArray()){
                 c = c.getComponentType();
             }
             
-//            if(relevantClasses.contains(c)){
-//                //we've already seen this type, do nothing
-//                return;
-//            }
+            if(visitedAlready.contains(c)){
+                //we've already seen this type, do nothing
+                return;
+            }
+            visitedAlready.add(c);//TODO
             
             if(isPrimitive(c)){
                 //it's a primitive type, do nothing
@@ -522,7 +549,7 @@ public class AnnotationGenerator {
             
             //dive recursively into all field types
             fieldIterator(c).forEachRemaining(f->{
-                collectFieldTypes(f.getType());
+                collectFieldTypes(f.getType(),visitedAlready);
             });
         }
 
@@ -531,15 +558,36 @@ public class AnnotationGenerator {
             final Map<Class<?>,Set<Class<?>>> classTree = 
                     getChildrenToParents(knownClasses);
             
+            Set<Class<?>> alreadyAdded = new HashSet<>();
+            
             boolean stop = false;
             while(!stop){
-                final int startingSize = relevantClasses.size();
+                Set<Class<?>> beforeClasses = new HashSet<>(relevantClasses);
                 
                 //process existing knowledge
                 //TODO: memoize previously processed knowledge to prevent waste
                 for(Class<?> c:new ArrayList<>(relevantClasses)){
+                    
+                    //don't re-visit a class we already know is relevant
+                    {
+                        if(alreadyAdded.contains(c)){
+                            continue;
+                        }
+                        alreadyAdded.add(c);
+                    }
+                    
                     collectFieldTypes(c);
                     collectParents(c);
+                }
+                
+                //print classes added via field/parent collection
+                {
+                    Set<Class<?>> afterClasses = new HashSet<>(relevantClasses);
+                    afterClasses.removeAll(beforeClasses);
+                    
+                    for(Class<?> c:afterClasses){
+                        System.out.printf("[field/parent collection]>\tadded class %s\n", c.getName());
+                    }
                 }
                 
                 //grow
@@ -551,8 +599,27 @@ public class AnnotationGenerator {
                     }
                 }
                 
+                //print classes added via class tree growth
+                {
+                    Set<Class<?>> afterClasses = new HashSet<>(relevantClasses);
+                    afterClasses.removeAll(beforeClasses);
+                    
+                    for(Class<?> c:afterClasses){
+                        System.out.printf("[class tree growth]>\tadded class %s\n", c.getName());
+                    }
+                }
+                 
+                //print iteration statistics
+                {
+                    System.out.printf(
+                        "before this iteration: %d, after: %d\n", 
+                        beforeClasses.size(),
+                        relevantClasses.size()
+                        );
+                }
+                
                 //loop until no new classes found
-                if(relevantClasses.size() == startingSize){
+                if(relevantClasses.size() == beforeClasses.size()){
                     stop = true;
                 }
             }

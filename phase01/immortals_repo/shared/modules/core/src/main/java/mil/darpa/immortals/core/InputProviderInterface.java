@@ -7,6 +7,7 @@ package mil.darpa.immortals.core;
  *                <p>
  *                Created by awellman@bbn.com on 12/14/15.
  */
+@Deprecated
 public interface InputProviderInterface<INPUT> {
 
     /**

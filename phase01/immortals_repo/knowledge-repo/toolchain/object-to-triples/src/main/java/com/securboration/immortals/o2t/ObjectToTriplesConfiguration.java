@@ -39,6 +39,21 @@ public class ObjectToTriplesConfiguration {
     private boolean autoGenerateAdditionalPrefixes = true;
     
     private boolean flattenArrays = true;
+    
+    private boolean addDomainRangeToProperties = false;
+    
+    private boolean addDisjointAssertions = false;
+    
+    private boolean addKeys = false;
+    
+    private boolean addPojoProvenance = false;
+    
+    private boolean includeTypeWithProperties = false;
+    
+    private boolean addFieldRestrictions = true;
+    
+    private boolean validateOntology = 
+            System.getProperty("validateOntology") != null;
 
     private String version = "r1.0.0.SNAPSHOT";
     
@@ -46,7 +61,7 @@ public class ObjectToTriplesConfiguration {
     
     private ObjectMapper mapper = new ObjectMapper();
     
-    private boolean addMetadata = true;
+    private boolean addMetadata = false;
 
     public Logger getLog() {
         return log;
@@ -170,6 +185,76 @@ public class ObjectToTriplesConfiguration {
     
     public void setAddMetadata(boolean addMetadata) {
         this.addMetadata = addMetadata;
+    }
+
+    
+    public boolean isAddDomainRangeToProperties() {
+        return addDomainRangeToProperties;
+    }
+
+    
+    public void setAddDomainRangeToProperties(boolean addDomainRangeToProperties) {
+        this.addDomainRangeToProperties = addDomainRangeToProperties;
+    }
+
+    
+    public boolean isAddDisjointAssertions() {
+        return addDisjointAssertions;
+    }
+
+    
+    public void setAddDisjointAssertions(boolean addDisjointAssertions) {
+        this.addDisjointAssertions = addDisjointAssertions;
+    }
+
+    
+    public boolean isValidateOntology() {
+        return validateOntology;
+    }
+
+    
+    public void setValidateOntology(boolean validateOntology) {
+        this.validateOntology = validateOntology;
+    }
+
+    
+    public boolean isAddKeys() {
+        return addKeys;
+    }
+
+    
+    public void setAddKeys(boolean addKeys) {
+        this.addKeys = addKeys;
+    }
+
+    
+    public boolean isAddPojoProvenance() {
+        return addPojoProvenance;
+    }
+
+    
+    public void setAddPojoProvenance(boolean addPojoProvenance) {
+        this.addPojoProvenance = addPojoProvenance;
+    }
+
+    
+    public boolean isIncludeTypeWithProperties() {
+        return includeTypeWithProperties;
+    }
+
+    
+    public void setIncludeTypeWithProperties(boolean includeTypeWithProperties) {
+        this.includeTypeWithProperties = includeTypeWithProperties;
+    }
+
+    
+    public boolean isAddFieldRestrictions() {
+        return addFieldRestrictions;
+    }
+
+    
+    public void setAddFieldRestrictions(boolean addFieldRestrictions) {
+        this.addFieldRestrictions = addFieldRestrictions;
     }
 
 }

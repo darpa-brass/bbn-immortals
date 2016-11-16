@@ -57,6 +57,13 @@
 			<scope>compile</scope>
 		</dependency>
 		
+		<dependency><!-- scratchpad -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-scratchpad</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
 	</dependencies>
 
 	<properties>
@@ -94,6 +101,7 @@
 								<source>${project.basedir}/../ontology-vocab-domains/bytecode/src/main/java</source>
 								<source>${project.basedir}/../ontology-vocab-domains/sa/src/main/java</source>
 								<source>${project.basedir}/../ontology-vocab-domains/cp/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/scratchpad/src/main/java</source>
 							</sources>
 						</configuration>
 					</execution>

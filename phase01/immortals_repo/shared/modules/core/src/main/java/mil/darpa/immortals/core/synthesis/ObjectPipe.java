@@ -1,25 +1,30 @@
 package mil.darpa.immortals.core.synthesis;
 
-import mil.darpa.immortals.core.synthesis.interfaces.ReadableObjectPipeInterface;
-import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ProducingPipe;
+import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
 
 /**
  * Allows simple function-based implementation of a single part of a pipeline
  * Created by awellman@bbn.com on 6/21/16.
  */
-public abstract class ObjectPipe<InputType, OutputType> implements WriteableObjectPipeInterface<InputType>, ReadableObjectPipeInterface<OutputType> {
-    private final WriteableObjectPipeInterface<OutputType> next;
-    private final ReadableObjectPipeInterface<InputType> previous;
+public abstract class ObjectPipe<InputType, OutputType> implements ConsumingPipe<InputType>, ProducingPipe<OutputType> {
+    private final ConsumingPipe<OutputType> next;
+    private final ProducingPipe<InputType> previous;
 
-    public ObjectPipe(WriteableObjectPipeInterface<OutputType> next) {
+    public ObjectPipe(ConsumingPipe<OutputType> next) {
         this.next = next;
         this.previous = null;
         StringBuilder sb;
     }
 
-    public ObjectPipe(ReadableObjectPipeInterface<InputType> previous) {
+    public ObjectPipe(ProducingPipe<InputType> previous) {
         this.next = null;
         this.previous = previous;
+    }
+
+    public ObjectPipe() {
+        this.next = null;
+        this.previous = null;
     }
 
     @Override
@@ -31,7 +36,9 @@ public abstract class ObjectPipe<InputType, OutputType> implements WriteableObje
 
     public final synchronized void consume(InputType input) {
         OutputType output = process(input);
-        next.consume(output);
+        if (next != null) {
+            next.consume(output);
+        }
     }
 
     @Override
@@ -40,10 +47,12 @@ public abstract class ObjectPipe<InputType, OutputType> implements WriteableObje
         try {
             output = flushToOutput();
         } finally {
-            if (output != null && next != null) {
-                next.consume(output);
+            if (next != null) {
+                if (output != null) {
+                    next.consume(output);
+                }
+                next.flushPipe();
             }
-            next.flushPipe();
         }
     }
 

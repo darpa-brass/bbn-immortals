@@ -17,13 +17,32 @@ public class ImageUtilsAndroid {
         if ((height * width) > targetPixels) {
             double aspectRatio = height / width;
 
-//            int newHeight = (int) Math.floor((height / width) * targetPixels);
-//            int newWidth = (int) Math.floor((width / height) * targetPixels);
-
             int newHeight = (int) Math.floor(Math.sqrt(targetPixels * aspectRatio));
             int newWidth = (int) Math.floor(newHeight / aspectRatio);
             return Bitmap.createScaledBitmap(bmp, newWidth, newHeight, true);
         }
         return bmp;
+    }
+
+    public static Bitmap scaleBitmap(Bitmap bmp, double scalingValue) {
+        double height = bmp.getHeight();
+        double width = bmp.getWidth();
+        double totalPixels = height * width;
+        double totalPixelsPrime = height * width * scalingValue;
+        if (totalPixels > totalPixelsPrime) {
+            double ratio = height / width;
+            double widthPrime = Math.sqrt(totalPixelsPrime / ratio);
+            double heightPrime = totalPixelsPrime / widthPrime;
+            return Bitmap.createScaledBitmap(bmp, (int) Math.floor(widthPrime), (int) Math.floor(heightPrime), true);
+        }
+        return bmp;
+    }
+
+    //    public static Bitmap scaleBitmap(Bitmap bmp, double scalingValue) {
+//        int height = (int) Math.floor(((double) bmp.getHeight()) / scalingValue);
+//        int width = (int) Math.floor(((double) bmp.getWidth()) / scalingValue);
+//        return Bitmap.createScaledBitmap(bmp, width, height, true);
+//    }
+    public static void main(String[] args) {
     }
 }

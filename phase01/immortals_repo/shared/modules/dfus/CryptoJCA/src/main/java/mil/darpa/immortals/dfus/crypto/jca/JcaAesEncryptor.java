@@ -3,7 +3,7 @@ package mil.darpa.immortals.dfus.crypto.jca;
 import mil.darpa.immortals.annotation.dsl.ontology.functionality.Output;
 import mil.darpa.immortals.annotation.dsl.ontology.functionality.alg.encryption.EncryptionKey;
 import mil.darpa.immortals.core.synthesis.adapters.OutputStreamPipe;
-import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
 
 import java.io.OutputStream;
 
@@ -12,7 +12,7 @@ import java.io.OutputStream;
  */
 public class JcaAesEncryptor extends JcaEncryptor {
 
-    public JcaAesEncryptor(@EncryptionKey String encryptionKey, @Output WriteableObjectPipeInterface<byte[]> consumer) {
+    public JcaAesEncryptor(@EncryptionKey String encryptionKey, @Output ConsumingPipe<byte[]> consumer) {
         super(encryptionKey, JcaAes.cipherAlgorithm, consumer);
     }
 

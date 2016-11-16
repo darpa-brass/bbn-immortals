@@ -3,7 +3,7 @@ package mil.darpa.immortals.dfus.crypto.jca;
 import mil.darpa.immortals.annotation.dsl.ontology.functionality.Input;
 import mil.darpa.immortals.annotation.dsl.ontology.functionality.alg.encryption.EncryptionKey;
 import mil.darpa.immortals.core.synthesis.adapters.InputStreamPipe;
-import mil.darpa.immortals.core.synthesis.interfaces.ReadableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ProducingPipe;
 
 import java.io.InputStream;
 
@@ -12,7 +12,7 @@ import java.io.InputStream;
  */
 public class JcaBlowfishDecryptor extends JcaDecryptor {
 
-    public JcaBlowfishDecryptor(@EncryptionKey String encryptionKey, @Input ReadableObjectPipeInterface<byte[]> producer) {
+    public JcaBlowfishDecryptor(@EncryptionKey String encryptionKey, @Input ProducingPipe<byte[]> producer) {
         super(encryptionKey, JcaAes.cipherAlgorithm, producer);
     }
 

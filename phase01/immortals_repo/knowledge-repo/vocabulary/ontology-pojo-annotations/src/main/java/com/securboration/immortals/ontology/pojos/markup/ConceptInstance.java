@@ -24,4 +24,7 @@ public @interface ConceptInstance {
      * same type
      */
     public long id() default 0l;
+    
+    
+    public String name() default "";
 }

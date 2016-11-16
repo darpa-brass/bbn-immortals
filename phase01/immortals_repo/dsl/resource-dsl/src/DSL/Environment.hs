@@ -1,135 +1,103 @@
-{-# LANGUAGE
-      DeriveGeneric,
-      FlexibleContexts
-  #-}
-
 module DSL.Environment where
 
+import Data.Data (Data,Typeable)
 import GHC.Generics (Generic)
 
-import Control.Monad.Except (MonadError,throwError)
+import Data.Composition ((.:))
+import Control.Monad.Catch (Exception,MonadThrow,throwM)
 
-import Data.Map (Map)
-import qualified Data.Map as Map
-
-import Data.Set (Set)
-import qualified Data.Set as Set
-
-import Data.SBV
-
-
---
--- * Names
---
-
--- | Names.
-type Name = String
-
--- | Variables.
-type Var = Name
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
 
 
 --
 -- * Generic Environments
 --
 
--- | Environments map names to values.
-type Env a = Map Name a
+-- ** Type
+
+-- | An environment is a map from keys to values.
+newtype Env k v = Env { envAsMap :: Map k v }
+  deriving (Data,Eq,Generic,Read,Show,Typeable)
+
+-- | Apply a function to the map that implements this environment.
+envOnMap :: (Map a b -> Map c d) -> Env a b -> Env c d
+envOnMap f (Env m) = Env (f m)
+
+
+-- ** Errors
+
+-- | Error thrown when a name is not found in the environment.
+newtype NotFound k = NotFound k
+  deriving (Data,Eq,Generic,Read,Show,Typeable)
+
+instance (Show k, Typeable k) => Exception (NotFound k)
+
+-- | Assume an operation succeeds, failing dynamically otherwise.
+assumeSuccess :: Show e => Either e v -> v
+assumeSuccess (Right a)  = a
+assumeSuccess (Left err) = error msg
+  where msg = "assumeSuccess: bad assumption: " ++ show err
+
+
+-- ** Construction
 
 -- | Empty enivornment.
-envEmpty :: Env a
-envEmpty = Map.empty
+envEmpty :: Env k v
+envEmpty = Env Map.empty
 
--- | Smart constructor for environments.
-env :: [(Name,a)] -> Env a
-env = Map.fromList
+-- | Singleton environment.
+envSingle :: k -> v -> Env k v
+envSingle = Env .: Map.singleton
 
--- | Construct an environment with fresh symbolic values for each variable.
-symEnv :: (Name -> Symbolic b) -> Set Name -> Symbolic (Env b)
-symEnv f s = fmap (Map.fromList . zip vs) (mapM f vs)
-  where vs = Set.toList s
+-- | Construct an environment from an association list.
+envFromList :: Ord k => [(k,v)] -> Env k v
+envFromList = Env . Map.fromList
+
+-- | Construct an environment from an association list, merging duplicates.
+envFromListAcc :: (Ord k, MergeDup m) => [(k,m)] -> Env k m
+envFromListAcc []        = envEmpty
+envFromListAcc ((k,m):l) = envUnionWith mergeDup (envSingle k m) (envFromListAcc l)
+
+-- | Type class for merging duplicate values when constructing an environment
+--   from an association list.
+class MergeDup v where
+  mergeDup :: v -> v -> v
+
+instance MergeDup [a] where
+  mergeDup = (++)
 
 
 -- ** Operations
 
 -- | Check whether an environment contains a particular name.
-envHas :: Name -> Env a -> Bool
-envHas = Map.member
+envHas :: Ord k => k -> Env k v -> Bool
+envHas k = Map.member k . envAsMap
 
 -- | Extend an environment with a new name binding.
-envExtend :: Name -> a -> Env a -> Env a
-envExtend = Map.insert
+envExtend :: Ord k => k -> v -> Env k v -> Env k v
+envExtend = envOnMap .: Map.insert
+
+-- | Delete a binding in an environment.
+envDelete :: Ord k => k -> Env k v -> Env k v
+envDelete = envOnMap . Map.delete
+
+-- | Left-biased union of two environments.
+envUnion :: Ord k => Env k v -> Env k v -> Env k v
+envUnion (Env l) (Env r) = Env (Map.union l r)
+
+-- | Left-biased union of two environments.
+envUnionWith :: Ord k => (v -> v -> v) -> Env k v -> Env k v -> Env k v
+envUnionWith f (Env l) (Env r) = Env (Map.unionWith f l r)
 
 -- | Lookup a binding in an environment.
-envLookup :: MonadError String m => Name -> Env a -> m a
-envLookup x m = maybe notFound return (Map.lookup x m)
-  where notFound = throwError ("envLookup: name is not in environment: " ++ x)
+envLookup :: (Ord k, Show k, Typeable k, MonadThrow m) => k -> Env k v -> m v
+envLookup k = maybe notFound return . Map.lookup k . envAsMap
+  where notFound = throwM (NotFound k)
 
--- | Assume a binding is found, failing dynamically otherwise.
-assumeFound :: Either String a -> a
-assumeFound (Right a)  = a
-assumeFound (Left msg) = error msg
+-- | Apply a result-less monadic action to all key-value pairs.
+envMapM_ :: Monad m => (k -> v -> m ()) -> Env k v -> m ()
+envMapM_ f = mapM_ (uncurry f) . Map.toAscList . envAsMap
 
-
---
--- * Hierarchical Environments
---
-
--- | Path through a hierarchical environment.
-type Path = [Name]
-
--- | A hierarchical environment.
-newtype HEnv a = HEnv (Env (Either (HEnv a) a))
-  deriving (Eq,Generic,Show)
-
--- | Empty hierarchical enivornment.
-henvEmpty :: HEnv a
-henvEmpty = HEnv envEmpty
-
-
--- ** Operations
-
--- | Lookup an entry in a hierarchical environment using a path.
-henvLookup :: MonadError String m => Path -> HEnv a -> m (Either (HEnv a) a)
-henvLookup []    h        = return (Left h)
-henvLookup [x]   (HEnv m) = envLookup x m
-henvLookup (x:p) (HEnv m) = do
-  r <- envLookup x m
-  case r of
-    Right _ -> throwError ("henvLookup: unexpected base value: " ++ x)
-    Left h  -> henvLookup p h
-
--- | Alter an entry in a hierarchical environment. Similar to Map.alter.
-henvAlter :: MonadError String m
-          => Path -> (Maybe (Either (HEnv a) a) -> m (Maybe (Either (HEnv a) a)))
-          -> HEnv a -> m (HEnv a)
-henvAlter []    _ _        = throwError "henvAlter: empty path"
-henvAlter [x]   f (HEnv m) = do
-  out <- f (Map.lookup x m)
-  case out of
-    Nothing  -> return $ HEnv (Map.delete x m)
-    Just new -> return $ HEnv (Map.insert x new m)
-henvAlter (x:p) f (HEnv m) = do
-  r <- envLookup x m
-  case r of
-    Right _ -> throwError ("henvLookup: unexpected base value: " ++ x)
-    Left  h -> do h' <- henvAlter p f h
-                  return $ HEnv (Map.insert x (Left h') m)
-
--- | Extend a hierarchical environment with a new binding.
-henvExtend :: MonadError String m => Path -> a -> HEnv a -> m (HEnv a)
-henvExtend p a = henvAlter p ext
-  where
-    ext Nothing  = return $ Just (Right a)
-    ext (Just e) = throwError ("envExtend: already an entry at: " ++ show p)
-
--- | Lookup a base value in a hierarchical environment using a path.
-henvLookupBase :: MonadError String m => Path -> HEnv a -> m a
-henvLookupBase p m = do
-  r <- henvLookup p m
-  case r of
-    Right a -> return a
-    Left _  -> throwError ("henvLookupBase: entry at path is not a base value: " ++ show p)
-
-instance Functor HEnv where
-  fmap f (HEnv m) = HEnv (fmap (either (Left . fmap f) (Right . f)) m)
+instance Functor (Env k) where
+  fmap = envOnMap . fmap

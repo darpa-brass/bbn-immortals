@@ -1,0 +1,78 @@
+/// DfuCompositionConfiguration
+{
+    "originalDfu" : {
+        "dependencyString": "mil.darpa.immortals.misc:module-runner-data-generator:+",
+        "consumingPipeSpecification" : {
+            "classPackageIdentifier": "mil.darpa.immortals.modulerunner.ApplicationGeneratorOriginalDfu",
+            "constructorParameters" : []
+        }
+    },
+    "dfuCompositionSequence": [
+        {
+            "dependencyString": "mil.darpa.immortals.misc:module-runner-data-generator:+",
+            "consumingPipeSpecification": {
+                "classPackageIdentifier": "mil.darpa.immortals.modulerunner.generators.semantictypes.JpegFilepathGenerator",
+                "constructorParameters": [
+                    {
+                        "providedByApplication": false,
+                        "classType": "java.lang.String",
+                        "values" : ["/sdcard/ataklite/sample_images"]
+                    },
+                    {
+                        "providedByApplication": false,
+                        "classType": "java.lang.Integer",
+                        "values" : ["100"]
+                    },
+                    {
+                        "providedByApplication": false,
+                        "classType": "java.lang.Integer",
+                        "values" : ["1"]
+                    },
+
+                    {
+                        "providedByApplication": true,
+                        "classType": "mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe<java.lang.String>"
+                    }
+                ]
+            }
+        },
+        {
+            "dependencyString": "mil.darpa.immortals.dfus:ImageUtilsAndroid:+",
+            "consumingPipeSpecification": {
+                "classPackageIdentifier": "mil.darpa.immortals.dfus.images.BitmapReader",
+                "constructorParameters": [
+                    {
+                        "providedByApplication": true,
+                        "classType": "mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe<android.graphics.Bitmap>"
+                    }
+                ],
+                "performAnalysis" : true
+            }
+        },
+        {
+            "dependencyString": "mil.darpa.immortals.dfus:ImageUtilsAndroid:+",
+            "consumingPipeSpecification": {
+                "classPackageIdentifier": "mil.darpa.immortals.dfus.images.BitmapScaler",
+                "constructorParameters": [
+                    {
+                        "providedByApplication": false,
+                        "classType": "java.lang.Double",
+                        "values" : ["0.0", "0.5", "0.10", "0.15"]
+                    },
+                    {
+                        "providedByApplication": true,
+                        "classType": "mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe<android.graphics.Bitmap>"
+                    }
+                ],
+                "performAnalysis" : true
+            }
+        },
+        {
+            "dependencyString": "mil.darpa.immortals.misc:module-runner-data-generator:+",
+            "consumingPipeSpecification" : {
+                "classPackageIdentifier": "mil.darpa.immortals.modulerunner.DevNullConsumingPipe",
+                "constructorParameters": []
+            }
+        }
+    ]
+}

@@ -2,52 +2,35 @@ package com.securboration.immortals.ontology.property.impact;
 
 import com.securboration.immortals.ontology.annotations.triples.Literal;
 import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.ontology.constraint.PropertyCriterionType;
+import com.securboration.immortals.ontology.constraint.PropertyImpactType;
 import com.securboration.immortals.ontology.property.Property;
 import com.securboration.immortals.uris.Uris.rdfs;
 
 @Triple(
     predicateUri=rdfs.comment$,
     objectLiteral=@Literal(
-        "Models the impact of a change to a property"
+        "Models an impact on a property"
         )
     )
-public class PropertyImpact {
+public class PropertyImpact extends ImpactStatement {
     
-    private String humanReadableDescription;
-    private Class<? extends Property> property;
-    private PropertyCriterionType criterionForImpact;
-    private ImpactSpecification[] impact;
+    private PropertyImpactType impactOnProperty;
+    private Class<? extends Property> impactedProperty;
     
-    public String getHumanReadableDescription() {
-        return humanReadableDescription;
+    public PropertyImpactType getImpactOnProperty() {
+        return impactOnProperty;
     }
     
-    public void setHumanReadableDescription(String humanReadableDescription) {
-        this.humanReadableDescription = humanReadableDescription;
+    public void setImpactOnProperty(PropertyImpactType impactOnProperty) {
+        this.impactOnProperty = impactOnProperty;
     }
     
-    public Class<? extends Property> getProperty() {
-        return property;
+    public Class<? extends Property> getImpactedProperty() {
+        return impactedProperty;
     }
     
-    public void setProperty(Class<? extends Property> property) {
-        this.property = property;
+    public void setImpactedProperty(Class<? extends Property> impactedProperty) {
+        this.impactedProperty = impactedProperty;
     }
-    
-    public PropertyCriterionType getCriterionForImpact() {
-        return criterionForImpact;
-    }
-    
-    public void setCriterionForImpact(PropertyCriterionType criterionForImpact) {
-        this.criterionForImpact = criterionForImpact;
-    }
-    
-    public ImpactSpecification[] getImpact() {
-        return impact;
-    }
-    
-    public void setImpact(ImpactSpecification[] impact) {
-        this.impact = impact;
-    }
+
 }

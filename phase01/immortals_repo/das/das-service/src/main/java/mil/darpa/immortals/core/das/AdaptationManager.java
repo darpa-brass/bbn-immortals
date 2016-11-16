@@ -3,9 +3,7 @@ package mil.darpa.immortals.core.das;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,19 +11,23 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonString;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
+import org.apache.commons.jexl2.Expression;
+import org.apache.commons.jexl2.JexlContext;
+import org.apache.commons.jexl2.JexlEngine;
+import org.apache.commons.jexl2.MapContext;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.DecompositionSolver;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 import org.apache.jena.query.ARQ;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.ResultSet;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -33,6 +35,29 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import mil.darpa.immortals.core.das.CodeMetricMetaData.VariableTypeValue;
+import mil.darpa.immortals.core.das.sparql.AbstractResources;
+import mil.darpa.immortals.core.das.sparql.AggregateResourceProfiles;
+import mil.darpa.immortals.core.das.sparql.CandidateDFUList;
+import mil.darpa.immortals.core.das.sparql.CodeMetricMetaDataQuery;
+import mil.darpa.immortals.core.das.sparql.ConfigurationAspects;
+import mil.darpa.immortals.core.das.sparql.ControlPoints;
+import mil.darpa.immortals.core.das.sparql.DFUByClassName;
+import mil.darpa.immortals.core.das.sparql.DFULifecycleMethods;
+import mil.darpa.immortals.core.das.sparql.DataflowProducer;
+import mil.darpa.immortals.core.das.sparql.DataflowQuery;
+import mil.darpa.immortals.core.das.sparql.FunctionalitySpecs;
+import mil.darpa.immortals.core.das.sparql.ImageScalingCodeMetrics;
+import mil.darpa.immortals.core.das.sparql.MetricQuery;
+import mil.darpa.immortals.core.das.sparql.MissionMetrics;
+import mil.darpa.immortals.core.das.sparql.PropertyImpact;
+import mil.darpa.immortals.core.das.sparql.SessionIdentifier;
+import mil.darpa.immortals.core.das.sparql.SparqlQuery;
+import mil.darpa.immortals.das.buildbridge.BuildBridge;
+import mil.darpa.immortals.das.configuration.EnvironmentConfiguration;
+import mil.darpa.immortals.das.sourcecomposer.SourceComposer;
+import java.nio.file.Path;
 
 public class AdaptationManager {
 
@@ -50,165 +75,215 @@ public class AdaptationManager {
 	public static AdaptationManager getInstance() {
 		return instance;
 	}
-		
-	public AdaptationStatus triggerAdaptation(String deploymentModelJson) {
+			
+	/**
+	 * This method is the start point for the DAS adaptation process (technically, the action starts from the DASEndpoint.triggerAdaptation class, 
+	 * but that is merely the REST endpoint for this method, plus a small amount of logic).
+	 * 
+	 * @param deploymentModelRdf String containing an rdf description of the mission requirements and target resources
+	 * 
+	 * @return AdaptationStatus instance that describes the outcome
+	 * 
+	 * @throws IOException
+	 */
+	public AdaptationStatus triggerAdaptation(String deploymentModelRdf) throws IOException {
 		
 		AdaptationStatus result = new AdaptationStatus();
 		
-		print("Adaptation Driver Triggered: Processing New Deployment Model", true);
+		Optional<DFU> selectedDFU = null;
+		boolean queueBuild = false;
 		
-		pushDeploymentModel(deploymentModelJson);
-
-		//Once the deploymentModel is defined and inserted into the triple store,
-		//we can replace the following code with SPARQL
-		JsonReader json = Json.createReader(new StringReader(deploymentModelJson));
-		JsonObject deploymentModel = json.readObject();
-		List<JsonObject> functionalityPointsJson = deploymentModel.getJsonArray("functionalityPoints").getValuesAs(JsonObject.class);
-		List<JsonString> resourceUris = deploymentModel.getJsonArray("resourceUris").getValuesAs(JsonString.class);
-
-		String resourceString = resourceUris.stream().map(JsonString::getString).collect(Collectors.joining(","));
-
-		//We won't need this going forward
-		String resourceDigest = "";
+		String deploymentGraphUri = null;
 		
-		/*String resourceDigest = Arrays.asList(resourceString.split(","))
-				.stream().map(e -> resourceLabels.get(e))
-				.sorted((ResourceLabel r1, ResourceLabel r2) -> r1.rank - r2.rank)
-				.map(s -> s.label)
-				.collect(Collectors.joining("+"));
-		*/
+		//Push the deployment model to the repository service
+		try {
+			deploymentGraphUri = pushDeploymentModel(deploymentModelRdf);
+		} catch (Exception e) {
+			result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+			result.setDetails("Unexpected error loading deployment model.");
 
-		print("Resources found in target environment ... ", false);
-		
-		resourceUris.stream().forEach(r -> print("\t\t" + r.getString(), false));
-		
-		print("DSL Resource Digest ... ", false);
-		print("\t\t" + resourceDigest, false);
-
-		print("Mission Requirements ... ", false);
-		
-		List<FunctionalityPoint> functionalityPoints = new ArrayList<FunctionalityPoint>();
-		
-		for (JsonObject o : functionalityPointsJson) {
-			List<JsonString> propertyUrisJson = o.getJsonArray("propertyUris").getValuesAs(JsonString.class);
-			List<String> propertyUris = propertyUrisJson.stream().map(JsonString::getString).collect(Collectors.toList());
-
-			functionalityPoints.add(new FunctionalityPoint(o.getString("missionFunctionalityUri"),
-					o.getString("controlPointUuid"), propertyUris));
+			return result;
 		}
+
+		String sessionIdentifier = SessionIdentifier.select(deploymentGraphUri);
 		
-		functionalityPoints.stream().forEach(f -> print("\t\tMission Target:" + f.getMissionFunctionalityUri(), false));
-		functionalityPoints.stream().forEach(f -> print("\t\tControl Point Target:" + f.getControlPointUuid(), false));
+		// Load the SourceComposer with the initialized environment configuration
+		SourceComposer sourceComposer = new SourceComposer(sessionIdentifier);
+
+		// Construct an application instance
+		SourceComposer.ApplicationInstance applicationInstance = 
+				sourceComposer.initializeApplicationInstance(EnvironmentConfiguration.CompositionTarget.Client_ATAKLite);
+
+		//Retrieve the deployment's functionality requirements and properties
+		List<FunctionalitySpecification> functionalitySpecifications = FunctionalitySpecs.select(deploymentGraphUri);
 		
-		print("", true);
-		print("", false);
+		//Resolve deployment-level resources to dfu abstractions
+		List<String> abstractResourceUris = AbstractResources.select(deploymentGraphUri);
 		
-		if (functionalityPoints == null || functionalityPoints.isEmpty()) {
+		if (functionalitySpecifications == null || functionalitySpecifications.isEmpty()) {
 			//No mission requirements; should not occur
 			result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
 			result.setDetails("Deployment model did not specify target functionality.");
-		} else {
-			for (FunctionalityPoint f : functionalityPoints) {
-				print("Adapting Code & Build Process", true);
-
-				print("Target Functionality ...", false);
-				print("\t\t" + f.getMissionFunctionalityUri(), false);
-				List<DFU> candidates = getCandidateDFUs(f.getMissionFunctionalityUri(), resourceString, f.getPropertyUris());
-								
-				if (candidates.isEmpty()) {
-					//No DFUs to pass to the DSL; basic requirements could not be satisfied
-					result.setAdaptationStatusValue(AdaptationStatusValue.UNSUCCESSFUL);
-					result.setDetails("No DFUs found to match basic deployment model constraints.");
-					print("No DFUs found to match basic deployment model constraints.", false);
+			
+			return result;
+		}
+		
+		for (FunctionalitySpecification f : functionalitySpecifications) {
+			List<DFU> candidates = CandidateDFUList.select(bootstrapUri, f.getFunctionalityUri(), abstractResourceUris, f.getPropertyUris());
+							
+			if (candidates.isEmpty()) {
+				//No DFUs to pass to the DSL; basic requirements could not be satisfied
+				result.setAdaptationStatusValue(AdaptationStatusValue.UNSUCCESSFUL);
+				result.setDetails("No DFUs found to match basic deployment model constraints.");
+				break;
+			} else {
+				//Invoke DSL for each DFU
+				String dslError = null;
+				
+				for (DFU d : candidates) {
+					try {
+						//DSL is work in progress; resource + property checking applied with SPARQL for now
+						//d.setResourceIndex(calculateResourceIndex(d, f.getMissionFunctionalityUri(), resourceDigest));
+						d.setResourceIndex(0);
+					} catch (Exception e) {
+						dslError = e.getMessage();
+						break;
+					}
+				}
+				
+				if (dslError != null) {
+					result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+					result.setDetails("Unexpected error invoking DSL: " + dslError);
 					break;
 				} else {
-					print("Initial DFU candidates ...", false);
-					
-					candidates.stream().forEach(c -> print("\t\t" + c.getClassName(), false));
-					
-					print("", true);
-
-					//Invoke DSL for each DFU
-					String dslError = null;
-					
-					print("",false);
-					print("Calculating resource indexes", true);
-					print("", false);
-					
-					for (DFU d : candidates) {
+					selectedDFU = candidates.stream().sorted((DFU d1, DFU d2) -> 
+													d1.getResourceIndex() - d2.getResourceIndex())
+													.findFirst();
+					if (selectedDFU.isPresent() && selectedDFU.get().getResourceIndex() == 0) {
+						//Adapt all control points for the functionality using the DFU
 						try {
-							print("\n" + new String(new char[100]).replace('\0', '*'), false);
-							print("DFU Class: " + d.getClassName() +
-									"\nDFU Functionality Type: " + d.getFunctionalityTypeUri() +
-									"\nDFU Instance URI: " + d.getUri(), false);
-							//DSL integration with Haskell is work in progress; resource + property checking applied with SPARQL for now
-							//d.setResourceIndex(calculateResourceIndex(d, f.getMissionFunctionalityUri(), resourceDigest));
-							d.setResourceIndex(0);
-							print("Resource Index: " + d.getResourceIndex() + " (" + dslReturnLabels.get(d.getResourceIndex()) + ")", false);
-							print(new String(new char[100]).replace('\0', '*'), false);
+							adaptControlPoints(f, selectedDFU.get(), applicationInstance);
+							queueBuild = true;
+							result.setSelectedDfu(selectedDFU.get().getClassName());
 						} catch (Exception e) {
-							dslError = e.getMessage();
+							result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+							result.setDetails("Unexpected error adapting control point: " + e.getMessage());
 							break;
+						}
+					} else {
+						//At least one functionalityUri not matched to a DFU; set error and exit.
+						//We may change this practice depending on how we want to handle partially successful adaptations.
+						result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+						String temp =  "No suitable adaptation for " + f.getFunctionalityUri() + 
+								" in deployment model.";
+						result.setDetails(temp);
+						break;
+					}
+				}
+			}
+				
+			if (result.getAdaptationStatusValue().equals(AdaptationStatusValue.ERROR)) {
+				return result;
+			}
+				
+			//Check aggregate resources defined at control points
+			List<ControlPoint> controlPoints = ControlPoints.select(bootstrapUri, f);
+			for (ControlPoint cp : controlPoints) {
+				Dataflow dataflow = DataflowQuery.select(bootstrapUri, cp.getDataflowEntryPoint());
+				
+				List<ResourceProfile> resourceProfiles = AggregateResourceProfiles.select(bootstrapUri, cp.getUri());
+
+				for (ResourceProfile rp : resourceProfiles) {
+					
+					Metric constrainingMetric = MetricQuery.select(rp.getConstrainingMetricLinkID(), deploymentGraphUri);
+
+					String formula = rp.getFormula();
+					Number formulaResult = resolveFormula(formula, deploymentGraphUri, null);
+
+					if (constrainingMetric.getAssertionCriterion() == AssertionCriterionValue.LESS_THAN_INCLUSIVE) {
+
+						if (formulaResult.doubleValue() > Double.parseDouble(constrainingMetric.getValue()) && constrainingMetric.getUnit().equals(rp.getUnit())) {
+							
+							//Violation of constraining metric;begin domain analysis
+							String violatedResource = constrainingMetric.getProperty();
+							DFURemediation dfuRemediation = getDfuRemediation(violatedResource, "PROPERTY_DECREASES");
+							if (dataflow.containsDataType(dfuRemediation.getApplicableDataType())) {
+								List<DFU> dfuRemediations = CandidateDFUList.selectByFunctionalAspect(bootstrapUri, dfuRemediation.getFunctionalAspectUri(), 
+										abstractResourceUris, new ArrayList<String>());
+								if (dfuRemediations != null && !dfuRemediations.isEmpty()) {
+									DFU dfu = dfuRemediations.get(0);
+									String originalDFUClassName = DataflowProducer.select(bootstrapUri, dfuRemediation.getApplicableDataType(), cp.getDataflowEntryPoint());
+									DFU originalDfu = DFUByClassName.select(bootstrapUri, originalDFUClassName.replace(".","/"));
+									
+									/*
+									List<String> configurationAspects = ConfigurationAspects.select(bootstrapUri, dfuRemediation.getStrategyUri());
+									for (String ca : configurationAspects) {
+										//We don't know where to bind a value for the configuration aspect, so we look in a few places following a priority
+										//Check the deployment model (code here)
+										//Check to see if the value can be obtaining from the DFU's code profiling
+										CodeMetricMetaData metaData = CodeMetricMetaDataQuery.select(bootstrapUri, dfu.getClassName());
+										if (metaData == null) {
+											result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+											break;
+										}
+										if (metaData.getVariable(ca) != null && metaData.getVariable(ca).getType() == VariableTypeValue.CONFIGURATION_VARIABLE) {
+											//We can use the code profiling metrics table as "function" to obtain the desired configuration value for the DFU
+											
+										}
+									}
+									*/
+									
+									//#####Begin section to be reworked/abstracted#####
+									ArrayList<String> params = new ArrayList<String>();
+
+									List<String> configurationAspects = ConfigurationAspects.select(bootstrapUri, dfuRemediation.getStrategyUri());
+
+									List<Map<String, String>> codeMetrics = ImageScalingCodeMetrics.select(bootstrapUri, dfu.getClassName(), 
+											configurationAspects.get(0), 5.0);
+									for (Map<String, String> m : codeMetrics) {
+										Map<String, String> replacements = new HashMap<String, String>();
+										replacements.put("DefaultImageSize", m.get("outputMegapixels"));
+										Number testFormulaResult = resolveFormula(formula, deploymentGraphUri, replacements);
+										if (testFormulaResult.doubleValue() <= Double.parseDouble(constrainingMetric.getValue())) {
+											params.add(m.get("scalingFactor"));
+											break;
+										}
+									}
+									//#####End section to be reworked/abstracted#####
+
+									if (params.isEmpty()) {
+										result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+										String temp =  "No suitable scaler value for " + f.getFunctionalityUri() + 
+												" in deployment model.";
+										result.setDetails(temp);
+									} else {
+										sourceComposer.constructCP2ControlPointComposition(originalDfu.getDependencyCoordinate().toString(), 
+											originalDfu.getClassName().replace(".", "/"), 
+											dfu.getDependencyCoordinate().toString(), dfu.getClassName().replace(".",  "/"), params);
+									}
+
+								}
+
+							}
 						}
 					}
-					
-					if (dslError != null) {
-						result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
-						result.setDetails("Unexpected error invoking DSL: " + dslError);
+					if (result.getAdaptationStatusValue() == AdaptationStatusValue.ERROR) {
 						break;
-					} else {
-						Optional<DFU> selectedDFU = candidates.stream()
-														.sorted((DFU d1, DFU d2) -> d1.getResourceIndex() - d2.getResourceIndex())
-														.findFirst();
-						if (selectedDFU.isPresent() && selectedDFU.get().getResourceIndex() == 0) {
-							//Adapt all control points for the functionality using the DFU
-							try {
-								print("", false);
-								print("Selected DFU", true);
-								print("DFU Class: " + selectedDFU.get().getClassName(), false);
-								print("DFU Functionality Type: " + selectedDFU.get().getFunctionalityTypeUri(), false);
-								print("DFU Instance URI: " + selectedDFU.get().getUri(), false);
-								print("", true);
-								
-								print("", false);
-								print("Adapting Control Points for Selected DFU", true);
-								
-								adaptControlPoints(f, selectedDFU.get());
-								
-								print("", true);
-								
-								//This is ad-hoc for now, but we need some way to know what to build (i.e., which
-								//build artifact is this control point associated with?). For now, just build the ATAKClient.
-								//Going forward we may need to modify the control point vocabulary
-								
-								print("", false);
-								print("Building ATAK Client", true);
-								buildAtakClient(selectedDFU.get());
-								print("", true);
-								result.setSelectedDfu(selectedDFU.get().getClassName());
-							} catch (Exception e) {
-								result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
-								result.setDetails("Unexpected error adapting control point: " + e.getMessage());
-								break;
-							}
-						} else {
-							//At least one functionalityUri not matched to a DFU; set error and exit.
-							//We may change this practice depending on how we want to handle partially successful adaptations.
-							result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
-							String temp =  "No suitable adaptation for " + f.getMissionFunctionalityUri() + 
-									" in deployment model.";
-							result.setDetails(temp);
-							print(temp, false);
-							break;
-						}
 					}
 				}
 			}
 		}
 
+		if (queueBuild && !result.getAdaptationStatusValue().equals(AdaptationStatusValue.ERROR)) {
+			try {
+				buildAtakClient(applicationInstance);
+			} catch (Exception e) {
+				result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+				result.setDetails("Unexpected error building ATAKClient: " + e.getMessage());
+			}
+		}
+
 		if (result.getAdaptationStatusValue() == AdaptationStatusValue.PENDING) {
-			print("", false);
-			print("DAS completed adaptation process successfully.", true);
 			result = new AdaptationStatus(AdaptationStatusValue.SUCCESSFUL);
 		}
 		
@@ -216,10 +291,59 @@ public class AdaptationManager {
 	}
 	
 	@SuppressWarnings("unused")
+	private Number solveLinearEquation(String formula, String deploymentGraphUri, double constant) {
+		
+		Number result = null;
+		
+	    List<Metric> metrics = MissionMetrics.select(deploymentGraphUri);
+	    
+	    for (Metric m : metrics) {
+		    if (formula.contains(m.getLinkId())) {
+		    	formula = formula.replace(m.getLinkId(), m.getValue());
+		    }
+	    }
+
+	    String resolvedEquation = constant + "=" + formula;
+	    
+		RealMatrix coefficients = new Array2DRowRealMatrix(new double[][] {{5}}, false);
+		DecompositionSolver solver = new LUDecomposition(coefficients).getSolver();
+		RealVector constants = new ArrayRealVector(new double[] {25}, false);
+		RealVector solution = solver.solve(constants);
+   
+		return result;
+
+	}
+	
+	private Number resolveFormula(String formula, String deploymentGraphUri, Map<String, String> replacements) {
+		
+		Number result = null;
+		
+		JexlEngine jexlEngine = new JexlEngine();
+		jexlEngine.setLenient(false);
+		jexlEngine.setSilent(false);
+		 
+		Expression e = jexlEngine.createExpression(formula);
+
+	    JexlContext context = new MapContext();
+	    
+	    List<Metric> metrics = MissionMetrics.select(deploymentGraphUri);
+	    
+	    for (Metric m : metrics) {
+	    	if (replacements != null && replacements.containsKey(m.getLinkId())) {
+	    		context.set(m.getLinkId(), replacements.get(m.getLinkId()));
+	    	} else {
+			    context.set(m.getLinkId(), m.getValue());
+	    	}
+	    }
+	    
+	    result = (Number) e.evaluate(context);
+		
+		return result;
+	}
+	
+	@SuppressWarnings("unused")
 	private int calculateResourceIndex(DFU dfu, String functionalityUri, String resourceDigest) throws Exception {
 
-		//!!This method is not working at the moment since the interface between the DAS and Haskell's DSL is in flux
-		
 		String functionalityLabel = null;
 		//String functionalityLabel = requirementLabels.get(functionalityUri);
 		String dfuLabel = dfuLabels.get(dfu.getFunctionalityTypeUri());
@@ -258,70 +382,34 @@ public class AdaptationManager {
 		return result;
 	}
 	
-	private void buildAtakClient(DFU selectedDFU) throws Exception  {
+	private void buildAtakClient(SourceComposer.ApplicationInstance applicationInstance) throws Exception  {
 		
-		//Rename existing dependency file
-		File file = new File(DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT) + ATAK_CLIENT + "dependencies.gradle");
-		if (file.exists() && !file.isDirectory()) {
-			file.renameTo(new File(DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT) + ATAK_CLIENT + "dependencies.gradle" + ".old." + new Date().getTime()));
-		}
-		
-		//Format of dependency file
-		//apply plugin: 'com.android.application'
-		//	dependencies {
-		//	    compile 'mil.darpa.immortals.dfus:LocationProviderAndroidGPS:+'
-		//	    compile 'mil.darpa.immortals.dfus:LocationProviderSimulated:+'
-		//	}
-		
-		//Write dependency file
-		FileWriter writer = new FileWriter(DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT) + ATAK_CLIENT + "dependencies.gradle");
-		String eol = System.getProperty("line.separator");
-		
-		writer.write("apply plugin: 'com.android.application' " + eol);
-		writer.append("dependencies {" + eol + "compile '" + selectedDFU.getDependencyCoordinate().getGroupId()
-				+ ":" + selectedDFU.getDependencyCoordinate().getArtifactId() + ":+'" + eol + "}");
-
-		writer.flush();
-		writer.close();
-		
-		//Build client
-		ProcessBuilder pb = new ProcessBuilder("gradle", "build");
-		pb.directory(new File(DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT) + ATAK_CLIENT));
-		pb.inheritIO();
-		Process p = pb.start();
-		
-		try {
-			if (p.waitFor(2, TimeUnit.MINUTES)) {
-				if (p.exitValue() != 0) {
-					throw new Exception("Unexpected exception executing ATAKClient build.");
-				}
-			} else {
-				throw new Exception("Timed out waiting for ATAKClient to complete build.");
-			}
-		} catch (InterruptedException e) {
-			throw new Exception("Unexpected interrupt waiting for ATAKClient build: " + e.getMessage());
-		}
+        // Build the application
+		applicationInstance.build();
 
 	}
 	
-	private void adaptControlPoints(FunctionalityPoint functionalityPoint, DFU dfu) throws Exception {
+	private void adaptControlPoints(FunctionalitySpecification functionalitySpecification, DFU dfu, SourceComposer.ApplicationInstance applicationInstance) throws Exception {
 		
         String dfuReference = null;
         Template cpTemplate = null;
         VelocityContext context = null;
 
-		Properties p = new Properties();
-		p.put("file.resource.loader.path", DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT) + SOURCE_TEMPLATE_FOLDER);
-		Velocity.init(p);
 		String dfuCanonicalClassName = null;
-			
-        List<ControlPoint> controlPoints = getControlPoints(functionalityPoint);
-        
-		print(controlPoints.size() + " control point(s) found", false);
 
+		// Get the path to the SACommunicationService file
+		Path saCommunicationServiceTemplatePath = applicationInstance.getApplicationPath().resolve(SOURCE_TEMPLATE_FOLDER);
+
+		// Get the path to the SACommunicationService file
+		Path saCommunicationServiceSourcePath = applicationInstance.getApplicationPath().resolve(CONTROL_POINT_FOLDER);
+
+		Properties p = new Properties();
+		p.put("file.resource.loader.path", saCommunicationServiceTemplatePath.toString());
+		Velocity.init(p);
+
+        List<ControlPoint> controlPoints = ControlPoints.select(bootstrapUri, functionalitySpecification);
+        
         for (ControlPoint cp : controlPoints) {
-        	
-        	print("Adapting control point: " + cp.getUri(), false);
         	
         	cpTemplate = Velocity.getTemplate(cp.getClassName() + ".java");
         	
@@ -335,7 +423,7 @@ public class AdaptationManager {
 
         		dfuReference = "a" + UUID.randomUUID().toString().replace('-', '_');
 	        	
-	        	dfuMethods = getDFULifecycleMethods(dfu.getUri());
+	        	dfuMethods = DFULifecycleMethods.select(bootstrapUri, dfu.getUri());
 
 	        	if (dfuMethods == null || dfuMethods.isEmpty()) {
 	        		//DFU is not properly annotated and cannot be used; this is an error condition
@@ -378,12 +466,7 @@ public class AdaptationManager {
         	FileWriter writer = null;
         	
 			try {
-				String root = DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT);
-				File file = new File(root + CONTROL_POINT_FOLDER + cp.getClassName() + ".java");
-				if (file.exists() && !file.isDirectory()) {
-					file.renameTo(new File(root + CONTROL_POINT_FOLDER + cp.getClassName() + ".old." + new Date().getTime()));
-				}
-				writer = new FileWriter(root + CONTROL_POINT_FOLDER + cp.getClassName() + ".java");
+				writer = new FileWriter(saCommunicationServiceSourcePath.resolve(cp.getClassName() + ".java").toFile());
 	        	cpTemplate.merge(context, writer);
 	        	writer.flush();
 			} catch (IOException e) {
@@ -396,116 +479,95 @@ public class AdaptationManager {
 				}
 			}
         }
+        
+		// Add the new dependencies from CP1 to the application instance
+		applicationInstance.addDependency(dfu.getDependencyCoordinate().getGroupId()
+				+ ":" + dfu.getDependencyCoordinate().getArtifactId() + ":+");
+		
 	}
 	
-	private List<ControlPoint> getControlPoints(FunctionalityPoint functionalityPoint) {
+	private DFURemediation getDfuRemediation(String resource, String action) {
 		
-		List<ControlPoint> results = new ArrayList<ControlPoint>();
+		DFURemediation dfuRemediation = null;
 		
-		String query = "PREFIX im: <http://darpa.mil/immortals/ontology/r2.0.0#> " +
-			"PREFIX f:  <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> " +
-			"	PREFIX cp: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/cp#> " +
-			"	PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
-			"	PREFIX owl: <http://www.w3.org/2002/07/owl#> " +
-			"	SELECT ?cp_uri ?uuid ?class_name ?class_url " +
-			"	WHERE { " +
-        	"  	GRAPH <" + bootstrapUri + "> { " +
-			"		?cp_uri  a cp:ControlPoint . " +
-			"	    ?cp_uri im:hasControlPointUuid_String '" + functionalityPoint.getControlPointUuid() + "' . " +
-			"	    ?cp_uri im:hasControlPointUuid_String ?uuid. " +
-			"	    ?cp_uri im:hasOwnerClass_AClass ?class . " +
-			"	    ?class im:hasClassName_String ?class_name . " +
-			"	    ?class im:hasClassUrl_String ?class_url . " + 
-			"	  } " +
-			"	} ";
+		String onProperty = resource;
+		String actionToTake = action;
 		
-        try (QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_QUERY_ENDPOINT, query)) {
-	        ResultSet resultSet = qe.execSelect();
-	        resultSet.forEachRemaining(t -> results.add(new ControlPoint(t.getResource("cp_uri").getURI(), 
-	        		t.getLiteral("uuid").getString(),
-	        		t.getLiteral("class_name").getString(),
-	        		t.getLiteral("class_url").getString())));
-        }
-
-        return results;
-	}
-	
-	private List<DFU> getCandidateDFUs(String functionalityUri, String resourceUris, List<String> propertyUris) {
+		String invokedAspect = null;
+		String applicableDataType = null;
+		String strategyUri = null;
 		
-		List<DFU> result = new ArrayList<DFU>();
+		String priorProperty = null;
+		String priorAction = null;
+		
+		while (invokedAspect == null && actionToTake != null && onProperty != null) { 
 
-		String query =
-				"PREFIX im: <http://darpa.mil/immortals/ontology/r2.0.0#> " +
-				"PREFIX dfu: <http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#> " +
-				"PREFIX lp_func: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#> " +
-				"PREFIX bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#> " +
-				"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
-
-				"SELECT DISTINCT ?dfu ?className ?groupId ?artifactId ?version ?functionalityUri " +
-				"WHERE { " +
-	    		"	  	GRAPH <" + bootstrapUri + "> { " +
-				"			?dfu a dfu:DfuInstance . " +
-				"			?dfu im:hasFunctionalityAbstraction_Class ?functionalityUri . " +
-				"			?dfu im:hasClassPointer_String ?classPointer . " +
-				"			?class a bytecode:AClass . " +
-				"			?class im:hasBytecodePointer_String ?classPointer . " +
-				"			?class im:hasClassName_String ?className . " +
-				"			?jar a bytecode:JarArtifact . " +
-				"			?jar im:hasClasses_AClass ?class . " +
-				"			?jar im:hasCoordinate_BytecodeArtifactCoordinate ?coordinate . " +
-				"			?coordinate im:hasVersion_String ?version . " +
-				"			?coordinate im:hasArtifactId_String ?artifactId . " +
-				"			?coordinate im:hasGroupId_String ?groupId . " +
-				"			filter (?functionalityUri = " + functionalityUri + ") ";
-
-				for (String property : propertyUris) {
-					query = query.concat(
-							"?dfu im:hasDfuProperties_Property ?propertyInstance . " +
-							"?propertyInstance a " + property + ".");
+			Map<String, String> data = PropertyImpact.select(bootstrapUri, actionToTake, onProperty);
+			
+			priorAction = actionToTake;
+			priorProperty = onProperty;
+			
+			actionToTake = null;
+			onProperty = null;
+			
+			if (data != null) {
+				if (data.get("actionToTake") != null) {
+					actionToTake = data.get("actionToTake");					
 				}
-
-			    query = query.concat(
-			    		"MINUS { " +
-			    		"SELECT DISTINCT ?dfu " +
-			    		"WHERE { " +
-			    		"GRAPH <" + bootstrapUri + "> { " +
-			            "?dfu a dfu:DfuInstance . " +
-			            "?dfu im:hasFunctionalityAbstraction_Class ?functionalityUri . " +
-			            "?dfu im:hasResourceDependencies_Class ?resource . " +
-			            "FILTER(?resource NOT IN ( " + resourceUris +
-			            "  ) " +
-			            ") " +
-			          "} " +
-			        "} " +
-			      "}");
-	
-			query = query.concat("}}");
-
-        try (QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_QUERY_ENDPOINT, query)) {
-	        ResultSet resultSet = qe.execSelect();
-	        resultSet.forEachRemaining(t -> result.add(new DFU(t.getResource("dfu").getURI(), 
-	        				t.getLiteral("className").getString(),
-	        				new DependencyCoordinate(t.getLiteral("groupId").toString(),
-	        						t.getLiteral("artifactId").toString(),
-	        						t.getLiteral("version").toString()),
-	        						"<" + t.getResource("functionalityUri").getURI() + ">")));
-        }
-
-        return result;
+				
+				if (data.get("onProperty") != null) {
+					onProperty = data.get("onProperty");
+				}
+				
+				if (data.get("invokedAspect") != null) {
+					invokedAspect = data.get("invokedAspect");
+					
+					if (data.get("applicableDataType") != null) {
+						applicableDataType = data.get("applicableDataType");
+					}
+					
+					if (data.get("strategy") != null) {
+						strategyUri = data.get("strategy");
+					}
+				}
+			}
+		}
+		
+		if (invokedAspect != null && applicableDataType != null) {
+			dfuRemediation = new DFURemediation(invokedAspect, applicableDataType, priorAction, priorProperty, strategyUri);
+		}
+		
+        return dfuRemediation;
 	}
-	
-	private void pushDeploymentModel(String deploymentModelJSON) {
 
-		//String deploymentUri = repositoryService.path("pushDeploymentModel").request().post(Entity.entity(deploymentModel, 
-		//	MediaType.APPLICATION_JSON_TYPE), String.class);
+	
+	private String pushDeploymentModel(String deploymentModelRdf) throws Exception {
+		
+		String result = null;
+		
+		Response deploymentGraphUri = repositoryService.path("pushDeploymentModel").request(javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE)
+				.post(Entity.entity(deploymentModelRdf, javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE));
+
+		if (deploymentGraphUri.getStatus() != 200) {
+			throw new Exception("Unexpected response code from repository service: " + deploymentGraphUri.getStatusInfo());
+		} else {
+			result = deploymentGraphUri.readEntity(String.class);
+			if (result != null && result.trim().length() > 0) {
+				result = "<" + SparqlQuery.FUSEKI_DATA_ENDPOINT + result + ">";
+			}
+		}
+		
+		return result;
+
 	}
 	
 	private static void initialize() {
 
-		WebTarget repositoryService = null;
 		String byteCodeURI = null;
-		
+
+		//SourceComposer init
+		EnvironmentConfiguration.initializeDefaultEnvironmentConfiguration();
+
 		try {
 			repositoryService = ClientBuilder.newClient(new ClientConfig()
 					.register(JacksonFeature.class))
@@ -516,7 +578,7 @@ public class AdaptationManager {
 		}
 		
         if (byteCodeURI != null && byteCodeURI.trim().length() > 0) {
-        	bootstrapUri = FUSEKI_DATA_ENDPOINT + byteCodeURI;
+        	bootstrapUri = SparqlQuery.FUSEKI_DATA_ENDPOINT + byteCodeURI;
         }
         
     	resourceLabels = new HashMap<String, ResourceLabel>();
@@ -546,74 +608,7 @@ public class AdaptationManager {
         dslReturnLabels.put(2, "The DFU cannot be loaded in the given environment.");
         dslReturnLabels.put(3, "The DFU successfully loads but does not satisfy the requirements.");
 	}
-
-	private Map<String, String> getDFULifecycleMethods(String dfuUri) {
-
-		HashMap<String, String> result = new HashMap<String, String>();
-
-		String query = 
-			"PREFIX im: <http://darpa.mil/immortals/ontology/r2.0.0#> " +
-			"PREFIX dfu: <http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#>" +
-			"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
-			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
-
-			"SELECT DISTINCT ?dfu ?abstractAspect ?methodName " +
-			"WHERE { " +
-    		"	  	GRAPH <" + bootstrapUri + "> { " +
-			"			?dfu a dfu:DfuInstance . " +
-			"  			?dfu im:hasFunctionalAspects_FunctionalAspectInstance ?functionalAspectInstance . " +
-			"  			?functionalAspectInstance im:hasAbstractAspect_Class ?abstractAspect . " +
-			"  			?functionalAspectInstance im:hasMethodPointer_String ?methodPointer . " +
-			"  			?method im:hasBytecodePointer_String ?methodPointer . " +
-			"  			?method im:hasMethodName_String ?methodName . " +
-			"			} " +
-			"FILTER (?dfu = <" + dfuUri + ">)" + 
-			"}";
-        
-        try (QueryExecution qe = QueryExecutionFactory.sparqlService(FUSEKI_QUERY_ENDPOINT, query)) {
-	        ResultSet resultSet = qe.execSelect();
-	        resultSet.forEachRemaining(t -> result.put(t.getResource("abstractAspect").toString(), 
-	        				t.getLiteral("methodName").getString()));
-        }
-		
-		return result;
-	}
 	
-	private void print(String message, boolean heading) {
-		
-		if (heading) {
-			if (message.length() < 100) {
-				int lpad = (int) Math.floor((100 - message.length())/2f);
-				int rpad = (int) Math.ceil((100 - message.length())/2f);
-	
-				System.out.println("\n" + new String(new char[lpad]).replace('\0', '*') + message + new String(new char[rpad]).replace('\0', '*'));				
-			} else {
-				System.out.println("\n" + message);
-			}
-		} else {
-			System.out.println("\n" + message);
-		}
-	}
-
-	private static AdaptationManager instance;
-	private static String bootstrapUri;
-		
-	//These are relative to the Immortals root path provided to the DAS as a startup parameter (see DAS.java)
-	private static final String SOURCE_TEMPLATE_FOLDER = "/client/ATAKLite/src-templates/";
-	private static final String CONTROL_POINT_FOLDER = "/client/ATAKLite/src/";
-	private static final String DSL_FOLDER = "/dsl/resource-dsl";
-	private static final String ATAK_CLIENT = "/client/ATAKLite/";
-
-	//We can potentially change these so that these can be passed in to the DAS as well
-	private static final String REPOSITORY_SERVICE_CONTEXT_ROOT = "http://localhost:9999/immortalsRepositoryService/";	
-	private static final String FUSEKI_DATA_ENDPOINT = "http://localhost:3030/ds/data/";
-	private static final String FUSEKI_QUERY_ENDPOINT = "http://localhost:3030/ds/query";
-
-	private static final String LIFECYCLE_DECLARATION = "declaration";
-	private static final String LIFECYCLE_INIT = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#InitializeAspect~instance0";
-	private static final String LIFECYCLE_CLEANUP = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#CleanupAspect~instance0";
-	private static final String LIFECYCLE_WORK = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#GetCurrentLocationAspect~instance0";
-
 	private static class ResourceLabel {
 	    public ResourceLabel(String uri, String label, int rank) {
 	      this.uri = uri;
@@ -623,9 +618,28 @@ public class AdaptationManager {
 	    
 	    @SuppressWarnings("unused")
 		public String uri;
+		@SuppressWarnings("unused")
 		public String label;
-	    public int rank;
+	    @SuppressWarnings("unused")
+		public int rank;
 	}
+
+	private static WebTarget repositoryService;
+	private static AdaptationManager instance;
+	private static String bootstrapUri;
+		
+	//These are relative to the Immortals root path provided to the DAS as a startup parameter (see DAS.java)
+	private static final String SOURCE_TEMPLATE_FOLDER = "src-templates/com/bbn/ataklite/service";
+	private static final String CONTROL_POINT_FOLDER = "src/com/bbn/ataklite/service/";
+	private static final String DSL_FOLDER = "/dsl/resource-dsl";
+
+	//We can potentially change these so that these can be passed in to the DAS as well
+	private static final String REPOSITORY_SERVICE_CONTEXT_ROOT = "http://localhost:9999/immortalsRepositoryService/";	
+
+	private static final String LIFECYCLE_DECLARATION = "declaration";
+	private static final String LIFECYCLE_INIT = "<http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#InitializeAspect>";
+	private static final String LIFECYCLE_CLEANUP = "<http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#CleanupAspect>";
+	private static final String LIFECYCLE_WORK = "<http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#GetCurrentLocationAspect>";
 
 	private static Map<String, ResourceLabel> resourceLabels;
 	private static Map<String, String> dfuLabels;

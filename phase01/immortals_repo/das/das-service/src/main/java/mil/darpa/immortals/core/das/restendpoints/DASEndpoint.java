@@ -55,9 +55,9 @@ public class DASEndpoint {
     
     @POST
     @Path("/deployment-model")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public AdaptationStatus triggerAdaptation(String deploymentModel) {
+    public AdaptationStatus triggerAdaptation(String deploymentModelRdf) {
 
 		logger.error("/deployment-model REST endpoint invoked.");
 
@@ -74,7 +74,7 @@ public class DASEndpoint {
 	    		DAS.getDASStatus().setStatus(DASStatusValue.OFFLINE_ADAPTATION);
 		    	
 		    	AdaptationManager am = AdaptationManager.getInstance();
-		    	result = am.triggerAdaptation(deploymentModel);
+		    	result = am.triggerAdaptation(deploymentModelRdf);
 		    	
 		    	logger.trace("DAS completed adaptation successfully.");
 	    	}

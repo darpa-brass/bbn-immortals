@@ -1,6 +1,6 @@
 package mil.darpa.immortals.core.synthesis;
 
-import mil.darpa.immortals.core.synthesis.interfaces.WriteableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -14,17 +14,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public abstract class ObjectPipeMultiplexerTail<InputType0, InputType1, OutputType> {
 
-    public final WriteableObjectPipeInterface<InputType0> input0;
+    public final ConsumingPipe<InputType0> input0;
 
-    public final WriteableObjectPipeInterface<InputType1> input1;
+    public final ConsumingPipe<InputType1> input1;
 
     private InputType0 processedObject0;
     private InputType1 processedObject1;
 
-    private final WriteableObjectPipeInterface<OutputType> next;
+    private final ConsumingPipe<OutputType> next;
     private final Queue<OutputType> outputQueue;
 
-    public ObjectPipeMultiplexerTail(WriteableObjectPipeInterface<OutputType> outputPipe) {
+    public ObjectPipeMultiplexerTail(ConsumingPipe<OutputType> outputPipe) {
         if (outputPipe == null) {
             this.next = null;
             outputQueue = new ConcurrentLinkedQueue<>();
@@ -36,7 +36,7 @@ public abstract class ObjectPipeMultiplexerTail<InputType0, InputType1, OutputTy
 
         final ObjectPipeMultiplexerTail multiplexer = this;
 
-        input0 = new WriteableObjectPipeInterface<InputType0>() {
+        input0 = new ConsumingPipe<InputType0>() {
             @Override
             public void consume(InputType0 input) {
                 multiplexer.writeInput0(input);
@@ -53,7 +53,7 @@ public abstract class ObjectPipeMultiplexerTail<InputType0, InputType1, OutputTy
             }
         };
 
-        input1 = new WriteableObjectPipeInterface<InputType1>() {
+        input1 = new ConsumingPipe<InputType1>() {
             @Override
             public void consume(InputType1 input) {
                 multiplexer.writeInput1(input);

@@ -1,6 +1,6 @@
 package mil.darpa.immortals.core.synthesis.adapters;
 
-import mil.darpa.immortals.core.synthesis.interfaces.ReadableObjectPipeInterface;
+import mil.darpa.immortals.core.synthesis.interfaces.ProducingPipe;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,11 +8,11 @@ import java.io.InputStream;
 /**
  * Created by awellman@bbn.com on 7/19/16.
  */
-public class InputStreamPipe extends InputStream implements ReadableObjectPipeInterface<byte[]> {
+public class InputStreamPipe extends InputStream implements ProducingPipe<byte[]> {
     private PipeToInputStream pipeToInputStream;
     private InputStreamToPipe inputStreamToPipe;
     private InputStream inputStream;
-    private ReadableObjectPipeInterface<byte[]> pipe;
+    private ProducingPipe<byte[]> pipe;
 
     public InputStreamPipe() {
     }
@@ -25,7 +25,7 @@ public class InputStreamPipe extends InputStream implements ReadableObjectPipeIn
         pipeToInputStream = null;
     }
 
-    protected void delayedInit(ReadableObjectPipeInterface<byte[]> input) {
+    protected void delayedInit(ProducingPipe<byte[]> input) {
         inputStreamToPipe = null;
         pipeToInputStream = new PipeToInputStream(input);
         inputStream = pipeToInputStream;

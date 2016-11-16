@@ -11,10 +11,11 @@ import com.securboration.immortals.ontology.functionality.locationprovider.Clean
 import com.securboration.immortals.ontology.functionality.locationprovider.GetCurrentLocationAspect;
 import com.securboration.immortals.ontology.functionality.locationprovider.InitializeAspect;
 import com.securboration.immortals.ontology.functionality.locationprovider.LocationProvider;
-import com.securboration.immortals.ontology.resources.gps.GpsReceiver;
-import com.securboration.immortals.ontology.resources.gps.GpsSatellite;
+import com.securboration.immortals.ontology.resources.gps.GpsReceiverEmbedded;
+import com.securboration.immortals.ontology.resources.gps.GpsSatelliteConstellation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
+import mil.darpa.immortals.core.synthesis.annotations.dfu.SynthesisAndroidContext;
 import mil.darpa.immortals.datatypes.Coordinates;
 
 import javax.annotation.Nonnull;
@@ -22,30 +23,17 @@ import javax.annotation.Nonnull;
 /**
  * Created by awellman@bbn.com on 2/4/16.
  */
-//@Dfu(
-//        //Identifies the core functionality being performed by the DFU
-//        functionalityUri = Semantics.Functionality_LocationProvider_AndroidGPS,
-//
-//        //Any resource dependencies that apply to all functional aspects of this DFU go here
-//        //Indicates the resource dependencies specific to this functional aspect
-//        resourceDependencies = @ResourceDependencies(
-//                dependencyUris = {
-//                        Semantics.Ecosystem_Platform_Android,
-//                        Semantics.Ecosystem_Hardware_EmbeddedGPS,
-//                        Semantics.Ecosystem_Environment_GPSSatellites
-//                }
-//        )
-//)
 @DfuAnnotation(
         functionalityBeingPerformed = LocationProvider.class,
         resourceDependencies = {
-                GpsSatellite.class,
-                GpsReceiver.class
+                GpsSatelliteConstellation.class,
+                GpsReceiverEmbedded.class
         }
 )
 public class LocationProviderAndroidGpsBuiltIn {
 
     private static final String TAG = "LocationProviderAndroidGpsBuiltIn";
+    private static final String HOW = "m-g";
 
     private String provider;
 
@@ -82,7 +70,7 @@ public class LocationProviderAndroidGpsBuiltIn {
 
     //    @SynthesisInit
     @FunctionalAspectAnnotation(aspect = InitializeAspect.class)
-    public void initialize(@Nonnull Context context) {
+    public void initialize(@SynthesisAndroidContext Context context) {
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         Criteria criteria = new Criteria();
@@ -135,7 +123,7 @@ public class LocationProviderAndroidGpsBuiltIn {
                         (location.hasAltitude() ? location.getAltitude() : null),
                         (location.hasAccuracy() ? location.getAccuracy() : null),
                         location.getTime(),
-                        TAG
+                        HOW
                 );
             } else {
                 coordinates = new Coordinates(
@@ -144,7 +132,7 @@ public class LocationProviderAndroidGpsBuiltIn {
                         null,
                         null,
                         System.currentTimeMillis(),
-                        TAG
+                        HOW
                 );
             }
             return coordinates;

@@ -1,0 +1,49 @@
+subprojects {
+    apply plugin: immortals.CoreDefinitions
+
+    apply plugin: 'maven'
+
+    repositories {
+        mavenCentral()
+        maven {
+            url "$System.env.ANDROID_HOME/extras/android/m2repository"
+        }
+        maven {
+            url 'https://repo.gradle.org/gradle/libs-releases'
+        }
+    }
+
+    apply plugin: 'java'
+
+    sourceCompatibility = toolJavaSourceCompatibility
+    version = defaultSoftwarePublishVersion
+    group = "${rootGroup}.das"
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java']
+            }
+            resources {
+                srcDirs = ['src/main/resources']
+            }
+        }
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.12'
+        compile 'com.google.code.findbugs:jsr305:3.0.1'
+        compile 'com.google.code.gson:gson:2.5'
+    }
+
+    apply plugin: 'maven-publish'
+
+    publishing {
+        repositories {
+            maven {
+                url localRepoPath
+            }
+        }
+    }
+}
+

@@ -67,6 +67,7 @@
 	</repositories>
 
 	<profiles>
+			
 		<profile>
 			<id>bootstrap</id>
 			<activation>
@@ -96,12 +97,51 @@
 									<arguments>
 										<argument>IMMoRTALS_${immortals.version}</argument>
 										<argument>${project.basedir}/../../vocabulary/ontology-package/target/immortals-ontologies-package-${immortals.version}.jar/</argument>
+										<argument>${immortals-ns}</argument>
+										<argument>${immortals.version}</argument>
 										<argument>.ttl</argument>
 									</arguments>
 								</configuration>
 							</execution>
 						</executions>
 						
+					</plugin>
+				</plugins>
+
+			</build>
+			
+		</profile>
+	
+		<profile>
+			<id>buildDeploymentChecker</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			
+			<build>
+				<defaultGoal>install</defaultGoal>
+
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>2.4.3</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>shade</goal>
+								</goals>
+								<configuration>
+									<finalName>deployment-validator</finalName>
+									<transformers>
+										<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+											<mainClass>com.securboration.immortals.deployment.validator.DeploymentValidator</mainClass>
+										</transformer>
+									</transformers>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 

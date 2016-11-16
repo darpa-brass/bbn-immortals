@@ -4,11 +4,12 @@ public class ControlPoint {
 
 	public ControlPoint() {}
 	
-	public ControlPoint(String uri, String uuid, String className, String classUrl) {
+	public ControlPoint(String uri, String uuid, String className, String classUrl, String dataflowEntryPoint) {
 		this.uri = uri;
 		this.uuid = uuid;
 		this.className = className;
 		this.classUrl = classUrl;
+		this.dataflowEntryPoint = dataflowEntryPoint;
 	}
 	
 	public String getUri() {
@@ -42,9 +43,18 @@ public class ControlPoint {
 	public void setClassUrl(String classUrl) {
 		this.classUrl = classUrl;
 	}
+	
+	public String getDataflowEntryPoint() {
+		return dataflowEntryPoint;
+	}
+
+	public void setDataflowEntryPoint(String dataflowEntryPoint) {
+		this.dataflowEntryPoint = dataflowEntryPoint;
+	}
 
 	private String uri;
 	private String uuid;
 	private String className;
 	private String classUrl;
+	private String dataflowEntryPoint;
 }

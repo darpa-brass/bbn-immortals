@@ -9,12 +9,12 @@ import com.securboration.immortals.ontology.functionality.locationprovider.GetCu
 import com.securboration.immortals.ontology.functionality.locationprovider.InitializeAspect;
 import com.securboration.immortals.ontology.functionality.locationprovider.LocationProvider;
 import com.securboration.immortals.ontology.resources.BluetoothResource;
-import com.securboration.immortals.ontology.resources.gps.GpsReceiverBluetooth;
-import com.securboration.immortals.ontology.resources.gps.GpsSatellite;
+import com.securboration.immortals.ontology.resources.gps.GpsSatelliteConstellation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
 import mil.darpa.immortals.core.analytics.Analytics;
 import mil.darpa.immortals.core.analytics.AnalyticsEventType;
+import mil.darpa.immortals.core.synthesis.annotations.dfu.SynthesisAndroidContext;
 import mil.darpa.immortals.datatypes.Coordinates;
 
 import javax.annotation.Nonnull;
@@ -26,23 +26,17 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by awellman@bbn.com on 2/12/16.
  */
-//@Dfu(functionalityUri = Semantics.Functionality_LocationProvider_BluetoothGPS,
-//        resourceDependencies = @ResourceDependencies(
-//                dependencyUris = {
-//                        Semantics.Ecosystem_Environment_GPSSatellites,
-//                        Semantics.Ecosystem_Hardware_Bluetooth
-//                }
-//        ))
 @DfuAnnotation(
         functionalityBeingPerformed = LocationProvider.class,
         resourceDependencies = {
-                GpsSatellite.class,
-                GpsReceiverBluetooth.class
+                GpsSatelliteConstellation.class,
+                BluetoothResource.class
         }
 )
 public class LocationProviderBluetoothGpsSimulated {
 
-    private static final String providerIdentifier = "LocationProviderBluetoothGpsSimulated";
+    private static final String providerIdentifier_ = "LocationProviderBluetoothGpsSimulated";
+    private static final String HOW = "m-g-s";
 
     private LocationProviderSimulatedImpl locationProvider;
 
@@ -51,11 +45,11 @@ public class LocationProviderBluetoothGpsSimulated {
 
     //    @SynthesisInit
     @FunctionalAspectAnnotation(aspect = InitializeAspect.class)
-    public void initialize(Context context) {
+    public void initialize(@SynthesisAndroidContext Context context) {
         try {
-            locationProvider = new LocationProviderSimulatedImpl(providerIdentifier, providerIdentifier + ".json");
+            locationProvider = new LocationProviderSimulatedImpl(HOW, providerIdentifier_ + ".json");
         } catch (RuntimeException e) {
-            Analytics.log(Analytics.newEvent(AnalyticsEventType.DfuMissmatchError, providerIdentifier, e.getMessage()));
+            Analytics.log(Analytics.newEvent(AnalyticsEventType.DfuMissmatchError, providerIdentifier_, e.getMessage()));
             locationProvider = null;
         }
 
@@ -65,7 +59,7 @@ public class LocationProviderBluetoothGpsSimulated {
                 bluetoothDevice.getAddress();
             }
         } catch (Exception e) {
-            Analytics.log(Analytics.newEvent(AnalyticsEventType.UnexepctedIgnorableError, providerIdentifier, "Error iterating over bluetoothdevices!"));
+            Analytics.log(Analytics.newEvent(AnalyticsEventType.UnexepctedIgnorableError, providerIdentifier_, "Error iterating over bluetoothdevices!"));
         }
     }
 
@@ -92,27 +86,25 @@ public class LocationProviderBluetoothGpsSimulated {
 
         private final MockLocationBehaviorProfile behaviorProfile;
 
-        private final String providerIdentifier;
+        private final String how;
 
         private final long startTime;
 
-        public LocationProviderSimulatedImpl(@Nonnull String providerIdentifier, @Nonnull String profileFileName) {
+        public LocationProviderSimulatedImpl(@Nonnull String how, @Nonnull String profileFileName) {
             startTime = System.currentTimeMillis();
-            this.providerIdentifier = providerIdentifier;
+            this.how = how;
 
             MockLocationBehaviorProfile newProfile = null;
             // The use of this code indicates the "hardware" (file) is available.
             try {
                 File inputFile = new File(Environment.getExternalStorageDirectory(), "ataklite/" + profileFileName);
 
-//                if (inputFile.exists()) {
                 FileReader fr = new FileReader(inputFile);
                 Gson gson = new Gson();
 
                 newProfile = gson.fromJson(fr, MockLocationBehaviorProfile.class);
-//                }
             } catch (Exception e) {
-                System.err.println("Unexpected exception: Requirements to use '" + providerIdentifier + "' have not been met!");
+                System.err.println("Unexpected exception: Requirements to use '" + profileFileName + "' have not been met!");
                 throw new RuntimeException(e);
             } finally {
                 behaviorProfile = newProfile;
@@ -149,7 +141,7 @@ public class LocationProviderBluetoothGpsSimulated {
                     break;
             }
 
-            return new Coordinates(latitude, longitude, null, null, currentTime, providerIdentifier);
+            return new Coordinates(latitude, longitude, null, null, currentTime, how);
         }
 
         public enum MockLocationCountry {

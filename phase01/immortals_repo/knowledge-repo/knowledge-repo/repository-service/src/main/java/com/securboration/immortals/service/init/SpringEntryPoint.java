@@ -44,7 +44,8 @@ public class SpringEntryPoint
 
     @Override
     protected SpringApplicationBuilder configure(
-            SpringApplicationBuilder application) {
+            SpringApplicationBuilder application
+            ) {
         return application.sources(SpringEntryPoint.class);
     }
 
@@ -134,5 +135,74 @@ public class SpringEntryPoint
                 "running %s\n",
                 ImmortalsRepositoryService.class.getSimpleName());
     }
+    
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        if (!registry.hasMappingForPattern("/webjars/**")) {
+//            registry.addResourceHandler("/webjars/**").addResourceLocations(
+//                    "classpath:/META-INF/resources/webjars/");
+//        }
+//        if (!registry.hasMappingForPattern("/**")) {
+//            registry.addResourceHandler("/**").addResourceLocations(
+//                    RESOURCE_LOCATIONS);
+//        }
+//    }
+    
+    
+//    @Bean
+//    public Resolver getResolver(){
+//        return new Resolver();
+//    }
+//    
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//       boolean devMode = this.env.acceptsProfiles("dev");
+//       boolean useResourceCache = !devMode;
+//       Integer cachePeriod = devMode ? 0 : null;
+//
+//       registry.addResourceHandler("/public/**")
+//          .addResourceLocations("/public/", "classpath:/public/")
+//          .setCachePeriod(cachePeriod)
+//          .resourceChain(useResourceCache)
+//          .addResolver(new GzipResourceResolver())
+//          .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"))
+//          .addTransformer(new AppCacheManifestTransformer()
+//              );
+//    }
+//    
+//    
+//    private static class Resolver implements ResourceResolver{
+//        
+//        public Resolver(){
+//            System.out.println("creating resolver...\n");
+//        }
+//        
+//        @Override
+//        public Resource resolveResource(
+//                HttpServletRequest request,
+//                String requestPath, 
+//                List<? extends Resource> locations,
+//                ResourceResolverChain chain
+//                ) {
+//            
+//            System.out.printf("resolveResource: %s\n",request.getRequestURI());//TODO
+//            
+//            return chain.resolveResource(request, requestPath, locations);
+//        }
+//
+//        @Override
+//        public String resolveUrlPath(
+//                String resourcePath,
+//                List<? extends Resource> locations, 
+//                ResourceResolverChain chain
+//                ) {
+//            
+//            System.out.printf("resolvePath: %s\n",resourcePath);//TODO
+//            
+//            return chain.resolveUrlPath(resourcePath, locations);
+//        }
+//    }
+
+    
 
 }
