@@ -28,9 +28,9 @@ public class FunctionalitySpecs extends SparqlQuery {
 			"  		?gme a cp:GmeInterchangeFormat . " +
 			"   	?gme im:hasFunctionalitySpec $fs . " +
 			"   	?fs im:hasFunctionalityPerformed ?fp .  " +
-			"   	?fs im:hasPropertyConstraint ?pc . " +
+			"optional{?fs im:hasPropertyConstraint ?pc . " +
 			"  		?pc im:hasConstrainedProperty ?p . " +
-			"		?p a ?pt . " +
+			"		?p a ?pt . } " +
 			"	}" +
 			"}" +
 			"GROUP BY ?fs ?fp";
@@ -44,10 +44,12 @@ public class FunctionalitySpecs extends SparqlQuery {
         	fs = new FunctionalitySpecification(getResource(qs, "functionalitySpec"),
         			getResource(qs, "functionalityPerformed"));
         	
-        	String propertyRollup = getLiteral(qs, "propertyRollup");
-        	String[] propertiesSplit = propertyRollup.split(",");
-        	for (int x = 0; x < propertiesSplit.length; x++) {
-        		fs.addPropertyUri("<" + propertiesSplit[x] + ">");
+        	if (qs.getLiteral("propertyRollup") != null) {
+	        	String propertyRollup = getLiteral(qs, "propertyRollup");
+	        	String[] propertiesSplit = propertyRollup.split(",");
+	        	for (int x = 0; x < propertiesSplit.length; x++) {
+	        		fs.addPropertyUri("<" + propertiesSplit[x] + ">");
+	        	}
         	}
         	
         	result.add(fs);

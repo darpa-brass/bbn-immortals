@@ -11,10 +11,12 @@ _adb_identifier_count = 0
 _emulator_name_template = 'emulator-{CONSOLEPORT}'
 _port_base = 5560
 
+
 def _exit_handler():
     logging.info('Cleaning up after androidplatform.py')
     for platform in _instances:
         platform.platform_teardown()
+
 
 atexit.register(_exit_handler)
 _instances = {}
@@ -40,32 +42,25 @@ def _generate_emulator_identifier():
     elif len(str_identifier) == 1:
         str_identifier = '0' + str_identifier
 
-    consoleport = _port_base + 2*int_identifier
+    consoleport = _port_base + 2 * int_identifier
     return _emulator_name_template.format(CONSOLEPORT=consoleport)
 
 
 class AndroidPlatform(object):
-
     def platform_setup(self):
         pass
-
 
     def deploy_application(self, application_location):
         pass
 
-
     def upload_file(self, source_file_location, file_target):
         pass
-
-
 
     def start_application(self):
         pass
 
-
     def stop_application(self):
         pass
-
 
     def platform_teardown(self):
         pass

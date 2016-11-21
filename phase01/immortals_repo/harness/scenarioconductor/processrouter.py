@@ -17,9 +17,7 @@ def _exit_handler():
     global _keep_running
     _keep_running = False
 
-
 class ProcessRouter:
-
     @staticmethod
     def keep_running():
         global _keep_running

@@ -134,7 +134,7 @@ fi
 
 
 if [ ! -e "~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm" ];then
-    mkdir -p ~/.gradle/wrapper/dists/gradle-2.8-bin/ca0flae0itb57he40lyj6fhpp
+    mkdir -p ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm
     wget "https://services.gradle.org/distributions/gradle-2.8-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm/
 fi
 
@@ -173,8 +173,8 @@ ln -s ${Z3_HOME}/bin/z3 /opt/bin/z3
 apt-get install maven -y
 
 ######## Install other deps ########
-apt-get install python3-pip
-pip install rdflib
+apt-get install python3-pip -y
+pip3 install rdflib
 
 
 

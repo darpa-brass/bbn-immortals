@@ -10,9 +10,9 @@ import subprocess
 import time
 
 import adbhelper
-from configurationmanager import Configuration, AndroidApplicationConfig
 import deploymentplatform
 import emuhelper
+from configurationmanager import AndroidApplicationConfig
 from immortalsglobals import ImmortalsGlobals
 from stdrouter import StdRouter
 from utils import get_formatted_string_value
@@ -29,16 +29,16 @@ def _exit_handler():
             process.kill()
 
 
-    # for identifier in exitidentifiers:
-    #     call_list = [configurationmanager.ANDROID_BIN, 'list', 'avd']
-    #     values = subprocess.check_output(call_list)
-    #     if identifier in values:
-    #
-    #
-    #         try:
-    #             subprocess.call(['android', 'delete', 'avd', '--name', identifier], stdout=None, stderr=None)
-    #         except:
-    #             pass
+            # for identifier in exitidentifiers:
+            #     call_list = [configurationmanager.ANDROID_BIN, 'list', 'avd']
+            #     values = subprocess.check_output(call_list)
+            #     if identifier in values:
+            #
+            #
+            #         try:
+            #             subprocess.call(['android', 'delete', 'avd', '--name', identifier], stdout=None, stderr=None)
+            #         except:
+            #             pass
 
 
 atexit.register(_exit_handler)
@@ -78,7 +78,6 @@ class AndroidEmulatorInstance(deploymentplatform.DeploymentPlatform):
     :type config: AndroidApplicationConfig
     """
 
-
     def __init__(self, application_configuration):
         self.config = application_configuration
         self.adb_device_identifier = _generate_emulator_identifier()
@@ -102,7 +101,8 @@ class AndroidEmulatorInstance(deploymentplatform.DeploymentPlatform):
             self.adbhelper.restart_adb_server()
             _adb_has_been_reinitialized = True
 
-        logging.debug('Setting up ' + self.config.deployment_platform_environment + ' for ' + self.config.instance_identifier)
+        logging.debug(
+                'Setting up ' + self.config.deployment_platform_environment + ' for ' + self.config.instance_identifier)
 
         is_known = self.adbhelper.is_known()
         is_running = self._emulator_exists()
@@ -121,7 +121,8 @@ class AndroidEmulatorInstance(deploymentplatform.DeploymentPlatform):
         if not ImmortalsGlobals.keep_constructed_environment_running:
             _halt_identifiers.append(self.adb_device_identifier)
 
-        sdcard_filepath = os.path.join(self.config.application_deployment_directory, self.config.instance_identifier + '_sdcard.img')
+        sdcard_filepath = os.path.join(self.config.application_deployment_directory,
+                                       self.config.instance_identifier + '_sdcard.img')
         cmd = ['mksdcard', '12M', sdcard_filepath]
         self.call(cmd)
         self.sdcard_filepath = sdcard_filepath
@@ -158,8 +159,8 @@ class AndroidEmulatorInstance(deploymentplatform.DeploymentPlatform):
             self._kill_emulator()
             self.emulator_is_running = False
 
-#        if self.adb_device_identifier in _remove_identifiers:
-#            self._delete_emulator()
+            #        if self.adb_device_identifier in _remove_identifiers:
+            #            self._delete_emulator()
 
     def call(self, call_list):
         logging.debug('EXEC: ' + str(call_list))

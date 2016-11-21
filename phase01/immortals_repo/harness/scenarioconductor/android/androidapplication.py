@@ -51,7 +51,6 @@ class AndroidApplication:
             # if self.is_application_running is True:
             raise Exception('The environment named "' + self.identifier + '" is already running an application!')
 
-
         self.platform.deploy_application(self.config.executable_filepath)
 
         with open(self.config.configuration_template_filepath, 'r') as f:

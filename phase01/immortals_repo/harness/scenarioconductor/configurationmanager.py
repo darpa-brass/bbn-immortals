@@ -148,7 +148,7 @@ class AndroidApplicationConfig(ApplicationConfig):
                  deployment_platform_environment,  # type: str
                  build_root,  # type: str
                  executable_filepath,  # type: str
-                 application_deployment_directory, #  type:str
+                 application_deployment_directory,  # type:str
                  configuration_template_filepath,  # type: str
                  configuration_target_filepath,  # type: str
                  files,  # type: dict
@@ -246,7 +246,7 @@ class JavaApplicationConfig(ApplicationConfig):
                  deployment_platform_environment,  # type: str
                  build_root,  # type: str
                  executable_filepath,  # type: str
-                 application_deployment_directory,  #type: str
+                 application_deployment_directory,  # type: str
                  configuration_template_filepath,  # type: str
                  configuration_target_filepath,  # type: str
                  files,  # type: dict

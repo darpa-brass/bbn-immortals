@@ -17,6 +17,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import mil.darpa.immortals.das.configuration.DfuCompositionConfiguration;
+import mil.darpa.immortals.das.sourcecomposer.CompositionException;
 import org.apache.commons.jexl2.Expression;
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
@@ -246,6 +248,7 @@ public class AdaptationManager {
 										Number testFormulaResult = resolveFormula(formula, deploymentGraphUri, replacements);
 										if (testFormulaResult.doubleValue() <= Double.parseDouble(constrainingMetric.getValue())) {
 											params.add(m.get("scalingFactor"));
+											result.setDetails("Scaling factor used during synthesis: " + m.get("scalingFactor"));
 											break;
 										}
 									}
@@ -257,9 +260,16 @@ public class AdaptationManager {
 												" in deployment model.";
 										result.setDetails(temp);
 									} else {
-										sourceComposer.constructCP2ControlPointComposition(originalDfu.getDependencyCoordinate().toString(), 
-											originalDfu.getClassName().replace(".", "/"), 
-											dfu.getDependencyCoordinate().toString(), dfu.getClassName().replace(".",  "/"), params);
+										try {
+											DfuCompositionConfiguration dfuCompositionConfiguration =
+													sourceComposer.constructCP2ControlPointComposition(originalDfu.getDependencyCoordinate().toString(),
+															originalDfu.getClassName().replace("/", "."),
+															dfu.getDependencyCoordinate().toString(), dfu.getClassName().replace("/", "."), params);
+											sourceComposer.executeCP2Composition(applicationInstance, dfuCompositionConfiguration);
+										} catch (Exception e) {
+											result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+											result.setDetails("Unexpected error invoking Dfu Synthesis: " + e.getMessage());
+										}
 									}
 
 								}
@@ -284,7 +294,7 @@ public class AdaptationManager {
 		}
 
 		if (result.getAdaptationStatusValue() == AdaptationStatusValue.PENDING) {
-			result = new AdaptationStatus(AdaptationStatusValue.SUCCESSFUL);
+			result.setAdaptationStatusValue(AdaptationStatusValue.SUCCESSFUL);
 		}
 		
 		return result;

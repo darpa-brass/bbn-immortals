@@ -35,5 +35,6 @@
     "keepEnvironmentRunning": false,
     "wipeExistingEnvironment": true,
     "haltEnvironmentWhenDone" : true,
-    "displayEmulatorGui": false
+    "displayEmulatorGui": false,
+    "startEmulatorsSimultaneously": false
 }

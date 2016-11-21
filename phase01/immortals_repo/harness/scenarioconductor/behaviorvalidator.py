@@ -7,10 +7,11 @@
 # import subprocess
 
 import json
+import os
 import signal
 from threading import Thread, Timer
 
-from configurationmanager import ApplicationConfig, Configuration
+from configurationmanager import Configuration
 from packages import subprocess32 as subprocess
 
 
@@ -20,12 +21,15 @@ class BehaviorValidator:
 
         self.client_identifiers = []
 
-        for app in runner_configuration.scenario.deployment_applications:  #  type: ApplicationConfig
+        for app in runner_configuration.scenario.deployment_applications:  # type: ApplicationConfig
             if app.application_identifier == 'ATAKLite' or app.application_identifier == 'ataklite':
                 self.client_identifiers.append(app.instance_identifier)
 
         self.deployment_path = runner_configuration.deployment_directory
         self.process = None
+        self.listener = None
+        self.monitoringthread = None;
+        self.timer = None
         self.time_limit_seconds = runner_configuration.timeout
         self.validation_running = True
 
@@ -36,35 +40,33 @@ class BehaviorValidator:
             ci += ['-i', identifier]
 
         command = ['java', '-jar', Configuration.validation_program.executable_filepath, '-f',
-                   self.deployment_path + 'validation_log.txt', '-c',
+                   self.deployment_path + 'results/evaluation_event_log.txt', '-c',
                    'validate'] + ci + self.validator_identifiers
+
+        if not os.path.exists(self.deployment_path + 'results/'):
+            os.mkdir(self.deployment_path + 'results/')
+
         self.process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.listener = finishlistener
 
         self.monitoringthread = Thread(None, self.monitoroutput, None)
         self.monitoringthread.start()
 
-        self.timeout = Timer(self.time_limit_seconds, self.stop, ())
-        self.timeout.start()
+        self.timer = Timer(self.time_limit_seconds, self.stop, ())
+        self.timer.start()
 
     def stop(self):
         if self.validation_running:
             self.validation_running = False
-            self.timeout.cancel()
+            self.timer.cancel()
             self.process.send_signal(signal.SIGINT);
 
     def monitoroutput(self):
         while True:
             try:
                 value = self.process.stdout.readline()
-                if value == '':
-                    break;
-
-                result = self.analyzeinput(value)
-                if result is not None:
-                    print result
-                    self.listener(result)
-                    self.stop()
+                if value != '':
+                    result = self.analyzeinput(value)
 
             except OSError:
                 pass
@@ -73,12 +75,17 @@ class BehaviorValidator:
         data = json.loads(string_value)
 
         if data['type'] == 'Tooling_ValidationFinished':
-            results = data['data']
+            result = json.loads(data['data'])
+            print data['data']
 
+            with open(self.deployment_path + 'results/evaluation_result.json', 'w') as f:
+                json.dump(result, f)
+
+            self.listener(data)
             self.stop()
-            return json.dumps(results)
 
         return None
+
 
 def main():
     bv = BehaviorValidator(None, 600)

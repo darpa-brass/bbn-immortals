@@ -2,19 +2,19 @@
 
 import argparse
 import atexit
-import json
 import logging
 import os
 import shutil
 import signal
 import sys
 import time
-import uuid
+from threading import Thread
 
 import platformhelper
 from behaviorvalidator import BehaviorValidator
-from configurationmanager import ApplicationConfig, Configuration, path_helper
-from data_skeletons import MartiServer, ScenarioConfiguration, ScenarioRunnerConfiguration
+from configurationmanager import Configuration, path_helper
+from data.scenarioconfiguration import ScenarioConfiguration
+from data.scenariorunnerconfiguration import ScenarioRunnerConfiguration
 from immortalsglobals import ImmortalsGlobals
 
 
@@ -76,42 +76,11 @@ class ScenarioRunner:
         ImmortalsGlobals.wipe_existing_environment = runner_configuration.wipe_existing_environment
         ImmortalsGlobals.keep_constructed_environment_running = runner_configuration.keep_environment_running
         ImmortalsGlobals.display_guis = runner_configuration.display_emulator_gui
-        # self.configuration = runner_configuration
 
-        # self.scenario_configuration = ScenarioConverter.produce_scenario(runner_configuration)
-        # self.execution_mode = runner_configuration['executionMode']  # type:str
-
-        # self.scenario_identifier = runner_configuration['scenarioConfiguration']['sessionIdentifier']  # type:str
-
-        # self.behaviorvalidator = None
-
-        # public enum ExecutionMode {
-        #     SETUP_ENVIRONMENT,
-        #     SETUP_APPLICATIONS,
-        #     SETUP_SCENARIO,
-        #     SETUP_EXECUTE_SCENARIO,
-        #     EXECUTE_SCENARIO
-        # }
-
-        # def __init__(self, scenario_identifier, do_setup_environments, do_setup_applications, do_execute_scenario,
-        #              do_display_ui, timeout_seconds, do_validation):
-        #     self.scenario_identifier = scenario_identifier
-        #     self.do_setup_environments = do_setup_environments
-        #     self.do_setup_applications = do_setup_applications
-        #     self.do_execute_scenario = do_execute_scenario
-        #     self.config = config.scenarios[scenario_identifier]
-        # self.scenario_root = path_helper(False, runner_configuration.deployment_directory, self.runner_configuration.session_identifier)
         self.scenario_root = path_helper(False, Configuration.immortals_root, runner_configuration.deployment_directory)
-        # self.scenario_root = os.path.join(runner_configuration.deployment_directory, 'scenarios',
-        #                                   self.runner_configuration.identifier)  # type:str
         self.application_instances = []  # type:list
-        #     self.behaviorvalidator = None
         self.timer = None
-        #     self.do_validation = do_validation
-        #     config.display_ui = do_display_ui
-        self.timeout = runner_configuration.timeout is not None and runner_configuration.timeout or \
-                       runner_configuration.scenario.duration_seconds
-        # self.timeout = runner_configuration['timeout']  # type:int
+        self.timeout = runner_configuration.timeout is not None and runner_configuration.timeout or runner_configuration.scenario.duration_seconds
         self.behaviorvalidator = None
 
     def execute_scenario(self):
@@ -126,39 +95,11 @@ class ScenarioRunner:
 
         if self.runner_configuration.execute_scenario:
             self.start_applications()
-            # self.behavior_validator.start_validation()
 
         if self.runner_configuration.scenario.validator_identifiers is None or not self.runner_configuration.validate:
             if self.timeout is not None and self.timeout > 0:
                 time.sleep(self.timeout)
                 self.halt_scenario()
-                # Sleep a while for the test to run
-                # self.timer = Timer(self.timeout, self.halt_scenario, ())
-                # self.timer.start()
-                # time.sleep(self.config.duration_seconds)
-
-                # Stop all clients
-                # for application in self.applications:
-                #     application.stop_application()
-
-                # Stop collecting data and determine if the test passes
-                # if self.config.duration_seconds > 0:
-                # validation_result = self.behavior_validator.stop_and_validate()
-                # else:
-                # validation_result = True
-
-                # Save the results to the results file and display the status on the screen
-                # results = {}
-                # results['testPass'] = validation_result
-
-                # with open(os.path.join(self.scenario_root, 'results.json'), 'w') as resultFile:
-                # _file_objects.append(resultFile)
-                # commentjson.dump(results, resultFile)
-
-
-                # if not ImmortalsGlobals.keep_constructed_environment_running:
-                #     for application in self.applications:
-                #         application.stop_environment()
 
     def setup_environment(self):
         if os.path.exists(self.scenario_root):
@@ -184,12 +125,29 @@ class ScenarioRunner:
         if len(self.application_instances) == 0:
             self._init_applications()
 
-        for application in self.application_instances:
+        if self.runner_configuration.start_emulators_simultaneously:
+
             if self.runner_configuration.setup_environment:
-                application.setup_start_environment()
+                thread_pool = []
+                for application in self.application_instances:
+                    t = Thread(target=application.setup_start_environment)
+                    thread_pool.append(t)
+                    t.start()
+
+                for t in thread_pool:  # type: Thread
+                    t.join()
 
             if self.runner_configuration.setup_applications:
-                application.setup_application()
+                for application in self.application_instances:
+                    application.setup_application()
+
+        else:
+            for application in self.application_instances:
+                if self.runner_configuration.setup_environment:
+                    application.setup_start_environment()
+
+                if self.runner_configuration.setup_applications:
+                    application.setup_application()
 
     def start_applications(self):
         if len(self.application_instances) == 0:
@@ -198,22 +156,16 @@ class ScenarioRunner:
         if self.runner_configuration.scenario.validator_identifiers is not None and self.runner_configuration.validate:
             client_identifiers = []
 
-            for client in self.runner_configuration.scenario.deployment_applications: #  type: ApplicationConfig
+            for client in self.runner_configuration.scenario.deployment_applications:  # type: ApplicationConfig
                 if client.application_identifier == 'ATAKLite':
                     client_identifiers.append(client.instance_identifier)
 
-            # self.behaviorvalidator = BehaviorValidator(self.runner_configuration.scenario.validator_identifiers,
-            #                                            client_identifiers,
-            #                                            self.runner_configuration.deployment_directory,
-            #                                            self.runner_configuration.timeout)
             self.behaviorvalidator = BehaviorValidator(self.runner_configuration)
             self.behaviorvalidator.start(self.halt_scenario)
 
         for application in self.application_instances:
-            # self.behavior_validator.add_client(application.instance_identifier, application.application_identifier)
             with open(os.path.join(application.config.application_deployment_directory, 'log.txt'), 'w') as log:
                 _file_objects.append(log)
-                # application.start_application(self.behavior_validator.receive_event)
 
                 application.start_application()
 
@@ -240,7 +192,6 @@ class ScenarioRunner:
         for configuration_instance in deployment_applications:
             application_instance = platformhelper.create_application_instance(configuration_instance)
             self.application_instances.append(application_instance)
-
 
 # def main():
 #     args = parser.parse_args()
@@ -301,5 +252,3 @@ class ScenarioRunner:
 #         parser.print_help()
 #
 #
-# if __name__ == '__main__':
-#     main()

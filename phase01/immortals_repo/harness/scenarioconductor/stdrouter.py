@@ -13,7 +13,6 @@ atexit.register(_exit_handler)
 
 
 class StdEndpointSet:
-
     def __init__(self, std_dirpath=None):
         if std_dirpath is not None:
             self.err = open(os.path.join(std_dirpath, 'stderr.txt'), 'w')
@@ -26,7 +25,6 @@ class StdEndpointSet:
 
 
 class StdRouter:
-
     endpoints = {}
 
     @staticmethod

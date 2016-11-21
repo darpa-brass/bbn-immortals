@@ -12,10 +12,7 @@ import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
  * Created by awellman@bbn.com on 6/22/16.
  */
 @DfuAnnotation(
-        functionalityBeingPerformed = ImageProcessor.class,
-        resourceDependencies = {
-                DiskResource.class
-        }
+        functionalityBeingPerformed = ImageProcessor.class
 )
 public class BitmapReader implements ConsumingPipe<String> {
 

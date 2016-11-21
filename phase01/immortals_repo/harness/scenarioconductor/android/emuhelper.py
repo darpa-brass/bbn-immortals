@@ -16,8 +16,9 @@ _ID_PORT = '$PORT!'
 _ID_EMULATOR_SDK_LEVEL = '$EMULATOR_SDK_LEVEL!'
 
 _android_emulator_create_command = (
-ANDROID_BIN, 'create', 'avd', '--target', 'android-' + _ID_EMULATOR_SDK_LEVEL, '--abi', 'default/x86_64', '--device',
-'Nexus 5', '--sdcard', '512M', '--name', _ID_EMULATOR_IDENTIFIER)
+    ANDROID_BIN, 'create', 'avd', '--target', 'android-' + _ID_EMULATOR_SDK_LEVEL, '--abi', 'default/x86_64',
+    '--device',
+    'Nexus 5', '--sdcard', '512M', '--name', _ID_EMULATOR_IDENTIFIER)
 _android_emulator_delete_command = (ANDROID_BIN, 'delete', 'avd', '--name', _ID_EMULATOR_IDENTIFIER)
 # DO NOT disable the boot screen as it is used to determine when a device has finished booting!
 _android_emulator_start_command = (EMULATOR_BIN, '-avd', _ID_EMULATOR_IDENTIFIER, '-gpu', 'off', '-port', _ID_PORT)

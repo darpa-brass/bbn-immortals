@@ -6,7 +6,6 @@ import mil.darpa.immortals.das.sourcecomposer.dfucomposers.ConsumingPipeComposer
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -42,18 +41,34 @@ public class SourceComposer {
         private final Path targetApplicationPath;
         private final String sessionIdentifier;
 
-        private final LinkedList<String> dependencyLines = new LinkedList<>();
+        private final LinkedList<String> dependencyLines;
 
 
-        ApplicationInstance(EnvironmentConfiguration environmentConfiguration, EnvironmentConfiguration.CompositionTarget applicationIdentifier, String sessionIdentifier) throws IOException {
+        private ApplicationInstance(EnvironmentConfiguration environmentConfiguration, EnvironmentConfiguration.CompositionTarget applicationIdentifier, String sessionIdentifier, boolean newInstance) throws IOException {
             this.sessionIdentifier = sessionIdentifier;
             this.environmentConfiguration = environmentConfiguration;
             this.compositionTargetProfile = environmentConfiguration.getApplicationProfile(applicationIdentifier);
-            this.targetApplicationPath = ApplicationAugmenter.intializeApplicationInstance(compositionTargetProfile, sessionIdentifier).toAbsolutePath();
 
-            dependencyLines.add("apply plugin: 'com.android.application'");
-            dependencyLines.add("dependencies {");
-            dependencyLines.add("}");
+            if (newInstance) {
+                this.targetApplicationPath = ApplicationAugmenter.intializeApplicationInstance(compositionTargetProfile, sessionIdentifier).toAbsolutePath();
+
+                dependencyLines = new LinkedList<>();
+
+                dependencyLines.add("apply plugin: 'com.android.application'");
+                dependencyLines.add("dependencies {");
+                dependencyLines.add("}");
+
+            } else {
+                this.targetApplicationPath = this.compositionTargetProfile.generateTargetApplicationPathValue(this.sessionIdentifier);
+
+                Path gradleFilepath = targetApplicationPath.resolve(compositionTargetProfile.getGradleTargetFile());
+
+                if (Files.exists(gradleFilepath)) {
+                    dependencyLines = new LinkedList<>(Files.readAllLines(gradleFilepath));
+                } else {
+                    dependencyLines = new LinkedList<>();
+                }
+            }
         }
 
         public Path getApplicationPath() {
@@ -111,7 +126,7 @@ public class SourceComposer {
      * @return The absolute path to the new client instance
      */
     public ApplicationInstance initializeApplicationInstance(EnvironmentConfiguration.CompositionTarget applicationIdentifier) throws IOException {
-        return new ApplicationInstance(environmentConfiguration, applicationIdentifier, sessionIdentifier);
+        return new ApplicationInstance(environmentConfiguration, applicationIdentifier, sessionIdentifier, true);
     }
 
     /**

@@ -13,6 +13,8 @@ from java import javaplatform
 """
 Creates an application instance for a given application configuration (see configurationmanager.py)
 """
+
+
 def create_application_instance(application_configuration):
     platform = application_configuration.deployment_platform_environment
 
@@ -28,6 +30,8 @@ def create_application_instance(application_configuration):
 """
 Creates a platform instance for a given application coniguration. This should never need to be called from anywhere other than an application instance (such as what is obtained by calling the above)
 """
+
+
 def create_platform_instance(application_configuration):
     platform = application_configuration.deployment_platform_environment
 

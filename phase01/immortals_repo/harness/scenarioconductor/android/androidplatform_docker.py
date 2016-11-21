@@ -17,10 +17,10 @@ _IDIMAGE_IDENTIFIER = '$IMAGE_IDENTIFIER!'
 
 _CMD_DOCKER_EXEC = ('sudo', 'docker', 'exec', _IDCONTAINER_NAME)
 _CMD_GET_DOCKER_CREATED_CONTAINER_IDENTIFIER = (
-'sudo', 'docker', 'ps', '-a', '-q', '--filter=name=' + _IDCONTAINER_NAME)
+    'sudo', 'docker', 'ps', '-a', '-q', '--filter=name=' + _IDCONTAINER_NAME)
 _CMD_GET_DOCKER_RUNNING_CONTAINER_IDENTIFIER = ('sudo', 'docker', 'ps', '-q', '--filter=name=' + _IDCONTAINER_NAME)
 _CMD_CREATE_CONTAINER = (
-'sudo', 'docker', 'run', '-itd', '--device=/dev/kvm', '--name=' + _IDCONTAINER_NAME, _IDIMAGE_IDENTIFIER)
+    'sudo', 'docker', 'run', '-itd', '--device=/dev/kvm', '--name=' + _IDCONTAINER_NAME, _IDIMAGE_IDENTIFIER)
 
 _CMD_START_CONTAINER = ('sudo', 'docker', 'start', _IDCONTAINER_NAME)
 _CMD_STOP_CONTAINER = ('sudo', 'docker', 'stop', _IDCONTAINER_NAME)
@@ -35,7 +35,8 @@ class AndroidDockerEmulatorInstance(deploymentplatform.DeploymentPlatform):
 
     def __init__(self, application_configuration):
         self.config = application_configuration
-        self.docker = docker.DockerInstance(self.config.application_deployment_directory, application_configuration, True)
+        self.docker = docker.DockerInstance(self.config.application_deployment_directory, application_configuration,
+                                            True)
         self.emulator = androidplatform_emulator.AndroidEmulatorInstance(application_configuration)
         self.emulator.call = self.docker.call
         self.emulator.Popen = self.docker.Popen

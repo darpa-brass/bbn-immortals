@@ -9,23 +9,24 @@ buildscript {
     }
 }
 
+// Little hacky... But it works for now
 String scriptPath = project.buildscript.sourceFile
 scriptPath = scriptPath.substring(0, scriptPath.lastIndexOf("/")+1)
 
-// Little hacky... But it works for now
 File f;
 if ((f = new File("${scriptPath}../../shared/common.gradle")).exists()) {
-    apply from: f.toString()//"../../shared/common.gradle"
+    apply from: f.toString()
 
 } else if ((f = new File("${scriptPath}../../../shared/common.gradle")).exists()) {
-    apply from: f.toString()//"../../../shared/common.gradle"
+    apply from: f.toString()
 
 } else if ((f = new File("${scriptPath}../../../../shared/common.gradle")).exists()) {
-    apply from: f.toString()//"../../../../shared/common.gradle"
+    apply from: f.toString()
 
 } else if ((f = new File("${scriptPath}../../../../../shared/common.gradle")).exists()) {
-    apply from: f.toString()//"../../../../../shared/common.gradle"
+    apply from: f.toString()
 }
+// End of Little hacky...
 
 apply from: 'dependencies.gradle'
 

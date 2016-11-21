@@ -4,6 +4,7 @@ import mil.darpa.immortals.das.configuration.EnvironmentConfiguration;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -19,32 +20,50 @@ public class BuildBridge {
     }
 
     private EnvironmentConfiguration configuration;
+    private final File gradleHome;
 
 
     private static BuildBridge mInstance;
 
     private BuildBridge(EnvironmentConfiguration environmentConfiguration) {
         configuration = environmentConfiguration;
+        String gradleHomeStr = System.getenv("GRADLE_HOME");
+        if (gradleHomeStr == null) {
+            gradleHome = null;
+        } else {
+            File gh = new File(gradleHomeStr);
+            if (gh.exists()) {
+                gradleHome = gh;
+            } else {
+                gradleHome = null;
+            }
+        }
     }
 
     public synchronized void buildSynthesisRepository(String sessionIdentifier) {
-        ProjectConnection projectConnection = GradleConnector.newConnector().forProjectDirectory(configuration.getSynthesisModulesPath(sessionIdentifier).toFile()).connect();
+        GradleConnector gradleConnector = GradleConnector.newConnector().forProjectDirectory(configuration.getSynthesisModulesPath(sessionIdentifier).toFile());
 
-        projectConnection.newBuild().forTasks("publish").setStandardOutput(System.out).run();
+        if (gradleHome != null) {
+            gradleConnector.useInstallation(gradleHome);
+        }
+
+        ProjectConnection projectConnection = gradleConnector.connect();
+
+        projectConnection.newBuild().forTasks("publish").withArguments("--offline").setStandardOutput(System.out).run();
         projectConnection.close();
     }
 
     public synchronized void buildApplication(Path applicationPath) {
-        ProjectConnection applicationConnection = GradleConnector.newConnector().forProjectDirectory(applicationPath.toAbsolutePath().toFile()).connect();
-        applicationConnection.newBuild().forTasks("build").setStandardOutput(System.out).run();
+        GradleConnector gradleConnector = GradleConnector.newConnector().forProjectDirectory(applicationPath.toAbsolutePath().toFile());
+
+        if (gradleHome != null) {
+            gradleConnector.useInstallation(gradleHome);
+        }
+
+        ProjectConnection applicationConnection = gradleConnector.connect();
+
+        applicationConnection.newBuild().forTasks("build").withArguments("--offline").setStandardOutput(System.out).run();
         applicationConnection.close();
     }
-
-    // This appears to be kicking off some base ATAKLite stuff, which gets confused about where common.gradle is... Need to investigate before enabling...
-//    public synchronized void wipeSynthesized() {
-//        ProjectConnection applicationConnection = GradleConnector.newConnector().forProjectDirectory(configuration.getImmortalsRootPath().toAbsolutePath().toFile()).connect();
-//        applicationConnection.newBuild().forTasks("wipeSynthesized").setStandardOutput(System.out).run();
-//        applicationConnection.close();
-//    }
 }
 
