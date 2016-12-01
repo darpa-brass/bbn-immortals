@@ -1,31 +1,4 @@
-#
-# {
-#     "scenarioConfiguration": {
-#         "sessionIdentifier" : "B4F3692B0665",
-#         "server": {
-#             "bandwidth": 1000
-#         },
-#         "clients": [
-#             {
-#                 "imageBroadcastIntervalMS": "5000",
-#                 "latestSABroadcastIntervalMS": "250",
-#                 "count": 2
-#             }
-#         ]
-#
-#     },
-#     "executionMode": "RUN_SCENARIO",
-#     "scenarioIdentifiers" : [
-#         "client-test-images"
-#     ],
-#     "validate": true,
-#     "timeout": 60,
-#     "keepEnvironmentRunning": false,
-#     "wipeExistingEnvironment": true,
-#     "displayEmulatorGui": false,
-#
-#     "wipeExistingEnvironment": false,
-# }
+import time
 
 
 class MartiServer:
@@ -35,15 +8,19 @@ class MartiServer:
 
     @classmethod
     def from_dict(cls, d):
-        # type:(dict) -> MartiServer
         return cls(
                 d['bandwidth']
         )
 
     def __init__(self,
-                 bandwidth  # type: int
+                 bandwidth
                  ):
-        self.bandwidth = bandwidth  # type: int
+        self.bandwidth = bandwidth
+
+    def to_dict(self):
+        return {
+            'bandwidth': self.bandwidth
+        }
 
 
 class ATAKLiteClient:
@@ -57,7 +34,6 @@ class ATAKLiteClient:
 
     @classmethod
     def from_dict(cls, d):
-        # type:(dict) -> ATAKLiteClient
         return cls(
                 d['imageBroadcastIntervalMS'],
                 d['latestSABroadcastIntervalMS'],
@@ -79,46 +55,58 @@ class ATAKLiteClient:
         self.present_resources = present_resources
         self.required_properties = required_properties
 
+    def to_dict(self):
+        return {
+            'imageBroadcastIntervalMS': self.image_broadcast_interval_ms,
+            'latestSABroadcastIntervalMS': self.latestsa_broadcast_interval_ms,
+            'count': self.count,
+            'presentResources': self.present_resources,
+            'requiredProperties': self.required_properties
+        }
 
+
+# noinspection PyPep8Naming
 class ScenarioConfiguration:
     """
     :type session_identifier: str
     :type server: MartiServer
     :type clients: list[ATAKLiteClient]
+    :type minimumRunTimeMS: int
     """
 
     def __init__(self,
-                 session_identifier,  # type: str
-                 server,  # type: MartiServer
-                 clients  # type:ATAKLiteClient
+                 session_identifier,
+                 server,
+                 clients,
+                 minimumRunTimeMS,
                  ):
-        self.session_identifier = session_identifier  # type: str
-        self.server = server  # type: MartiServer
-        self.clients = clients  # type:ATAKLiteClient
+        self.session_identifier = session_identifier
+        self.server = server
+        self.clients = clients
+        self.minimumRunTimeMS = minimumRunTimeMS
         self.server.parent_config = self
         for c in self.clients:
             c.parent_config = self
 
+    def to_dict(self):
+        return {
+            'sessionIdentifier': self.session_identifier,
+            'server': self.server.to_dict(),
+            'clients': map(lambda c: ATAKLiteClient.to_dict(c), self.clients),
+            'minimumRunTimeMS': self.minimumRunTimeMS,
+        }
+
     @classmethod
     def from_dict(cls, d):
-        return cls(
-                d['sessionIdentifier'],
-                MartiServer.from_dict(d['server']),
-                map(lambda c: ATAKLiteClient.from_dict(c), d['clients'])
-        )
 
-# def main():
-#     with open('sample_configuration.json', 'r') as f:
-#         sc_j = json.load(f)
-#         sc = ScenarioConfiguration.from_dict(sc_j)
-#
-#     src = ScenarioRunnerConfiguration.from_scenario_configuration(sc, 'validation')
-#     # print json.dumps(src, default=lambda o: o.__dict__, sort_keys=True, indent=4)
-#     from scenariorunner import  ScenarioRunner
-#     sr = ScenarioRunner(src)
-#
-#     # sr.execute_scenario()
-#
-#
-# if __name__ == '__main__':
-#     main()
+        if 'sessionIdentifier' in d:
+            si = d['sessionIdentifier']
+        else:
+            si = "S" + str(int(time.time() * 1000))[:12]
+
+        return cls(
+                si,
+                MartiServer.from_dict(d['server']),
+                map(lambda c: ATAKLiteClient.from_dict(c), d['clients']),
+                d['minimumRunTimeMS'],
+        )

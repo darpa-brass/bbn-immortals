@@ -1,0 +1,35 @@
+{
+    // The Marti server
+    "server": {
+        // The bandwidth of the server
+        "bandwidth": 1000
+    },
+    // The client configurations. Currently, only a single client configuration is supported (more will result in unpredictable behavior)
+    "clients": [
+        // A client configuration
+        {
+            // How often in milliseconds an image should be broadcasted
+            "imageBroadcastIntervalMS": "70000",
+            // How often in milliseconds latestSA should be broadcasted
+            "latestSABroadcastIntervalMS": "1000",
+            // How many instances of this client configuration should be run
+            "count": 2,
+            // The resources present on the client
+            "presentResources" : [
+                "bluetooth",
+                "usb",
+                "internalGps",
+                "userInterface",
+                "gpsSatellites"
+            ],
+            // The requirements the client must meet
+            "requiredProperties" : [
+                "trustedLocations"
+            ]
+        }
+    ],
+    // The scenario will run for no less time than this to allow for additional data to be collected
+    // We still need to balance the impact multiple clients and image broadcast interval have on the needed run time,
+    // so it is recommended to set this to at least double the image broadcast interval plus maybe 5000 per client
+    "minimumRunTimeMS": 90000
+}

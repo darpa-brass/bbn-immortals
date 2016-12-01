@@ -5,9 +5,11 @@ import com.securboration.immortals.ontology.resources.NetworkResource;
 /**
  * Bandwidth consumed on some communication medium
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Bandwidth consumed on some communication medium  @author jstaples ")
 public class NetworkBandwidth extends NetworkResource {
 
 }

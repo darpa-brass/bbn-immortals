@@ -1,36 +1,36 @@
 package com.securboration.immortals.ontology.lang;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.core.org.Standard;
-import com.securboration.immortals.uris.Uris.rdfs;
 
 /**
  * An abstraction of a programming language
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
-@Triple(
-    predicateUri = rdfs.comment$,
-    objectLiteral = @Literal("an abstraction of a programming language"))
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "An abstraction of a programming language  @author jstaples ")
 public class ProgrammingLanguage {
     
-    @Triple(
-        predicateUri = rdfs.comment$,
-        objectLiteral = @Literal("The name of the language.  E.g., Java"))
+    /**
+     * The name of the language.  E.g., "Java"
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The name of the language.  E.g., \"Java\"")
     private String languageName;
     
-    @Triple(
-        predicateUri = rdfs.comment$,
-        objectLiteral = @Literal("The version of the language.  E.g., " +
-                "Java 8"))
+    /**
+     * The version of the language.  E.g., "Java 8"
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The version of the language.  E.g., \"Java 8\"")
     private String versionTag;
     
-    @Triple(
-        predicateUri = rdfs.comment$,
-        objectLiteral = @Literal("The standard for the language.  " +
-                "E.g., C11 aka ISO/IEC 9899:2011"))
+    /**
+     * The standard for the language.  E.g., C11 aka ISO/IEC 9899:2011
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The standard for the language.  E.g., C11 aka ISO/IEC 9899:2011")
     private Standard programmingLanguageStandard;
 
     public String getLanguageName() {

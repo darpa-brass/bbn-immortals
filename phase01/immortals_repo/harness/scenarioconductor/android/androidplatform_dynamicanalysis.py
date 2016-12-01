@@ -5,9 +5,9 @@ import logging
 import os
 
 import androidplatform_emulator
-import deploymentplatform
-import docker
-from configurationmanager import AndroidApplicationConfig
+from .. import deploymentplatform
+from .. import docker
+from ..data.applicationconfig import AndroidApplicationConfig
 
 parser = argparse.ArgumentParser(description='IMMoRTALS Droidscope Utility')
 argumentCommandGroup = parser.add_mutually_exclusive_group()
@@ -15,7 +15,7 @@ argumentCommandGroup.add_argument('-sd', '--start-docker', action='store_true', 
 argumentCommandGroup.add_argument('-se', '--start-emulator', action='store_true', help='Start the docker container')
 
 
-class AndroidDynamicAnalysisInstance(deploymentplatform.DeploymentPlatform):
+class AndroidDynamicAnalysisInstance(deploymentplatform.DeploymentPlatformInterface):
     """
     :type config: AndroidApplicationConfig
     """
@@ -67,8 +67,8 @@ class AndroidDynamicAnalysisInstance(deploymentplatform.DeploymentPlatform):
 
         self.config = application_configuration
 
-    def platform_setup(self):
-        self.docker.platform_setup()
+    def setup(self):
+        self.docker.setup()
 
         sdcard_filepath = os.path.join(self.config.application_deployment_directory,
                                        self.config.application_identifier + '_sdcard.img')
@@ -76,7 +76,7 @@ class AndroidDynamicAnalysisInstance(deploymentplatform.DeploymentPlatform):
         logging.debug('EXEC: ' + str(cmd))
         self.docker.call(cmd)
 
-        self.emulator.platform_setup()
+        self.emulator.setup()
 
     def deploy_application(self, application_location):
         self.docker.deploy_application(application_location)
@@ -92,17 +92,17 @@ class AndroidDynamicAnalysisInstance(deploymentplatform.DeploymentPlatform):
         self.docker.upload_file(source_file_location, file_target)
         self.emulator.upload_file(source_file_location, file_target)
 
-    def start_application(self):
-        self.docker.start_application()
-        self.emulator.start_application()
+    def application_start(self):
+        self.docker.application_start()
+        self.emulator.application_start()
 
-    def stop_application(self):
-        self.emulator.stop_application()
-        self.docker.stop_application()
+    def application_stop(self):
+        self.emulator.application_stop()
+        self.docker.application_stop()
 
         self.docker.copy_file_from_docker('/decaf.log', self.config.application_deployment_directory)
         self.docker.copy_file_from_docker('/' + self.docker.config.package_identifier + '_jumps.log',
                                           self.config.application_deployment_directory)
 
-    def platform_teardown(self):
-        self.docker.platform_teardown()
+    def stop(self):
+        self.docker.stop()

@@ -41,7 +41,7 @@ public class QuicksortDriver {
         strClasses.add("com.osustar.QuicksortTest");
 
         HierarchicalClassReducer classReducer = new HierarchicalClassReducer(rootFolder,relativeFilePath,jarFile,packageName,
-                testJarFile,strClasses,buildCommand,className);
+                testJarFile,strClasses,buildCommand,className, false);
         classReducer.ReduceClass();
     }
 }

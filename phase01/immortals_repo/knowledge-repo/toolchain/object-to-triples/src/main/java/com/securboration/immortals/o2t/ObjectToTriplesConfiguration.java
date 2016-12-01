@@ -23,14 +23,16 @@ public class ObjectToTriplesConfiguration {
     private Logger log = 
             LogManager.getLogger(ObjectToTriplesConfiguration.class);
 
-    private ClassLoader classloader = ObjectToTriplesConfiguration.class
-            .getClassLoader();
+    private ClassLoader classloader = 
+            ObjectToTriplesConfiguration.class.getClassLoader();
 
     private Collection<String> namespaceMappings = new ArrayList<>();
 
-    private String targetNamespace = "http://securboration.com/immortals/ontology/r1.0.0.SNAPSHOT";
+    private String targetNamespace = 
+            "http://securboration.com/immortals/ontology/r1.0.0.SNAPSHOT";
 
-    private File outputFile = new File("./immortals-" + UUID.randomUUID().toString() + ".ttl");
+    private File outputFile = 
+            new File("./immortals-" + UUID.randomUUID().toString() + ".ttl");
 
     private String outputLanguage = "Turtle";
 
@@ -40,7 +42,7 @@ public class ObjectToTriplesConfiguration {
     
     private boolean flattenArrays = true;
     
-    private boolean addDomainRangeToProperties = false;
+    private boolean addDomainRangeToProperties = true;
     
     private boolean addDisjointAssertions = false;
     
@@ -62,6 +64,8 @@ public class ObjectToTriplesConfiguration {
     private ObjectMapper mapper = new ObjectMapper();
     
     private boolean addMetadata = false;
+    
+    private ObjectTranslator objectTranslator = new ObjectTranslatorImpl();
 
     public Logger getLog() {
         return log;
@@ -255,6 +259,16 @@ public class ObjectToTriplesConfiguration {
     
     public void setAddFieldRestrictions(boolean addFieldRestrictions) {
         this.addFieldRestrictions = addFieldRestrictions;
+    }
+    
+    
+    public ObjectTranslator getObjectTranslator() {
+        return objectTranslator;
+    }
+
+    
+    public void setObjectTranslator(ObjectTranslator objectTranslator) {
+        this.objectTranslator = objectTranslator;
     }
 
 }

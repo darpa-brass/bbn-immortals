@@ -2,10 +2,28 @@ package com.securboration.immortals.ontology.metrics;
 
 import com.securboration.immortals.ontology.property.Property;
 
+/**
+ * A type of measurement
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A type of measurement  @author jstaples ")
 public class MeasurementType {
     
+    /**
+     * A tag describing the measurement type
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A tag describing the measurement type")
     private String measurementType;
     
+    /**
+     * The property being measured
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The property being measured")
     private Class<? extends Property> correspondingProperty;
 
     

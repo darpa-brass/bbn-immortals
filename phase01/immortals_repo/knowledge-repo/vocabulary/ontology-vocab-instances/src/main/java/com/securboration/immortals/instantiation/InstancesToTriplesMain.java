@@ -14,6 +14,7 @@ import com.securboration.immortals.instantiation.bytecode.JarIngestor;
 import com.securboration.immortals.instantiation.bytecode.SourceFinder;
 import com.securboration.immortals.instantiation.bytecode.UriMappings;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
+import com.securboration.immortals.o2t.PassthroughTranslator;
 import com.securboration.immortals.o2t.analysis.ObjectNode;
 import com.securboration.immortals.o2t.analysis.ObjectPrinter;
 import com.securboration.immortals.o2t.analysis.ObjectToTriples;
@@ -215,7 +216,7 @@ public class InstancesToTriplesMain {
 
     private static void printObject(Object o) {
         ExceptionWrapper.wrap(() -> {
-            ObjectNode n = ObjectNode.build(o);
+            ObjectNode n = ObjectNode.build(new PassthroughTranslator(),o);
             ObjectPrinter.getPrinterVisitor();
 
             n.accept(ObjectPrinter.getPrinterVisitor());

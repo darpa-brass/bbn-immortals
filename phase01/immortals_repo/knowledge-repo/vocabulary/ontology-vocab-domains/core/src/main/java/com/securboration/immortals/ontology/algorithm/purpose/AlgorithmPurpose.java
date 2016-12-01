@@ -3,9 +3,11 @@ package com.securboration.immortals.ontology.algorithm.purpose;
 /**
  * An enumeration of common algorithm purposes
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "An enumeration of common algorithm purposes  @author jstaples ")
 public enum AlgorithmPurpose {
     
     UNDEFINED,

@@ -1,17 +1,20 @@
 package com.securboration.immortals.ontology.property.impact;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.uris.Uris.rdfs;
-
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A remediation strategy"
-        )
-    )
+/**
+ * The impact of a remediation strategy
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "The impact of a remediation strategy  @author jstaples ")
 public class RemediationImpact extends ImpactStatement {
     
+    /**
+     * A predictive assertion that represents the remediation strategy
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A predictive assertion that represents the remediation strategy")
     private PredictiveCauseEffectAssertion remediationStrategy;
 
     

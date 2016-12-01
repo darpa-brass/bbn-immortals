@@ -3,14 +3,14 @@
 import logging
 import os
 
-import deploymentplatform
-import docker
-from configurationmanager import AndroidApplicationConfig
+from .. import deploymentplatform
+from .. import docker
+from ..data.applicationconfig import AndroidApplicationConfig
 
 _CONTAINER_NAME = os.environ['USER'] + '-ds'
 
 
-class AndroidStaticAnalysisInstance(deploymentplatform.DeploymentPlatform):
+class AndroidStaticAnalysisInstance(deploymentplatform.DeploymentPlatformInterface):
     """
     :type config: AndroidApplicationConfig
     """
@@ -19,8 +19,8 @@ class AndroidStaticAnalysisInstance(deploymentplatform.DeploymentPlatform):
         self.config = application_configuration
         self.docker = docker.DockerInstance(self.config.application_deployment_directory, application_configuration)
 
-    def platform_setup(self):
-        self.docker.platform_setup()
+    def setup(self):
+        self.docker.setup()
 
     def deploy_application(self, application_location):
         self.apk_filename = os.path.basename(application_location)
@@ -30,7 +30,7 @@ class AndroidStaticAnalysisInstance(deploymentplatform.DeploymentPlatform):
     def upload_file(self, source_file_location, file_target):
         self.docker.upload_file(source_file_location, file_target)
 
-    def start_application(self):
+    def application_start(self):
         file_found = False;
         for filepath in self.docker.files:
             if os.path.basename(filepath) == 'android_staticanalysis.sh':
@@ -54,8 +54,8 @@ class AndroidStaticAnalysisInstance(deploymentplatform.DeploymentPlatform):
         if not file_found:
             raise Exception("No file has been found in the droidscope instance for android_staticanalysis.sh!!!")
 
-    def stop_application(self):
-        self.docker.stop_application()
+    def application_stop(self):
+        self.docker.application_stop()
 
-    def platform_teardown(self):
-        self.docker.platform_teardown()
+    def stop(self):
+        self.docker.stop()

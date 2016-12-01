@@ -3,13 +3,20 @@ package com.securboration.immortals.ontology.resources;
 import com.securboration.immortals.ontology.core.Resource;
 
 /**
- * A device
+ * An abstract device
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "An abstract device  @author jstaples ")
 public class Device extends Resource {
     
+    /**
+     * The platform resources connected to a device
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The platform resources connected to a device")
     private PlatformResource[] resources;
 
     

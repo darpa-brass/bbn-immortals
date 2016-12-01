@@ -5,24 +5,33 @@ import com.securboration.immortals.ontology.property.Property;
 
 /**
  * A model of data flow to/from a DFU
- * @author Securboration
+ * 
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A model of data flow to/from a DFU  @author jstaples ")
 public class DataFlow {
     
     /**
      * The datatype that flows
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The datatype that flows")
     private Class<? extends DataType> type;
     
     /**
      * Properties of the flow
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Properties of the flow")
     private Property[] properties;
     
     /**
      * The name of the flow
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The name of the flow")
     private String flowName;
 
     public Class<? extends DataType> getType() {

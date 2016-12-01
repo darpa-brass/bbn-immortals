@@ -22,5 +22,8 @@
         "harness/scenarioconductor/configs/location/LocationProviderSaasmSimulated.json": "/sdcard/ataklite/LocationProviderSaasmSimulated.json",
         "harness/scenarioconductor/configs/location/LocationProviderUsbGpsSimulated.json": "/sdcard/ataklite/LocationProviderUsbGpsSimulated.json"
     },
+    "filesForCleanup": [
+        "/sdcard/ataklite"
+    ],
     "properties": {}
 }

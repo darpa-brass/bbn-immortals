@@ -1,19 +1,29 @@
 package com.securboration.immortals.ontology.ordering;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.uris.Uris.rdfs;
-
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "Describes the logical ordering of elements specified explicitly in " +
-        "before/after form"
-        )
-    )
+/**
+ * Describes the logical ordering of elements by explicitly asserting 
+ * before/after relationships between them
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Describes the logical ordering of elements by explicitly asserting " +
+    " before/after relationships between them  @author jstaples ")
 public class LogicalOrderingMechanism extends OrderingMechanism {
     
+    /**
+     * The things that come before
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The things that come before")
     private Class<?>[] comesBefore;
+    
+    /**
+     * The things that come after
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The things that come after")
     private Class<?>[] comesAfter;
     
     public Class<?>[] getComesBefore() {

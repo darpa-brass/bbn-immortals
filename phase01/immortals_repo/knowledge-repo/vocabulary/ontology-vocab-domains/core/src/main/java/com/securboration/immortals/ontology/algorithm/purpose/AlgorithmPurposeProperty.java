@@ -5,11 +5,18 @@ import com.securboration.immortals.ontology.algorithm.AlgorithmSpecificationProp
 /**
  * Indicates the purpose of the algorithm
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Indicates the purpose of the algorithm  @author jstaples ")
 public class AlgorithmPurposeProperty extends AlgorithmSpecificationProperty {
     
+    /**
+     * The algorithm's purpose
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The algorithm's purpose")
     private AlgorithmPurpose purpose;
     
     public AlgorithmPurposeProperty(){}

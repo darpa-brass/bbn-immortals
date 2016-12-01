@@ -1,36 +1,51 @@
 #!/usr/bin/env python
 
 import os
-import subprocess
+from scenarioconductor.packages import subprocess32 as subprocess
 import signal
-import sys
 import time
 
-sys.path.append('./scenarioconductor')
-
 from scenarioconductor.configurationmanager import Configuration as config
-from scenarioconductor.configurationmanager import DAS_ROOT
+from scenarioconductor.configurationmanager import IMMORTALS_ROOT
+from scenarioconductor.server import Server
+from scenarioconductor import threadprocessrouter as tpr
+from scenarioconductor import immortalsglobals
 
 RUNDIR = config.runtime_rootpath
 
 fuseki_process = None
 repository_service_process = None
 das_process = None
+rest_endpoint_process = None
+
+rest_server = None
 
 
-def exit_handler(signal, frame):
+def exit_handler():
     print "Exit request detected. shutting down processes..."
-    if fuseki_process is not None:
-        fuseki_process.terminate()
+    try:
+        if rest_endpoint_process is not None:
+            rest_endpoint_process.terminate()
+    except:
+        pass
 
-    if repository_service_process is not None:
-        repository_service_process.terminate()
+    try:
+        if das_process is not None:
+            das_process.terminate()
+    except:
+        pass
 
-    if das_process is not None:
-        das_process.terminate()
+    try:
+        if repository_service_process is not None:
+            repository_service_process.terminate()
+    except:
+        pass
 
-
-signal.signal(signal.SIGINT, exit_handler)
+    try:
+        if fuseki_process is not None:
+            fuseki_process.terminate()
+    except:
+        pass
 
 
 def start_fuseki():
@@ -77,14 +92,26 @@ def start_das_service():
     jar = config.das_service.executable_filepath
     repo_root = config.target_source_rootpath
 
-    das_process = subprocess.Popen(['java', '-jar', jar, repo_root], cwd=DAS_ROOT, stdin=None)
+    das_process = subprocess.Popen(['java', '-jar', jar, repo_root], cwd=IMMORTALS_ROOT, stdin=None)
 
     time.sleep(4)
 
     print "DAS has started.  Press Ctrl-C to shut down."
 
 
+def start_rest_endpoint():
+    print 'Starting rest endpoint...'
+
+    rest_server = Server('localhost', '55555')
+    tpr.start_thread(Server.start, thread_args=[rest_server], shutdown_method=Server.shutdown, shutdown_args=[rest_server])
+
+    time.sleep(2)
+    print 'Ready to take submissions.'
+
 if __name__ == '__main__':
+    immortalsglobals.main_thread_cleanup_hookup()
+    immortalsglobals.exit_handlers.append(exit_handler)
+
     if not os.path.exists(config.runtime_rootpath):
         os.mkdir(config.runtime_rootpath)
 
@@ -94,4 +121,5 @@ if __name__ == '__main__':
     start_fuseki()
     start_repository_service()
     start_das_service()
+    start_rest_endpoint()
     signal.pause()

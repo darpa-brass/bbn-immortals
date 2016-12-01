@@ -1,9 +1,15 @@
 package com.securboration.immortals.ontology.bytecode;
 
+import com.securboration.immortals.ontology.annotations.RdfsComment;
+import com.securboration.immortals.ontology.annotations.triples.Triple;
+import com.securboration.immortals.ontology.annotations.triples.Triples;
+import com.securboration.immortals.uris.Uris.owl;
+import com.securboration.immortals.uris.Uris.rdf;
+
 /**
  * The class is the fundamental compilation unit of bytecode.
  * 
- * This is a a logical representation of a class. E.g., classes contain fields,
+ * This is a logical representation of a class. E.g., classes contain fields,
  * methods, annotations, etc.
  * 
  * @author Securboration
@@ -15,6 +21,15 @@ public class AClass extends ClassStructure {
      * A URL pointing to the .java source code that was compiled to create this
      * class instance.
      */
+    @RdfsComment(
+        "A URL pointing to the .java source code that was compiled to create " +
+        "a class instance")
+    @Triples({
+        @Triple(
+            predicateUri=rdf.type$,
+            objectUri=owl.FunctionalProperty$
+            )
+        })
     private String sourceUrl;
 
     /**

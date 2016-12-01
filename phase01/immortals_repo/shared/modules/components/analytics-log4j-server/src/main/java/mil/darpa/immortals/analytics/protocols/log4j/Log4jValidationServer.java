@@ -31,17 +31,22 @@ class Log4jValidationServer extends Thread implements ValidationResultsListener 
 
     private Logger rootLogger = new LoggerContext().getLogger("ImmortalsAnalytics");
 
-    private final int maxRunDurationSeconds;
+    private final long startTime;
+    private final long maxRunDurationMS;
+    private final long minRunDurationMS;
 
     private final Log4jClientServer clientServer;
 
-    public Log4jValidationServer(int port, Level logLevel, int maxDurationSeconds) {
+    public Log4jValidationServer(int port, Level logLevel, long maxDurationMS, long minDurationMS) {
 
         validatorManager = new ValidatorManager(this);
 
         clientServer = new Log4jClientServer(port, new ValidatorManagerLog4jAppender(validatorManager));
 
-        this.maxRunDurationSeconds = maxDurationSeconds;
+        this.maxRunDurationMS = (maxDurationMS > minDurationMS ? maxDurationMS : minDurationMS);
+        this.minRunDurationMS = minDurationMS;
+
+        this.startTime = System.currentTimeMillis();
 
         L.initialize(rootLogger);
         Analytics.initializeEndpoint(L.getAnalyticsEndpointInstance());
@@ -100,7 +105,7 @@ class Log4jValidationServer extends Thread implements ValidationResultsListener 
             clientServer.start();
 
             try {
-                Thread.sleep(maxRunDurationSeconds * 1000);
+                Thread.sleep(maxRunDurationMS);
             } catch (InterruptedException e) {
                 // Do nothing
             } finally {
@@ -120,6 +125,19 @@ class Log4jValidationServer extends Thread implements ValidationResultsListener 
 
     @Override
     public synchronized void finished(ValidationResults results) {
-        interrupt();
+        long durationMS = System.currentTimeMillis() - this.startTime;
+        long timeLeft = minRunDurationMS - durationMS;
+
+        if (timeLeft <= 0) {
+            interrupt();
+        } else {
+            try {
+                Thread.sleep(timeLeft);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            interrupt();
+        }
     }
 }

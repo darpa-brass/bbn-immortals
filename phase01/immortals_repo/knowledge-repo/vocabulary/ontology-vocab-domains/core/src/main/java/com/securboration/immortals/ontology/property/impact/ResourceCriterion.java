@@ -1,21 +1,31 @@
 package com.securboration.immortals.ontology.property.impact;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.constraint.ResourceCriterionType;
 import com.securboration.immortals.ontology.core.Resource;
-import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "Models a change to a resource"
-        )
-    )
+/**
+ * A criterion statement about an abstract resource 
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A criterion statement about an abstract resource   @author jstaples ")
 public class ResourceCriterion extends CriterionStatement {
 
+    /**
+     * The criterion statement
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The criterion statement")
     private ResourceCriterionType criterion;
-    private Class<? extends Resource> property;
+    
+    /**
+     * The abstract resource
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The abstract resource")
+    private Class<? extends Resource> resource;
     
     public ResourceCriterionType getCriterion() {
         return criterion;
@@ -26,13 +36,13 @@ public class ResourceCriterion extends CriterionStatement {
     }
 
     
-    public Class<? extends Resource> getProperty() {
-        return property;
+    public Class<? extends Resource> getResource() {
+        return resource;
     }
 
     
-    public void setProperty(Class<? extends Resource> property) {
-        this.property = property;
+    public void setResource(Class<? extends Resource> resource) {
+        this.resource = resource;
     }
     
     

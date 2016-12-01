@@ -1,0 +1,23 @@
+{
+    "server": {
+        "bandwidth": 1000
+    },
+    "clients": [
+        {
+            "imageBroadcastIntervalMS": "70000",
+            "latestSABroadcastIntervalMS": "1000",
+            "count": 2,
+            "presentResources" : [
+                "bluetooth",
+                "usb",
+                "internalGps",
+                "userInterface",
+                "gpsSatellites"
+            ],
+            "requiredProperties" : [
+                "trustedLocations"
+            ]
+        }
+    ],
+    "minimumRunTimeMS": 90000
+}

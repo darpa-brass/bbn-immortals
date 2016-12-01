@@ -11,8 +11,24 @@ import com.securboration.immortals.uris.Uris.rdfs;
         "Lower numbers come first."
         )
     )
+/**
+ * Describes the ordering of an item by numerical precedence.  
+ * 
+ * Lower numbers have higher precedence.
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Describes the ordering of an item by numerical precedence.    Lower" +
+    " numbers have higher precedence.  @author jstaples ")
 public class ExplicitNumericOrderingMechanism extends OrderingMechanism {
 
+    /**
+     * The precedence.  Lower numbers have higher precedence.
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The precedence.  Lower numbers have higher precedence.")
     private int precedence;
 
     

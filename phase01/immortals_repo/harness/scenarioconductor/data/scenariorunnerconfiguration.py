@@ -1,25 +1,72 @@
 import copy
 
-from configurationmanager import Configuration, AndroidApplicationConfig, Scenario
-from packages import commentjson as json
-from utils import path_helper, value_helper
+from ..configurationmanager import Configuration, Scenario
+from applicationconfig import AndroidApplicationConfig
+from ..packages import commentjson as json
+from ..utils import path_helper, value_helper
 
 
+# noinspection PyPep8Naming
+class Lifecycle:
+    """
+    :type setupEnvironment: bool
+    :type setupApplications: bool
+    :type executeScenario: bool
+    :type haltEnvironment: bool
+    """
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+                setupEnvironment=d['setupEnvironment'],
+                setupApplications=d['setupApplications'],
+                executeScenario=d['executeScenario'],
+                haltEnvironment=d['haltEnvironment']
+        )
+
+    def __init__(self,
+                 setupEnvironment,
+                 setupApplications,
+                 executeScenario,
+                 haltEnvironment
+                 ):
+        self.setupEnvironment = setupEnvironment
+        self.setupApplications = setupApplications
+        self.executeScenario = executeScenario
+        self.haltEnvironment = haltEnvironment
+
+
+# noinspection PyPep8Naming
+class SetupEnvironmentLifecycle:
+    """
+    :type destroyExisting: bool
+    :type cleanExisting: bool
+    """
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+                destroyExisting=d['destroyExisting'],
+                cleanExisting=d['cleanExisting']
+        )
+
+    def __init__(self, destroyExisting, cleanExisting):
+        self.destroyExisting = destroyExisting
+        self.cleanExisting = cleanExisting
+
+
+# noinspection PyPep8Naming
 class ScenarioRunnerConfiguration:
     """
     :type session_identifier: str
     :type deployment_directory: str
     :type scenario: Scenario
     :type validate: bool
-    :type timeout: int
-    :type setup_environment: bool
-    :type setup_applications: bool
-    :type execute_scenario: bool
-    :type keep_environment_running: bool
-    :type wipe_existing_environment: bool
     :type display_emulator_gui: bool
     :type start_emulators_simultaneously: bool
-    """
+    :type lifecycle: Lifecycle
+    :type setupEnvironmentLifecycle: SetupEnvironmentLifecycle
+   """
 
     @classmethod
     def from_scenario_configuration(cls,
@@ -34,9 +81,11 @@ class ScenarioRunnerConfiguration:
 
         ident = scenario_configuration.session_identifier
 
+        config_root = 'harness/scenarioconductor/configs/templates/' + scenario_template + '/'
+
         # Construct the scenario runner configuration
         with open(path_helper(True, Configuration.immortals_root,
-                              'harness/scenarioconductor/configs/templates/validation/scenario_runner_configuration.json')) as f:
+                              config_root + 'scenario_runner_configuration.json')) as f:
             f_json = json.load(f)
             scenario_runner_configuration = ScenarioRunnerConfiguration.from_dict(f_json)
 
@@ -47,6 +96,7 @@ class ScenarioRunnerConfiguration:
                                      scenario_runner_configuration)) + '/'
 
         scenario_runner_configuration.scenario.parent_config = scenario_runner_configuration
+        scenario_runner_configuration.minDurationMS = scenario_configuration.minimumRunTimeMS
 
         # Only the server is in there by default for CP1/CP2
         marti_router = scenario_runner_configuration.scenario.deployment_applications[0]  # type: JavaApplicationConfig
@@ -99,24 +149,19 @@ class ScenarioRunnerConfiguration:
 
     @classmethod
     def from_dict(cls, j):
-        # type: (dict) -> ScenarioRunnerConfiguration
-
         scenario = Scenario.from_dict(j['scenario'])
         scenario.parent_config = cls
 
         return cls(
-                j['sessionIdentifier'],
-                j['deploymentDirectory'],
-                scenario,
-                j['validate'],
-                j['timeout'],
-                j['setupEnvironment'],
-                j['setupApplications'],
-                j['executeScenario'],
-                j['keepEnvironmentRunning'],
-                j['wipeExistingEnvironment'],
-                j['displayEmulatorGui'],
-                j['startEmulatorsSimultaneously']
+                session_identifier=j['sessionIdentifier'],
+                deployment_directory=j['deploymentDirectory'],
+                scenario=scenario,
+                validate=j['validate'],
+                display_emulator_gui=j['displayEmulatorGui'],
+                start_emulators_simultaneously=j['startEmulatorsSimultaneously'],
+                lifecycle=Lifecycle.from_dict(j['lifecycle']),
+                setupEnvironmentLifecycle=SetupEnvironmentLifecycle.from_dict(j['setupEnvironmentLifecycle']),
+                minDurationMS=j['minDurationMS']
         )
 
     def __init__(self,
@@ -124,27 +169,21 @@ class ScenarioRunnerConfiguration:
                  deployment_directory,
                  scenario,
                  validate,
-                 timeout,
-                 setup_environment,
-                 setup_applications,
-                 execute_scenario,
-                 keep_environment_running,
-                 wipe_existing_environment,
                  display_emulator_gui,
-                 start_emulators_simultaneously
+                 start_emulators_simultaneously,
+                 lifecycle,
+                 setupEnvironmentLifecycle,
+                 minDurationMS
                  ):
         self.session_identifier = session_identifier
         self.deployment_directory = deployment_directory
         self.scenario = scenario
         self.validate = validate
-        self.timeout = timeout
-        self.setup_environment = setup_environment
-        self.setup_applications = setup_applications
-        self.execute_scenario = execute_scenario
-        self.keep_environment_running = keep_environment_running
-        self.wipe_existing_environment = wipe_existing_environment
         self.display_emulator_gui = display_emulator_gui
         self.start_emulators_simultaneously = start_emulators_simultaneously
+        self.lifecycle = lifecycle
+        self.setupEnvironmentLifecycle = setupEnvironmentLifecycle
+        self.minDurationMS = minDurationMS
 
     def clone_and_trim(self):
         clone = copy.deepcopy(self)

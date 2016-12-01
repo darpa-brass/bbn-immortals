@@ -74,17 +74,7 @@ public class TreeManipulator {
             }
             else if (s.getClass().getSimpleName().toString().equals("IfStmt")){
                 IfStmt ifStmt = (IfStmt)s;
-                int ifLength;
-                int elseLength;
-                if(StatementTypeQuery.isExprStmt(ifStmt.getThenStmt()))
-                    ifLength = 1;
-                else
-                    ifLength = GetHeighestDepthLevel((BlockStmt)ifStmt.getThenStmt());
-                if(ifStmt.getElseStmt() != null && StatementTypeQuery.isExprStmt(ifStmt.getElseStmt()))
-                    elseLength = 1;
-                else
-                    elseLength = ifStmt.getElseStmt() != null? GetHeighestDepthLevel((BlockStmt)ifStmt.getElseStmt()): 0;
-                tempDepthLevels[i] = Math.max(ifLength,elseLength);
+                tempDepthLevels[i]  = GetHeighestDepthLevel(ifStmt);
                 i++;
             }
             else if(StatementTypeQuery.isSwitchStmt(s)){
@@ -93,6 +83,14 @@ public class TreeManipulator {
             }
             else if(StatementTypeQuery.isForEachStmt(s)){
                 tempDepthLevels[i] = GetHighestDepthLevel((ForeachStmt)s);
+            }
+            else if(StatementTypeQuery.isThrowStmt(s)){
+                tempDepthLevels[i] = 0;
+                i++;
+            }
+            else if(StatementTypeQuery.isTryStmt(s)){
+                tempDepthLevels[i] = GetHeighestDepthLevel((TryStmt) s);
+                i++;
             }
             else{
                 Debugger.log(s);
@@ -168,10 +166,47 @@ public class TreeManipulator {
             ifLength = GetHeighestDepthLevel((BlockStmt)ifStmt.getThenStmt());
         if(ifStmt.getElseStmt() != null && StatementTypeQuery.isExprStmt(ifStmt.getElseStmt()))
             elseLength = 1;
-        else
-            elseLength = ifStmt.getElseStmt() != null? GetHeighestDepthLevel((BlockStmt)ifStmt.getElseStmt()): 0;
+        else{
+            if(ifStmt.getElseStmt() != null){
+                if(StatementTypeQuery.isIfElseStmt(ifStmt.getElseStmt())){
+                    elseLength  = 1 + GetHeighestDepthLevel((IfStmt)ifStmt.getElseStmt());
+                }
+                else{
+                    elseLength = GetHeighestDepthLevel((BlockStmt)ifStmt.getElseStmt());
+                }
+
+            }
+            else{
+                elseLength = 0;
+            }
+
+
+        }
+
         return Math.max(ifLength,elseLength);
 
+    }
+
+    private int GetHeighestDepthLevel(TryStmt tryStmt){
+        int tryLength, catchlength,finallylength;
+        catchlength  = tryLength = finallylength= 0;
+        Debugger.log(tryStmt);
+        BlockStmt tryBlock = tryStmt.getTryBlock();
+
+        if(tryBlock != null){
+            tryLength = GetHeighestDepthLevel(tryBlock);
+        }
+        for (CatchClause catchClause:tryStmt.getCatchs()) {
+
+            catchlength = Integer.max(catchlength,GetHeighestDepthLevel(catchClause.getCatchBlock()));
+
+        }
+        BlockStmt finallyBlock = tryStmt.getFinallyBlock();
+        if(finallyBlock != null){
+            finallylength = GetHeighestDepthLevel(finallyBlock);
+        }
+
+        return  Integer.max(Integer.max(tryLength,catchlength ),finallylength);
     }
 
 

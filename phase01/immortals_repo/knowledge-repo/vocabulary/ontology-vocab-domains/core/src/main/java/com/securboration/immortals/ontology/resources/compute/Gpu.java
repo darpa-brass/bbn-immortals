@@ -5,14 +5,19 @@ import com.securboration.immortals.ontology.resources.memory.MemoryResource;
 
 /**
  * Simple abstraction of a specialized compute device for graphics processing.
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Simple abstraction of a specialized compute device for graphics" +
+    " processing. @author jstaples ")
 public class Gpu extends ComputeResource {
     
     /**
      * A model of the memory for this object
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A model of the memory for this object")
     private MemoryResource memoryModel;
 
     public MemoryResource getMemoryModel() {

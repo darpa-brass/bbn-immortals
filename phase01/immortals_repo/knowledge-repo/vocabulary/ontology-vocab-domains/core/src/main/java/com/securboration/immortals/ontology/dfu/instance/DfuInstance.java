@@ -8,39 +8,55 @@ import com.securboration.immortals.ontology.property.Property;
  * An instantiation of a DFU that binds what abstract things are being done by
  * the DFU to how they are implemented in bytecode
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "An instantiation of a DFU that binds what abstract things are being" +
+    " done by the DFU to how they are implemented in bytecode  @author" +
+    " jstaples ")
 public class DfuInstance {
     
     /**
      * The class in which the functionality is performed
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The class in which the functionality is performed")
     private String classPointer;
     
     /**
      * The abstract functionality performed by the DFU 
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The abstract functionality performed by the DFU")
     private Class<? extends Functionality> functionalityAbstraction;
     
     /**
      * The resources upon which the DFU depends, if any
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The resources upon which the DFU depends, if any")
     private Class<? extends Resource>[] resourceDependencies;
     
     /**
      * Properties bound directly to the DFU
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Properties bound directly to the DFU")
     private Property[] dfuProperties;
     
     /**
      * A durable reference to this DFU instance
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A durable reference to this DFU instance")
     private String tag;
     
     /**
      * The functional aspects of the DFU
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The functional aspects of the DFU")
     private FunctionalAspectInstance[] functionalAspects;
 
     

@@ -1,16 +1,16 @@
 package com.securboration.immortals.ontology.analysis;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.uris.Uris.rdfs;
-
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A dataflow node that comes from outside of this process (e.g., " +
-        "network or disk IO)"
-        )
-    )
+/**
+ * A dataflow node that involves the transfer of data between processes (rather
+ * than within the same process). For example: IPC, network IO, disk IO
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A dataflow node that involves the transfer of data between processes" +
+    " (rather than within the same process). For example: IPC, network IO," +
+    " disk IO  @author jstaples ")
 public class InterProcessDataflowNode extends DataflowNode {
 
 }

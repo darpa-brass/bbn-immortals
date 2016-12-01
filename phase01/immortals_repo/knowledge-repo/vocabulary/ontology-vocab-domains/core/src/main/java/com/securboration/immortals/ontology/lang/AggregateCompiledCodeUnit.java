@@ -1,33 +1,35 @@
 package com.securboration.immortals.ontology.lang;
 
-import com.securboration.immortals.ontology.annotations.RdfsComment;
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.uris.Uris.rdfs;
-
 /**
- * The result of compiling source code
+ * The result of compiling and then packaging source code.
  * 
- * @author Securboration
+ * An aggregate compiled code unit is a single compiled artifact derived from 
+ * multiple source code files (e.g., a .jar or .dll).  It may stand alone or
+ * be used as a dependency by other artifacts.
+ * 
+ * @author jstaples
  *
  */
-@RdfsComment(
-        "an aggregate compiled code unit is a single compiled " +
-        "artifact derived from multiple source code files (e.g., a .jar or " +
-        ".dll)"
-        )
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "The result of compiling and then packaging source code.  An aggregate" +
+    " compiled code unit is a single compiled artifact derived from " +
+    " multiple source code files (e.g., a .jar or .dll).  It may stand" +
+    " alone or be used as a dependency by other artifacts.  @author" +
+    " jstaples ")
 public class AggregateCompiledCodeUnit extends CompiledCodeUnit {
 
-    @Triple(
-        predicateUri = rdfs.comment$,
-        objectLiteral = @Literal("the source files from which the" +
-                "aggregate code unit was compiled"))
+    /**
+     * The source files from which the aggregate code unit was compiled
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The source files from which the aggregate code unit was compiled")
     private SourceFile[] sourceFiles;
 
-    @Triple(
-        predicateUri = rdfs.comment$,
-        objectLiteral = @Literal("the binary form of the aggregate" +
-                "code unit"))
+    /**
+     * The binary form of the aggregate code unit
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The binary form of the aggregate code unit")
     private byte[] compiledForm;
 
     public AggregateCompiledCodeUnit() {

@@ -1,18 +1,33 @@
 package com.securboration.immortals.ontology.analysis;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.uris.Uris.rdfs;
-
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A call to a method"
-        )
-    )
+/**
+ * A dataflow node that involves the transfer of information via method
+ * invocation within the same process
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A dataflow node that involves the transfer of information via method" +
+    " invocation within the same process  @author jstaples ")
 public class MethodInvocationDataflowNode extends IntraProcessDataflowNode {
     
+    /**
+     * The name of the class being invoked. E.g.,
+     * com.bbn.ataklite.service.SACommunicationService.java
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The name of the class being invoked. E.g.," +
+        " com.bbn.ataklite.service.SACommunicationService.java")
     private String javaClassName;
+    
+    /**
+     * The name of the method being invoked. E.g., handleActionSendImage(String
+     * imageFilepath, Location location)
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The name of the method being invoked. E.g.," +
+        " handleActionSendImage(String imageFilepath, Location location)")
     private String javaMethodName;
     
     public String getJavaClassName() {

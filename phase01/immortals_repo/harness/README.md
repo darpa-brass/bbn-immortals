@@ -24,15 +24,84 @@ Root is (ab)used and used for everything at the moment since it runs in a self-c
 1.  As root, navigate to ~/immortals_repo/harness
 2.  Execute the following command to start the DAS and related components in the current terminal that will be used for monitoring DAS activity:
     `$ ./start_das.py
-4.  Submissions can be made via curl commands
+4.  Submissions can be made via http requests to the server
 
-## Scenario validation  
-Please see immortals_repo/models/scenario/README.md
+## Scenario Execution
+1. With a running server, modify the file located at ~/immortals_repo/harness/sample_submission.json
+2. Submit it to the server, such as through the following curl command:
+    `curl -X POST -d @sample_submission.json http://localhost:55555/submit --header "Content-Type:application/json"`
+3. You will eventually get a reply back with the status of the code augmentation like the following:  
+{  
+    "adaptationResult": {  
+        "adaptationStatusValue": "SUCCESSFUL",  
+        "details": "Scaling factor used during synthesis: 0.015625",  
+        "selectedDfu": "mil/darpa/immortals/dfus/location/LocationProviderSaasmSimulated"  
+    },  
+    "identifier": "S148062879802",  
+    "synthesisFinished": true,  
+    "validationFinished": false,  
+    "validationResult": null  
+} 
+4.  You may then periodically submit a query for the identifier to determine the validation status. In this instance, that would be something like the following:
+    `curl http://localhost:55156/query/S148062879802`
+5.  It will either return what you got previously if it has not finished yet, or validationFinished will read true, with something similar to the following for the validationResult:
+{  
+    "results": [  
+        {  
+            "currentState": "PASSED",  
+            "detailMessages": [  
+                "ATAKLite-S148062879802_0-001-MyImageSent->",  
+                "ATAKLite-S148062879802_0-000-MyImageSent->"  
+            ],  
+            "errorMessages": [],  
+            "validatorIdentifier": "client-image-produce"  
+        },  
+        {  
+            "currentState": "PASSED",  
+            "detailMessages": [  
+                "ATAKLite-S148062879802_0-001-[m-r-p]->",  
+                "ATAKLite-S148062879802_0-000-[m-r-p]->",  
+                "ATAKLite-S148062879802_0-000-[m-r-p]->",  
+                "ATAKLite-S148062879802_0-000-[m-r-p]->"  
+            ],  
+            "errorMessages": [],  
+            "validatorIdentifier": "client-location-trusted"  
+        },  
+        {  
+            "currentState": "PASSED",  
+            "detailMessages": [  
+                "ATAKLite-S148062879802_0-001-MyLocationProduced->",  
+                "ATAKLite-S148062879802_0-000-MyLocationProduced->"  
+            ],  
+            "errorMessages": [],  
+            "validatorIdentifier": "client-location-produce"  
+        },  
+        {  
+            "currentState": "PASSED",  
+            "detailMessages": [  
+                "ATAKLite-S148062879802_0-001<-FieldLocationUpdated-ATAKLite-S148062879802_0-000",  
+                "ATAKLite-S148062879802_0-000<-FieldLocationUpdated-ATAKLite-S148062879802_0-001"  
+            ],  
+            "errorMessages": [],  
+            "validatorIdentifier": "client-location-share"  
+        },  
+        {  
+            "currentState": "PASSED",  
+            "detailMessages": [  
+                "ATAKLite-S148062879802_0-001<-FieldImageReceived-ATAKLite-S148062879802_0-000",  
+                "ATAKLite-S148062879802_0-000<-FieldImageReceived-ATAKLite-S148062879802_0-001"  
+            ],  
+            "errorMessages": [],  
+            "validatorIdentifier": "client-image-share"  
+        }  
+    ],  
+    "testDurationMS": 72451  
+}  
 
-## Scenario artifacts  
-immortals_repo/PRODUCTS contains the artifacts in the following directory structure:  
-IMMORTALS_REPO - Shared maven repository that all the synthesized DFUs are published to  
-I############# - Identifier generated for each scenario call based on the epoch time  
-I#############/applications - Directory for modified applications
-I#############/modules - Directory for synthesized DFUs
-I#############/deployment_environment - All application runtime information is placed here. They also contain the stderr/stdout streams of the applications and their environments being brought up and can be used to monitor the current status of the scenario validation construction and execution.
+## Other Notes
+The run artifacts (which take up about 100M each) are not automatically cleared from the DAS and there is not yet a
+ rest command to clear them. They must be cleared manually by removing the directory corresponding to each run 
+ identifier in ~/immortals_repo/PRODUCTS  
+ 
+If any unexpected results are found, a log of the output on the DAS and the contents of ~/immortals_repo/PRODUCTS should be provided for analysis.
+

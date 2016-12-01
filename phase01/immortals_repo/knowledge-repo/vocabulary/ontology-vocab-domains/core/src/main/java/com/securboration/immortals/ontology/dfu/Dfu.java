@@ -6,26 +6,42 @@ import com.securboration.immortals.ontology.lang.CompiledCodeUnit;
 
 /**
  * An abstraction that binds what is being done to how it is implemented in
- * bytecode
+ * bytecode.
  * 
- * @author Securboration
+ * A DFU instance contains information about the semantic signature of the
+ * functionality performed by a code region, and also information about the
+ * structure of that code region.
+ * 
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "An abstraction that binds what is being done to how it is implemented" +
+    " in bytecode.  A DFU instance contains information about the semantic" +
+    " signature of the functionality performed by a code region, and also" +
+    " information about the structure of that code region.  @author" +
+    " jstaples ")
 public class Dfu {
 
     /**
      * The functionality performed by the DFU
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The functionality performed by the DFU")
     private Functionality functionalityBeingPerformed;
     
     /**
      * The location in code where the functionality is performed
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The location in code where the functionality is performed")
     private CompiledCodeUnit codeUnit;
     
     /**
      * The resources upon which the DFU depends, if any
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The resources upon which the DFU depends, if any")
     private Class<? extends Resource>[] resourceDependencies;
 
     public Functionality getFunctionalityBeingPerformed() {

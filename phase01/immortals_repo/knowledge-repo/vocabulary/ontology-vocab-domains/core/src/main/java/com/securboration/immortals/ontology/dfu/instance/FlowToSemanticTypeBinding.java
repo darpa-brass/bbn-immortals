@@ -6,9 +6,12 @@ import com.securboration.immortals.ontology.property.Property;
 /**
  * Models the binding of a functional aspect dataflow to bytecode
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Models the binding of a functional aspect dataflow to bytecode " +
+    " @author jstaples ")
 public class FlowToSemanticTypeBinding {
     
     /**
@@ -19,22 +22,35 @@ public class FlowToSemanticTypeBinding {
      * 
      * A value of -1 implies an unknown mapping
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The index of the argument.  For instance methods, 0 refers to the " +
+        " implicit \"this\" argument, 1 refers to the first argument, 2 to" +
+        " the second, etc.  For static methods, 0 is an invalid index, 1" +
+        " refers to the  first argument, 2 to the second, etc.  A value of" +
+        " -1 implies an unknown mapping")
     private int argIndex;
     
     /**
      * The semantic type of the data flow
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The semantic type of the data flow")
     private Class<? extends DataType> semanticType;
     
     /**
      * Properties of the flow
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Properties of the flow")
     private Property[] properties;
     
     /**
      * A comment about the mapping.  For human use only.  Format/content may
      * change without warning.
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A comment about the mapping.  For human use only.  Format/content" +
+        " may change without warning.")
     private String comment;
 
     

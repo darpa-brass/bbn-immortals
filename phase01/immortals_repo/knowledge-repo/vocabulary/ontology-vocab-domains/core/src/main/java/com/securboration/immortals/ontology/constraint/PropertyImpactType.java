@@ -3,9 +3,11 @@ package com.securboration.immortals.ontology.constraint;
 /**
  * An enumeration of impact types for properties
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "An enumeration of impact types for properties  @author jstaples ")
 public enum PropertyImpactType {
     
     ADDS,

@@ -1,20 +1,49 @@
 package com.securboration.immortals.ontology.analysis;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.core.Resource;
-import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A node in a dataflow graph.  This could be a method call or a " +
-        "DFU functional aspect, depending upon the granularity of the analysis"
-        )
-    )
+/**
+ * A node in a dataflow graph representing a point at which data is
+ * communicated. This can, for example, be a method call or a DFU's functional
+ * aspect, depending upon the granularity of analysis.
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A node in a dataflow graph representing a point at which data is" +
+    " communicated. This can, for example, be a method call or a DFU's" +
+    " functional aspect, depending upon the granularity of analysis. " +
+    " @author jstaples ")
 public class DataflowNode {
     
+    /**
+     * A template for the resource on which the node exists. E.g.,
+     * SoftwareComponent1 contains an invocation of Method9, which is a dataflow
+     * node. SoftwareComponent1 resides on some AndroidDevice instance, which is
+     * represented here in template form.
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A template for the resource on which the node exists. E.g.," +
+        " SoftwareComponent1 contains an invocation of Method9, which is a" +
+        " dataflow node. SoftwareComponent1 resides on some AndroidDevice" +
+        " instance, which is represented here in template form.")
     private Resource resourceTemplate;
+    
+    /**
+     * A template for the ecosystem in which the node exists. E.g.,
+     * SoftwareComponent1 contains an invocation of Method9, which is a dataflow
+     * node. SoftwareComponent1 resides on some AndroidDevice instance, which in
+     * turn communicates with some Server instance. Here we represent an
+     * ecosystem containing the Server and AndroidDevice templates.
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A template for the ecosystem in which the node exists. E.g.," +
+        " SoftwareComponent1 contains an invocation of Method9, which is a" +
+        " dataflow node. SoftwareComponent1 resides on some AndroidDevice" +
+        " instance, which in turn communicates with some Server instance." +
+        " Here we represent an ecosystem containing the Server and" +
+        " AndroidDevice templates.")
     private Resource contextTemplate;
 
 

@@ -3,21 +3,28 @@ package com.securboration.immortals.ontology.dfu;
 import com.securboration.immortals.ontology.functionality.datatype.DataType;
 
 /**
- * A simple DFU that converts between types
+ * A DFU whose purpose is the conversion between abstract datatypes
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A DFU whose purpose is the conversion between abstract datatypes " +
+    " @author jstaples ")
 public class DataTypeConverter extends Dfu {
 
     /**
      * The type to convert from
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The type to convert from")
     private DataType fromDataType;
     
     /**
      * The type to convert to
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The type to convert to")
     private DataType toDataType;
 
     public DataType getFromDataType() {

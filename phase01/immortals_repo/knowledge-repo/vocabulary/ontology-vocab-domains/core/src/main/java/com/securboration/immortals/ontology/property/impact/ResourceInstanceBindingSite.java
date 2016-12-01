@@ -1,18 +1,23 @@
 package com.securboration.immortals.ontology.property.impact;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.core.Resource;
-import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A specific resource instance to which assertions can bind"
-        )
-    )
+/**
+ * A resource instance to which an assertive statement can bind 
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A resource instance to which an assertive statement can bind   @author" +
+    " jstaples ")
 public class ResourceInstanceBindingSite extends AssertionBindingSite {
     
+    /**
+     * The resource instance to which the assertive statement binds
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The resource instance to which the assertive statement binds")
     private Resource resourceInstance;
 
     

@@ -6,25 +6,34 @@ import com.securboration.immortals.ontology.resources.RadioChannel;
 /**
  * Models a GPS receiver
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Models a GPS receiver  @author jstaples ")
 public class GpsReceiver extends PlatformResource{
     
     /**
      * # of satellites the GPS receiver can lock onto
      * e.g., cheapo GPS receivers use 4 whereas military grade can use 6+
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "# of satellites the GPS receiver can lock onto e.g., cheapo GPS" +
+        " receivers use 4 whereas military grade can use 6+")
     private int numChannels;
     
     /**
      * The spectrum a given satellite is able to lock onto
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The spectrum a given satellite is able to lock onto")
     private RadioChannel[] receivableSpectrum;
     
     /**
      * The constellation to which this receiver connects
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The constellation to which this receiver connects")
     private GpsSatelliteConstellation constellation;
 
     public int getNumChannels() {

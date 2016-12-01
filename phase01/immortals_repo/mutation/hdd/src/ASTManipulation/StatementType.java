@@ -13,6 +13,9 @@ public enum StatementType {
     SwitchEntryStmt,
     BreakStmt,
     ForeachStmt,
+    BlockStmt,
+    ThrowStmt,
+    TryStmt,
     Unknown
 }
 

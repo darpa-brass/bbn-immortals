@@ -5,46 +5,62 @@ import com.securboration.immortals.ontology.functionality.FunctionalAspect;
 import com.securboration.immortals.ontology.property.Property;
 
 /**
- * Models the binding of a property to a DFU
+ * An instantiation of an abstract Functional Aspect
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "An instantiation of an abstract Functional Aspect  @author jstaples ")
 public class FunctionalAspectInstance {
     
     /**
      * A pointer to the method implementing the functional aspect
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A pointer to the method implementing the functional aspect")
     private String methodPointer;
     
     /**
      * The properties of the functional aspect
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The properties of the functional aspect")
     private Property[] properties;
     
     /**
      * The resources upon which the aspect depends, if any
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The resources upon which the aspect depends, if any")
     private Class<? extends Resource>[] resourceDependencies;
     
     /**
      * The abstract functional aspect implemented
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The abstract functional aspect implemented")
     private Class<? extends FunctionalAspect> abstractAspect;
     
     /**
      * The arg mappings
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The arg mappings")
     private ArgToSemanticTypeBinding[] argsToSemanticTypes;
     
     /**
      * The return value mappings
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The return value mappings")
     private ReturnValueToSemanticTypeBinding returnValueToSemanticType;
     
     /**
      * A recipe for using the aspect
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A recipe for using the aspect")
     private String recipe;
 
     

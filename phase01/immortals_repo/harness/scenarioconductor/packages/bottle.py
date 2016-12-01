@@ -3046,6 +3046,9 @@ class WSGIRefServer(ServerAdapter):
                                handler_cls)
         self.port = self.srv.server_port  # update port actual port (0 means random)
         try:
+            self.srv.allow_reuse_address = True
+            self.srv.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.srv.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
             self.srv.serve_forever()
         except KeyboardInterrupt:
             self.srv.server_close()  # Prevent ResourceWarning: unclosed socket

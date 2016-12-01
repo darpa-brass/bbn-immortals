@@ -6,9 +6,12 @@ package com.securboration.immortals.ontology.resources;
  * E.g., FPGA, CPU, GPU
  * 
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A type of resource that performs computation  E.g., FPGA, CPU, GPU  " +
+    " @author jstaples ")
 public class ComputeResource extends PlatformResource {
 
 }

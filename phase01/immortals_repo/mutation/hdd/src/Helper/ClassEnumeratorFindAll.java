@@ -207,5 +207,9 @@ public class ClassEnumeratorFindAll {
 
         return classes;
     }
+
+    public static void main(String[] args){
+
+    }
 }
 

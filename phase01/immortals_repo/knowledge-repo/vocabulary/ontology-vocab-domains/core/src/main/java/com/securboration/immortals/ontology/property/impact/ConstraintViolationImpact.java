@@ -1,23 +1,46 @@
 package com.securboration.immortals.ontology.property.impact;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.constraint.ConstraintImpactType;
 import com.securboration.immortals.ontology.constraint.DirectionOfViolationType;
 import com.securboration.immortals.ontology.core.Resource;
-import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "Models a constraint violation on a resource"
-        )
-    )
+/**
+ * Models the impact of a constraint violation on a resource
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Models the impact of a constraint violation on a resource  @author" +
+    " jstaples ")
 public class ConstraintViolationImpact extends ImpactStatement {
     
+    /**
+     * The type of constraint emitted
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The type of constraint emitted")
     private ConstraintImpactType constraintViolationType;
+    
+    /**
+     * The sign of the violation (overshoot/undershoot)
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The sign of the violation (overshoot/undershoot)")
     private DirectionOfViolationType directionOfViolation;
+    
+    /**
+     * The abstract resource impacted
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The abstract resource impacted")
     private Class<? extends Resource> impactedResource;
+    
+    /**
+     * A human readable message describing the constraint violation
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A human readable message describing the constraint violation")
     private String violationMessage;
     
     public ConstraintImpactType getConstraintViolationType() {

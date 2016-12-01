@@ -5,9 +5,11 @@ import com.securboration.immortals.ontology.resources.environment.OperatingEnvir
 /**
  * The terrain in the environment
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "The terrain in the environment  @author jstaples ")
 public class Terrain extends OperatingEnvironment{
     
     

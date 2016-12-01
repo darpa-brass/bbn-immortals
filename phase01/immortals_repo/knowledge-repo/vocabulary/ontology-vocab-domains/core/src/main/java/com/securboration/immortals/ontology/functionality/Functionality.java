@@ -10,31 +10,45 @@ import com.securboration.immortals.ontology.property.Property;
  * thing in a different way, the idea is that we can adapt our software by
  * swapping between them.
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A description of what a functional unit of software does (but not how" +
+    " it is done). If we know that two different pieces of code do" +
+    " essentially the same thing in a different way, the idea is that we" +
+    " can adapt our software by swapping between them.  @author jstaples ")
 @GenerateAnnotation
 public class Functionality {
 
     /**
      * An ID for the functionality being performed
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "An ID for the functionality being performed")
     private String functionalityId;
     
     /**
      * Our abstraction of functionality comprises various atomic functional 
      * aspects
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Our abstraction of functionality comprises various atomic" +
+        " functional  aspects")
     private FunctionalAspect[] functionalAspects;
     
     /**
      * Properties that bind to the functionality
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Properties that bind to the functionality")
     private Property[] functionalityProperties;
     
     /**
      * The resources upon which the functionality depends, if any
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The resources upon which the functionality depends, if any")
     private Class<? extends Resource>[] resourceDependencies;
 
     public FunctionalAspect[] getFunctionalAspects() {

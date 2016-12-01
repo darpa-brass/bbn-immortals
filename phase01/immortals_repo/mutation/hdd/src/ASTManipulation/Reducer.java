@@ -36,6 +36,11 @@ public class Reducer {
                 }
 
             }
+            else if(StatementTypeQuery.isThrowStmt(s)){
+                if(!l.contains(s)){
+                    newList.add(s);
+                }
+            }
             else if(s.getClass().getSimpleName().toString().equals("ReturnStmt")){
                 if(!l.contains(s)){
                     newList.add(s);
@@ -75,9 +80,13 @@ public class Reducer {
 
 
             }
+            else if(StatementTypeQuery.isTryStmt(s)){
+                ReduceTryCatchStmt(l,newList,(TryStmt) s);
+            }
             else if(StatementTypeQuery.isForEachStmt(s)){
                 ReduceForEachStmt(l, newList, s);
             }
+
             else{
 
                 Debugger.log(s);
@@ -113,7 +122,15 @@ public class Reducer {
 
             if(!EmptyStatementChecker.isEmptyStatement(elsePart)){
                 if(!StatementTypeQuery.isExprStmt(ifPart)){
-                    ifStmt.setElseStmt(reduce((BlockStmt)elsePart,l));
+                    if(StatementTypeQuery.isBlockStmt(elsePart)){
+                        ifStmt.setElseStmt(reduce((BlockStmt)elsePart,l));
+                    }
+                    else if(StatementTypeQuery.isIfElseStmt(elsePart)){
+                        List<Statement> newList2 = new ArrayList<Statement>();
+                        ReduceIfStmt(l,newList2,elsePart);
+
+
+                    }
                 }
                 else{
                     if(l.contains(elsePart)){
@@ -127,6 +144,39 @@ public class Reducer {
         }
     }
 
+
+    private void ReduceTryCatchStmt(List<Statement> l, List<Statement> newList, TryStmt tryStmt){
+        if(!l.contains(tryStmt)){
+            BlockStmt tryPart = tryStmt.getTryBlock();
+            BlockStmt finallyPart = tryStmt.getFinallyBlock();
+            if(tryPart != null){
+                if(!EmptyStatementChecker.isEmptyStatement(tryPart)){
+                    tryStmt.setTryBlock((BlockStmt)reduce(tryPart,l));
+                }
+            }
+            if(finallyPart != null){
+                if(!EmptyStatementChecker.isEmptyStatement(finallyPart)){
+                    tryStmt.setFinallyBlock(reduce(finallyPart,l));
+                }
+            }
+            List<CatchClause> catchClausesToBeRetained = new ArrayList<>();
+            for (CatchClause catchClause:tryStmt.getCatchs() ) {
+                CatchClause tempCatchClause = new CatchClause();
+                tempCatchClause.setExcept(catchClause.getExcept());
+                tempCatchClause.setCatchBlock((BlockStmt) reduce(catchClause.getCatchBlock(),l));
+
+                catchClausesToBeRetained.add(tempCatchClause);
+
+
+            }
+            tryStmt.setCatchs(catchClausesToBeRetained);
+
+            newList.add(tryStmt);
+
+        }
+
+
+    }
     private void ReduceSwitchCase(List<Statement> l, SwitchStmt s) {
         SwitchStmt switchStmt = s;
         for ( SwitchEntryStmt switchEntryStmt : switchStmt.getEntries()  ) {
@@ -178,6 +228,9 @@ public class Reducer {
             newList.add(f);
         }
     }
+
+
+
 
     public BlockStmt reduceSingleStatement(BlockStmt b, Statement s){
 

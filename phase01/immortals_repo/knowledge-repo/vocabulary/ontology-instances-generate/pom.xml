@@ -181,10 +181,11 @@
 								</goals>
 								<configuration>
 									<mainClass>com.securboration.immortals.instantiation.annotationparser.bytecode.Main</mainClass>
-									<arguments>
+									<arguments><!-- include only darpa/immortals/dfus and darpa/immortals/datatypes -->
 										<argument>${immortals.version}</argument>
-										<argument>${local-repo-root}/shared/IMMORTALS_REPO/mil/darpa</argument>
 										<argument>${project.basedir}/target/classes/ontology/bytecode-structure</argument>
+										<argument>${local-repo-root}/shared/IMMORTALS_REPO/mil/darpa/immortals/dfus</argument>
+										<argument>${local-repo-root}/shared/IMMORTALS_REPO/mil/darpa/immortals/datatypes</argument>
 									</arguments>
 								</configuration>
 							</execution>

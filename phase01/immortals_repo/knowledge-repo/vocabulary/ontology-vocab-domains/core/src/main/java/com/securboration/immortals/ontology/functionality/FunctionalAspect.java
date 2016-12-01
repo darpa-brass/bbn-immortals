@@ -13,39 +13,57 @@ import com.securboration.immortals.ontology.property.Property;
  * @author Securboration
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A description of a specific thing done by some abstraction of" +
+    " functionality.  E.g., a counter abstraction might have increment and" +
+    " zeroize functional aspects  @author Securboration ")
 @GenerateAnnotation
 public class FunctionalAspect {
     
     /**
      * An ID for this functional aspect
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "An ID for this functional aspect")
     private String aspectId;
     
     /**
      * Resources specific to this functional aspect
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Resources specific to this functional aspect")
     private Class<? extends Resource>[] aspectSpecificResourceDependencies;
     
     /**
      * Identifies an inverse transformation
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Identifies an inverse transformation")
     private Class<? extends FunctionalAspect> inverseAspect;
     
     /**
      * Properties applicable to this aspect
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Properties applicable to this aspect")
     private Property[] aspectProperties;
 
     /**
      * The inputs provided to the functionality abstraction. These can be either
      * explicit (arguments) or implicit (e.g., field accesses)
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The inputs provided to the functionality abstraction. These can be" +
+        " either explicit (arguments) or implicit (e.g., field accesses)")
     private Input[] inputs;
 
     /**
      * The outputs provided by the functionality abstraction. These can be
      * either explicit (return value) or implicit (locations written)
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The outputs provided by the functionality abstraction. These can" +
+        " be either explicit (return value) or implicit (locations written)")
     private Output[] outputs;
 
     public Input[] getInputs() {

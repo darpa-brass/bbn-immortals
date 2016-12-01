@@ -5,9 +5,11 @@ import com.securboration.immortals.ontology.resources.NetworkResource;
 /**
  * Standard OSI model of a network stack
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Standard OSI model of a network stack  @author jstaples ")
 public class NetworkStackAbstraction extends NetworkResource {
 
     /**
@@ -15,6 +17,9 @@ public class NetworkStackAbstraction extends NetworkResource {
      * 
      * E.g., HTTP, HTTPS
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Describes how applications will interpret the data  E.g., HTTP," +
+        " HTTPS")
     private ApplicationLayerAbstraction applicationLayer;
 
     /**
@@ -23,6 +28,10 @@ public class NetworkStackAbstraction extends NetworkResource {
      * 
      * E.g., TCP, UPD
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Describes how messages will be reliably delivered in an" +
+        " environment where individual messages may be lost or corrupted. " +
+        " E.g., TCP, UPD")
     private TransportLayerAbstraction transportLayer;
 
     /**
@@ -31,6 +40,9 @@ public class NetworkStackAbstraction extends NetworkResource {
      * 
      * E.g., IPV6
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Describes how messages will be routed between two arbitrary points" +
+        " in a network of connected nodes  E.g., IPV6")
     private NetworkLayerAbstraction internetLayer;
 
     /**
@@ -38,6 +50,9 @@ public class NetworkStackAbstraction extends NetworkResource {
      * 
      * E.g., IEEE 802.2
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Describes how two nodes connected by some medium will communicate " +
+        " E.g., IEEE 802.2")
     private LinkLayerAbstraction linkLayer;
 
     /**
@@ -45,6 +60,9 @@ public class NetworkStackAbstraction extends NetworkResource {
      * 
      * E.g., USB, Ethernet
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Describes how data is physically transmitted over some medium " +
+        " E.g., USB, Ethernet")
     private PhysicalLayerAbstraction physicalLayer;
 
     public ApplicationLayerAbstraction getApplicationLayer() {

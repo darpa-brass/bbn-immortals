@@ -4,9 +4,9 @@ into a separate docker platform for java if necessary later on.
 """
 
 import androidplatform_emulator
-import deploymentplatform
-import docker
-from configurationmanager import AndroidApplicationConfig
+from .. import docker
+from ..data.applicationconfig import AndroidApplicationConfig
+from ..deploymentplatform import DeploymentPlatformInterface
 
 _IDSHARED = '$SHARED!'
 _IDDS_SHARED = '$DS_SHARED!'
@@ -28,7 +28,7 @@ _CMD_DELETE_CONTAINER = ('sudo', 'docker', 'rm', _IDCONTAINER_NAME)
 _CMD_COPY_TO_DOCKER = ('sudo', 'docker', 'cp', _IDSOURCE_FILE, _IDCONTAINER_NAME + ':' + _IDTARGET_FILE)
 
 
-class AndroidDockerEmulatorInstance(deploymentplatform.DeploymentPlatform):
+class AndroidDockerEmulatorInstance(DeploymentPlatformInterface):
     """
     :type config: AndroidApplicationConfig
     """
@@ -42,9 +42,9 @@ class AndroidDockerEmulatorInstance(deploymentplatform.DeploymentPlatform):
         self.emulator.Popen = self.docker.Popen
         self.emulator.check_output = self.docker.check_output
 
-    def platform_setup(self):
-        self.docker.platform_setup()
-        self.emulator.platform_setup()
+    def setup(self):
+        self.docker.setup()
+        self.emulator.setup()
 
     def deploy_application(self, application_location):
         self.docker.deploy_application(application_location)
@@ -54,14 +54,14 @@ class AndroidDockerEmulatorInstance(deploymentplatform.DeploymentPlatform):
         self.docker.upload_file(source_file_location, file_target)
         self.emulator.upload_file(source_file_location, file_target)
 
-    def start_application(self):
-        self.docker.start_application()
-        self.emulator.start_application()
+    def application_start(self):
+        self.docker.application_start()
+        self.emulator.application_start()
 
-    def stop_application(self):
-        self.emulator.stop_application()
-        self.docker.stop_application()
+    def application_stop(self):
+        self.emulator.application_stop()
+        self.docker.application_stop()
 
-    def platform_teardown(self):
-        self.emulator.platform_teardown()
-        self.emulator.platform_teardown()
+    def stop(self):
+        self.emulator.stop()
+        self.emulator.stop()

@@ -345,6 +345,9 @@ public class ClassMethodLineManipulator {
                 else if(s.getClass().getSimpleName().toString().equals("ReturnStmt") ){
 
                 }
+                else if(StatementTypeQuery.isThrowStmt(s)){
+
+                }
                 else if (s.getClass().getSimpleName().toString().equals("ForStmt")){
                     ForStmt forstmt = (ForStmt)s;
                     BlockStmt blkstmt = (BlockStmt)forstmt.getBody();
@@ -377,16 +380,37 @@ public class ClassMethodLineManipulator {
                             levelStatements.add(elsePart);
                         }
                         else{
+                            if(StatementTypeQuery.isBlockStmt(elsePart)){
+                                List<Statement> stmts = ((BlockStmt)((IfStmt) s).getElseStmt()).getStmts();
+                                if(stmts != null)
+                                    levelStatements.addAll(stmts);
+                            }
+                            else if(StatementTypeQuery.isIfElseStmt(elsePart)){
+                                levelStatements.add(elsePart);
 
-                            List<Statement> stmts = ((BlockStmt)((IfStmt) s).getThenStmt()).getStmts();
-                            if(stmts != null)
-                                levelStatements.addAll(stmts);
+                            }
+
                         }
 
                     }
 
 
 
+
+                }
+                else if(StatementTypeQuery.isTryStmt(s)){
+                    TryStmt tryStmt = (TryStmt)s;
+                    BlockStmt tryBlock = tryStmt.getTryBlock();
+                    if(tryBlock != null){
+                        levelStatements.addAll(tryBlock.getStmts());
+                    }
+                    for (CatchClause catchClause: tryStmt.getCatchs()  ) {
+                        levelStatements.addAll(catchClause.getCatchBlock().getStmts());
+                    }
+                    BlockStmt finallyBlock = tryStmt.getFinallyBlock();
+                    if(finallyBlock != null){
+                        levelStatements.addAll(finallyBlock.getStmts());
+                    }
 
                 }
                 else if(StatementTypeQuery.isSwitchStmt(s)){

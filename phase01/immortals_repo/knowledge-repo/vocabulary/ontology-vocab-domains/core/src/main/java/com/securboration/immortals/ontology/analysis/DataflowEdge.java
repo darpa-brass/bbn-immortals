@@ -1,27 +1,57 @@
 package com.securboration.immortals.ontology.analysis;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.core.Resource;
 import com.securboration.immortals.ontology.functionality.datatype.DataType;
-import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A directed dataflow edge connecting a producer to a consumer of " +
-        "an abstract data type"
-        )
-    )
+
+/**
+ * A directed dataflow edge connecting a producer to a consumer of an abstract
+ * data type
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A directed dataflow edge connecting a producer to a consumer of an" +
+    " abstract data type  @author jstaples ")
 public class DataflowEdge {
     
+    /**
+     * The type of data being communicated
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The type of data being communicated")
     private Class<? extends DataType> dataTypeCommunicated;
     
+    /**
+     * The producer of the data
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The producer of the data")
     private DataflowNode producer;
+    
+    /**
+     * A template for the communication channel.  E.g., a NetworkConnection
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A template for the communication channel.  E.g., a" +
+        " NetworkConnection")
     private Resource communicationChannelTemplate;
+    
+    /**
+     * The consumer of the data
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The consumer of the data")
     private DataflowNode consumer;
     
+    /**
+     * A human-readable description of this object
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A human-readable description of this object")
     private String humanReadableDescription;
+    
     
     public Class<? extends DataType> getDataTypeCommunicated() {
         return dataTypeCommunicated;

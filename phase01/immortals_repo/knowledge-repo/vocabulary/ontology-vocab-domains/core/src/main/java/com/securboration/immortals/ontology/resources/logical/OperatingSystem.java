@@ -6,34 +6,46 @@ import com.securboration.immortals.ontology.resources.PartitionedDiskResource;
 /**
  * Simple model of an operating system
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Simple model of an operating system  @author jstaples ")
 public class OperatingSystem extends LogicalResource {
     
     /**
-     * E.g., Android
+     * The type of an operating system.  E.g., Android
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The type of an operating system.  E.g., Android")
     private String osType;
     
     /**
-     * E.g., 6.0_Marshmallow
+     * The version of an operating system.  E.g., 6.0_Marshmallow
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The version of an operating system.  E.g., 6.0_Marshmallow")
     private String versionTag;
 
     /**
-     * The OS's file system
+     * The file system of an operating system
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The file system of an operating system")
     private FileSystemResource fileSystem;
     
     /**
-     * Libraries made available by the OS
+     * Libraries available to an operating system
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Libraries available to an operating system")
     private LogicalResource[] systemLibraries;
     
     /**
-     * The device's disk storage
+     * The disk storage available to an operating system
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The disk storage available to an operating system")
     private PartitionedDiskResource osPartition;
 
     public String getOsType() {

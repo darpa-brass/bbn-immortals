@@ -17,10 +17,7 @@ public class PythonTester {
 
     public boolean test(){
         boolean result = false;
-        String output = pythonRunner.execute();
-        if(output.contains(TEST_PASS_INDICATION)){
-            result = true;
-        }
+        result = pythonRunner.executeAndReturnResult();
         return result;
 
 

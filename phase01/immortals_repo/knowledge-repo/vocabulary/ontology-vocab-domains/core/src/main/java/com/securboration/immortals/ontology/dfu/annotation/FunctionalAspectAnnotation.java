@@ -7,29 +7,42 @@ import com.securboration.immortals.ontology.property.Property;
 
 /**
  * A description of a specific thing done by some abstraction of functionality.
+ * This is a programmer-facing abstraction that allows the definition of new
+ * functional signatures.
  * 
- * E.g., a counter abstraction might have increment and zeroize functional
- * aspects
+ * E.g., a counter abstraction might have init and increment functional aspects.
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A description of a specific thing done by some abstraction of" +
+    " functionality. This is a programmer-facing abstraction that allows" +
+    " the definition of new functional signatures.  E.g., a counter" +
+    " abstraction might have init and increment functional aspects. " +
+    " @author jstaples ")
 @GenerateAnnotation
 public class FunctionalAspectAnnotation {
     
     /**
      * Resources specific to this functional aspect
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Resources specific to this functional aspect")
     private Class<? extends Resource>[] aspectSpecificResourceDependencies;
 
     /**
      * The functional aspect
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The functional aspect")
     private Class<? extends FunctionalAspect> aspect;
     
     /**
      * The properties associated with the aspect
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The properties associated with the aspect")
     private Property[] properties;
     
     public Class<? extends FunctionalAspect> getAspect() {

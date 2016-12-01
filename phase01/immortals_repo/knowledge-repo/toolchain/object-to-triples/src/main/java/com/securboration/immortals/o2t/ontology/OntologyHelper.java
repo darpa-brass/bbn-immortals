@@ -1141,6 +1141,9 @@ public class OntologyHelper {
                 Type.getType(byte[].class), 
                 model.getResource(XSDDatatype.XSDbase64Binary.getURI()));
         map.put(
+            Type.getType(char[].class), 
+            model.getResource(XSDDatatype.XSDstring.getURI()));
+        map.put(
                 Type.getType(Date.class), 
                 model.getResource(XSDDatatype.XSDdate.getURI()));
         map.put(

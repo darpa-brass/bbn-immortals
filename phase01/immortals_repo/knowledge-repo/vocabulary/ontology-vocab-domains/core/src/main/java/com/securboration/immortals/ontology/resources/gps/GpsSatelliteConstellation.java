@@ -5,9 +5,11 @@ import com.securboration.immortals.ontology.core.Resource;
 /**
  * a satellite constellation that provides a GPS signal
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "a satellite constellation that provides a GPS signal  @author jstaples ")
 public class GpsSatelliteConstellation extends Resource {
     
     private String constellationName;
@@ -17,6 +19,10 @@ public class GpsSatelliteConstellation extends Resource {
      * satellites in the constellation, not just the ones visible at a given 
      * place and time.
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The satellites comprising the constellation.  Note that these are" +
+        " all  satellites in the constellation, not just the ones visible" +
+        " at a given  place and time.")
     private GpsSatellite[] satellites;
 
     public GpsSatellite[] getSatellites() {

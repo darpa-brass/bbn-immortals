@@ -19,7 +19,7 @@ public class TrustedLocationValidator implements ValidatorInterface {
 
     private final AnalyticsEventType EVENT_TYPE = AnalyticsEventType.MyLocationProduced;
 
-    private ValidatorResult state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, null);
+    private ValidatorResult state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, null, null);
 
     private final HashMap<String, LinkedList<String>> howMap = new HashMap<>();
 
@@ -54,6 +54,7 @@ public class TrustedLocationValidator implements ValidatorInterface {
     public synchronized ValidatorResult attemptValidation() {
         if (state.currentState == ValidatorState.RUNNING) {
             LinkedList<String> validationErrors = new LinkedList<>();
+            LinkedList<String> detailMessages = new LinkedList<>();
 
             for (String clientIdentifier : howMap.keySet()) {
                 LinkedList<String> howList = howMap.get(clientIdentifier);
@@ -64,20 +65,23 @@ public class TrustedLocationValidator implements ValidatorInterface {
                     for (String how : howList) {
                         if (!how.startsWith("m-r-p") && !how.startsWith("m-r-e") && !how.startsWith("m-r-t")) {
                             validationErrors.add(clientIdentifier + " has produced an untrusted location of type " + how + "!");
-                            state = new ValidatorResult(getValidatorName(), ValidatorState.FAILED, validationErrors);
+                            state = new ValidatorResult(getValidatorName(), ValidatorState.FAILED, validationErrors, detailMessages);
                             return state;
+                        } else {
+                            detailMessages.add(clientIdentifier + "-[" + how + "]->");
                         }
                     }
                 }
             }
 
+
             if (validationErrors.isEmpty()) {
-                ValidatorResult vs = new ValidatorResult(getValidatorName(), ValidatorState.PASSED, null);
+                ValidatorResult vs = new ValidatorResult(getValidatorName(), ValidatorState.PASSED, validationErrors, detailMessages);
                 state = vs;
                 return vs;
 
             } else {
-                state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, validationErrors);
+                state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, validationErrors, detailMessages);
             }
         }
         return state;

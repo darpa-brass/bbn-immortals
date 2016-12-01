@@ -6,13 +6,13 @@
 
 # import subprocess
 
-import json
 import os
 import signal
-from threading import Thread, Timer
 
+import threadprocessrouter as tpr
 from configurationmanager import Configuration
-from packages import subprocess32 as subprocess
+from data.validationresult import ValidationResult
+from packages import commentjson as json
 
 
 class BehaviorValidator:
@@ -30,39 +30,49 @@ class BehaviorValidator:
         self.listener = None
         self.monitoringthread = None;
         self.timer = None
-        self.time_limit_seconds = runner_configuration.timeout
+        self.time_limit_ms = runner_configuration.scenario.durationMS if runner_configuration.scenario.durationMS > runner_configuration.minDurationMS else runner_configuration.minDurationMS
+        self.minimum_run_time_ms = runner_configuration.minDurationMS
         self.validation_running = True
 
     def start(self, finishlistener=None):
-        ci = []
+        if len(self.client_identifiers) > 0:
+            ci = []
+            for identifier in self.client_identifiers:
+                ci += ['-i', identifier]
 
-        for identifier in self.client_identifiers:
-            ci += ['-i', identifier]
+            command = ['java', '-jar', Configuration.validation_program.executable_filepath, '-f',
+                       self.deployment_path + 'results/evaluation_event_log.txt', '-c',
+                       '--time-min-ms', str(self.minimum_run_time_ms),
+                       'validate'] + ci + self.validator_identifiers
 
-        command = ['java', '-jar', Configuration.validation_program.executable_filepath, '-f',
-                   self.deployment_path + 'results/evaluation_event_log.txt', '-c',
-                   'validate'] + ci + self.validator_identifiers
+        else:
+            command = ['java', '-jar', Configuration.validation_program.executable_filepath, '-f',
+                       self.deployment_path + 'results/evaluation_event_log.txt',
+                       '--time-max-ms', str(self.time_limit_ms),
+                       '--time-min-ms', str(self.minimum_run_time_ms),
+                       'observe']
 
         if not os.path.exists(self.deployment_path + 'results/'):
             os.mkdir(self.deployment_path + 'results/')
 
-        self.process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.process = tpr.Popen(command, stdout=tpr.PIPE, stderr=tpr.PIPE)
         self.listener = finishlistener
 
-        self.monitoringthread = Thread(None, self.monitoroutput, None)
-        self.monitoringthread.start()
+        tpr.start_thread(thread_method=BehaviorValidator.monitoroutput, thread_args=[self])
 
-        self.timer = Timer(self.time_limit_seconds, self.stop, ())
-        self.timer.start()
+        self.timer = tpr.start_timer(duration_seconds=self.time_limit_ms/1000, shutdown_method=self.stop,
+                                     halt_on_shutdown=False)
 
     def stop(self):
         if self.validation_running:
             self.validation_running = False
             self.timer.cancel()
-            self.process.send_signal(signal.SIGINT);
+            self.process.send_signal(signal.SIGINT)
 
     def monitoroutput(self):
-        while True:
+        result = None
+
+        while result is None:
             try:
                 value = self.process.stdout.readline()
                 if value != '':
@@ -81,8 +91,10 @@ class BehaviorValidator:
             with open(self.deployment_path + 'results/evaluation_result.json', 'w') as f:
                 json.dump(result, f)
 
-            self.listener(data)
+            validation_result = ValidationResult.from_dict(result)
+            self.listener(validation_result)
             self.stop()
+            return validation_result
 
         return None
 

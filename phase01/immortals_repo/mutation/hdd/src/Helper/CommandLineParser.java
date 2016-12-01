@@ -24,6 +24,7 @@ public class CommandLineParser {
         options.addOption("timeoutForInfiniteLoop", true, "time out to detect infinite loop in seconds");
         options.addOption("testClassesFilePath", true, "test class file path, data file where set of test cases are being kept");
         options.addOption("immortalsTester", true, "Immortals tester, special case to run immortals python tester.");
+        options.addOption("jarOrApk", true, "Speficy if final outcome is jar or apk.");
 
         parser = new org.apache.commons.cli.DefaultParser();
 
@@ -66,6 +67,7 @@ public class CommandLineParser {
     public String getImmortalsTester(){
         return commandLine.getOptionValue("immortalsTester");
     }
+    public String getJarOrApk(){return commandLine.getOptionValue("jarOrApk");}
 
     public static void main(String[] args) throws ParseException{
         try {

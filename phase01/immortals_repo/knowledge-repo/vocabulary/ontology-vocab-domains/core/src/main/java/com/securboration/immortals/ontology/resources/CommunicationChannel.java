@@ -5,8 +5,10 @@ import com.securboration.immortals.ontology.core.Resource;
 /**
  * A communication channel
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A communication channel  @author jstaples ")
 public class CommunicationChannel extends Resource {
 }

@@ -44,8 +44,11 @@ public class LoggingServerMain {
         @Option(type = OptionType.GLOBAL, name = "-m", description = "Log minimally (does not log client activity (disabled by default)")
         boolean logMinimal = false;
 
-        @Option(type = OptionType.GLOBAL, name = "-t", description = "How many seconds until the server stops the validation or observation (600 by default)")
-        int validationTimeout = 600;
+        @Option(type = OptionType.GLOBAL, name = "--time-max-ms", description = "The maximum number of milliseconds for the server to wait for validation to complete (60000 by default)")
+        int validationMaximum = 60000;
+
+        @Option(type = OptionType.GLOBAL, name = "--time-min-ms", description = "The minimum number of milliseconds for the server to run (overrules the '-time-max' parameter) ((60000 by default)")
+        int validationMinimum = 60000;
 
         @Option(name = {"-p", "--port"}, title = "PORT", description = "The port to run the server on (7707 by default)")
         int port = 7707;
@@ -55,7 +58,7 @@ public class LoggingServerMain {
     @Command(name = "validate", description = "Validates the received data against the specified validators")
     public static class Validate extends LoggingServerCommand {
 
-        @Option(type= OptionType.COMMAND, name = "-i", description = "The identifier of an expected client")
+        @Option(type = OptionType.COMMAND, name = "-i", description = "The identifier of an expected client")
         private HashSet<String> clientIdentifier = new HashSet<>();
 
         @Arguments(description = "The validators to run")
@@ -76,7 +79,7 @@ public class LoggingServerMain {
                     throw new RuntimeException(errorMessage);
                 }
 
-                server = new Log4jValidationServer(port, (logMinimal ? Level.INFO : Level.DEBUG), validationTimeout);
+                server = new Log4jValidationServer(port, (logMinimal ? Level.INFO : Level.DEBUG), validationMaximum, validationMinimum);
 
                 if (logToConsole) {
                     server.initConsoleLogger();
@@ -111,7 +114,7 @@ public class LoggingServerMain {
         @Override
         public void run() {
             try {
-                Log4jValidationServer server = new Log4jValidationServer(port, (logMinimal ? Level.INFO : Level.DEBUG), validationTimeout);
+                Log4jValidationServer server = new Log4jValidationServer(port, (logMinimal ? Level.INFO : Level.DEBUG), validationMaximum, validationMinimum);
 
                 if (logToConsole) {
                     server.initConsoleLogger();
@@ -131,7 +134,7 @@ public class LoggingServerMain {
                 server.run();
 
 //                try {
-//                    Thread.sleep(validationTimeout * 1000);
+//                    Thread.sleep(validationMaximum * 1000);
 //                } catch (InterruptedException e) {
 //                     Pass
 //                } finally {

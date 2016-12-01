@@ -5,9 +5,11 @@ import com.securboration.immortals.ontology.resources.environment.OperatingEnvir
 /**
  * The structures in the environment
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "The structures in the environment  @author jstaples ")
 public class Structures extends OperatingEnvironment{
     
     

@@ -1,17 +1,21 @@
 package com.securboration.immortals.ontology.property.impact;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.uris.Uris.rdfs;
-
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "Models an impact"
-        )
-    )
+/**
+ * Describes an impact on resources, properties, or other concepts.
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Describes an impact on resources, properties, or other concepts. " +
+    " @author jstaples ")
 public class ImpactStatement {
     
+    /**
+     * A human readable description of the impact 
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A human readable description of the impact")
     private String humanReadableDescription;
 
     

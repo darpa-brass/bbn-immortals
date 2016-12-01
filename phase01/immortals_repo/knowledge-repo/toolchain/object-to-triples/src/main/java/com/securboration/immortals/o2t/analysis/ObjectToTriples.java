@@ -94,7 +94,7 @@ public class ObjectToTriples {
     
     private void analyze(Object o,AnalysisContext c) throws IllegalArgumentException, IllegalAccessException{
         
-        ObjectNode object = ObjectNode.build(o);
+        ObjectNode object = ObjectNode.build(context.getObjectTranslator(),o);
         
         object.accept(new ObjectVisitor(c));
     }
@@ -209,6 +209,8 @@ public class ObjectToTriples {
             if(instance == null){
                 return null;
             }
+            
+            instance = context.getObjectTranslator().translate(instance);
             
             Resource primitive = 
                     OntologyHelper.getTypeMappings(analysisContext.model).get(
@@ -504,9 +506,11 @@ public class ObjectToTriples {
                     Type.getType(objectFieldValue.getPossibleType()));
             
             final boolean shouldFlatten = 
+                    //only consider flattening if the config says to do so
                     (context.shouldFlattenArrays()) 
-                    && 
-                    (objectFieldValue.getPossibleType().isArray());
+                    //only consider flattening the object if it's an array
+                    && (objectFieldValue.getValue().getClass().isArray())
+                    ;
             
             if(shouldFlatten){
                 visitObjectFieldFlattened(fieldOwner,p,objectFieldValue);

@@ -1,6 +1,7 @@
 package Driver;
 
 import Helper.Debugger;
+import Helper.Globals;
 import JReduce.HierarchicalClassReducer;
 import JReduce.ImmortalsTester;
 
@@ -31,16 +32,19 @@ public class ImmortalsDriver {
         String jarFile = commandLineParser.getJarFileName();
         String buildCommand = commandLineParser.getBuildcommand();
         String packageName = commandLineParser.getPackageName();
+        boolean isAPK = commandLineParser.getJarOrApk().toString().toUpperCase().trim().equals("APK");
         System.out.println("*************************");
+
         System.out.println(buildCommand);
         System.out.println("*************************");
         String immortalsTesterCommand= commandLineParser.getImmortalsTester();
         ImmortalsTester tester = new ImmortalsTester(immortalsTesterCommand, new String[]{"-w", "-t", "30", "-v", "-r", "client-test-location"});
+        Globals.IS_IMMORTALS_RUN = true;
         //buildCommand = "/root/immortals_repo/./gradlew";
         //-w -t 30 -v -r client-test-images
 
         HierarchicalClassReducer classReducer = new HierarchicalClassReducer(rootFolder,relativeFilePath,jarFile,packageName,
-                tester,buildCommand,className);
+                tester,buildCommand,className, isAPK);
         classReducer.ReduceClass();
 
     }

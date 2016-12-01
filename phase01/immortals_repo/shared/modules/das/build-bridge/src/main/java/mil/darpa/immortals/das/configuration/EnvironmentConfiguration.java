@@ -86,7 +86,15 @@ public class EnvironmentConfiguration {
     }
 
     public Path getSynthesizedDfuProjectFilepath(String sessionIdentifier) {
-        return getSynthesisRootPath(sessionIdentifier).resolve(synthesizedDfusSubdirectory);
+        Path p = getSynthesisRootPath(sessionIdentifier).resolve(synthesizedDfusSubdirectory);
+        if (!Files.exists(p)) {
+            try {
+                Files.createDirectories(p);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return p;
     }
 
     public Path getScenarioComposeerPath() {
@@ -170,16 +178,52 @@ public class EnvironmentConfiguration {
         }
     }
 
+    public Path getSynthesisRootPath() {
+        Path p = getImmortalsRootPath().resolve(synthesisRoot);
+        if (!Files.exists(p)) {
+            try {
+                Files.createDirectories(p);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return p;
+    }
+
     public Path getSynthesisRootPath(String sessionIdentifier) {
-        return getImmortalsRootPath().resolve(synthesisRoot).resolve(sessionIdentifier);
+        Path p = getSynthesisRootPath().resolve(sessionIdentifier);
+        if (!Files.exists(p)) {
+            try {
+                Files.createDirectories(p);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return p;
     }
 
     public Path getSynthesisModulesPath(String sessionIdentifier) {
-        return getSynthesisRootPath(sessionIdentifier).resolve(synthesisModulesSubdirectory);
+        Path p = getSynthesisRootPath(sessionIdentifier).resolve(synthesisModulesSubdirectory);
+        if (!Files.exists(p)) {
+            try {
+                Files.createDirectories(p);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return p;
     }
 
     public Path getSynthesisRepoPath(String sessionIdentifier) {
-        return getSynthesisRootPath(sessionIdentifier).resolve("IMMORTALS_REPO");
+        Path p = getSynthesisRootPath(sessionIdentifier).resolve("IMMORTALS_REPO");
+        if (!Files.exists(p)) {
+            try {
+                Files.createDirectories(p);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return p;
     }
 
     public String getSynthesizedDfuPackage() {

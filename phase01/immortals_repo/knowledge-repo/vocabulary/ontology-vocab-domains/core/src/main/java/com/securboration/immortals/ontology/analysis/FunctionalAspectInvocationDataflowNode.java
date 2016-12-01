@@ -1,18 +1,23 @@
 package com.securboration.immortals.ontology.analysis;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.functionality.FunctionalAspect;
-import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A call to a functional aspect"
-        )
-    )
+/**
+ * A dataflow node involving the invocation of a DFU's functional aspect
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A dataflow node involving the invocation of a DFU's functional aspect " +
+    " @author jstaples ")
 public class FunctionalAspectInvocationDataflowNode extends MethodInvocationDataflowNode {
     
+    /**
+     * The aspect implemented by the DFU that is called in the flow
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The aspect implemented by the DFU that is called in the flow")
     private FunctionalAspect aspectImplemented;
 
     

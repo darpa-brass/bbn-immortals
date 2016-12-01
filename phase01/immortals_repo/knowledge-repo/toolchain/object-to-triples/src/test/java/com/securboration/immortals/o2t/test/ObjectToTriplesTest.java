@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.jena.rdf.model.Model;
 import org.junit.Test;
+import org.objectweb.asm.Type;
 
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
 import com.securboration.immortals.o2t.analysis.ObjectToTriples;
@@ -62,6 +63,11 @@ public class ObjectToTriplesTest {
                 "composite array list",
                 new CollectionObjects.CompositeArrayListObject()
                 );
+        
+        testObjectToTriples(
+            "asm Type",
+            Type.getType(this.getClass())
+            );
     }
     
     private static void printDividerStart(String tag){
@@ -148,7 +154,7 @@ public class ObjectToTriplesTest {
         
         private static class PathologicalArrayObject{
             private Object[] saneArray = new String[]{"item1","item2"};
-            private Object[] crazyArray = new Object[]{new Object[]{new int[]{1,3,4},new String[]{},new char[]{}},new Object[]{new byte[]{5},new long[]{6}}};
+            private Object[] crazyArray = new Object[]{new Object[]{new int[]{1,3,4},new String[]{},"this is a test".toCharArray()},new Object[]{new byte[]{5},new long[]{6}}};
         }
     }
     

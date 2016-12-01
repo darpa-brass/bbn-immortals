@@ -1,20 +1,30 @@
 package com.securboration.immortals.ontology.property.impact;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.constraint.ResourceImpactType;
 import com.securboration.immortals.ontology.core.Resource;
-import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "Models an impact on a resource"
-        )
-    )
+/**
+ * Models an impact on an abstract resource
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Models an impact on an abstract resource  @author jstaples ")
 public class ResourceImpact extends ImpactStatement {
     
+    /**
+     * The resource impact statement
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The resource impact statement")
     private ResourceImpactType impactOnResource;
+    
+    /**
+     * The impacted abstract resource
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The impacted abstract resource")
     private Class<? extends Resource> impactedResource;
     
     public ResourceImpactType getImpactOnResource() {

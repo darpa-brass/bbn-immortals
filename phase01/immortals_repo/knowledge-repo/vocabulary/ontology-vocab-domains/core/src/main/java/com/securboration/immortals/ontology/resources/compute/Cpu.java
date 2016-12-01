@@ -6,14 +6,19 @@ import com.securboration.immortals.ontology.resources.memory.MemoryResource;
 /**
  * Simple abstraction of a general-purpose compute device
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Simple abstraction of a general-purpose compute device  @author" +
+    " jstaples ")
 public class Cpu extends ComputeResource {
 
     /**
      * The number of cores actually available for independent execution
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The number of cores actually available for independent execution")
     private int numCoresPhysical;
 
     /**
@@ -23,11 +28,17 @@ public class Cpu extends ComputeResource {
      * E.g., hyperthreading can map multiple logical threads onto a single
      * physical compute resource
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The number of cores that appear to be available for independent" +
+        " execution.  E.g., hyperthreading can map multiple logical threads" +
+        " onto a single physical compute resource")
     private int numCoresLogical;
 
     /**
      * A model of the memory for this object
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A model of the memory for this object")
     private MemoryResource memoryModel;
 
     public int getNumCoresPhysical() {

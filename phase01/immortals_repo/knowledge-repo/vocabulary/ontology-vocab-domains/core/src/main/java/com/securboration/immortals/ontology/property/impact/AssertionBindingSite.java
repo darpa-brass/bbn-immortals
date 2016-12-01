@@ -1,17 +1,22 @@
 package com.securboration.immortals.ontology.property.impact;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.uris.Uris.rdfs;
-
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "Models something to which an assertion can bind"
-        )
-    )
+/**
+ * Models a site to which an assertion can bind (e.g., an abstract resource or
+ * a resource instance)
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "Models a site to which an assertion can bind (e.g., an abstract" +
+    " resource or a resource instance)  @author jstaples ")
 public class AssertionBindingSite {
     
+    /**
+     * Describes the site
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "Describes the site")
     private String humanReadableDescription;
 
     public String getHumanReadableDescription() {

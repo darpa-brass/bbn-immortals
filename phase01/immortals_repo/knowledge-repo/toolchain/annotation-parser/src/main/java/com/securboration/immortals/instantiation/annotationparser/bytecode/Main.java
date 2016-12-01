@@ -2,7 +2,9 @@ package com.securboration.immortals.instantiation.annotationparser.bytecode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
@@ -37,64 +39,73 @@ public class Main {
 //        args = getTestArgs();//TODO
         
         final String version = args[0];
-        final File jarDir = new File(args[1]);
-        final File outputDir = new File(args[2]);
-        
-        
-        {//JAR mode
-            Console.log("searching %s",jarDir.getAbsolutePath());
-            Collection<File> jars = 
-                    FileUtils.listFiles(
-                        jarDir, 
-                        new String[]{"jar"}, 
-                        true
-                        );
+        final File outputDir = new File(args[1]);
+        final List<File> jarDirs = new ArrayList<>();
+        {
+            final String[] dirs = new String[args.length - 2];
+            System.arraycopy(args, 2, dirs, 0, args.length - 2);
             
-            for(File jar:jars){
-                Console.log("found jar %s", jar.getName());
-                
-                ObjectToTriplesConfiguration config = 
-                        new ObjectToTriplesConfiguration(version);
-                config.setAddMetadata(false);
-                
-                BytecodeModelGatherer gatherer = 
-                        new BytecodeModelGatherer();
-                
-                JarTraverser.traverseJar(jar, gatherer);
-                
-                final String outputPath = 
-                        outputDir + "/" + jar.getName() + ".bytecode.ttl";
-                
-                Model jarModel = 
-                        ObjectToTriples.convert(
-                            config, 
-                            gatherer.getBytecodeModel()
+            for(String dir:dirs){
+                jarDirs.add(new File(dir));
+            }
+        }
+        
+        for(final File jarDir:jarDirs){
+            {//JAR mode
+                Console.log("searching %s",jarDir.getAbsolutePath());
+                Collection<File> jars = 
+                        FileUtils.listFiles(
+                            jarDir, 
+                            new String[]{"jar"}, 
+                            true
                             );
                 
-                OntologyHelper.addAutogenerationMetadata(
-                    config, 
-                    jarModel, 
-                    config.getTargetNamespace(), 
-                    config.getOutputFile()
-                    );
-                
-                final String serialized = 
-                        OntologyHelper.serializeModel(
-                            jarModel, 
-                            "TTL", 
-                            config.isValidateOntology()
-                            );
-                
-//                Console.log(
-//                    "bytecode model for jar %s:\n%s\n", 
-//                    jar.getName(), 
-//                    serialized
-//                    );
-                
-                FileUtils.writeStringToFile(
-                    new File(outputPath), 
-                    serialized
-                    );
+                for(File jar:jars){
+                    Console.log("found jar %s", jar.getName());
+                    
+                    ObjectToTriplesConfiguration config = 
+                            new ObjectToTriplesConfiguration(version);
+                    config.setAddMetadata(false);
+                    
+                    BytecodeModelGatherer gatherer = 
+                            new BytecodeModelGatherer();
+                    
+                    JarTraverser.traverseJar(jar, gatherer);
+                    
+                    final String outputPath = 
+                            outputDir + "/" + jar.getName() + ".bytecode.ttl";
+                    
+                    Model jarModel = 
+                            ObjectToTriples.convert(
+                                config, 
+                                gatherer.getBytecodeModel()
+                                );
+                    
+                    OntologyHelper.addAutogenerationMetadata(
+                        config, 
+                        jarModel, 
+                        config.getTargetNamespace(), 
+                        config.getOutputFile()
+                        );
+                    
+                    final String serialized = 
+                            OntologyHelper.serializeModel(
+                                jarModel, 
+                                "TTL", 
+                                config.isValidateOntology()
+                                );
+                    
+//                    Console.log(
+//                        "bytecode model for jar %s:\n%s\n", 
+//                        jar.getName(), 
+//                        serialized
+//                        );
+                    
+                    FileUtils.writeStringToFile(
+                        new File(outputPath), 
+                        serialized
+                        );
+                }
             }
         }
     }

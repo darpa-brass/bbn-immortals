@@ -43,7 +43,7 @@ public class CommonsValidatorDriver {
 
 
         HierarchicalClassReducer classReducer = new HierarchicalClassReducer(rootFolder,relativeFilePath,jarFile,packageName,
-                testJarFile,testClasses,buildCommand,className);
+                testJarFile,testClasses,buildCommand,className, false);
         classReducer.ReduceClass();
 
 

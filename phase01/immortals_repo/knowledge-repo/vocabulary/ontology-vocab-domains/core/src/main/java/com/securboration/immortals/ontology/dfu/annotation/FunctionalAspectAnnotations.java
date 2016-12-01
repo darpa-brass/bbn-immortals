@@ -3,20 +3,21 @@ package com.securboration.immortals.ontology.dfu.annotation;
 import com.securboration.immortals.ontology.pojos.markup.GenerateAnnotation;
 
 /**
- * A description of a specific thing done by some abstraction of functionality.
+ * A wrapper for multiple functional aspects
  * 
- * E.g., a counter abstraction might have increment and zeroize functional
- * aspects
- * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A wrapper for multiple functional aspects  @author jstaples ")
 @GenerateAnnotation
 public class FunctionalAspectAnnotations {
     
     /**
      * The functional aspects
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The functional aspects")
     private FunctionalAspectAnnotation[] aspects;
 
     

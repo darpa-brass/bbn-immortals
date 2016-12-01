@@ -3,14 +3,25 @@ package com.securboration.immortals.ontology.resources;
 /**
  * A file on a file system
  * 
- * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A file on a file system  @author jstaples ")
 public class FileResource extends FileSystemResource {
     
+    /**
+     * The path to the file
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The path to the file")
     private String absolutePath;
     
+    /**
+     * The file's access permissions
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The file's access permissions")
     private FilePermission[] permission;
 
     

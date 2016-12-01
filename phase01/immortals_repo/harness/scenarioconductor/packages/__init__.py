@@ -1,2 +1,2 @@
-__all__ = ['gevent', 'geventwebsocket']
+__all__ = ['bottle', 'gevent', 'geventwebsocket']
 # from packages import gevent, geventwebsocket

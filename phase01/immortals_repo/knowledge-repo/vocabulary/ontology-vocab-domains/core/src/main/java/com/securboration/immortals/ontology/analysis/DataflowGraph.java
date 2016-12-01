@@ -1,19 +1,32 @@
 package com.securboration.immortals.ontology.analysis;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.uris.Uris.rdfs;
-
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A dataflow graph is a set of dataflow edges"
-        )
-    )
+/**
+ * A dataflow graph is a set of dataflow edges.  Each edge, in turn, connects
+ * dataflow nodes via some communication medium (e.g., softwareComponent1 
+ * communicates with softwareComponent2 via a namedSocket9).
+ * 
+ * @author jstaples
+ *
+ */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A dataflow graph is a set of dataflow edges.  Each edge, in turn," +
+    " connects dataflow nodes via some communication medium (e.g.," +
+    " softwareComponent1  communicates with softwareComponent2 via a" +
+    " namedSocket9).  @author jstaples ")
 public class DataflowGraph {
     
+    /**
+     * The edges in the graph
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The edges in the graph")
     private DataflowEdge[] edges;
     
+    /**
+     * A human-readable description of what is in the graph
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A human-readable description of what is in the graph")
     private String humanReadableDescription;
 
     

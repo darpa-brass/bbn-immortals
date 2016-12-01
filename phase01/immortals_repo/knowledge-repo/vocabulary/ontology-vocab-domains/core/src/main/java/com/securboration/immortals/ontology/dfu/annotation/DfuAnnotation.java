@@ -8,37 +8,51 @@ import com.securboration.immortals.ontology.property.Property;
 
 /**
  * An abstraction that binds what is being done to how it is implemented in
- * bytecode
+ * bytecode.  This is a programmer-facing variant of the DFU abstraction.
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "An abstraction that binds what is being done to how it is implemented" +
+    " in bytecode.  This is a programmer-facing variant of the DFU" +
+    " abstraction.  @author jstaples ")
 @GenerateAnnotation
 public class DfuAnnotation {
 
     /**
      * The functionality performed by the DFU 
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The functionality performed by the DFU")
     private Class<? extends Functionality> functionalityBeingPerformed;
     
     /**
      * The resources upon which the DFU depends, if any
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The resources upon which the DFU depends, if any")
     private Class<? extends Resource>[] resourceDependencies;
     
     /**
      * The functional aspects of the DFU
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The functional aspects of the DFU")
     private Class<? extends FunctionalAspect>[] functionalAspects;
     
     /**
      * The properties associated with the DFU
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The properties associated with the DFU")
     private Property[] properties;
     
     /**
      * A human-readable tag for durably referencing this DFU.
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "A human-readable tag for durably referencing this DFU.")
     private String tag;
     
 

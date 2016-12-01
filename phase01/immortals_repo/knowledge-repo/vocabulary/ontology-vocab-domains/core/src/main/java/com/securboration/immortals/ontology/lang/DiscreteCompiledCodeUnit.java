@@ -1,29 +1,27 @@
 package com.securboration.immortals.ontology.lang;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.uris.Uris.rdfs;
-
 /**
  * A discrete compiled code unit
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
-@Triple(
-        predicateUri=rdfs.comment$,
-        objectLiteral=@Literal("a discrete compiled code unit")
-        )
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A discrete compiled code unit  @author jstaples ")
 public class DiscreteCompiledCodeUnit extends CompiledCodeUnit {
     
     /**
      * The source code compiled into this artifact
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The source code compiled into this artifact")
     private SourceFile source;
     
     /**
      * The compiled form of the artifact
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The compiled form of the artifact")
     private byte[] compiledForm;
     
     public DiscreteCompiledCodeUnit(){}

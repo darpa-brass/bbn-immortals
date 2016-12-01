@@ -3,27 +3,34 @@ package com.securboration.immortals.ontology.resources.memory;
 import com.securboration.immortals.ontology.resources.PlatformResource;
 
 /**
- * Memory
+ * A model of memory
  * 
- * 
- * @author Securboration
+ * @author jstaples
  *
  */
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A model of memory  @author jstaples ")
 public class MemoryResource extends PlatformResource {
     
     /**
-     * True iff we can read this device
+     * True iff we can read from a memory device
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "True iff we can read from a memory device")
     private boolean canRead;
     
     /**
-     * True iff we can write this device
+     * True iff we can write to a memory device
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "True iff we can write to a memory device")
     private boolean canWrite;
     
     /**
-     * The space available for writing
+     * The unused space available on a memory device
      */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The unused space available on a memory device")
     private long maxAvailableBytes;
 
     public boolean isCanRead() {

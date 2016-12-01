@@ -33,6 +33,15 @@ public class StatementTypeQuery {
             case "ForeachStmt":
                 statementType = StatementType.ForeachStmt;
                 break;
+            case "BlockStmt":
+                statementType = StatementType.BlockStmt;
+                break;
+            case "ThrowStmt":
+                statementType = StatementType.ThrowStmt;
+                break;
+            case "TryStmt":
+                statementType = StatementType.TryStmt;
+                break;
            default:
                 statementType = StatementType.Unknown;
                 break;
@@ -62,4 +71,7 @@ public class StatementTypeQuery {
         return FindType(s) == StatementType.ForStmt;
     }
     public static boolean isForEachStmt(Statement s){return FindType(s) == StatementType.ForeachStmt;}
+    public static boolean isBlockStmt(Statement s){return FindType(s) == StatementType.BlockStmt;}
+    public static boolean isThrowStmt(Statement s){return FindType(s) == StatementType.ThrowStmt;}
+    public static boolean isTryStmt(Statement s){return FindType(s) == StatementType.TryStmt;}
 }

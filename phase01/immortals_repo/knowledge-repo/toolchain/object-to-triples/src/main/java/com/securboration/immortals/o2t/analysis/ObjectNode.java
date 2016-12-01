@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.securboration.immortals.o2t.ObjectTranslator;
+
 /**
  * A graph of a Java class instance (object)
  * 
@@ -152,12 +154,16 @@ public class ObjectNode {
     /**
      * Constructs an ObjectNode recursively from the provided object instance
      * 
+     * @param translator converts encountered objects
      * @param value the object to build a model from
      * @return an object model that can be easily traversed to produce triples
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    public static ObjectNode build(Object value) throws IllegalArgumentException, IllegalAccessException {
+    public static ObjectNode build(
+            ObjectTranslator translator,
+            Object value
+            ) throws IllegalArgumentException, IllegalAccessException {
 
         Class<?> possibleType = Object.class;
         Class<?> actualType = null;
@@ -173,59 +179,9 @@ public class ObjectNode {
                         possibleType, 
                         actualType);
 
-        diveInto(p, new HashMap<>(), new HashMap<>());
-
+        diveInto(p, new HashMap<>(), translator);
+        
         return p;
-    }
-    
-    private static class KeyValue{
-        Object key;
-        Object value;
-        
-        KeyValue(Object k,Object v){
-            this.key = k;
-            this.value = v;
-        }
-    }
-    
-    
-    private static Object arrayify(
-            Object input,
-            Map<Object,Object> arrayifiedObjects
-            ){
-        
-        if(arrayifiedObjects.containsKey(input)){
-            return arrayifiedObjects.get(input);
-        }
-        
-        List<Object> resultArray = new ArrayList<>();
-        
-        if(input instanceof Collection){
-            Collection<?> c = (Collection<?>)input;
-            
-            for(Object o:c){
-                resultArray.add(arrayify(o,arrayifiedObjects));
-            }
-        } else if(input instanceof Map){
-            Map<?,?> m = (Map<?,?>)input;
-            
-            for(Object key:m.keySet()){
-                Object value = m.get(key);
-                
-                resultArray.add(
-                        new KeyValue(
-                                arrayify(key,arrayifiedObjects),
-                                arrayify(value,arrayifiedObjects)));
-            }
-        } else {
-            return input;
-        }
-        
-        Object[] array = resultArray.toArray();
-        
-        arrayifiedObjects.put(input, array);
-        
-        return array;
     }
     
     private static ObjectNode getNodeForObject(
@@ -233,10 +189,11 @@ public class ObjectNode {
             Class<?> possibleType,
             ObjectNode parent,
             Map<Object,ObjectNode> visited,
-            Map<Object,Object> arrayifiedObjects,
-            List<ObjectNode> recursivelyVisitThese
+            List<ObjectNode> recursivelyVisitThese,
+            ObjectTranslator translator
             ) throws IllegalArgumentException, IllegalAccessException{
-
+        object = translator.translate(object);
+        
         Class<?> actualType = null;
         
         if(object != null){
@@ -244,14 +201,10 @@ public class ObjectNode {
         }
         
         if(object == null || isPrimitive(object) || visited.containsKey(object)){
-            
             return new ObjectNode(object,parent,possibleType,actualType);
         }
         
-        Object convertedObject = 
-                arrayify(object,arrayifiedObjects);
-        
-        ObjectNode newNode = new ObjectNode(convertedObject,parent,possibleType,actualType);
+        ObjectNode newNode = new ObjectNode(object,parent,possibleType,actualType);
         
         recursivelyVisitThese.add(newNode);
         
@@ -284,7 +237,7 @@ public class ObjectNode {
     private static void diveInto(
             ObjectNode o, 
             Map<Object,ObjectNode> visited,
-            Map<Object,Object> arrayifiedObjects
+            ObjectTranslator translator
             ) throws IllegalArgumentException, IllegalAccessException {
         
         Object value = o.value;
@@ -319,9 +272,9 @@ public class ObjectNode {
                                 value.getClass().getComponentType(),
                                 o,
                                 visited,
-                                arrayifiedObjects,
-                                diveIntoThese);
-                
+                                diveIntoThese,
+                                translator
+                                );
                 o.arrayValues.add(arrayValue);
             }
         } else {
@@ -341,8 +294,8 @@ public class ObjectNode {
                                 f.getType(),
                                 o,
                                 visited,
-                                arrayifiedObjects,
-                                diveIntoThese
+                                diveIntoThese,
+                                translator
                                 );
                 
                 o.fields.put(
@@ -353,8 +306,7 @@ public class ObjectNode {
         
         //dive into each new object
         for(ObjectNode newNode:diveIntoThese){
-            
-            diveInto(newNode,visited,arrayifiedObjects);
+            diveInto(newNode,visited,translator);
         }
         
         return;
@@ -369,9 +321,7 @@ public class ObjectNode {
         Boolean.class,
         Character.class,
         Byte.class,
-        Short.class,
-        
-        byte[].class
+        Short.class
       };
       
     private static boolean shouldProcessField(Field f) {
@@ -424,7 +374,6 @@ public class ObjectNode {
             ){
         
         if(current.arrayValues != null){
-            
             visited.add(current);
             
             ArrayElementVisitor arrayVisitor = 
@@ -434,7 +383,6 @@ public class ObjectNode {
                             );
             
             for(int i=0;i<current.arrayValues.size();i++){
-                
                 ObjectNode element = current.arrayValues.get(i);
                 
                 arrayVisitor.visitArrayElement(
@@ -456,7 +404,6 @@ public class ObjectNode {
                 }
             }
         } else if(current.fields != null){
-            
             visited.add(current);
             
             for(String fieldName:current.fields.keySet()){
@@ -478,7 +425,6 @@ public class ObjectNode {
                 }
             }
         } else {
-            
             visitor.visitPrimitiveField(
                     current.parent, 
                     current

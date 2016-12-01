@@ -1,20 +1,15 @@
 package com.securboration.immortals.ontology.core.org;
 
-import com.securboration.immortals.ontology.annotations.triples.Literal;
-import com.securboration.immortals.ontology.annotations.triples.Triple;
-import com.securboration.immortals.uris.Uris.rdfs;
-
 /**
- * A standard for some domain or process
+ * A standard for some domain or process. E.g., FIPS 46-3 defines the Data
+ * Encryption Standard (DES).
  * 
- * @author Securboration
+ * @author jstaples
  *
  */
-@Triple(
-    predicateUri = rdfs.comment$,
-    objectLiteral = @Literal("A standard for describing some domain " +
-            "or process.  E.g., FIPS 46-3 defines the Data Encryption " +
-            "Standard (DES)."))
+@com.securboration.immortals.ontology.annotations.RdfsComment(
+    "A standard for some domain or process. E.g., FIPS 46-3 defines the" +
+    " Data Encryption Standard (DES).  @author jstaples ")
 public class Standard {
-//    String s = Uris.dcelements.creator$
+    
 }

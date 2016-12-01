@@ -95,6 +95,47 @@ public class ClassEnumerator {
         return classes;
     }
 
+    public static List<Class<?>> processDirectoryApk(File directory, String pkgname) {
+
+        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+        String relPath = pkgname.replace('.', '/');
+        log("relative path: "+relPath);
+        File fullDirectory = new File(directory.getAbsoluteFile() + "/" + relPath);
+
+        log("Reading Directory '" + directory + "'");
+
+        // Get the list of the files contained in the package
+        String[] files = fullDirectory.list();
+        for (int i = 0; i < files.length; i++) {
+            String fileName = files[i];
+            String className = null;
+
+            // we are only interested in .class files
+            if (fileName.endsWith(".class")) {
+                // removes the .class extension
+                className = pkgname + '.' + fileName.substring(0, fileName.length() - 6);
+            }
+
+            log("FileName '" + fileName + "'  =>  class '" + className + "'");
+
+            if (className != null) {
+                try {
+                    classes.add(loadClass(className));
+                }
+                catch(Exception ex){
+                    Debugger.log("Exception found but ignored.");
+                }
+            }
+
+            //If the file is a directory recursively class this method.
+            File subdir = new File(directory, fileName);
+            if (subdir.isDirectory()) {
+                classes.addAll(processDirectory(subdir, pkgname + '.' + fileName));
+            }
+        }
+        return classes;
+    }
+
     /**
      * Given a jar file's URL and a package name returns all classes within jar file.
      * @param resource
@@ -228,6 +269,28 @@ public class ClassEnumerator {
         URL[] urls = new URL[]{url};
 
         return urls;
+    }
+
+    private static URL[] LoadDirectoryFile(String directoryName ) throws MalformedURLException{
+        File file = new File(directoryName);
+        URL url = file.toURL();
+        URL[] urls = new URL[]{url};
+        return urls;
+    }
+
+    public static void main(String[] args) throws MalformedURLException {
+       // List<Class<?>> classes =  ClassEnumerator.processDirectoryApk(new File("/home/ubuntu/learning/java/MyApplication//app/build/intermediates/classes/debug/"),"com.example.root.myapplication");
+        File file = new File("/home/ubuntu/learning/java/MyApplication//app/build/intermediates/classes/debug/");
+        URL url = file.toURL();
+        URL[] urls = new URL[]{url};
+       // Class<?> cls = loadClass("/home/ubuntu/learning/java/MyApplication//app/build/intermediates/classes/debug/com/example/root/myapplicaiton/MainActivity.class");
+        ClassLoader cl = new URLClassLoader(urls);
+        try {
+            cl.loadClass("com.example.root.myapplication.MainActivity");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

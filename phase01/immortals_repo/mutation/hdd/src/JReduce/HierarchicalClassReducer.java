@@ -1,5 +1,6 @@
 package JReduce;
 
+import ASTManipulation.ClassIterator;
 import Helper.ClassEnumerator;
 import Helper.Globals;
 import Helper.MethodEnumerator;
@@ -25,8 +26,9 @@ public class HierarchicalClassReducer {
     String className;
     public String testJarFilePath = Globals.EmptyString;
     public ITester tester;
+    boolean isAPK;
 
-    public HierarchicalClassReducer(String rootFolder,String relativeFilePath, String jarFilePath, String packageName,String testJarFileName,  List<String> testClasses, String buildCommand, String className){
+    public HierarchicalClassReducer(String rootFolder,String relativeFilePath, String jarFilePath, String packageName,String testJarFileName,  List<String> testClasses, String buildCommand, String className, boolean isAPK){
         this.rootFolder = rootFolder;
         this.relativeFilePath = relativeFilePath;
         this.testClasses = testClasses;
@@ -36,9 +38,10 @@ public class HierarchicalClassReducer {
         this.testClasses = testClasses;
         this.packageName = packageName;
         this.className = className;
+        this.isAPK = isAPK;
     }
 
-    public HierarchicalClassReducer(String rootFolder,String relativeFilePath, String jarFilePath, String packageName,ITester tester, String buildCommand, String className){
+    public HierarchicalClassReducer(String rootFolder,String relativeFilePath, String jarFilePath, String packageName,ITester tester, String buildCommand, String className, boolean isAPK){
         this.rootFolder = rootFolder;
         this.relativeFilePath = relativeFilePath;
         this.testClasses = testClasses;
@@ -47,19 +50,31 @@ public class HierarchicalClassReducer {
         this.tester = tester;
         this.packageName = packageName;
         this.className = className;
+        this.isAPK = isAPK;
     }
 
     private void Initialize(){
 
     }
     public void ReduceClass(){
+        if(!this.isAPK){
+           ReduceClassFromJar();
+        }
+        else{
+            ReduceClassFromApk();
+        }
+
+
+    }
+
+    public void ReduceClassFromJar(){
         List<Class<?>> classes = ClassEnumerator.getClassedFromThisJarFile(this.fullJarFilePath,packageName);
         if(classes.stream().anyMatch(x -> x.getSimpleName().equals(className))){
 
             Arrays
-            .asList(MethodEnumerator.GetDeclaedMethods(classes.stream().filter(x -> x.getSimpleName().equals(className))
-            .findFirst().get()))
-            .stream().forEach(p -> {
+                    .asList(MethodEnumerator.GetDeclaedMethods(classes.stream().filter(x -> x.getSimpleName().equals(className))
+                            .findFirst().get()))
+                    .stream().forEach(p -> {
                 JavaMethod javaMethod = new JavaMethod(rootFolder,relativeFilePath,p.getName(),className,this.fullJarFilePath);
                 HierarchicalReducer hReducer = null;
                 if(testClasses.isEmpty() || testJarFilePath.isEmpty()){
@@ -78,6 +93,33 @@ public class HierarchicalClassReducer {
             });
 
         }
+    }
+
+    public void ReduceClassFromApk(){
+
+        ClassIterator iterator = new ClassIterator(rootFolder +  relativeFilePath);
+        iterator.GetAllMethods().forEach(p ->
+        {
+            JavaMethod javaMethod = new JavaMethod(rootFolder,relativeFilePath,p,className,this.fullJarFilePath);
+            HierarchicalReducer hReducer = null;
+            if(testClasses.isEmpty() || testJarFilePath.isEmpty()){
+                hReducer = new HierarchicalReducer
+                        (javaMethod,rootFolder,relativeFilePath,p,tester,buildCommand,className);
+            }else{
+                hReducer = new HierarchicalReducer
+                        (javaMethod,rootFolder,relativeFilePath,p,testJarFilePath,testClasses,buildCommand,className);
+            }
+
+            try {
+                hReducer.Reduce();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        });
+
+
+
 
     }
 }

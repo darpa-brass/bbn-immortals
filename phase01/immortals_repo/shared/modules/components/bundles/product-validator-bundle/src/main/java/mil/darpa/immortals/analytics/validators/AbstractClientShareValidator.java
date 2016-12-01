@@ -12,10 +12,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Abstract validator for events sent from all clients to all clients minus the sender client
+ * <p>
  * Created by awellman@bbn.com on 11/11/16.
  */
 public abstract class AbstractClientShareValidator implements ValidatorInterface {
-    private ValidatorResult state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, null);
+    private ValidatorResult state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, null, null);
 
     private final Map<String, HashMap<String, Boolean>> clientReceivedMap = new HashMap<>();
     private final int expectedClientCount;
@@ -54,6 +56,7 @@ public abstract class AbstractClientShareValidator implements ValidatorInterface
     public synchronized ValidatorResult attemptValidation() {
         if (state.currentState == ValidatorState.RUNNING) {
             LinkedList<String> validationErrors = new LinkedList<>();
+            LinkedList<String> detailMessages = new LinkedList<>();
 
             if (clientReceivedMap.keySet().size() != expectedClientCount) {
                 validationErrors.add(clientReceivedMap.keySet().size() + "/" + expectedClientCount + " of expected clients came online!");
@@ -64,18 +67,20 @@ public abstract class AbstractClientShareValidator implements ValidatorInterface
                     for (String sender : receivedMap.keySet()) {
                         if (!receivedMap.get(sender)) {
                             validationErrors.add(receiver + " has not received a " + getDesiredEventType().name() + " event from " + sender + "!");
+                        } else {
+                            detailMessages.add(receiver + "<-" + getDesiredEventType().name() + "-" + sender);
                         }
                     }
                 }
             }
 
             if (validationErrors.isEmpty()) {
-                ValidatorResult vs = new ValidatorResult(getValidatorName(), ValidatorState.PASSED, null);
+                ValidatorResult vs = new ValidatorResult(getValidatorName(), ValidatorState.PASSED, validationErrors, detailMessages);
                 state = vs;
                 return vs;
 
             } else {
-                state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, validationErrors);
+                state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, validationErrors, detailMessages);
             }
         }
         return state;
