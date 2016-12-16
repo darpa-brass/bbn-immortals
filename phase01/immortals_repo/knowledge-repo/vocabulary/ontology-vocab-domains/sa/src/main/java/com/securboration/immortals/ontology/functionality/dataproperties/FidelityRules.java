@@ -12,10 +12,11 @@ import com.securboration.immortals.uris.Uris.rdfs;
 public class FidelityRules {
     
     @ConceptInstance
-    @Triple(
-        predicateUri=rdfs.comment$,
-        objectLiteral=@Literal("describes the impact of increasing # of pixels on memory use")
-        )
+    /**
+     * describes the impact of increasing # of pixels on memory use
+     * 
+     * @author Securboration
+     */
     public static class IncreasePixelsVsMemory extends FidelityResourceRelationship {
         
         public IncreasePixelsVsMemory(){
@@ -29,10 +30,11 @@ public class FidelityRules {
     }
     
     @ConceptInstance
-    @Triple(
-        predicateUri=rdfs.comment$,
-        objectLiteral=@Literal("describes the impact of decreasing # of pixels on memory use")
-        )
+    /**
+     * describes the impact of decreasing # of pixels on memory use
+     * 
+     * @author Securboration
+     */
     public static class DecreasePixelsVsMemory extends FidelityResourceRelationship {
         
         public DecreasePixelsVsMemory(){

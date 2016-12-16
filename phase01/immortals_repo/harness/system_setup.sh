@@ -173,8 +173,9 @@ ln -s ${Z3_HOME}/bin/z3 /opt/bin/z3
 apt-get install maven -y
 
 ######## Install other deps ########
-apt-get install python3-pip -y
+apt-get install python-pip python3-pip -y
 pip3 install rdflib
+pip install cherrypy
 
 
 

@@ -383,7 +383,7 @@ edit_tuple(
 
 # Mission REQ: trusted communications
 edit_tuple(
-    ARGS.androidUiRes, 'trusted communications',
+    ARGS.missionTrustComms, 'trusted communications',
     IMN.hasPropertyConstraint,
     G.query(
         """SELECT DISTINCT ?func_spec ?property

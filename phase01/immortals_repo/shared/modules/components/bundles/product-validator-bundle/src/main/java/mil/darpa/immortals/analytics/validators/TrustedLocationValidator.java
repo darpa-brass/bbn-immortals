@@ -41,7 +41,9 @@ public class TrustedLocationValidator implements ValidatorInterface {
                 howMap.put(event.eventSource, new LinkedList<>());
             }
             Coordinates data = gson.fromJson(event.data, Coordinates.class);
-            howMap.get(event.eventSource).add(data.getProvider());
+            if (!howMap.get(event.eventSource).contains(data.getProvider())) {
+                howMap.get(event.eventSource).add(data.getProvider());
+            }
         }
     }
 

@@ -8,13 +8,12 @@
 //import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 //import com.securboration.immortals.uris.Uris.rdfs;
 //
-//@Triple(
-//    predicateUri=rdfs.comment$,
-//    objectLiteral=@Literal(
-//        "A simple example consisting of an android device with commercial-" +
-//        "grade GPS receiver hardware"
-//        )
-//    )
+/**
+ * A simple example consisting of an android device with commercial-
+ * grade GPS receiver hardware
+ * 
+ * @author Securboration
+ */
 //@ConceptInstance
 //public class Example1_SimpleAndroidGps extends GmeInterchangeFormat {
 //    

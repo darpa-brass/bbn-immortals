@@ -19,13 +19,13 @@ class JavaApplication(LifecycleInterface):
         self.is_application_setup = False
         self.platform = JavaPlatform(application_configuration)
 
-        self.jar_filepath = path_helper(False, self.config.application_deployment_directory,
-                                        os.path.basename(self.config.executable_filepath))
+        self.jar_filepath = path_helper(False, self.config.applicationDeploymentDirectory,
+                                        os.path.basename(self.config.executableFile))
 
         self.files = {}
 
         for src_filepath in self.config.files.keys():
-            self.files[src_filepath] = path_helper(False, self.config.application_deployment_directory,
+            self.files[src_filepath] = path_helper(False, self.config.applicationDeploymentDirectory,
                                                    self.config.files[src_filepath])
 
     """
@@ -62,11 +62,11 @@ class JavaApplication(LifecycleInterface):
     def setup(self):
         if self.is_application_running is True:
             raise Exception(
-                    'The environment named "' + self.config.instance_identifier + '" is already running an application!')
+                    'The environment named "' + self.config.instanceIdentifier + '" is already running an application!')
 
-        self.platform.upload_file(self.config.executable_filepath, self.jar_filepath)
-        self.platform.upload_file(self.config.configuration_template_filepath,
-                                  self.config.configuration_target_filepath)
+        self.platform.upload_file(self.config.executableFile, self.jar_filepath)
+        self.platform.upload_file(self.config.configurationTemplateFilepath,
+                                  self.config.configurationTargetFilepath)
 
         for src_filepath in self.files.keys():
             self.platform.upload_file(src_filepath, self.files[src_filepath])

@@ -8,6 +8,7 @@ import Data.Aeson.BetterErrors
 import Data.Aeson.Encode.Pretty (encodePretty)
 import Data.Map.Strict (toAscList)
 import Data.Monoid ((<>))
+import Data.Scientific (floatingOrInteger,fromFloatDigits)
 import Data.String (fromString)
 import Data.Text (Text,intercalate,pack,unpack)
 import Data.Vector (fromList)
@@ -44,7 +45,7 @@ defaultOutput = "outbox/resources.json"
 
 --
 -- * Read/Write JSON
--- 
+--
 
 -- | Parse a String containing a JSON value.
 decodeJSON :: String -> ParseIt a -> IO a
@@ -88,7 +89,7 @@ data SchemaViolation
 
 prettySchemaViolation :: SchemaViolation -> Text
 prettySchemaViolation (BadCase typ good bad) =
-    "Invalid " <> typ <> " case: " <> bad 
+    "Invalid " <> typ <> " case: " <> bad
     <> "\nExpected one of: " <> intercalate ", " good
 prettySchemaViolation (BadPVal bad) =
     "Invalid primitive value: " <> pack (show bad)
@@ -103,15 +104,13 @@ printParseError = mapM_ (putStrLn . unpack) . displayError prettySchemaViolation
 -- ** Primitives
 
 instance ToJSON PType where
-  toJSON TUnit   = String "unit"
-  toJSON TBool   = String "bool"
-  toJSON TInt    = String "int"
-  toJSON TSymbol = String "symbol"
+  toJSON = String . pack . prettyPType
 
 instance ToJSON PVal where
   toJSON Unit  = Null
   toJSON (B b) = Bool b
   toJSON (I i) = Number (fromInteger (toInteger i))
+  toJSON (F d) = Number (fromFloatDigits d)
   toJSON (S s) = String (pack (toName s))
 
 asPType :: ParseIt PType
@@ -121,8 +120,9 @@ asPType = do
       "unit"   -> pure TUnit
       "bool"   -> pure TBool
       "int"    -> pure TInt
+      "float"  -> pure TFloat
       "symbol" -> pure TSymbol
-      _ -> throwCustomError (BadCase "primitive type" ["unit","bool","int","symbol"] t)
+      _ -> throwCustomError (BadCase "primitive type" ["unit","bool","int","float","symbol"] t)
 
 asPVal :: ParseIt PVal
 asPVal = do
@@ -130,13 +130,13 @@ asPVal = do
     case v of
       Null     -> pure Unit
       Bool b   -> pure (B b)
-      Number _ -> I <$> asIntegral
+      Number n -> pure (either F I (floatingOrInteger n))
       String _ -> S <$> asSymbol
       _ -> throwCustomError (BadPVal v)
 
 asConfig :: ParseIt [PVal]
 asConfig = eachInArray asPVal
-     
+
 
 -- ** Functions and Expressions
 

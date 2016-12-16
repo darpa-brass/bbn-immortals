@@ -6,10 +6,9 @@ import time
 from threading import Semaphore
 
 import adbhelper
-from .. import configurationmanager
 from .. import immortalsglobals as ig
 from .. import threadprocessrouter as tpr
-from ..configurationmanager import ADB_BIN, ANDROID_BIN, EMULATOR_BIN
+from ..immortalsglobals import ADB_BIN, ANDROID_BIN, EMULATOR_BIN, configuration
 from ..utils import replace
 
 _ID_EMULATOR_IDENTIFIER = '$EMULATOR_IDENTIFIER!'
@@ -41,8 +40,15 @@ def create_emulator(adb_device_identifier, command_processor=tpr):
 
     args = list(_android_emulator_create_command)
     replace(args, _ID_EMULATOR_IDENTIFIER, adb_device_identifier)
+
+    env = None
+
+    for de in configuration.deploymentEnvironments:
+        if de.identifier == 'android_emulator':
+            env = de
+
     replace(args, _ID_EMULATOR_SDK_LEVEL,
-            str(configurationmanager.Configuration.deployment_environments['android_emulator'].sdk_level))
+            str(env.sdkLevel))
     command_processor.call(args=args)
 
 
@@ -81,7 +87,7 @@ def start_emulator(adb_device_identifier, console_port, sdcard_filepath, command
     with _emulator_semaphore:
         args = list(_android_emulator_start_command)
 
-        if ig.config.display_emulator_gui:
+        if ig.config.displayEmulatorGui:
             args.append('-skin')
             args.append('720x1280')
         else:
@@ -100,6 +106,7 @@ def start_emulator(adb_device_identifier, console_port, sdcard_filepath, command
             time.sleep(1)
 
     adbhelper.wait_for_device_ready(adb_device_identifier, command_processor)
+
 
 def kill_emulator(console_port, command_processor=tpr):
     """

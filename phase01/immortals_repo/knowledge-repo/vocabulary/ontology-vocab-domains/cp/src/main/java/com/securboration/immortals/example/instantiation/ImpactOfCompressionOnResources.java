@@ -17,13 +17,12 @@
 //import com.securboration.immortals.uris.Uris.rdfs;
 //
 //@ConceptInstance
-//@Triple(
-//    predicateUri=rdfs.comment$,
-//    objectLiteral=@Literal(
-//        "Describes the impact on memory and entropy of adding the " +
-//        "'Compressed' property"
-//        )
-//    )
+/**
+ * Describes the impact on memory and entropy of adding the
+ * 'Compressed' property
+ * 
+ * @author Securboration
+ */
 //public class ImpactOfCompressionOnResources extends CauseEffectAssertion{
 //    
 //    public ImpactOfCompressionOnResources(){

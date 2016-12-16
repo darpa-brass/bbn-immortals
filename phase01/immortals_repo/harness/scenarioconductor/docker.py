@@ -8,11 +8,10 @@ import shutil
 import uuid
 from threading import Lock
 
-import configurationmanager
-from immortalsglobals import IMMORTALS_ROOT
+import immortalsglobals as ig
 from data.applicationconfig import ApplicationConfig
 from deploymentplatform import DeploymentPlatformInterface
-import immortalsglobals as ig
+from immortalsglobals import IMMORTALS_ROOT
 from interfaces import CommandHandlerInterface
 from utils import path_helper, replace
 
@@ -62,17 +61,17 @@ class DockerInstance(DeploymentPlatformInterface):
 
         if running_id:
             if ig.config.setupEnvironmentLifecycle.destroyExisting:
-                _halt_identifiers.append(self.config.instance_identifier)
+                _halt_identifiers.append(self.config.instanceIdentifier)
                 self._stop_docker_container()
         else:
-            _halt_identifiers.append(self.config.instance_identifier)
+            _halt_identifiers.append(self.config.instanceIdentifier)
 
         if existing_id:
             if ig.config.setupEnvironmentLifecycle.destroyExisting:
-                _remove_identifiers.append(self.config.instance_identifier)
+                _remove_identifiers.append(self.config.instanceIdentifier)
                 self._remove_docker_container()
         else:
-            _remove_identifiers.append(self.config.instance_identifier)
+            _remove_identifiers.append(self.config.instanceIdentifier)
 
         files = []
 
@@ -81,13 +80,13 @@ class DockerInstance(DeploymentPlatformInterface):
 
         # If it is not running, start it
         cmd = list(_CMD_START_CONTAINER)
-        replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+        replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
         logging.info(self.check_output(cmd))
 
-        cmd = ['mkdir', '-p', self.config.application_deployment_directory]
+        cmd = ['mkdir', '-p', self.config.applicationDeploymentDirectory]
         self.check_output(cmd)
 
-        for script in configurationmanager.Configuration.scenario_runner.docker.scripts:
+        for script in ig.configuration.scenarioRunner.docker.scripts:
             filepath = path_helper(True, IMMORTALS_ROOT, script)
             files.append(filepath)
             self.copy_file_to_docker(filepath, filepath)
@@ -99,7 +98,7 @@ class DockerInstance(DeploymentPlatformInterface):
         self.copy_file_to_docker(source_file_location, source_file_location)
 
     def stop(self):
-        if self.config.instance_identifier in _halt_identifiers:
+        if self.config.instanceIdentifier in _halt_identifiers:
             self._stop_docker_container()
 
             # Not doing since it makes analysis of issues impossible
@@ -109,7 +108,7 @@ class DockerInstance(DeploymentPlatformInterface):
     def _get_docker_id_if_running(self):
         # Command to query for the container name in all containers
         cmd = list(_CMD_GET_DOCKER_RUNNING_CONTAINER_IDENTIFIER)
-        replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+        replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
 
         # If it does not exist, create it
         val = self.check_output(cmd)
@@ -121,19 +120,19 @@ class DockerInstance(DeploymentPlatformInterface):
 
     def _docker_run(self, additional_parameters=None):
         cmd = list(_CMD_CREATE_CONTAINER)
-        replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+        replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
 
         if additional_parameters is not None:
             for parameter in additional_parameters:
                 cmd.insert(len(cmd) - 1, parameter)
 
-        replace(cmd, _ID_IMAGE_IDENTIFIER, self.config.deployment_platform_environment)
+        replace(cmd, _ID_IMAGE_IDENTIFIER, self.config.deploymentPlatformEnvironment)
         logging.info(self.check_output(cmd))
 
     def _get_docker_id_if_exists(self):
         # Command to query for the container name in all containers
         cmd = list(_CMD_GET_DOCKER_CREATED_CONTAINER_IDENTIFIER)
-        replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+        replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
 
         # If it does not exist, create it
         val = self.check_output(cmd)
@@ -147,21 +146,21 @@ class DockerInstance(DeploymentPlatformInterface):
         with self.lock:
             if self._get_docker_id_if_running():
                 cmd = list(_CMD_STOP_CONTAINER)
-                replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+                replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
                 self.call(cmd)
 
     def _remove_docker_container(self):
         with self.lock:
             if self._get_docker_id_if_exists():
                 cmd = list(_CMD_DELETE_CONTAINER)
-                replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+                replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
                 self.call(cmd)
 
     def call(self, args, halt_on_shutdown=None, shutdown_method=None, shutdown_args=(), stdout=None, stderr=None,
              *popenargs, **kwargs):
 
         cmd = list(_CMD_DOCKER_EXEC) + args
-        args = replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+        args = replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
 
         return CommandHandlerInterface.call(self, args, halt_on_shutdown, shutdown_method, shutdown_args, stdout,
                                             stderr, *popenargs, **kwargs)
@@ -170,7 +169,7 @@ class DockerInstance(DeploymentPlatformInterface):
                    *popenargs, **kwargs):
 
         cmd = list(_CMD_DOCKER_EXEC) + args
-        args = replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+        args = replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
         return CommandHandlerInterface.check_call(self, args, halt_on_shutdown, shutdown_method, shutdown_args, stdout,
                                                   stderr, *popenargs, **kwargs)
 
@@ -178,7 +177,7 @@ class DockerInstance(DeploymentPlatformInterface):
                      **kwargs):
 
         cmd = list(_CMD_DOCKER_EXEC) + args
-        args = replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+        args = replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
         return CommandHandlerInterface.check_output(self, args, halt_on_shutdown, shutdown_method, shutdown_args,
                                                     stderr, *popenargs, **kwargs)
 
@@ -186,7 +185,7 @@ class DockerInstance(DeploymentPlatformInterface):
               *popenargs, **kwargs):
 
         cmd = list(_CMD_DOCKER_EXEC) + args
-        args = replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+        args = replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
         return CommandHandlerInterface.Popen(self, args, halt_on_shutdown, shutdown_method, shutdown_args, stdout,
                                              stderr, *popenargs, **kwargs)
 
@@ -196,7 +195,7 @@ class DockerInstance(DeploymentPlatformInterface):
         self.check_output(cmd)
 
         cmd = list(_CMD_COPY_TO_DOCKER)
-        cmd = replace(cmd, ID_CONTAINER_NAME, self.config.instance_identifier)
+        cmd = replace(cmd, ID_CONTAINER_NAME, self.config.instanceIdentifier)
         cmd = replace(cmd, _ID_SOURCE_FILE, local_filepath)
         cmd = replace(cmd, _ID_TARGET_FILE, target_filepath)
         self.call(cmd)
@@ -206,7 +205,7 @@ class DockerInstance(DeploymentPlatformInterface):
         tmp_target = os.path.join('/tmp/', str(uuid.uuid4()))
         final_target = os.path.join(target_directory, filename)
 
-        cmd = ['sudo', 'docker', 'cp', self.config.instance_identifier + ':' + docker_filepath, tmp_target]
+        cmd = ['sudo', 'docker', 'cp', self.config.instanceIdentifier + ':' + docker_filepath, tmp_target]
         self.call(cmd)
 
         shutil.copyfile(tmp_target, final_target)

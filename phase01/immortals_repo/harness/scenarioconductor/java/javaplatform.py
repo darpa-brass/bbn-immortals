@@ -52,18 +52,18 @@ class JavaPlatform(DeploymentPlatformInterface):
 
     def application_start(self):
         with self._lock:
-            with open(os.path.join(self.config.application_deployment_directory, 'stdout_log.txt'),
+            with open(os.path.join(self.config.applicationDeploymentDirectory, 'stdout_log.txt'),
                       'w') as stdout_log, open(
-                    os.path.join(self.config.application_deployment_directory, 'stderr_log.txt'),
+                    os.path.join(self.config.applicationDeploymentDirectory, 'stderr_log.txt'),
                     'w') as stderr_log:
-                logging.debug('Starting ' + self.jar_filepath + ' for ' + self.config.instance_identifier)
+                logging.debug('Starting ' + self.jar_filepath + ' for ' + self.config.instanceIdentifier)
                 call_array = list(_CMD_START_JAR)
                 replace(call_array, _ID_JAR_FILEPATH, self.jar_filepath)
                 logging.debug('EXEC: ' + str(call_array))
 
                 self._application_process = tpr.Popen(
                         args=call_array,
-                        cwd=self.config.application_deployment_directory,
+                        cwd=self.config.applicationDeploymentDirectory,
                         stdout=stdout_log,
                         stderr=stderr_log
                 )
@@ -86,13 +86,13 @@ class JavaPlatform(DeploymentPlatformInterface):
     def __init__(self, application_configuration):
         self.config = application_configuration
 
-        self.jar_filepath = path_helper(False, self.config.application_deployment_directory,
-                                        os.path.basename(self.config.executable_filepath))
+        self.jar_filepath = path_helper(False, self.config.applicationDeploymentDirectory,
+                                        os.path.basename(self.config.executableFile))
 
         self._application_process = None
         self._lock = Lock()
 
-        if self.config.deployment_platform_environment == 'java_local':
+        if self.config.deploymentPlatformEnvironment == 'java_local':
             logging.info("Using local Java environment...")
         else:
             raise Exception("A valid java environment and identifier must be provided!")
@@ -100,15 +100,15 @@ class JavaPlatform(DeploymentPlatformInterface):
     def setup(self):
         with self._lock:
             logging.debug(
-                    'Setting up ' + self.config.deployment_platform_environment + ' for ' + self.config.instance_identifier)
+                    'Setting up ' + self.config.deploymentPlatformEnvironment + ' for ' + self.config.instanceIdentifier)
             logging.debug(
-                    'Setting up ' + self.config.deployment_platform_environment + ' for ' + self.config.instance_identifier)
+                    'Setting up ' + self.config.deploymentPlatformEnvironment + ' for ' + self.config.instanceIdentifier)
 
             if ig.config.setupEnvironmentLifecycle.destroyExisting:
-                if os.path.exists(self.config.application_deployment_directory):
-                    shutil.rmtree(self.config.application_deployment_directory)
+                if os.path.exists(self.config.applicationDeploymentDirectory):
+                    shutil.rmtree(self.config.applicationDeploymentDirectory)
 
-            os.makedirs(self.config.application_deployment_directory)
+            os.makedirs(self.config.applicationDeploymentDirectory)
 
     def _stop(self):
         # Not necessary since it is the local system:w

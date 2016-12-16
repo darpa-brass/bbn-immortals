@@ -8,15 +8,14 @@
 //import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 //import com.securboration.immortals.uris.Uris.rdfs;
 //
-//@Triple(
-//    predicateUri=rdfs.comment$,
-//    objectLiteral=@Literal(
-//        "Extension of Example1 consisting of an android device connected to " +
-//        "military-grade GPS receiver hardware.  Also includes the satellite " +
-//        "constellation and models of the radio links between satellites and " +
-//        "the receiver."
-//        )
-//    )
+/**
+ * Extension of Example1 consisting of an android device connected to
+ * military-grade GPS receiver hardware.  Also includes the satellite
+ * constellation and models of the radio links between satellites and
+ * the receiver.
+ * 
+ * @author Securboration
+ */
 //@ConceptInstance
 //public class Example2_AdvancedAndroidGps extends GmeInterchangeFormat {
 //    

@@ -6,13 +6,12 @@ import com.securboration.immortals.ontology.constraint.ValueCriterionType;
 import com.securboration.immortals.ontology.metrics.Metric;
 import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A specification for the behavior of software in-mission " +
-        "(ie, its intent with regard to mission objectives)"
-        )
-    )
+/**
+ * A specification for the behavior of software in-mission 
+ * (ie, its intent with regard to mission objectives)
+ * 
+ * @author Securboration
+ */
 public class MissionSpec extends SoftwareSpec {
     
     private String humanReadableForm;

@@ -14,13 +14,12 @@ import com.securboration.immortals.ontology.resources.network.NetworkConnection;
 import com.securboration.immortals.ontology.server.ServerPlatform;
 import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "Uber example."
-        )
-    )
 @ConceptInstance
+/**
+ * Uber example.
+ * 
+ * @author Securboration
+ */
 public class GmeInterchangeFormatUberExample extends GmeInterchangeFormat {
     
     

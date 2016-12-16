@@ -6,7 +6,7 @@ from validationresult import ValidationResult
 class SubmissionResult:
     """
     :type identifier: string
-    :type synthesisFinished: bool
+    :type adaptationFinished: bool
     :type validationFinished: bool
     :type adaptationResult: AdaptationResult
     :type validationResult: ValidationResult
@@ -14,13 +14,13 @@ class SubmissionResult:
 
     def __init__(self,
                  identifier,
-                 synthesisFinished,
+                 adaptationFinished,
                  validationFinished,
                  adaptationResult,
                  validationResult
                  ):
         self.identifier = identifier
-        self.synthesisFinished = synthesisFinished
+        self.adaptationFinished = adaptationFinished
         self.validationFinished = validationFinished
         self.adaptationResult = adaptationResult
         self.validationResult = validationResult
@@ -28,7 +28,7 @@ class SubmissionResult:
     def to_dict(self):
         return {
             'identifier': self.identifier,
-            'synthesisFinished': self.synthesisFinished,
+            'adaptationFinished': self.adaptationFinished,
             'validationFinished': self.validationFinished,
             'adaptationResult': None if self.adaptationResult is None else self.adaptationResult.to_dict(),
             'validationResult': None if self.validationResult is None else self.validationResult.to_dict()

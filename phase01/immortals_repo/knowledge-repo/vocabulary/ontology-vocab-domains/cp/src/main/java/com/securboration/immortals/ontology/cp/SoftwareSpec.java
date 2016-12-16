@@ -5,13 +5,12 @@ import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.ordering.ExplicitNumericOrderingMechanism;
 import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A specification for the behavior of software " +
-        "(ie, its intent)"
-        )
-    )
+/**
+ * A specification for the behavior of software 
+ * (ie, its intent)
+ * 
+ * @author Securboration
+ */
 public class SoftwareSpec {
     
     private ExplicitNumericOrderingMechanism precedenceOfSpec;

@@ -20,12 +20,12 @@ class AndroidApplication(LifecycleInterface):
     block_setup = False
 
     def __init__(self, application_configuration):
-        if application_configuration.instance_identifier in _instances:
+        if application_configuration.instanceIdentifier in _instances:
             raise Exception(
-                    'An AndroidApplication with the identifier "' + application_configuration.instance_identifier +
+                    'An AndroidApplication with the identifier "' + application_configuration.instanceIdentifier +
                     '" has already been defined!')
         else:
-            _instances[application_configuration.instance_identifier] = self
+            _instances[application_configuration.instanceIdentifier] = self
 
         self.config = application_configuration
         self.is_application_running = False
@@ -38,9 +38,9 @@ class AndroidApplication(LifecycleInterface):
     """
 
     def setup(self):
-        self.platform.deploy_application(self.config.executable_filepath)
+        self.platform.deploy_application(self.config.executableFile)
 
-        with open(self.config.configuration_template_filepath, 'r') as f:
+        with open(self.config.configurationTemplateFilepath, 'r') as f:
             atak_lite_config = json.load(f)
 
             for key in self.config.properties.keys():
@@ -57,13 +57,13 @@ class AndroidApplication(LifecycleInterface):
 
                 attr_parent[property_path.pop(0)] = self.config.properties[key]
 
-            fp = path_helper(False, self.config.application_deployment_directory,
-                             self.config.configuration_template_filepath.split('/').pop())
+            fp = path_helper(False, self.config.applicationDeploymentDirectory,
+                             self.config.configurationTemplateFilepath.split('/').pop())
 
             with open(fp, 'w') as f2:
                 json.dump(atak_lite_config, f2)
 
-            self.config.files[fp] = self.config.configuration_target_filepath
+            self.config.files[fp] = self.config.configurationTargetFilepath
 
         for source_filepath in self.config.files.keys():
             target_filepath = self.config.files[source_filepath]

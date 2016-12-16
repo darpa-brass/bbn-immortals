@@ -5,12 +5,11 @@ import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.constraint.BinaryComparisonOperatorType;
 import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "Describes the relationship between one fidelity and others"
-        )
-    )
+/**
+ * Describes the relationship between one fidelity and others
+ * 
+ * @author Securboration
+ */
 public class QualitativeFidelityAssertion {
     
     private Class<? extends Fidelity> subjectOfAssertion;

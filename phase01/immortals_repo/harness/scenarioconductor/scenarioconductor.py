@@ -3,11 +3,12 @@
 import argparse
 from threading import Semaphore
 
-import immortalsglobals
-from data.scenarioconfiguration import ATAKLiteClient, MartiServer, ScenarioConfiguration
-from data.scenariorunnerconfiguration import ScenarioRunnerConfiguration
-from packages import commentjson as json
-from scenariorunner import ScenarioRunner
+from . import utils
+from . import immortalsglobals as ig
+from .data.scenarioapiconfiguration import ATAKLiteClient, MartiServer, ScenarioConductorConfiguration
+from .data.scenariorunnerconfiguration import ScenarioRunnerConfiguration
+from .packages import commentjson as json
+from .scenariorunner import ScenarioRunner
 
 parser = argparse.ArgumentParser(description='IMMORTALS Scenario Conductor')
 parser.add_argument('--sessionidentifier', type=str)
@@ -21,32 +22,42 @@ parser.add_argument('--android-internal-gps-resource', action='store_true')
 parser.add_argument('--android-ui-resource', action='store_true')
 parser.add_argument('--gps-satellite-resource', action='store_true')
 parser.add_argument('--mission-trusted-comms', action='store_true')
-parser.add_argument('--file', type=str)
+
+parser.add_argument('--configuration-file', type=str)
 parser.add_argument('--configuration-string', type=str)
-#
+parser.add_argument('--scenario-template-tag', type=str)
+
 _sem = Semaphore()
 
 
 class ScenarioConductor:
     """
     :type src: ScenarioRunnerConfiguration
-    :type sc: ScenarioConfiguration
+    :type sc: ScenarioConductorConfiguration
     :type sr: ScenarioRunner
     """
 
     def __init__(self,
-                 scenario_configuration
+                 scenario_configuration,
+                 scenario_template_tag,
+                 swallow_and_shutdown_on_exception=True
                  ):
         self.sc = scenario_configuration
 
-        self.src = ScenarioRunnerConfiguration.from_scenario_configuration(self.sc, 'validation')
+        self.src = ScenarioRunnerConfiguration.from_scenario_api_configuration(self.sc, scenario_template_tag,
+                                                                               swallow_and_shutdown_on_exception)
 
-        if 'trustedLocations' in self.sc.clients[0].required_properties:
-            self.src.scenario.validator_identifiers.append('client-location-trusted')
+        if 'trustedLocations' in self.sc.clients[0].requiredProperties:
+            self.src.scenario.validatorIdentifiers.append('client-location-trusted')
 
-        if self.sc.clients[0].image_broadcast_interval_ms > 0:
-            self.src.scenario.validator_identifiers.append('client-image-produce')
-            self.src.scenario.validator_identifiers.append('client-image-share')
+        if self.sc.clients[0].imageBroadcastIntervalMS > 0:
+            self.src.scenario.validatorIdentifiers.append('client-image-produce')
+            self.src.scenario.validatorIdentifiers.append('client-image-share')
+
+        ig.logger().write_artifact_to_file(
+            str_to_write=json.dumps(utils.dictify(self.src)),
+            target_subpath=self.src.sessionIdentifier + '-scenariorunnerconfiguration.json',
+            clobber_existing=True)
 
         self.sr = None
 
@@ -67,21 +78,21 @@ def _execute(conductor):
 
 
 def main():
-    immortalsglobals.main_thread_cleanup_hookup()
+    ig.main_thread_cleanup_hookup()
 
     args = parser.parse_args()
 
     if args.file is not None:
         with open(args.file, 'r') as f:
             sc_j = json.load(f)
-            sc = ScenarioConfiguration.from_dict(sc_j)
+            sc = ScenarioConductorConfiguration.from_dict(sc_j)
 
         conductor_instance = ScenarioConductor(sc)
         _execute(conductor_instance)
 
     elif args.configuration_string is not None:
         sc_j = json.load(args.configuration_string)
-        sc = ScenarioConfiguration.from_dict(sc_j)
+        sc = ScenarioConductorConfiguration.from_dict(sc_j)
 
         conductor_instance = ScenarioConductor(sc)
         _execute(conductor_instance)
@@ -124,20 +135,20 @@ def main():
             if args.mission_trusted_comms:
                 required_properties.append('trustedLocations')
 
-            scenario_configuration = ScenarioConfiguration(
-                    args.sessionidentifier,
-                    MartiServer(
-                            args.serverbandwidth
-                    ),
-                    [
-                        ATAKLiteClient(
-                                60 / int(args.clientimagesendfrequency),
-                                60 / int(args.clientmsgsendfrequency),
-                                args.clientcount,
-                                available_client_resources,
-                                required_properties
-                        )
-                    ]
+            scenario_configuration = ScenarioConductorConfiguration(
+                args.sessionidentifier,
+                MartiServer(
+                    args.serverbandwidth
+                ),
+                [
+                    ATAKLiteClient(
+                        60 / int(args.clientimagesendfrequency),
+                        60 / int(args.clientmsgsendfrequency),
+                        args.clientcount,
+                        available_client_resources,
+                        required_properties
+                    )
+                ]
             )
 
             conductor_instance = ScenarioConductor(scenario_configuration)

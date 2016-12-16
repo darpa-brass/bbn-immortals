@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -18,7 +19,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import mil.darpa.immortals.das.configuration.DfuCompositionConfiguration;
-import mil.darpa.immortals.das.sourcecomposer.CompositionException;
 import org.apache.commons.jexl2.Expression;
 import org.apache.commons.jexl2.JexlContext;
 import org.apache.commons.jexl2.JexlEngine;
@@ -38,11 +38,9 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mil.darpa.immortals.core.das.CodeMetricMetaData.VariableTypeValue;
 import mil.darpa.immortals.core.das.sparql.AbstractResources;
 import mil.darpa.immortals.core.das.sparql.AggregateResourceProfiles;
 import mil.darpa.immortals.core.das.sparql.CandidateDFUList;
-import mil.darpa.immortals.core.das.sparql.CodeMetricMetaDataQuery;
 import mil.darpa.immortals.core.das.sparql.ConfigurationAspects;
 import mil.darpa.immortals.core.das.sparql.ControlPoints;
 import mil.darpa.immortals.core.das.sparql.DFUByClassName;
@@ -53,10 +51,10 @@ import mil.darpa.immortals.core.das.sparql.FunctionalitySpecs;
 import mil.darpa.immortals.core.das.sparql.ImageScalingCodeMetrics;
 import mil.darpa.immortals.core.das.sparql.MetricQuery;
 import mil.darpa.immortals.core.das.sparql.MissionMetrics;
+import mil.darpa.immortals.core.das.sparql.MissionMetricsMap;
 import mil.darpa.immortals.core.das.sparql.PropertyImpact;
 import mil.darpa.immortals.core.das.sparql.SessionIdentifier;
 import mil.darpa.immortals.core.das.sparql.SparqlQuery;
-import mil.darpa.immortals.das.buildbridge.BuildBridge;
 import mil.darpa.immortals.das.configuration.EnvironmentConfiguration;
 import mil.darpa.immortals.das.sourcecomposer.SourceComposer;
 import java.nio.file.Path;
@@ -100,6 +98,7 @@ public class AdaptationManager {
 		//Push the deployment model to the repository service
 		try {
 			deploymentGraphUri = pushDeploymentModel(deploymentModelRdf);
+			result.addAudit("Successfully added deployment model to triple store.");
 		} catch (Exception e) {
 			result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
 			result.setDetails("Unexpected error loading deployment model.");
@@ -108,6 +107,8 @@ public class AdaptationManager {
 		}
 
 		String sessionIdentifier = SessionIdentifier.select(deploymentGraphUri);
+		
+		result.setSessionIdentifier(sessionIdentifier);
 		
 		// Load the SourceComposer with the initialized environment configuration
 		SourceComposer sourceComposer = new SourceComposer(sessionIdentifier);
@@ -122,6 +123,28 @@ public class AdaptationManager {
 		//Resolve deployment-level resources to dfu abstractions
 		List<String> abstractResourceUris = AbstractResources.select(deploymentGraphUri);
 		
+		if (abstractResourceUris == null || abstractResourceUris.isEmpty()) {
+			//This currently won't likely happen as the default deployment model always includes
+			//several non-perturbable resources (e.g., network, server, etc.).
+			result.setAdaptationStatusValue(AdaptationStatusValue.UNSUCCESSFUL);
+			result.setDetails("No resources were provided in the target environment.");
+			
+			return result;
+		}
+
+		abstractResourceUris.stream().forEach(t -> result.addAudit("Mission Resource URI: " + t));
+		String resourceDigest = generateResourceDigest(abstractResourceUris);
+		
+		if (resourceDigest == null || resourceDigest.trim().length() == 0) {
+			//This could happen if none of the resources actually relevant to cp1 & cp2 were provided
+			result.setAdaptationStatusValue(AdaptationStatusValue.UNSUCCESSFUL);
+			result.setDetails("None of the cp1 or cp2 resources were provided in the target environment.");
+			
+			return result;
+		}
+
+		boolean saasm = false;
+		
 		if (functionalitySpecifications == null || functionalitySpecifications.isEmpty()) {
 			//No mission requirements; should not occur
 			result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
@@ -130,38 +153,68 @@ public class AdaptationManager {
 			return result;
 		}
 		
+		functionalitySpecifications.forEach(t -> result.addAudit("Mission Functionality: " + t));
+
+		
 		for (FunctionalitySpecification f : functionalitySpecifications) {
+
+			saasm = (f.getPropertyUris().contains(SAASM_URI));
+			
+			DSLInvocationResultValue dslInputResult = generateDslLocationInput(resourceDigest, saasm);
+
+			if (dslInputResult != DSLInvocationResultValue.MODEL_OK) {
+				result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+				result.setDetails("Could not initialize DSL input files for DSL check at DFU level:" + dslInputResult.description());
+				
+				return result;
+			}
+			
+			result.addAudit("DSL input files initialized for DFU level checks with resource digest: " + resourceDigest);
+
 			List<DFU> candidates = CandidateDFUList.select(bootstrapUri, f.getFunctionalityUri(), abstractResourceUris, f.getPropertyUris());
-							
+			
 			if (candidates.isEmpty()) {
 				//No DFUs to pass to the DSL; basic requirements could not be satisfied
 				result.setAdaptationStatusValue(AdaptationStatusValue.UNSUCCESSFUL);
 				result.setDetails("No DFUs found to match basic deployment model constraints.");
 				break;
 			} else {
+				candidates.forEach(t -> result.addAudit("Candidate DFU: " + t.getClassName()));
+				
 				//Invoke DSL for each DFU
-				String dslError = null;
+				DSLInvocationResultValue dfuDSLReturn = DSLInvocationResultValue.MODEL_OK;
+				
+				boolean error = false;
 				
 				for (DFU d : candidates) {
-					try {
-						//DSL is work in progress; resource + property checking applied with SPARQL for now
-						//d.setResourceIndex(calculateResourceIndex(d, f.getMissionFunctionalityUri(), resourceDigest));
-						d.setResourceIndex(0);
-					} catch (Exception e) {
-						dslError = e.getMessage();
+					dfuDSLReturn = performDFUDSLCheck(d);
+					if (dfuDSLReturn == DSLInvocationResultValue.ERROR) {
+						//This branch detects unexpected error invoking the 
+						//DSL (versus detecting that the provided dfu fails 
+						//to satisfy the mission requirements and/or exceeds 
+						//the resources in the target environment). I'm treating this as
+						//a general no-go since it's likely caused by Haskel setup issue
+						error = true;
 						break;
+					} else {
+						//The return is treated as an index (for future use), but in practice the value is discrete
+						//(the dfu works or doesn't); this is not an issue since only working DFUs
+						//for the given model are chosen below
+						d.setResourceIndex(dfuDSLReturn.value());
 					}
 				}
 				
-				if (dslError != null) {
+				if (error) {
 					result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
-					result.setDetails("Unexpected error invoking DSL: " + dslError);
+					result.setDetails("Unexpected error invoking DSL for DFU level check.");
 					break;
 				} else {
 					selectedDFU = candidates.stream().sorted((DFU d1, DFU d2) -> 
 													d1.getResourceIndex() - d2.getResourceIndex())
 													.findFirst();
-					if (selectedDFU.isPresent() && selectedDFU.get().getResourceIndex() == 0) {
+					if (selectedDFU.isPresent() && selectedDFU.get().getResourceIndex() == DSLInvocationResultValue.MODEL_OK.value()) {
+						result.addAudit("Selected DFU for adaptation: " + selectedDFU.get().getClassName());
+						
 						//Adapt all control points for the functionality using the DFU
 						try {
 							adaptControlPoints(f, selectedDFU.get(), applicationInstance);
@@ -179,17 +232,39 @@ public class AdaptationManager {
 						String temp =  "No suitable adaptation for " + f.getFunctionalityUri() + 
 								" in deployment model.";
 						result.setDetails(temp);
+						result.addAudit(temp);
 						break;
 					}
 				}
 			}
 				
 			if (result.getAdaptationStatusValue().equals(AdaptationStatusValue.ERROR)) {
+				result.addAudit("Aggregate resource (network) check not performed due to DFU adaptation errors.");
 				return result;
 			}
 				
 			//Check aggregate resources defined at control points
+			Map<String, Metric> missionMap = MissionMetricsMap.select(deploymentGraphUri);
+			missionMap.keySet().stream().sorted().forEach(k -> result.addAudit(k + ":" + missionMap.get(k).getValue()));
+
+			//Begin ad-hoc block
+			
+			//The DAS attempts to drive the adaptation as generically as possible (driven by points of use with annotated
+			//metadata and aggregate resource usage models). The DSL invocation is specific for now to cp2 details (even if we
+			//combined the cp1 and cp2 interfaces, the parameters must be called out and are specific to challenge problems).
+			//We will revisit for future drops. For now, we have a very specific block below for the baseline DSL check.
+			long bandwidth = Math.round(Double.parseDouble(missionMap.get("TotalAvailableServerBandwidth").getValue()));
+			long pliReportRate = Math.round(Double.parseDouble(missionMap.get("PLIReportRate").getValue()));
+			long imageReportRate = Math.round(Double.parseDouble(missionMap.get("ImageReportRate").getValue()));
+			int numberClients = Integer.parseInt(missionMap.get("NumberOfClients").getValue());										
+			double scalingFactor = 1.0f;
+			
+			DSLInvocationResultValue dslCheckResult = performNetworkDSLCheck(bandwidth, numberClients, scalingFactor, pliReportRate, imageReportRate);
+			result.addAudit("DSL bandwidth check for initial model: " + dslCheckResult.description());
+			//End ad-hoc block
+			
 			List<ControlPoint> controlPoints = ControlPoints.select(bootstrapUri, f);
+			
 			for (ControlPoint cp : controlPoints) {
 				Dataflow dataflow = DataflowQuery.select(bootstrapUri, cp.getDataflowEntryPoint());
 				
@@ -201,10 +276,14 @@ public class AdaptationManager {
 
 					String formula = rp.getFormula();
 					Number formulaResult = resolveFormula(formula, deploymentGraphUri, null);
-
+					
+					result.addAudit("DAS computed bandwidth usage for initial environment: " + formulaResult.doubleValue());
+					
 					if (constrainingMetric.getAssertionCriterion() == AssertionCriterionValue.LESS_THAN_INCLUSIVE) {
 
 						if (formulaResult.doubleValue() > Double.parseDouble(constrainingMetric.getValue()) && constrainingMetric.getUnit().equals(rp.getUnit())) {
+							
+							result.addAudit("Bandwidth usage exceeds available resources in target environment.");
 							
 							//Violation of constraining metric;begin domain analysis
 							String violatedResource = constrainingMetric.getProperty();
@@ -217,38 +296,30 @@ public class AdaptationManager {
 									String originalDFUClassName = DataflowProducer.select(bootstrapUri, dfuRemediation.getApplicableDataType(), cp.getDataflowEntryPoint());
 									DFU originalDfu = DFUByClassName.select(bootstrapUri, originalDFUClassName.replace(".","/"));
 									
-									/*
-									List<String> configurationAspects = ConfigurationAspects.select(bootstrapUri, dfuRemediation.getStrategyUri());
-									for (String ca : configurationAspects) {
-										//We don't know where to bind a value for the configuration aspect, so we look in a few places following a priority
-										//Check the deployment model (code here)
-										//Check to see if the value can be obtaining from the DFU's code profiling
-										CodeMetricMetaData metaData = CodeMetricMetaDataQuery.select(bootstrapUri, dfu.getClassName());
-										if (metaData == null) {
-											result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
-											break;
-										}
-										if (metaData.getVariable(ca) != null && metaData.getVariable(ca).getType() == VariableTypeValue.CONFIGURATION_VARIABLE) {
-											//We can use the code profiling metrics table as "function" to obtain the desired configuration value for the DFU
-											
-										}
-									}
-									*/
-									
 									//#####Begin section to be reworked/abstracted#####
 									ArrayList<String> params = new ArrayList<String>();
 
 									List<String> configurationAspects = ConfigurationAspects.select(bootstrapUri, dfuRemediation.getStrategyUri());
 
 									List<Map<String, String>> codeMetrics = ImageScalingCodeMetrics.select(bootstrapUri, dfu.getClassName(), 
-											configurationAspects.get(0), 5.0);
+											configurationAspects.get(0), 5.0); //this 5.0 value is in the deployment model so we can remove this hard-coded value
+									
 									for (Map<String, String> m : codeMetrics) {
 										Map<String, String> replacements = new HashMap<String, String>();
 										replacements.put("DefaultImageSize", m.get("outputMegapixels"));
+										
+										scalingFactor = Double.parseDouble(m.get("scalingFactor"));
+										dslCheckResult = performNetworkDSLCheck(bandwidth, numberClients, scalingFactor, pliReportRate, imageReportRate);
+										result.addAudit("DSL check result for scaling factor " + scalingFactor + " : " + dslCheckResult.description());
+
 										Number testFormulaResult = resolveFormula(formula, deploymentGraphUri, replacements);
+										
+										result.addAudit("DAS computed bandwidth for scaling factor " + scalingFactor + " : " + testFormulaResult.doubleValue());
+										
 										if (testFormulaResult.doubleValue() <= Double.parseDouble(constrainingMetric.getValue())) {
 											params.add(m.get("scalingFactor"));
 											result.setDetails("Scaling factor used during synthesis: " + m.get("scalingFactor"));
+											result.addAudit("Scaling factor used during synthesis: " + m.get("scalingFactor"));
 											break;
 										}
 									}
@@ -266,6 +337,8 @@ public class AdaptationManager {
 															originalDfu.getClassName().replace("/", "."),
 															dfu.getDependencyCoordinate().toString(), dfu.getClassName().replace("/", "."), params);
 											sourceComposer.executeCP2Composition(applicationInstance, dfuCompositionConfiguration);
+											result.addAudit("Synthesis completed successfully.");
+											queueBuild = true;
 										} catch (Exception e) {
 											result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
 											result.setDetails("Unexpected error invoking Dfu Synthesis: " + e.getMessage());
@@ -286,7 +359,9 @@ public class AdaptationManager {
 
 		if (queueBuild && !result.getAdaptationStatusValue().equals(AdaptationStatusValue.ERROR)) {
 			try {
+				result.addAudit("Adaptation queued a build.");
 				buildAtakClient(applicationInstance);
+				result.addAudit("Build completed successfully.");
 			} catch (Exception e) {
 				result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
 				result.setDetails("Unexpected error building ATAKClient: " + e.getMessage());
@@ -295,6 +370,7 @@ public class AdaptationManager {
 
 		if (result.getAdaptationStatusValue() == AdaptationStatusValue.PENDING) {
 			result.setAdaptationStatusValue(AdaptationStatusValue.SUCCESSFUL);
+			result.addAudit("Adaptation was completed successfully.");
 		}
 		
 		return result;
@@ -351,47 +427,152 @@ public class AdaptationManager {
 		return result;
 	}
 	
-	@SuppressWarnings("unused")
-	private int calculateResourceIndex(DFU dfu, String functionalityUri, String resourceDigest) throws Exception {
+	private DSLInvocationResultValue performDFUDSLCheck(DFU dfu) {
 
-		String functionalityLabel = null;
-		//String functionalityLabel = requirementLabels.get(functionalityUri);
-		String dfuLabel = dfuLabels.get(dfu.getFunctionalityTypeUri());
-		
-		int result = 0;
-		
+		DSLInvocationResultValue result = DSLInvocationResultValue.MODEL_OK;
+
+		String dfuLabel = dfuLabels.get(dfu.getClassName());
+
 		if (dfuLabel != null) {
-			//DSL call:
-			//Command: stack exec resource-dsl location [req-name] [dfu-name] [env-name]
-			//Example: stack exec resource-dsl location location gps-android GPS-Sat+GPS-Dev
-			ProcessBuilder pb = new ProcessBuilder("stack", "exec", "resource-dsl", "location",
-							   functionalityLabel, dfuLabel, resourceDigest);
-			pb.directory(new File(DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT) + DSL_FOLDER));
-			pb.inheritIO();
-			Process p = pb.start(); //IOException will be thrown to caller
-			
-			//DSL return codes (we can put these into an enum later maybe):
-			//		0: 	OK -- the DFU loads successfully and satisfies the requirements
-			//		1: 	Miscellaneous Error -- see output for details (e.g. bad arguments, JSON
-			//			decoding error, bug in interpreter)
-			//		2: 	DFU cannot be loaded in the given environment.
-			//		3:	DFU successfully loads but does not satisfy the requirements.
-			if (p.waitFor(15, TimeUnit.SECONDS)) {
-				result = p.exitValue();
-			} else {
-				throw new Exception("DSL invocation timed out.");
+			try {
+				ProcessBuilder pb = new ProcessBuilder("stack", "exec", "resource-dsl", "--", "check", "--config",
+									"[\"" + dfuLabel + "\"]");
+				pb.directory(new File(DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT) + DSL_FOLDER));
+				pb.inheritIO();
+				Process p = pb.start();
+				
+				if (p.waitFor(15, TimeUnit.SECONDS)) {
+					result = DSLInvocationResultValue.fromValue(p.exitValue());
+					if (result == null) {
+						//Unexpected return code; error condition
+						result = DSLInvocationResultValue.ERROR;
+					}
+				} else {
+					result = DSLInvocationResultValue.ERROR;
+				}
+			} catch (Exception e) {
+				result = DSLInvocationResultValue.ERROR;
 			}
 		} else {
-			result = 2;
-		}
-
-		if (result == 1) {
-			throw new Exception("Unexpected DSL error.");
+			result = DSLInvocationResultValue.ERROR;
 		}
 
 		return result;
 	}
 	
+	private DSLInvocationResultValue performNetworkDSLCheck(long bandwidth, int numberClients, double scalingFactor,
+			long pliReportRate, long imageReportRate) {
+
+		DSLInvocationResultValue result = DSLInvocationResultValue.MODEL_OK;
+		
+		try {
+			result = generateDslNetworkInput(bandwidth, numberClients, scalingFactor,
+					pliReportRate, imageReportRate);
+
+			if (result == DSLInvocationResultValue.MODEL_OK) {
+				ProcessBuilder pb = new ProcessBuilder("stack", "exec", "resource-dsl", "--", "check");
+				
+				pb.directory(new File(DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT) + DSL_FOLDER));
+				pb.inheritIO();
+				Process p = pb.start();
+				
+				if (p.waitFor(15, TimeUnit.SECONDS)) {
+					result = DSLInvocationResultValue.fromValue(p.exitValue());
+					if (result == null) {
+						//Unexpected return code; error condition
+						result = DSLInvocationResultValue.ERROR;
+					}
+				} else {
+					result = DSLInvocationResultValue.ERROR;
+				}
+			}
+		} catch (Exception e) {
+			result = DSLInvocationResultValue.ERROR;
+		}
+		
+		return result;
+	}
+	
+	private DSLInvocationResultValue generateDslLocationInput(String resourceDigest, boolean saasm) {
+
+		DSLInvocationResultValue result = DSLInvocationResultValue.MODEL_OK;
+		
+		try {
+			ProcessBuilder pb = null;
+			if (saasm) {
+				pb = new ProcessBuilder("stack", "exec", "resource-dsl", "--" , "example", "location",
+					"--dict", "--model", "--saasm", "--init", resourceDigest);
+			} else {
+				pb = new ProcessBuilder("stack", "exec", "resource-dsl", "--" , "example", "location",
+						"--dict", "--model", "--reqs", "--init", resourceDigest);				
+			}
+			pb.directory(new File(DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT) + DSL_FOLDER));
+			pb.inheritIO();
+			Process p = pb.start();
+
+			if (p.waitFor(15, TimeUnit.SECONDS)) {
+				result = DSLInvocationResultValue.fromValue(p.exitValue());
+				if (result == null) {
+					//Unexpected return code; error condition
+					result = DSLInvocationResultValue.ERROR;
+				}
+			} else {
+				result = DSLInvocationResultValue.ERROR;
+			}			
+		} catch (IOException | InterruptedException e) {
+			result = DSLInvocationResultValue.ERROR;
+		}
+		
+		return result;
+	}
+	
+	private DSLInvocationResultValue generateDslNetworkInput(long bandwidth, int numberClients, double scalingFactor,
+			long pliReportRate, long imageReportRate) {
+
+		DSLInvocationResultValue result = DSLInvocationResultValue.MODEL_OK;
+		
+		String config = "(" + String.valueOf(numberClients) + "," +
+				String.valueOf(pliReportRate) + "," +
+				String.valueOf(imageReportRate) + "," +
+				String.valueOf(scalingFactor) + ")";
+		
+		try {
+			ProcessBuilder pb = new ProcessBuilder("stack", "exec", "resource-dsl", "--" , "example", "network",
+								"--dict", "--model", "--reqs", "--init", String.valueOf(bandwidth), 
+								"--config", config);
+			pb.directory(new File(DAS.getConfigurationValue(DAS.CFG_IMMORTALS_ROOT) + DSL_FOLDER));
+			pb.inheritIO();
+			Process p = pb.start(); //IOException will be thrown to caller
+			
+			if (p.waitFor(15, TimeUnit.SECONDS)) {
+				result = DSLInvocationResultValue.fromValue(p.exitValue());
+				if (result == null) {
+					//Unexpected return code; error condition
+					result = DSLInvocationResultValue.ERROR;
+				}
+			} else {
+				result = DSLInvocationResultValue.ERROR;
+			}
+		} catch (IOException | InterruptedException e) {
+			result = DSLInvocationResultValue.ERROR;
+		}
+
+		return result;
+	}
+	
+	private String generateResourceDigest(List<String> abstractResourceUris) {
+		
+		String resourceDigest = abstractResourceUris
+				.stream().filter(t -> resourceLabels.containsKey(t))
+				.map(e -> resourceLabels.get(e))
+				.sorted((ResourceLabel r1, ResourceLabel r2) -> r1.rank - r2.rank)
+				.map(s -> s.label)
+				.collect(Collectors.joining("+"));
+		
+		return resourceDigest;
+
+	}
+
 	private void buildAtakClient(SourceComposer.ApplicationInstance applicationInstance) throws Exception  {
 		
         // Build the application
@@ -593,30 +774,23 @@ public class AdaptationManager {
         
     	resourceLabels = new HashMap<String, ResourceLabel>();
     	dfuLabels = new HashMap<String, String>();
-    	dslReturnLabels = new HashMap<Integer, String>();
 
-    	//We won't need this going forward after the DSL changes
     	resourceLabels.put("<http://darpa.mil/immortals/ontology/r2.0.0/resources#BluetoothResource>", 
-        		new ResourceLabel("<http://darpa.mil/immortals/ontology/r2.0.0/resources#BluetoothResource>", "Ext-BT", 3));
+        		new ResourceLabel("<http://darpa.mil/immortals/ontology/r2.0.0/resources#BluetoothResource>", "Ext.BT", 4));
         resourceLabels.put("<http://darpa.mil/immortals/ontology/r2.0.0/resources#UsbResource>", 
-        		new ResourceLabel("<http://darpa.mil/immortals/ontology/r2.0.0/resources#UsbResource>", "Ext-USB", 4));
+        		new ResourceLabel("<http://darpa.mil/immortals/ontology/r2.0.0/resources#UsbResource>", "Ext.USB", 3));
         resourceLabels.put("<http://darpa.mil/immortals/ontology/r2.0.0/resources#UserInterface>", 
-        		new ResourceLabel("<http://darpa.mil/immortals/ontology/r2.0.0/resources#UserInterface>", "Has-UI", 5));
-        resourceLabels.put("<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsReceiver>", 
-        		new ResourceLabel("<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsReceiver>", "GPS-Dev", 2));
-        resourceLabels.put("<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsSatellite>",
-        		new ResourceLabel("<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsSatellite>", "GPS-Sat", 1));
+        		new ResourceLabel("<http://darpa.mil/immortals/ontology/r2.0.0/resources#UserInterface>", "UI", 5));
+        resourceLabels.put("<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsReceiverEmbedded>", 
+        		new ResourceLabel("<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsReceiverEmbedded>", "GPS.Dev", 2));
+        resourceLabels.put("<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsSatelliteConstellation>",
+        		new ResourceLabel("<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsSatelliteConstellation>", "GPS.SAT", 1));
         
         dfuLabels.put("mil/darpa/immortals/dfus/location/LocationProviderManualSimulated", "dead-reckoning");
         dfuLabels.put("mil/darpa/immortals/dfus/location/LocationProviderAndroidGpsBuiltIn", "gps-android");
         dfuLabels.put("mil/darpa/immortals/dfus/location/LocationProviderBluetoothGpsSimulated", "gps-bluetooth");
         dfuLabels.put("mil/darpa/immortals/dfus/location/LocationProviderSaasmSimulated", "gps-saasm");
         dfuLabels.put("mil/darpa/immortals/dfus/location/LocationProviderUsbGpsSimulated", "gps-usb");
-        
-        dslReturnLabels.put(0, "The DFU loads successfully and satisfies the requirements");
-        dslReturnLabels.put(1, "Miscellaneous Error -- see output for details (e.g. bad arguments, JSON decoding error, bug in interpreter)");
-        dslReturnLabels.put(2, "The DFU cannot be loaded in the given environment.");
-        dslReturnLabels.put(3, "The DFU successfully loads but does not satisfy the requirements.");
 	}
 	
 	private static class ResourceLabel {
@@ -628,9 +802,7 @@ public class AdaptationManager {
 	    
 	    @SuppressWarnings("unused")
 		public String uri;
-		@SuppressWarnings("unused")
 		public String label;
-	    @SuppressWarnings("unused")
 		public int rank;
 	}
 
@@ -650,9 +822,9 @@ public class AdaptationManager {
 	private static final String LIFECYCLE_INIT = "<http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#InitializeAspect>";
 	private static final String LIFECYCLE_CLEANUP = "<http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#CleanupAspect>";
 	private static final String LIFECYCLE_WORK = "<http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#GetCurrentLocationAspect>";
-
+	private static final String SAASM_URI = "<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps/properties#TrustedProperty>";
+	
 	private static Map<String, ResourceLabel> resourceLabels;
 	private static Map<String, String> dfuLabels;
-	private static Map<Integer, String> dslReturnLabels;
 
 }

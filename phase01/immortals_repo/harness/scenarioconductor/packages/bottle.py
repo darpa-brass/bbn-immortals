@@ -2989,6 +2989,7 @@ class ServerAdapter(object):
         self.options = options
         self.host = host
         self.port = int(port)
+        self.srv = None
 
     def run(self, handler):  # pragma: no cover
         pass
@@ -3068,16 +3069,16 @@ class CherryPyServer(ServerAdapter):
         if keyfile:
             del self.options['keyfile']
 
-        server = wsgiserver.CherryPyWSGIServer(**self.options)
+        self.srv = wsgiserver.CherryPyWSGIServer(**self.options)
         if certfile:
-            server.ssl_certificate = certfile
+            self.srv.ssl_certificate = certfile
         if keyfile:
-            server.ssl_private_key = keyfile
+            self.srv.ssl_private_key = keyfile
 
         try:
-            server.start()
+            self.srv.start()
         finally:
-            server.stop()
+            self.srv.stop()
 
 
 class WaitressServer(ServerAdapter):
@@ -3194,11 +3195,11 @@ class GeventServer(ServerAdapter):
         if not self.options.pop('fast', None): wsgi = pywsgi
         self.options['log'] = None if self.quiet else 'default'
         address = (self.host, self.port)
-        server = wsgi.WSGIServer(address, handler, **self.options)
+        self.srv = wsgi.WSGIServer(address, handler, **self.options)
         if 'BOTTLE_CHILD' in os.environ:
             import signal
-            signal.signal(signal.SIGINT, lambda s, f: server.stop())
-        server.serve_forever()
+            signal.signal(signal.SIGINT, lambda s, f: self.srv.stop())
+        self.srv.serve_forever()
 
 
 class GeventSocketIOServer(ServerAdapter):

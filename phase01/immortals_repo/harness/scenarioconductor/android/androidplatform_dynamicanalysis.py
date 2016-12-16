@@ -53,8 +53,8 @@ class AndroidDynamicAnalysisInstance(deploymentplatform.DeploymentPlatformInterf
 
     def __init__(self, application_configuration):
         self.config = application_configuration
-        self.docker = docker.DockerInstance(self.config.application_deployment_directory, application_configuration)
-        self.emulator = androidplatform_emulator.AndroidEmulatorInstance(self.config.application_deployment_directory,
+        self.docker = docker.DockerInstance(self.config.applicationDeploymentDirectory, application_configuration)
+        self.emulator = androidplatform_emulator.AndroidEmulatorInstance(self.config.applicationDeploymentDirectory,
                                                                          application_configuration)
         self.emulator.call = self.docker.call
         self.emulator.Popen = self.docker.Popen
@@ -70,8 +70,8 @@ class AndroidDynamicAnalysisInstance(deploymentplatform.DeploymentPlatformInterf
     def setup(self):
         self.docker.setup()
 
-        sdcard_filepath = os.path.join(self.config.application_deployment_directory,
-                                       self.config.application_identifier + '_sdcard.img')
+        sdcard_filepath = os.path.join(self.config.applicationDeploymentDirectory,
+                                       self.config.applicationIdentifier + '_sdcard.img')
         cmd = ['cp', '/droidscope_sdcard.img', sdcard_filepath]
         logging.debug('EXEC: ' + str(cmd))
         self.docker.call(cmd)
@@ -84,8 +84,8 @@ class AndroidDynamicAnalysisInstance(deploymentplatform.DeploymentPlatformInterf
 
         for filepath in self.docker.files:
             if os.path.basename(filepath) == 'ds_hookup_package.expect':
-                logging.info('Hooking package "' + self.docker.config.package_identifier + '" up to droidscope...')
-                cmd = ['expect', '-f', filepath, self.docker.config.package_identifier]
+                logging.info('Hooking package "' + self.docker.config.packageIdentifier + '" up to droidscope...')
+                cmd = ['expect', '-f', filepath, self.docker.config.packageIdentifier]
                 self.docker.call(cmd)
 
     def upload_file(self, source_file_location, file_target):
@@ -100,9 +100,9 @@ class AndroidDynamicAnalysisInstance(deploymentplatform.DeploymentPlatformInterf
         self.emulator.application_stop()
         self.docker.application_stop()
 
-        self.docker.copy_file_from_docker('/decaf.log', self.config.application_deployment_directory)
-        self.docker.copy_file_from_docker('/' + self.docker.config.package_identifier + '_jumps.log',
-                                          self.config.application_deployment_directory)
+        self.docker.copy_file_from_docker('/decaf.log', self.config.applicationDeploymentDirectory)
+        self.docker.copy_file_from_docker('/' + self.docker.config.packageIdentifier + '_jumps.log',
+                                          self.config.applicationDeploymentDirectory)
 
     def stop(self):
         self.docker.stop()

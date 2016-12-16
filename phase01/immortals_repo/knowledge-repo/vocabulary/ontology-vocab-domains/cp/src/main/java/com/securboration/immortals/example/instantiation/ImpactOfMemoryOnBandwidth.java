@@ -14,12 +14,11 @@
 //import com.securboration.immortals.uris.Uris.rdfs;
 //
 //@ConceptInstance
-//@Triple(
-//    predicateUri=rdfs.comment$,
-//    objectLiteral=@Literal(
-//        "Describes the impact on network bandwidth of a larger memory footprint"
-//        )
-//    )
+/**
+ * Describes the impact on network bandwidth of a larger memory footprint
+ * 
+ * @author Securboration
+ */
 //public class ImpactOfMemoryOnBandwidth extends CauseEffectAssertion{
 //    
 //    public ImpactOfMemoryOnBandwidth(){

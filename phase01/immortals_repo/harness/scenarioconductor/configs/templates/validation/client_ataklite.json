@@ -1,9 +1,9 @@
 {
-    "application": "ATAKLite",
+    "applicationIdentifier": "ataklite",
     "instanceIdentifier": "ATAKLite-{sessionIdentifier}_{CCID}-{CID}",
     "deploymentPlatformEnvironment": "android_emulator",
-    "buildRoot": "PRODUCTS/{sessionIdentifier}/applications/client/ATAKLite-{sessionIdentifier}/",
-    "executableFile": "PRODUCTS/{sessionIdentifier}/applications/client/ATAKLite-{sessionIdentifier}/ATAKLite-{sessionIdentifier}-debug.apk",
+    "buildRoot": "{runtimeRoot}/{sessionIdentifier}/applications/client/ATAKLite-{sessionIdentifier}/",
+    "executableFile": "{runtimeRoot}/{sessionIdentifier}/applications/client/ATAKLite-{sessionIdentifier}/ATAKLite-{sessionIdentifier}-debug.apk",
     "applicationDeploymentDirectory" : "{deploymentDirectory}{instanceIdentifier}/",
     "configurationTemplateFilepath" : "harness/scenarioconductor/configs/templates/validation/ATAKLite-Config.json",
     "configurationTargetFilepath" : "/sdcard/ataklite/ATAKLite-Config.json",

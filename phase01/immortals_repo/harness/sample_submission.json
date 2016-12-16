@@ -4,7 +4,7 @@
     },
     "clients": [
         {
-            "imageBroadcastIntervalMS": "70000",
+            "imageBroadcastIntervalMS": "2000",
             "latestSABroadcastIntervalMS": "1000",
             "count": 2,
             "presentResources" : [
@@ -19,5 +19,5 @@
             ]
         }
     ],
-    "minimumRunTimeMS": 90000
+    "minimumRunTimeMS": 30000
 }

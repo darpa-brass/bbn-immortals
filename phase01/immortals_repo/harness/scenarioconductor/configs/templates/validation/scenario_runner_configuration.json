@@ -1,21 +1,21 @@
 {
-    "sessionIdentifier": "UNDEFINED",
-    "deploymentDirectory": "PRODUCTS/{sessionIdentifier}/deployment_environment/",
+    "sessionIdentifier": "{sessionIdentifier}",
+    "deploymentDirectory": "{runtimeRoot}/{sessionIdentifier}/deployment_environment/",
     "scenario": {
         "scenarioIdentifier": "validation",
         "durationMS": 60000,
         "deploymentApplications": [
             {
-                "application": "marti",
+                "applicationIdentifier": "marti",
                 "instanceIdentifier": "martiRouter",
                 "deploymentPlatformEnvironment": "java_local",
-                "buildSubdir": "applications/server/Marti/",
+                "buildRoot": "applications/server/Marti/",
                 "executableFile": "applications/server/Marti/Marti-immortals.jar",
-                "applicationDeploymentDirectory" : "{deploymentDirectory}{instanceIdentifier}/",
-                "configurationTemplateFilepath" : "harness/scenarioconductor/configs/templates/validation/marti-CoreConfig.xml",
-                "configurationTargetFilepath" : "{applicationDeploymentDirectory}CoreConfig.xml",
+                "applicationDeploymentDirectory": "{deploymentDirectory}{instanceIdentifier}/",
+                "configurationTemplateFilepath": "harness/scenarioconductor/configs/templates/validation/marti-CoreConfig.xml",
+                "configurationTargetFilepath": "{applicationDeploymentDirectory}CoreConfig.xml",
                 "files": {},
-                "filesForCleanup":  [
+                "filesForCleanup": [
                     "{deploymentDirectory}{instanceIdentifier}"
                 ],
                 "properties": {}
@@ -29,7 +29,9 @@
     "validate": true,
     "displayEmulatorGui": false,
     "startEmulatorsSimultaneously": true,
+    "swallowAndShutdownOnException": true,
     "minDurationMS": 60000,
+    "debugMode": false,
     "lifecycle": {
         "setupEnvironment": true,
         "setupApplications": true,

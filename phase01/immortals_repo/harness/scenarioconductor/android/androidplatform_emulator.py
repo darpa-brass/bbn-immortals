@@ -12,11 +12,10 @@ import adbhelper
 import emuhelper
 
 from .. import immortalsglobals as ig
-from .. import threadprocessrouter
+from .. import threadprocessrouter as tpr
 from ..data.applicationconfig import AndroidApplicationConfig
 from ..deploymentplatform import DeploymentPlatformInterface
 from ..interfaces import CommandHandlerInterface
-from ..stdrouter import StdRouter
 
 from ..utils import get_formatted_string_value
 
@@ -56,7 +55,7 @@ class AndroidEmulatorInstance(DeploymentPlatformInterface):
     :type command_processor: CommandHandlerInterface
     """
 
-    def __init__(self, application_configuration, command_processor=threadprocessrouter):
+    def __init__(self, application_configuration, command_processor=tpr):
 
         self.config = application_configuration
         self.std_endpoint = None
@@ -70,8 +69,8 @@ class AndroidEmulatorInstance(DeploymentPlatformInterface):
         self.console_port = int(get_formatted_string_value(_emulator_name_template, self.adb_device_identifier,
                                                            'CONSOLEPORT'))
         self.adb_port = self.console_port + 1
-        self.sdcard_filepath = os.path.join(self.config.application_deployment_directory,
-                                            self.config.instance_identifier + '_sdcard.img')
+        self.sdcard_filepath = os.path.join(self.config.applicationDeploymentDirectory,
+                                            self.config.instanceIdentifier + '_sdcard.img')
         self.emulator_is_running = False
         self.is_application_running = False
 
@@ -87,12 +86,12 @@ class AndroidEmulatorInstance(DeploymentPlatformInterface):
                 self.adbhelper.restart_adb_server()
                 _adb_has_been_reinitialized = True
 
-        self.std_endpoint = StdRouter.get_endpoint(self.config.application_deployment_directory)
+        self.std_endpoint = tpr.get_std_endpoint(self.config.applicationDeploymentDirectory)
         self.stdout = self.std_endpoint.out
         self.stderr = self.std_endpoint.err
 
         logging.debug(
-                'Setting up ' + self.config.deployment_platform_environment + ' for ' + self.config.instance_identifier)
+                'Setting up ' + self.config.deploymentPlatformEnvironment + ' for ' + self.config.instanceIdentifier)
 
         cmd = ['mksdcard', '12M', self.sdcard_filepath]
         self.call(cmd)
@@ -163,5 +162,5 @@ class AndroidEmulatorInstance(DeploymentPlatformInterface):
 
     def application_destroy(self):
         self.adbhelper.uninstall_package()
-        for f in self.config.files_for_cleanup:
+        for f in self.config.filesForCleanup:
             self.adbhelper.remove_file_recursively(f)

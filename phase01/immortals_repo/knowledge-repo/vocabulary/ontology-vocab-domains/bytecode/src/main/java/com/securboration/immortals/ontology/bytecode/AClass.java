@@ -17,19 +17,18 @@ import com.securboration.immortals.uris.Uris.rdf;
  */
 public class AClass extends ClassStructure {
 
-    /**
-     * A URL pointing to the .java source code that was compiled to create this
-     * class instance.
-     */
-    @RdfsComment(
-        "A URL pointing to the .java source code that was compiled to create " +
-        "a class instance")
     @Triples({
         @Triple(
             predicateUri=rdf.type$,
             objectUri=owl.FunctionalProperty$
             )
         })
+    /**
+     * A URL pointing to the .java source code that was compiled to create
+     * a class instance
+     * 
+     * @author Securboration
+     */
     private String sourceUrl;
 
     /**

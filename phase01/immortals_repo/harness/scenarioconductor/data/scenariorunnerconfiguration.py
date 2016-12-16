@@ -1,9 +1,13 @@
 import copy
+import logging
 
-from ..configurationmanager import Configuration, Scenario
 from applicationconfig import AndroidApplicationConfig
+from scenarioconductor import utils
+from scenarioconductor.data.scenarioconfiguration import ScenarioConfiguration
+from .. import immortalsglobals as ig
+from ..data.scenarioapiconfiguration import ScenarioConductorConfiguration
 from ..packages import commentjson as json
-from ..utils import path_helper, value_helper
+from ..utils import path_helper
 
 
 # noinspection PyPep8Naming
@@ -16,24 +20,35 @@ class Lifecycle:
     """
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, d, parent_config):
         return cls(
-                setupEnvironment=d['setupEnvironment'],
-                setupApplications=d['setupApplications'],
-                executeScenario=d['executeScenario'],
-                haltEnvironment=d['haltEnvironment']
+            setupEnvironment=d['setupEnvironment'],
+            setupApplications=d['setupApplications'],
+            executeScenario=d['executeScenario'],
+            haltEnvironment=d['haltEnvironment'],
+            parent_config=parent_config
         )
 
     def __init__(self,
                  setupEnvironment,
                  setupApplications,
                  executeScenario,
-                 haltEnvironment
+                 haltEnvironment,
+                 parent_config
                  ):
         self.setupEnvironment = setupEnvironment
         self.setupApplications = setupApplications
         self.executeScenario = executeScenario
         self.haltEnvironment = haltEnvironment
+        self.parent_config = parent_config
+
+    def to_dict(self):
+        return {
+            'setupEnvironment': self.setupEnvironment,
+            'setupApplications': self.setupApplications,
+            'executeScenario': self.executeScenario,
+            'haltEnvironment': self.haltEnvironment
+        }
 
 
 # noinspection PyPep8Naming
@@ -44,76 +59,84 @@ class SetupEnvironmentLifecycle:
     """
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, d, parent_config):
         return cls(
-                destroyExisting=d['destroyExisting'],
-                cleanExisting=d['cleanExisting']
+            destroyExisting=d['destroyExisting'],
+            cleanExisting=d['cleanExisting'],
+            parent_config=parent_config
         )
 
-    def __init__(self, destroyExisting, cleanExisting):
+    def __init__(self, destroyExisting, cleanExisting, parent_config):
         self.destroyExisting = destroyExisting
         self.cleanExisting = cleanExisting
+        self.parent_config = parent_config
+
+    def to_dict(self):
+        return {
+            'destroyExisting': self.destroyExisting,
+            'cleanExisting': self.cleanExisting
+        }
 
 
 # noinspection PyPep8Naming
 class ScenarioRunnerConfiguration:
     """
-    :type session_identifier: str
-    :type deployment_directory: str
-    :type scenario: Scenario
+    :type sessionIdentifier: str
+    :type deploymentDirectory: str
+    :type scenario: ScenarioConductorConfiguration
     :type validate: bool
-    :type display_emulator_gui: bool
-    :type start_emulators_simultaneously: bool
+    :type displayEmulatorGui: bool
+    :type startEmulatorsSimultaneously: bool
     :type lifecycle: Lifecycle
     :type setupEnvironmentLifecycle: SetupEnvironmentLifecycle
+    :type swallowAndShutdownOnException: bool
    """
 
     @classmethod
-    def from_scenario_configuration(cls,
-                                    scenario_configuration,
-                                    scenario_template
-                                    ):
+    def from_scenario_api_configuration(cls,
+                                        scenario_configuration,
+                                        scenario_template,
+                                        swallowAndShutdownOnException
+                                        ):
         """
-        :type scenario_configuration ScenarioConfiguration
+        :type scenario_configuration ScenarioConductorConfiguration
         :type scenario_template str
         :rtype ScenarioRunnerConfiguration
+        :type swallowAndShutdownOnException bool
         """
-
-        ident = scenario_configuration.session_identifier
 
         config_root = 'harness/scenarioconductor/configs/templates/' + scenario_template + '/'
 
         # Construct the scenario runner configuration
-        with open(path_helper(True, Configuration.immortals_root,
+        with open(path_helper(True, ig.IMMORTALS_ROOT,
                               config_root + 'scenario_runner_configuration.json')) as f:
             f_json = json.load(f)
-            scenario_runner_configuration = ScenarioRunnerConfiguration.from_dict(f_json)
+            scenario_runner_configuration = ScenarioRunnerConfiguration.from_dict(
+                j=f_json,
+                parent_config=None,
+                value_pool={
+                    'sessionIdentifier': scenario_configuration.sessionIdentifier,
+                    'runtimeRoot': ig.configuration.runtimeRoot
+                })
+            scenario_runner_configuration.swallowAndShutdownOnException = swallowAndShutdownOnException
 
-        scenario_runner_configuration.session_identifier = scenario_configuration.session_identifier
-        scenario_runner_configuration.deployment_directory = \
-            path_helper(False, Configuration.immortals_root,
-                        value_helper(scenario_runner_configuration.deployment_directory,
-                                     scenario_runner_configuration)) + '/'
+        scenario_runner_configuration.deploymentDirectory = \
+            path_helper(False, ig.IMMORTALS_ROOT, scenario_runner_configuration.deploymentDirectory)
 
         scenario_runner_configuration.scenario.parent_config = scenario_runner_configuration
         scenario_runner_configuration.minDurationMS = scenario_configuration.minimumRunTimeMS
 
         # Only the server is in there by default for CP1/CP2
-        marti_router = scenario_runner_configuration.scenario.deployment_applications[0]  # type: JavaApplicationConfig
+        marti_router = scenario_runner_configuration.scenario.deploymentApplications[0]  # type: JavaApplicationConfig
         marti_router.parent_config = scenario_runner_configuration.scenario
-        marti_router.application_deployment_directory = path_helper(False, Configuration.immortals_root, value_helper(
-                marti_router.application_deployment_directory,
-                marti_router))
-
-        marti_router.configuration_target_filepath = value_helper(marti_router.configuration_target_filepath,
-                                                                  marti_router)
+        marti_router.applicationDeploymentDirectory = path_helper(False, ig.IMMORTALS_ROOT,
+                                                                  marti_router.applicationDeploymentDirectory)
 
         # Construct the clients and add them to the scenario runner configuration
-        with open(path_helper(True, Configuration.immortals_root,
+        with open(path_helper(True, ig.IMMORTALS_ROOT,
                               'harness/scenarioconductor/configs/templates/' + scenario_template + '/client_ataklite.json'),
                   'r') as f:
             client_j = json.load(f)
-            client_template = AndroidApplicationConfig.from_dict(client_j, scenario_runner_configuration)
 
         ccid = 0
         for j in range(len(scenario_configuration.clients)):
@@ -126,64 +149,82 @@ class ScenarioRunnerConfiguration:
                 elif len(i_str) == 2:
                     i_str = '0' + i_str
 
-                client = copy.deepcopy(client_template)  # type: AndroidApplicationConfig
-                client.parent_config = scenario_runner_configuration
-                client.instance_identifier = value_helper(client.instance_identifier, client,
-                                                          value_pool={'CCID': str(ccid), 'CID': i_str})
-                client.build_root = client.build_root.format(IDENT=ident)
-                client.executable_filepath = client.executable_filepath.format(IDENT=ident)
+                client = AndroidApplicationConfig.from_dict(
+                    j=copy.deepcopy(client_j),
+                    parent_config=scenario_runner_configuration,
+                    value_pool={'CCID': str(ccid),
+                                'CID': i_str,
+                                'sessionIdentifier': scenario_configuration.sessionIdentifier,
+                                'runtimeRoot': ig.configuration.runtimeRoot}
+                )
 
-                client.application_deployment_directory = \
-                    path_helper(False, Configuration.immortals_root,
-                                value_helper(client.application_deployment_directory, client))
+                logging.error("CID: " + client.instanceIdentifier)
+                client.properties['callsign'] = client.instanceIdentifier
+                client.properties['latestSABroadcastIntervalMS'] = client_configuration.latestSABroadcastIntervalMS
+                client.properties['imageBroadcastIntervalMS'] = client_configuration.imageBroadcastIntervalMS
 
-                # Add customization properties that will be added to the configuration file at deployment
-                client.properties['callsign'] = client.instance_identifier
-                client.properties['latestSABroadcastIntervalMS'] = client_configuration.latestsa_broadcast_interval_ms
-                client.properties['imageBroadcastIntervalMS'] = client_configuration.image_broadcast_interval_ms
-
-                scenario_runner_configuration.scenario.deployment_applications.append(client)
+                scenario_runner_configuration.scenario.deploymentApplications.append(client)
             ccid += 1
 
         return scenario_runner_configuration
 
     @classmethod
-    def from_dict(cls, j):
-        scenario = Scenario.from_dict(j['scenario'])
-        scenario.parent_config = cls
-
-        return cls(
-                session_identifier=j['sessionIdentifier'],
-                deployment_directory=j['deploymentDirectory'],
-                scenario=scenario,
-                validate=j['validate'],
-                display_emulator_gui=j['displayEmulatorGui'],
-                start_emulators_simultaneously=j['startEmulatorsSimultaneously'],
-                lifecycle=Lifecycle.from_dict(j['lifecycle']),
-                setupEnvironmentLifecycle=SetupEnvironmentLifecycle.from_dict(j['setupEnvironmentLifecycle']),
-                minDurationMS=j['minDurationMS']
+    def from_dict(cls, j, parent_config, value_pool={}):
+        r = cls(
+            sessionIdentifier=j['sessionIdentifier'],
+            deploymentDirectory=j['deploymentDirectory'],
+            scenario=None,
+            validate=j['validate'],
+            displayEmulatorGui=j['displayEmulatorGui'],
+            startEmulatorsSimultaneously=j['startEmulatorsSimultaneously'],
+            lifecycle=None,
+            setupEnvironmentLifecycle=None,
+            minDurationMS=j['minDurationMS'],
+            debugMode=j['debugMode'],
+            swallowAndShutdownOnException=j['swallowAndShutdownOnException'],
+            parent_config=parent_config
         )
+        utils.fillout_object(r, value_pool=value_pool)
+        r.deploymentDirectory = path_helper(False, ig.IMMORTALS_ROOT, r.deploymentDirectory) + '/'
+        r.scenario = ScenarioConfiguration.from_dict(j['scenario'], r, value_pool=value_pool)
+        utils.fillout_object(r.scenario)
+        r.lifecycle = Lifecycle.from_dict(j['lifecycle'], r)
+        r.setupEnvironmentLifecycle = SetupEnvironmentLifecycle.from_dict(j['setupEnvironmentLifecycle'], r)
+        utils.fillout_object(r)
+        return r
 
     def __init__(self,
-                 session_identifier,
-                 deployment_directory,
+                 sessionIdentifier,
+                 deploymentDirectory,
                  scenario,
                  validate,
-                 display_emulator_gui,
-                 start_emulators_simultaneously,
+                 displayEmulatorGui,
+                 startEmulatorsSimultaneously,
                  lifecycle,
                  setupEnvironmentLifecycle,
-                 minDurationMS
+                 minDurationMS,
+                 debugMode,
+                 swallowAndShutdownOnException,
+                 parent_config
                  ):
-        self.session_identifier = session_identifier
-        self.deployment_directory = deployment_directory
+        self.sessionIdentifier = sessionIdentifier
+        self.deploymentDirectory = deploymentDirectory
         self.scenario = scenario
         self.validate = validate
-        self.display_emulator_gui = display_emulator_gui
-        self.start_emulators_simultaneously = start_emulators_simultaneously
+        self.displayEmulatorGui = displayEmulatorGui
+        self.startEmulatorsSimultaneously = startEmulatorsSimultaneously
         self.lifecycle = lifecycle
         self.setupEnvironmentLifecycle = setupEnvironmentLifecycle
         self.minDurationMS = minDurationMS
+        self.debugMode = debugMode
+        self.swallowAndShutdownOnException = swallowAndShutdownOnException
+        self.parent_config = parent_config
+
+        d = utils.dictify(self)
+        print 'AAA'
+        print json.dumps(d)
+        # print utils.dictify(self)
+        print 'BBB'
 
     def clone_and_trim(self):
         clone = copy.deepcopy(self)

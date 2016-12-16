@@ -6,12 +6,11 @@ import com.securboration.immortals.ontology.functionality.Functionality;
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "TODO"
-        )
-    )
+/**
+ * TODO
+ * 
+ * @author Securboration
+ */
 @ConceptInstance
 public class SaDataProvider extends Functionality {
     

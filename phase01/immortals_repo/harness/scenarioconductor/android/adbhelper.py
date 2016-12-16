@@ -157,7 +157,7 @@ def wait_for_device_ready(adb_device_identifier, command_processor=tpr):
     """
     waitduration = 180
     timepassed = 0
-    checkfrequency = 5
+    checkfrequency = 1
 
     logging.info('Waiting for emulator ' + adb_device_identifier + ' to finish starting')
     sys.stdout.flush()
@@ -170,7 +170,7 @@ def wait_for_device_ready(adb_device_identifier, command_processor=tpr):
         if is_fully_booted(adb_device_identifier, command_processor):
             client_adb_identifier = None
 
-        time.sleep(checkfrequency)
+        tpr.sleep(checkfrequency)
         timepassed += checkfrequency
 
     logging.info('Emulator ' + adb_device_identifier + ' has finished starting.')
@@ -210,11 +210,11 @@ class AdbHelper:
 
     def start_process(self):
         print 'ADB-SP'
-        start_process(self.adb_device_identifier, self.config.package_identifier + '/' + self.config.main_activity, self.cp)
+        start_process(self.adb_device_identifier, self.config.packageIdentifier + '/' + self.config.mainActivity, self.cp)
 
     def force_stop_process(self):
         print 'ADB-FSP'
-        force_stop_process(self.adb_device_identifier, self.config.package_identifier, self.cp)
+        force_stop_process(self.adb_device_identifier, self.config.packageIdentifier, self.cp)
 
     def deploy_apk(self, apk_location):
         print 'ADB-DA'
@@ -242,7 +242,7 @@ class AdbHelper:
 
     def uninstall_package(self):
         print 'ADB-UP'
-        uninstall_package(self.adb_device_identifier, self.config.package_identifier)
+        uninstall_package(self.adb_device_identifier, self.config.packageIdentifier)
 
     def remove_file_recursively(self, filepath):
         print 'ADB-RFR'

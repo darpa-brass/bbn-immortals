@@ -2,10 +2,10 @@
     "durationSeconds": "{TIMEOUT}",
     "deploymentApplications": [
         {
-            "application": "marti",
+            "applicationIdentifier": "marti",
             "instanceIdentifier": "marti_{IDENT}_000",
             "deploymentEnvironment": "java",
-            "buildSubdir": "applications/server/Marti",
+            "buildRoot": "applications/server/Marti",
             "executableFile": "applications/server/Marti/Marti-immortals.jar"
         }
     ],

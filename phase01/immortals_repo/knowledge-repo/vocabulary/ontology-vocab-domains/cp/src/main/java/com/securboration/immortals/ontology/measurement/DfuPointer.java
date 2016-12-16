@@ -6,13 +6,12 @@ import com.securboration.immortals.ontology.functionality.FunctionalAspect;
 import com.securboration.immortals.ontology.functionality.Functionality;
 import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal(
-        "A durable but indirect way to reference a DFU or an aspect of a DFU.  " +
-        "Provide as much/little info as desired."
-        )
-    )
+/**
+ * A durable but indirect way to reference a DFU or an aspect of a DFU. 
+ * Provide as much/little info as desired.
+ * 
+ * @author Securboration
+ */
 public class DfuPointer extends CodeUnitPointer {
     
     private Class<? extends Functionality> relevantFunctionality;

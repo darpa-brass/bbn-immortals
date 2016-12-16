@@ -280,14 +280,15 @@ public class GenerateUriConstants {
             ){
         Query query = QueryFactory.create(selectQuery);
         
-        QueryExecution queryExecution = 
-                QueryExecutionFactory.create(query, m);
+        try(QueryExecution queryExecution = 
+                QueryExecutionFactory.create(query, m);){
         
-        ResultSet r = queryExecution.execSelect();
-        while(r.hasNext()){
-            QuerySolution q = r.next();
-            
-            p.process(q);
+            ResultSet r = queryExecution.execSelect();
+            while(r.hasNext()){
+                QuerySolution q = r.next();
+                
+                p.process(q);
+            }
         }
     }
     

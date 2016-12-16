@@ -11,13 +11,12 @@
 //import com.securboration.immortals.uris.Uris.rdfs;
 //
 //@Ignore
-//@Triple(
-//    predicateUri=rdfs.comment$,
-//    objectLiteral=@Literal(
-//        "This subgraph provides a representative template for the " +
-//        "instantiations to be provided by WebGME"
-//        )
-//    )
+/**
+ * This subgraph provides a representative template for the
+ * instantiations to be provided by WebGME
+ * 
+ * @author Securboration
+ */
 //@ConceptInstance
 //public class Example extends GmeInterchangeFormat {
 //    

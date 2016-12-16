@@ -10,10 +10,10 @@ class TestResult:
     @classmethod
     def from_dict(cls, d):
         return cls(
-                validatorIdentifier=d['validatorIdentifier'],
-                currentState=d['currentState'],
-                errorMessages=d['errorMessages'],
-                detailMessages=d['detailMessages']
+            validatorIdentifier=d['validatorIdentifier'],
+            currentState=d['currentState'],
+            errorMessages=d['errorMessages'],
+            detailMessages=d['detailMessages']
         )
 
     def __init__(self,
@@ -46,8 +46,8 @@ class ValidationResult:
     @classmethod
     def from_dict(cls, d):
         return cls(
-                testDurationMS=d['testDurationMS'],
-                results=map(lambda c: TestResult.from_dict(c), d['results'])
+            testDurationMS=d['testDurationMS'],
+            results=map(lambda c: TestResult.from_dict(c), d['results'])
         )
 
     def __init__(self,

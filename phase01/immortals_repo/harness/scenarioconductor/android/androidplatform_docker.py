@@ -35,7 +35,7 @@ class AndroidDockerEmulatorInstance(DeploymentPlatformInterface):
 
     def __init__(self, application_configuration):
         self.config = application_configuration
-        self.docker = docker.DockerInstance(self.config.application_deployment_directory, application_configuration,
+        self.docker = docker.DockerInstance(self.config.applicationDeploymentDirectory, application_configuration,
                                             True)
         self.emulator = androidplatform_emulator.AndroidEmulatorInstance(application_configuration)
         self.emulator.call = self.docker.call

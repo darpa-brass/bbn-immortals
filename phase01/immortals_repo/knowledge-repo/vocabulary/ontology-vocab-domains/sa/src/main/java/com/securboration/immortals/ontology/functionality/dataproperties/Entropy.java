@@ -5,10 +5,11 @@ import com.securboration.immortals.ontology.annotations.triples.Triple;
 import com.securboration.immortals.ontology.functionality.datatype.DataProperty;
 import com.securboration.immortals.uris.Uris.rdfs;
 
-@Triple(
-    predicateUri=rdfs.comment$,
-    objectLiteral=@Literal("the Shannon entropy of data")
-    )
+/**
+ * the Shannon entropy of data
+ * 
+ * @author Securboration
+ */
 public class Entropy extends DataProperty {
     
 }

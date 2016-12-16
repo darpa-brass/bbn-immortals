@@ -38,6 +38,31 @@ public class FunctionalitySpecification {
 	public void addPropertyUri(String propertyUri) {
 		propertyUris.add(propertyUri);
 	}
+	
+	
+	@Override
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(getFunctionalityUri());
+
+		if (propertyUris != null) {
+			sb.append(" - Properties: ");
+			
+			sb.append("(");
+			
+			for (String p : getPropertyUris()) {
+				sb.append(p + " : ");
+			}
+			
+			sb.append(")");
+		}
+		
+		return sb.toString();
+	}
+
+
 
 	private String functionalitySpecificationUri;
 	private String functionalityUri;

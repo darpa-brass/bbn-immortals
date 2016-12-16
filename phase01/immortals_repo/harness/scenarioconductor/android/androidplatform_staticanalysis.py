@@ -17,7 +17,7 @@ class AndroidStaticAnalysisInstance(deploymentplatform.DeploymentPlatformInterfa
 
     def __init__(self, application_configuration):
         self.config = application_configuration
-        self.docker = docker.DockerInstance(self.config.application_deployment_directory, application_configuration)
+        self.docker = docker.DockerInstance(self.config.applicationDeploymentDirectory, application_configuration)
 
     def setup(self):
         self.docker.setup()
@@ -45,11 +45,11 @@ class AndroidStaticAnalysisInstance(deploymentplatform.DeploymentPlatformInterfa
 
                 basename = os.path.splitext(os.path.basename(self.apk_filename))[0]
                 self.docker.copy_file_from_docker('/bbnAnalysis/output/' + basename + 'dir.log',
-                                                  self.config.application_deployment_directory)
+                                                  self.config.applicationDeploymentDirectory)
                 self.docker.copy_file_from_docker('/bbnAnalysis/output/' + basename + 'dir.output',
-                                                  self.config.application_deployment_directory)
+                                                  self.config.applicationDeploymentDirectory)
                 self.docker.copy_file_from_docker('/bbnAnalysis/output/' + basename + 'dir.ddg.global.dot',
-                                                  self.config.application_deployment_directory)
+                                                  self.config.applicationDeploymentDirectory)
 
         if not file_found:
             raise Exception("No file has been found in the droidscope instance for android_staticanalysis.sh!!!")

@@ -14,7 +14,7 @@ Creates a platform instance for a given application coniguration. This should ne
 
 
 def create_platform_instance(application_configuration):
-    platform = application_configuration.deployment_platform_environment
+    platform = application_configuration.deploymentPlatformEnvironment
 
     if platform == "android_emulator":
         return androidplatform_emulator.AndroidEmulatorInstance(application_configuration)
