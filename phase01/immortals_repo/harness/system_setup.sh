@@ -13,8 +13,8 @@ fi;
 echo 'blacklist cirrus' >> /etc/modprobe.d/blacklist-cirrus.conf
 update-initramfs -u -k all
 
-echo "immortals" > /etc/hostname
-echo "127.0.0.1 immortals" >> /etc/hosts
+echo "brass-ta" > /etc/hostname
+echo "127.0.0.1 brass-ta" >> /etc/hosts
 
 ANDROID_BUILD_TOOLS_VERSION="21.1.2"
 
@@ -54,11 +54,11 @@ apt-get install apt-transport-https ca-certificates -y
 
 
 ######## Install Docker ########
-apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" > /etc/apt/sources.list.d/docker.list
-apt-get update
-apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual -y
-apt-get install docker-engine -y
+#apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+#echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" > /etc/apt/sources.list.d/docker.list
+#apt-get update
+#apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual -y
+#apt-get install docker-engine -y
 
 
 
@@ -123,20 +123,20 @@ echo "export GRADLE_HOME=${GRADLE_HOME}" >> ~/.bashrc
 ln -s ${GRADLE_HOME}/bin/gradle /opt/bin/gradle
 
 
-if [ ! -e "~/.gradle/wrapper/dists" ];then
-    mkdir -p ~/.gradle/wrapper/dists
-fi
-
-if [ ! -e "~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp" ];then
-    mkdir -p ~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp
-    wget "https://services.gradle.org/distributions/gradle-2.2-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp/
-fi
-
-
-if [ ! -e "~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm" ];then
-    mkdir -p ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm
-    wget "https://services.gradle.org/distributions/gradle-2.8-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm/
-fi
+#if [ ! -e "~/.gradle/wrapper/dists" ];then
+#    mkdir -p ~/.gradle/wrapper/dists
+#fi
+#
+#if [ ! -e "~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp" ];then
+#    mkdir -p ~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp
+#    wget "https://services.gradle.org/distributions/gradle-2.2-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp/
+#fi
+#
+#
+#if [ ! -e "~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm" ];then
+#    mkdir -p ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm
+#    wget "https://services.gradle.org/distributions/gradle-2.8-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm/
+#fi
 
 
 ######## Install Fuseki ########

@@ -62,7 +62,7 @@ def start_repository_service():
     stderr = os.path.join(ig.configuration.artifactRoot, 'repository_service_stderr.txt')
 
     with open(stdout, 'w') as r_stdout, open(stderr, 'w') as r_stderr:
-        _repository_service_process = tpr.Popen(['java', '-Dserver.port=' + str(port), '-jar', war], cwd=path,
+        _repository_service_process = tpr.Popen(['java', '-Djava.security.egd=file:/dev/urandom', '-Dserver.port=' + str(port), '-jar', war], cwd=path,
                                                 stdout=r_stdout, stderr=r_stderr, stdin=None)
 
     print 'immortals-repository-service is starting.... \n,' \
