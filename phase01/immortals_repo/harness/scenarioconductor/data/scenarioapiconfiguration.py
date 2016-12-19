@@ -10,7 +10,7 @@ class MartiServer:
     @classmethod
     def from_dict(cls, d):
         return cls(
-                d['bandwidth']
+            d['bandwidth']
         )
 
     def __init__(self,
@@ -22,6 +22,12 @@ class MartiServer:
         return {
             'bandwidth': self.bandwidth
         }
+
+    def equals(self, other):
+        """
+        :param MartiServer other:
+        """
+        return self.bandwidth == other.bandwidth
 
 
 # noinspection PyPep8Naming
@@ -37,11 +43,11 @@ class ATAKLiteClient:
     @classmethod
     def from_dict(cls, d):
         return cls(
-                d['imageBroadcastIntervalMS'],
-                d['latestSABroadcastIntervalMS'],
-                d['count'],
-                d['presentResources'],
-                d['requiredProperties']
+            d['imageBroadcastIntervalMS'],
+            d['latestSABroadcastIntervalMS'],
+            d['count'],
+            d['presentResources'],
+            d['requiredProperties']
         )
 
     def __init__(self,
@@ -65,6 +71,29 @@ class ATAKLiteClient:
             'presentResources': self.presentResources,
             'requiredProperties': self.requiredProperties
         }
+
+    def equals(self, other):
+        """
+        :param  ATAKLiteClient other:
+        """
+        isEqual = self.imageBroadcastIntervalMS == other.imageBroadcastIntervalMS \
+                  and self.latestSABroadcastIntervalMS == other.latestSABroadcastIntervalMS \
+                  and self.count == other.count
+
+        if not isEqual or len(self.presentResources) != len(other.presentResources) \
+                or len(self.requiredProperties) != len(other.requiredProperties):
+            return False
+
+        else:
+            for res in self.presentResources:
+                if not res in other.presentResources:
+                    return False
+
+            for prop in self.requiredProperties:
+                if not prop in other.requiredProperties:
+                    return False
+
+        return True
 
 
 # noinspection PyPep8Naming
@@ -107,8 +136,17 @@ class ScenarioConductorConfiguration:
             si = "S" + str(int(time.time() * 1000))[:12]
 
         return cls(
-                si,
-                MartiServer.from_dict(d['server']),
-                map(lambda c: ATAKLiteClient.from_dict(c), d['clients']),
-                d['minimumRunTimeMS'],
+            si,
+            MartiServer.from_dict(d['server']),
+            map(lambda c: ATAKLiteClient.from_dict(c), d['clients']),
+            d['minimumRunTimeMS'],
         )
+
+    def equals(self, other):
+        """
+        :param ScenarioConductorConfiguration other:
+        :rtype: bool
+        """
+
+        return self.server.equals(other.server) and len(self.clients) == 1 and len(other.clients) == 1 and self.clients[
+            0].equals(other.clients[0]) and self.minimumRunTimeMS == other.minimumRunTimeMS

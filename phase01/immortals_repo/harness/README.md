@@ -29,6 +29,7 @@ Root is (ab)used and used for everything at the moment since it runs in a self-c
 ## Scenario Execution
 1. Within the immortals_repo, modify the file located at ~/immortals_repo/harness/sample_submission.json
 2. Once Ready has been sent from the TA to the TH, that file can be submitted to the TA via the "/action/submitDeploymentModel" url
+3. Submission of the file ~/immortals_repo/harness/base_submission.json will deploy the base client, which will not trigger augmentation.
 
 ## Other Notes
 The run artifacts (which take up about 100M each) are not automatically cleared from the DAS and there is not yet a

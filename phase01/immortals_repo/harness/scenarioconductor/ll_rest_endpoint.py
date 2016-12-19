@@ -102,18 +102,39 @@ class LLRestEndpoint(bottle.Bottle):
 
 
 def _submit_deployment_model_inner(s_conf, sr, action):
-    execute_ttl_generation(s_conf)
-    deployment_file = ph(True, ig.IMMORTALS_ROOT, 'models/scenario/deployment_model.ttl')
-    ig.logger().artifact_file(deployment_file)
-    ar = execute_das_submission(deployment_file)
-    sr.adaptationResult = ar
-    sr.adaptationFinished = True
+    base_s_conf = ScenarioConductorConfiguration.from_dict(json.load(open(
+        ph(True, ig.IMMORTALS_ROOT, 'harness/scenarioconductor/configs/base_submission.json'))))
 
-    if ar.adaptationStatusValue == 'SUCCESSFUL':
+    if base_s_conf.equals(s_conf):
+        ar = AdaptationResult(
+            "NOT_NECESSARY",
+            [],
+            '',
+            'Adaptation is not necessary since the base configuration was provided',
+            'None',
+            s_conf.sessionIdentifier
+        )
+        sr.adaptationResult = ar
+        sr.adaptationFinished = True
+
+    else:
+        execute_ttl_generation(s_conf)
+        deployment_file = ph(True, ig.IMMORTALS_ROOT, 'models/scenario/deployment_model.ttl')
+        ig.logger().artifact_file(deployment_file)
+        ar = execute_das_submission(deployment_file)
+        sr.adaptationResult = ar
+        sr.adaptationFinished = True
+
+    if ar.adaptationStatusValue == 'SUCCESSFUL' or ar.adaptationStatusValue == 'NOT_NECESSARY':
         d = sr.to_dict()
         ig.logger().submit_action(action, d)
         ig.logger().log_das_info(json.dumps(d))
-        vr = execute_validation(s_conf)
+
+        if ar.adaptationStatusValue == 'SUCCESSFUL':
+            vr = execute_validation(s_conf)
+        else:
+            vr = execute_baseline_validation(s_conf)
+
         sr.validationResult = vr
         sr.validationFinished = True
         ig.logger().submit_action(action, sr.to_dict())
@@ -144,6 +165,18 @@ def execute_validation(scenario_configuration):
     s_conductor = ScenarioConductor(
         scenario_configuration=scenario_configuration,
         scenario_template_tag='validation',
+        swallow_and_shutdown_on_exception=False)
+    result = s_conductor.execute()
+    return result
+
+
+def execute_baseline_validation(scenario_configuration):
+    """
+    :rtype: ValidationResult
+    """
+    s_conductor = ScenarioConductor(
+        scenario_configuration=scenario_configuration,
+        scenario_template_tag='baseline',
         swallow_and_shutdown_on_exception=False)
     result = s_conductor.execute()
     return result

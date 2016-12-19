@@ -33,6 +33,12 @@ class ReportingInterface:
     def artifact_file(self, source_filepath, target_subpath=None):
         raise NotImplementedError
 
+    def log_das_info(self, message, event_time_s=None):
+        raise NotImplementedError
+
+    def log_das_error(self, message, event_time_s=None):
+        raise NotImplementedError
+
     def write_artifact_to_file(self, str_to_write, target_subpath, clobber_existing=True):
         """
         :param str str_to_write:
