@@ -18,6 +18,21 @@ def get_timestamp(time_seconds=None):
 
 
 class AbstractReporter(ReportingInterface):
+    def adapting(self, message, event_time_s=None):
+        self._submit_status(status='ADAPTING', message=message, event_time_s=event_time_s)
+
+    def adaptation_initiated(self, message, event_time_s=None):
+        self._submit_status(status='ADAPTATION_INITIATED', message=message, event_time_s=event_time_s)
+
+    def mission_resumed(self, message, event_time_s=None):
+        self._submit_status(status='MISSION_RESUMED', message=message, event_time_s=event_time_s)
+
+    def mission_suspended(self, message, event_time_s=None):
+        self._submit_status(status='MISSION_SUSPENDED', message=message, event_time_s=event_time_s)
+
+    def adaptation_completed(self, message, event_time_s=None):
+        self._submit_status(status='ADAPTATION_COMPLETED', message=message, event_time_s=event_time_s)
+
     def __init__(self, log_filepath, artifact_dirpath, log_error_to_net=False):
         self.log_filepath = log_filepath
         self.artifact_dirpath = artifact_dirpath

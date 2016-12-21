@@ -34,4 +34,7 @@ Root is (ab)used and used for everything at the moment since it runs in a self-c
 ## Other Notes
 The run artifacts (which take up about 100M each) are not automatically cleared from the DAS and there is not yet a
  rest command to clear them. They must be cleared manually by removing the directory corresponding to each run 
- identifier in ~/immortals_repo/PRODUCTS  
+ identifier in ~/immortals_repo/PRODUCTS
+ ADAPTATION_TIMEOUT: 5 minutes (15 if the DAS startup issues are still there)
+ TRIAL_TIMEOUT: 10 minutes
+

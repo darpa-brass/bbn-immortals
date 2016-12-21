@@ -21,6 +21,12 @@ class ReportingInterface:
     def perturbation_detected(self, message, event_time_s=None):
         raise NotImplementedError
 
+    def mission_suspended(self, message, event_time_s=None):
+        raise NotImplementedError
+
+    def mission_resumed(self, message, event_time_s=None):
+        raise NotImplementedError
+
     def mission_halted(self, message, event_time_s=None):
         raise NotImplementedError
 
@@ -28,6 +34,15 @@ class ReportingInterface:
         raise NotImplementedError
 
     def mission_test_error(self, message, event_time_s=None):
+        raise NotImplementedError
+
+    def adaptation_initiated(self, message, event_time_s=None):
+        raise NotImplementedError
+
+    def adapting(self, message, event_time_s=None):
+        raise NotImplementedError
+
+    def adaptation_completed(self, message, event_time_s=None):
         raise NotImplementedError
 
     def artifact_file(self, source_filepath, target_subpath=None):

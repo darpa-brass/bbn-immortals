@@ -73,7 +73,6 @@ class LLRestEndpoint(bottle.Bottle):
                     bottle.abort()
 
                 else:
-                    ig.logger().perturbation_detected("New deployment Model received.")
                     sr = SubmissionResult(
                         s_conf.sessionIdentifier,
                         False,
@@ -81,14 +80,13 @@ class LLRestEndpoint(bottle.Bottle):
                         None,
                         None
                     )
+                    ig.logger().perturbation_detected(sr.to_dict())
 
                     ig.logger().log_das_info(sr.to_dict())
 
                     self.synthesis_history[s_conf.sessionIdentifier] = sr
 
-                    tpr.start_thread(thread_method=_submit_deployment_model_inner,
-                                     thread_args=[s_conf, sr, 'submitDeploymentModel'],
-                                     swallow_and_shutdown_on_exception=True)
+                    sr = _submit_deployment_model_inner(s_conf, sr, 'submitDeploymentModel')
 
                     return_val = {
                         'TIME': get_timestamp(),
@@ -122,13 +120,19 @@ def _submit_deployment_model_inner(s_conf, sr, action):
         deployment_file = ph(True, ig.IMMORTALS_ROOT, 'models/scenario/deployment_model.ttl')
         ig.logger().artifact_file(deployment_file)
         ar = execute_das_submission(deployment_file)
-        sr.adaptationResult = ar
-        sr.adaptationFinished = True
+
+        if ar.adaptationStatusValue == 'SUCCESSFUL':
+            ig.logger().adaptation_initiated(sr.to_dict())
+            sr.adaptationResult = ar
+            sr.adaptationFinished = True
+            ig.logger().adaptation_completed(sr.to_dict())
+            ig.logger().log_das_info(sr.to_dict())
+
+        elif ar.adaptationStatusValue == 'NOT_NECESSARY':
+            sr.adaptationResult = ar
+            sr.adaptationFinished = True
 
     if ar.adaptationStatusValue == 'SUCCESSFUL' or ar.adaptationStatusValue == 'NOT_NECESSARY':
-        d = sr.to_dict()
-        ig.logger().submit_action(action, d)
-        ig.logger().log_das_info(json.dumps(d))
 
         if ar.adaptationStatusValue == 'SUCCESSFUL':
             vr = execute_validation(s_conf)
@@ -137,13 +141,13 @@ def _submit_deployment_model_inner(s_conf, sr, action):
 
         sr.validationResult = vr
         sr.validationFinished = True
-        ig.logger().submit_action(action, sr.to_dict())
         ig.logger().log_das_info(json.dumps(sr.to_dict()))
+        return sr
 
     else:
         sr.validationFinished = True
-        ig.logger().submit_action(action, sr.to_dict())
         ig.logger().log_das_info(json.dumps(sr.to_dict()))
+        return sr
 
 
 def execute_das_submission(deployment_model_path):
