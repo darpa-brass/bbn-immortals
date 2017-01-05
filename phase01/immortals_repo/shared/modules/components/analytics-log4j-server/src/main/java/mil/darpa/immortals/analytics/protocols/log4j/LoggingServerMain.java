@@ -3,6 +3,7 @@ package mil.darpa.immortals.analytics.protocols.log4j;
 
 import io.airlift.airline.*;
 import mil.darpa.immortals.analytics.validators.ValidatorManager;
+import mil.darpa.immortals.analytics.validators.Validators;
 import mil.darpa.immortals.core.analytics.Analytics;
 import mil.darpa.immortals.core.analytics.AnalyticsStdoutEndpoint;
 import org.slf4j.event.Level;
@@ -72,7 +73,7 @@ public class LoggingServerMain {
             try {
                 if (validatorIdentifiers.size() == 0) {
                     String errorMessage = "\"No validators specified! Valid validators:";
-                    for (String validatorIdentifier : ValidatorManager.VALIDATOR_IDENTIFIERS) {
+                    for (String validatorIdentifier : Validators.getValidatorIdentifierList()) {
                         errorMessage += ("\n\t" + validatorIdentifier);
                     }
                     errorMessage += ("\n\tall");

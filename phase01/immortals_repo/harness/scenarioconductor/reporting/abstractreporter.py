@@ -21,9 +21,6 @@ class AbstractReporter(ReportingInterface):
     def adapting(self, message, event_time_s=None):
         self._submit_status(status='ADAPTING', message=message, event_time_s=event_time_s)
 
-    def adaptation_initiated(self, message, event_time_s=None):
-        self._submit_status(status='ADAPTATION_INITIATED', message=message, event_time_s=event_time_s)
-
     def mission_resumed(self, message, event_time_s=None):
         self._submit_status(status='MISSION_RESUMED', message=message, event_time_s=event_time_s)
 
@@ -44,13 +41,6 @@ class AbstractReporter(ReportingInterface):
 
         self._is_ready = False
 
-    def _log_to_file(self, log_type, message, event_time_s=None):
-        self._log.write(json.dumps({
-            'TIME': get_timestamp(event_time_s),
-            'TYPE': log_type,
-            'MESSAGE': message
-        }))
-
     def _submit_error(self, error, message, event_time_s=None):
         raise NotImplementedError
 
@@ -66,14 +56,14 @@ class AbstractReporter(ReportingInterface):
     def log_das_info(self, message, event_time_s=None):
         self._log.write(json.dumps({
             'TIME': get_timestamp(event_time_s),
-            'TYPE': 'DAS_INFO',
+            'TYPE': 'INFO',
             'MESSAGE': message
         }))
 
     def log_das_error(self, message, event_time_s=None):
         self._log.write(json.dumps({
             'TIME': get_timestamp(event_time_s),
-            'ERROR': 'RUNTIME' if self._is_ready else 'RUNTIME',
+            'TYPE': 'RUNTIME_ERROR' if self._is_ready else 'STARTUP_ERROR',
             'MESSAGE': message
         }))
 
@@ -102,13 +92,13 @@ class AbstractReporter(ReportingInterface):
             tb0 = traceback.format_exc()
 
         try:
-            self._submit_error(error='DAS_ERROR', message=message, event_time_s=event_time_s)
+            self._submit_error(error='DAS_OTHER_ERROR', message=message, event_time_s=event_time_s)
         except Exception as e:
             e1 = e
             tb1 = traceback.format_exc()
 
         if e0 is not None:
-            self._submit_error(error='DAS_ERROR', message=tb0, event_time_s=event_time_s)
+            self._submit_error(error='DAS_OTHER_ERROR', message=tb0, event_time_s=event_time_s)
             raise e0
         elif e1 is not None:
             self.log_das_error(message=tb1, event_time_s=event_time_s)

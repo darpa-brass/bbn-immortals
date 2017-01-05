@@ -40,7 +40,7 @@ class TestResult:
 class ValidationResult:
     """
     :type testDurationMS: long
-    :type results TestResult
+    :type results list[TestResult]
     """
 
     @classmethod

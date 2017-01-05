@@ -36,9 +36,6 @@ class ReportingInterface:
     def mission_test_error(self, message, event_time_s=None):
         raise NotImplementedError
 
-    def adaptation_initiated(self, message, event_time_s=None):
-        raise NotImplementedError
-
     def adapting(self, message, event_time_s=None):
         raise NotImplementedError
 

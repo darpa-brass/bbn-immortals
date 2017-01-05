@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import SocketServer
 import argparse
+import json
 import logging
 
 from .packages import bottle
-from .packages import commentjson as json
 from .packages import requests
 
 TH_PORT = 80
@@ -52,7 +52,7 @@ class LLHarness(bottle.Bottle):
         self.route(path='/error', method='POST', callback=self._error)
         self.route(path='/ready', method='POST', callback=self._ready)
         self.route(path='/status', method='POST', callback=self._status)
-        self.route(path='/action/<target>', method='GET', callback=self._action)
+        self.route(path='/action/<target>', method='POST', callback=self._action)
 
     @staticmethod
     def _error():
@@ -68,13 +68,16 @@ class LLHarness(bottle.Bottle):
 
         obj_s = open('sample_submission.json', 'r').read()
 
-        _network_logger.info('TH SENDING GET /action/submitDeploymentModel\n')
+        _network_logger.info('TH SENDING POST /action/adaptAndValidateApplication\n')
+        url = URL_TEMPLATE.format(path='action/adaptAndValidateApplication')
+        r = requests.post(url=url,
+                          headers=JSON_HEADERS,
+                          data=obj_s
+                          )
 
-        url = URL_TEMPLATE.format(path='action/submitDeploymentModel')
-        r = requests.get(url=url,
-                         headers=JSON_HEADERS,
-                         data=obj_s
-                         )
+        # _network_logger.info('TH SENDING POST /action/validateBaselineApplication\n')
+        # url = URL_TEMPLATE.format(path='action/validateBaselineApplication')
+        # r = requests.post(url=url)
 
         ack_body = r.text
         log_body = None
@@ -87,21 +90,21 @@ class LLHarness(bottle.Bottle):
         if log_body is None:
             log_body = ack_body
 
-        _network_logger.info('TH RECEIVED ACK for GET /action/submitDeploymentModel of ' + str(r.status_code) +
+        _network_logger.info('TH RECEIVED ACK for POST /action/adaptAndValidateApplication of ' + str(r.status_code) +
                              ' with BODY: ' + log_body + '\n')
 
     @staticmethod
     def _status():
         obj_j = bottle.request.json
         _network_logger.info(
-            'TH RECEIVED GET /status with BODY: ' + json.dumps(obj_j, indent=4, separators=(',', ': ')) + '\n')
+            'TH RECEIVED POST /status with BODY: ' + json.dumps(obj_j, indent=4, separators=(',', ': ')) + '\n')
 
     @staticmethod
     def _action(target):
         obj_j = bottle.request.json
-        _network_logger.info('TH RECEIVED GET /action/' + target + ' with BODY: ' + json.dumps(obj_j, indent=4,
-                                                                                               separators=(
-                                                                                                   ',', ': ')) + '\n')
+        _network_logger.info('TH RECEIVED POST /action/' + target + ' with BODY: ' + json.dumps(obj_j, indent=4,
+                                                                                                separators=(
+                                                                                                    ',', ': ')) + '\n')
 
 
 def main():

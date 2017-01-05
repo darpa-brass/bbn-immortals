@@ -36,7 +36,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class LocationProviderBluetoothGpsSimulated {
 
     private static final String providerIdentifier_ = "LocationProviderBluetoothGpsSimulated";
-    private static final String HOW = "m-g-s";
+    private static final String HOW = "m-g-s-b";
 
     private LocationProviderSimulatedImpl locationProvider;
 

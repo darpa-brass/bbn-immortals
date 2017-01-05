@@ -193,7 +193,7 @@ class ScenarioRunner:
                 client_identifiers = []
 
                 for client in self.runner_config.scenario.deploymentApplications:  # type: ApplicationConfig
-                    if client.applicationIdentifier == 'ATAKLite':
+                    if client.applicationIdentifier == 'ATAKLite' or client.applicationIdentifier == 'ataklite':
                         client_identifiers.append(client.instanceIdentifier)
 
                 self.behaviorvalidator = BehaviorValidator(self.runner_config)

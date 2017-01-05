@@ -3,33 +3,65 @@ from validationresult import ValidationResult
 
 
 # noinspection PyPep8Naming
+class ValidationStateContainer:
+    """
+    :type status: string
+    :type details: ValidationResult
+    """
+
+    def __init__(self,
+                 status,
+                 details):
+        self.status = status
+        self.details = details
+
+    def to_dict(self):
+        return {
+            'status': self.status,
+            'details': None if self.details is None else self.details.to_dict()
+        }
+
+
+# noinspection PyPep8Naming
+class AdaptationStateContainer:
+    """
+    :type status: string
+    :type details: AdaptationResult
+    """
+
+    def __init__(self,
+                 status,
+                 details):
+        self.status = status
+        self.details = details
+
+    def to_dict(self):
+        return {
+            'status': self.status,
+            'details': None if self.details is None else self.details.to_dict()
+        }
+
+
+# noinspection PyPep8Naming
 class SubmissionResult:
     """
     :type identifier: string
-    :type adaptationFinished: bool
-    :type validationFinished: bool
-    :type adaptationResult: AdaptationResult
-    :type validationResult: ValidationResult
+    :type adaptation: AdaptationStateContainer
+    :type validation: ValidationStateContainer
     """
 
     def __init__(self,
                  identifier,
-                 adaptationFinished,
-                 validationFinished,
-                 adaptationResult,
-                 validationResult
+                 adaptation,
+                 validation
                  ):
         self.identifier = identifier
-        self.adaptationFinished = adaptationFinished
-        self.validationFinished = validationFinished
-        self.adaptationResult = adaptationResult
-        self.validationResult = validationResult
+        self.adaptation = adaptation
+        self.validation = validation
 
     def to_dict(self):
         return {
             'identifier': self.identifier,
-            'adaptationFinished': self.adaptationFinished,
-            'validationFinished': self.validationFinished,
-            'adaptationResult': None if self.adaptationResult is None else self.adaptationResult.to_dict(),
-            'validationResult': None if self.validationResult is None else self.validationResult.to_dict()
+            'adaptation': None if self.adaptation is None else self.adaptation.to_dict(),
+            'validation': None if self.adaptation is None else self.validation.to_dict()
         }

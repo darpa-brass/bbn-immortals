@@ -14,9 +14,9 @@ import java.util.Set;
 /**
  * Created by awellman@bbn.com on 8/2/16.
  */
-public class ClientLocationUpdateValidator extends AbstractClientEventValidator {
+public class ClientLocationProduceValidator extends AbstractClientEventValidator {
 
-    public ClientLocationUpdateValidator(@Nonnull Set<String> clientIdentifiers) {
+    public ClientLocationProduceValidator(@Nonnull Set<String> clientIdentifiers) {
         super(clientIdentifiers);
     }
 

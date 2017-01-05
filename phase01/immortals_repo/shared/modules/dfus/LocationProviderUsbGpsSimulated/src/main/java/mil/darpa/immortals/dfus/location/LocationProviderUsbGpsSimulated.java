@@ -35,7 +35,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class LocationProviderUsbGpsSimulated {
 
     private static final String PROFILE_IDENTIFIER = "LocationProviderUsbGpsSimulated";
-    private static final String HOW = "m-g-s";
+    private static final String HOW = "m-g-s-u";
 
     private LocationProviderSimulatedImpl locationProvider;
 

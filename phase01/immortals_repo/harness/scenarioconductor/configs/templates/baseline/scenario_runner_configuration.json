@@ -1,0 +1,47 @@
+{
+    "sessionIdentifier": "{sessionIdentifier}",
+    "deploymentDirectory": "{runtimeRoot}/{sessionIdentifier}/baseline/deployment_environment/",
+    "scenario": {
+        "scenarioIdentifier": "baseline",
+        "durationMS": 30000,
+        "deploymentApplications": [
+            {
+                "applicationIdentifier": "marti",
+                "instanceIdentifier": "martiRouter_DAS",
+                "deploymentPlatformEnvironment": "java_local",
+                "buildRoot": "applications/server/Marti/",
+                "executableFile": "applications/server/Marti/Marti-immortals.jar",
+                "applicationDeploymentDirectory": "{deploymentDirectory}{instanceIdentifier}/",
+                "configurationTemplateFilepath": "harness/scenarioconductor/configs/templates/{scenarioIdentifier}/marti-CoreConfig.xml",
+                "configurationTargetFilepath": "{applicationDeploymentDirectory}CoreConfig.xml",
+                "files": {},
+                "filesForCleanup": [
+                    "{deploymentDirectory}{instanceIdentifier}"
+                ],
+                "properties": {}
+            }
+        ],
+        "validatorIdentifiers": [
+            "client-location-share",
+            "client-location-produce",
+            "client-image-share",
+            "client-image-produce"
+        ]
+    },
+    "validate": true,
+    "displayEmulatorGui": false,
+    "startEmulatorsSimultaneously": true,
+    "swallowAndShutdownOnException": true,
+    "minDurationMS": 0,
+    "debugMode": false,
+    "lifecycle": {
+        "setupEnvironment": true,
+        "setupApplications": true,
+        "executeScenario": true,
+        "haltEnvironment": false
+    },
+    "setupEnvironmentLifecycle": {
+        "destroyExisting": false,
+        "cleanExisting": true
+    }
+}

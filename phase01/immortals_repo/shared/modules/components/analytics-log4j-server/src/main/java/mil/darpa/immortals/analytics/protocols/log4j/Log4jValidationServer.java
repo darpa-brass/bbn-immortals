@@ -7,6 +7,7 @@ import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.FileAppender;
 import mil.darpa.immortals.analytics.L;
 import mil.darpa.immortals.analytics.validators.ValidatorManager;
+import mil.darpa.immortals.analytics.validators.Validators;
 import mil.darpa.immortals.analytics.validators.result.ValidationResults;
 import mil.darpa.immortals.analytics.validators.result.ValidationResultsListener;
 import mil.darpa.immortals.core.analytics.Analytics;
@@ -89,7 +90,7 @@ class Log4jValidationServer extends Thread implements ValidationResultsListener 
         List<String> identifiers = Arrays.asList(validatorIdentifiers);
 
         if (identifiers.contains("all")) {
-            identifiers = new ArrayList(ValidatorManager.VALIDATOR_IDENTIFIERS);
+            identifiers = new ArrayList(Validators.getValidatorIdentifierList());
         }
 
         for (String validatorIdentifier : identifiers) {

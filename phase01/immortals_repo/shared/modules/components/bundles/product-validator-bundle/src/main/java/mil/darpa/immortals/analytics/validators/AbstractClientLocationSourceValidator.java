@@ -10,12 +10,13 @@ import mil.darpa.immortals.datatypes.Coordinates;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Created by awellman@bbn.com on 11/10/16.
  */
-public class TrustedLocationValidator implements ValidatorInterface {
+public abstract class AbstractClientLocationSourceValidator implements ValidatorInterface {
 
     private final AnalyticsEventType EVENT_TYPE = AnalyticsEventType.MyLocationProduced;
 
@@ -23,15 +24,14 @@ public class TrustedLocationValidator implements ValidatorInterface {
 
     private final HashMap<String, LinkedList<String>> howMap = new HashMap<>();
 
+    abstract List<String> getValidLocationTags();
 
     private final Gson gson = new Gson();
 
-    public TrustedLocationValidator(@Nonnull Set<String> clientIdentifiers) {
+    public AbstractClientLocationSourceValidator(@Nonnull Set<String> clientIdentifiers) {
         for (String str : clientIdentifiers) {
             howMap.put(str, new LinkedList<>());
         }
-
-//        expectedClients = new HashSet<>(clientIdentifiers);
     }
 
     @Override
@@ -47,10 +47,6 @@ public class TrustedLocationValidator implements ValidatorInterface {
         }
     }
 
-    @Override
-    public String getValidatorName() {
-        return "client-location-trusted";
-    }
 
     @Override
     public synchronized ValidatorResult attemptValidation() {
@@ -65,7 +61,7 @@ public class TrustedLocationValidator implements ValidatorInterface {
                     validationErrors.add(clientIdentifier + " has not produced any locations!");
                 } else {
                     for (String how : howList) {
-                        if (!how.startsWith("m-r-p") && !how.startsWith("m-r-e") && !how.startsWith("m-r-t")) {
+                        if (!getValidLocationTags().contains(how)) {
                             validationErrors.add(clientIdentifier + " has produced an untrusted location of type " + how + "!");
                             state = new ValidatorResult(getValidatorName(), ValidatorState.FAILED, validationErrors, detailMessages);
                             return state;

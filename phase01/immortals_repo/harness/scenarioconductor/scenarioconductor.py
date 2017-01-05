@@ -48,7 +48,7 @@ class ScenarioConductor:
                                                                                swallow_and_shutdown_on_exception)
 
         if 'trustedLocations' in self.sc.clients[0].requiredProperties:
-            self.src.scenario.validatorIdentifiers.append('client-location-trusted')
+            self.src.scenario.validatorIdentifiers.append('client-location-source-trusted')
 
         if self.sc.clients[0].imageBroadcastIntervalMS > 0:
             self.src.scenario.validatorIdentifiers.append('client-image-produce')

@@ -1,0 +1,29 @@
+{
+    "applicationIdentifier": "ataklite",
+    "instanceIdentifier": "ATAKLite-{sessionIdentifier}_{CCID}-{CID}",
+    "deploymentPlatformEnvironment": "android_emulator",
+    "buildRoot": "applications/client/ATAKLite/",
+    "executableFile": "applications/client/ATAKLite/ATAKLite-debug.apk",
+    "applicationDeploymentDirectory": "{deploymentDirectory}{instanceIdentifier}/",
+    "configurationTemplateFilepath": "harness/scenarioconductor/configs/templates/baseline/ATAKLite-Config.json",
+    "configurationTargetFilepath": "/sdcard/ataklite/ATAKLite-Config.json",
+    "packageIdentifier": "com.bbn.ataklite",
+    "mainActivity": "com.bbn.ataklite.MainActivity",
+    "permissions": [
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE"
+    ],
+    "files": {
+        "harness/scenarioconductor/configs/templates/baseline/sample_image.jpg": "/sdcard/ataklite/sample_image.jpg"
+    },
+    "filesForCleanup": [
+        "/sdcard/ataklite"
+    ],
+    "properties": {
+        "callsign": "{instanceIdentifier}",
+        "latestSABroadcastIntervalMS": 1000,
+        "imageBroadcastIntervalMS": 2000
+    }
+}
