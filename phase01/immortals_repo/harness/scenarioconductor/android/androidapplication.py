@@ -7,7 +7,7 @@ import json
 from .. import platformhelper
 from ..data.applicationconfig import AndroidApplicationConfig
 from ..deploymentplatform import LifecycleInterface
-from ..utils import path_helper
+from ..data.base.tools import path_helper
 
 _instances = {}
 
@@ -22,8 +22,8 @@ class AndroidApplication(LifecycleInterface):
     def __init__(self, application_configuration):
         if application_configuration.instanceIdentifier in _instances:
             raise Exception(
-                    'An AndroidApplication with the identifier "' + application_configuration.instanceIdentifier +
-                    '" has already been defined!')
+                'An AndroidApplication with the identifier "' + application_configuration.instanceIdentifier +
+                '" has already been defined!')
         else:
             _instances[application_configuration.instanceIdentifier] = self
 
@@ -40,30 +40,33 @@ class AndroidApplication(LifecycleInterface):
     def setup(self):
         self.platform.deploy_application(self.config.executableFile)
 
-        with open(self.config.configurationTemplateFilepath, 'r') as f:
-            atak_lite_config = json.load(f)
+        for source_path in self.config.configurationCustomizations:
 
-            for key in self.config.properties.keys():
-                property_path = key.split('.')
+            with open(source_path, 'r') as f:
+                config_file = json.load(f)
 
-                attr_parent = None
+                for key in self.config.configurationCustomizations[source_path].keys():
+                    property_path = key.split('.')
 
-                while len(property_path) > 1:
-                    key = property_path.pop(0)
-                    attr_parent = atak_lite_config[key]
+                    attr_parent = None
 
-                if attr_parent is None:
-                    attr_parent = atak_lite_config
+                    while len(property_path) > 1:
+                        key = property_path.pop(0)
+                        attr_parent = config_file[key]
 
-                attr_parent[property_path.pop(0)] = self.config.properties[key]
+                    if attr_parent is None:
+                        attr_parent = config_file
 
-            fp = path_helper(False, self.config.applicationDeploymentDirectory,
-                             self.config.configurationTemplateFilepath.split('/').pop())
+                    attr_parent[property_path.pop(0)] = self.config.configurationCustomizations[source_path][key]
 
-            with open(fp, 'w') as f2:
-                json.dump(atak_lite_config, f2)
+                fp = path_helper(False, self.config.applicationDeploymentDirectory, source_path.split('/').pop())
 
-            self.config.files[fp] = self.config.configurationTargetFilepath
+                with open(fp, 'w') as f2:
+                    json.dump(config_file, f2)
+
+                target_path = self.config.files[source_path]
+                self.config.files.pop(source_path)
+                self.config.files[fp] = target_path
 
         for source_filepath in self.config.files.keys():
             target_filepath = self.config.files[source_filepath]

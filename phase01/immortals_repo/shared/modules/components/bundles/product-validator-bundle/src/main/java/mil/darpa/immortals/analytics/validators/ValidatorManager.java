@@ -34,7 +34,7 @@ public class ValidatorManager {
     public synchronized void forceEndValidation() {
         if (runningValidators != null && !runningValidators.isEmpty()) {
             for (ValidatorInterface running : runningValidators) {
-                finishedValidators.add(running.attemptValidation());
+                finishedValidators.add(running.attemptValidation(true));
             }
             runningValidators.clear();
         }
@@ -64,8 +64,8 @@ public class ValidatorManager {
         L.analyticsEvent(event);
         for (ValidatorInterface validator : runningValidators) {
             validator.processEvent(event);
-            ValidatorResult result = validator.attemptValidation();
-            if (result.currentState == ValidatorState.PASSED || result.currentState == ValidatorState.FAILED) {
+            ValidatorResult result = validator.attemptValidation(false);
+            if (result.currentState == ValidatorState.SUCCESS || result.currentState == ValidatorState.FAILURE) {
                 finishedValidators.add(result);
                 validatorRemovalQueue.add(validator);
             }

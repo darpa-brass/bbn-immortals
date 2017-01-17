@@ -1,6 +1,7 @@
 # IMMoRTALS Test Adapter Instructions
 
 #### ADAPTATION_TIMEOUT:  15 minutes (TODO: Shorten this if the startup issues reported by Lincoln have been resolved)  
+
 #### TRIAL_TIMEOUT:  10 minutes
 
 ## Overview  
@@ -39,16 +40,18 @@ The DAS does not utilize any data placed in the /test/data directory, so it can 
 ## Data Dictionary  
 
 ### IM_TA_CONFIGURATION
-__TYPE__: JSON  
+__TYPE__: JSON
+
 __Description__: Miscellaneous configuration options exposed for troubleshooting and calibration purposes
 
-| Identifier            | Type  | Description                                                                                                       |
-|:----------------------|:-----:|:------------------------------------------------------------------------------------------------------------------|
-| minimumTestDurationMS | int   | The minimum amount of time for a test to run. May vary depending on client count, send rate, system specs, etc.   |
+| Identifier                       | Type  | Description                                                                                                        |
+|:---------------------------------|:-----:|:-------------------------------------------------------------------------------------------------------------------|
+| validation.minimumTestDurationMS | int   | The minimum amount of time for a test to run. May vary depending on client count, send rate, system specs, etc.    |
 
 
 ### IM_STATUS  
-__Type__: String Constant  
+__Type__: String Constant
+
 __Description__ : Indicates the current state of some functionality
 
 | Value             | Description                                                                                              |
@@ -61,49 +64,56 @@ __Description__ : Indicates the current state of some functionality
 
 
 ### IM_ADAPTATION_STATE
-__Type__: JSON  
+__Type__: JSON
+
 __Description__: The current state of an adaptation
 
-| Field     | Type          | Description                           |
-|:----------|:-------------:|:--------------------------------------|
-| status    | IM_STATUS     | The current status of the adaptation  |
-| details   | JSON          | Details related to the adaptation     |
+| Field             | Type          | Description                               |
+|:------------------|:-------------:|:------------------------------------------|
+| adaptationStatus  | IM_STATUS     | The current status of the adaptation      |
+| details           | JSON          | Internal data related to the adaptation   |
 
 
 #### IM_TEST_DETAILS
-__Type__: JSON  
+__Type__: JSON
+
 __Description__: The details for an executed test
 
-| Field     | Type      | Description                           |
-|:----------|:---------:|:--------------------------------------|
-| status    | IM_STATUS | The current status of the test        |
-| details   | JSON      | Details related to the test execution |
+| Field             | Type      | Description                                   |
+|:------------------|:---------:|:----------------------------------------------|
+| testIdentifier    | String    | The identifier for the test                   |
+| expectedStatus    | IM_STATUS | The expected resultant status of the test     |
+| actualStatus      | IM_STATUS | The current status of the test                |
+| details           | JSON      | Internal data related to the test execution   |
 
 
 ### IM_VALIDATION_STATE
-__Type__: JSON  
+__Type__: JSON
+
 __Description__ : A JSON-formatted resultant state for an individual test
 
-| Field             | Type              | Description                                                                                           |
-|:------------------|:-----------------:|:------------------------------------------------------------------------------------------------------|
-| applicableTests   | String List       | A list of the identifiers for the tests that must pass for the validation to be considered passing    |
-| executedTests     | IM_TEST_DETAILS   | The list of tests executed                                                                            |
-| status            | IM_STATUS         | Indicates the passing state of all applicableTests                                                    |
+| Field                     | Type              | Description                                                                                               |
+|:--------------------------|:-----------------:|:----------------------------------------------------------------------------------------------------------|
+| executedTests             | IM_TEST_DETAILS   | The list of tests executed                                                                                |
+| overallIntentStatus       | IM_STATUS         | Indicates whether or not all tests with a SUCCESS or FAILURE expectedStatus had a matching actualStatus   |
 
 
 ### IM_TA_STATE  
-__Type__: JSON  
+__Type__: JSON
+
 __Description__ : A high level overview indicating the state of an action submitted to the Test Adapter.
 
-| Identifier | Type                 | Description                                                           |
-|:-----------|:--------------------:|:----------------------------------------------------------------------|
-| identifier | String               | An identifier used identify the action the state is associated with   |
-| adaptation | IM_ADAPTATION_STATE  | Adaptaiton details                                                    |
-| validation | IM_VALIDATION_STATE  | Validation details                                                    |
+| Identifier    | Type                      | Description                                                               |
+|:--------------|:-------------------------:|:--------------------------------------------------------------------------|
+| identifier    | String                    | An identifier used identify the action the state is associated with       |
+| adaptation    | IM_ADAPTATION_STATE       | Adaptation details                                                        |
+| validation    | IM_VALIDATION_STATE       | Validation details                                                        |
+| rawLogData    | IM_ANALYTICS_EVENT list   | Raw log data that will only include the "combinedServerTrafficBytes" type |
 
 
 ### IM_ANALYTICS_EVENT
-__Type__: JSON  
+__Type__: JSON
+
 __Description__ : A message format that all data used for validation and analysis is transferred in
 
 | Identifier        | Type              | Description                                                                                                                   |
@@ -117,22 +127,13 @@ __Description__ : A message format that all data used for validation and analysi
 | data              | String            | Event data. May be JSON encoded if the dataType is not a primitive                                                            |
 
 
-### IM_RAW_VALIDATION_DATA
-__Type__: JSON  
-__Description__: A container that contains the raw data used for validation
-
-| Identifier    | Type                      | Description                                           |
-|:--------------|:-------------------------:|:------------------------------------------------------|
-| data          | IM_ANALYTICS_EVENT list   | A list of all the analysis events generated by the TA |
-
-
 ## Test Adapter Endpoints  
 
 ### validateBaselineApplication  
 * __URI__: http://brass-ta/action/validateBaselineApplication
-* __Description__ :  Submit a validation request to the  for the baseline application.  
-* __Body Description__:  NOT YET SUPPORTED!! (optional)  The deployment model to base the environment on.  If omitted, the baseline environment will be used.
-* __Body Example__ NOT YET SUPPORTED!! (From _immortals_repo/harness/sample_submission.json_):
+* __Description__ : Submit a validation request to the  for the baseline application.  
+* __Body Description__: (optional)  The deployment model to base the environment on.  If omitted, the baseline environment will be used.
+* __Body Example__ (From _immortals_repo/harness/sample_submission.json_):
     ```
     {
         "server": {
@@ -161,8 +162,8 @@ __Description__: A container that contains the raw data used for validation
   
 ### adaptAndValidateApplication  
 * __URI__: http://brass-ta/action/adaptAndValidateApplication
-* __Description__ :  Submit an adaption request to the DAS and validate it in the corresponding environment configuration.
-* __Body Description__:  (mandatory) The deployment model to submit to the DAS and base the environment on.
+* __Description__ : Submit an adaption request to the DAS and validate it in the corresponding environment configuration.
+* __Body Description__: (mandatory) The deployment model to submit to the DAS and base the environment on.
 * __Body Example__ (From _immortals_repo/harness/sample_submission.json_):
     ```
     {
@@ -191,9 +192,10 @@ __Description__: A container that contains the raw data used for validation
 * __Return Value__: IM_TA_STATE object containing the identifier.  Additional POSTs will be made to the TH with an updated IM_TA_STATE object updated as events occur.
 
 ## Test Harness Endpoints
+
 ### done
 * __URI__: http://brass-th/action/done
-* __Description__ :  Returns the results of the completed operations of the last TEST_ACTION message and indicates a terminal state for the associated TEST_ACTION
+* __Description__ : Returns the results of the completed operations of the last TEST_ACTION message and indicates a terminal state for the associated TEST_ACTION
 * __Body__: IM_TA_STATE object
 
 
@@ -205,9 +207,21 @@ __Description__: A container that contains the raw data used for validation
 ## General 
 
 ### Bandwidth data 
-The bandwidth data will be logged within the IM_RAW_VALIDATION_DATA after validation completes. Events associated with can be identified with the following details:  
+The bandwidth data will be logged in the rawLogData parameter of the IM_TA_STATE after validation completes. Events associated with can be identified with the following details and the mandatory timestamp (an initial traffic point of zero KBytes will be sent initially):
 
-* type: "combinedServerBandwidthMBps"
+* type: "combinedServerTrafficBytes"
 * eventSource: TBD
-* dataType: TBD
+* dataType: TBD (but a whole number of some sort)
 
+## Sample Execution (How we are doing it)
+
+1.  Extract a copy of the repository to the dummy Test Harness machine.
+2.  With a prepared Test Adapter image, (See Initial Online Setup above), start the machine hosting it, but do not execute the startup script.
+3.  Set up the host files on the TA and TH to point to one another
+4.  Create the "/test" and "/test/data" directory on the TA.
+5.  Execute the following command from the _immortals_root/harness_ directory on the Test Harness to start the dummy server:  
+    `./testing.py llds -tha 0.0.0.0 -thp 44444 -tap 55555 all`
+6.  This will start a "Lincoln Labs Dummy Server" on 'Test Harness Address' 0.0.0.0 (indicates all network interfaces) using the 'Test Harness Port' 44444, 'Test Adapter Port' 55555, and run 'all' tests (Baseline A, Baseline B, and Challenge) upon a ready signal.
+7.  Switch to the Test Adapter machine, and from the "immortals_root/harness" directory, execute the following command:
+    `./start_das.py -taa 0.0.0.0 -thp 44444 -tap 55555`
+8.  If all goes well, events should be occurring on the Test Adapter console and _immortals_root/harness/ll_dummy_server.log_ should display the network events as they occur.

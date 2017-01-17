@@ -10,9 +10,9 @@ import os
 import signal
 from threading import RLock
 
+from .data.base.validationresults import ValidationResults
 from . import threadprocessrouter as tpr
 from .data.applicationconfig import ApplicationConfig
-from .data.validationresult import ValidationResult
 from .immortalsglobals import configuration
 from .packages import commentjson as json
 from .packages.subprocess32 import Popen
@@ -73,16 +73,8 @@ class BehaviorValidator:
             self.monitor = tpr.start_thread(thread_method=BehaviorValidator.monitoroutput, thread_args=[self])
 
     def wait_for_validation_result(self):
-        counter = 0
-        duration = self.time_limit_ms / 1000
-
-        while counter < duration and self.server_running:
+        while self.server_running:
             tpr.sleep(1)
-            counter += 1
-
-        with self._lock:
-            if self.server_running:
-                self.stop()
 
         return self.result
 
@@ -114,7 +106,7 @@ class BehaviorValidator:
                         with open(self.deployment_path + 'results/evaluation_result.json', 'w') as f:
                             json.dump(result, f)
 
-                        validation_result = ValidationResult.from_dict(result)
+                        validation_result = ValidationResults.from_dict(result)
                         result = validation_result
                         self.result = validation_result
                         self.stop()

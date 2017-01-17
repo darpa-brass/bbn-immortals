@@ -4,6 +4,7 @@ apply plugin: immortals.DfuBase
 apply plugin: immortals.PublishJavaDfu
 
 dependencies {
+    compile project(':core')
     compile project(':datatypes:Coordinates')
     compile files(androidSDKJar)
 }

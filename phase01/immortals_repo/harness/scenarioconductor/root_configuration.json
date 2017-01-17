@@ -1,0 +1,113 @@
+{
+    // The location where all runtime and result files should be placed relative to the DAS root
+    "runtimeRoot": "{immortalsRoot}/PRODUCTS",
+    // Where the results of a DAS submission should be placed relative to the DAS root
+    "resultRoot": "{immortalsRoot}/PRODUCTS",
+    "dataRoot": "/test/data/",
+    "logRoot": "/test/log/",
+    "artifactRoot": "/test/debug/",
+    // Details relating to the codebase to immortalize
+    "immortalizationTarget": {
+        // The path of the codebase
+        "path": ""
+    },
+    // The environments that are valid for deployment. Be sure to synchronize any changes with platformhelper.py
+    "deploymentEnvironments": [
+        {
+            "identifier": "java_local",
+            "deploymentPlatform": "java",
+            "sdkLevel": 8
+        },
+        {
+            "identifier": "android_emulator",
+            "deploymentPlatform": "android",
+            "sdkLevel": 23
+        },
+        {
+            "identifier": "android_docker",
+            "deploymentPlatform": "android",
+            "sdkLevel": 23
+        },
+        {
+            "identifier": "android_dynamicanalysis",
+            "deploymentPlatform": "android",
+            "sdkLevel": 21
+        },
+        {
+            "identifier": "android_staticanalysis",
+            "deploymentPlatform": "android",
+            "sdkLevel": 23
+        }
+    ],
+    // Configuration details for running scenarios against generated results
+    "scenarioRunner": {
+        // The configuration relative to the DAS root
+        "configurationFile": "configs/scenarios.json",
+        // The android sdk level that will be used
+
+        // Configuration options specific to the droidscope docker instance
+        "docker": {
+            // This differs from the normal one for the following reasons:
+            // 1.  Droidscope does not support higher than 21
+            // 2.  Lower than 23 has issues with multiple emulators running concurrently.
+            //"androidSdkLevel" : 21,
+            // Scripts that may be used by a docker instance or its derivatives (relative to the DAS root)
+            "scripts": [
+                "das/das-analysis/docker/scripts/ds_hookup_package.expect",
+                "das/das-analysis/docker/scripts/ds_load_tracing_plugin.expect",
+                "das/das-analysis/docker/scripts/ds_start_emulator.sh",
+                "das/das-analysis/docker/scripts/android_staticanalysis.sh"
+            ]
+        }
+    },
+    // Fuseki configuration details
+    "fuseki": {
+        // The root directory of a fuseki runtime environment
+        "root": "/opt/apache-jena-fuseki-2.3.1/",
+        //"root" : "/usr/local/opt/fuseki/bin/",
+        // The port Fuseki should run on
+        "port": "3030"
+    },
+    // Immortals-Repository-Service configuration Details
+    "repositoryService": {
+        // The root location relative to the DAS root
+        "root": "{immortalsRoot}/knowledge-repo/knowledge-repo/repository-service/",
+        // THe executable file location relative to the DAS root
+        "executableFile": "{immortalsRoot}/knowledge-repo/knowledge-repo/repository-service/target/immortals-repository-service-boot.war",
+        // The port the repository service should run on
+        "port": "9999"
+    },
+    // das-service configuration
+    "dasService": {
+        "root": "{immortalsRoot}/das/das-service/",
+        "executableFile": "{immortalsRoot}/das/das-service/das.jar",
+        // The port the das-service should run on
+        "port": "8080"
+    },
+    "validationProgram": {
+        "root": "{immortalsRoot}/shared/modules/components/analytics-log4j-server",
+        "executableFile": "{immortalsRoot}/shared/modules/components/analytics-log4j-server/analytics-log4j-server-1.0-LOCAL.jar",
+        "baseParameters": [
+            "-c",
+            "validate"
+        ]
+    },
+    "testHarness": {
+        "enabled": true,
+        "protocol": "http://",
+        "url": "brass-th",
+        "port": 80
+    },
+    "testAdapter": {
+        "enabled": true,
+        "protocol": "http://",
+        "url": "brass-ta",
+        "port": 80
+    },
+    "validation": {
+        "minimumTestDurationMS": 10000
+    },
+    "androidEmulator": {
+        "displayEmulatorGui": false
+    }
+}

@@ -1,4 +1,4 @@
-from scenarioconductor.data.applicationconfig import ApplicationConfig
+from .applicationconfig import ApplicationConfig
 
 
 # noinspection PyPep8Naming

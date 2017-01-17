@@ -2,9 +2,9 @@
 
 import os
 
+from ..data.base.testharnessconfiguration import TestHarnessConfiguration
 from .abstractreporter import get_timestamp, AbstractReporter
 from .. import threadprocessrouter as tpr
-from ..data.testharnessconfiguration import TestHarnessConfiguration
 from ..packages import commentjson as json
 from ..packages import requests
 from ..threadprocessrouter import LoggingEndpoint
@@ -39,9 +39,9 @@ class TestHarnessReporter(AbstractReporter):
     def _submit_action(self, action, arguments, event_time_s=None):
         url = self._urlTemplate.format(path='action/' + action)
 
-        self._offline_endpoint.write('TA SENDING GET /action/' + action)
+        self._offline_endpoint.write('TA SENDING POST /action/' + action)
 
-        r = requests.get(url=url,
+        r = requests.post(url=url,
                          headers=_JSON_HEADERS,
                          data=json.dumps({
                              'TIME': get_timestamp(event_time_s),
@@ -119,7 +119,7 @@ class FakeTestHarnessReporter(AbstractReporter):
 
     # noinspection PyMethodMayBeStatic
     def _submit_action(self, action, arguments, event_time_s=None):
-        self._offline_endpoint.write('TA would SEND GET /action/' + action + ' with BODY: ' +
+        self._offline_endpoint.write('TA would SEND POST /action/' + action + ' with BODY: ' +
                                      json.dumps({
                                          'TIME': get_timestamp(event_time_s),
                                          'ARGUMENTS': arguments

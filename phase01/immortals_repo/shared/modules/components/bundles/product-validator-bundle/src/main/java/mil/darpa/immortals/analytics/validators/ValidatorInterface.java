@@ -12,6 +12,11 @@ public interface ValidatorInterface {
 
     String getValidatorName();
 
-    ValidatorResult attemptValidation();
+    /**
+     * Attempts validation
+     * @param terminalState If true, currently running validators listening for potential violations should assume they are done listening
+     * @return The results
+     */
+    ValidatorResult attemptValidation(boolean terminalState);
 
 }

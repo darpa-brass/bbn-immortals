@@ -4,27 +4,19 @@ import os
 import re
 import traceback
 
-from data.validationresult import TestResult
+from data.base.adaptationresult import AdaptationResult
+from data.base.scenarioapiconfiguration import ScenarioConductorConfiguration
+from data.base.validationresults import ValidationResults
 from . import immortalsglobals as ig
 from . import threadprocessrouter as tpr
-from .data.adaptationresult import AdaptationResult
-from .data.scenarioapiconfiguration import ScenarioConductorConfiguration
-from .data.submissionresult import AdaptationStateContainer, SubmissionResult, ValidationStateContainer
+from . import validation
+from .data.base.tools import path_helper as ph
+from .ll_api.data import AdaptationState, Status, TestAdapterState, ValidationState, TestDetails
 from .packages import bottle, requests
 from .reporting.abstractreporter import get_timestamp
 from .scenarioconductor import ScenarioConductor
-from .utils import path_helper as ph
 
 _VALID_SESSION_IDENTIFIER_REGEX = "^[A-Za-z]+[A-Za-z0-9]*$"
-
-
-# noinspection PyClassHasNoInit
-class Status:
-    PENDING = 'PENDING'
-    NOT_APPLICABLE = 'NOT_APPLICABLE'
-    RUNNING = 'RUNNING'
-    SUCCESS = 'SUCCESS'
-    FAILURE = 'FAILURE'
 
 
 class LLRestEndpoint(bottle.Bottle):
@@ -55,25 +47,60 @@ class LLRestEndpoint(bottle.Bottle):
                    callback=self.validate_baseline_application)
 
     def validate_baseline_application(self):
+        # noinspection PyBroadException
+        data_s = bottle.request.body.read()
 
-        if bottle.request.content_length > 0:
-            ig.logger().error_das(
-                'Validation of the baseline application in a perturbed environment is not yet supported!'
-            )
-            return bottle.HTTPResponse(status=400, body=None)
+        if data_s is None or data_s == '':
+            env_conf = ScenarioConductorConfiguration.from_dict(
+                json.load(open(
+                    ph(True, ig.IMMORTALS_ROOT,
+                       'harness/scenarioconductor/configs/samples/scenarioconfiguration-baseline.json'))))
 
-        env_conf = ScenarioConductorConfiguration.from_dict(
-            json.load(open(ph(True, ig.IMMORTALS_ROOT, 'harness/scenarioconductor/configs/base_submission.json'))))
-        app_conf = env_conf
+        else:
+            # noinspection PyBroadException
+            try:
+                data_s = bottle.request.body.read()
+                data_j = json.loads(data_s)
+            except:
+                ig.logger().error_das(
+                    'Error attempting to parse the submitted data as json.'
+                    '  Are you sure it is well-formed?. Details:\n\t' + traceback.format_exc())
+                return bottle.HTTPResponse(status=400, body=None)
+
+            self._network_logger.write(
+                'TA RECEIVED POST /action/adaptAndValidateApplication with BODY: ' + json.dumps(data_j, indent=4,
+                                                                                                separators=(
+                                                                                                    ',', ': ')))
+            # noinspection PyBroadException
+            try:
+                env_conf = ScenarioConductorConfiguration.from_dict(data_j)
+            except:
+                # data contents error
+                ig.logger().error_das(
+                    'Error attempting to parse the JSON data to an object.'
+                    ' Are you sure all fields are valid? Details:\n\t' + traceback.format_exc())
+                return bottle.HTTPResponse(status=400, body=None)
+
+            if not re.match(_VALID_SESSION_IDENTIFIER_REGEX, env_conf.sessionIdentifier):
+                ig.logger().error_das(
+                    'Invalid sessionIdentifier. Are you sure it starts'
+                    ' with a letter and contains only letters and numbers?'
+                )
+                return bottle.HTTPResponse(status=400, body=None)
 
         # noinspection PyTypeChecker
-        sr = SubmissionResult(
+        sr = TestAdapterState(
             identifier=env_conf.sessionIdentifier,
-            adaptation=AdaptationStateContainer(Status.NOT_APPLICABLE, None),
-            validation=ValidationStateContainer(Status.PENDING, None)
+            adaptation=AdaptationState(
+                adaptationStatus=Status.NOT_APPLICABLE,
+                details=None
+            ),
+            validation=ValidationState(
+                executedTests=None,
+                overallIntentStatus=Status.PENDING
+            ),
+            rawLogData=None
         )
-
-        # ig.logger().perturbation_detected(sr.to_dict())
 
         self.synthesis_history[env_conf.sessionIdentifier] = sr
 
@@ -86,7 +113,7 @@ class LLRestEndpoint(bottle.Bottle):
 
         tpr.start_thread(
             thread_method=_perform_validation,
-            thread_args=[app_conf, env_conf, sr, 'baseline']
+            thread_args=[env_conf, sr, 'baseline']
         )
 
         self._network_logger.write('TA SENDING ACK /action/adaptAndValidateApplication with BODY: ' +
@@ -127,10 +154,17 @@ class LLRestEndpoint(bottle.Bottle):
             return bottle.HTTPResponse(status=400, body=None)
 
         # noinspection PyTypeChecker
-        sr = SubmissionResult(
+        sr = TestAdapterState(
             identifier=s_conf.sessionIdentifier,
-            adaptation=AdaptationStateContainer(Status.PENDING, None),
-            validation=ValidationStateContainer(Status.PENDING, None)
+            adaptation=AdaptationState(
+                adaptationStatus=Status.PENDING,
+                details=None
+            ),
+            validation=ValidationState(
+                executedTests=None,
+                overallIntentStatus=Status.PENDING
+            ),
+            rawLogData=None
         )
 
         self.synthesis_history[s_conf.sessionIdentifier] = sr
@@ -145,7 +179,7 @@ class LLRestEndpoint(bottle.Bottle):
 
         tpr.start_thread(
             thread_method=_perform_adaptation_and_validation,
-            thread_args=[s_conf, s_conf, sr]
+            thread_args=[s_conf, sr]
         )
 
         self._network_logger.write('TA SENDING ACK /action/adaptAndValidateApplication with BODY:'
@@ -154,14 +188,13 @@ class LLRestEndpoint(bottle.Bottle):
         return return_val
 
 
-def _perform_adaptation_and_validation(app_conf, env_conf, result_container, scenario_template_tag='validation'):
+def _perform_adaptation_and_validation(env_conf, result_container, scenario_template_tag='validation'):
     _perform_adaptation(
-        app_conf=app_conf,
+        app_conf=env_conf,
         result_container=result_container
     )
-    if result_container.adaptation.status == Status.SUCCESS:
+    if result_container.adaptation.adaptationStatus == Status.SUCCESS:
         _perform_validation(
-            app_conf=app_conf,
             env_conf=env_conf,
             result_container=result_container,
             scenario_template_tag=scenario_template_tag
@@ -177,38 +210,89 @@ def _perform_adaptation(app_conf, result_container):
     payload = open(deployment_file, 'rb').read()
     headers = {'Content-Type': 'text/plain'}
     req = requests.post('http://localhost:8080/bbn/das/deployment-model', headers=headers, data=payload)
+
     ar = AdaptationResult.from_dict(json.loads(req.text))
 
     result_container.adaptation.details = ar
-    result_container.adaptation.status = Status.SUCCESS if ar.adaptationStatusValue == 'SUCCESSFUL' else Status.FAILURE
 
-    ig.logger().adaptation_completed(result_container.to_dict())
-    ig.logger().log_das_info(result_container.to_dict())
+    if ar.adaptationStatusValue == 'SUCCESSFUL':
+        result_container.adaptation.adaptationStatus = Status.SUCCESS
+        ig.logger().adaptation_completed(result_container.to_dict())
+        ig.logger().log_das_info(result_container.to_dict())
+
+    else:
+        result_container.adaptation.adaptationStatus = Status.FAILURE
+        ig.logger().log_das_info(result_container.to_dict())
+        ig.logger().mission_aborted(result_container.to_dict())
 
 
 # noinspection PyUnusedLocal
-def _perform_validation(app_conf, env_conf, result_container, scenario_template_tag='validation'):
-    # TODO: Add usage of env_conf!
+def _perform_validation(env_conf, result_container, scenario_template_tag='validation'):
+    """
+    :type env_conf: ScenarioConductorConfiguration
+    :type result_container: TestAdapterState
+    :type scenario_template_tag: str
+    :rtype: ValidationState
+    """
+
     result_container.validation.status = Status.RUNNING
     ig.logger().log_das_info(result_container.to_dict())
 
     s_conductor = ScenarioConductor(
-        scenario_configuration=app_conf,
+        scenario_configuration=env_conf,
         scenario_template_tag=scenario_template_tag,
         swallow_and_shutdown_on_exception=False)
     vr = s_conductor.execute()
 
     result_container.validation.details = vr
 
-    st = Status.SUCCESS
+    vs = process_results(vr, env_conf)
 
-    for r in vr.results:  # type: TestResult
-        if r.currentState != 'PASSED':
-            st = Status.FAILURE
-
-    result_container.validation.status = st
+    result_container.validation = vs
 
     ig.logger().log_das_info(result_container.to_dict())
+    ig.logger().done(message=result_container.to_dict())
+
+
+def process_results(validation_results, scenario_configuration):
+    """
+    :type validation_results: ValidationResults
+    :type scenario_configuration: ScenarioConductorConfiguration
+    :rtype: ValidationState
+    """
+
+    # Calculate the validators
+    validators = validation.calculate_validators(scenario_configuration)
+
+    # Transform the details returned from the validation server to a mapping of test identifiers to the details
+    # formatted for LL consumption
+    test_result_map = {
+        k.validatorIdentifier:
+            TestDetails(
+                testIdentifier=k.validatorIdentifier,
+                expectedStatus=(
+                    Status.NOT_APPLICABLE if k.validatorIdentifier not in validators
+                    else Status.SUCCESS if validators[k.validatorIdentifier] else Status.FAILURE
+                ),
+                actualStatus=k.currentState,
+                details=k
+            )
+        for k in validation_results.results}
+
+    overall_pass = True
+
+    for validator in test_result_map.keys():
+        td = test_result_map[validator]  # type: TestDetails
+
+        if td.expectedStatus != td.actualStatus:
+            if td.expectedStatus is Status.SUCCESS or td.expectedStatus is Status.FAILURE:
+                overall_pass = False
+                break
+
+    return ValidationState(
+        executedTests=test_result_map.values(),
+        overallIntentStatus=Status.SUCCESS if overall_pass else Status.FAILURE
+    )
 
 
 def execute_ttl_generation(scenario_configuration):

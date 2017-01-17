@@ -87,7 +87,7 @@ def start_emulator(adb_device_identifier, console_port, sdcard_filepath, command
     with _emulator_semaphore:
         args = list(_android_emulator_start_command)
 
-        if ig.config.displayEmulatorGui:
+        if ig.configuration.androidEmulator.displayEmulatorGui:
             args.append('-skin')
             args.append('720x1280')
         else:

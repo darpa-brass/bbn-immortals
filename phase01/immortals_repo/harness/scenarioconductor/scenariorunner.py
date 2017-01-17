@@ -6,6 +6,8 @@ import os
 import shutil
 import signal
 
+from .data.base.tools import path_helper
+from .data.base.validationresults import ValidationResults
 from . import applicationhelper
 from . import immortalsglobals as ig
 from . import threadprocessrouter as tpr
@@ -15,15 +17,20 @@ from .data.applicationconfig import ApplicationConfig
 from .data.scenariorunnerconfiguration import ScenarioRunnerConfiguration
 from .deploymentplatform import LifecycleInterface
 from .packages import commentjson as json
-from .utils import path_helper
 
 logging.basicConfig(level=logging.DEBUG)
 
 parser = argparse.ArgumentParser(description='IMMORTALS Scenario Runner')
-parser.add_argument('-f', '--configuration-file', type=str,
-                    help='Loads all the configuration data from the specified file, ignoring any other parameters')
-parser.add_argument('-s', '--configuration-string', type=str,
-                    help='Loads all the configuration data from the specified json string, ignoring any other parameters')
+
+
+def add_parser_arguments(psr):
+    psr.add_argument('-f', '--configuration-file', type=str,
+                     help='Loads all the configuration data from the specified file, ignoring any other parameters')
+    psr.add_argument('-s', '--configuration-string', type=str,
+                     help='Loads all the configuration data from the specified json string, ignoring any other parameters')
+
+
+add_parser_arguments(parser)
 
 
 def _exit_handler(signal, frame):
@@ -40,13 +47,18 @@ _file_objects = []
 class ScenarioRunner:
     """
     :type runner_configuration: ScenarioRunnerConfiguration
+    :type scenario_root: str
+    :type behaviorvalidator: BehaviorValidator
+    :type is_running: bool
+    :type results: ValidationResults
+    :type application_instances: list[LifecycleInterface]
     """
 
     def __init__(self,
                  runner_configuration,  # type: ScenarioRunnerConfiguration
                  ):
         ig.config = runner_configuration
-        self.runner_config = runner_configuration
+        self.runner_configuration = runner_configuration
 
         self.scenario_root = path_helper(False, ig.IMMORTALS_ROOT, runner_configuration.deploymentDirectory)
 
@@ -57,12 +69,16 @@ class ScenarioRunner:
         self.application_instances = []
 
     def execute_scenario(self):
+        """
+        :rtype: 
+        """
+
         self.is_running = True
 
         self.clean_deployment_directory()
         self.setup_deployment_directory()
 
-        for configuration_instance in self.runner_config.scenario.deploymentApplications:
+        for configuration_instance in self.runner_configuration.scenario.deploymentApplications:
             application_instance = applicationhelper.create_application_instance(configuration_instance)
             self.application_instances.append(application_instance)
 
@@ -70,18 +86,18 @@ class ScenarioRunner:
         for app in self.application_instances:
             platforms.append(app.platform)
 
-        if self.runner_config.lifecycle.setupEnvironment:
-            self.setup_platforms(platforms, self.runner_config.startEmulatorsSimultaneously)
+        if self.runner_configuration.lifecycle.setupEnvironment:
+            self.setup_platforms(platforms, self.runner_configuration.startEmulatorsSimultaneously)
 
-        if self.runner_config.lifecycle.setupApplications:
+        if self.runner_configuration.lifecycle.setupApplications:
             self.setup_applications(self.application_instances, False)
             pass
 
         # TODO Ideally validation and timing would not be handled by the start_applications call. But it works for now.
-        if self.runner_config.lifecycle.executeScenario:
+        if self.runner_configuration.lifecycle.executeScenario:
             self.start_applications(self.application_instances, False, True)
 
-        if self.runner_config.lifecycle.haltEnvironment:
+        if self.runner_configuration.lifecycle.haltEnvironment:
             # TODO: Halt here
             pass
 
@@ -94,7 +110,7 @@ class ScenarioRunner:
         # Make directories
         os.makedirs(self.scenario_root)
 
-        for application in self.runner_config.scenario.deploymentApplications:
+        for application in self.runner_configuration.scenario.deploymentApplications:
             os.mkdir(os.path.join(self.scenario_root, application.instanceIdentifier))
 
     """
@@ -113,7 +129,7 @@ class ScenarioRunner:
         for application in self.application_instances:
             application.stop()
 
-        if self.runner_config.lifecycle.haltEnvironment:
+        if self.runner_configuration.lifecycle.haltEnvironment:
             for application in self.application_instances:
                 application.platform.stop()
 
@@ -142,7 +158,7 @@ class ScenarioRunner:
                 t.join(99999)
 
         else:
-            selc = self.runner_config.setupEnvironmentLifecycle
+            selc = self.runner_configuration.setupEnvironmentLifecycle
 
             if selc.destroyExisting:
                 for o in objects:
@@ -189,14 +205,14 @@ class ScenarioRunner:
     def start_applications(self, objects, threaded=False, validate=False):
 
         if validate:
-            if self.runner_config.scenario.validatorIdentifiers is not None and self.runner_config.validate:
+            if self.runner_configuration.scenario.validatorIdentifiers is not None and self.runner_configuration.validate:
                 client_identifiers = []
 
-                for client in self.runner_config.scenario.deploymentApplications:  # type: ApplicationConfig
+                for client in self.runner_configuration.scenario.deploymentApplications:  # type: ApplicationConfig
                     if client.applicationIdentifier == 'ATAKLite' or client.applicationIdentifier == 'ataklite':
                         client_identifiers.append(client.instanceIdentifier)
 
-                self.behaviorvalidator = BehaviorValidator(self.runner_config)
+                self.behaviorvalidator = BehaviorValidator(self.runner_configuration)
                 self.behaviorvalidator.start_server()
                 # self.behaviorvalidator.start(self.halt_scenario)
 
@@ -222,8 +238,9 @@ class ScenarioRunner:
         self.halt_scenario(result)
 
 
-def main():
-    args = parser.parse_args()
+def main(args=None):
+    if args is None:
+        args = parser.parse_args()
 
     if args.configuration_file is not None:
         with open(args.configuration_file, 'r') as f:

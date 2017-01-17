@@ -277,20 +277,10 @@ public class SACommunicationService extends IntentService {
 
         // Initialize the location provider
         // 2B997763-CB0F-426B-88D2-4E5995E79A8A-replaceWith{$BCC0A94D-C2B1-40AD-8056-E3DDBD46585E-init}
-        // By default attempt to initialize the location system based on the assumption the Simulated and AndroidGPS DFUs are available
-        java.io.File inputFile = new java.io.File(android.os.Environment.getExternalStorageDirectory(), "ataklite/LocationProviderManualSimulated.json");
-
-        if (inputFile.exists()) {
-            // If the simulated instruction file exists, use the simulated GPS
-            mil.darpa.immortals.dfus.location.LocationProviderManualSimulated locationProviderManualSimulated = new mil.darpa.immortals.dfus.location.LocationProviderManualSimulated();
-            locationProviderManualSimulated.initialize(this);
-            this.locationProvider = locationProviderManualSimulated;
-        } else {
-            // Otherwise, use the internal one
-            mil.darpa.immortals.dfus.location.LocationProviderAndroidGpsBuiltIn locationProviderAndroidGPS = new mil.darpa.immortals.dfus.location.LocationProviderAndroidGpsBuiltIn();
-            locationProviderAndroidGPS.initialize(this);
-            this.locationProvider = locationProviderAndroidGPS;
-        }
+        // By default attempt to initialize the location system based on the assumption the AndroidGPS DFU is available
+        mil.darpa.immortals.dfus.location.LocationProviderAndroidGpsBuiltIn locationProviderAndroidGPS = new mil.darpa.immortals.dfus.location.LocationProviderAndroidGpsBuiltIn();
+        locationProviderAndroidGPS.initialize(this);
+        this.locationProvider = locationProviderAndroidGPS;
 
         if (locationProvider != null) {
             String message = "Using '" + locationProvider.getClass().getSimpleName() + "' for location";
@@ -352,14 +342,7 @@ public class SACommunicationService extends IntentService {
 
                     // Get the user's current location
                     // 2B997763-CB0F-426B-88D2-4E5995E79A8A-replaceWith{coordinates = $BCC0A94D-C2B1-40AD-8056-E3DDBD46585E-work}
-
-                    if (locationProvider instanceof mil.darpa.immortals.dfus.location.LocationProviderAndroidGpsBuiltIn) {
-                        coordinates = ((mil.darpa.immortals.dfus.location.LocationProviderAndroidGpsBuiltIn) locationProvider).getLastKnownLocation();
-                    } else if (locationProvider instanceof mil.darpa.immortals.dfus.location.LocationProviderManualSimulated) {
-                        coordinates = ((mil.darpa.immortals.dfus.location.LocationProviderManualSimulated) locationProvider).getLastKnownLocation();
-                    } else {
-                        coordinates = null;
-                    }
+                    coordinates = ((mil.darpa.immortals.dfus.location.LocationProviderAndroidGpsBuiltIn) locationProvider).getLastKnownLocation();
                     // 2B997763-CB0F-426B-88D2-4E5995E79A8A-replaceEnd
 
                     if (coordinates != null) {

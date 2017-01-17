@@ -8,7 +8,7 @@ import traceback
 from .reportinginterface import ReportingInterface
 from .. import immortalsglobals as ig
 from .. import threadprocessrouter as tpr
-from ..utils import path_helper as ph
+from ..data.base.tools import path_helper as ph
 
 
 def get_timestamp(time_seconds=None):
@@ -66,6 +66,9 @@ class AbstractReporter(ReportingInterface):
             'TYPE': 'RUNTIME_ERROR' if self._is_ready else 'STARTUP_ERROR',
             'MESSAGE': message
         }))
+
+    def done(self, message, event_time_s=None):
+        return self.submit_action(action='done', arguments=message, event_time_s=event_time_s)
 
     def submit_action(self, action, arguments, event_time_s=None):
         return self._submit_action(action=action, arguments=arguments, event_time_s=event_time_s)
@@ -151,8 +154,9 @@ class AbstractReporter(ReportingInterface):
         :param bool clobber_existing:
         """
         target_path = os.path.join(self.artifact_dirpath, target_subpath)
-        if not os.path.exists(target_path):
-            os.makedirs(target_path[target_path.rfind('/') + 1:])
+        full_target_path = target_path[:target_path.rfind('/')]
+        if not os.path.exists(full_target_path):
+            os.makedirs(full_target_path)
 
         f = open(target_path, 'w' if clobber_existing else 'a')
         f.write(str_to_write)

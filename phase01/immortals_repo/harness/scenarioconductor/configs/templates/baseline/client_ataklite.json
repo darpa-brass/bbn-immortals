@@ -5,8 +5,6 @@
     "buildRoot": "applications/client/ATAKLite/",
     "executableFile": "applications/client/ATAKLite/ATAKLite-debug.apk",
     "applicationDeploymentDirectory": "{deploymentDirectory}{instanceIdentifier}/",
-    "configurationTemplateFilepath": "harness/scenarioconductor/configs/templates/baseline/ATAKLite-Config.json",
-    "configurationTargetFilepath": "/sdcard/ataklite/ATAKLite-Config.json",
     "packageIdentifier": "com.bbn.ataklite",
     "mainActivity": "com.bbn.ataklite.MainActivity",
     "permissions": [
@@ -16,14 +14,27 @@
         "android.permission.READ_EXTERNAL_STORAGE"
     ],
     "files": {
-        "harness/scenarioconductor/configs/templates/baseline/sample_image.jpg": "/sdcard/ataklite/sample_image.jpg"
+        "harness/scenarioconductor/configs/templates/baseline/ATAKLite-Config.json": "/sdcard/ataklite/ATAKLite-Config.json",
+        "harness/scenarioconductor/configs/templates/baseline/sample_image.jpg": "/sdcard/ataklite/sample_image.jpg",
+        "harness/scenarioconductor/configs/base_env.json": "/sdcard/ataklite/env.json"
     },
     "filesForCleanup": [
         "/sdcard/ataklite"
     ],
-    "properties": {
-        "callsign": "{instanceIdentifier}",
-        "latestSABroadcastIntervalMS": 1000,
-        "imageBroadcastIntervalMS": 2000
+    "configurationCustomizations": {
+        "harness/scenarioconductor/configs/base_env.json": {
+            "availableResources": [
+                "bluetooth",
+                "usb",
+                "internalGps",
+                "userInterface",
+                "gpsSatellites"
+            ]
+        },
+        "harness/scenarioconductor/configs/templates/baseline/ATAKLite-Config.json": {
+            "callsign": "{instanceIdentifier}",
+            "latestSABroadcastIntervalMS": 1000,
+            "imageBroadcastIntervalMS": 2000
+        }
     }
 }

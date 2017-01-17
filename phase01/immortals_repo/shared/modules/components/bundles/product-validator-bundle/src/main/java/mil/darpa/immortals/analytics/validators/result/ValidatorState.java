@@ -5,6 +5,6 @@ package mil.darpa.immortals.analytics.validators.result;
  */
 public enum ValidatorState {
     RUNNING,
-    FAILED,
-    PASSED
+    FAILURE,
+    SUCCESS
 }

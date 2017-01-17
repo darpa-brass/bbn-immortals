@@ -10,7 +10,8 @@ from .. import immortalsglobals as ig
 from .. import threadprocessrouter as tpr
 from ..data.applicationconfig import JavaApplicationConfig
 from ..deploymentplatform import DeploymentPlatformInterface
-from ..utils import replace, path_helper
+from ..utils import replace
+from ..data.base.tools import path_helper
 
 _ID_JAR_FILEPATH = '$JAR_FILEPATH!'
 

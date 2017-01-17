@@ -38,29 +38,34 @@ abstract class AbstractClientEventValidator implements ValidatorInterface {
     protected abstract AnalyticsEventType getDesiredEventType();
 
     @Override
-    public synchronized ValidatorResult attemptValidation() {
+    public synchronized ValidatorResult attemptValidation(boolean terminalState) {
         if (state.currentState == ValidatorState.RUNNING) {
             LinkedList<String> validationErrors = new LinkedList<>();
             LinkedList<String> detailMessages = new LinkedList<>();
-
+            
             if (expectedClients.size() != clientUpdateMap.keySet().size()) {
                 validationErrors.add(clientUpdateMap.keySet().size() + "/" + expectedClients.size() + " of expected clients came online!");
 
             } else {
                 for (String clientIdentifier : expectedClients) {
-                    if (!(clientUpdateMap.containsKey(clientIdentifier) && clientUpdateMap.get(clientIdentifier))) {
+                    if (!clientUpdateMap.containsKey(clientIdentifier) || !clientUpdateMap.get(clientIdentifier)) {
                         validationErrors.add(clientIdentifier + " has not produced a " + getDesiredEventType().name() + "event!");
                     } else {
                         detailMessages.add(clientIdentifier + "-" + getDesiredEventType().name() + "->");
                     }
                 }
             }
-
+            
             if (validationErrors.isEmpty()) {
-                ValidatorResult vs = new ValidatorResult(getValidatorName(), ValidatorState.PASSED, validationErrors, detailMessages);
+                ValidatorResult vs = new ValidatorResult(getValidatorName(), ValidatorState.SUCCESS, validationErrors, detailMessages);
                 state = vs;
                 return vs;
 
+            } else if (terminalState) {
+                ValidatorResult vs = new ValidatorResult(getValidatorName(), ValidatorState.FAILURE, validationErrors, detailMessages);
+                state = vs;
+                return vs;
+                
             } else {
                 state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, validationErrors, detailMessages);
             }

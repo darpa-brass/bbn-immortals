@@ -3,7 +3,7 @@ import os
 from javaplatform import JavaPlatform
 from ..data.applicationconfig import JavaApplicationConfig
 from ..deploymentplatform import LifecycleInterface
-from ..utils import path_helper
+from ..data.base.tools import path_helper
 
 
 class JavaApplication(LifecycleInterface):
@@ -65,8 +65,6 @@ class JavaApplication(LifecycleInterface):
                     'The environment named "' + self.config.instanceIdentifier + '" is already running an application!')
 
         self.platform.upload_file(self.config.executableFile, self.jar_filepath)
-        self.platform.upload_file(self.config.configurationTemplateFilepath,
-                                  self.config.configurationTargetFilepath)
 
         for src_filepath in self.files.keys():
             self.platform.upload_file(src_filepath, self.files[src_filepath])

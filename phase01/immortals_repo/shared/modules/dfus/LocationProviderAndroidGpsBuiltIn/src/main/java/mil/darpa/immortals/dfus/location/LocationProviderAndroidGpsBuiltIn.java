@@ -15,10 +15,9 @@ import com.securboration.immortals.ontology.resources.gps.GpsReceiverEmbedded;
 import com.securboration.immortals.ontology.resources.gps.GpsSatelliteConstellation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
+import mil.darpa.immortals.core.simulated.EnvironmentConfiguration;
 import mil.darpa.immortals.core.synthesis.annotations.dfu.SynthesisAndroidContext;
 import mil.darpa.immortals.datatypes.Coordinates;
-
-import javax.annotation.Nonnull;
 
 /**
  * Created by awellman@bbn.com on 2/4/16.
@@ -32,7 +31,7 @@ import javax.annotation.Nonnull;
 )
 public class LocationProviderAndroidGpsBuiltIn {
 
-    private static final String TAG = "LocationProviderAndroidGpsBuiltIn";
+    private static final String PROFILE_IDENTIFIER = "LocationProviderAndroidGpsBuiltIn";
     private static final String HOW = "m-g";
 
     private String provider;
@@ -68,9 +67,10 @@ public class LocationProviderAndroidGpsBuiltIn {
     public LocationProviderAndroidGpsBuiltIn() {
     }
 
-    //    @SynthesisInit
     @FunctionalAspectAnnotation(aspect = InitializeAspect.class)
     public void initialize(@SynthesisAndroidContext Context context) {
+        EnvironmentConfiguration.getAndroidEnvironment().handleMissingResources(PROFILE_IDENTIFIER);
+
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         Criteria criteria = new Criteria();
@@ -95,21 +95,6 @@ public class LocationProviderAndroidGpsBuiltIn {
         this.mostRecentLocation = location;
     }
 
-
-    //    @SynthesisWork
-//    @FunctionalDfuAspect(
-//            //Indicates the core DFU functionality to which this aspect applies.  This should match
-//            // exactly one of the @DFU annotations on the owner class
-//            functionalityUri = Semantics.Functionality_LocationProvider,
-//
-//            //Indicates the functional aspect of the DFU to which this method applies.
-//            functionalAspectUri = Semantics.Functionality_LocationProvider_LastKnown
-//    )
-//    @SemanticTypeBinding(
-//            //Here the type annotation applies to return type (output)
-//            //It can also be placed on any args (inputs)
-//            semanticType = Semantics.Datatype_Coordinates
-//    )
     @FunctionalAspectAnnotation(aspect = GetCurrentLocationAspect.class)
     public synchronized Coordinates getLastKnownLocation() {
         try {
@@ -142,11 +127,10 @@ public class LocationProviderAndroidGpsBuiltIn {
         }
     }
 
-    //    @SynthesisCleanup
     @FunctionalAspectAnnotation(aspect = CleanupAspect.class)
     public void onDestroy() {
         try {
-            Log.i(TAG, "Unregistering location update since SACommunicationService is stopping.");
+            Log.i(PROFILE_IDENTIFIER, "Unregistering location update since SACommunicationService is stopping.");
             if (locationManager != null && this.locationManager != null) {
                 locationManager.removeUpdates(this.locationListener);
             }

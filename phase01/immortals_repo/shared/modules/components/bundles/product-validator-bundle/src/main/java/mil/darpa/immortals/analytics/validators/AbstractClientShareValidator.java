@@ -53,7 +53,7 @@ public abstract class AbstractClientShareValidator implements ValidatorInterface
     }
 
     @Override
-    public synchronized ValidatorResult attemptValidation() {
+    public synchronized ValidatorResult attemptValidation(boolean terminalState) {
         if (state.currentState == ValidatorState.RUNNING) {
             LinkedList<String> validationErrors = new LinkedList<>();
             LinkedList<String> detailMessages = new LinkedList<>();
@@ -74,14 +74,15 @@ public abstract class AbstractClientShareValidator implements ValidatorInterface
                 }
             }
 
-            if (validationErrors.isEmpty()) {
-                ValidatorResult vs = new ValidatorResult(getValidatorName(), ValidatorState.PASSED, validationErrors, detailMessages);
-                state = vs;
-                return vs;
-
-            } else {
-                state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, validationErrors, detailMessages);
-            }
+            state = new ValidatorResult(
+                    getValidatorName(),
+                    (
+                            !terminalState ? ValidatorState.RUNNING :
+                                    validationErrors.isEmpty() ? ValidatorState.SUCCESS : ValidatorState.FAILURE
+                    ),
+                    validationErrors,
+                    detailMessages
+            );
         }
         return state;
     }

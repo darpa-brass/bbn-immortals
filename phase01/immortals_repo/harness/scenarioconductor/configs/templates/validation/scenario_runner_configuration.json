@@ -12,22 +12,30 @@
                 "buildRoot": "applications/server/Marti/",
                 "executableFile": "applications/server/Marti/Marti-immortals.jar",
                 "applicationDeploymentDirectory": "{deploymentDirectory}{instanceIdentifier}/",
-                "configurationTemplateFilepath": "harness/scenarioconductor/configs/templates/validation/marti-CoreConfig.xml",
-                "configurationTargetFilepath": "{applicationDeploymentDirectory}CoreConfig.xml",
-                "files": {},
+                "files": {
+                    "harness/scenarioconductor/configs/templates/validation/marti-CoreConfig.xml": "{applicationDeploymentDirectory}CoreConfig.xml"
+                },
                 "filesForCleanup": [
                     "{deploymentDirectory}{instanceIdentifier}"
                 ],
-                "properties": {}
+                "configurationCustomizations": {
+                }
             }
         ],
         "validatorIdentifiers": [
+            "client-location-produce",
             "client-location-share",
-            "client-location-produce"
+            "client-location-source-trusted",
+            "client-location-trusted",
+            "client-location-source-usb",
+            "client-location-source-bluetooth",
+            "client-location-source-androidgps",
+            "client-location-source-manual",
+            "client-image-produce",
+            "client-image-share"
         ]
     },
     "validate": true,
-    "displayEmulatorGui": false,
     "startEmulatorsSimultaneously": true,
     "swallowAndShutdownOnException": true,
     "minDurationMS": 60000,

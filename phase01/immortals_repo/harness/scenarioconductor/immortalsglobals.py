@@ -97,7 +97,27 @@ def force_exit():
     _exit_handler()
 
 
-configuration = Configuration.from_dict(
-    json.load(open(os.path.join(PACKAGE_ROOT, 'infrastructure_configuration.json'))),
-    value_pool={'immortalsRoot': IMMORTALS_ROOT}
-)
+def _load_configuration():
+    configuration_d = json.load(open(os.path.join(PACKAGE_ROOT, 'root_configuration.json')))
+
+    override_filepath = os.path.join(configuration_d['dataRoot'], 'environment.json')
+    if os.path.exists(override_filepath):
+        override_configuration_d = json.load(open(override_filepath))
+
+        for key in override_configuration_d:
+            target_d = configuration_d
+            override_path = key.split('.')
+            override_tail = override_path.pop()
+
+            for path_element in override_path:
+                target_d = target_d[path_element]
+
+            target_d[override_tail] = override_configuration_d[key]
+
+    return Configuration.from_dict(
+        configuration_d,
+        value_pool={'immortalsRoot': IMMORTALS_ROOT}
+    )
+
+
+configuration = _load_configuration()

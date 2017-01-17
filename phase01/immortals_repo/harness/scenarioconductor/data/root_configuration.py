@@ -1,7 +1,7 @@
 # noinspection PyPep8Naming
 import copy
 
-from ..utils import fillout_object
+from .base.tools import fillout_object
 
 
 # noinspection PyPep8Naming
@@ -74,6 +74,20 @@ class ValidationProgramConfiguration:
         self.baseParameters = baseParameters
 
 
+# noinspection PyPep8Naming
+class AndroidEmulatorConfiguration:
+    """
+    :type displayEmulaturGui: bool
+    """
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(**d)
+
+    def __init__(self, displayEmulatorGui):
+        self.displayEmulatorGui = displayEmulatorGui
+
+
 class ImmortalizationTarget:
     """
     :type path: str
@@ -104,6 +118,8 @@ class Configuration:
     :type validationProgram: ValidationProgramConfiguration
     :type testHarness: TestHarnessConfiguration
     :type testAdapter: TestAdapterConfiguration
+    :type validation: ValidationConfiguration
+    :type androidEmulator: AndroidEmulatorConfiguration
     """
 
     @classmethod
@@ -127,6 +143,10 @@ class Configuration:
         fillout_object(dc['testHarness'], value_pool=value_pool)
         dc['testAdapter'] = TestAdapterConfiguration.from_dict(dc['testAdapter'])
         fillout_object(dc['testAdapter'], value_pool=value_pool)
+        dc['validation'] = ValidationConfiguration.from_dict(dc['validation'])
+        fillout_object(dc['validation'], value_pool=value_pool)
+        dc['androidEmulator'] = AndroidEmulatorConfiguration.from_dict(dc['androidEmulator'])
+        fillout_object(dc['androidEmulator'], value_pool=value_pool)
         obj = cls(**dc)
         fillout_object(obj, value_pool=value_pool)
         return obj
@@ -145,7 +165,9 @@ class Configuration:
                  dasService,
                  validationProgram,
                  testHarness,
-                 testAdapter):
+                 testAdapter,
+                 validation,
+                 androidEmulator):
         self.runtimeRoot = runtimeRoot
         self.resultRoot = resultRoot
         self.dataRoot = dataRoot
@@ -160,6 +182,8 @@ class Configuration:
         self.validationProgram = validationProgram
         self.testHarness = testHarness
         self.testAdapter = testAdapter
+        self.validation = validation
+        self.androidEmulator = androidEmulator
 
 
 # noinspection PyPep8Naming
@@ -263,3 +287,17 @@ class TestAdapterConfiguration:
         self.protocol = protocol
         self.url = url
         self.port = port
+
+
+# noinspection PyPep8Naming
+class ValidationConfiguration:
+    """
+    :type minimumTestDurationMS: int
+    """
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(**d)
+
+    def __init__(self, minimumTestDurationMS):
+        self.minimumTestDurationMS = minimumTestDurationMS

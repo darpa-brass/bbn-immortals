@@ -1,0 +1,65 @@
+"GPS Dev","GPS Sat","Ext BT","Ext USB","Has UI","Req SAASM","Environment and Mission","Feasible using full code base","Feasible using baseline","LocationProvider DFUs that are acceptable to use"
+"y"," y"," y"," y"," y"," y","yyyyyy","Yes","No","SAASM-GPS"
+"y"," y"," y"," y"," y"," n","yyyyyn","Yes","Yes","A-GPS, BT-GPS, USB-GPS, SAASM-GPS, Dreck"
+"y"," y"," y"," y"," n"," y","yyyyny","Yes","No","SAASM-GPS"
+"y"," y"," y"," y"," n"," n","yyyynn","Yes","Yes","A-GPS, BT-GPS, USB-GPS, SAASM-GPS"
+"y"," y"," y"," n"," y"," y","yyynyy","No","No",
+"y"," y"," y"," n"," y"," n","yyynyn","Yes","Yes","A-GPS, BT-GPS, Dreck"
+"y"," y"," y"," n"," n"," y","yyynny","No","No",
+"y"," y"," y"," n"," n"," n","yyynnn","Yes","Yes","A-GPS, BT-GPS"
+"y"," y"," n"," y"," y"," y","yynyyy","Yes","No","SAASM-GPS"
+"y"," y"," n"," y"," y"," n","yynyyn","Yes","Yes","A-GPS, USB-GPS, SAASM-GPS, Dreck"
+"y"," y"," n"," y"," n"," y","yynyny","Yes","No","SAASM-GPS"
+"y"," y"," n"," y"," n"," n","yynynn","Yes","Yes","A-GPS, USB-GPS, SAASM-GPS"
+"y"," y"," n"," n"," y"," y","yynnyy","No","No",
+"y"," y"," n"," n"," y"," n","yynnyn","Yes","Yes","A-GPS, Dreck"
+"y"," y"," n"," n"," n"," y","yynnny","No","No",
+"y"," y"," n"," n"," n"," n","yynnnn","Yes","Yes","A-GPS"
+"y"," n"," y"," y"," y"," y","ynyyyy","No","No",
+"y"," n"," y"," y"," y"," n","ynyyyn","Yes","No","Dreck"
+"y"," n"," y"," y"," n"," y","ynyyny","No","No",
+"y"," n"," y"," y"," n"," n","ynyynn","No","No",
+"y"," n"," y"," n"," y"," y","ynynyy","No","No",
+"y"," n"," y"," n"," y"," n","ynynyn","Yes","No","Dreck"
+"y"," n"," y"," n"," n"," y","ynynny","No","No",
+"y"," n"," y"," n"," n"," n","ynynnn","No","No",
+"y"," n"," n"," y"," y"," y","ynnyyy","No","No",
+"y"," n"," n"," y"," y"," n","ynnyyn","Yes","No","Dreck"
+"y"," n"," n"," y"," n"," y","ynnyny","No","No",
+"y"," n"," n"," y"," n"," n","ynnynn","No","No",
+"y"," n"," n"," n"," y"," y","ynnnyy","No","No",
+"y"," n"," n"," n"," y"," n","ynnnyn","Yes","No","Dreck"
+"y"," n"," n"," n"," n"," y","ynnnny","No","No",
+"y"," n"," n"," n"," n"," n","ynnnnn","No","No",
+"n"," y"," y"," y"," y"," y","nyyyyy","Yes","No","SAASM-GPS"
+"n"," y"," y"," y"," y"," n","nyyyyn","Yes","No","BT-GPS, USB-GPS, SAASM-GPS, Dreck"
+"n"," y"," y"," y"," n"," y","nyyyny","Yes","No","SAASM-GPS"
+"n"," y"," y"," y"," n"," n","nyyynn","Yes","No","BT-GPS, USB-GPS, SAASM-GPS"
+"n"," y"," y"," n"," y"," y","nyynyy","No","No",
+"n"," y"," y"," n"," y"," n","nyynyn","Yes","No","BT-GPS, Dreck"
+"n"," y"," y"," n"," n"," y","nyynny","No","No",
+"n"," y"," y"," n"," n"," n","nyynnn","Yes","No","BT-GPS"
+"n"," y"," n"," y"," y"," y","nynyyy","Yes","No","SAASM-GPS"
+"n"," y"," n"," y"," y"," n","nynyyn","Yes","No","USB-GPS, SAASM-GPS, Dreck"
+"n"," y"," n"," y"," n"," y","nynyny","Yes","No","SAASM-GPS"
+"n"," y"," n"," y"," n"," n","nynynn","Yes","No","USB-GPS, SAASM-GPS"
+"n"," y"," n"," n"," y"," y","nynnyy","No","No",
+"n"," y"," n"," n"," y"," n","nynnyn","Yes","No","Dreck"
+"n"," y"," n"," n"," n"," y","nynnny","No","No",
+"n"," y"," n"," n"," n"," n","nynnnn","No","No",
+"n"," n"," y"," y"," y"," y","nnyyyy","No","No",
+"n"," n"," y"," y"," y"," n","nnyyyn","Yes","No","Dreck"
+"n"," n"," y"," y"," n"," y","nnyyny","No","No",
+"n"," n"," y"," y"," n"," n","nnyynn","Yes","No","Dreck"
+"n"," n"," y"," n"," y"," y","nnynyy","No","No",
+"n"," n"," y"," n"," y"," n","nnynyn","Yes","No","Dreck"
+"n"," n"," y"," n"," n"," y","nnynny","No","No",
+"n"," n"," y"," n"," n"," n","nnynnn","Yes","No","Dreck"
+"n"," n"," n"," y"," y"," y","nnnyyy","No","No",
+"n"," n"," n"," y"," y"," n","nnnyyn","Yes","No","Dreck"
+"n"," n"," n"," y"," n"," y","nnnyny","No","No",
+"n"," n"," n"," y"," n"," n","nnnynn","Yes","No","Dreck"
+"n"," n"," n"," n"," y"," y","nnnnyy","No","No",
+"n"," n"," n"," n"," y"," n","nnnnyn","Yes","No","Dreck"
+"n"," n"," n"," n"," n"," y","nnnnny","No","No",
+"n"," n"," n"," n"," n"," n","nnnnnn","No","No",

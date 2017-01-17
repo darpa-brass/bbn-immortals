@@ -1,5 +1,8 @@
+from copy import deepcopy
+
+
+from .base.tools import path_helper, fillout_object
 from ..immortalsglobals import IMMORTALS_ROOT
-from ..utils import path_helper, fillout_object
 
 
 # noinspection PyPep8Naming
@@ -11,22 +14,20 @@ class ApplicationConfig:
     :type buildRoot: str
     :type executableFile: str
     :type applicationDeploymentDirectory: str
-    :type configurationTemplateFilepath: str
-    :type configurationTargetFilepath: str
     :type files: dict[str,str]
     :type filesForCleanup: list[str]
-    :type properties: dict[str,str]
+    :type configurationCustomizations: dict[str,dict[str,str]]
     """
 
     @classmethod
-    def from_json(cls, j, parent_config, value_pool={}):
-        applicationIdentifier = j['applicationIdentifier']
+    def from_json(cls, d, parent_config, value_pool=None):
+        applicationIdentifier = d['applicationIdentifier']
 
         if applicationIdentifier == 'marti':
-            return JavaApplicationConfig.from_dict(j=j, parent_config=parent_config, value_pool=value_pool)
+            return JavaApplicationConfig.from_dict(d=d, parent_config=parent_config, value_pool=value_pool)
 
         elif applicationIdentifier == 'ataklite':
-            return AndroidApplicationConfig.from_dict(j=j, parent_config=parent_config, value_pool=value_pool)
+            return AndroidApplicationConfig.from_dict(d=d, parent_config=parent_config, value_pool=value_pool)
 
         else:
             raise Exception('Unexpected applicationIdentifier identifier \'' + applicationIdentifier + '\'!')
@@ -38,13 +39,11 @@ class ApplicationConfig:
                  buildRoot,
                  executableFile,
                  applicationDeploymentDirectory,
-                 configurationTemplateFilepath,
-                 configurationTargetFilepath,
                  files,
                  filesForCleanup,
-                 properties,
+                 configurationCustomizations,
                  parent_config,
-                 value_pool={}
+                 value_pool=None
                  ):
 
         self.parent_config = parent_config
@@ -54,14 +53,12 @@ class ApplicationConfig:
         self.buildRoot = buildRoot
         self.executableFile = executableFile
         self.applicationDeploymentDirectory = applicationDeploymentDirectory
-        self.configurationTemplateFilepath = configurationTemplateFilepath
-        self.configurationTargetFilepath = configurationTargetFilepath
         self.files = files
 
         self.filesForCleanup = filesForCleanup
-        self.properties = properties
+        self.configurationCustomizations = configurationCustomizations
 
-        fillout_object(self, value_pool)
+        fillout_object(self, {} if value_pool is None else value_pool)
 
         abs_files = {}
         for k in files.keys():
@@ -69,8 +66,11 @@ class ApplicationConfig:
 
         self.files = abs_files
 
-        if self.configurationTemplateFilepath is not None:
-            self.configurationTemplateFilepath = path_helper(False, IMMORTALS_ROOT, self.configurationTemplateFilepath)
+        abs_files = {}
+        for k in configurationCustomizations.keys():
+            abs_files[path_helper(True, IMMORTALS_ROOT, k)] = configurationCustomizations[k]
+
+        self.configurationCustomizations = abs_files
 
         self.buildRoot = path_helper(True, IMMORTALS_ROOT, self.buildRoot)
         self.executableFile = path_helper(True, IMMORTALS_ROOT, self.executableFile)
@@ -79,22 +79,8 @@ class ApplicationConfig:
 # noinspection PyPep8Naming
 class JavaApplicationConfig(ApplicationConfig):
     @classmethod
-    def from_dict(cls, j, parent_config, value_pool={}):
-        return cls(
-                applicationIdentifier=j['applicationIdentifier'],
-                instanceIdentifier=j['instanceIdentifier'],
-                deploymentPlatformEnvironment=j['deploymentPlatformEnvironment'],
-                buildRoot=j['buildRoot'],
-                executableFile=j['executableFile'],
-                applicationDeploymentDirectory=j['applicationDeploymentDirectory'],
-                configurationTemplateFilepath=j['configurationTemplateFilepath'],
-                configurationTargetFilepath=j['configurationTargetFilepath'],
-                files=j['files'],
-                filesForCleanup=j['filesForCleanup'],
-                properties=j['properties'],
-                parent_config=parent_config,
-                value_pool=value_pool
-        )
+    def from_dict(cls, d, parent_config, value_pool=None):
+        return cls(parent_config=parent_config, value_pool=value_pool, **deepcopy(d))
 
     def __init__(self,
                  applicationIdentifier,
@@ -103,13 +89,11 @@ class JavaApplicationConfig(ApplicationConfig):
                  buildRoot,
                  executableFile,
                  applicationDeploymentDirectory,
-                 configurationTemplateFilepath,
-                 configurationTargetFilepath,
                  files,
                  filesForCleanup,
-                 properties,
+                 configurationCustomizations,
                  parent_config,
-                 value_pool={}
+                 value_pool=None
                  ):
         ApplicationConfig.__init__(self,
                                    applicationIdentifier=applicationIdentifier,
@@ -118,11 +102,9 @@ class JavaApplicationConfig(ApplicationConfig):
                                    buildRoot=buildRoot,
                                    executableFile=executableFile,
                                    applicationDeploymentDirectory=applicationDeploymentDirectory,
-                                   configurationTemplateFilepath=configurationTemplateFilepath,
-                                   configurationTargetFilepath=configurationTargetFilepath,
                                    files=files,
                                    filesForCleanup=filesForCleanup,
-                                   properties=properties,
+                                   configurationCustomizations=configurationCustomizations,
                                    parent_config=parent_config,
                                    value_pool=value_pool)
 
@@ -136,29 +118,14 @@ class AndroidApplicationConfig(ApplicationConfig):
     """
 
     @classmethod
-    def from_dict(cls, j, parent_config, value_pool={}):
+    def from_dict(cls, d, parent_config, value_pool=None):
         """
-        :type j dict
+        :type d dict
         :type parent_config: object
         :type value_pool: dict[str,str]
         """
-        return cls(applicationIdentifier=j['applicationIdentifier'],
-                   instanceIdentifier=j['instanceIdentifier'],
-                   deploymentPlatformEnvironment=j['deploymentPlatformEnvironment'],
-                   buildRoot=j['buildRoot'],
-                   executableFile=j['executableFile'],
-                   applicationDeploymentDirectory=j['applicationDeploymentDirectory'],
-                   configurationTemplateFilepath=j['configurationTemplateFilepath'],
-                   configurationTargetFilepath=j['configurationTargetFilepath'],
-                   files=j['files'],
-                   filesForCleanup=j['filesForCleanup'],
-                   properties=j['properties'],
-                   packageIdentifier=j['packageIdentifier'],
-                   mainActivity=j['mainActivity'],
-                   permissions=j['permissions'],
-                   parent_config=parent_config,
-                   value_pool=value_pool
-                   )
+
+        return cls(parent_config=parent_config, value_pool=value_pool, **deepcopy(d))
 
     def __init__(self,
                  applicationIdentifier,
@@ -167,16 +134,14 @@ class AndroidApplicationConfig(ApplicationConfig):
                  buildRoot,
                  executableFile,
                  applicationDeploymentDirectory,
-                 configurationTemplateFilepath,
-                 configurationTargetFilepath,
                  files,
                  filesForCleanup,
-                 properties,
+                 configurationCustomizations,
                  packageIdentifier,
                  mainActivity,
                  permissions,
                  parent_config,
-                 value_pool={}
+                 value_pool=None
                  ):
         ApplicationConfig.__init__(self,
                                    applicationIdentifier=applicationIdentifier,
@@ -185,11 +150,9 @@ class AndroidApplicationConfig(ApplicationConfig):
                                    buildRoot=buildRoot,
                                    executableFile=executableFile,
                                    applicationDeploymentDirectory=applicationDeploymentDirectory,
-                                   configurationTemplateFilepath=configurationTemplateFilepath,
-                                   configurationTargetFilepath=configurationTargetFilepath,
                                    files=files,
                                    filesForCleanup=filesForCleanup,
-                                   properties=properties,
+                                   configurationCustomizations=configurationCustomizations,
                                    parent_config=parent_config,
                                    value_pool=value_pool
                                    )

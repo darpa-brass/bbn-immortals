@@ -1,22 +1,26 @@
 package mil.darpa.immortals.core.analytics;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * Analytics logging data format
+ * <p>
  * Created by awellman@bbn.com on 8/2/16.
  */
+@SuppressWarnings("WeakerAccess")
 public class AnalyticsEvent {
     private transient static final AtomicLong eventIdCounter = new AtomicLong(0);
     private transient static Gson _gson;
 
-    public AnalyticsEventType type;
+    public final AnalyticsEventType type;
     public final String eventSource;
     public final String eventRemoteSource;
     public final String dataType;
+    public final long eventTime;
     public final String data;
     public final long eventId;
 
@@ -27,17 +31,18 @@ public class AnalyticsEvent {
         return _gson;
     }
 
-    protected AnalyticsEvent(@Nonnull AnalyticsEventType type, @Nonnull String eventSource, @Nonnull String eventRemoteSource, @Nonnull Object data) {
+    protected AnalyticsEvent(@Nonnull AnalyticsEventType type, @Nonnull String eventSource, @Nonnull String eventRemoteSource, @Nullable Object data, long eventTime) {
         this.type = type;
         this.eventSource = eventSource;
         this.eventRemoteSource = eventRemoteSource;
         this.eventId = eventIdCounter.getAndIncrement();
+        this.eventTime = eventTime;
 
         if (Analytics.logVerbosity == AnalyticsVerbosity.Metadata) {
             this.dataType = null;
             this.data = null;
 
-        } else if (Analytics.logVerbosity == AnalyticsVerbosity.Data) {
+        } else if (Analytics.logVerbosity == AnalyticsVerbosity.Data && data != null) {
             this.dataType = data.getClass().getCanonicalName();
             this.data = Analytics.gson.toJson(data);
 

@@ -1,13 +1,11 @@
 import copy
 import logging
 
-from applicationconfig import AndroidApplicationConfig
-from scenarioconductor import utils
-from scenarioconductor.data.scenarioconfiguration import ScenarioConfiguration
+from .applicationconfig import AndroidApplicationConfig
+from .base.tools import path_helper, fillout_object, dictify
 from .. import immortalsglobals as ig
-from ..data.scenarioapiconfiguration import ScenarioConductorConfiguration
+from ..data.scenarioconfiguration import ScenarioConfiguration
 from ..packages import commentjson as json
-from ..utils import path_helper
 
 
 # noinspection PyPep8Naming
@@ -85,7 +83,6 @@ class ScenarioRunnerConfiguration:
     :type deploymentDirectory: str
     :type scenario: ScenarioConductorConfiguration
     :type validate: bool
-    :type displayEmulatorGui: bool
     :type startEmulatorsSimultaneously: bool
     :type lifecycle: Lifecycle
     :type setupEnvironmentLifecycle: SetupEnvironmentLifecycle
@@ -124,7 +121,7 @@ class ScenarioRunnerConfiguration:
             path_helper(False, ig.IMMORTALS_ROOT, scenario_runner_configuration.deploymentDirectory)
 
         scenario_runner_configuration.scenario.parent_config = scenario_runner_configuration
-        scenario_runner_configuration.minDurationMS = scenario_configuration.minimumRunTimeMS
+        scenario_runner_configuration.minDurationMS = ig.configuration.validation.minimumTestDurationMS
 
         # Only the server is in there by default for CP1/CP2
         marti_router = scenario_runner_configuration.scenario.deploymentApplications[0]  # type: JavaApplicationConfig
@@ -150,7 +147,7 @@ class ScenarioRunnerConfiguration:
                     i_str = '0' + i_str
 
                 client = AndroidApplicationConfig.from_dict(
-                    j=copy.deepcopy(client_j),
+                    d=copy.deepcopy(client_j),
                     parent_config=scenario_runner_configuration,
                     value_pool={'CCID': str(ccid),
                                 'CID': i_str,
@@ -159,9 +156,26 @@ class ScenarioRunnerConfiguration:
                 )
 
                 logging.error("CID: " + client.instanceIdentifier)
-                client.properties['callsign'] = client.instanceIdentifier
-                client.properties['latestSABroadcastIntervalMS'] = client_configuration.latestSABroadcastIntervalMS
-                client.properties['imageBroadcastIntervalMS'] = client_configuration.imageBroadcastIntervalMS
+
+                for key in client.files.keys():
+                    value = client.files[key]
+
+                    if value == '/sdcard/ataklite/ATAKLite-Config.json':
+                        if value not in client.configurationCustomizations:
+                            client.configurationCustomizations[key] = {}
+
+                        client.configurationCustomizations[key]['callsign'] = client.instanceIdentifier
+                        client.configurationCustomizations[key][
+                            'latestSABroadcastIntervalMS'] = client_configuration.latestSABroadcastIntervalMS
+                        client.configurationCustomizations[key][
+                            'imageBroadcastIntervalMS'] = client_configuration.imageBroadcastIntervalMS
+
+                    elif value == '/sdcard/ataklite/env.json':
+                        if value not in client.configurationCustomizations:
+                            client.configurationCustomizations[key] = {}
+
+                        client.configurationCustomizations[key][
+                            'availableResources'] = client_configuration.presentResources
 
                 scenario_runner_configuration.scenario.deploymentApplications.append(client)
             ccid += 1
@@ -175,7 +189,6 @@ class ScenarioRunnerConfiguration:
             deploymentDirectory=j['deploymentDirectory'],
             scenario=None,
             validate=j['validate'],
-            displayEmulatorGui=j['displayEmulatorGui'],
             startEmulatorsSimultaneously=j['startEmulatorsSimultaneously'],
             lifecycle=None,
             setupEnvironmentLifecycle=None,
@@ -184,13 +197,13 @@ class ScenarioRunnerConfiguration:
             swallowAndShutdownOnException=j['swallowAndShutdownOnException'],
             parent_config=parent_config
         )
-        utils.fillout_object(r, value_pool=value_pool)
+        fillout_object(r, value_pool=value_pool)
         r.deploymentDirectory = path_helper(False, ig.IMMORTALS_ROOT, r.deploymentDirectory) + '/'
-        r.scenario = ScenarioConfiguration.from_dict(j['scenario'], r, value_pool=value_pool)
-        utils.fillout_object(r.scenario)
+        r.scenario = ScenarioConfiguration.from_dict(j=j['scenario'], parent_config=r, value_pool=value_pool)
+        fillout_object(r.scenario)
         r.lifecycle = Lifecycle.from_dict(j['lifecycle'], r)
         r.setupEnvironmentLifecycle = SetupEnvironmentLifecycle.from_dict(j['setupEnvironmentLifecycle'], r)
-        utils.fillout_object(r)
+        fillout_object(r)
         return r
 
     def __init__(self,
@@ -198,7 +211,6 @@ class ScenarioRunnerConfiguration:
                  deploymentDirectory,
                  scenario,
                  validate,
-                 displayEmulatorGui,
                  startEmulatorsSimultaneously,
                  lifecycle,
                  setupEnvironmentLifecycle,
@@ -211,7 +223,6 @@ class ScenarioRunnerConfiguration:
         self.deploymentDirectory = deploymentDirectory
         self.scenario = scenario
         self.validate = validate
-        self.displayEmulatorGui = displayEmulatorGui
         self.startEmulatorsSimultaneously = startEmulatorsSimultaneously
         self.lifecycle = lifecycle
         self.setupEnvironmentLifecycle = setupEnvironmentLifecycle
@@ -220,7 +231,7 @@ class ScenarioRunnerConfiguration:
         self.swallowAndShutdownOnException = swallowAndShutdownOnException
         self.parent_config = parent_config
 
-        d = utils.dictify(self)
+        d = dictify(self)
         print 'AAA'
         print json.dumps(d)
         # print utils.dictify(self)

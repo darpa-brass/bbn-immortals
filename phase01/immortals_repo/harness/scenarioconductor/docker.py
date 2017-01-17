@@ -13,7 +13,8 @@ from data.applicationconfig import ApplicationConfig
 from deploymentplatform import DeploymentPlatformInterface
 from immortalsglobals import IMMORTALS_ROOT
 from interfaces import CommandHandlerInterface
-from utils import path_helper, replace
+from utils import replace
+from .data.base.tools import path_helper
 
 _halt_identifiers = []
 _remove_identifiers = []

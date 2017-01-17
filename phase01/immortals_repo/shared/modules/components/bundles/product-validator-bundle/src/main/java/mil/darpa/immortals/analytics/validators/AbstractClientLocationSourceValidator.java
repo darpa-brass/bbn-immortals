@@ -26,6 +26,8 @@ public abstract class AbstractClientLocationSourceValidator implements Validator
 
     abstract List<String> getValidLocationTags();
 
+    String locationTagString = null;
+
     private final Gson gson = new Gson();
 
     public AbstractClientLocationSourceValidator(@Nonnull Set<String> clientIdentifiers) {
@@ -49,7 +51,7 @@ public abstract class AbstractClientLocationSourceValidator implements Validator
 
 
     @Override
-    public synchronized ValidatorResult attemptValidation() {
+    public synchronized ValidatorResult attemptValidation(boolean terminalState) {
         if (state.currentState == ValidatorState.RUNNING) {
             LinkedList<String> validationErrors = new LinkedList<>();
             LinkedList<String> detailMessages = new LinkedList<>();
@@ -62,8 +64,16 @@ public abstract class AbstractClientLocationSourceValidator implements Validator
                 } else {
                     for (String how : howList) {
                         if (!getValidLocationTags().contains(how)) {
-                            validationErrors.add(clientIdentifier + " has produced an untrusted location of type " + how + "!");
-                            state = new ValidatorResult(getValidatorName(), ValidatorState.FAILED, validationErrors, detailMessages);
+                            if (locationTagString == null) {
+                                locationTagString = "[";
+                                for (String tag : getValidLocationTags()) {
+                                    locationTagString += (tag + ",");
+                                }
+                                locationTagString += "]";
+                            }
+
+                            validationErrors.add(clientIdentifier + " location of type " + how + " is not one of the valid location tags !");
+                            state = new ValidatorResult(getValidatorName(), ValidatorState.FAILURE, validationErrors, detailMessages);
                             return state;
                         } else {
                             detailMessages.add(clientIdentifier + "-[" + how + "]->");
@@ -72,15 +82,15 @@ public abstract class AbstractClientLocationSourceValidator implements Validator
                 }
             }
 
-
-            if (validationErrors.isEmpty()) {
-                ValidatorResult vs = new ValidatorResult(getValidatorName(), ValidatorState.PASSED, validationErrors, detailMessages);
-                state = vs;
-                return vs;
-
-            } else {
-                state = new ValidatorResult(getValidatorName(), ValidatorState.RUNNING, validationErrors, detailMessages);
-            }
+            state = new ValidatorResult(
+                    getValidatorName(),
+                    (
+                            !terminalState ? ValidatorState.RUNNING :
+                                    validationErrors.isEmpty() ? ValidatorState.SUCCESS : ValidatorState.FAILURE
+                    ),
+                    validationErrors,
+                    detailMessages
+            );
         }
         return state;
     }

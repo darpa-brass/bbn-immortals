@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 
 /**
+ * Analytics logging interface
+ * <p>
  * Created by awellman@bbn.com on 3/22/16.
  */
 public class Analytics {
@@ -19,8 +21,14 @@ public class Analytics {
     private static LinkedList<AnalyticsEvent> logQueue;
 
     // TODO: Use this re reuse events instead of unnecessarily create new objects
-    public static AnalyticsEvent newEvent(@Nonnull AnalyticsEventType type, @Nonnull String remoteEventSource, @Nullable Object data) {
-        return new AnalyticsEvent(type, sourceIdentifier, remoteEventSource, data);
+    public static AnalyticsEvent newEvent(@Nonnull AnalyticsEventType type, @Nullable String remoteEventSource, @Nullable Object data) {
+        return new AnalyticsEvent(
+                type,
+                sourceIdentifier,
+                (remoteEventSource == null ? sourceIdentifier : remoteEventSource),
+                data,
+                System.currentTimeMillis()
+        );
     }
 
     public synchronized static void initializeEndpoint(AnalyticsEndpointInterface endpointInterface) {
@@ -35,6 +43,7 @@ public class Analytics {
         }
     }
 
+    @SuppressWarnings("unused")
     public synchronized static void shutdown() {
         if (endpoint != null) {
             endpoint.shutdown();
@@ -49,7 +58,7 @@ public class Analytics {
     public synchronized static void log(@Nonnull AnalyticsEvent analyticsEvent) {
         if (endpoint == null) {
             if (logQueue == null) {
-                logQueue = new LinkedList();
+                logQueue = new LinkedList<>();
             }
             logQueue.add(analyticsEvent);
 
@@ -62,10 +71,12 @@ public class Analytics {
         sourceIdentifier = identifier;
     }
 
+    @SuppressWarnings("unused")
     public static String getOwnSourceIdentifier() {
         return sourceIdentifier;
     }
 
+    @SuppressWarnings("unused")
     public static AnalyticsVerbosity getVerbosity() {
         return logVerbosity;
     }
@@ -74,12 +85,13 @@ public class Analytics {
         logVerbosity = verbosity;
     }
 
+    @SuppressWarnings("unused")
     public enum DataType {
         String("java.lang.String");
 
-        private String classPackage;
+        private final String classPackage;
 
-        private DataType(String classPackage) {
+        DataType(String classPackage) {
             this.classPackage = classPackage;
 
         }
