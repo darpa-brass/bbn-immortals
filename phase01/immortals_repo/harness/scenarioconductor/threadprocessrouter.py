@@ -92,15 +92,14 @@ def get_std_endpoint(execution_dirpath, file_tag=None):
     :rtype: StdEndpointSet
     """
 
+    if file_tag not in _std_endpoints:
+        tag = '' if file_tag is None else file_tag + '_'
+        out = os.path.join(execution_dirpath, tag + 'stdout.txt')
+        err = os.path.join(execution_dirpath, tag + 'stderr.txt')
 
-    tag = '' if file_tag is None else file_tag + '_'
-    out = os.path.join(execution_dirpath, tag + 'stdout.txt')
-    err = os.path.join(execution_dirpath, tag + 'stderr.txt')
+        _std_endpoints[file_tag] = StdEndpointSet(stdout_absfilepath=out, stderr_absfilepath=err)
 
-    if (execution_dirpath + tag) not in _std_endpoints:
-        _std_endpoints[execution_dirpath] = StdEndpointSet(stdout_absfilepath=out, stderr_absfilepath=err)
-
-    return _std_endpoints[execution_dirpath]
+    return _std_endpoints[file_tag]
 
 
 # I hate the exception handling in this function... But since it sounds like LL reserves the right for a blunt poweroff
@@ -224,11 +223,15 @@ def exit_handler():
                                           '\n\tSHUTDOWN_HANDLER_ARGS: ' + str(tpi.shutdown_args) + '!')
 
                 # Do the endpoints last so all log data is written
-                for endpoint in reversed(_std_endpoints):  # type: StdEndpointSet
-                    endpoint.out.flush()
-                    endpoint.out.close()
-                    endpoint.err.flush()
-                    endpoint.err.close()
+                for endpoint_identifier in reversed(_std_endpoints):  # type: StdEndpointSet
+                    endpoint = _std_endpoints[endpoint_identifier]
+                    if endpoint.out is file and not endpoint.out.closed:
+                        endpoint.out.flush()
+                        endpoint.out.close()
+
+                    if endpoint.err is file and not endpoint.err.closed:
+                        endpoint.err.flush()
+                        endpoint.err.close()
 
 
 def cleanup_the_dead():

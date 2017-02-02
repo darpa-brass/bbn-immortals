@@ -5,7 +5,8 @@ import signal
 import sys
 import traceback
 
-from .data.root_configuration import Configuration
+from data.base.root_configuration import Configuration
+from .olympus import Olympus
 from .packages import commentjson as json
 from .reporting.reportinginterface import ReportingInterface
 
@@ -33,8 +34,26 @@ signal_handlers = []
 _logger = None
 _debugMode = False
 
+_olympus = None
 
-# config = Configuration
+
+def get_olympus():
+    """
+    :rtype: Olympus
+    """
+    global _olympus
+    if _olympus is None:
+        _olympus = Olympus(host=configuration.testAdapter.url, port=configuration.testAdapter.port)
+    return _olympus
+
+
+def start_olympus():
+    from . import threadprocessrouter as tpr
+
+    o = get_olympus()
+
+    tpr.start_thread(thread_method=o.start)
+
 
 def set_logger(new_logger):
     global _logger

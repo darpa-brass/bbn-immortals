@@ -44,7 +44,6 @@ def calculate_validators(scenario_configuration):
         for resource in resource_test_dependencies[test_identifier]:
             if resource not in available_resources:
                 must_fail = True
-                break
 
         if must_fail:
             expected_validator_states[test_identifier] = False

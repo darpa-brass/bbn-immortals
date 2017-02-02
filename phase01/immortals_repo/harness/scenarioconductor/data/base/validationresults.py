@@ -40,4 +40,4 @@ class ValidationResults(Serializable):
                  results
                  ):
         self.testDurationMS = testDurationMS
-        self.results = results
+        self.results = results if results is not None else list()

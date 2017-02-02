@@ -1,6 +1,6 @@
 {
     "server": {
-        "bandwidth": 1000
+        "bandwidth": 384
     },
     "clients": [
         {
@@ -15,6 +15,5 @@
             ],
             "requiredProperties" : []
         }
-    ],
-    "minimumRunTimeMS": 30000
+    ]
 }

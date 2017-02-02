@@ -85,6 +85,7 @@ public class DASEndpoint {
     				"An unexpected error has occurred: " + e.getMessage());    		
     	} finally {
     		DAS.getDASStatus().setStatus(DASStatusValue.RUNNING);
+    		result.close();
     	}
     	
     	return result;

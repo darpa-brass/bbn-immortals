@@ -78,6 +78,6 @@ repositories {
         url "$synthRepoPath"
     }
     maven {
-        url 'https://repo.gradle.org/gradle/libs-releases'
+        url 'http://repo.gradle.org/gradle/libs-releases'
     }
 }

@@ -24,6 +24,18 @@ class VALIDATORS:
     client_image_produce = 'client-image-produce'
     client_image_share = 'client-image-share'
     client_location_trusted = 'client-location-trusted'
+    bandwidth_maximum_validator = 'bandwidth-maximum-validator'
+
+
+def get_validator_list():
+    l = []
+
+    for value in VALIDATORS.__dict__:
+
+        if not value.startswith('__'):
+            l.append(VALIDATORS.__dict__[value])
+
+    return l
 
 
 """
@@ -35,7 +47,8 @@ intent_satisfaction_tests = {
         VALIDATORS.client_location_produce,
         VALIDATORS.client_location_share,
         VALIDATORS.client_image_produce,
-        VALIDATORS.client_image_share
+        VALIDATORS.client_image_share,
+        VALIDATORS.bandwidth_maximum_validator
     ]),
     # Additional properties that can be specified to add new mission requirements to the scenario
     PROPERTIES.trustedLocations: frozenset([

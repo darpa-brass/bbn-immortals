@@ -68,7 +68,7 @@ class ScenarioConductor:
         result = None
 
         with _sem:
-            self.sr = ScenarioRunner(self.src)
+            self.sr = ScenarioRunner(self.src, self.sc)
             result = self.sr.execute_scenario()
 
             print "DONE"

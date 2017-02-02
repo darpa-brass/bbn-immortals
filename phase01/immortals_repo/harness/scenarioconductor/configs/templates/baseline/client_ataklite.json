@@ -15,26 +15,12 @@
     ],
     "files": {
         "harness/scenarioconductor/configs/templates/baseline/ATAKLite-Config.json": "/sdcard/ataklite/ATAKLite-Config.json",
-        "harness/scenarioconductor/configs/templates/baseline/sample_image.jpg": "/sdcard/ataklite/sample_image.jpg",
-        "harness/scenarioconductor/configs/base_env.json": "/sdcard/ataklite/env.json"
+        "harness/scenarioconductor/configs/samples/sample_image.jpg": "/sdcard/ataklite/sample_image.jpg",
+        "harness/scenarioconductor/configs/templates/baseline/env.json": "/sdcard/ataklite/env.json"
     },
     "filesForCleanup": [
         "/sdcard/ataklite"
     ],
     "configurationCustomizations": {
-        "harness/scenarioconductor/configs/base_env.json": {
-            "availableResources": [
-                "bluetooth",
-                "usb",
-                "internalGps",
-                "userInterface",
-                "gpsSatellites"
-            ]
-        },
-        "harness/scenarioconductor/configs/templates/baseline/ATAKLite-Config.json": {
-            "callsign": "{instanceIdentifier}",
-            "latestSABroadcastIntervalMS": 1000,
-            "imageBroadcastIntervalMS": 2000
-        }
     }
 }

@@ -5,13 +5,17 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.FileAppender;
+import com.google.gson.Gson;
 import mil.darpa.immortals.analytics.L;
 import mil.darpa.immortals.analytics.validators.ValidatorManager;
 import mil.darpa.immortals.analytics.validators.Validators;
 import mil.darpa.immortals.analytics.validators.result.ValidationResults;
 import mil.darpa.immortals.analytics.validators.result.ValidationResultsListener;
 import mil.darpa.immortals.core.analytics.Analytics;
+import mil.darpa.immortals.core.analytics.AnalyticsEvent;
+import mil.darpa.immortals.core.analytics.AnalyticsEventType;
 import mil.darpa.immortals.core.analytics.AnalyticsVerbosity;
+import org.apache.log4j.Appender;
 import org.slf4j.event.Level;
 
 import javax.annotation.Nonnull;
@@ -38,11 +42,22 @@ class Log4jValidationServer extends Thread implements ValidationResultsListener 
 
     private final Log4jClientServer clientServer;
 
-    public Log4jValidationServer(int port, Level logLevel, long maxDurationMS, long minDurationMS) {
+    public Log4jValidationServer(int port, Level logLevel, long maxDurationMS, long minDurationMS, String appenderAddress, Integer appenderPort) {
 
         validatorManager = new ValidatorManager(this);
 
-        clientServer = new Log4jClientServer(port, new ValidatorManagerLog4jAppender(validatorManager));
+        Appender[] appenders;
+
+        if (appenderAddress != null && appenderPort != null) {
+            appenders = new Appender[2];
+            appenders[0] = new ValidatorManagerLog4jAppender(validatorManager);
+            appenders[1] = new RestfulLoggingAppender(appenderAddress, appenderPort);
+        } else {
+            appenders = new Appender[1];
+            appenders[0] = new ValidatorManagerLog4jAppender(validatorManager);
+        }
+
+        clientServer = new Log4jClientServer(port, appenders);
 
         this.maxRunDurationMS = (maxDurationMS > minDurationMS ? maxDurationMS : minDurationMS);
         this.minRunDurationMS = minDurationMS;
@@ -126,6 +141,19 @@ class Log4jValidationServer extends Thread implements ValidationResultsListener 
 
     @Override
     public synchronized void finished(ValidationResults results) {
+
+        AnalyticsEventReporter aer = AnalyticsEventReporter.getInstance();
+        if (aer != null) {
+            AnalyticsEvent ae = new AnalyticsEvent(
+                    AnalyticsEventType.Tooling_ValidationServerStopped,
+                    "JavaAnalyticsServer",
+                    "JavaAnalyticsServer",
+                    results,
+                    System.currentTimeMillis()
+            );
+            AnalyticsEventReporter.getInstance().report((new Gson()).toJson(ae));
+        }
+
         long durationMS = System.currentTimeMillis() - this.startTime;
         long timeLeft = minRunDurationMS - durationMS;
 
@@ -140,5 +168,6 @@ class Log4jValidationServer extends Thread implements ValidationResultsListener 
 
             interrupt();
         }
+
     }
 }

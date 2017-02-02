@@ -10,12 +10,13 @@ Provided clients not meeting the validator's criteria result in a failure.  More
 
 These values are used in the _eventType_ field for validation.  
 
-| eventType             | Description                                                                       |
-|:----------------------|:----------------------------------------------------------------------------------|
-| FieldLocationUpdated  | Indicates _eventSource_ has received a location update from _eventRemoteSource_   |
-| MyImageSent           | Indicates _eventSource_ has sent an image                                         |
-| MyLocationProduced    | Indicates _evnetSource_ has produced a location                                   |
-| FieldImageUpdated     | Indicates _eventSource_ has received an image from _eventRemoteSource_            |
+| eventType                     | Description                                                                                               |
+|:------------------------------|:----------------------------------------------------------------------------------------------------------|
+| FieldLocationUpdated          | Indicates _eventSource_ has received a location update from _eventRemoteSource_                           |
+| MyImageSent                   | Indicates _eventSource_ has sent an image                                                                 |
+| MyLocationProduced            | Indicates _evnetSource_ has produced a location                                                           |
+| FieldImageUpdated             | Indicates _eventSource_ has received an image from _eventRemoteSource_                                    |
+| CombinedServerTrafficBytes    | A periodic check (approximately once a second) of the total data usage between all clients and the server |
 
 ## Validator Types
 
@@ -34,6 +35,17 @@ Validation is terminated manually, and will continue validating the state until 
 Takes a set of _eventSource_'s and validates the data of all _eventType_'s of **FieldLocationUpdated** are a coordinate with one of a set of predetermined how (source) values.
 Validation is terminated manually, and will continue validating the state until that point.
 
+# BandwitdhValidator
+
+This is used to determine whether or not a bandwidth threshold has been reached. 
+It performs the following steps:
+1.  Waits for a message of any sort from all clients
+2.  Waits half the maximum transmission interval of the clients (imageBroadcastIntervalMS or latestSABroadcastIntervalMS, whichever is greatest).
+3.  Marks the currently used bandwidth
+4.  Waits for ten iterations of the maximum transmission level and marks the final used bandwidth.
+5.  Calculates the final bandwidth in kilobits per second and compares it to the bandwidth specified in the deployment model
+
+
 ## Validators
 
 | Validator Identifier              | Validator Type                | Details                                   |
@@ -48,5 +60,6 @@ Validation is terminated manually, and will continue validating the state until 
 | client-location-source-bluetooth  | ClientLocationSourceValidator | Valid sources: 'm-g-s-b'                  |
 | client-location-source-androidgps | ClientLocationSourceValidator | Valid sources: 'm-g'                      |
 | client-location-source-manual     | ClientLocationSourceValidator | Valid sources: 'h-e-s'                    |
+| bandwidth-maximum-validator       | BandwidthValidator            | eventType: **CombinedServerTrafficBytes** |
 
 

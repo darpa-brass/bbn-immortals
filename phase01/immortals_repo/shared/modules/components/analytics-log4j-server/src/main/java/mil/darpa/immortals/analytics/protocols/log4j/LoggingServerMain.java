@@ -2,7 +2,6 @@ package mil.darpa.immortals.analytics.protocols.log4j;
 
 
 import io.airlift.airline.*;
-import mil.darpa.immortals.analytics.validators.ValidatorManager;
 import mil.darpa.immortals.analytics.validators.Validators;
 import mil.darpa.immortals.core.analytics.Analytics;
 import mil.darpa.immortals.core.analytics.AnalyticsStdoutEndpoint;
@@ -54,6 +53,11 @@ public class LoggingServerMain {
         @Option(name = {"-p", "--port"}, title = "PORT", description = "The port to run the server on (7707 by default)")
         int port = 7707;
 
+        @Option(type = OptionType.GLOBAL, name = "--auxillary-logging-port", description = "If set, logs will also be POSTed to the specified port on the localhost (disabled by default)")
+        Integer auxillaryLoggingPort = null;
+
+        @Option(type = OptionType.GLOBAL, name = "--auxillary-logging-address", description = "If set along with the auxillary logging port, will log to the specified address at the specified port ((127.0.0.1 by default)")
+        String auxillaryLoggingAddress = "127.0.0.1";
     }
 
     @Command(name = "validate", description = "Validates the received data against the specified validators")
@@ -80,7 +84,11 @@ public class LoggingServerMain {
                     throw new RuntimeException(errorMessage);
                 }
 
-                server = new Log4jValidationServer(port, (logMinimal ? Level.INFO : Level.DEBUG), validationMaximum, validationMinimum);
+                if (auxillaryLoggingPort != null) {
+                    server = new Log4jValidationServer(port, (logMinimal ? Level.INFO : Level.DEBUG), validationMaximum, validationMinimum, auxillaryLoggingAddress, auxillaryLoggingPort);
+                } else {
+                    server = new Log4jValidationServer(port, (logMinimal ? Level.INFO : Level.DEBUG), validationMaximum, validationMinimum, null, null);
+                }
 
                 if (logToConsole) {
                     server.initConsoleLogger();
@@ -114,8 +122,13 @@ public class LoggingServerMain {
 
         @Override
         public void run() {
+            Log4jValidationServer server;
             try {
-                Log4jValidationServer server = new Log4jValidationServer(port, (logMinimal ? Level.INFO : Level.DEBUG), validationMaximum, validationMinimum);
+                if (auxillaryLoggingPort != null) {
+                    server = new Log4jValidationServer(port, (logMinimal ? Level.INFO : Level.DEBUG), validationMaximum, validationMinimum, auxillaryLoggingAddress, auxillaryLoggingPort);
+                } else {
+                    server = new Log4jValidationServer(port, (logMinimal ? Level.INFO : Level.DEBUG), validationMaximum, validationMinimum, null, null);
+                }
 
                 if (logToConsole) {
                     server.initConsoleLogger();

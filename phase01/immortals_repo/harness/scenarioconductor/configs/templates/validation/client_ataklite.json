@@ -15,7 +15,7 @@
     ],
     "files": {
         "harness/scenarioconductor/configs/templates/validation/ATAKLite-Config.json": "/sdcard/ataklite/ATAKLite-Config.json",
-        "harness/scenarioconductor/configs/templates/validation/sample_image.jpg": "/sdcard/ataklite/sample_image.jpg",
+        "harness/scenarioconductor/configs/samples/sample_image.jpg": "/sdcard/ataklite/sample_image.jpg",
         "harness/scenarioconductor/configs/base_env.json": "/sdcard/ataklite/env.json"
     },
     "filesForCleanup": [

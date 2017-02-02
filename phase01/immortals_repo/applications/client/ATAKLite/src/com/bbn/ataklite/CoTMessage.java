@@ -33,7 +33,7 @@ import java.util.Locale;
 })
 public class CoTMessage implements Serializable {
 
-    private static final long STALE_PERIOD_MS = 3600000;
+    private static final long STALE_PERIOD_MS = 30000;
 
     private static final long serialVersionUID = 239885679680454860L;
     private String uid;
@@ -62,6 +62,11 @@ public class CoTMessage implements Serializable {
         this.imageMime = imageMime;
     }
 
+    public void updateTimestamp() {
+        this.time = System.currentTimeMillis();
+        this.start = this.time;
+        this.stale = this.time + STALE_PERIOD_MS;
+    }
 
     public CoTMessage(Location location, String uid) {
         this.uid = uid;
@@ -71,6 +76,8 @@ public class CoTMessage implements Serializable {
         this.time = location.getTime();
         this.start = location.getTime();
         this.stale = time + STALE_PERIOD_MS;
+
+        this.how = location.getProvider();
 
         this.altitude = location.hasAltitude() ? location.getAltitude() : 0.0;
 
@@ -195,11 +202,16 @@ public class CoTMessage implements Serializable {
             document.setXmlStandalone(true);
             document.setXmlVersion("1.0");
 
-            //Create event
+
+            // Create all mandatory elements
             Element event = document.createElement("event");
+            Element point = document.createElement("point");
+            Element contact = document.createElement("contact");
+            Element detail = document.createElement("detail");
+
+
+            // Add event attributes
             event.setAttribute("version", "2.0");
-            event.setAttribute("uid", ATAKLite.getConfigInstance().callsign);
-            event.setAttribute("type", "a-f-G-U-C");
 
             //Set time of event attribute (when event occurred)
             time = sdf.format(new Date(coTMessage.getTime()));
@@ -212,20 +224,63 @@ public class CoTMessage implements Serializable {
             event.setAttribute("stale", sdf.format(new Date(coTMessage.getStale())));
 
             //Set how attribute
-            event.setAttribute("how", "m-g");
+            event.setAttribute("how", coTMessage.getHow());
 
-            //Create point element
-            Element point = document.createElement("point");
+
+            // Add point attributes
             point.setAttribute("lat", String.valueOf(coTMessage.getLatitude()));
             point.setAttribute("lon", String.valueOf(coTMessage.getLongitude()));
             point.setAttribute("hae", String.valueOf(coTMessage.getAltitude()));
             point.setAttribute("ce", String.valueOf(coTMessage.getCylinderRadius()));
             point.setAttribute("le", String.valueOf(coTMessage.getCyclinderHalfHeight()));
 
-            //Create empty detail element
-            Element detail = document.createElement("detail");
 
-            if (coTMessage.imageData != null) {
+            if (coTMessage.imageData == null) {
+                String uid = ATAKLite.getConfigInstance().callsign;
+                String trimmedUid = uid.substring(uid.length() - 3, uid.length());
+                String type = "a-f-G-U-C";
+
+                event.setAttribute("uid", uid);
+                event.setAttribute("type", type);
+
+                contact.setAttribute("callsign", trimmedUid);
+                contact.setAttribute("endpoint", "0.0.0.0:-1:tcp");
+
+                Element group = document.createElement("__group");
+                group.setAttribute("name", "Cyan");
+                detail.appendChild(group);
+
+
+            } else {
+                String uid = ATAKLite.getConfigInstance().callsign + "-i";
+                String trimmedUid = uid.substring(uid.length() - 5, uid.length());
+//                String type = "b-m-p-s-p-loc";
+                String type = "a-u-G";
+
+                event.setAttribute("uid", uid);
+                event.setAttribute("type", type);
+
+                contact.setAttribute("callsign", trimmedUid);
+
+//                Element link = document.createElement("link");
+//                link.setAttribute("relation", "p-p");
+//                link.setAttribute("type", type);
+//                link.setAttribute("uid", uid);
+//                detail.appendChild(link);
+
+                // Add sensor attributes
+                Element sensor = document.createElement("sensor");
+                sensor.setAttribute("displayMagneticReference", "0");
+                sensor.setAttribute("fov", "45");
+                sensor.setAttribute("fovRed", "1.0");
+                sensor.setAttribute("fovBlue", "1.0");
+                sensor.setAttribute("fovAlpha", "0.3");
+                sensor.setAttribute("fovGreen", "1.0");
+                sensor.setAttribute("azimuth", "270");
+                sensor.setAttribute("range", "100");
+                detail.appendChild(sensor);
+
+
                 Element image = document.createElement("image");
 
                 if (coTMessage.imageHeight != null) {
@@ -254,6 +309,7 @@ public class CoTMessage implements Serializable {
                 detail.appendChild(image);
             }
 
+            detail.appendChild(contact);
             event.appendChild(point);
             event.appendChild(detail);
             document.appendChild(event);

@@ -5,22 +5,22 @@
         "LocationProviderBluetoothGpsSimulated": {
             "country": "Australia",
             "direction": "West",
-            "degreeChangePerSecond": 0.001
+            "degreeChangePerSecond": 0.2
         },
         "LocationProviderUsbGpsSimulated": {
             "country": "UnitedStates",
             "direction": "South",
-            "degreeChangePerSecond": 0.001
+            "degreeChangePerSecond": 0.2
         },
         "LocationProviderManualSimulated": {
             "country": "Russia",
             "direction": "South",
-            "degreeChangePerSecond": 0.001
+            "degreeChangePerSecond": 0.2
         },
         "LocationProviderSaasmSimulated": {
             "country": "Argentina",
             "direction": "South",
-            "degreeChangePerSecond": 0.001
+            "degreeChangePerSecond": 0.2
         }
     }
 }

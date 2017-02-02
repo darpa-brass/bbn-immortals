@@ -1,60 +1,58 @@
-import SocketServer
 import json
 import os
 import re
 import traceback
 
+import bottle
+
 from data.base.adaptationresult import AdaptationResult
 from data.base.scenarioapiconfiguration import ScenarioConductorConfiguration
 from data.base.validationresults import ValidationResults
+from packages import requests
 from . import immortalsglobals as ig
 from . import threadprocessrouter as tpr
 from . import validation
+from .data.base.root_configuration import demo_mode
 from .data.base.tools import path_helper as ph
 from .ll_api.data import AdaptationState, Status, TestAdapterState, ValidationState, TestDetails
-from .packages import bottle, requests
 from .reporting.abstractreporter import get_timestamp
 from .scenarioconductor import ScenarioConductor
 
 _VALID_SESSION_IDENTIFIER_REGEX = "^[A-Za-z]+[A-Za-z0-9]*$"
 
 
-class LLRestEndpoint(bottle.Bottle):
-    def __init__(self, host, port):
-        super(LLRestEndpoint, self).__init__()
-        self._define_routes()
+class LLRestEndpoint():
+    def __init__(self, url, port):
+        ig.get_olympus().add_call(path='/action/adaptAndValidateApplication', method='POST',
+                                  callback=self.adapt_and_validate_application)
+
+        ig.get_olympus().add_call(path='/action/validateBaselineApplication', method='POST',
+                                  callback=self.validate_baseline_application)
+
         self.synthesis_history = {}
 
         self._network_logger = tpr.get_logging_endpoint(
             os.path.join(ig.configuration.artifactRoot, 'network_log.txt'))  # type: tpr.LoggingEndpoint
 
-        SocketServer.TCPServer.allow_reuse_address = True
-        SocketServer.ThreadingTCPServer.allow_reuse_address = True
-
-        self.server = bottle.CherryPyServer(host=host, port=port)
-
     def start(self):
-        bottle.run(app=self, server=self.server, debug=True)
-
-    def stop(self):
-        self.server.srv.stop()
-
-    def _define_routes(self):
-        self.route(path='/action/adaptAndValidateApplication', method='POST',
-                   callback=self.adapt_and_validate_application)
-
-        self.route(path='/action/validateBaselineApplication', method='POST',
-                   callback=self.validate_baseline_application)
+        ig.start_olympus()
 
     def validate_baseline_application(self):
         # noinspection PyBroadException
         data_s = bottle.request.body.read()
 
         if data_s is None or data_s == '':
-            env_conf = ScenarioConductorConfiguration.from_dict(
-                json.load(open(
-                    ph(True, ig.IMMORTALS_ROOT,
-                       'harness/scenarioconductor/configs/samples/scenarioconfiguration-baseline.json'))))
+            if demo_mode:
+                env_conf = ScenarioConductorConfiguration.from_dict(
+                    json.load(open(
+                        ph(True, ig.IMMORTALS_ROOT,
+                           'harness/scenarioconductor/configs/samples/scenarioconfiguration-baseline-a-demo.json'))))
+
+            else:
+                env_conf = ScenarioConductorConfiguration.from_dict(
+                    json.load(open(
+                        ph(True, ig.IMMORTALS_ROOT,
+                           'harness/scenarioconductor/configs/samples/scenarioconfiguration-baseline.json'))))
 
         else:
             # noinspection PyBroadException
@@ -88,6 +86,8 @@ class LLRestEndpoint(bottle.Bottle):
                 )
                 return bottle.HTTPResponse(status=400, body=None)
 
+        if demo_mode:
+            ig.get_olympus().demo.load_scenario_configuration(scenario_configuration=env_conf)
         # noinspection PyTypeChecker
         sr = TestAdapterState(
             identifier=env_conf.sessionIdentifier,
@@ -153,6 +153,9 @@ class LLRestEndpoint(bottle.Bottle):
             )
             return bottle.HTTPResponse(status=400, body=None)
 
+        if demo_mode:
+            ig.get_olympus().demo.load_scenario_configuration(scenario_configuration=s_conf)
+
         # noinspection PyTypeChecker
         sr = TestAdapterState(
             identifier=s_conf.sessionIdentifier,
@@ -169,7 +172,8 @@ class LLRestEndpoint(bottle.Bottle):
 
         self.synthesis_history[s_conf.sessionIdentifier] = sr
 
-        ig.logger().perturbation_detected(sr.to_dict())
+        ig.logger().perturbation_detected(message=sr.to_dict(),
+                                          display_message="Perturbation of the Environment has been detected")
         ig.logger().log_das_info(sr.to_dict())
 
         return_val = {
@@ -202,7 +206,7 @@ def _perform_adaptation_and_validation(env_conf, result_container, scenario_temp
 
 
 def _perform_adaptation(app_conf, result_container):
-    ig.logger().adapting(result_container.to_dict())
+    ig.logger().adapting(message=result_container.to_dict(), display_message="Beginning adaptation")
     execute_ttl_generation(app_conf)
     deployment_file = ph(True, ig.IMMORTALS_ROOT, 'models/scenario/deployment_model.ttl')
     ig.logger().artifact_file(deployment_file)
@@ -217,7 +221,7 @@ def _perform_adaptation(app_conf, result_container):
 
     if ar.adaptationStatusValue == 'SUCCESSFUL':
         result_container.adaptation.adaptationStatus = Status.SUCCESS
-        ig.logger().adaptation_completed(result_container.to_dict())
+        ig.logger().adaptation_completed(result_container.to_dict(), display_message="Adaptation completed")
         ig.logger().log_das_info(result_container.to_dict())
 
     else:
@@ -249,9 +253,11 @@ def _perform_validation(env_conf, result_container, scenario_template_tag='valid
     vs = process_results(vr, env_conf)
 
     result_container.validation = vs
+    result_container.rawLogData = s_conductor.sr.behaviorvalidator.ll_events
 
     ig.logger().log_das_info(result_container.to_dict())
-    ig.logger().done(message=result_container.to_dict())
+    ig.logger().done(message=result_container.to_dict(),
+                     display_message="The scenario has been completed")
 
 
 def process_results(validation_results, scenario_configuration):
@@ -311,7 +317,7 @@ def execute_ttl_generation(scenario_configuration):
         '--pli-client-msg-rate',
         str(60000 / int(client.latestSABroadcastIntervalMS)),
         '--image-client-msg-rate',
-        str(60000 / int(client.latestSABroadcastIntervalMS)),
+        str(60000 / int(client.imageBroadcastIntervalMS)),
         '--server-bandwidth',
         str(scenario_configuration.server.bandwidth),
         '--client-device-count',

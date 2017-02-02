@@ -3,9 +3,24 @@ package mil.darpa.immortals.core.das;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AdaptationStatus {
-	
+
+	static final Logger logger = LoggerFactory.getLogger(AdaptationStatus.class);
+
 	public AdaptationStatus() {
+
+		try {
+			lp = new LoggerProxy();
+		} catch (Exception e) {
+			logger.error("Unable to initialize logger proxy:" + e.getMessage());
+			if (lp != null) {
+				lp.close();
+			}
+		}
+		
 		this.setAdaptationStatusValue(AdaptationStatusValue.PENDING);
 	}
 	
@@ -44,6 +59,9 @@ public class AdaptationStatus {
 	
 	public void addAudit(String audit) {
 		audits.add(audit);
+		if (lp != null) {
+			lp.sendLogEntry(audit);
+		}
 	}
 	
 	public String getSessionIdentifier() {
@@ -68,10 +86,17 @@ public class AdaptationStatus {
 		
 		return sb.toString();
 	}
+	
+	public void close() {
+		if (lp != null) {
+			lp.close();
+		}
+	}
 
 	private AdaptationStatusValue adaptationStatusValue;
 	private String details;
 	private String selectedDfu;
 	private List<String> audits = new ArrayList<String>();
 	private String sessionIdentifier;
+	private LoggerProxy lp;
 }

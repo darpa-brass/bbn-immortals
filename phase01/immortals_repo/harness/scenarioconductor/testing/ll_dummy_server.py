@@ -10,7 +10,14 @@ from . import ta_submitter as tas
 
 parser = argparse.ArgumentParser(description='IMMORTALS Mock LL TH')
 
-_DEFAULT_PERTURBED_SUBMISSION_FILE = 'scenarioconductor/configs/samples/scenarioconfiguration-baseline-b-fail.json'
+_failure_map = {
+    'none': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline.json',
+    'all': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline-b-fail.json',
+    'gps': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline-b-fail-gps.json',
+    'bandwidth': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline-b-fail-bandwidth.json'
+}
+
+
 # _DEFAULT_PERTURBED_SUBMISSION_FILE = 'scenarioconductor/configs/samples/scenarioconfiguration-challenge-fail.json'
 
 
@@ -20,6 +27,7 @@ def add_parser_arguments(psr):
     psr.add_argument('-tap', '--test-adapter-port', type=int)
     psr.add_argument('-taa', '--test-adapter-address', type=str)
     psr.add_argument('flow', metavar='FLOW', choices=['baselineA', 'baselineB', 'challenge', 'all'])
+    psr.add_argument('failure', metavar='FAILURE_PROPERTY', choices=['none', 'all', 'gps', 'bandwidth'])
     psr.add_argument('-f', '--scenario-file', type=str)
     psr.add_argument('-s', '--scenario-string', type=str)
 
@@ -116,7 +124,7 @@ def main(args=None):
         scc_j = json.loads(args.scenario_string)
 
     else:
-        scc_j = json.load(open(_DEFAULT_PERTURBED_SUBMISSION_FILE, 'r'))
+        scc_j = json.load(open(_failure_map[args.failure]))
 
     execution_scenarios = tas.produce_test_adapter_submissions(args.flow, scc_j)
 

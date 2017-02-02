@@ -123,20 +123,20 @@ echo "export GRADLE_HOME=${GRADLE_HOME}" >> ~/.bashrc
 ln -s ${GRADLE_HOME}/bin/gradle /opt/bin/gradle
 
 
-#if [ ! -e "~/.gradle/wrapper/dists" ];then
-#    mkdir -p ~/.gradle/wrapper/dists
-#fi
-#
-#if [ ! -e "~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp" ];then
-#    mkdir -p ~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp
-#    wget "https://services.gradle.org/distributions/gradle-2.2-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp/
-#fi
-#
-#
-#if [ ! -e "~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm" ];then
-#    mkdir -p ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm
-#    wget "https://services.gradle.org/distributions/gradle-2.8-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm/
-#fi
+if [ ! -e "~/.gradle/wrapper/dists" ];then
+    mkdir -p ~/.gradle/wrapper/dists
+fi
+
+if [ ! -e "~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp" ];then
+    mkdir -p ~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp
+    wget "https://services.gradle.org/distributions/gradle-2.2-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.2-bin/ca0flae0itb57he40lyj6fhpp/
+fi
+
+
+if [ ! -e "~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm" ];then
+    mkdir -p ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm
+    wget "https://services.gradle.org/distributions/gradle-2.8-bin.zip" --directory-prefix ~/.gradle/wrapper/dists/gradle-2.8-bin/4rsda7i357a5ogdj89yq8dntm/
+fi
 
 
 ######## Install Fuseki ########
@@ -173,9 +173,15 @@ ln -s ${Z3_HOME}/bin/z3 /opt/bin/z3
 apt-get install maven -y
 
 ######## Install other deps ########
-apt-get install python-pip python3-pip -y
-pip3 install rdflib
-pip install cherrypy
+apt-get install python-pip python3-pip python-dev python-pcapy -y
+pip3 install rdflib==4.2.1
+pip install CherryPy==8.1.2
+pip install bokeh==0.12.4
+pip install subprocess32==3.2.7
+pip install bottle==0.11.6
+pip install tornado==4.4.2
+pip install requests==2.12.5
+pip install commentjson==0.6
 
 
 

@@ -9,6 +9,7 @@ from .reportinginterface import ReportingInterface
 from .. import immortalsglobals as ig
 from .. import threadprocessrouter as tpr
 from ..data.base.tools import path_helper as ph
+from ..data.base.root_configuration import demo_mode
 
 
 def get_timestamp(time_seconds=None):
@@ -18,7 +19,9 @@ def get_timestamp(time_seconds=None):
 
 
 class AbstractReporter(ReportingInterface):
-    def adapting(self, message, event_time_s=None):
+    def adapting(self, message, event_time_s=None, display_message=None):
+        if demo_mode:
+            ig.get_olympus().demo.adapting(display_message)
         self._submit_status(status='ADAPTING', message=message, event_time_s=event_time_s)
 
     def mission_resumed(self, message, event_time_s=None):
@@ -27,7 +30,9 @@ class AbstractReporter(ReportingInterface):
     def mission_suspended(self, message, event_time_s=None):
         self._submit_status(status='MISSION_SUSPENDED', message=message, event_time_s=event_time_s)
 
-    def adaptation_completed(self, message, event_time_s=None):
+    def adaptation_completed(self, message, event_time_s=None, display_message=None):
+        if demo_mode:
+            ig.get_olympus().demo.adaption_completed(display_message)
         self._submit_status(status='ADAPTATION_COMPLETED', message=message, event_time_s=event_time_s)
 
     def __init__(self, log_filepath, artifact_dirpath, log_error_to_net=False):
@@ -67,7 +72,9 @@ class AbstractReporter(ReportingInterface):
             'MESSAGE': message
         }))
 
-    def done(self, message, event_time_s=None):
+    def done(self, message, event_time_s=None, display_message=None):
+        if demo_mode:
+            ig.get_olympus().demo.done(display_message)
         return self.submit_action(action='done', arguments=message, event_time_s=event_time_s)
 
     def submit_action(self, action, arguments, event_time_s=None):
@@ -107,11 +114,15 @@ class AbstractReporter(ReportingInterface):
             self.log_das_error(message=tb1, event_time_s=event_time_s)
             raise e1
 
-    def das_ready(self, event_time_s=None):
+    def das_ready(self, event_time_s=None, display_message=None):
+        if demo_mode:
+            ig.get_olympus().demo.das_ready(display_message)
         self._submit_ready(event_time_s)
         self._is_ready = True
 
-    def perturbation_detected(self, message, event_time_s=None):
+    def perturbation_detected(self, message, event_time_s=None, display_message=None):
+        if demo_mode:
+            ig.get_olympus().demo.perturbation_detected(display_message)
         self._submit_status(status='PERTURBATION_DETECTED', message=message, event_time_s=event_time_s)
 
     def mission_halted(self, message, event_time_s=None):

@@ -32,9 +32,11 @@ class Log4jClientServer {
 
     private final int port;
 
-    public Log4jClientServer(int port, Appender appender) {
+    public Log4jClientServer(int port, Appender... appenders) {
         this.port = port;
-        immortalsAnalyticsLogger.addAppender(appender);
+        for (Appender a : appenders) {
+            immortalsAnalyticsLogger.addAppender(a);
+        }
     }
 
     public synchronized void start() {

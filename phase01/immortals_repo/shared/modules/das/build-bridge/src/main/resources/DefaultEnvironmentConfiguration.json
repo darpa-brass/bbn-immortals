@@ -8,6 +8,7 @@
     "synthesizedDfuSourceSubdirectory" : "src/main/java/",
     "synthesisGradleSettingsFile": "settings.gradle",
     "scenarioComposerSubdirectory": "harness/scenarioconductor/",
+    "harnessRestUrl": "http://127.0.0.1:55555",
     "compositionTargetProfiles": [
         {
             "compositionTarget": "Client_ATAKLite",
@@ -25,8 +26,5 @@
                 "src/main/java/mil/darpa/immortals/applications/client/consumingpiperunner/MainActivity.java"
             ]
         }
-    ],
-    "ipcPorts" : {
-        "scenarioconductor.py" : 6970
-    }
+    ]
 }

@@ -1,10 +1,11 @@
 #!/usr/bin/env python2
 
+import logging
 import os
 
-from ..data.base.testharnessconfiguration import TestHarnessConfiguration
 from .abstractreporter import get_timestamp, AbstractReporter
 from .. import threadprocessrouter as tpr
+from ..data.base.testharnessconfiguration import TestHarnessConfiguration
 from ..packages import commentjson as json
 from ..packages import requests
 from ..threadprocessrouter import LoggingEndpoint
@@ -42,11 +43,11 @@ class TestHarnessReporter(AbstractReporter):
         self._offline_endpoint.write('TA SENDING POST /action/' + action)
 
         r = requests.post(url=url,
-                         headers=_JSON_HEADERS,
-                         data=json.dumps({
-                             'TIME': get_timestamp(event_time_s),
-                             'ARGUMENTS': arguments
-                         }))
+                          headers=_JSON_HEADERS,
+                          data=json.dumps({
+                              'TIME': get_timestamp(event_time_s),
+                              'ARGUMENTS': arguments
+                          }))
 
         self._offline_endpoint.write('TA RECEIVED ACK: ' + str(r.status_code))
 
@@ -149,3 +150,21 @@ class FakeTestHarnessReporter(AbstractReporter):
                                          'ERROR': error,
                                          'MESSAGE': message
                                      }))
+
+
+class ConsoleHarnessLogger(AbstractReporter):
+    def _submit_error(self, error, message, event_time_s=None):
+        logging.error(message)
+        pass
+
+    def _submit_status(self, status, message, event_time_s=None):
+        logging.info(message)
+        pass
+
+    def _submit_action(self, action, arguments, event_time_s=None):
+        logging.error(arguments)
+        pass
+
+    def _submit_ready(self, event_time_s=None):
+        logging.info("READY")
+        pass

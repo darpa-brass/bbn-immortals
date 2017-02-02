@@ -243,10 +243,10 @@ public class EnvironmentConfiguration {
     private final String synthesizedDfuSourceSubdirectory;
     private final String synthesisGradleSettingsFile;
     private final String scenarioComposerSubdirectory;
-    private final HashMap<String, Integer> ipcPorts;
-
-    public int getIpcPort(String componentIdentifier) {
-        return ipcPorts.get(componentIdentifier);
+    private final String harnessRestUrl;
+    
+    public String getHarnessRestUrl() {
+        return harnessRestUrl;
     }
 
     private final ArrayList<CompositionTargetProfile> compositionTargetProfiles;
@@ -260,7 +260,7 @@ public class EnvironmentConfiguration {
         throw new RuntimeException("No application profile for '" + compositionTarget + "' has been defined!");
     }
 
-    public EnvironmentConfiguration(String dfuProjectsSubdirectory, String synthesizedDfuPackage, String synthesisRoot, String synthesisModulesSubdirectory, String synthesizedDfusSubdirectory, String synthesizedDfuSourceSubdirectory, String synthesisGradleSettingsFile, String scenarioComposerSubdirectory, String immortalsRoot, ArrayList<CompositionTargetProfile> compositionTargetProfiles, Map<String, Integer> ipcPorts) {
+    public EnvironmentConfiguration(String dfuProjectsSubdirectory, String synthesizedDfuPackage, String synthesisRoot, String synthesisModulesSubdirectory, String synthesizedDfusSubdirectory, String synthesizedDfuSourceSubdirectory, String synthesisGradleSettingsFile, String scenarioComposerSubdirectory, String immortalsRoot, ArrayList<CompositionTargetProfile> compositionTargetProfiles, String harnessRestUrl) {
         this.dfuProjectsSubdirectory = dfuProjectsSubdirectory;
         this.synthesizedDfuPackage = synthesizedDfuPackage;
         this.synthesisRoot = synthesisRoot;
@@ -271,6 +271,6 @@ public class EnvironmentConfiguration {
         this.scenarioComposerSubdirectory = scenarioComposerSubdirectory;
         this.immortalsRoot = immortalsRoot;
         this.compositionTargetProfiles = compositionTargetProfiles;
-        this.ipcPorts = new HashMap<>(ipcPorts);
+        this.harnessRestUrl = harnessRestUrl;
     }
 }

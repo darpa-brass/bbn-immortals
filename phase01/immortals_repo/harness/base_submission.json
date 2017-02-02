@@ -13,6 +13,5 @@
             ],
             "requiredProperties" : []
         }
-    ],
-    "minimumRunTimeMS": 30000
+    ]
 }

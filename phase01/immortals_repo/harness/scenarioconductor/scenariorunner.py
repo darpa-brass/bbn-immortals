@@ -6,17 +6,20 @@ import os
 import shutil
 import signal
 
-from .data.base.tools import path_helper
-from .data.base.validationresults import ValidationResults
 from . import applicationhelper
 from . import immortalsglobals as ig
 from . import threadprocessrouter as tpr
 from .android.androidplatform_emulator import reset_identifier_counter as ae_ric
 from .behaviorvalidator import BehaviorValidator
 from .data.applicationconfig import ApplicationConfig
+from .data.base.root_configuration import load_configuration
+from .data.base.tools import path_helper
+from .data.base.validationresults import ValidationResults
 from .data.scenariorunnerconfiguration import ScenarioRunnerConfiguration
 from .deploymentplatform import LifecycleInterface
 from .packages import commentjson as json
+
+demo_mode = load_configuration().visualizationConfiguration.enabled
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -56,6 +59,7 @@ class ScenarioRunner:
 
     def __init__(self,
                  runner_configuration,  # type: ScenarioRunnerConfiguration
+                 scenario_configuraiton
                  ):
         ig.config = runner_configuration
         self.runner_configuration = runner_configuration
@@ -65,6 +69,7 @@ class ScenarioRunner:
         self.behaviorvalidator = None
         self.is_running = False
         self.results = None
+        self.scenario_configuration = scenario_configuraiton
 
         self.application_instances = []
 
@@ -74,6 +79,9 @@ class ScenarioRunner:
         """
 
         self.is_running = True
+
+        if demo_mode:
+            ig.get_olympus().demo.validation_in_progress("Starting up validation environment")
 
         self.clean_deployment_directory()
         self.setup_deployment_directory()
@@ -212,7 +220,7 @@ class ScenarioRunner:
                     if client.applicationIdentifier == 'ATAKLite' or client.applicationIdentifier == 'ataklite':
                         client_identifiers.append(client.instanceIdentifier)
 
-                self.behaviorvalidator = BehaviorValidator(self.runner_configuration)
+                self.behaviorvalidator = BehaviorValidator(self.runner_configuration, self.scenario_configuration)
                 self.behaviorvalidator.start_server()
                 # self.behaviorvalidator.start(self.halt_scenario)
 
@@ -235,6 +243,7 @@ class ScenarioRunner:
             o.start()
 
         result = self.behaviorvalidator.wait_for_validation_result()
+
         self.halt_scenario(result)
 
 

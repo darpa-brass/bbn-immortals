@@ -1,7 +1,6 @@
+import __builtin__
 import os
 import types
-
-import __builtin__
 
 
 def path_helper(dir_should_exist, root_path, subpath):

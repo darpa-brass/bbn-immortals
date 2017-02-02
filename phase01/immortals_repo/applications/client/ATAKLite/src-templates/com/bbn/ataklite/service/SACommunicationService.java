@@ -337,6 +337,9 @@ coordinates = $BCC0A94D-C2B1-40AD-8056-E3DDBD46585E-work
                         cotSender.consume(message);
                         // CO-work-end
 
+                        // Provide the image sender with the updated location
+                        testEventBroadcaster.setCurrentLocation(coordinates);
+                        
                         // Send to other interested parties (such as the UI) through an intent
                         intentBroadcaster.broadcastSelfLocationUpdate(coordinates);
                     }

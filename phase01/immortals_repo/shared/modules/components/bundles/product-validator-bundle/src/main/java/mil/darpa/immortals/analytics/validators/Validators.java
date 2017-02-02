@@ -13,7 +13,7 @@ public enum Validators {
     ClientLocationProduce("client-location-produce", ClientLocationProduceValidator.class),
     ClientLocationShare("client-location-share", ClientLocationShareValidator.class),
     ClientLocationSourceTrusted("client-location-source-trusted", ClientLocationSourceTrustedValidator.class),
-    ClientLocationTrusted("client-location-trusted", ClientLocationSourceTrustedValidator.class),
+    ClientLocationTrusted("client-location-trusted", ClientLocationTrustedValidator.class),
     ClientLocationSourceUsb("client-location-source-usb", ClientLocationSourceUsbValidator.class),
     ClientLocationSourceBluetooth("client-location-source-bluetooth", ClientLocationSourceBluetoothValidator.class),
     ClientLocationSourceAndroidGps("client-location-source-androidgps", ClientLocationSourceAndroidGpsValidator.class),

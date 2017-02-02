@@ -3,7 +3,7 @@
     "deploymentDirectory": "{runtimeRoot}/{sessionIdentifier}/baseline/deployment_environment/",
     "scenario": {
         "scenarioIdentifier": "baseline",
-        "durationMS": 30000,
+        "durationMS": 10000,
         "deploymentApplications": [
             {
                 "applicationIdentifier": "marti",
@@ -32,7 +32,8 @@
             "client-location-source-androidgps",
             "client-location-source-manual",
             "client-image-produce",
-            "client-image-share"
+            "client-image-share",
+            "bandwidth-maximum-validator"
         ]
     },
     "validate": true,

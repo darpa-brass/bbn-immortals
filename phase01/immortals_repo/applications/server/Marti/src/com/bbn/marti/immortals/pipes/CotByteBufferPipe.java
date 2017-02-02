@@ -28,7 +28,7 @@ public class CotByteBufferPipe extends AbstractInputOutputProvider<byte[], CotEv
     }
 
     protected void distributeResult(CotEventContainer data) {
-        System.out.println(data.asXml().toString());
+        System.out.println("Received CoT message...");
         super.distributeResult(data);
     }
 

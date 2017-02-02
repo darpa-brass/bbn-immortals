@@ -62,8 +62,9 @@ def start_repository_service():
     stderr = os.path.join(ig.configuration.artifactRoot, 'repository_service_stderr.txt')
 
     with open(stdout, 'w') as r_stdout, open(stderr, 'w') as r_stderr:
-        _repository_service_process = tpr.Popen(['java', '-Djava.security.egd=file:/dev/urandom', '-Dserver.port=' + str(port), '-jar', war], cwd=path,
-                                                stdout=r_stdout, stderr=r_stderr, stdin=None)
+        _repository_service_process = tpr.Popen(
+            ['java', '-Djava.security.egd=file:/dev/urandom', '-Dserver.port=' + str(port), '-jar', war], cwd=path,
+            stdout=r_stdout, stderr=r_stderr, stdin=None)
 
     print 'immortals-repository-service is starting.... \n,' \
           'For stdout, please see "' + stdout + '". \n For stderr, please see "' + stderr + '".\n\n'
@@ -88,13 +89,18 @@ def start_das_service():
     print "DAS has started.  Press Ctrl-C to shut down."
 
 
+def start_olympus():
+    ig.get_olympus()
+
+
 def start_rest_endpoint():
     print 'Starting rest endpoint...'
 
     rest_server = ll_rest_endpoint.LLRestEndpoint(ig.configuration.testAdapter.url, ig.configuration.testAdapter.port)
-    tpr.start_thread(thread_method=rest_server.start,
-                     shutdown_method=rest_server.stop,
-                     swallow_and_shutdown_on_exception=True)
+    rest_server.start()
+    # tpr.start_thread(thread_method=rest_server.start,
+    #                  shutdown_method=rest_server.stop,
+    #                  swallow_and_shutdown_on_exception=True)
 
     tpr.sleep(2)
     print 'Ready to take submissions.'
@@ -157,11 +163,13 @@ if __name__ == '__main__':
         if not os.path.exists(ig.configuration.artifactRoot):
             os.mkdir(ig.configuration.artifactRoot)
 
+        start_olympus()
+
         start_fuseki()
         start_repository_service()
         start_das_service()
         start_rest_endpoint()
-        ig.logger().das_ready()
+        ig.logger().das_ready(display_message="DAS ready to take submissions.")
 
         tpr.sleep(4)
 

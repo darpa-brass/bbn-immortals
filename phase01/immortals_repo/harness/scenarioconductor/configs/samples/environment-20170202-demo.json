@@ -1,0 +1,11 @@
+{
+  "testHarness.url": "127.0.0.1",
+  "testHarness.port": 44444,
+  "testAdapter.url": "127.0.0.1",
+  "testAdapter.port": 55555,
+  "androidEmulator.displayEmulatorGui": true,
+  "visualizationConfiguration.enabled": true,
+  "visualizationConfiguration.maxImageSendSizeBytes": 960000,
+  "visualizationConfiguration.maxLatestSASendSizeBytes": 480,
+  "visualizationConfiguration.errorMargin": 0.20
+}

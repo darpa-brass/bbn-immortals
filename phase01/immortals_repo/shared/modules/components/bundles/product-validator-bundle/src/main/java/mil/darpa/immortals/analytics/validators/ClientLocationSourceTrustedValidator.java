@@ -1,14 +1,6 @@
 package mil.darpa.immortals.analytics.validators;
 
-import com.google.gson.Gson;
-import mil.darpa.immortals.analytics.validators.result.ValidatorResult;
-import mil.darpa.immortals.analytics.validators.result.ValidatorState;
-import mil.darpa.immortals.core.analytics.AnalyticsEvent;
-import mil.darpa.immortals.core.analytics.AnalyticsEventType;
-import mil.darpa.immortals.datatypes.Coordinates;
-
 import javax.annotation.Nonnull;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;

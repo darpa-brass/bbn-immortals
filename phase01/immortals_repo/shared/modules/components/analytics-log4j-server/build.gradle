@@ -26,10 +26,14 @@ dependencies {
     compile project(':components:analytics-log4j-client')
     compile project(':components:bundles:product-analysis-bundle-base')
     compile project(':components:bundles:product-validator-bundle')
+    compile project(':datatypes:Coordinates')
     compile 'io.airlift:airline:0.7'
     compile "org.slf4j:slf4j-api:${project.slf4jVersion}"
     compile "org.slf4j:slf4j-log4j12:${project.slf4jVersion}"
     compile "ch.qos.logback:logback-classic:1.1.7"
     compile "ch.qos.logback:logback-core:1.1.7"
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }

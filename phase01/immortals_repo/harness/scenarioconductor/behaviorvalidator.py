@@ -10,106 +10,141 @@ import os
 import signal
 from threading import RLock
 
-from .data.base.validationresults import ValidationResults
+from . import immortalsglobals as ig
 from . import threadprocessrouter as tpr
 from .data.applicationconfig import ApplicationConfig
-from .immortalsglobals import configuration
-from .packages import commentjson as json
+from .data.base.root_configuration import demo_mode
+from .data.base.root_configuration import load_configuration
+from .data.base.scenarioapiconfiguration import ScenarioConductorConfiguration
+from .data.scenariorunnerconfiguration import ScenarioRunnerConfiguration
+from .ll_api.data import AnalyticsEvent
+from .monitors.monitor_manager import MonitorManager
 from .packages.subprocess32 import Popen
+from .validators.validator_manager import ValidatorManager, LOCAL_VALIDATORS
+
+demo_mode = load_configuration().visualizationConfiguration.enabled
 
 
 class BehaviorValidator:
     """
-    :type process: Popen
+    :type _process: Popen
+    :type _validator_identifiers: set
+    :type _runner_configuration: ScenarioRunnerConfiguration
+    :type _scenario_configuration: ScenarioConductorConfiguration
+    :type _client_identifiers: list[str]
+    :type _validation_manager: ValidatorManager
+    :type _monitor_manager: MonitorManager
+    :type _duration: long
     """
 
-    def __init__(self, runner_configuration):
-        self.validator_identifiers = runner_configuration.scenario.validatorIdentifiers
+    def __init__(self, runner_configuration, scenario_configuration):
+        """
+        :type runner_configuration: ScenarioRunnerConfiguration
+        :type scenario_configuration: ScenarioConductorConfiguration
+        """
 
-        self.client_identifiers = []
+        self._validator_identifiers = set(runner_configuration.scenario.validatorIdentifiers)
+
+        self._runner_configuration = runner_configuration
+        self._scenario_configuration = scenario_configuration
+
+        self._client_identifiers = []
 
         for app in runner_configuration.scenario.deploymentApplications:  # type: ApplicationConfig
             if app.applicationIdentifier == 'ATAKLite' or app.applicationIdentifier == 'ataklite':
-                self.client_identifiers.append(app.instanceIdentifier)
+                self._client_identifiers.append(app.instanceIdentifier)
 
         self._lock = RLock()
 
-        self.deployment_path = runner_configuration.deploymentDirectory
-        self.process = None
-        self.monitor = None
-        if runner_configuration.scenario.durationMS > runner_configuration.minDurationMS:
-            self.time_limit_ms = runner_configuration.scenario.durationMS
-        else:
-            self.time_limit_ms = runner_configuration.minDurationMS
+        self._process = None
 
-        self.minimum_run_time_ms = runner_configuration.minDurationMS
-        self.server_running = False
-        self.result = None
+        self.ll_events = []
+
+        client_count = 0
+        max_wait_interval = 0
+        for c in scenario_configuration.clients:
+            client_count += c.count
+
+            max_wait_interval = max(max_wait_interval, int(c.imageBroadcastIntervalMS),
+                                    int(c.latestSABroadcastIntervalMS))
+
+        calculated_duration = client_count * 8000 + max_wait_interval * 12 + 10000
+
+        self._duration = max(calculated_duration, runner_configuration.minDurationMS)
+
+        if demo_mode:
+            ig.get_olympus().demo.validation_in_progress(
+                'Validating environment. This will take approximately ' + str(self._duration / 1000) + ' seconds')
+
+        py_validators = LOCAL_VALIDATORS.intersection(self._validator_identifiers)
+        java_validators = self._validator_identifiers.difference(LOCAL_VALIDATORS)
+
+        self._validation_manager = ValidatorManager(scenario_configuration=self._scenario_configuration,
+                                                    runner_configuration=self._runner_configuration,
+                                                    validator_identifiers=py_validators,
+                                                    client_identifiers=self._client_identifiers)
+        self._monitor_manager = MonitorManager(scenario_configuration=self._scenario_configuration,
+                                               validator_identifiers=py_validators,
+                                               listeners=[self._validation_manager.process_event, self.add_raw_events_for_ll])
+
+        ci = []
+        for identifier in self._client_identifiers:
+            ci += ['-i', identifier]
+
+        self._java_analytics_server_command = \
+            ['java', '-jar', ig.configuration.validationProgram.executableFile, '-f',
+             self._runner_configuration.deploymentDirectory + 'results/evaluation_event_log.txt',
+             '-c',
+             '--time-min-ms', str(self._duration),
+             '--auxillary-logging-port', str(ig.configuration.testAdapter.port),
+             'validate'] + ci + list(java_validators)
+
+        self._server_running = False
+        self._result = None
 
     def start_server(self):
         with self._lock:
-            self.server_running = True
-            if len(self.client_identifiers) > 0:
-                ci = []
-                for identifier in self.client_identifiers:
-                    ci += ['-i', identifier]
+            self._server_running = True
 
-                command = ['java', '-jar', configuration.validationProgram.executableFile, '-f',
-                           self.deployment_path + 'results/evaluation_event_log.txt', '-c',
-                           '--time-min-ms', str(self.minimum_run_time_ms),
-                           'validate'] + ci + self.validator_identifiers
+            if not os.path.exists(self._runner_configuration.deploymentDirectory + 'results/'):
+                os.mkdir(self._runner_configuration.deploymentDirectory + 'results/')
 
-            else:
-                command = ['java', '-jar', configuration.validationProgram.executableFile, '-f',
-                           self.deployment_path + 'results/evaluation_event_log.txt',
-                           '--time-max-ms', str(self.time_limit_ms),
-                           '--time-min-ms', str(self.minimum_run_time_ms),
-                           'observe']
+            self._validation_manager.start()
+            self._monitor_manager.start()
 
-            if not os.path.exists(self.deployment_path + 'results/'):
-                os.mkdir(self.deployment_path + 'results/')
+            std_endpoint = tpr.get_std_endpoint(ig.configuration.artifactRoot, 'analyticsLog4jServer')
 
-            self.process = tpr.Popen(command, stdout=tpr.PIPE, stderr=tpr.PIPE)
-            self.monitor = tpr.start_thread(thread_method=BehaviorValidator.monitoroutput, thread_args=[self])
+            self._process = tpr.Popen(self._java_analytics_server_command, stdout=std_endpoint.out,
+                                      stderr=std_endpoint.err)
+
+    def add_raw_events_for_ll(self, event):
+        """
+        :type event: AnalyticsEvent
+        """
+
+        if event.eventSource == 'global' and event.type == 'combinedServerTrafficBytes':
+            self.ll_events.append(event)
 
     def wait_for_validation_result(self):
-        while self.server_running:
+        while self._process is not None and self._process.poll() is None and self._validation_manager.result is None:
             tpr.sleep(1)
 
-        return self.result
+        self._monitor_manager.stop()
+
+        self._result = self._validation_manager.result
+
+        if demo_mode:
+            ig.get_olympus().demo.update_validation_status(self._result)
+
+        return self._result
 
     def stop(self):
         with self._lock:
 
-            if self.server_running:
+            if self._server_running:
 
-                if self.process is not None and self.process.poll() is None:
-                    self.process.send_signal(signal.SIGINT)
-                    self.process.wait()
+                if self._process is not None and self._process.poll() is None:
+                    self._process.send_signal(signal.SIGINT)
+                    self._process.wait()
 
-                self.server_running = False
-
-    def monitoroutput(self):
-        result = None
-
-        while result is None:
-            try:
-                value = self.process.stdout.readline()
-                if value != '':
-
-                    data = json.loads(value)
-
-                    if data['type'] == 'Tooling_ValidationFinished':
-                        result = json.loads(data['data'])
-                        print data['data']
-
-                        with open(self.deployment_path + 'results/evaluation_result.json', 'w') as f:
-                            json.dump(result, f)
-
-                        validation_result = ValidationResults.from_dict(result)
-                        result = validation_result
-                        self.result = validation_result
-                        self.stop()
-
-            except OSError:
-                pass
+                self._server_running = False

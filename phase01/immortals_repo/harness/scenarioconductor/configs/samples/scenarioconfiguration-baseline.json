@@ -1,21 +1,17 @@
 {
     "server": {
-        "bandwidth": 1000
+        "bandwidth": 8000
     },
     "clients": [
         {
-            "imageBroadcastIntervalMS": "2000",
+            "imageBroadcastIntervalMS": "10000",
             "latestSABroadcastIntervalMS": "1000",
             "count": 2,
             "presentResources" : [
                 "internalGps",
-                "gpsSatellites",
-                "bluetooth",
-                "usb",
-                "userInterface"
+                "gpsSatellites"
             ],
             "requiredProperties" : []
         }
-    ],
-    "minimumRunTimeMS": 30000
+    ]
 }

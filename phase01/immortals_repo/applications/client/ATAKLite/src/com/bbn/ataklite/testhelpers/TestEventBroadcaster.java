@@ -4,13 +4,14 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Environment;
 import com.bbn.ataklite.service.SACommunicationService;
+import mil.darpa.immortals.datatypes.Coordinates;
+import mil.darpa.immortals.javatypeconverters.CoordinateLocationConverter;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by awellman@bbn.com on 2/1/16.
@@ -21,11 +22,7 @@ public class TestEventBroadcaster {
         IMAGE
     }
 
-    // Rough mostly-continental chunk of the US
-    public static final double MAX_RANDOM_LAT = 48.562068;
-    public static final double MIN_RANDOM_LAT = 30.755641;
-    public static final double MAX_RANDOM_LON = -81.490127;
-    public static final double MIN_RANDOM_LON = -122.387100;
+    private Coordinates currentLocation = null;
 
     private final Timer timer = new Timer();
 
@@ -48,12 +45,11 @@ public class TestEventBroadcaster {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                Location location = new Location("zyx");
+                if (currentLocation != null) {
 
-                location.setLatitude(ThreadLocalRandom.current().nextDouble(MIN_RANDOM_LAT, MAX_RANDOM_LAT));
-                location.setLongitude(ThreadLocalRandom.current().nextDouble(MIN_RANDOM_LON, MAX_RANDOM_LON));
-
-                SACommunicationService.startActionSendImage(context, location, sampleImagePath);
+                    Location location = CoordinateLocationConverter.toLocation(currentLocation);
+                    SACommunicationService.startActionSendImage(context, location, sampleImagePath);
+                }
             }
         };
 
@@ -67,6 +63,10 @@ public class TestEventBroadcaster {
         taskSet.add(task);
 
         timer.schedule(task, startDelayMS, intervalMS);
+    }
+
+    public synchronized void setCurrentLocation(Coordinates coordinates) {
+        currentLocation = coordinates;
     }
 
     public synchronized void stopAllTasksOfType(EventType eventType) {

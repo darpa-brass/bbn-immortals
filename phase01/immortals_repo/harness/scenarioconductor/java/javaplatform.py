@@ -9,9 +9,10 @@ from threading import Lock
 from .. import immortalsglobals as ig
 from .. import threadprocessrouter as tpr
 from ..data.applicationconfig import JavaApplicationConfig
+from ..data.base.tools import path_helper
+from ..data.base.root_configuration import demo_mode
 from ..deploymentplatform import DeploymentPlatformInterface
 from ..utils import replace
-from ..data.base.tools import path_helper
 
 _ID_JAR_FILEPATH = '$JAR_FILEPATH!'
 
@@ -48,29 +49,31 @@ class JavaPlatform(DeploymentPlatformInterface):
         pass
 
     def application_stop(self):
-        with self._lock:
-            self._application_process.terminate()
+        if not demo_mode:
+            with self._lock:
+                self._application_process.terminate()
 
     def application_start(self):
-        with self._lock:
-            with open(os.path.join(self.config.applicationDeploymentDirectory, 'stdout_log.txt'),
-                      'w') as stdout_log, open(
+        if not demo_mode:
+            with self._lock:
+                with open(os.path.join(self.config.applicationDeploymentDirectory, 'stdout_log.txt'),
+                          'w') as stdout_log, open(
                     os.path.join(self.config.applicationDeploymentDirectory, 'stderr_log.txt'),
                     'w') as stderr_log:
-                logging.debug('Starting ' + self.jar_filepath + ' for ' + self.config.instanceIdentifier)
-                call_array = list(_CMD_START_JAR)
-                replace(call_array, _ID_JAR_FILEPATH, self.jar_filepath)
-                logging.debug('EXEC: ' + str(call_array))
+                    logging.debug('Starting ' + self.jar_filepath + ' for ' + self.config.instanceIdentifier)
+                    call_array = list(_CMD_START_JAR)
+                    replace(call_array, _ID_JAR_FILEPATH, self.jar_filepath)
+                    logging.debug('EXEC: ' + str(call_array))
 
-                self._application_process = tpr.Popen(
+                    self._application_process = tpr.Popen(
                         args=call_array,
                         cwd=self.config.applicationDeploymentDirectory,
                         stdout=stdout_log,
                         stderr=stderr_log
-                )
+                    )
 
-                # TODO: This really should be a configuration parameter...
-                time.sleep(2)
+                    # TODO: This really should be a configuration parameter...
+                    time.sleep(2)
 
     def upload_file(self, source_file_location, file_target):
         with self._lock:
@@ -101,9 +104,9 @@ class JavaPlatform(DeploymentPlatformInterface):
     def setup(self):
         with self._lock:
             logging.debug(
-                    'Setting up ' + self.config.deploymentPlatformEnvironment + ' for ' + self.config.instanceIdentifier)
+                'Setting up ' + self.config.deploymentPlatformEnvironment + ' for ' + self.config.instanceIdentifier)
             logging.debug(
-                    'Setting up ' + self.config.deploymentPlatformEnvironment + ' for ' + self.config.instanceIdentifier)
+                'Setting up ' + self.config.deploymentPlatformEnvironment + ' for ' + self.config.instanceIdentifier)
 
             if ig.config.setupEnvironmentLifecycle.destroyExisting:
                 if os.path.exists(self.config.applicationDeploymentDirectory):

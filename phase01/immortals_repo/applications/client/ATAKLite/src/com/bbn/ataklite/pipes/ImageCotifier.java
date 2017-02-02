@@ -30,6 +30,7 @@ public class ImageCotifier extends ObjectPipeMultiplexerTail<Bitmap, Location, C
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(DEFAULT_COMPRESSION_FORMAT, DEFAULT_COMPRESSION_QUALITY, baos);
         message.setImage(baos.toByteArray(), bitmap.getHeight(), bitmap.getWidth(), DEFAULT_COMPRESSION_FORMAT);
+        message.updateTimestamp();
         return message;
     }
 

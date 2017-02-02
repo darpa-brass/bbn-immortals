@@ -105,9 +105,13 @@
         "port": 80
     },
     "validation": {
-        "minimumTestDurationMS": 10000
+        "minimumTestDurationMS": -1,
+        "pcapyMonitorInterface": "lo"
     },
     "androidEmulator": {
         "displayEmulatorGui": false
+    },
+    "visualizationConfiguration": {
+        "enabled": false
     }
 }

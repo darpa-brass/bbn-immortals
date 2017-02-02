@@ -26,7 +26,7 @@ Root is (ab)used and used for everything at the moment since it runs in a self-c
 5.  Restart or shutdown the image for offline usage  
 
 ## Optional Test Adapter Configuration
-The Test Adapter can optionally be configured with an "env.json" file placed with the TEST_DATA_URI directory formatted as a IM_TA_CONFIGURATION object, and is currently not necessary for anything other than debugging.
+The Test Adapter can optionally be configured with an "environment.json" file placed with the TEST_DATA_URI directory formatted as a IM_TA_CONFIGURATION object, and is currently not necessary for anything other than debugging.
 
 ## Offline DAS Initialization  
 The DAS does not utilize any data placed in the /test/data directory, so it can remain empty.

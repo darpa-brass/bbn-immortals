@@ -4,13 +4,16 @@ import logging
 
 import requests
 
-TH_PORT = 44444
-TH_URL = 'brass-th'
-TH_PROTOCOL = 'http://'
+from ..data.base.root_configuration import load_configuration
 
-TA_PORT = 55555
-TA_URL = 'brass-ta'
-TA_PROTOCOL = 'http://'
+config = load_configuration()
+TH_PORT = config.testHarness.port
+TH_URL = config.testHarness.url
+TH_PROTOCOL = config.testHarness.protocol
+
+TA_PORT = config.testAdapter.port
+TA_URL = config.testAdapter.url
+TA_PROTOCOL = config.testAdapter.protocol
 
 URL_TEMPLATE = TA_PROTOCOL + TA_URL + ':' + str(TA_PORT) + '/{path}'
 
@@ -94,10 +97,17 @@ def produce_test_adapter_submissions(scenario_flow, scenario_configuration_dict)
         scd.pop('sessionIdentifier')
 
     if scenario_flow == 'baselineA' or scenario_flow == 'all':
-        l.append(TestAdapterSubmission(
-            source_configuration_dict=None,
-            method=send_baseline_validation
-        ))
+        if config.visualizationConfiguration.enabled:
+            l.append(TestAdapterSubmission(
+                source_configuration_dict=None,
+                method=send_baseline_validation
+            ))
+
+        else:
+            l.append(TestAdapterSubmission(
+                source_configuration_dict=None,
+                method=send_baseline_validation
+            ))
 
     if scenario_flow == 'baselineB' or scenario_flow == 'all':
         l.append(TestAdapterSubmission(

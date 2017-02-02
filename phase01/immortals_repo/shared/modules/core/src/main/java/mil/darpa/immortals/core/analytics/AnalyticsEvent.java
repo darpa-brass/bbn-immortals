@@ -31,12 +31,31 @@ public class AnalyticsEvent {
         return _gson;
     }
 
-    protected AnalyticsEvent(@Nonnull AnalyticsEventType type, @Nonnull String eventSource, @Nonnull String eventRemoteSource, @Nullable Object data, long eventTime) {
+    public AnalyticsEvent(@Nonnull AnalyticsEventType type, @Nonnull String eventSource, @Nonnull String eventRemoteSource, @Nullable Object data, long eventTime) {
         this.type = type;
-        this.eventSource = eventSource;
-        this.eventRemoteSource = eventRemoteSource;
         this.eventId = eventIdCounter.getAndIncrement();
         this.eventTime = eventTime;
+
+        // Image identifers are appended to the UID in this case
+        if (type == AnalyticsEventType.MyImageSent || type == AnalyticsEventType.FieldImageReceived) {
+            if (eventSource.endsWith("-i")) {
+                this.eventSource = eventSource.substring(0, eventSource.length() - 2);
+            } else {
+                this.eventSource = eventSource;
+            }
+
+            if (eventRemoteSource.endsWith("-i")) {
+                this.eventRemoteSource = eventRemoteSource.substring(0, eventRemoteSource.length() - 2);
+            } else {
+                this.eventRemoteSource = eventRemoteSource;
+
+            }
+
+        } else {
+            this.eventSource = eventSource;
+            this.eventRemoteSource = eventRemoteSource;
+
+        }
 
         if (Analytics.logVerbosity == AnalyticsVerbosity.Metadata) {
             this.dataType = null;
