@@ -1,3 +1,4 @@
+import bottle
 import json
 import os
 import re
@@ -301,7 +302,7 @@ def process_results(validation_results, scenario_configuration):
     )
 
 
-def execute_ttl_generation(scenario_configuration):
+def execute_ttl_generation(scenario_configuration, output_file=None):
     client = scenario_configuration.clients[0]
     res = client.presentResources
 
@@ -335,5 +336,9 @@ def execute_ttl_generation(scenario_configuration):
         '--mission-trusted-comms',
         'yes' if 'trustedLocations' in client.requiredProperties else 'no'
     ]
+
+    if output_file is not None:
+        params.append('--output')
+        params.append(os.path.abspath(output_file))
 
     tpr.check_output(args=params, cwd=ig.IMMORTALS_ROOT + 'models/scenario')

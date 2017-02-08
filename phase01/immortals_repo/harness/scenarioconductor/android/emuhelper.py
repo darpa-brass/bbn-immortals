@@ -87,7 +87,7 @@ def start_emulator(adb_device_identifier, console_port, sdcard_filepath, command
     with _emulator_semaphore:
         args = list(_android_emulator_start_command)
 
-        if ig.configuration.androidEmulator.displayEmulatorGui:
+        if ig.configuration.validationEnvironment.displayAndroidEmulatorGui:
             args.append('-skin')
             args.append('720x1280')
         else:
@@ -100,7 +100,7 @@ def start_emulator(adb_device_identifier, console_port, sdcard_filepath, command
         replace(args, _ID_EMULATOR_IDENTIFIER, adb_device_identifier)
         replace(args, _ID_CONSOLE_PORT, str(console_port))
 
-        command_processor.Popen(args=args, halt_on_shutdown=ig.config.lifecycle.haltEnvironment)
+        command_processor.Popen(args=args, halt_on_shutdown=ig.configuration.validationEnvironment.lifecycle.haltEnvironment)
 
         while not adbhelper.is_known(adb_device_identifier, command_processor):
             time.sleep(1)

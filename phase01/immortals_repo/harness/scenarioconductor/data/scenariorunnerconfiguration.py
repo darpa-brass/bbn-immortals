@@ -9,83 +9,12 @@ from ..packages import commentjson as json
 
 
 # noinspection PyPep8Naming
-class Lifecycle:
-    """
-    :type setupEnvironment: bool
-    :type setupApplications: bool
-    :type executeScenario: bool
-    :type haltEnvironment: bool
-    """
-
-    @classmethod
-    def from_dict(cls, d, parent_config):
-        return cls(
-            setupEnvironment=d['setupEnvironment'],
-            setupApplications=d['setupApplications'],
-            executeScenario=d['executeScenario'],
-            haltEnvironment=d['haltEnvironment'],
-            parent_config=parent_config
-        )
-
-    def __init__(self,
-                 setupEnvironment,
-                 setupApplications,
-                 executeScenario,
-                 haltEnvironment,
-                 parent_config
-                 ):
-        self.setupEnvironment = setupEnvironment
-        self.setupApplications = setupApplications
-        self.executeScenario = executeScenario
-        self.haltEnvironment = haltEnvironment
-        self.parent_config = parent_config
-
-    def to_dict(self):
-        return {
-            'setupEnvironment': self.setupEnvironment,
-            'setupApplications': self.setupApplications,
-            'executeScenario': self.executeScenario,
-            'haltEnvironment': self.haltEnvironment
-        }
-
-
-# noinspection PyPep8Naming
-class SetupEnvironmentLifecycle:
-    """
-    :type destroyExisting: bool
-    :type cleanExisting: bool
-    """
-
-    @classmethod
-    def from_dict(cls, d, parent_config):
-        return cls(
-            destroyExisting=d['destroyExisting'],
-            cleanExisting=d['cleanExisting'],
-            parent_config=parent_config
-        )
-
-    def __init__(self, destroyExisting, cleanExisting, parent_config):
-        self.destroyExisting = destroyExisting
-        self.cleanExisting = cleanExisting
-        self.parent_config = parent_config
-
-    def to_dict(self):
-        return {
-            'destroyExisting': self.destroyExisting,
-            'cleanExisting': self.cleanExisting
-        }
-
-
-# noinspection PyPep8Naming
 class ScenarioRunnerConfiguration:
     """
     :type sessionIdentifier: str
     :type deploymentDirectory: str
     :type scenario: ScenarioConductorConfiguration
     :type validate: bool
-    :type startEmulatorsSimultaneously: bool
-    :type lifecycle: Lifecycle
-    :type setupEnvironmentLifecycle: SetupEnvironmentLifecycle
     :type swallowAndShutdownOnException: bool
    """
 
@@ -189,11 +118,7 @@ class ScenarioRunnerConfiguration:
             deploymentDirectory=j['deploymentDirectory'],
             scenario=None,
             validate=j['validate'],
-            startEmulatorsSimultaneously=j['startEmulatorsSimultaneously'],
-            lifecycle=None,
-            setupEnvironmentLifecycle=None,
             minDurationMS=j['minDurationMS'],
-            debugMode=j['debugMode'],
             swallowAndShutdownOnException=j['swallowAndShutdownOnException'],
             parent_config=parent_config
         )
@@ -201,8 +126,6 @@ class ScenarioRunnerConfiguration:
         r.deploymentDirectory = path_helper(False, ig.IMMORTALS_ROOT, r.deploymentDirectory) + '/'
         r.scenario = ScenarioConfiguration.from_dict(j=j['scenario'], parent_config=r, value_pool=value_pool)
         fillout_object(r.scenario)
-        r.lifecycle = Lifecycle.from_dict(j['lifecycle'], r)
-        r.setupEnvironmentLifecycle = SetupEnvironmentLifecycle.from_dict(j['setupEnvironmentLifecycle'], r)
         fillout_object(r)
         return r
 
@@ -211,11 +134,7 @@ class ScenarioRunnerConfiguration:
                  deploymentDirectory,
                  scenario,
                  validate,
-                 startEmulatorsSimultaneously,
-                 lifecycle,
-                 setupEnvironmentLifecycle,
                  minDurationMS,
-                 debugMode,
                  swallowAndShutdownOnException,
                  parent_config
                  ):
@@ -223,11 +142,7 @@ class ScenarioRunnerConfiguration:
         self.deploymentDirectory = deploymentDirectory
         self.scenario = scenario
         self.validate = validate
-        self.startEmulatorsSimultaneously = startEmulatorsSimultaneously
-        self.lifecycle = lifecycle
-        self.setupEnvironmentLifecycle = setupEnvironmentLifecycle
         self.minDurationMS = minDurationMS
-        self.debugMode = debugMode
         self.swallowAndShutdownOnException = swallowAndShutdownOnException
         self.parent_config = parent_config
 

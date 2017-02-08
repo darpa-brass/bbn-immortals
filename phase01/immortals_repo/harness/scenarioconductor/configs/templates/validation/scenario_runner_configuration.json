@@ -37,18 +37,6 @@
         ]
     },
     "validate": true,
-    "startEmulatorsSimultaneously": true,
     "swallowAndShutdownOnException": true,
-    "minDurationMS": 0,
-    "debugMode": false,
-    "lifecycle": {
-        "setupEnvironment": true,
-        "setupApplications": true,
-        "executeScenario": true,
-        "haltEnvironment": false
-    },
-    "setupEnvironmentLifecycle": {
-        "destroyExisting": false,
-        "cleanExisting": true
-    }
+    "minDurationMS": 0
 }

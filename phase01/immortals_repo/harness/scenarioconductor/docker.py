@@ -61,14 +61,14 @@ class DockerInstance(DeploymentPlatformInterface):
         existing_id = self._get_docker_id_if_exists()
 
         if running_id:
-            if ig.config.setupEnvironmentLifecycle.destroyExisting:
+            if ig.configuration.validationEnvironment.setupEnvironmentLifecycle.destroyExisting:
                 _halt_identifiers.append(self.config.instanceIdentifier)
                 self._stop_docker_container()
         else:
             _halt_identifiers.append(self.config.instanceIdentifier)
 
         if existing_id:
-            if ig.config.setupEnvironmentLifecycle.destroyExisting:
+            if ig.configuration.validationEnvironment.setupEnvironmentLifecycle.destroyExisting:
                 _remove_identifiers.append(self.config.instanceIdentifier)
                 self._remove_docker_container()
         else:
@@ -76,7 +76,7 @@ class DockerInstance(DeploymentPlatformInterface):
 
         files = []
 
-        if not existing_id or ig.config.setupEnvironmentLifecycle.destroyExisting:
+        if not existing_id or ig.configuration.validationEnvironment.setupEnvironmentLifecycle.destroyExisting:
             self._docker_run()
 
         # If it is not running, start it

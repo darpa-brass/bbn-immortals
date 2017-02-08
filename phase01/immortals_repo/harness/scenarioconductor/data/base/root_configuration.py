@@ -79,17 +79,89 @@ class ValidationProgramConfiguration:
 
 
 # noinspection PyPep8Naming
-class AndroidEmulatorConfiguration:
+class Lifecycle:
     """
-    :type displayEmulatorGui: bool
+    :type setupEnvironment: bool
+    :type setupApplications: bool
+    :type executeScenario: bool
+    :type haltEnvironment: bool
     """
 
     @classmethod
     def from_dict(cls, d):
-        return cls(**d)
+        return cls(
+            setupEnvironment=d['setupEnvironment'],
+            setupApplications=d['setupApplications'],
+            executeScenario=d['executeScenario'],
+            haltEnvironment=d['haltEnvironment'],
+        )
 
-    def __init__(self, displayEmulatorGui):
-        self.displayEmulatorGui = displayEmulatorGui
+    def __init__(self,
+                 setupEnvironment,
+                 setupApplications,
+                 executeScenario,
+                 haltEnvironment
+                 ):
+        self.setupEnvironment = setupEnvironment
+        self.setupApplications = setupApplications
+        self.executeScenario = executeScenario
+        self.haltEnvironment = haltEnvironment
+
+    def to_dict(self):
+        return {
+            'setupEnvironment': self.setupEnvironment,
+            'setupApplications': self.setupApplications,
+            'executeScenario': self.executeScenario,
+            'haltEnvironment': self.haltEnvironment
+        }
+
+
+# noinspection PyPep8Naming
+class SetupEnvironmentLifecycle:
+    """
+    :type destroyExisting: bool
+    :type cleanExisting: bool
+    """
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            destroyExisting=d['destroyExisting'],
+            cleanExisting=d['cleanExisting'],
+        )
+
+    def __init__(self, destroyExisting, cleanExisting):
+        self.destroyExisting = destroyExisting
+        self.cleanExisting = cleanExisting
+
+    def to_dict(self):
+        return {
+            'destroyExisting': self.destroyExisting,
+            'cleanExisting': self.cleanExisting
+        }
+
+
+# noinspection PyPep8Naming
+class ValidationEnvironmentConfiguration:
+    """
+    :type displayAndroidEmulatorGui: bool
+    :type startAndroidEmulatorsSimultaneously: bool
+    :type lifecycle: Lifecycle
+    :type setupEnvironmentLifecycle: SetupEnvironmentLifecycle
+    """
+
+    @classmethod
+    def from_dict(cls, d):
+        dc = copy.deepcopy(d)
+        dc['lifecycle'] = Lifecycle.from_dict(d['lifecycle'])
+        dc['setupEnvironmentLifecycle'] = SetupEnvironmentLifecycle.from_dict(d['setupEnvironmentLifecycle'])
+        return cls(**dc)
+
+    def __init__(self, displayAndroidEmulatorGui, startAndroidEmulatorsSimultaneously, lifecycle, setupEnvironmentLifecycle):
+        self.displayAndroidEmulatorGui = displayAndroidEmulatorGui
+        self.lifecycle = lifecycle
+        self.setupEnvironmentLifecycle = setupEnvironmentLifecycle
+        self.startAndroidEmulatorsSimultaneously = startAndroidEmulatorsSimultaneously
 
 
 class ImmortalizationTarget:
@@ -123,8 +195,9 @@ class Configuration:
     :type testHarness: TestHarnessConfiguration
     :type testAdapter: TestAdapterConfiguration
     :type validation: ValidationConfiguration
-    :type androidEmulator: AndroidEmulatorConfiguration
+    :type validationEnvironment: ValidationEnvironmentConfiguration
     :type visualizationConfiguration: VisualizationConfiguration
+    :type debugMode: bool
     """
 
     @classmethod
@@ -150,8 +223,8 @@ class Configuration:
         fillout_object(dc['testAdapter'], value_pool=value_pool)
         dc['validation'] = ValidationConfiguration.from_dict(dc['validation'])
         fillout_object(dc['validation'], value_pool=value_pool)
-        dc['androidEmulator'] = AndroidEmulatorConfiguration.from_dict(dc['androidEmulator'])
-        fillout_object(dc['androidEmulator'], value_pool=value_pool)
+        dc['validationEnvironment'] = ValidationEnvironmentConfiguration.from_dict(dc['validationEnvironment'])
+        fillout_object(dc['validationEnvironment'], value_pool=value_pool)
         dc['visualizationConfiguration'] = VisualizationConfiguration.from_dict(dc['visualizationConfiguration'])
         fillout_object(dc['visualizationConfiguration'], value_pool=value_pool)
         obj = cls(**dc)
@@ -174,8 +247,9 @@ class Configuration:
                  testHarness,
                  testAdapter,
                  validation,
-                 androidEmulator,
-                 visualizationConfiguration):
+                 validationEnvironment,
+                 visualizationConfiguration,
+                 debugMode):
         self.runtimeRoot = runtimeRoot
         self.resultRoot = resultRoot
         self.dataRoot = dataRoot
@@ -191,8 +265,9 @@ class Configuration:
         self.testHarness = testHarness
         self.testAdapter = testAdapter
         self.validation = validation
-        self.androidEmulator = androidEmulator
+        self.validationEnvironment = validationEnvironment
         self.visualizationConfiguration = visualizationConfiguration
+        self.debugMode = debugMode
 
 
 # noinspection PyPep8Naming

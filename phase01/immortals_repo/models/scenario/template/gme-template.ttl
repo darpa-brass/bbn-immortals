@@ -242,7 +242,7 @@
                 <http://darpa.mil/immortals/ontology/r2.0.0/metrics#Metric-eb31398b-306c-41e4-a6a9-bbf598fc523b> .
 
 
-<http://darpa.mil/immortals/ontology/r2.0.0/gmei#GmeInterchangeFormatUberExample>
+<http://darpa.mil/immortals/ontology/r2.0.0/gmei#GmeInterchangeFormatUberExample-9f854d89-ce5a-30e3-25c7-5bb1d2d9e036>
         a       <http://darpa.mil/immortals/ontology/r2.0.0/cp#GmeInterchangeFormat> ;
         <http://www.w3.org/2000/01/rdf-schema#comment>
                 "Uber example."^^<xsd:string> ;

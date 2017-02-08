@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import SocketServer
-import argparse
 import json
 import logging
 
@@ -8,31 +7,12 @@ import bottle
 
 from . import ta_submitter as tas
 
-parser = argparse.ArgumentParser(description='IMMORTALS Mock LL TH')
-
 _failure_map = {
-    'none': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline.json',
-    'all': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline-b-fail.json',
-    'gps': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline-b-fail-gps.json',
-    'bandwidth': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline-b-fail-bandwidth.json'
+    'baseline': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline.json',
+    'fail-all': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline-b-fail.json',
+    'fail-gps': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline-b-fail-gps.json',
+    'fail-bandwidth': 'scenarioconductor/configs/samples/scenarioconfiguration-baseline-b-fail-bandwidth.json'
 }
-
-
-# _DEFAULT_PERTURBED_SUBMISSION_FILE = 'scenarioconductor/configs/samples/scenarioconfiguration-challenge-fail.json'
-
-
-def add_parser_arguments(psr):
-    psr.add_argument('-thp', '--test-harness-port', type=int)
-    psr.add_argument('-tha', '--test-harness-address', type=str)
-    psr.add_argument('-tap', '--test-adapter-port', type=int)
-    psr.add_argument('-taa', '--test-adapter-address', type=str)
-    psr.add_argument('flow', metavar='FLOW', choices=['baselineA', 'baselineB', 'challenge', 'all'])
-    psr.add_argument('failure', metavar='FAILURE_PROPERTY', choices=['none', 'all', 'gps', 'bandwidth'])
-    psr.add_argument('-f', '--scenario-file', type=str)
-    psr.add_argument('-s', '--scenario-string', type=str)
-
-
-add_parser_arguments(parser)
 
 
 # noinspection PyClassHasNoInit
@@ -99,10 +79,7 @@ class LLHarness(bottle.Bottle):
             self.pending_executions[0].execute()
 
 
-def main(args=None):
-    if args is None:
-        args = parser.parse_args()
-
+def main(args):
     if args.test_harness_port is not None:
         tas.TH_PORT = args.test_harness_port
 
@@ -117,14 +94,25 @@ def main(args=None):
 
     tas.URL_TEMPLATE = tas.TA_PROTOCOL + tas.TA_URL + ':' + str(tas.TA_PORT) + '/{path}'
 
-    if args.scenario_file is not None:
-        scc_j = json.load(open(args.scenario_file, 'r'))
+    scc_j = None
 
-    elif args.scenario_string is not None:
-        scc_j = json.loads(args.scenario_string)
+    if args.deployment_model == 'custom':
 
-    else:
-        scc_j = json.load(open(_failure_map[args.failure]))
+        if args.scenario_file is not None:
+            scc_j = json.load(open(args.scenario_file, 'r'))
+
+        elif args.scenario_string is not None:
+            scc_j = json.loads(args.scenario_string)
+
+        else:
+            raise Exception("Cannot execute a 'custom' deployment model without a provided file or string!")
+
+    elif args.deployment_model != 'custom':
+        if args.scenario_file is None and args.scenario_string is None:
+            scc_j = json.load(open(_failure_map[args.deployment_model]))
+        else:
+            raise Exception(
+                "Cannot execute a deployment model file or string unless the deployment model type is set to 'custom'!")
 
     execution_scenarios = tas.produce_test_adapter_submissions(args.flow, scc_j)
 
@@ -132,7 +120,3 @@ def main(args=None):
                   log_filepath='ll_dummy_server.log')
 
     o.start()
-
-
-if __name__ == '__main__':
-    main()

@@ -108,7 +108,7 @@ class JavaPlatform(DeploymentPlatformInterface):
             logging.debug(
                 'Setting up ' + self.config.deploymentPlatformEnvironment + ' for ' + self.config.instanceIdentifier)
 
-            if ig.config.setupEnvironmentLifecycle.destroyExisting:
+            if ig.configuration.validationEnvironment.setupEnvironmentLifecycle.destroyExisting:
                 if os.path.exists(self.config.applicationDeploymentDirectory):
                     shutil.rmtree(self.config.applicationDeploymentDirectory)
 

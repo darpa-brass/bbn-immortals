@@ -96,26 +96,29 @@ def produce_test_adapter_submissions(scenario_flow, scenario_configuration_dict)
     if 'sessionIdentifier' in scd:
         scd.pop('sessionIdentifier')
 
-    if scenario_flow == 'baselineA' or scenario_flow == 'all':
-        if config.visualizationConfiguration.enabled:
-            l.append(TestAdapterSubmission(
-                source_configuration_dict=None,
-                method=send_baseline_validation
-            ))
-
-        else:
-            l.append(TestAdapterSubmission(
-                source_configuration_dict=None,
-                method=send_baseline_validation
-            ))
-
-    if scenario_flow == 'baselineB' or scenario_flow == 'all':
+    if scenario_flow == 'baseline':
         l.append(TestAdapterSubmission(
             source_configuration_dict=scd,
             method=send_baseline_validation
         ))
 
-    if scenario_flow == 'challenge' or scenario_flow == 'all':
+    elif scenario_flow == 'challenge':
+        l.append(TestAdapterSubmission(
+            source_configuration_dict=scd,
+            method=send_adapt_and_validate
+        ))
+
+    elif scenario_flow == 'all':
+        l.append(TestAdapterSubmission(
+            source_configuration_dict=None,
+            method=send_baseline_validation
+        ))
+
+        l.append(TestAdapterSubmission(
+            source_configuration_dict=scd,
+            method=send_baseline_validation
+        ))
+
         l.append(TestAdapterSubmission(
             source_configuration_dict=scd,
             method=send_adapt_and_validate

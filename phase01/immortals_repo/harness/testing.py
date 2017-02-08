@@ -12,11 +12,32 @@ def llds_add_parser_arguments(psr):
     psr.add_argument('-tha', '--test-harness-address', type=str)
     psr.add_argument('-tap', '--test-adapter-port', type=int)
     psr.add_argument('-taa', '--test-adapter-address', type=str)
-    psr.add_argument('flow', metavar='FLOW', choices=['baselineA', 'baselineB', 'challenge', 'all'])
-    psr.add_argument('failure', metavar='FAILURE_PROPERTY', choices=['none', 'all', 'gps', 'bandwidth'])
+    psr.add_argument('flow', metavar='FLOW', choices=['baseline', 'challenge', 'all'])
+    psr.add_argument('deployment_model',
+                     metavar='DEPLOYMENT_MODEL',
+                     choices=['baseline', 'fail-all', 'fail-gps', 'fail-bandwidth', 'custom'])
     psr.add_argument('-f', '--scenario-file', type=str)
     psr.add_argument('-s', '--scenario-string', type=str)
 
+
+def llds_help():
+    return """
+    FLOW Options:
+    baseline        Executes the baseline validation scenario with the provided
+                        deployment model
+    challenge       Executes augmentation and validation against the provided
+                        deployment model
+    all             Executes baseline-a, baseline-b with the provided deployment
+                    model, and challenge with the provided deployment model
+                    sequentially
+
+    DEPLOYMENT_MODEL Options:
+    baseline        Baseline deployment model
+    fail-all        Deployment model where GPS and bandwidth both fail
+    fail-gps        Deployment model where GPS fails but bandwidth succeeds
+    fail-bandwidth  Deployment model where bandwidth fails but GPS succeeds
+    custom          Use a custom deployment model
+    """
 
 def olympus_main(args=None):
     from scenarioconductor.olympus import Olympus
@@ -35,11 +56,21 @@ def llds_main(args=None):
     llds.main(args)
 
 
+def tools_dmttl_main(args=None):
+    from scenarioconductor.data.base.scenarioapiconfiguration import ScenarioConductorConfiguration
+    from scenarioconductor.ll_rest_endpoint import execute_ttl_generation
+    import commentjson as json
+    args = _parser.parse_args()
+    sc_d = json.load(open(args.input_file, 'r'))
+    sc_obj = ScenarioConductorConfiguration.from_dict(sc_d)
+    execute_ttl_generation(sc_obj, args.output_file)
+
+
 _sub_parsers = _parser.add_subparsers(help='Available Commands')
 
 llds_parser = _sub_parsers.add_parser('llds', help='IMMoRTALS Mock LL TestHarness')
 
-ll_dummy_server_parser = _sub_parsers.add_parser('llds', help='IMMORTALS Mock LL TH')
+ll_dummy_server_parser = _sub_parsers.add_parser('llds', help='IMMORTALS Mock LL TH', epilog=llds_help(), formatter_class=argparse.RawTextHelpFormatter)
 llds_add_parser_arguments(ll_dummy_server_parser)
 ll_dummy_server_parser.set_defaults(func=llds_main)
 
@@ -48,6 +79,13 @@ sc_parser.add_argument('-f', '--sc-configuration-file', type=str)
 
 olympus_parser = _sub_parsers.add_parser('olympus', help='IMMoRTALS Olympus Web Interface')
 olympus_parser.set_defaults(func=olympus_main)
+
+tools_parser = _sub_parsers.add_parser('tools', help='IMMoRTALS Tools')
+_tools_parser_subparsers = tools_parser.add_subparsers(help='Available Utility Commands')
+dmttl_parser = _tools_parser_subparsers.add_parser('dmtottl', help="Deployment Model To TTL")
+dmttl_parser.add_argument('input_file', metavar='INPUT_FILE')
+dmttl_parser.add_argument('output_file', metavar='OUTPUT_FILE')
+dmttl_parser.set_defaults(func=tools_dmttl_main)
 
 network_logger = logging.getLogger
 
@@ -86,7 +124,7 @@ def main():
             ]
         }
 
-        ig.configuration.androidEmulator.displayEmulatorGui = True
+        ig.configuration.validationEnvironment.displayAndroidEmulatorGui = True
         ig.configuration.validation.minimumTestDurationMS = -1
 
         ig.start_olympus()

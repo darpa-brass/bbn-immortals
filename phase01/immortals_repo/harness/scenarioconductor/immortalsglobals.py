@@ -139,4 +139,4 @@ def _load_configuration():
     )
 
 
-configuration = _load_configuration()
+configuration = _load_configuration() # type: Configuration

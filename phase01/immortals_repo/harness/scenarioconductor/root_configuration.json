@@ -108,10 +108,22 @@
         "minimumTestDurationMS": -1,
         "pcapyMonitorInterface": "lo"
     },
-    "androidEmulator": {
-        "displayEmulatorGui": false
+    "validationEnvironment": {
+        "displayAndroidEmulatorGui": false,
+        "startAndroidEmulatorsSimultaneously": true,
+        "lifecycle": {
+            "setupEnvironment": true,
+            "setupApplications": true,
+            "executeScenario": true,
+            "haltEnvironment": false
+        },
+        "setupEnvironmentLifecycle": {
+            "destroyExisting": false,
+            "cleanExisting": true
+        }
     },
     "visualizationConfiguration": {
         "enabled": false
-    }
+    },
+    "debugMode": false
 }

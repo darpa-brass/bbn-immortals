@@ -10,43 +10,37 @@ from threading import Lock
 
 import adbhelper
 import emuhelper
-
 from .. import immortalsglobals as ig
 from .. import threadprocessrouter as tpr
 from ..data.applicationconfig import AndroidApplicationConfig
 from ..deploymentplatform import DeploymentPlatformInterface
 from ..interfaces import CommandHandlerInterface
-
 from ..utils import get_formatted_string_value
 
 _adb_has_been_reinitialized = False
 _global_lock = Lock()
 _adb_identifier_count = 0
 _emulator_name_template = 'emulator-{CONSOLEPORT}'
-_port_base = 5560
+_port_max = 5584
+_port_min = 5554
+_port_skip = 2
+_port_generator = [n for n in range(_port_min, _port_max + _port_skip, _port_skip)]
 
 
 def _generate_emulator_identifier():
-    global _adb_identifier_count
-    number = _adb_identifier_count
-    _adb_identifier_count += 1
+    global _port_generator
 
-    int_identifier = None
-    if type(number) is int:
-        int_identifier = number
-    elif type(number) is str:
-        int_identifier = str(number)
+    try:
+        port = _port_generator.pop()
+        return _emulator_name_template.format(CONSOLEPORT=port)
 
-    if int_identifier >= 22:
-        raise Exception("No more than 22 devices are supported at this time!")
-
-    consoleport = _port_base + 2 * int_identifier
-    return _emulator_name_template.format(CONSOLEPORT=consoleport)
+    except IndexError:
+        raise Exception("No more than 16 devices are supported at this time!")
 
 
 def reset_identifier_counter():
-    global _adb_identifier_count
-    _adb_identifier_count = 0
+    global _port_generator, _port_max, _port_min, _port_skip
+    _port_generator = [n for n in range(_port_min, _port_max + _port_skip, _port_skip)]
 
 
 class AndroidEmulatorInstance(DeploymentPlatformInterface):
@@ -62,7 +56,7 @@ class AndroidEmulatorInstance(DeploymentPlatformInterface):
 
         DeploymentPlatformInterface.__init__(self,
                                              command_processor=command_processor,
-                                             halt_on_shutdown=ig.config.lifecycle.haltEnvironment
+                                             halt_on_shutdown=ig.configuration.validationEnvironment.lifecycle.haltEnvironment
                                              )
 
         self.adb_device_identifier = _generate_emulator_identifier()
@@ -91,7 +85,7 @@ class AndroidEmulatorInstance(DeploymentPlatformInterface):
         self.stderr = self.std_endpoint.err
 
         logging.debug(
-                'Setting up ' + self.config.deploymentPlatformEnvironment + ' for ' + self.config.instanceIdentifier)
+            'Setting up ' + self.config.deploymentPlatformEnvironment + ' for ' + self.config.instanceIdentifier)
 
         cmd = ['mksdcard', '12M', self.sdcard_filepath]
         self.call(cmd)

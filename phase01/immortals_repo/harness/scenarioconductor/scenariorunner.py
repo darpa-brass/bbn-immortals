@@ -94,18 +94,18 @@ class ScenarioRunner:
         for app in self.application_instances:
             platforms.append(app.platform)
 
-        if self.runner_configuration.lifecycle.setupEnvironment:
-            self.setup_platforms(platforms, self.runner_configuration.startEmulatorsSimultaneously)
+        if ig.configuration.validationEnvironment.lifecycle.setupEnvironment:
+            self.setup_platforms(platforms, ig.configuration.validationEnvironment.startAndroidEmulatorsSimultaneously)
 
-        if self.runner_configuration.lifecycle.setupApplications:
+        if ig.configuration.validationEnvironment.lifecycle.setupApplications:
             self.setup_applications(self.application_instances, False)
             pass
 
         # TODO Ideally validation and timing would not be handled by the start_applications call. But it works for now.
-        if self.runner_configuration.lifecycle.executeScenario:
+        if ig.configuration.validationEnvironment.lifecycle.executeScenario:
             self.start_applications(self.application_instances, False, True)
 
-        if self.runner_configuration.lifecycle.haltEnvironment:
+        if ig.configuration.validationEnvironment.lifecycle.haltEnvironment:
             # TODO: Halt here
             pass
 
@@ -137,7 +137,7 @@ class ScenarioRunner:
         for application in self.application_instances:
             application.stop()
 
-        if self.runner_configuration.lifecycle.haltEnvironment:
+        if ig.configuration.validationEnvironment.lifecycle.haltEnvironment:
             for application in self.application_instances:
                 application.platform.stop()
 
@@ -166,7 +166,7 @@ class ScenarioRunner:
                 t.join(99999)
 
         else:
-            selc = self.runner_configuration.setupEnvironmentLifecycle
+            selc = ig.configuration.validationEnvironment.setupEnvironmentLifecycle
 
             if selc.destroyExisting:
                 for o in objects:
