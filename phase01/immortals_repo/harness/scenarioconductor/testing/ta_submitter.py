@@ -1,6 +1,7 @@
 import copy
 import json
 import logging
+import time
 
 import requests
 
@@ -20,6 +21,12 @@ URL_TEMPLATE = TA_PROTOCOL + TA_URL + ':' + str(TA_PORT) + '/{path}'
 JSON_HEADERS = {'Content-Type': 'application/json'}
 
 _network_logger = logging.getLogger()
+
+
+def get_timestamp(time_seconds=None):
+    if time_seconds is None:
+        time_seconds = time.time()
+    return time.strftime("%Y-%m-%dT%H:%m:%S", time.gmtime(time_seconds)) + '.' + str(time_seconds % 1)[2:5] + 'Z'
 
 
 def set_logger(logging_logger):
@@ -72,9 +79,13 @@ class TestAdapterSubmission:
         :type source_configuration_dict: dict or None
         :param method: method
         """
+
+        send_value = json.dumps({
+            'TIME': get_timestamp(),
+            'ARGUMENTS': None if source_configuration_dict is None else source_configuration_dict
+        })
         self._method_kwargs = {
-            'source_configuration_str': None if source_configuration_dict is None else json.dumps(
-                source_configuration_dict)
+            'source_configuration_str': send_value
         }
         self._method = method
         self.results = None

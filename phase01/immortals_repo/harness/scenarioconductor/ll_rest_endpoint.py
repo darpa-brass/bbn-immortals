@@ -1,4 +1,3 @@
-import bottle
 import json
 import os
 import re
@@ -42,7 +41,21 @@ class LLRestEndpoint():
         # noinspection PyBroadException
         data_s = bottle.request.body.read()
 
-        if data_s is None or data_s == '':
+        # noinspection PyBroadException
+        try:
+            data_s = bottle.request.body.read()
+            data_j = json.loads(data_s)
+            self._network_logger.write(
+                'TA RECEIVED POST /action/adaptAndValidateApplication with BODY: ' + json.dumps(data_j, indent=4,
+                                                                                                separators=(
+                                                                                                    ',', ': ')))
+        except:
+            ig.logger().error_das(
+                'Error attempting to parse the submitted data as json.'
+                '  Are you sure it is well-formed?. Details:\n\t' + traceback.format_exc())
+            return bottle.HTTPResponse(status=400, body=None)
+
+        if 'ARGUMENTS' not in data_j or data_j['ARGUMENTS'] is None or data_j['ARGUMENTS'] == '':
             if demo_mode:
                 env_conf = ScenarioConductorConfiguration.from_dict(
                     json.load(open(
@@ -58,21 +71,7 @@ class LLRestEndpoint():
         else:
             # noinspection PyBroadException
             try:
-                data_s = bottle.request.body.read()
-                data_j = json.loads(data_s)
-            except:
-                ig.logger().error_das(
-                    'Error attempting to parse the submitted data as json.'
-                    '  Are you sure it is well-formed?. Details:\n\t' + traceback.format_exc())
-                return bottle.HTTPResponse(status=400, body=None)
-
-            self._network_logger.write(
-                'TA RECEIVED POST /action/adaptAndValidateApplication with BODY: ' + json.dumps(data_j, indent=4,
-                                                                                                separators=(
-                                                                                                    ',', ': ')))
-            # noinspection PyBroadException
-            try:
-                env_conf = ScenarioConductorConfiguration.from_dict(data_j)
+                env_conf = ScenarioConductorConfiguration.from_dict(data_j['ARGUMENTS'])
             except:
                 # data contents error
                 ig.logger().error_das(
@@ -118,7 +117,7 @@ class LLRestEndpoint():
         )
 
         self._network_logger.write('TA SENDING ACK /action/adaptAndValidateApplication with BODY: ' +
-                                   json.dumps(env_conf.to_dict(), indent=4, separators=(',', ': ')))
+                                   json.dumps(return_val, indent=4, separators=(',', ': ')))
 
         return return_val
 
@@ -139,7 +138,7 @@ class LLRestEndpoint():
                                                                                                 ',', ': ')))
         # noinspection PyBroadException
         try:
-            s_conf = ScenarioConductorConfiguration.from_dict(data_j)
+            s_conf = ScenarioConductorConfiguration.from_dict(data_j['ARGUMENTS'])
         except:
             # data contents error
             ig.logger().error_das(
@@ -188,7 +187,7 @@ class LLRestEndpoint():
         )
 
         self._network_logger.write('TA SENDING ACK /action/adaptAndValidateApplication with BODY:'
-                                   ' ' + json.dumps(data_j, indent=4, separators=(',', ': ')))
+                                   ' ' + json.dumps(return_val, indent=4, separators=(',', ': ')))
 
         return return_val
 
