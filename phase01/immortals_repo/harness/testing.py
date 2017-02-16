@@ -39,6 +39,7 @@ def llds_help():
     custom          Use a custom deployment model
     """
 
+
 def olympus_main(args=None):
     from scenarioconductor.olympus import Olympus
     from tornado.ioloop import IOLoop
@@ -58,7 +59,7 @@ def llds_main(args=None):
 
 def tools_dmttl_main(args=None):
     from scenarioconductor.data.base.scenarioapiconfiguration import ScenarioConductorConfiguration
-    from scenarioconductor.ll_rest_endpoint import execute_ttl_generation
+    from scenarioconductor.ttl_bridge import execute_ttl_generation
     import commentjson as json
     args = _parser.parse_args()
     sc_d = json.load(open(args.input_file, 'r'))
@@ -70,7 +71,8 @@ _sub_parsers = _parser.add_subparsers(help='Available Commands')
 
 llds_parser = _sub_parsers.add_parser('llds', help='IMMoRTALS Mock LL TestHarness')
 
-ll_dummy_server_parser = _sub_parsers.add_parser('llds', help='IMMORTALS Mock LL TH', epilog=llds_help(), formatter_class=argparse.RawTextHelpFormatter)
+ll_dummy_server_parser = _sub_parsers.add_parser('llds', help='IMMORTALS Mock LL TH', epilog=llds_help(),
+                                                 formatter_class=argparse.RawTextHelpFormatter)
 llds_add_parser_arguments(ll_dummy_server_parser)
 ll_dummy_server_parser.set_defaults(func=llds_main)
 

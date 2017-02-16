@@ -497,6 +497,15 @@ public class ObjectToTriples {
                 throw new RuntimeException("shouldn't happen");
             }
             
+            if(objectFieldValue.getReflectionField() == null){
+                throw new RuntimeException("expected to find a Field");
+            }
+            
+            if(context.getIgnoredFields().contains(objectFieldValue.getReflectionField())){
+                //it's been explicitly ignored so skip over this field
+                return;
+            }
+            
             Resource fieldOwner = 
                     instantiate(objectFieldOwner.getValue()).asResource();
             Property p = OntologyHelper.getPropertyForField(

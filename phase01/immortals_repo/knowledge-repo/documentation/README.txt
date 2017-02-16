@@ -6,6 +6,7 @@ Additional optional build flags:
 	-Pbootstrap (push IMMoRTALS ontology into a running Fuseki instance)
 	-PincludeBytecodeModels (include fine-grained bytecode models in ontology)
 	-PincludeAstModels (include abstract syntax tree models in ontology)
+	-DvalidateOntology (runs a soundness check on the generated ontology, this may take quite some time to complete)
 
 Multiple build flags can be used simultaneously:
 	mvn clean install -DskipTests -Djunit.debug -Pbootstrap -PincludeAstModels -PincludeBytecodeModels
@@ -35,8 +36,21 @@ Start the knowledge-repo service (on port 8080):
 Start the service on some other port:
 	java -jar knowledge-repo/repository-service/target/immortals-repository-service-boot.war -Dserver.port=9999
 	
-After starting the service on port 8080, the ontology vocabulary can be viewed at:
+	After starting the service on port 8080, test it:
+	http://localhost:8080/immortalsTestService/ping
+	
+	A triple navigation UI can be viewed at:
+	http://localhost:8080/Query.html
+
+	List the graphs in Fuseki:
+	GET http://localhost:8080/immortalsRepositoryService/graphs
+	
+	Bootstrap a new knowledge graph:
+	POST http://localhost:8080/immortalsRepositoryService/bootstrap
+	
+	Generate a flattened, stringified view of a named resource:
+	GET http://localhost:8080/stringify?graphName=http://localhost:3030/ds/data/IMMoRTALS_r2.0.0&individualUri=[a uri goes here e.g. http://darpa.mil/immortals/ontology/r2.0.0/...]
+	
+	The ontology vocabulary can be viewed at:
 	http://localhost:8080/ontology/immortals-vocab/immortals_vocabulary.ttl
 	
-
-

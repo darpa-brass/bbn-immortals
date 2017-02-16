@@ -1,6 +1,7 @@
 package com.securboration.immortals.service.api;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -98,6 +99,38 @@ public class RelatedNodesService {
     	}
     }
     
+    private static Collection<String> getQueryVariables(List<QuerySolution> solutions){
+        Set<String> s = new HashSet<>();
+        
+        for(QuerySolution solution:solutions){
+            Iterator<String> vars = solution.varNames();
+            
+            while(vars.hasNext()){
+                s.add(vars.next());
+            }
+        }
+        
+        return s;
+    }
+    
+    /**
+     * 
+     * @param solutions
+     * @return null if 0 or more than 1 variables are found in the provided
+     * solutions, the variable name if exactly 1 is found
+     */
+    private static String getQueryVariable(List<QuerySolution> solutions){
+        Collection<String> vars = getQueryVariables(solutions);
+        
+        if(vars.size() == 0){
+            return null;
+        } else if(vars.size() > 1){
+            return null;
+        } else {
+            return vars.iterator().next();
+        }
+    }
+    
     private GraphNode getSparqlQueryResults(String query){
         List<QuerySolution> solutions = new ArrayList<>();
         
@@ -105,22 +138,57 @@ public class RelatedNodesService {
             solutions.add(solution);
         });
         
-        final String name = convertToString(solutions);
-        GraphNode g = new GraphNode(name,NodeType.QUERY_RESULT,null);
+        final String queryVar = getQueryVariable(solutions);
         
-        int counter = 1;
-        for(QuerySolution solution:solutions){
-            final String property = "hasSolution";
-            final String solutionUri = convertToString(solution,"solution"+counter);
+        if(queryVar == null){
+            //it's a complex query or one with no solutions so return a view of
+            //query hasSolution s1
+            //query hasSolution s2
+            //...
             
-            GraphNode o = new GraphNode(solutionUri,NodeType.QUERY_SOLUTION,null);
+            final String name = convertToString(solutions);
+            GraphNode g = new GraphNode(name,NodeType.QUERY_RESULT,null);
             
-            g.createEdge(property, null, o);
+            int counter = 1;
+            for(QuerySolution solution:solutions){
+                final String property = "hasSolution";
+                final String solutionUri = convertToString(solution,"solution"+counter);
+                
+                GraphNode o = new GraphNode(solutionUri,NodeType.QUERY_SOLUTION,null);
+                
+                g.createEdge(property, null, o);
+                
+                counter++;
+            }
             
-            counter++;
+            return g;
+        } else {
+            //it's a simple query with at least one solution so return a view of
+            //query has[varName] [solution 1]
+            //...
+            
+            GraphNode g = new GraphNode("solution",NodeType.QUERY_SOLUTION,null);
+            
+            for(QuerySolution s:solutions){
+                
+                RDFNode n =  s.get(queryVar);
+                
+                if(n.isAnon()){
+                    continue;
+                } else if(n.isLiteral()){
+                    GraphNode o = new GraphNode(n.toString(),NodeType.LITERAL,null);
+                    g.createEdge(queryVar, null, o);
+                } else if(n.isResource()){
+                    GraphNode o = new GraphNode(n.toString(),NodeType.OBJECT,null);
+                    g.createEdge(queryVar, null, o);
+                }
+            }
+            
+            return g;
+            
         }
         
-        return g;
+        
     }
     
     private static final String QS_SERIALIZE_NEWLINE_SIGIL = "QQQQQ";

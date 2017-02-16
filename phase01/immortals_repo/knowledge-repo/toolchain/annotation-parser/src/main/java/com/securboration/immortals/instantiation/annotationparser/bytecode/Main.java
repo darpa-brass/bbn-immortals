@@ -2,12 +2,17 @@ package com.securboration.immortals.instantiation.annotationparser.bytecode;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
+import org.objectweb.asm.tree.AnnotationNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodNode;
 
 import com.securboration.immortals.instantiation.annotationparser.traversal.JarTraverser;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
@@ -24,6 +29,60 @@ public class Main {
                 "./target/classes/ontology/bytecode-structure",
         };
         
+    }
+    
+    private static class ReflectionHelper{
+        public static Field getField(Class<?> c,String fieldName){
+            Class<?> currentClass = c;
+            
+            Field match = null;
+            while(currentClass != null){
+                for(Field f:currentClass.getDeclaredFields()){
+                    if(f.getName().equals(fieldName)){
+                        if(match != null){
+                            throw new RuntimeException(
+                                "found multiple matches for a field named " + 
+                                fieldName + " in class " + 
+                                currentClass.getName() + 
+                                " with base class " + c.getName()
+                                );
+                        }
+                        match = f;
+                    }
+                }
+                
+                currentClass = currentClass.getSuperclass();
+            }
+            
+            return match;
+        }
+    }
+    
+    private static void addIgnoreFields(ObjectToTriplesConfiguration c){
+        c.getIgnoredFields().add(
+            ReflectionHelper.getField(
+                FieldNode.class, 
+                "api"
+                )
+            );
+        c.getIgnoredFields().add(
+            ReflectionHelper.getField(
+                AnnotationNode.class, 
+                "api"
+                )
+            );
+        c.getIgnoredFields().add(
+            ReflectionHelper.getField(
+                ClassNode.class, 
+                "api"
+                )
+            );
+        c.getIgnoredFields().add(
+            ReflectionHelper.getField(
+                MethodNode.class, 
+                "api"
+                )
+            );
     }
     
     /**
@@ -66,6 +125,7 @@ public class Main {
                     ObjectToTriplesConfiguration config = 
                             new ObjectToTriplesConfiguration(version);
                     config.setAddMetadata(false);
+                    addIgnoreFields(config);
                     
                     BytecodeModelGatherer gatherer = 
                             new BytecodeModelGatherer();

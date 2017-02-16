@@ -15,7 +15,7 @@ from ..data.base.root_configuration import demo_mode
 def get_timestamp(time_seconds=None):
     if time_seconds is None:
         time_seconds = time.time()
-    return time.strftime("%Y-%m-%dT%H:%m:%S", time.gmtime(time_seconds)) + '.' + str(time_seconds % 1)[2:5]
+    return time.strftime("%Y-%m-%dT%H:%m:%S", time.gmtime(time_seconds)) + '.' + str(time_seconds % 1)[2:5] + 'Z'
 
 
 class AbstractReporter(ReportingInterface):

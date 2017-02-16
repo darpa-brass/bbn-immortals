@@ -914,6 +914,22 @@ public class OntologyHelper {
         return c.getAnnotation(ConceptInstance.class) != null;
     }
     
+    private static void buildAnonymousNodeMapping(
+            OntModel model,
+            Map<String,Resource> map,
+            String name
+            ){
+        if(map.containsKey(name)){
+            return;
+        }
+        
+        if(name.equals(Constants.UndefinedString)){
+            return;
+        }
+        
+        map.put(name, model.createResource());
+    }
+    
     /**
      * Adds triples derived from @Triple annotations on a Class to the model
      * 
@@ -928,6 +944,14 @@ public class OntologyHelper {
             Triple[] triples
             ){
         
+        //first build an anonymous node mapping for this set of triples
+        Map<String,Resource> anonymousNodes = new HashMap<>();
+        for(Triple triple:triples){
+            buildAnonymousNodeMapping(model,anonymousNodes,triple.objectId());
+            buildAnonymousNodeMapping(model,anonymousNodes,triple.subjectId());
+        }
+        
+        //now parse the triples
         for(Triple triple:triples){
             
             Resource s = null;
@@ -946,6 +970,16 @@ public class OntologyHelper {
             
             //get the subject
             {
+                //the subject refers to an anonymous node
+                if(s == null && !triple.subjectId().equals(Constants.UndefinedString)){
+                    s = anonymousNodes.get(triple.subjectId());
+                }
+                
+                //the subject is a URI
+                if(s == null && !triple.subjectUri().equals(Constants.UndefinedString)){
+                    s = model.createResource(triple.subjectUri());
+                }
+                
                 //the subject is a class
                 Class<?> subjectClass = triple.subjectClass();
                 if(subjectClass != Constants.UndefinedClass.class){
@@ -955,11 +989,6 @@ public class OntologyHelper {
                             subjectClass,
                             isConceptInstance(subjectClass)
                             );
-                }
-                
-                //the subject is a URI
-                if(s == null && !triple.subjectUri().equals(Constants.UndefinedString)){
-                    s = model.createResource(triple.subjectUri());
                 }
                 
                 //the subject is a property
@@ -978,6 +1007,16 @@ public class OntologyHelper {
             
             //get the object
             {
+                //the object refers to an anonymous node
+                if(o == null && !triple.objectId().equals(Constants.UndefinedString)){
+                    o = anonymousNodes.get(triple.objectId());
+                }
+                
+                //the object is a URI
+                if(o == null && !triple.objectUri().equals(Constants.UndefinedString)){
+                    o = model.createResource(triple.objectUri());
+                }
+                
                 //the object is a Class
                 Class<?> objectClass = triple.objectClass();
                 if(objectClass != Constants.UndefinedClass.class){
@@ -987,11 +1026,6 @@ public class OntologyHelper {
                             objectClass,
                             isConceptInstance(objectClass)
                             );
-                }
-                
-                //the object is a URI
-                if(o == null && !triple.objectUri().equals(Constants.UndefinedString)){
-                    o = model.createResource(triple.objectUri());
                 }
                 
                 //the object is a property

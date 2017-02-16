@@ -27,6 +27,7 @@ public class ObjectNode {
     
     //if it's a normal Java object, it will have these
     private Map<String, ObjectNode> fields = null;
+    private Set<Field> reflectiveFields = null;
     
     // ** OR ** //
     
@@ -71,6 +72,22 @@ public class ObjectNode {
         }
         
         throw new RuntimeException("couldn't find field name!");
+    }
+    
+    public Field getReflectionField(){
+        String fieldName = getFieldName();
+        
+        if(fieldName == null){
+            return null;
+        }
+        
+        for(Field f:parent.reflectiveFields){
+            if(f.getName().equals(fieldName)){
+                return f;
+            }
+        }
+        
+        throw new RuntimeException("no field found with name " + fieldName);
     }
 
     
@@ -280,7 +297,8 @@ public class ObjectNode {
         } else {
             
             //it's a non-primitive object with fields, so dive into each field
-            o.fields = new HashMap<>();    
+            o.fields = new HashMap<>();
+            o.reflectiveFields = new HashSet<>();
             
             for (Field f : getFields(value.getClass())) {
                 if (!shouldProcessField(f)) {
@@ -301,6 +319,8 @@ public class ObjectNode {
                 o.fields.put(
                         f.getName(), 
                         fieldValue);
+                
+                o.reflectiveFields.add(f);
             }
         }
         

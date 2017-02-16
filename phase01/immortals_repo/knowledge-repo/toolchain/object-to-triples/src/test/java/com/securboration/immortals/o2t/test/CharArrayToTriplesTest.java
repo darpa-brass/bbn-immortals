@@ -13,7 +13,7 @@ import com.securboration.immortals.o2t.ontology.OntologyHelper;
 public class CharArrayToTriplesTest {
     
     @Test
-    public void testObjectToTriplesLists() throws IOException{
+    public void testObjectToTriplesLists() throws IOException, NoSuchFieldException, SecurityException{
         testObjectToTriples(
             "asm Type",
             Type.getType(this.getClass())
@@ -56,6 +56,8 @@ public class CharArrayToTriplesTest {
                         },
                 new char[] {'d','e',0}
         };
+        
+        private Object test2 = 9999;
     }
     
     private static void printDividerStart(String tag){
@@ -77,9 +79,11 @@ public class CharArrayToTriplesTest {
     private static void testObjectToTriples(
             String tag,
             Object o
-            ) throws IOException{
+            ) throws IOException, NoSuchFieldException, SecurityException{
         
         final ObjectToTriplesConfiguration config = getConfig();
+        
+        config.getIgnoredFields().add(TestNestedArray3d.class.getDeclaredField("test2"));
         
         printDividerStart(tag);
         

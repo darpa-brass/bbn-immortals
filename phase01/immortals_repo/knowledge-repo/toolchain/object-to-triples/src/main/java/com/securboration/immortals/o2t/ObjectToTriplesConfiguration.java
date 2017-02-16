@@ -1,9 +1,11 @@
 package com.securboration.immortals.o2t;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.UUID;
 
 import org.apache.log4j.LogManager;
@@ -66,6 +68,8 @@ public class ObjectToTriplesConfiguration {
     private boolean addMetadata = false;
     
     private ObjectTranslator objectTranslator = new ObjectTranslatorImpl();
+    
+    private final Collection<Field> ignoredFields = new HashSet<>();
 
     public Logger getLog() {
         return log;
@@ -269,6 +273,11 @@ public class ObjectToTriplesConfiguration {
     
     public void setObjectTranslator(ObjectTranslator objectTranslator) {
         this.objectTranslator = objectTranslator;
+    }
+
+    
+    public Collection<Field> getIgnoredFields() {
+        return ignoredFields;
     }
 
 }
