@@ -4,10 +4,13 @@ Represents an android application and the common configuration options necessary
 
 import json
 
+from .. import immortalsglobals as ig
 from .. import platformhelper
+from .. import threadprocessrouter as tpr
 from ..data.applicationconfig import AndroidApplicationConfig
-from ..deploymentplatform import LifecycleInterface
 from ..data.base.tools import path_helper
+from ..deploymentplatform import LifecycleInterface
+from ..interfaces import CommandHandlerInterface
 
 _instances = {}
 
@@ -27,10 +30,17 @@ class AndroidApplication(LifecycleInterface):
         else:
             _instances[application_configuration.instanceIdentifier] = self
 
+        self.std_endpoint = tpr.get_std_endpoint(ig.configuration.artifactRoot,
+                                                 application_configuration.instanceIdentifier)
+
+        self.command_processor = CommandHandlerInterface(stdout=self.std_endpoint.out,
+                                                         stderr=self.std_endpoint.err)
+
         self.config = application_configuration
         self.is_application_running = False
         self.is_application_setup = False
-        self.platform = platformhelper.create_platform_instance(application_configuration)
+        self.platform = platformhelper.create_platform_instance(application_configuration=application_configuration,
+                                                                command_processor=self.command_processor)
         self.performing_setup = False
 
     """

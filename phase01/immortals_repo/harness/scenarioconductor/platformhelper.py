@@ -13,11 +13,12 @@ Creates a platform instance for a given application coniguration. This should ne
 """
 
 
-def create_platform_instance(application_configuration):
+def create_platform_instance(application_configuration, command_processor=None):
     platform = application_configuration.deploymentPlatformEnvironment
 
     if platform == "android_emulator":
-        return androidplatform_emulator.AndroidEmulatorInstance(application_configuration)
+        return androidplatform_emulator.AndroidEmulatorInstance(application_configuration=application_configuration,
+                                                                command_processor=command_processor)
 
     elif platform == "android_docker":
         return androidplatform_docker.AndroidDockerEmulatorInstance(application_configuration)

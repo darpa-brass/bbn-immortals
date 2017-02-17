@@ -68,9 +68,9 @@ class AndroidEmulatorInstance(DeploymentPlatformInterface):
         self.emulator_is_running = False
         self.is_application_running = False
 
-        self.adbhelper = adbhelper.AdbHelper(application_configuration, self.adb_device_identifier, self)
+        self.adbhelper = adbhelper.AdbHelper(application_configuration, self.adb_device_identifier, command_processor)
         self.emuhelper = emuhelper.EmuHelper(self.adb_device_identifier, self.console_port,
-                                             self.sdcard_filepath, self)
+                                             self.sdcard_filepath, command_processor)
 
     def setup(self):
         global _global_lock, _adb_has_been_reinitialized
