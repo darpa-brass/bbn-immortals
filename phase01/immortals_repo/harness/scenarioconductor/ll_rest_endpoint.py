@@ -46,7 +46,7 @@ class LLRestEndpoint():
             data_s = bottle.request.body.read()
             data_j = json.loads(data_s)
             self._network_logger.write(
-                'TA RECEIVED POST /action/adaptAndValidateApplication with BODY: ' + json.dumps(data_j, indent=4,
+                'TA RECEIVED POST /action/validateBaselineApplication with BODY: ' + json.dumps(data_j, indent=4,
                                                                                                 separators=(
                                                                                                     ',', ': ')))
         except:
@@ -116,7 +116,7 @@ class LLRestEndpoint():
             thread_args=[env_conf, sr, 'baseline']
         )
 
-        self._network_logger.write('TA SENDING ACK /action/adaptAndValidateApplication with BODY: ' +
+        self._network_logger.write('TA SENDING ACK /action/validateBaselineApplication with BODY: ' +
                                    json.dumps(return_val, indent=4, separators=(',', ': ')))
 
         return return_val
