@@ -1,4 +1,9 @@
 import json
+import logging
+import time
+from threading import Lock
+
+from .ll_api.data import AnalyticsEvent
 
 """
 Given the targetList of Strings, it removes the first instance of
@@ -78,7 +83,6 @@ If len(args) > 1 and the path omitting the first path value (the default root) i
 
 
 def prettytext(text):
-
     if text is None:
         return ''
 
@@ -88,3 +92,33 @@ def prettytext(text):
         return return_body
     except:
         return text
+
+
+_event_ticker_lock = Lock()
+_event_ticker = 0
+
+
+def log_time_delta_0(emulator_identifier, event):
+    ae = AnalyticsEvent(
+        type="timeMarkerStart",
+        eventSource=emulator_identifier,
+        eventTime=time.time() * 1000,
+        eventRemoteSource='global',
+        dataType='java.lang.Long',
+        eventId=event,
+        data=''
+    )
+    logging.debug(ae.to_json_str())
+
+
+def log_time_delta_1(emulator_identifier, event):
+    ae = AnalyticsEvent(
+        type="timeMarkerEnd",
+        eventSource=emulator_identifier,
+        eventTime=time.time() * 1000,
+        eventRemoteSource='global',
+        dataType='java.lang.Long',
+        eventId=event,
+        data=''
+    )
+    logging.debug(ae.to_json_str())

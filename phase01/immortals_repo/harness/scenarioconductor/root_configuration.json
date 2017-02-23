@@ -106,7 +106,12 @@
     },
     "validation": {
         "minimumTestDurationMS": -1,
-        "pcapyMonitorInterface": "lo"
+        "pcapyMonitorInterface": "lo",
+        "pcapySnapshotLength": 4096,
+        "pcapyPromiscuousMode": false,
+        "pcapyPollingIntervalMS": 1000,
+        "bandwidthMonitorReportingIntervalMS": 1000,
+        "bandwidthValidatorSampleDurationMultiplier": 3
     },
     "validationEnvironment": {
         "displayAndroidEmulatorGui": false,

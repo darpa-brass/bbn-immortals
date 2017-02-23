@@ -2,7 +2,6 @@
 Core android platform. Currently contains emulator usage that can be disabled
 by overriding the relevant methods. Assumes ADB usage for deployment
 """
-
 import logging
 import os
 import time
@@ -15,32 +14,11 @@ from .. import threadprocessrouter as tpr
 from ..data.applicationconfig import AndroidApplicationConfig
 from ..deploymentplatform import DeploymentPlatformInterface
 from ..interfaces import CommandHandlerInterface
-from ..utils import get_formatted_string_value
+from ..utils import get_formatted_string_value, log_time_delta_0, log_time_delta_1
 
 _adb_has_been_reinitialized = False
 _global_lock = Lock()
 _adb_identifier_count = 0
-_emulator_name_template = 'emulator-{CONSOLEPORT}'
-_port_max = 5584
-_port_min = 5554
-_port_skip = 2
-_port_generator = [n for n in range(_port_min, _port_max + _port_skip, _port_skip)]
-
-
-def _generate_emulator_identifier():
-    global _port_generator
-
-    try:
-        port = _port_generator.pop()
-        return _emulator_name_template.format(CONSOLEPORT=port)
-
-    except IndexError:
-        raise Exception("No more than 16 devices are supported at this time!")
-
-
-def reset_identifier_counter():
-    global _port_generator, _port_max, _port_min, _port_skip
-    _port_generator = [n for n in range(_port_min, _port_max + _port_skip, _port_skip)]
 
 
 class AndroidEmulatorInstance(DeploymentPlatformInterface):
@@ -59,8 +37,8 @@ class AndroidEmulatorInstance(DeploymentPlatformInterface):
                                              halt_on_shutdown=ig.configuration.validationEnvironment.lifecycle.haltEnvironment
                                              )
 
-        self.adb_device_identifier = _generate_emulator_identifier()
-        self.console_port = int(get_formatted_string_value(_emulator_name_template, self.adb_device_identifier,
+        self.adb_device_identifier = emuhelper.generate_emulator_identifier()
+        self.console_port = int(get_formatted_string_value(emuhelper.emulator_name_template, self.adb_device_identifier,
                                                            'CONSOLEPORT'))
         self.adb_port = self.console_port + 1
         self.sdcard_filepath = os.path.join(self.config.applicationDeploymentDirectory,
@@ -105,36 +83,87 @@ class AndroidEmulatorInstance(DeploymentPlatformInterface):
             is_known = False
 
     def deploy_application(self, application_location):
-        return self.adbhelper.deploy_apk(application_location)
+        if ig.configuration.debugMode:
+            log_time_delta_0(self.config.instanceIdentifier, 'deploy_application')
+            val = self.adbhelper.deploy_apk(application_location)
+            log_time_delta_1(self.config.instanceIdentifier, 'deploy_application')
+            return val
+        else:
+            return self.adbhelper.deploy_apk(application_location)
 
     def upload_file(self, source_file_location, file_target):
-        return self.adbhelper.upload_file(source_file_location, file_target)
+        if ig.configuration.debugMode:
+            log_time_delta_0(self.config.instanceIdentifier, 'upload_file')
+            val = self.adbhelper.upload_file(source_file_location, file_target)
+            log_time_delta_1(self.config.instanceIdentifier, 'upload_file')
+            return val
+        else:
+            return self.adbhelper.upload_file(source_file_location, file_target)
 
     def application_start(self):
-        self.adbhelper.start_process()
+        if ig.configuration.debugMode:
+            log_time_delta_0(self.config.instanceIdentifier, 'application_start')
+            self.adbhelper.start_process()
+            log_time_delta_1(self.config.instanceIdentifier, 'application_start')
+        else:
+            self.adbhelper.start_process()
+
         self.is_application_running = True
         time.sleep(2)
 
     def application_stop(self):
-        self.adbhelper.force_stop_process()
+        if ig.configuration.debugMode:
+            log_time_delta_0(self.config.instanceIdentifier, 'application_stop')
+            self.adbhelper.force_stop_process()
+            log_time_delta_1(self.config.instanceIdentifier, 'application_stop')
+        else:
+            self.adbhelper.force_stop_process()
+
         self.is_application_running = False
 
     def _stop(self):
-        self._kill_emulator()
+        if ig.configuration.debugMode:
+            log_time_delta_0(self.config.instanceIdentifier, '_stop')
+            self._kill_emulator()
+            log_time_delta_1(self.config.instanceIdentifier, '_stop')
+        else:
+            self._kill_emulator()
+
         self.emulator_is_running = False
 
     def _start_emulator(self):
-        self.emuhelper.start_emulator()
+        if ig.configuration.debugMode:
+            log_time_delta_0(self.config.instanceIdentifier, '_start_emulator')
+            self.emuhelper.start_emulator()
+            log_time_delta_1(self.config.instanceIdentifier, '_start_emulator')
+        else:
+            self.emuhelper.start_emulator()
 
     def _kill_emulator(self):
-        self.emuhelper.kill_emulator()
+        if ig.configuration.debugMode:
+            log_time_delta_0(self.config.instanceIdentifier, '_kill_emulator')
+            self.emuhelper.kill_emulator()
+            log_time_delta_1(self.config.instanceIdentifier, '_kill_emulator')
+        else:
+            self.emuhelper.kill_emulator()
+
         self.emulator_is_running = False
 
     def _delete_emulator(self):
-        self.emuhelper.delete_emulator()
+        if ig.configuration.debugMode:
+            log_time_delta_0(self.config.instanceIdentifier, '_delete_emulator')
+            self.emuhelper.delete_emulator()
+            log_time_delta_1(self.config.instanceIdentifier, '_delete_emulator')
+        else:
+            self.emuhelper.delete_emulator()
 
     def _create_emulator(self):
-        self.emuhelper.create_emulator()
+        if ig.configuration.debugMode:
+            log_time_delta_0(self.config.instanceIdentifier, '_create_emulator')
+            self.emuhelper.create_emulator()
+            log_time_delta_1(self.config.instanceIdentifier, '_create_emulator')
+        else:
+            self.emuhelper.create_emulator()
 
     def _emulator_exists(self):
         return self.emuhelper.emulator_exists()
@@ -155,6 +184,13 @@ class AndroidEmulatorInstance(DeploymentPlatformInterface):
         self._start_emulator()
 
     def application_destroy(self):
-        self.adbhelper.uninstall_package()
-        for f in self.config.filesForCleanup:
-            self.adbhelper.remove_file_recursively(f)
+        if ig.configuration.debugMode:
+            log_time_delta_0(self.config.instanceIdentifier, 'application_destroy')
+            self.adbhelper.uninstall_package()
+            for f in self.config.filesForCleanup:
+                self.adbhelper.remove_file_recursively(f)
+            log_time_delta_1(self.config.instanceIdentifier, 'application_destroy')
+        else:
+            self.adbhelper.uninstall_package()
+            for f in self.config.filesForCleanup:
+                self.adbhelper.remove_file_recursively(f)

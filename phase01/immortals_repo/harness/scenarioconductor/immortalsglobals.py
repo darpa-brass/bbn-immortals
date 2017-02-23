@@ -32,7 +32,6 @@ failure_handlers = []
 signal_handlers = []
 
 _logger = None
-_debugMode = False
 
 _olympus = None
 
@@ -66,18 +65,6 @@ def logger():
     """
     global _logger
     return _logger
-
-
-def set_debug(value=True):
-    global _debugMode
-    _debugMode = value
-
-
-def get_debug():
-    """
-    :rtype: bool
-    """
-    return _debugMode
 
 
 # noinspection PyBroadException
@@ -139,4 +126,4 @@ def _load_configuration():
     )
 
 
-configuration = _load_configuration() # type: Configuration
+configuration = _load_configuration()  # type: Configuration

@@ -378,15 +378,27 @@ class ValidationConfiguration:
     """
     :type minimumTestDurationMS: int
     :type pcapyMonitorInterface: str
+    :type pcapySnapshotLength: int
+    :type pcapyPromiscuousMode: bool
+    :type pcapyPollingIntervalMS: int
+    :type bandwidthMonitorReportingIntervalMS: int
+    :type bandwidthValidatorSampleDurationMultiplier: int
     """
 
     @classmethod
     def from_dict(cls, d):
         return cls(**d)
 
-    def __init__(self, minimumTestDurationMS, pcapyMonitorInterface):
+    def __init__(self, minimumTestDurationMS, pcapyMonitorInterface, pcapySnapshotLength, pcapyPromiscuousMode,
+                 pcapyPollingIntervalMS, bandwidthMonitorReportingIntervalMS,
+                 bandwidthValidatorSampleDurationMultiplier):
         self.minimumTestDurationMS = minimumTestDurationMS
         self.pcapyMonitorInterface = pcapyMonitorInterface
+        self.pcapySnapshotLength = pcapySnapshotLength
+        self.pcapyPromiscuousMode = pcapyPromiscuousMode
+        self.pcapyPollingIntervalMS = pcapyPollingIntervalMS
+        self.bandwidthMonitorReportingIntervalMS = bandwidthMonitorReportingIntervalMS
+        self.bandwidthValidatorSampleDurationMultiplier = bandwidthValidatorSampleDurationMultiplier
 
 
 # noinspection PyPep8Naming
@@ -427,3 +439,4 @@ def load_configuration():
 
 
 demo_mode = load_configuration().visualizationConfiguration.enabled
+debug_mode = load_configuration().debugMode

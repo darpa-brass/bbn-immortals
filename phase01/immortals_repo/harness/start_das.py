@@ -3,6 +3,7 @@
 import argparse
 import logging
 import os
+import subprocess32 as subprocess
 import sys
 
 from scenarioconductor import immortalsglobals as ig
@@ -44,7 +45,7 @@ def start_fuseki():
 
     with open(stdout, 'w') as f_stdout, open(stderr, 'w') as f_stderr:
         _fuseki_process = tpr.Popen(['bash', server_script, '--update', '--mem', '--port=' + str(port), '/ds'],
-                                    env=env, stdout=f_stdout, stderr=f_stderr, stdin=None)
+                                    env=env, stdout=f_stdout, stderr=f_stderr, stdin=subprocess.PIPE)
 
     print 'Fuseki is starting.... \n,' \
           'For stdout, please see "' + stdout + '". \n For stderr, please see "' + stderr + '".\n\n'
@@ -64,7 +65,7 @@ def start_repository_service():
     with open(stdout, 'w') as r_stdout, open(stderr, 'w') as r_stderr:
         _repository_service_process = tpr.Popen(
             ['java', '-Djava.security.egd=file:/dev/urandom', '-Dserver.port=' + str(port), '-jar', war], cwd=path,
-            stdout=r_stdout, stderr=r_stderr, stdin=None)
+            stdout=r_stdout, stderr=r_stderr, stdin=subprocess.PIPE)
 
     print 'immortals-repository-service is starting.... \n,' \
           'For stdout, please see "' + stdout + '". \n For stderr, please see "' + stderr + '".\n\n'
@@ -82,7 +83,7 @@ def start_das_service():
         _das_process = tpr.Popen(['java', '-jar',
                                   ig.configuration.dasService.executableFile,
                                   ig.IMMORTALS_ROOT],
-                                 cwd=ig.IMMORTALS_ROOT, stdout=r_stdout, stderr=r_stderr, stdin=None)
+                                 cwd=ig.IMMORTALS_ROOT, stdout=r_stdout, stderr=r_stderr, stdin=subprocess.PIPE)
 
     tpr.sleep(4)
 
@@ -108,6 +109,11 @@ def start_rest_endpoint():
 
 if __name__ == '__main__':
     ig.main_thread_cleanup_hookup()
+
+    if ig.configuration.debugMode:
+        logging.Logger.setLevel(logging.getLogger(), logging.DEBUG)
+    else:
+        logging.Logger.setLevel(logging.getLogger(), logging.INFO)
 
     args = parser.parse_args()
 

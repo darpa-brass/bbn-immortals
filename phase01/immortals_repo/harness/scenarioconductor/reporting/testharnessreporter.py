@@ -40,66 +40,83 @@ class TestHarnessReporter(AbstractReporter):
     def _submit_action(self, action, arguments, event_time_s=None):
         url = self._urlTemplate.format(path='action/' + action)
 
-        self._offline_endpoint.write('TA SENDING POST /action/' + action)
+        body = {
+            'TIME': get_timestamp(event_time_s),
+            'ARGUMENTS': arguments
+        }
+
+        self._offline_endpoint.write('TA SENDING POST /action/' + action + "with BODY: " +
+                                     json.dumps(body, indent=4, separators=(',', ': ')))
 
         r = requests.post(url=url,
                           headers=_JSON_HEADERS,
-                          data=json.dumps({
-                              'TIME': get_timestamp(event_time_s),
-                              'ARGUMENTS': arguments
-                          }))
+                          data=json.dumps(body)
+                          )
 
-        self._offline_endpoint.write('TA RECEIVED ACK: ' + str(r.status_code))
+        self._offline_endpoint.write('TA RECEIVED ACK to POST /action/' + action + ': ' + str(r.status_code))
 
     # noinspection PyMethodMayBeStatic
     def _submit_status(self, status, message, event_time_s=None):
         url = self._urlTemplate.format(path='status')
 
-        self._offline_endpoint.write('TA SENDING POST /status with STATUS: ' + status)
+        body = {
+            'TIME': get_timestamp(event_time_s),
+            'STATUS': status,
+            'MESSAGE': message
+        }
+
+        self._offline_endpoint.write('TA SENDING POST /status with BODY: ' +
+                                     json.dumps(body, indent=4, separators=(',', ': ')))
 
         r = requests.post(url=url,
                           headers=_JSON_HEADERS,
-                          data=json.dumps({
-                              'TIME': get_timestamp(event_time_s),
-                              'STATUS': status,
-                              'MESSAGE': message
-                          }))
+                          data=json.dumps(body)
+                          )
 
-        self._offline_endpoint.write('TA RECEIVED ACK: ' + str(r.status_code))
+        self._offline_endpoint.write('TA RECEIVED ACK to POST /status: ' + str(r.status_code))
 
     # noinspection PyMethodMayBeStatic
     def _submit_ready(self, event_time_s=None):
         url = self._urlTemplate.format(path='ready')
 
-        self._offline_endpoint.write('TA SENDING POST /ready')
+        body = {
+            'TIME': get_timestamp(event_time_s),
+        }
+
+        self._offline_endpoint.write('TA SENDING POST /ready with BODY: ' +
+                                     json.dumps(body, indent=4, separators=(',', ': ')))
 
         # TODO: Try catch server connection issues
         r = requests.post(url=url,
                           headers=_JSON_HEADERS,
-                          data=json.dumps({
-                              'TIME': get_timestamp(event_time_s),
-                          }))
+                          data=json.dumps(body)
+        )
 
-        self._offline_endpoint.write('TA RECEIVED ACK: ' + str(r.status_code))
+        self._offline_endpoint.write('TA RECEIVED ACK to POST /ready: ' + str(r.status_code))
 
-    # noinspection PyMethodMayBeStatic
+        # noinspection PyMethodMayBeStatic
+
     def _submit_error(self, error, message, event_time_s=None):
         # Since LL may poweroff right after receiving the message
         tpr.flush_logging_endpoints()
 
         url = self._urlTemplate.format(path='error')
 
-        self._offline_endpoint.write('TA SENDING POST /error with ERROR: ' + error)
+        body = {
+            'TIME': get_timestamp(event_time_s),
+            'ERROR': error,
+            'MESSAGE': message
+        }
+
+        self._offline_endpoint.write('TA SENDING POST /error with BODY: ' +
+                                     json.dumps(body, indent=4, separators=(',', ': ')))
 
         r = requests.post(url=url,
                           headers=_JSON_HEADERS,
-                          data=json.dumps({
-                              'TIME': get_timestamp(event_time_s),
-                              'ERROR': error,
-                              'MESSAGE': message
-                          }))
+                          data=json.dumps(body)
+                          )
 
-        self._offline_endpoint.write('TA RECEIVED ACK: ' + str(r.status_code))
+        self._offline_endpoint.write('TA RECEIVED ACK to POST /error : ' + str(r.status_code))
 
 
 class FakeTestHarnessReporter(AbstractReporter):

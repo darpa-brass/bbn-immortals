@@ -65,10 +65,13 @@ class BehaviorValidator:
         for c in scenario_configuration.clients:
             client_count += c.count
 
-            max_wait_interval = max(max_wait_interval, int(c.imageBroadcastIntervalMS),
-                                    int(c.latestSABroadcastIntervalMS))
+            max_wait_interval = max(max_wait_interval,
+                                    (int(c.imageBroadcastIntervalMS) *
+                                     int(ig.configuration.validation.bandwidthValidatorSampleDurationMultiplier)),
+                                    (int(c.latestSABroadcastIntervalMS) *
+                                     int(ig.configuration.validation.bandwidthValidatorSampleDurationMultiplier)))
 
-        calculated_duration = client_count * 8000 + max_wait_interval * 12 + 10000
+        calculated_duration = client_count * 8000 + max_wait_interval * 6 + 10000
 
         self._duration = max(calculated_duration, runner_configuration.minDurationMS)
 
@@ -82,10 +85,12 @@ class BehaviorValidator:
         self._validation_manager = ValidatorManager(scenario_configuration=self._scenario_configuration,
                                                     runner_configuration=self._runner_configuration,
                                                     validator_identifiers=py_validators,
-                                                    client_identifiers=self._client_identifiers)
+                                                    client_identifiers=self._client_identifiers,
+                                                    listeners=[self.add_raw_events_for_ll])
         self._monitor_manager = MonitorManager(scenario_configuration=self._scenario_configuration,
                                                validator_identifiers=py_validators,
-                                               listeners=[self._validation_manager.process_event, self.add_raw_events_for_ll])
+                                               listeners=[self._validation_manager.process_event,
+                                                          self.add_raw_events_for_ll])
 
         ci = []
         for identifier in self._client_identifiers:
@@ -121,8 +126,7 @@ class BehaviorValidator:
         """
         :type event: AnalyticsEvent
         """
-
-        if event.eventSource == 'global' and event.type == 'combinedServerTrafficBytes':
+        if event.type == 'combinedServerTrafficBytes' or event.type == 'combinedServerTrafficBytesPerSecond':
             self.ll_events.append(event)
 
     def wait_for_validation_result(self):

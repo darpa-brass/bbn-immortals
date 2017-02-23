@@ -155,7 +155,7 @@ def wait_for_device_ready(adb_device_identifier, command_processor=tpr):
     Used for pausing activity while an emulator is starting up.
     Also includes an indication of the progress
     """
-    waitduration = 180
+    waitduration = 600
     timepassed = 0
     checkfrequency = 1
 
@@ -201,49 +201,38 @@ class AdbHelper:
         self.cp = command_processor
 
     def upload_file(self, source_file_location, file_target):
-        print 'ADB-UF'
         upload_file(self.adb_device_identifier, source_file_location, file_target, self.cp)
 
     def grant_permission(self, package, permission_string):
-        print 'ADB-GP'
         grant_permission(self.adb_device_identifier, package, permission_string, self.cp)
 
     def start_process(self):
-        print 'ADB-SP'
-        start_process(self.adb_device_identifier, self.config.packageIdentifier + '/' + self.config.mainActivity, self.cp)
+        start_process(self.adb_device_identifier, self.config.packageIdentifier + '/' + self.config.mainActivity,
+                      self.cp)
 
     def force_stop_process(self):
-        print 'ADB-FSP'
         force_stop_process(self.adb_device_identifier, self.config.packageIdentifier, self.cp)
 
     def deploy_apk(self, apk_location):
-        print 'ADB-DA'
         deploy_apk(self.adb_device_identifier, apk_location, self.cp)
 
     def is_known(self):
-        print 'ADB-IK'
         return is_known(self.adb_device_identifier, self.cp)
 
     def unlock_device_nopassword(self):
-        print 'ADB-UDN'
         unlock_device_nopassword(self.adb_device_identifier, self.cp)
 
     def is_fully_booted(self):
-        print 'ADB-IFB'
         return is_fully_booted(self.adb_device_identifier, self.cp)
 
     def restart_adb_server(self):
-        print 'ADB-RAS'
         restart_adb_server(self.cp)
 
     def wait_for_device_ready(self):
-        print 'ADB-WFDR'
         wait_for_device_ready(self.adb_device_identifier, self.cp)
 
     def uninstall_package(self):
-        print 'ADB-UP'
         uninstall_package(self.adb_device_identifier, self.config.packageIdentifier)
 
     def remove_file_recursively(self, filepath):
-        print 'ADB-RFR'
         remove_file_recursively(self.adb_device_identifier, filepath, self.cp)

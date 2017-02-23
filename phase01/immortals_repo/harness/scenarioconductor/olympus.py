@@ -1,8 +1,9 @@
 import json
 
 import bottle
+import logging
 
-from .data.base.root_configuration import demo_mode
+from .data.base.root_configuration import demo_mode, debug_mode
 from .ll_api.data import AnalyticsEvent
 
 if demo_mode:
@@ -105,7 +106,11 @@ class Olympus(bottle.Bottle):
         if demo_mode:
             self._bokeh_server.start()
 
-        bottle.run(app=self, server='tornado', host=self._host, port=self._port, debug=True)
+        if debug_mode:
+            logging.getLogger('tornado.access').setLevel(logging.WARNING)
+        else:
+            logging.getLogger('tornado.access').setLevel(logging.INFO)
+        bottle.run(app=self, server='tornado', host=self._host, port=self._port, debug=False)
 
     def stop(self):
         self.server.srv.stop()

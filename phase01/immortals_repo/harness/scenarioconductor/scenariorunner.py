@@ -9,7 +9,7 @@ import signal
 from . import applicationhelper
 from . import immortalsglobals as ig
 from . import threadprocessrouter as tpr
-from .android.androidplatform_emulator import reset_identifier_counter as ae_ric
+from .android.emuhelper import reset_identifier_counter as ae_ric
 from .behaviorvalidator import BehaviorValidator
 from .data.applicationconfig import ApplicationConfig
 from .data.base.root_configuration import load_configuration
