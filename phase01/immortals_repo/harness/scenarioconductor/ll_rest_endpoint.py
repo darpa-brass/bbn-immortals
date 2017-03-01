@@ -39,9 +39,6 @@ class LLRestEndpoint():
 
     def validate_baseline_application(self):
         # noinspection PyBroadException
-        data_s = bottle.request.body.read()
-
-        # noinspection PyBroadException
         try:
             data_s = bottle.request.body.read()
             data_j = json.loads(data_s)
@@ -84,6 +81,11 @@ class LLRestEndpoint():
                     'Invalid sessionIdentifier. Are you sure it starts'
                     ' with a letter and contains only letters and numbers?'
                 )
+                return bottle.HTTPResponse(status=400, body=None)
+
+            err = env_conf.validate()
+            if err is not None:
+                ig.logger().error_das(err)
                 return bottle.HTTPResponse(status=400, body=None)
 
         if demo_mode:
@@ -151,6 +153,11 @@ class LLRestEndpoint():
                 'Invalid sessionIdentifier. Are you sure it starts'
                 ' with a letter and contains only letters and numbers?'
             )
+            return bottle.HTTPResponse(status=400, body=None)
+
+        err = s_conf.validate()
+        if err is not None:
+            ig.logger().error_das(err)
             return bottle.HTTPResponse(status=400, body=None)
 
         if demo_mode:
@@ -224,10 +231,18 @@ def _perform_adaptation(app_conf, result_container):
         ig.logger().adaptation_completed(result_container.to_dict(), display_message="Adaptation completed")
         ig.logger().log_das_info(result_container.to_dict())
 
-    else:
+    elif ar.adaptationStatusValue == 'UNSUCCESSFUL':
         result_container.adaptation.adaptationStatus = Status.FAILURE
         ig.logger().log_das_info(result_container.to_dict())
         ig.logger().mission_aborted(result_container.to_dict())
+
+    elif ar.adaptationStatusValue == 'ERROR':
+        ig.logger().error_das(
+            'Error executing the adaptation on the das! Please check the debug information! Details: ' + ar.to_json_str())
+
+    else:
+        ig.logger().error_das(
+            'Unexpected adaptationStatusValue of "' + ar.adaptationStatusValue + '"! Details: ' + ar.to_json_str())
 
 
 # noinspection PyUnusedLocal

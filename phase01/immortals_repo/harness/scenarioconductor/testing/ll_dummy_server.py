@@ -58,8 +58,13 @@ class LLHarness(bottle.Bottle):
 
     def _ready(self):
         obj_j = bottle.request.json
+
+        try:
+            body = json.dumps(json.loads(obj_j), indent=4, separators=(',', ': ')) + '\n'
+        except:
+            body = str(obj_j)
         self.network_logger.info(
-            'TH RECEIVED POST /ready with BODY: ' + json.dumps(obj_j, indent=4, separators=(',', ': ')) + '\n')
+            'TH RECEIVED POST /ready with BODY: ' + body)
 
         self.pending_executions[0].execute()
 

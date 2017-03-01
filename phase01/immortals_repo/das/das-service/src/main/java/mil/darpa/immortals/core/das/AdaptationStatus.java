@@ -13,7 +13,9 @@ public class AdaptationStatus {
 	public AdaptationStatus() {
 
 		try {
-			lp = new LoggerProxy();
+			if (!System.getProperties().containsKey(AdaptationStatus.IGNORE_PROXY_LOGGING)) {
+				lp = new LoggerProxy();
+			}
 		} catch (Exception e) {
 			logger.error("Unable to initialize logger proxy:" + e.getMessage());
 			if (lp != null) {
@@ -98,5 +100,7 @@ public class AdaptationStatus {
 	private String selectedDfu;
 	private List<String> audits = new ArrayList<String>();
 	private String sessionIdentifier;
-	private LoggerProxy lp;
+	private LoggerProxy lp = null;
+	public static final String IGNORE_PROXY_LOGGING = "IGNORE_PROXY_LOGGING";
+
 }

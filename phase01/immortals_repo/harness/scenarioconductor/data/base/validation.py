@@ -7,9 +7,31 @@ class RESOURCES:
     gps_satellites = 'gpsSatellites'
 
 
+def get_resource_list():
+    l = []
+
+    for value in RESOURCES.__dict__:
+
+        if not value.startswith('__'):
+            l.append(RESOURCES.__dict__[value])
+
+    return l
+
+
 # noinspection PyClassHasNoInit
 class PROPERTIES:
     trustedLocations = 'trustedLocations'
+
+
+def get_properties_list():
+    l = []
+
+    for value in PROPERTIES.__dict__:
+
+        if not value.startswith('__'):
+            l.append(PROPERTIES.__dict__[value])
+
+    return l
 
 
 # noinspection PyClassHasNoInit

@@ -3,9 +3,10 @@ package mil.darpa.immortals.core.das;
 public enum AdaptationStatusValue {
 
     SUCCESSFUL("SUCCESSFUL", "IMMORTALS successfully adapted system for deployment model."),
-    UNSUCCESSFUL("UNSUCCESFUL", "IMMORTALS could not successfully adapt system for deployment model."),
+    UNSUCCESSFUL("UNSUCCESSFUL", "IMMORTALS could not successfully adapt system for deployment model."),
     PENDING("PENDING", "Adaptation status pending."),
-    ERROR("ERROR", "IMMORTALS encountered an an unexpected error.");
+    ERROR("ERROR", "IMMORTALS encountered an an unexpected error."),
+    INVALID_REQUEST("INVALID_REQUEST", "The adaptation session contained one or more invalid parameters.");
 
 	private final String value;
 	private final String description;

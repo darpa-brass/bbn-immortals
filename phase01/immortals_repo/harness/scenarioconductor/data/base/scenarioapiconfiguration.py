@@ -1,11 +1,18 @@
 import time
 
+from scenarioconductor.data.base.validation import get_properties_list, get_resource_list
+from serializable import ValidationCapable
+
 
 # noinspection PyPep8Naming
-class MartiServer:
+class MartiServer(ValidationCapable):
     """
     :type bandwidth int
     """
+
+    _valid_values = {
+        'bandwidth': (0, 10000000)
+    }
 
     @classmethod
     def from_dict(cls, d):
@@ -31,7 +38,7 @@ class MartiServer:
 
 
 # noinspection PyPep8Naming
-class ATAKLiteClient:
+class ATAKLiteClient(ValidationCapable):
     """
     :type imageBroadcastIntervalMS: int
     :type latestSABroadcastIntervalMS: int
@@ -39,6 +46,14 @@ class ATAKLiteClient:
     :type presentResources: list[str]
     :type requiredProperties: list[str]
     """
+
+    _valid_values = {
+        'imageBroadcastIntervalMS': (1000, 60000),
+        'latestSABroadcastIntervalMS': (1000, 60000),
+        'count': (2, 6),
+        'presentResources': get_resource_list(),
+        'requiredProperties': get_properties_list()
+    }
 
     @classmethod
     def from_dict(cls, d):
@@ -98,12 +113,14 @@ class ATAKLiteClient:
 
 
 # noinspection PyPep8Naming
-class ScenarioConductorConfiguration:
+class ScenarioConductorConfiguration(ValidationCapable):
     """
     :type sessionIdentifier: str
     :type server: MartiServer
     :type clients: list[ATAKLiteClient]
     """
+
+    _valid_values = {}
 
     def __init__(self,
                  sessionIdentifier,
@@ -146,3 +163,168 @@ class ScenarioConductorConfiguration:
 
         return self.server.equals(other.server) and len(self.clients) == 1 and len(other.clients) == 1 and self.clients[
             0].equals(other.clients[0])
+
+# 
+# def test():
+#     d = {
+#         'server': {
+#             'bandwidth': 50
+#         },
+#         'clients': [
+#             {
+#                 'imageBroadcastIntervalMS': 2000,
+#                 'latestSABroadcastIntervalMS': 1000,
+#                 'count': 2,
+#                 'presentResources': [],
+#                 'requiredProperties': []
+#             }
+#         ]
+#     }
+# 
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is None
+# 
+#     d['server']['bandwidth'] = 0
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['server']['bandwidth'] = -1
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['server']['bandwidth'] = 1000001
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['server']['bandwidth'] = 1000000
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is None
+# 
+#     d['clients'][0]['count'] = 1
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['clients'][0]['count'] = -1
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['clients'][0]['count'] = 0
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['clients'][0]['count'] = 1
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['clients'][0]['count'] = 13
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['clients'][0]['count'] = 12
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is None
+# 
+#     d['clients'][0]['presentResources'] = [
+#         'bluetooth',
+#         'usb',
+#         'internalGps',
+#         'userInterface',
+#         'gpsSatellites'
+#     ]
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is None
+# 
+#     d['clients'][0]['presentResources'] = [
+#         'bluetooth',
+#         'usb',
+#         'internalGps',
+#         'gpsSatellites'
+#     ]
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is None
+# 
+#     d['clients'][0]['presentResources'] = [
+#         'bluetooth',
+#         'usb',
+#         'internalGps',
+#         'gpsSatellitez'
+#     ]
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['clients'][0]['presentResources'] = [
+#         'gpsSatellitez'
+#     ]
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['clients'][0]['presentResources'] = [
+#         'bluetooth',
+#         'usb',
+#         'internalGps',
+#         'gpsSatellites'
+#     ]
+#     d['clients'][0]['requiredProperties'] = [
+# 
+#     ]
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is None
+# 
+#     d['clients'][0]['requiredProperties'] = [
+#         'trustedLocations'
+#     ]
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is None
+# 
+#     d['clients'][0]['requiredProperties'] = [
+#         'trustedLocations',
+#         'turzlec'
+#     ]
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None
+# 
+#     d['clients'][0]['requiredProperties'] = [
+#         'turkey',
+#         'trustedLocations'
+# 
+#     ]
+#     scc = ScenarioConductorConfiguration.from_dict(d=d)
+#     err = scc.validate()
+#     print err
+#     assert err is not None

@@ -76,7 +76,7 @@ public class DASEndpoint {
 		    	AdaptationManager am = AdaptationManager.getInstance();
 		    	result = am.triggerAdaptation(deploymentModelRdf);
 		    	
-		    	logger.trace("DAS completed adaptation successfully.");
+		    	logger.trace("DAS completed adaptation session.");
 	    	}
     	} catch (Throwable e) {
     		logger.error("Unexpected error in DAS:", e);

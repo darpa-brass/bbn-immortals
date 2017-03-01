@@ -21,6 +21,11 @@ public class DAS {
     		System.out.println("Example: \"/Users/xyz/Documents/Immortals/Workspace/trunk\"\n");
     		System.exit(-1);
     	} else {
+    		if (args.length == 2) {
+    			if (args[1].equals(AdaptationStatus.IGNORE_PROXY_LOGGING)) {
+    				System.getProperties().put(AdaptationStatus.IGNORE_PROXY_LOGGING, "true");
+    			}
+    		}
 	    	initialize(args[0]);
 	    	DAS.start();
     	}

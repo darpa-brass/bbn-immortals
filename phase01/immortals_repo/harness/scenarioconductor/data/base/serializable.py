@@ -25,6 +25,9 @@ class Serializable:
     def to_json_str(self):
         return json.dumps(self.to_dict())
 
+    def to_json_str_pretty(self):
+        return json.dumps(self.to_dict(), indent=4, separators=(',', ': '))
+
     @classmethod
     def from_json_str(cls, s):
         return cls.from_dict(json.loads(s))
@@ -116,31 +119,61 @@ class Serializable:
         return cls(**top_target_dict)
 
 
-# class TestClass0(Serializable):
-#     _types = {}
-# 
-#     def __init__(self, val0, val1):
-#         self.val0 = val0
-#         self.val1 = val1
-# 
-#     def do_this(self):
-#         pass
-# 
-#     @staticmethod
-#     def do_this_too():
-#         pass
-# 
-# 
-# # noinspection PyPep8Naming,PyPep8Naming
-# class TestClass1(Serializable):
-#     _types = {
-#         'valA': TestClass0,
-#         'valB': (list, TestClass0),
-#         'valC': (dict, TestClass0)
-#     }
-# 
-#     def __init__(self, valA, valB, valC, valD):
-#         self.valA = valA
-#         self.valB = valB
-#         self.valC = valC
-#         self.valD = valD
+# noinspection PyClassHasNoInit
+class ValidationCapable:
+    # noinspection PyPropertyDefinition
+    @classmethod
+    @property
+    def _valid_values(cls):
+        raise NotImplementedError
+
+    def validate(self):
+        for k in self.__dict__.keys():
+            v = self.__dict__[k]
+
+            if not k.startswith('__'):
+
+                if isinstance(v, ValidationCapable) and k != 'parent_config':
+                    err = v.validate()
+                    if err is not None:
+                        return k + ':' + err
+
+                elif isinstance(v, list):
+                    for i in range(len(v)):
+                        if isinstance(v[i], ValidationCapable):
+                            err2 = v[i].validate()
+                            if err2 is not None:
+                                return k + '[' + str(i) + ']:' + err2
+
+        for k in self._valid_values.keys():
+            v = self._valid_values[k]
+
+            if isinstance(v, list):
+                true_val = self.__dict__[k]
+
+                if isinstance(true_val, list):
+                    for vv in true_val:
+                        if vv not in v:
+                            return 'The value "' + str(vv) + '" is not valid! Valid values: [' + ','.join(v) + '].'
+
+                else:
+                    if true_val not in v:
+                        return 'The value "' + str(true_val) + '" is not valid! Valid values: [' + ','.join(v) + '].'
+
+            elif isinstance(v, tuple):
+                true_val = self.__dict__[k]
+
+                if isinstance(true_val, list):
+                    for vv in true_val:
+                        if not (v[0] <= float(vv) <= v[1]):
+                            return (
+                            'The value for "' + k + '" of "' + str(vv) + '" is beyond the valid range of '
+                            + str(v[0]) + ' - ' + str(v[1]) + '!')
+
+                else:
+                    if not (v[0] <= float(true_val) <= v[1]):
+                        return ('The value for "' + k + '" of "' + str(true_val) + '" is beyond the valid range of '
+                                + str(v[0]) + ' - ' + str(v[1]) + '!')
+
+            else:
+                raise Exception('Unexpected type for validation: ' + type(v) + '!')

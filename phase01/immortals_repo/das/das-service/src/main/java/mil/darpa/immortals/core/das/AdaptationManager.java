@@ -136,7 +136,8 @@ public class AdaptationManager {
 		String resourceDigest = generateResourceDigest(abstractResourceUris);
 		
 		if (resourceDigest == null || resourceDigest.trim().length() == 0) {
-			//This could happen if none of the resources actually relevant to cp1 & cp2 were provided
+			//This could happen if we were given some resources but none of the resources that 
+			//were provided could be mapped to cp1 & cp2. This can occur for several reasons.
 			result.setAdaptationStatusValue(AdaptationStatusValue.UNSUCCESSFUL);
 			result.setDetails("None of the cp1 or cp2 resources were provided in the target environment.");
 			
@@ -147,7 +148,7 @@ public class AdaptationManager {
 		
 		if (functionalitySpecifications == null || functionalitySpecifications.isEmpty()) {
 			//No mission requirements; should not occur
-			result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+			result.setAdaptationStatusValue(AdaptationStatusValue.INVALID_REQUEST);
 			result.setDetails("Deployment model did not specify target functionality.");
 			
 			return result;
@@ -163,6 +164,8 @@ public class AdaptationManager {
 			DSLInvocationResultValue dslInputResult = generateDslLocationInput(resourceDigest, saasm);
 
 			if (dslInputResult != DSLInvocationResultValue.MODEL_OK) {
+				//This is an error at this point since we couldn't initialized the dsl with the resource environment
+				//(i.e., we haven't gotten to an actual deployment test).
 				result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
 				result.setDetails("Could not initialize DSL input files for DSL check at DFU level:" + dslInputResult.description());
 				
@@ -177,72 +180,67 @@ public class AdaptationManager {
 				//No DFUs to pass to the DSL; basic requirements could not be satisfied
 				result.setAdaptationStatusValue(AdaptationStatusValue.UNSUCCESSFUL);
 				result.setDetails("No DFUs found to match basic deployment model constraints.");
-				break;
-			} else {
-				candidates.forEach(t -> result.addAudit("Candidate DFU: " + t.getClassName()));
-				
-				//Invoke DSL for each DFU
-				DSLInvocationResultValue dfuDSLReturn = DSLInvocationResultValue.MODEL_OK;
-				
-				boolean error = false;
-				
-				for (DFU d : candidates) {
-					dfuDSLReturn = performDFUDSLCheck(d);
-					if (dfuDSLReturn == DSLInvocationResultValue.ERROR) {
-						//This branch detects unexpected error invoking the 
-						//DSL (versus detecting that the provided dfu fails 
-						//to satisfy the mission requirements and/or exceeds 
-						//the resources in the target environment). I'm treating this as
-						//a general no-go since it's likely caused by Haskel setup issue
-						error = true;
-						break;
-					} else {
-						//The return is treated as an index (for future use), but in practice the value is discrete
-						//(the dfu works or doesn't); this is not an issue since only working DFUs
-						//for the given model are chosen below
-						d.setResourceIndex(dfuDSLReturn.value());
-					}
-				}
-				
-				if (error) {
-					result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
-					result.setDetails("Unexpected error invoking DSL for DFU level check.");
-					break;
-				} else {
-					selectedDFU = candidates.stream().sorted((DFU d1, DFU d2) -> 
-													d1.getResourceIndex() - d2.getResourceIndex())
-													.findFirst();
-					if (selectedDFU.isPresent() && selectedDFU.get().getResourceIndex() == DSLInvocationResultValue.MODEL_OK.value()) {
-						result.addAudit("Selected DFU for adaptation: " + selectedDFU.get().getClassName());
-						
-						//Adapt all control points for the functionality using the DFU
-						try {
-							adaptControlPoints(f, selectedDFU.get(), applicationInstance);
-							queueBuild = true;
-							result.setSelectedDfu(selectedDFU.get().getClassName());
-						} catch (Exception e) {
-							result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
-							result.setDetails("Unexpected error adapting control point: " + e.getMessage());
-							break;
-						}
-					} else {
-						//At least one functionalityUri not matched to a DFU; set error and exit.
-						//We may change this practice depending on how we want to handle partially successful adaptations.
-						result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
-						String temp =  "No suitable adaptation for " + f.getFunctionalityUri() + 
-								" in deployment model.";
-						result.setDetails(temp);
-						result.addAudit(temp);
-						break;
-					}
-				}
-			}
-				
-			if (result.getAdaptationStatusValue().equals(AdaptationStatusValue.ERROR)) {
-				result.addAudit("Aggregate resource (network) check not performed due to DFU adaptation errors.");
 				return result;
 			}
+			
+			candidates.forEach(t -> result.addAudit("Candidate DFU: " + t.getClassName()));
+			
+			//Invoke DSL for each DFU
+			DSLInvocationResultValue dfuDSLReturn = DSLInvocationResultValue.MODEL_OK;
+			
+			boolean error = false;
+			
+			for (DFU d : candidates) {
+				dfuDSLReturn = performDFUDSLCheck(d);
+				if (dfuDSLReturn == DSLInvocationResultValue.ERROR) {
+					//This branch detects unexpected error invoking the 
+					//DSL (versus detecting that the provided dfu fails 
+					//to satisfy the mission requirements and/or exceeds 
+					//the resources in the target environment). I'm treating this as
+					//a general no-go since it's likely caused by Haskel setup issue
+					error = true;
+					break;
+				} else {
+					//The return is treated as an index (for future use), but in practice the value is discrete
+					//(the dfu works or doesn't); this is not an issue since only working DFUs
+					//for the given model are chosen below
+					d.setResourceIndex(dfuDSLReturn.value());
+				}
+			}
+			
+			if (error) {
+				result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+				result.setDetails("Unexpected error invoking DSL for DFU level check.");
+				return result;
+			}
+			
+			selectedDFU = candidates.stream().sorted((DFU d1, DFU d2) -> 
+											d1.getResourceIndex() - d2.getResourceIndex())
+											.findFirst();
+			if (selectedDFU.isPresent() && selectedDFU.get().getResourceIndex() == DSLInvocationResultValue.MODEL_OK.value()) {
+				result.addAudit("Selected DFU for adaptation: " + selectedDFU.get().getClassName());
 				
+				//Adapt all control points for the functionality using the DFU
+				try {
+					adaptControlPoints(f, selectedDFU.get(), applicationInstance);
+					queueBuild = true;
+					result.setSelectedDfu(selectedDFU.get().getClassName());
+				} catch (Exception e) {
+					result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+					result.setDetails("Unexpected error adapting control point: " + e.getMessage());
+					return result;
+				}
+			} else {
+				//At least one functionalityUri not matched to a DFU; set error and exit.
+				//We may change this practice depending on how we want to handle partially successful adaptations.
+				result.setAdaptationStatusValue(AdaptationStatusValue.UNSUCCESSFUL);
+				String temp =  "No suitable adaptation for " + f.getFunctionalityUri() + 
+						" in deployment model.";
+				result.setDetails(temp);
+				result.addAudit(temp);
+				return result;
+			}
+
 			//Check aggregate resources defined at control points
 			Map<String, Metric> missionMap = MissionMetricsMap.select(deploymentGraphUri);
 			missionMap.keySet().stream().sorted().forEach(k -> result.addAudit(k + ":" + missionMap.get(k).getValue()));
@@ -260,7 +258,7 @@ public class AdaptationManager {
 			double scalingFactor = 1.0f;
 			
 			DSLInvocationResultValue dslCheckResult = performNetworkDSLCheck(bandwidth, numberClients, scalingFactor, pliReportRate, imageReportRate);
-			result.addAudit("DSL bandwidth check for initial model: " + dslCheckResult.description());
+			//result.addAudit("DSL bandwidth check for initial model: " + dslCheckResult.description());
 			//End ad-hoc block
 			
 			List<ControlPoint> controlPoints = ControlPoints.select(bootstrapUri, f);
@@ -310,7 +308,7 @@ public class AdaptationManager {
 										
 										scalingFactor = Double.parseDouble(m.get("scalingFactor"));
 										dslCheckResult = performNetworkDSLCheck(bandwidth, numberClients, scalingFactor, pliReportRate, imageReportRate);
-										result.addAudit("DSL check result for scaling factor " + scalingFactor + " : " + dslCheckResult.description());
+										//result.addAudit("DSL check result for scaling factor " + scalingFactor + " : " + dslCheckResult.description());
 
 										Number testFormulaResult = resolveFormula(formula, deploymentGraphUri, replacements);
 										
@@ -326,10 +324,12 @@ public class AdaptationManager {
 									//#####End section to be reworked/abstracted#####
 
 									if (params.isEmpty()) {
-										result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
+										result.setAdaptationStatusValue(AdaptationStatusValue.UNSUCCESSFUL);
 										String temp =  "No suitable scaler value for " + f.getFunctionalityUri() + 
 												" in deployment model.";
 										result.setDetails(temp);
+										result.addAudit("Resource profile constraint: " + rp.getTargetResourceTypeUri() + " at control point: " + cp.getUri() +
+												" could not be satisfied with adaptation.");
 									} else {
 										try {
 											DfuCompositionConfiguration dfuCompositionConfiguration =
@@ -337,27 +337,31 @@ public class AdaptationManager {
 															originalDfu.getClassName().replace("/", "."),
 															dfu.getDependencyCoordinate().toString(), dfu.getClassName().replace("/", "."), params);
 											sourceComposer.executeCP2Composition(applicationInstance, dfuCompositionConfiguration);
-											result.addAudit("Synthesis completed successfully.");
+											result.addAudit("Resource profile constraint: " + rp.getTargetResourceTypeUri() + " at control point: " + cp.getUri() +
+													" was violated but could be satisfied with adaptation.");
 											queueBuild = true;
 										} catch (Exception e) {
 											result.setAdaptationStatusValue(AdaptationStatusValue.ERROR);
 											result.setDetails("Unexpected error invoking Dfu Synthesis: " + e.getMessage());
 										}
 									}
-
 								}
-
 							}
+						} else {
+							result.addAudit("Resource profile constraint: " + rp.getTargetResourceTypeUri() + " at control point: " + cp.getUri() +
+									" was satisfied without adaptation.");
 						}
 					}
-					if (result.getAdaptationStatusValue() == AdaptationStatusValue.ERROR) {
-						break;
-					}
 				}
+				
+				if (result.getAdaptationStatusValue() != AdaptationStatusValue.PENDING) {
+					break;
+				}
+
 			}
 		}
 
-		if (queueBuild && !result.getAdaptationStatusValue().equals(AdaptationStatusValue.ERROR)) {
+		if (queueBuild && result.getAdaptationStatusValue() == AdaptationStatusValue.PENDING) {
 			try {
 				result.addAudit("Adaptation queued a build.");
 				buildAtakClient(applicationInstance);
