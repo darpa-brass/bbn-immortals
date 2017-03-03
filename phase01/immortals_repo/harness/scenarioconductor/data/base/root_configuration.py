@@ -148,6 +148,7 @@ class ValidationEnvironmentConfiguration:
     :type startAndroidEmulatorsSimultaneously: bool
     :type lifecycle: Lifecycle
     :type setupEnvironmentLifecycle: SetupEnvironmentLifecycle
+    :type androidEmulatorQemuArgs: list[str]
     """
 
     @classmethod
@@ -157,11 +158,13 @@ class ValidationEnvironmentConfiguration:
         dc['setupEnvironmentLifecycle'] = SetupEnvironmentLifecycle.from_dict(d['setupEnvironmentLifecycle'])
         return cls(**dc)
 
-    def __init__(self, displayAndroidEmulatorGui, startAndroidEmulatorsSimultaneously, lifecycle, setupEnvironmentLifecycle):
+    def __init__(self, displayAndroidEmulatorGui, startAndroidEmulatorsSimultaneously, lifecycle,
+                 setupEnvironmentLifecycle, androidEmulatorQemuArgs):
         self.displayAndroidEmulatorGui = displayAndroidEmulatorGui
         self.lifecycle = lifecycle
         self.setupEnvironmentLifecycle = setupEnvironmentLifecycle
         self.startAndroidEmulatorsSimultaneously = startAndroidEmulatorsSimultaneously
+        self.androidEmulatorQemuArgs = androidEmulatorQemuArgs
 
 
 class ImmortalizationTarget:

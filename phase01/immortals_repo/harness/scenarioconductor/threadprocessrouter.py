@@ -46,6 +46,7 @@ class LoggingEndpoint:
             try:
                 self.logger.info(msg=msg)
             except Exception as e:
+                print(msg)
                 ig.logger().error_das_log_file(message=traceback.format_exc())
                 raise e
 

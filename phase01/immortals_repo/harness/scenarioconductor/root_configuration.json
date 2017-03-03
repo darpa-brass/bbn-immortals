@@ -125,7 +125,8 @@
         "setupEnvironmentLifecycle": {
             "destroyExisting": false,
             "cleanExisting": true
-        }
+        },
+        "androidEmulatorQemuArgs": []
     },
     "visualizationConfiguration": {
         "enabled": false

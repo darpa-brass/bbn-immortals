@@ -137,6 +137,13 @@ def start_emulator(adb_device_identifier, console_port, sdcard_filepath, command
         replace(args, _ID_EMULATOR_IDENTIFIER, adb_device_identifier)
         replace(args, _ID_CONSOLE_PORT, str(console_port))
 
+        if ig.configuration.validationEnvironment.androidEmulatorQemuArgs is not None \
+                and len(ig.configuration.validationEnvironment.androidEmulatorQemuArgs) > 0:
+            args.append('-qemu')
+
+            for arg in ig.configuration.validationEnvironment.androidEmulatorQemuArgs:
+                args.append(arg)
+
         if ig.configuration.debugMode:
             log_time_delta_0(adb_device_identifier, 'startEmulatorPhase1')
             command_processor.Popen(args=args,
