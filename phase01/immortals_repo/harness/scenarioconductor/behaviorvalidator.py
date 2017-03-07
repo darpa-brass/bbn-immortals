@@ -71,7 +71,7 @@ class BehaviorValidator:
                                     (int(c.latestSABroadcastIntervalMS) *
                                      int(ig.configuration.validation.bandwidthValidatorSampleDurationMultiplier)))
 
-        calculated_duration = client_count * 8000 + max_wait_interval * 6 + 10000
+        calculated_duration = 120000 + max_wait_interval + 60000
 
         self._duration = max(calculated_duration, runner_configuration.minDurationMS)
 

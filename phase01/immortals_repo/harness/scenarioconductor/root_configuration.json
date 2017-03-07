@@ -115,7 +115,7 @@
     },
     "validationEnvironment": {
         "displayAndroidEmulatorGui": false,
-        "startAndroidEmulatorsSimultaneously": true,
+        "startAndroidEmulatorsSimultaneously": false,
         "lifecycle": {
             "setupEnvironment": true,
             "setupApplications": true,
@@ -126,7 +126,8 @@
             "destroyExisting": false,
             "cleanExisting": true
         },
-        "androidEmulatorQemuArgs": []
+        "androidEmulatorQemuArgs": [],
+        "initialEmulatorCount": 6
     },
     "visualizationConfiguration": {
         "enabled": false

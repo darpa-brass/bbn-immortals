@@ -94,11 +94,13 @@ class BandwidthValidator(ValidatorInterface):
             self._sample_span_seconds = \
                 max(self._sample_span_seconds, int(c.imageBroadcastIntervalMS), int(c.latestSABroadcastIntervalMS))
 
+        sample_delay = 120 / (self._sample_span_seconds / 1000)
+
         self._sample_span_seconds *= ig.configuration.validation.bandwidthValidatorSampleDurationMultiplier
         self._sample_span_seconds /= 1000
 
-        # Wait for half the sample span for things to settle before starting to measure data
-        self._lower_idx = self._sample_span_seconds / 2
+        # Wait for two minutes for things to settle before starting to measure data
+        self._lower_idx = sample_delay
         self._upper_idx = (self._lower_idx + (self._sample_span_seconds / validation_reporting_interval_secs))
 
         logging.debug('Bandwidth Sampling Starting Lower Idx: ' + str(self._lower_idx))

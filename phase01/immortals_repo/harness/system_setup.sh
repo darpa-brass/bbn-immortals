@@ -173,7 +173,7 @@ ln -s ${Z3_HOME}/bin/z3 /opt/bin/z3
 apt-get install maven -y
 
 ######## Install other deps ########
-apt-get install python-pip python3-pip python-dev python-pcapy -y
+apt-get install python-pip python3-pip python-dev python-pcapy expect -y
 pip3 install rdflib==4.2.1
 pip install CherryPy==8.1.2
 pip install bokeh==0.12.4
@@ -183,10 +183,13 @@ pip install tornado==4.4.2
 pip install requests==2.12.5
 pip install commentjson==0.6
 
-
+source ~/.bashrc
 
 ######## Perform the initial build to populate the dependency tree
 cd ../
 ${GRADLE_HOME}/bin/gradle
 ${GRADLE_HOME}/bin/gradle dslSetup
 ${GRADLE_HOME}/bin/gradle buildAll
+
+cd harness
+python testing.py setupemulators

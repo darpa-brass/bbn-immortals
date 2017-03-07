@@ -1,7 +1,8 @@
 """
 This class is used to perform actions related to the emulator.
 """
-
+import os
+import subprocess
 import time
 from threading import Semaphore
 
@@ -58,22 +59,46 @@ def reset_identifier_counter():
 def wipe_emulators():
     generator = [n for n in range(_port_min, _port_max + _port_skip, _port_skip)]
 
-    emulator_identifier = emulator_name_template.format(CONSOLEPORT=generator.pop())
-
-    while emulator_exists(emulator_identifier):
-        if adbhelper.is_known(emulator_identifier):
-            console_port = int(get_formatted_string_value(emulator_name_template, emulator_identifier, 'CONSOLEPORT'))
-            kill_emulator(console_port=console_port)
-
-        delete_emulator(emulator_identifier)
-
+    for i in range(0, configuration.validationEnvironment.initialEmulatorCount):
         emulator_identifier = emulator_name_template.format(CONSOLEPORT=generator.pop())
+
+        while emulator_exists(emulator_identifier):
+            if adbhelper.is_known(emulator_identifier):
+                console_port = int(
+                    get_formatted_string_value(emulator_name_template, emulator_identifier, 'CONSOLEPORT'))
+                kill_emulator(console_port=console_port)
+
+            delete_emulator(emulator_identifier)
+
+            emulator_identifier = emulator_name_template.format(CONSOLEPORT=generator.pop())
+
+
+def get_sdcard_path(adb_device_identifier):
+    return os.path.join(os.getenv('HOME'), adb_device_identifier + '_sdcard.img')
+
+
+def initially_setup_emulators():
+    generator = [n for n in range(_port_max - configuration.validationEnvironment.initialEmulatorCount*2+2, _port_max + _port_skip, _port_skip)]
+
+    for console_port in generator:
+        emulator_identifier = emulator_name_template.format(CONSOLEPORT=console_port)
+
+        create_emulator(emulator_identifier)
+
+        start_emulator(
+            adb_device_identifier=emulator_identifier,
+            console_port=console_port)
+
+        kill_emulator(console_port)
 
 
 def create_emulator(adb_device_identifier, command_processor=tpr):
     """
     Creates an emulator for the formatted emulator_identifier
     """
+
+    cmd = ['mksdcard', '12M', get_sdcard_path(adb_device_identifier=adb_device_identifier)]
+    subprocess.call(cmd)
 
     args = list(_android_emulator_create_command)
     replace(args, _ID_EMULATOR_IDENTIFIER, adb_device_identifier)
@@ -115,7 +140,8 @@ def delete_emulator(adb_device_identifier, command_processor=tpr):
             command_processor.call(args=args)
 
 
-def start_emulator(adb_device_identifier, console_port, sdcard_filepath, command_processor=tpr):
+def start_emulator(adb_device_identifier, console_port,
+                   command_processor=tpr, instance_identifier="UNDEFINED"):
     """
     Starts an emulator with the name provided by emulator_identifier, returning
     before it is ready to be used.
@@ -130,9 +156,8 @@ def start_emulator(adb_device_identifier, console_port, sdcard_filepath, command
         else:
             args.append('-no-window')
 
-        if sdcard_filepath is not None:
-            args.append('-sdcard')
-            args.append(sdcard_filepath)
+        args.append('-sdcard')
+        args.append(get_sdcard_path(adb_device_identifier))
 
         replace(args, _ID_EMULATOR_IDENTIFIER, adb_device_identifier)
         replace(args, _ID_CONSOLE_PORT, str(console_port))
@@ -145,12 +170,12 @@ def start_emulator(adb_device_identifier, console_port, sdcard_filepath, command
                 args.append(arg)
 
         if ig.configuration.debugMode:
-            log_time_delta_0(adb_device_identifier, 'startEmulatorPhase1')
+            log_time_delta_0(instance_identifier, 'startEmulatorPhase1')
             command_processor.Popen(args=args,
                                     halt_on_shutdown=ig.configuration.validationEnvironment.lifecycle.haltEnvironment)
             while not adbhelper.is_known(adb_device_identifier, command_processor):
                 time.sleep(1)
-            log_time_delta_1(adb_device_identifier, 'startEmulatorPhase1')
+            log_time_delta_1(instance_identifier, 'startEmulatorPhase1')
 
         else:
             command_processor.Popen(args=args,
@@ -159,9 +184,9 @@ def start_emulator(adb_device_identifier, console_port, sdcard_filepath, command
                 time.sleep(1)
 
     if ig.configuration.debugMode:
-        log_time_delta_0(adb_device_identifier, 'startEmulatorPhase2')
+        log_time_delta_0(instance_identifier, 'startEmulatorPhase2')
         adbhelper.wait_for_device_ready(adb_device_identifier, command_processor)
-        log_time_delta_1(adb_device_identifier, 'startEmulatorPhase2')
+        log_time_delta_1(instance_identifier, 'startEmulatorPhase2')
     else:
         adbhelper.wait_for_device_ready(adb_device_identifier, command_processor)
 
@@ -180,11 +205,12 @@ def kill_emulator(console_port, command_processor=tpr):
 
 
 class EmuHelper:
-    def __init__(self, adb_device_identifier, console_port, sdcard_filepath, command_processor=tpr):
+    def __init__(self, adb_device_identifier, console_port, command_processor=tpr, instance_identifier=None):
         self.adb_device_identifier = adb_device_identifier
         self.console_port = console_port
-        self.sdcard_filepath = sdcard_filepath
+        self.sdcard_filepath = os.path.join(os.getenv('HOME'), adb_device_identifier + '_sdcard.img')
         self.cp = command_processor
+        self.instance_identifier = instance_identifier
 
     def create_emulator(self):
         create_emulator(self.adb_device_identifier, self.cp)
@@ -196,7 +222,7 @@ class EmuHelper:
         delete_emulator(self.adb_device_identifier, self.cp)
 
     def start_emulator(self):
-        start_emulator(self.adb_device_identifier, self.console_port, self.sdcard_filepath, self.cp)
+        start_emulator(self.adb_device_identifier, self.console_port, self.cp, self.instance_identifier)
 
     def kill_emulator(self):
         kill_emulator(self.console_port, self.cp)

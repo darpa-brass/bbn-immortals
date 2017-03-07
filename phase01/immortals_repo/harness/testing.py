@@ -92,6 +92,14 @@ dmttl_parser.set_defaults(func=tools_dmttl_main)
 network_logger = logging.getLogger
 
 
+def setup_emulators_main(args=None):
+    from scenarioconductor.android.emuhelper import initially_setup_emulators
+    initially_setup_emulators()
+
+emulator_parser = _sub_parsers.add_parser('setupemulators')
+emulator_parser.set_defaults(func=setup_emulators_main)
+
+
 def main():
     args = _parser.parse_args()
 

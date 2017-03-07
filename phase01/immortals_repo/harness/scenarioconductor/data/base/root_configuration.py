@@ -149,6 +149,7 @@ class ValidationEnvironmentConfiguration:
     :type lifecycle: Lifecycle
     :type setupEnvironmentLifecycle: SetupEnvironmentLifecycle
     :type androidEmulatorQemuArgs: list[str]
+    :type initialEmulatorCount: int
     """
 
     @classmethod
@@ -159,12 +160,13 @@ class ValidationEnvironmentConfiguration:
         return cls(**dc)
 
     def __init__(self, displayAndroidEmulatorGui, startAndroidEmulatorsSimultaneously, lifecycle,
-                 setupEnvironmentLifecycle, androidEmulatorQemuArgs):
+                 setupEnvironmentLifecycle, androidEmulatorQemuArgs, initialEmulatorCount):
         self.displayAndroidEmulatorGui = displayAndroidEmulatorGui
         self.lifecycle = lifecycle
         self.setupEnvironmentLifecycle = setupEnvironmentLifecycle
         self.startAndroidEmulatorsSimultaneously = startAndroidEmulatorsSimultaneously
         self.androidEmulatorQemuArgs = androidEmulatorQemuArgs
+        self.initialEmulatorCount = initialEmulatorCount
 
 
 class ImmortalizationTarget:
