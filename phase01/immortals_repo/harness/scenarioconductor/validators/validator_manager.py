@@ -94,7 +94,7 @@ class BandwidthValidator(ValidatorInterface):
             self._sample_span_seconds = \
                 max(self._sample_span_seconds, int(c.imageBroadcastIntervalMS), int(c.latestSABroadcastIntervalMS))
 
-        sample_delay = 120 / (self._sample_span_seconds / 1000)
+        sample_delay = 300 / (self._sample_span_seconds / 1000)
 
         self._sample_span_seconds *= ig.configuration.validation.bandwidthValidatorSampleDurationMultiplier
         self._sample_span_seconds /= 1000

@@ -41,11 +41,12 @@ public class InFromNetworkImageProcessor extends AbstractOutputProvider<CotEvent
         if (bufferedImage == null) {
             return null;
         }
-        try {
-            ImageIO.write(bufferedImage, IMAGE_FORMAT, new File(getPhotoFileName()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+            System.out.println("Received Image");
+//            ImageIO.write(bufferedImage, IMAGE_FORMAT, new File(getPhotoFileName()));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
         return bufferedImage;
     }
 
@@ -58,11 +59,12 @@ public class InFromNetworkImageProcessor extends AbstractOutputProvider<CotEvent
 
         // SOImages-work: 853D8A8C-1EE5-44CD-91C2-5A7E2B57922F
         if (bufferedImage != null) {
-            try {
-                ImageIO.write(bufferedImage, IMAGE_FORMAT, new File(getPhotoFileName()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+//            try {
+                System.out.println("Received Image");
+//                ImageIO.write(bufferedImage, IMAGE_FORMAT, new File(getPhotoFileName()));
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
             distributeResult(data);
         }
         // SOImages-work-end
