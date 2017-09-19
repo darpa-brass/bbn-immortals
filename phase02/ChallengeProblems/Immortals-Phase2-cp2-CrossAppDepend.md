@@ -1,11 +1,6 @@
-IMMoRTALS Challenge Problem 2
-============
+# IMMoRTALS Challenge Problem 2 - Cross-Application Dependencies
 
-Cross-Application Dependencies
-============
-
-Introduction
-============
+## Introduction
 
 Modern software systems seldom operate in isolation. For example,
 Service-Oriented Architectures (SOAs) distribute distinct system
@@ -37,8 +32,7 @@ information before using it. Additionally, the client and server
 implementers must agree upon and utilize a secure key exchange
 procedure.
 
-Challenge Problem Description
-=============================
+## Challenge Problem Description
 
 Challenge Problem 2 (CP2) will investigate the change drivers in the
 middleware space. In the context of the IMMoRTALS platform application,
@@ -117,8 +111,7 @@ never receive a NACK from the server.
 
 Figure : CP2 client server architecture
 
-Adaptation scenarios
-====================
+## Adaptation scenarios
 
 The following scenarios can occur at various points in the lifetime of
 the MARTI/ATAK system. For each we describe the adaptation stimuli and
@@ -249,7 +242,7 @@ a.  Validation can also be achieved by inspecting the synthesized code
 i.  After adaptation, the encryption code regions in ATAK and MARTI
     should be configured using a 256-bit key.
 
-Analysis supporting CP2 adaptation
+## Analysis supporting CP2 adaptation
 ==================================
 
 ![](CP2Architecture.png)
@@ -301,11 +294,9 @@ Figure : Complete analysis of hypothetical
 scenario involving correct transmission of a compressed, encrypted
 message containing an image from ATAK to MARTI
 
-CP2 Test Parameters
-===================
+## CP2 Test Parameters
 
-Formalisms
-----------
+### Formalisms
 
 -   We will define a specification format for several popular symmetric
     key encryption algorithms (DES, 3DES, AES, Blowfish). This format
@@ -340,8 +331,7 @@ Formalisms
     more powerful ASICs for key brute forcing. This vocabulary will
     contain links to components in the feature model.
 
-Instantiations of formalisms
-----------------------------
+### Instantiations of formalisms
 
 -   We will provide feature models for ATAK and MARTI
 
@@ -365,8 +355,7 @@ Instantiations of formalisms
     encryption. This assertion can be bound to feature models for
     ATAK/MARTI
 
-Software
---------
+### Software
 
 -   We will provide ATAK and MARTI code, build scripts, and a virtual
     testing environment
@@ -378,11 +367,9 @@ Software
     to MARTI and verifies the correct ACK responses. The driver treat as
     a failure any NACK response returned by MARTI.
 
-Intent Specification and Evaluation Metrics
-===========================================
+## Intent Specification and Evaluation Metrics
 
-Intent specification
----------------------
+### Intent specification
 
 Intent within IMMoRTALS takes the form of assertions that bind to the
 feature model. We will provide an easy-to-use knob-based convenience
@@ -404,8 +391,7 @@ explicit knobs associated with this scenario are listed below:
     algorithm configuration Y. X and Y are elements in a predefined
     enumeration provided to MIT-LL. Knob type: *select from enumeration*
 
-Evaluation metrics
-------------------
+### Evaluation metrics
 
 The following metrics are gathered as the automated ATAK driver program
 executes:
@@ -449,11 +435,10 @@ The following metrics are gathered once, just after adaptation:
     -   Interpretation: the \# of compression or cipher DFUs included in
         the ATAK/MARTI software
 
-Expected results
-================
+## Expected results
 
-Expected runtime behavior of baseline software system before perturbation
--------------------------------------------------------------------------
+### Expected runtime behavior of baseline software system before perturbation
+
 | Metric                                                                                 | Nominal Value                                                                                                                  |
 |----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | NACK count                                                                             | 0                                                                                                                              |
@@ -461,8 +446,7 @@ Expected runtime behavior of baseline software system before perturbation
 | CompressionConfiguration                                                               | No CompressionConfiguration metrics should be received (the application does not initially utilize compression)                |
 | Assertion describing the preference of one lossless compression algorithm over another | IMMoRTALS replaces all uses of the less preferential lossless algorithm with the more preferred one                            |
 
-Expected runtime behavior after perturbation
---------------------------------------------
+### Expected runtime behavior after perturbation
 
 | Change driver                                                                                                                                              | Expected application behavior after adaptation                                                                     |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
@@ -471,8 +455,7 @@ Expected runtime behavior after perturbation
 | Large messages transmitted across network; assert a prescriptive adaptation strategy for large messages based on the injection of a LosslessCompressor DFU |    * Should observe CompressionConfiguration metrics     * NACK count = 0                                          |
 | Assertion describing the preference of one lossless compression algorithm over another                                                                     |    * Should observe CompressionConfiguration metrics for the preferred algorithm     * NACK count = 0              |
 
-Expected IMMoRTALS response to perturbation
--------------------------------------------
+### Expected IMMoRTALS response to perturbation
 
 | Change driver                                                                                                                                              | Expected adaptation response                                                                                       |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
@@ -481,13 +464,82 @@ Expected IMMoRTALS response to perturbation
 | Large messages transmitted across network; assert a prescriptive adaptation strategy for large messages based on the injection of a LosslessCompressor DFU | IMMoRTALS injects a LosslessCompression DFU at all code regions with dataflows that transcend the network boundary |
 | Assertion describing the preference of one lossless compression algorithm over another                                                                     | IMMoRTALS replaces all uses of the less preferential lossless algorithm with the more preferred one                |
 
-Test Procedure
-==============
+## Test Procedure
 
 The test harness will provide mission requirements by selecting change drivers as described in the “Intent specification” section. Tests will execute much as they did in our Phase-1 challenge problems: After the Test Harness provides the parameters, the TA and DAS will produce compliant versions of the client (ATAK) and server applications, then execute intent tests.
 
-Interface to the Test Harness (API)
-===================================
+## Interface to the Test Harness (API)
 
+### Description
+This challenge problem will utilize the unified API specified in the Test Harness API document. Since it is intended to 
+exercise the augmentation of applications within a system that requires coordination, it will be restricted 
+to the _globalModel_ which is applicable to the entire SUT. Our initial goal is to produce an encryption 
+augmentation. For this, a _securityStandard_ must be defined as a _requirement_ for _dataInTransit_ in the 
+_globalPerturbation_. There are currently several candidate security standards being investigated and are listed in 
+the **SecurityStandard** section of the Data Dictionary to drive this challenge problem.
 
-![](TestHarnessAPI.png)
+### Endpoint Usage
+__Endpoint Type__: POST  
+__Endpoint URL__: /action/crossApplicationDependencies
+
+#### Sample Payload (wrapped in a TEST_ACTION)
+```  
+{
+    "ARGUMENTS": {
+        "globalModel": {
+            "requirements": {
+                "dataInTransit": {
+                    "securityStandard": "NIST800Dash171"
+                }
+            }
+        }
+    },
+    "TIME": "2017-09-18T18:09:25.063Z"
+}  
+```  
+### Data Dictionary:  
+
+#### SubmissionModel  
+__Type__: JSON Object  
+__Description__: The main submission model  
+
+| Field       | Type                  | Description                       |  
+| ----------- | --------------------- | --------------------------------- |  
+| globalModel | GlobalSubmissionModel | Global perturbation configuration |  
+
+#### GlobalSubmissionModel  
+__Type__: JSON Object  
+__Description__: The model of application that is applicable to the entire System Under Test (SUT)  
+
+| Field        | Type               | Description                     |  
+| ------------ | ------------------ | ------------------------------- |  
+| requirements | GlobalRequirements | Requirements for the entire SUT |  
+
+#### GlobalRequirements  
+__Type__: JSON Object  
+__Description__: Requirements applicable to the entire System under Test  
+
+| Field         | Type          | Description              |  
+| ------------- | ------------- | ------------------------ |  
+| dataInTransit | DataInTransit | The transmission of data |  
+
+#### DataInTransit  
+__Type__: JSON Object  
+__Description__: The requirements for all data that is transmitted over the wire  
+
+| Field            | Type             | Description                                 |  
+| ---------------- | ---------------- | ------------------------------------------- |  
+| securityStandard | SecurityStandard | The required security standard to adhere to |  
+
+#### SecurityStandard  
+__Type__: String Constant  
+__Description__: Common security standards  
+
+| Values         | Description                                            |  
+| -------------- | ------------------------------------------------------ |  
+| Nothing        | No security required                                   |  
+| FIPS140Dash1   | Obsolete less secure NIST government security standard |  
+| FIPS140Dash2   | Current secure NIST government security standard       |  
+| NIST800Dash171 | Recent governemnt contractor security standard         |  
+| Secret         | Classified information lower security standard         |  
+| TopSceret      | Classified information highest security standard       |  

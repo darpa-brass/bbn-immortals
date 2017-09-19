@@ -1,11 +1,6 @@
-IMMoRTALS Challenge Problem 3
-============
+# IMMoRTALS Challenge Problem 3 - Third-Party Party Dependency Upgrade
 
-Third-Party Party Dependency Upgrade
-============
-
-Introduction
-============
+## Introduction
 
 Modern software is built upon many layers of 3^rd^ party libraries and
 operating system features. This has helped to drive down the development
@@ -26,8 +21,7 @@ third-party library that has security fixes in a new version of the
 library that the vendor chooses not to backport to the version of the
 library that our application was using.
 
-Challenge Problem Description
-=============================
+## Challenge Problem Description
 
 There are an incredible variety of ways that 3^rd^ party libraries might
 evolve. We will focus on a few specific kinds of evolution for this
@@ -132,8 +126,7 @@ In contrast to the 1^st^ motivating case, this case involves adapting
 the library, specifically, the older in-use version of the library, as
 opposed to the application itself.
 
-Adaptation scenarios
-====================
+## Adaptation scenarios
 
 The Test Adapter will support scenario generation in several ways. The
 DAS requires not just a notification of change, but oftentimes some
@@ -179,13 +172,8 @@ developing. The DAS will then try to use both the techniques described
 in the *Partial Library Upgrade* section to see if a new version of the
 application can be synthesized.
 
-CP3 Test Parameters
-===================
 
-TBD
-
-Intent Specification and Evaluation Metrics
-===========================================
+## Intent Specification and Evaluation Metrics
 
 The intent specification comes in two categories. The first is the
 baseline functionality: a client sending position reports to the server,
@@ -202,8 +190,7 @@ on the fly. Specifically, we may modify the *recipe* specified in the
 Change Request mitigation to include some log messages that will allow
 us to verify that the code was modified.
 
-Test Procedure
-==============
+## Test Procedure
 
 The test harness will provide mission requirements by selecting change
 drivers as described in the “Intent specification” section. Tests will
@@ -212,3 +199,139 @@ Test Harness provides the parameters, the TA and DAS will produce
 compliant versions of the client (ATAK) and server applications, then
 execute intent tests.
 
+## Interface to the Test Harness (API)
+
+### Description
+This challenge problem will utilize the unified API specified in the Test Harness API document. Since this challenge 
+problem is intended to exercise the ability of integrating incompatible library changes, it will be restricted to the 
+_atakliteClientModel_ and _martiServerModel_ fields of the root **SubmissionModel**.  Both models will utilize the 
+_libraryUpgrade_ field of their _requirements_. The _atakliteClientModel_ will utilize an additional 
+_deploymentPlatformVersion_ requirement to introduce an additional form of library upgrade.
+
+ For the _martiServerModel_ _libraryUpgrade_ _requirements_, allowable _libraryIdentifier_ values are listed in the 
+ **JavaLibrary** definition in the Data Dictionary. The provided _libraryVersion_ must match with corresponding 
+ **LatestVersion** value.  
+ 
+ The _atakliteClientModel_ _libraryUpgrade_ _requirements_ allowable _libraryIdentifier_ values are listed in the 
+ **AndroidLibrary** definition in the Data Dictionary. The provided _libraryVersion_ must match with corresponding 
+ **LatestVersion** value.  
+ 
+ The valid values for the _deploymentPlatformVersion_ field of _atakliteClientModel_ _requirements_ are listed in the 
+ **AndroidPlatformVersion** definition in the Data Dictionary.
+ 
+### Endpoint Usage
+__Endpoint Type__: POST  
+__Endpoint URL__: /action/libraryEvolution
+
+#### Sample Payload (wrapped in a TEST_ACTION)
+```  
+{
+    "ARGUMENTS": {
+        "atakliteClientModel": {
+            "requirements": {
+                "deploymentPlatformVersion": "Android23",
+                "libraryUpgrade": {
+                    "libraryIdentifier": "ToBeDetermined",
+                    "libraryVersion": "1.3.3.7"
+                }
+            }
+        },
+        "martiServerModel": {
+            "requirements": {
+                "libraryUpgrade": {
+                    "libraryIdentifier": "Dom4jCot",
+                    "libraryVersion": "2"
+                }
+            }
+        }
+    },
+    "TIME": "2017-09-18T18:09:25.063Z"
+}  
+```  
+
+### Data Dictionary:
+
+#### SubmissionModel  
+__Type__: JSON Object  
+__Description__: The main submission model  
+
+| Field               | Type                    | Description                      |  
+| ------------------- | ----------------------- | -------------------------------- |  
+| martiServerModel    | MartiSubmissionModel    | Marti server deployment model    |  
+| atakliteClientModel | ATAKLiteSubmissionModel | ATAKLite client deployment model |  
+
+#### MartiSubmissionModel  
+__Type__: JSON Object  
+__Description__: The model of adaptation for the Marti server  
+
+| Field        | Type              | Description                       |  
+| ------------ | ----------------- | --------------------------------- |  
+| requirements | MartiRequirements | Requirements for the Marti server |  
+
+#### MartiRequirements  
+__Type__: JSON Object  
+__Description__: A requirement specification for a Marti server  
+
+| Field          | Type                    | Description                        |  
+| -------------- | ----------------------- | ---------------------------------- |  
+| libraryUpgrade | JavaLibraryRequirements | A library upgrade that is required |  
+
+#### JavaLibraryRequirements  
+__Type__: JSON Object  
+__Description__: The requirements for a library used within the application  
+
+| Field             | Type        | Description                           |  
+| ----------------- | ----------- | ------------------------------------- |  
+| libraryIdentifier | JavaLibrary | A library used within the application |  
+| libraryVersion    | str         | The required version of the library   |  
+
+#### JavaLibrary  
+__Type__: String Constant  
+__Description__: An upgradable Java library  
+
+| Values   | Description                                                        | LatestVersion |  
+| -------- | ------------------------------------------------------------------ | ------------- |  
+| Dom4jCot | Dom4J library used for decoding incoming XML data into CoT objects | 2             |  
+
+#### ATAKLiteSubmissionModel  
+__Type__: JSON Object  
+__Description__: The model of adaptation for all ATAKLite Clients  
+
+| Field        | Type                 | Description                                     |  
+| ------------ | -------------------- | ----------------------------------------------- |  
+| requirements | AtakliteRequirements | Requirements for all operating ATAKLite clients |  
+
+#### AtakliteRequirements  
+__Type__: JSON Object  
+__Description__: A requirement specification for an ATAKLite instance  
+
+| Field                     | Type                       | Description                                                           |  
+| ------------------------- | -------------------------- | --------------------------------------------------------------------- |  
+| deploymentPlatformVersion | AndroidPlatformVersion     | Which version of the Android platform the clients must be deployed on |  
+| libraryUpgrade            | AndroidLibraryRequirements | A library upgrade that must be performed                              |  
+
+#### AndroidPlatformVersion  
+__Type__: String Constant  
+__Description__: Possible Android platforms to deploy on  
+
+| Values    | Description                                                             |  
+| --------- | ----------------------------------------------------------------------- |  
+| Android21 | Baseline Android API version 21                                         |  
+| Android23 | Newer Android API version 23 which requires runtime permission requests |  
+
+#### AndroidLibraryRequirements  
+__Type__: JSON Object  
+__Description__: The library requirements for a specific Android library  
+
+| Field             | Type           | Description                         |  
+| ----------------- | -------------- | ----------------------------------- |  
+| libraryIdentifier | AndroidLibrary | The identifier for the library      |  
+| libraryVersion    | str            | The required version of the library |  
+
+#### AndroidLibrary  
+__Type__: String Constant  
+__Description__: An upgradable Android library  
+
+| Values         | Description                    | LatestVersion |  
+| -------------- | ------------------------------ | ------------- |  
+| ToBeDetermined | A yet-to-be determined library | 1.3.3.7       |  

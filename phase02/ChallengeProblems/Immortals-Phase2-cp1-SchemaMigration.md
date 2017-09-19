@@ -1,11 +1,6 @@
-Immortals
-========
+# Immortals Challenge Problem 1 – Database Schema Migration
 
-Challenge Problem 1 – Database Schema Migration
-========
-
-Overview
-========
+## Overview
 
 Many applications make use of relational databases for storing and
 retrieving data. Our SA application uses such a database for storing
@@ -33,8 +28,7 @@ utilize our discovery tools to find where the application is making SQL
 queries. Success will allow the application to function when making
 queries against a database with the new schema.
 
-Test Data
-=========
+## Example Test Data
 
 The CASTOR algorithm requires some baseline data from the old database,
 as well as expected results from a set of SQL queries. It then requires
@@ -82,8 +76,7 @@ Expected runtime behavior of baseline software system before perturbation
 Table 1: Original schema and evolved schema. The original schema
 has the data broken into 7 tables. The evolved schema has 4 tables.
 
-Test Parameters
-===============
+## Example Test Parameters
 
 Testing of this capability requires that some known data be loaded into
 the new schema. As such, we believe that it will be necessary to provide
@@ -112,8 +105,7 @@ Table 1: {alt, task} / Table 2: { lon, speed} / Table 3: {lat, course}
 ‘id’ will be added to all tables in the ‘evolved’ schema. This isn’t
 necessary for CASTOR, but ensures that the normalization is valid)
 
-Test Procedure
-==============
+## Test Procedure
 
 The Test Harness will provide the number of tables to normalize to, as
 well as which columns to put in each table. The Test Adapter will then
@@ -134,54 +126,120 @@ Challenge Stage is fairly straightforward: we can run the new queries
 against the new database and test to see that it returned expected
 results.
 
-Interface to the Test Harness (API)
-===================================
+## Interface to the Test Harness (API)
 
-In the example below, there are two tables defined, on having columns 1
-and 2, and the other table contains column3.
+### Description
+This challenge problem will utilize the unified API specified in the Test Harness API document. It is restricted to the 
+_postgresqlPerturbation_ requirement of the martiRouter component. This requirement provides a means to supply an arbitrary 
+number of _tables_, each which contain an arbitrary number of _columns_ from the **DatabaseColumns** object listed in the 
+Data Dictionary.  These columns can be arranged in any way, but they must all be provided in the tables provided.
 
-  -----------------------------------------------------------------------------
-   
-  -----------------------------------------------------------------------------
-  // API to normalize the database
+### Endpoint Usage
+__Endpoint Type__: POST  
+__Endpoint URL__: /action/databaseSchemaPerturbation
 
-  POST http://brass-ta/action/perturbDatabase
+#### Sample Payload (wrapped in a TEST_ACTION)
+```  
+{
+    "ARGUMENTS": {
+        "martiServerModel": {
+            "requirements": {
+                "postgresqlPerturbation": {
+                    "tables": [
+                        {
+                            "columns": [
+                                "CotEvent_SourceId",
+                                "CotEvent_How",
+                                "CotEvent_ServerTime",
+                                "Position_CotEventId",
+                                "Position_PointCE",
+                                "Position_PointLE",
+                                "Position_TileX",
+                                "Position_Longitude",
+                                "Position_Latitude"
+                            ]
+                        },
+                        {
+                            "columns": [
+                                "Position_PointHae",
+                                "CotEvent_Detail",
+                                "Position_TileY",
+                                "CotEvent_CotType"
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "TIME": "2017-09-18T18:09:25.063Z"
+}  
+```  
 
-  TEST\_ACTION:
+### Data Dictionary
 
-    {"TIME" : TIME\_ENCODING,
+#### SubmissionModel  
+__Type__: JSON Object  
+__Description__: The main submission model  
 
-     "ARGUMENTS" : {"tables": \[
+| Field            | Type                 | Description                             |  
+| ---------------- | -------------------- | --------------------------------------- |  
+| martiServerModel | MartiSubmissionModel | Marti server perturbation configuration |  
 
-  { "columns": \[columnName1, columnName2\]},
+#### MartiSubmissionModel  
+__Type__: JSON Object  
+__Description__: The model of adaptation for the Marti server  
 
-  { "columns": \[columnName3,…\]}
+| Field        | Type              | Description                       |  
+| ------------ | ----------------- | --------------------------------- |  
+| requirements | MartiRequirements | Requirements for the Marti server |  
 
-  …
+#### MartiRequirements  
+__Type__: JSON Object  
+__Description__: A requirement specification for a Marti server  
 
-  \]
+| Field                  | Type                 | Description                    |  
+| ---------------------- | -------------------- | ------------------------------ |  
+| postgresqlPerturbation | DatabasePerturbation | A Database schema perturbation |  
 
-  }
+#### DatabasePerturbation  
+__Type__: JSON Object  
+__Description__: Database schema perturbation specification  
 
-  }
+| Field  | Type                             | Description                                 |  
+| ------ | -------------------------------- | ------------------------------------------- |  
+| tables | List[DatabaseTableConfiguration] | The tables the new schema should consist of |  
 
-  ACTION\_RESULT:
+#### DatabaseTableConfiguration  
+__Type__: JSON Object  
+__Description__: The configuration for a table in a schema  
 
-    {"TIME" : TIME\_ENCODING,
+| Field   | Type                  | Description                              |  
+| ------- | --------------------- | ---------------------------------------- |  
+| columns | List[DatabaseColumns] | The columns the schema table consists of |  
 
-     "RESULT" : {"nQueriesExecuted" : Integer, "successfulQueries" : Integer}
+#### DatabaseColumns  
+__Type__: String Constant  
+__Description__: The possible columns the database may be constructed from. All columns must be used to construct a new schema!  
 
-    }
+| Values              | Description                                                   |  
+| ------------------- | ------------------------------------------------------------- |  
+| CotEvent_SourceId   | The foreign key for the source the event is associated with   |  
+| CotEvent_CotType    | The CoT event type                                            |  
+| CotEvent_How        | The standardized source type of the message                   |  
+| CotEvent_Detail     | The detail field of the CoT event                             |  
+| CotEvent_ServerTime | The timestamp for the event                                   |  
+| Position_CotEventId | The foreign key for the event the position is associated with |  
+| Position_PointHae   | Altitude                                                      |  
+| Position_PointCE    | Circular Error                                                |  
+| Position_PointLE    | Linear Error                                                  |  
+| Position_TileX      | The X tile the position is within                             |  
+| Position_TileY      | The Y tile the position is within                             |  
+| Position_Longitude  | The longitude of the position                                 |  
+| Position_Latitude   | The latitude of the position                                  |  
 
-  -----------------------------------------------------------------------------
 
-*An interaction diagram like the following would also be helpful in our
-discussions.*
-
-![](TestHarnessAPI.png)
-
-Intent Specification and Evaluation Metrics
-===========================================
+## Intent Specification and Evaluation Metrics
 
 The intent in this challenge problem is fairly straightforward: does the
 query return the expected results. While in the real world the purpose
