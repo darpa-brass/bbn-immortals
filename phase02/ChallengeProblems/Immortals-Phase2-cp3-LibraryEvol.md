@@ -202,11 +202,15 @@ execute intent tests.
 ## Interface to the Test Harness (API)
 
 ### Description
-This challenge problem will utilize the unified API specified in the Test Harness API document. Since this challenge 
-problem is intended to exercise the ability of integrating incompatible library changes, it will be restricted to the 
+This challenge problem will utilize the [Test Harness API](Immortals-Phase2-TestHarnessAPI.md), which specifies the 
+overall interaction sequence, general structure, and response data associated with all challenge problems. This section 
+of this document pertains to the specific input utilized to perturb this endpoint and is all-inclusive in terms of 
+defining the endpoint and data necessary to initiate the perturbation of this challenge problem.  
+
+As this challenge problem intends to exercise the ability of integrating incompatible library changes, it will utilize to the 
 _atakliteClientModel_ and _martiServerModel_ fields of the root **SubmissionModel**.  Both models will utilize the 
 _libraryUpgrade_ field of their _requirements_. The _atakliteClientModel_ will utilize an additional 
-_deploymentPlatformVersion_ requirement to introduce an additional form of library upgrade.
+_deploymentPlatformVersion_ _requirements_ attribute to introduce an additional form of library upgrade.
 
  For the _martiServerModel_ _libraryUpgrade_ _requirements_, allowable _libraryIdentifier_ values are listed in the 
  **JavaLibrary** definition in the Data Dictionary. The provided _libraryVersion_ must match with corresponding 
@@ -223,33 +227,38 @@ _deploymentPlatformVersion_ requirement to introduce an additional form of libra
 __Endpoint Type__: POST  
 __Endpoint URL__: /action/libraryEvolution
 
-#### Sample Payload (wrapped in a TEST_ACTION)
+#### Sample SubmissionModel value
 ```  
 {
-    "ARGUMENTS": {
-        "atakliteClientModel": {
-            "requirements": {
-                "deploymentPlatformVersion": "Android23",
-                "libraryUpgrade": {
-                    "libraryIdentifier": "ToBeDetermined",
-                    "libraryVersion": "1.3.3.7"
-                }
-            }
-        },
-        "martiServerModel": {
-            "requirements": {
-                "libraryUpgrade": {
-                    "libraryIdentifier": "Dom4jCot",
-                    "libraryVersion": "2"
-                }
+    "atakLiteClientModel": {
+        "requirements": {
+            "deploymentPlatformVersion": "Android23",
+            "libraryUpgrade": {
+                "libraryIdentifier": "ToBeDetermined",
+                "libraryVersion": "1.3.3.7"
+            },
+            "partialLibraryUpgrade": {
+                "libraryIdentifier": "ToBeDetermined",
+                "libraryVersion": "1.3.3.7"
             }
         }
     },
-    "TIME": "2017-09-18T18:09:25.063Z"
+    "martiServerModel": {
+        "requirements": {
+            "libraryUpgrade": {
+                "libraryIdentifier": "ImageSaverLibrary",
+                "libraryVersion": "2"
+            },
+            "partialLibraryUpgrade": {
+                "libraryIdentifier": "Dom4jCot",
+                "libraryVersion": "2"
+            }
+        }
+    }
 }  
 ```  
 
-### Data Dictionary:
+### Data Dictionary
 
 #### SubmissionModel  
 __Type__: JSON Object  
@@ -257,41 +266,8 @@ __Description__: The main submission model
 
 | Field               | Type                    | Description                      |  
 | ------------------- | ----------------------- | -------------------------------- |  
+| atakLiteClientModel | ATAKLiteSubmissionModel | ATAKLite client deployment model |  
 | martiServerModel    | MartiSubmissionModel    | Marti server deployment model    |  
-| atakliteClientModel | ATAKLiteSubmissionModel | ATAKLite client deployment model |  
-
-#### MartiSubmissionModel  
-__Type__: JSON Object  
-__Description__: The model of adaptation for the Marti server  
-
-| Field        | Type              | Description                       |  
-| ------------ | ----------------- | --------------------------------- |  
-| requirements | MartiRequirements | Requirements for the Marti server |  
-
-#### MartiRequirements  
-__Type__: JSON Object  
-__Description__: A requirement specification for a Marti server  
-
-| Field          | Type                    | Description                        |  
-| -------------- | ----------------------- | ---------------------------------- |  
-| libraryUpgrade | JavaLibraryRequirements | A library upgrade that is required |  
-
-#### JavaLibraryRequirements  
-__Type__: JSON Object  
-__Description__: The requirements for a library used within the application  
-
-| Field             | Type        | Description                           |  
-| ----------------- | ----------- | ------------------------------------- |  
-| libraryIdentifier | JavaLibrary | A library used within the application |  
-| libraryVersion    | str         | The required version of the library   |  
-
-#### JavaLibrary  
-__Type__: String Constant  
-__Description__: An upgradable Java library  
-
-| Values   | Description                                                        | LatestVersion |  
-| -------- | ------------------------------------------------------------------ | ------------- |  
-| Dom4jCot | Dom4J library used for decoding incoming XML data into CoT objects | 2             |  
 
 #### ATAKLiteSubmissionModel  
 __Type__: JSON Object  
@@ -305,10 +281,11 @@ __Description__: The model of adaptation for all ATAKLite Clients
 __Type__: JSON Object  
 __Description__: A requirement specification for an ATAKLite instance  
 
-| Field                     | Type                       | Description                                                           |  
-| ------------------------- | -------------------------- | --------------------------------------------------------------------- |  
-| deploymentPlatformVersion | AndroidPlatformVersion     | Which version of the Android platform the clients must be deployed on |  
-| libraryUpgrade            | AndroidLibraryRequirements | A library upgrade that must be performed                              |  
+| Field                     | Type                                    | Description                                                           |  
+| ------------------------- | --------------------------------------- | --------------------------------------------------------------------- |  
+| deploymentPlatformVersion | AndroidPlatformVersion                  | Which version of the Android platform the clients must be deployed on |  
+| libraryUpgrade            | ClientLibraryUpgradeRequirements        | A library upgrade that will trigger a mutation                        |  
+| partialLibraryUpgrade     | ClientPartialLibraryUpgradeRequirements | A library upgrade that will trigger a partial library upgrade         |  
 
 #### AndroidPlatformVersion  
 __Type__: String Constant  
@@ -319,19 +296,88 @@ __Description__: Possible Android platforms to deploy on
 | Android21 | Baseline Android API version 21                                         |  
 | Android23 | Newer Android API version 23 which requires runtime permission requests |  
 
-#### AndroidLibraryRequirements  
+#### ClientLibraryUpgradeRequirements  
 __Type__: JSON Object  
-__Description__: The library requirements for a specific Android library  
+__Description__: A library upgrade that will trigger a mutation to cause the library to be compatible  
 
-| Field             | Type           | Description                         |  
-| ----------------- | -------------- | ----------------------------------- |  
-| libraryIdentifier | AndroidLibrary | The identifier for the library      |  
-| libraryVersion    | str            | The required version of the library |  
+| Field             | Type                 | Description                           |  
+| ----------------- | -------------------- | ------------------------------------- |  
+| libraryIdentifier | ClientUpgradeLibrary | A library used within the application |  
+| libraryVersion    | str                  | The required version of the library   |  
 
-#### AndroidLibrary  
+#### ClientUpgradeLibrary  
 __Type__: String Constant  
-__Description__: An upgradable Android library  
+__Description__: A client upgrade library that will cause a mutation  
 
 | Values         | Description                    | LatestVersion |  
 | -------------- | ------------------------------ | ------------- |  
 | ToBeDetermined | A yet-to-be determined library | 1.3.3.7       |  
+
+#### ClientPartialLibraryUpgradeRequirements  
+__Type__: JSON Object  
+__Description__: A library upgrade that will trigger a partial library upgrade to allow the library to be compatible  
+
+| Field             | Type                        | Description                         |  
+| ----------------- | --------------------------- | ----------------------------------- |  
+| libraryIdentifier | ClientPartialUpgradeLibrary | The identifier for the library      |  
+| libraryVersion    | str                         | The required version of the library |  
+
+#### ClientPartialUpgradeLibrary  
+__Type__: String Constant  
+__Description__: A client library upgrade that will cause a partial upgrade  
+
+| Values         | Description                    | LatestVersion |  
+| -------------- | ------------------------------ | ------------- |  
+| ToBeDetermined | A yet-to-be determined library | 1.3.3.7       |  
+
+#### MartiSubmissionModel  
+__Type__: JSON Object  
+__Description__: The model of adaptation for the Marti server  
+
+| Field        | Type              | Description                       |  
+| ------------ | ----------------- | --------------------------------- |  
+| requirements | MartiRequirements | Requirements for the Marti server |  
+
+#### MartiRequirements  
+__Type__: JSON Object  
+__Description__: A requirement specification for a Marti server  
+
+| Field                 | Type                                    | Description                                                   |  
+| --------------------- | --------------------------------------- | ------------------------------------------------------------- |  
+| libraryUpgrade        | ServerLibraryUpgradeRequirements        | A library upgrade that will trigger a mutation                |  
+| partialLibraryUpgrade | ServerPartialLibraryUpgradeRequirements | A library upgrade that will trigger a partial library upgrade |  
+
+#### ServerLibraryUpgradeRequirements  
+__Type__: JSON Object  
+__Description__: A library upgrade that will trigger a mutation to cause the library to be compatible  
+
+| Field             | Type                 | Description                           |  
+| ----------------- | -------------------- | ------------------------------------- |  
+| libraryIdentifier | ServerUpgradeLibrary | A library used within the application |  
+| libraryVersion    | str                  | The required version of the library   |  
+
+#### ServerUpgradeLibrary  
+__Type__: String Constant  
+__Description__: A server upgrade library that will cause a mutation  
+
+| Values            | Description                      | LatestVersion |  
+| ----------------- | -------------------------------- | ------------- |  
+| ImageSaverLibrary | A library used for saving images | 2             |  
+
+#### ServerPartialLibraryUpgradeRequirements  
+__Type__: JSON Object  
+__Description__: A library upgrade that will trigger a partial library upgrade to allow the library to be compatible  
+
+| Field             | Type                        | Description                           |  
+| ----------------- | --------------------------- | ------------------------------------- |  
+| libraryIdentifier | ServerPartialUpgradeLibrary | A library used within the application |  
+| libraryVersion    | str                         | The required version of the library   |  
+
+#### ServerPartialUpgradeLibrary  
+__Type__: String Constant  
+__Description__: A server library upgrade that will cause a partial upgrade  
+
+| Values   | Description                                                        | LatestVersion |  
+| -------- | ------------------------------------------------------------------ | ------------- |  
+| Dom4jCot | Dom4J library used for decoding incoming XML data into CoT objects | 2             |  
+

@@ -294,7 +294,7 @@ Figure : Complete analysis of hypothetical
 scenario involving correct transmission of a compressed, encrypted
 message containing an image from ATAK to MARTI
 
-## CP2 Test Parameters
+## Internal CP2 Encryption Parameters
 
 ### Formalisms
 
@@ -471,41 +471,43 @@ The test harness will provide mission requirements by selecting change drivers a
 ## Interface to the Test Harness (API)
 
 ### Description
-This challenge problem will utilize the unified API specified in the Test Harness API document. Since it is intended to 
-exercise the augmentation of applications within a system that requires coordination, it will be restricted 
-to the _globalModel_ which is applicable to the entire SUT. Our initial goal is to produce an encryption 
-augmentation. For this, a _securityStandard_ must be defined as a _requirement_ for _dataInTransit_ in the 
-_globalPerturbation_. There are currently several candidate security standards being investigated and are listed in 
+This challenge problem will utilize the [Test Harness API](Immortals-Phase2-TestHarnessAPI.md), which specifies the 
+overall interaction sequence, general structure, and response data associated with all challenge problems. This section 
+of this document pertains to the specific input utilized to perturb this endpoint and is all-inclusive in terms of 
+defining the endpoint and data necessary to initiate the perturbation of this challenge problem.
+
+As this challenge problem intends to exercise the augmentation of applications within a system that requires coordination, 
+it will utilize to the _globalModel_ which is applicable to the entire SUT. Our initial goal is to produce an encryption 
+augmentation. For this, a _securityStandard_ must be defined as an attribute for the _dataInTransit_ _requirements_ object 
+in the _globalPerturbation_. There are currently several candidate security standards being investigated and are listed in 
 the **SecurityStandard** section of the Data Dictionary to drive this challenge problem.
 
 ### Endpoint Usage
 __Endpoint Type__: POST  
 __Endpoint URL__: /action/crossApplicationDependencies
 
-#### Sample Payload (wrapped in a TEST_ACTION)
+#### Sample SubmissionModel value
 ```  
 {
-    "ARGUMENTS": {
-        "globalModel": {
-            "requirements": {
-                "dataInTransit": {
-                    "securityStandard": "NIST800Dash171"
-                }
+    "globalModel": {
+        "requirements": {
+            "dataInTransit": {
+                "securityStandard": "NIST800Dash171"
             }
         }
-    },
-    "TIME": "2017-09-18T18:09:25.063Z"
+    }
 }  
 ```  
-### Data Dictionary:  
+
+### Data Dictionary
 
 #### SubmissionModel  
 __Type__: JSON Object  
 __Description__: The main submission model  
 
-| Field       | Type                  | Description                       |  
-| ----------- | --------------------- | --------------------------------- |  
-| globalModel | GlobalSubmissionModel | Global perturbation configuration |  
+| Field       | Type                  | Description             |  
+| ----------- | --------------------- | ----------------------- |  
+| globalModel | GlobalSubmissionModel | Global submission model |  
 
 #### GlobalSubmissionModel  
 __Type__: JSON Object  

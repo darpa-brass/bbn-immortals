@@ -5,26 +5,74 @@ To orchestrate a cohesive adaptation scenario throughout IMMoRTALS, we have deci
 a unified API similar to what we did for phase 1. Many of the concepts are the same, but with additional flexibility 
 in terms of how requirements and resources are described.  
 
-In terms of the perturbation interface, the challenge problems will share the same perturbation and response JSON 
-structures similarly to how they did for phase 1.  The documentation for each challenge problem with only specify the 
-subset of options used for that challenge problem, and other fields can be ignored.
+See the Data Dictionary section of this document for details regarding the **bolded** object identifiers.  
 
 ## Workflow 
 
-The overall workflow is as follows:
+The overall workflow for all challenge problems is as follows:
 ![Submission Wokflow](Immortals-Phase2-TestHarnessAPI-Workflow.png)  
 
-Th general idea is that the TH POSTs a submission to the TA in the form of a **SubmissionModel** wrapped in a **TEST_ACTION**
- object and receives back a **TestAdapterState** wrapped in a **ACTION_RESULT**. Whenever a meaningful state change occurs 
- with the DAS or SUT, an updated **TestAdapterState** is submitted to the status endpoint on the TH. When the TA reaches 
- a terminal done state, the result will be submitted to the done endpoint on the TH.
+The overall sequence that these are derived from is as follows:  
+
+1. The TA POSTs an empty body to TH /ready.  
+2. If the baseline application should be used, the TH POSTs '{"dasEnabled": false}' to the TA to disable the DAS.  
+3. If the baseline environment should be used, the TH POSTs an empty body the challenge problem endpoint.  For a perturbed environment, a **SubmissionModel** is POSTed.  
+4. The TA responds with a **TestAdapterState** object indicating the state.  
+5. The TA POSTs a **TestAdapterState** object to the TH /status endpoint whenever a change in state occurs.  
+6. The TA POSTs a **TestAdapterState** object to the TH /done endpoint when execution is finished.  
+
+At any time during these workflows the _error_, _alive_, or _query_ endpoints may be called.  Do not disable or enable the DAS during a test or unexpected behavior may occur.  
+
+ 
+## Test Harness Endpoints
+
+### POST to /ready
+__Endpoint Request Payload__: None  
+__Expected Response__: A 200 response code with no body. This response will likely be unhandled.  
+
+### POST to /error
+__Endpoint Request Payload__: A string or indeterminate JSON object containing data to debug the error.  
+__Expected Response__: A 200 response code with no body. This response will likely be unhandled with an expectation of an imminent TA shutdown.  
+
+### POST to /status
+__Endpoint Request Payload__: A **TestAdapterState** object reflecting the current unfinished state.  
+__Expected Response__: A 200 response code with no body. This response will likely be unhandled.  
+
+### POST to /done
+__Endpoint Request Payload__: A **TestAdapterState** object containing the terminal state of the adaptation and validation.  
+__Expected Response__: A 200 response code with no body. This response will likely be unhandled.  
+
+
+## Test Adapter Endpoints
+
+### GET to /alive
+__Endpoint Request Payload__: None  
+__Expected Response__: A 200 response code  
+
+### POST to action/\<challenge problem endpoint\>
+__Endpoint Request Payload__: A **SubmissionModel** JSON object as described in the challenge problem documentation.  
+__Endpoint Response__: A **TestAdapterState** JSON object describing the initial state of the submission.  
+
+### GET to /query
+__Endpoint Request Payload__: None  
+__Endpoint Response__: A **TestAdapterState** object reflecting the current or last perturbation submission, or nothing if no perturbations have been submitted yet.  
+
+### POST to /enabled
+__Endpoint Request Payload__: A Json object of either '{"dasEnabled": true}' or '{"dasEnabled": false}' depending on if 
+the DAS should be enabled. It will be enabled by default. disabling the DAS will allow running the Baseline scenarios 
+without any DAS augmentation.  
+__Expected Response_: A 200 response code  
 
 ## Perturbation Submission
-The root **SubmissionModel** contains the following fields: _atakliteClientModel_, _martiServerModel_, and 
-_globalPerturbations_. These each contain _requirements_ and _properties_ that apply to the client, server, and both. 
-These _requirements_ and _properties_ each contain a _general_ field that lists simple identifier-based attributes along with 
-specific JSON-Objects for more advanced attributes.  
+The submission endpoints and data used are covered in the documentation for each challenge problem.  However, it should 
+be noted that they are subsections of a separate internal unified interface that defines the overall baseline 
+environment (including details from phase 1).  As each challenge problem provides perturbation of all properties that 
+might result in an augmentation, any attempt to submit a perturbation option outside of the scope of the specific 
+challenge problem documentation will be treated as an invalid submission.  
 
+An empty body submitted to any of the endpoints shall be considered a baseline environment and application and will 
+execute validation without any augmentation.  
+  
 ## Test Adapter State
 The **TestAdapterState* return object is largely unchanged since phase 1. The most significant changes are as follows:
 1. The test state has replaced the non-intermediary states with the **TestOutcome** values defined in the evaluation 
@@ -37,8 +85,7 @@ The **AdaptationState** and **ValidationState** also each contain a _details_ fi
 a summary of what is happening in the DAS and SUT. As that is an ongoing task, those values are stubbed out as General 
 JSON Objects for now.
 
-### Sample TestAdapterState response value
-
+#### Sample TestAdapterState value
 ```  
 {
     "adaptation": {
@@ -68,19 +115,19 @@ JSON Objects for now.
 }  
 ```  
 
-### TestAdapterState Data Dictionary
+### Data Dictionary
 
 #### TestAdapterState  
 __Type__: JSON Object  
 __Description__: The overall status of the Test Adapter used for all done, status, and perturbation responses  
 
-| Field      | Type            | Description                                                                      |  
-| ---------- | --------------- | -------------------------------------------------------------------------------- |  
-| identifier | str             | The internal identifier used to bind this perturbation to any artifacts produced |  
-| adaptation | AdaptationState | The state of the DAS adaptation                                                  |  
-| validation | ValidationState | The state of the validation                                                      |  
+| Field      | Type                  | Description                                                                      |  
+| ---------- | --------------------- | -------------------------------------------------------------------------------- |  
+| adaptation | AdaptationStateObject | The state of the DAS adaptation                                                  |  
+| identifier | str                   | The internal identifier used to bind this perturbation to any artifacts produced |  
+| validation | ValidationStateObject | The state of the validation                                                      |  
 
-#### AdaptationState  
+#### AdaptationStateObject  
 __Type__: JSON Object  
 __Description__: The state of the DAS adaptation  
 
@@ -102,51 +149,26 @@ __Description__: The current state of the DAS
 | SUCCESS        | Augmentation Successful                                   |  
 | ERROR          | An error has occured                                      |  
 
-#### TestDetails  
-__Type__: JSON Object  
-__Description__: The current state of a test execution  
-
-| Field          | Type        | Description                                 |  
-| -------------- | ----------- | ------------------------------------------- |  
-| testIdentifier | str         | An identifier for the test                  |  
-| currentState   | TestOutcome | The current state for the test              |  
-| errorMessages  | List[str]   | Messages indicating the reasons for failure |  
-| detailMessages | List[str]   | Messages indicating the reasons for success |  
-
-#### ValidationState  
+#### ValidationStateObject  
 __Type__: JSON Object  
 __Description__: The current state of intent satisfaction validation  
 
-| Field          | Type             | Description                                       |  
-| -------------- | ---------------- | ------------------------------------------------- |  
-| verdictOutcome | VerdictOutcome   | The outcome of the intent preservation            |  
-| executedTests  | List[TestResult] | The tests executed to support the verdict outcome |  
+| Field          | Type                  | Description                                       |  
+| -------------- | --------------------- | ------------------------------------------------- |  
+| executedTests  | List[TestStateObject] | The tests executed to support the verdict outcome |  
+| verdictOutcome | VerdictOutcome        | The outcome of the intent preservation            |  
 
-#### VerdictOutcome  
-__Type__: String Constant  
-__Description__: See LL Evaluation Methodology  
-
-| Values       | Description                    |  
-| ------------ | ------------------------------ |  
-| PENDING      | The verdict outcome is pending |  
-| PASS         | See LL Evaluation Methodology  |  
-| DEGRADED     | See LL Evaluation Methodology  |  
-| FAIL         | See LL Evaluation Methodology  |  
-| INCONCLUSIVE | See LL Evaluation Methodology  |  
-| INAPPLICABLE | See LL Evaluation Methodology  |  
-| ERROR        | See LL Evaluation Methodology  |  
-
-#### TestResult  
+#### TestStateObject  
 __Type__: JSON Object  
 __Description__: The current state of an intent test validation  
 
 | Field          | Type                | Description                                                             |  
 | -------------- | ------------------- | ----------------------------------------------------------------------- |  
-| testIdentifier | str                 | An identifier for the test                                              |  
-| intent         | str                 | The intent the test validates                                           |  
-| desiredStatus  | TestOutcome         | The desired outcome for the test. Will always be 'COMPLETE' for Phase 2 |  
 | actualStatus   | TestOutcome         | The current state for the test                                          |  
+| desiredStatus  | TestOutcome         | The desired outcome for the test. Will always be 'COMPLETE' for Phase 2 |  
 | details        | Generic JSON Object | Details relating to the resultant test state.                           |  
+| intent         | str                 | The intent the test validates                                           |  
+| testIdentifier | str                 | An identifier for the test                                              |  
 
 #### TestOutcome  
 __Type__: String Constant  
@@ -161,3 +183,17 @@ __Description__: The outcome of a test
 | INVALID        | See LL Evaluation Methodology                            |  
 | INCOMPLETE     | See LL Evaluation Methodology                            |  
 | ERROR          | See LL Evaluation Methodology                            |  
+
+#### VerdictOutcome  
+__Type__: String Constant  
+__Description__: See LL Evaluation Methodology  
+
+| Values       | Description                    |  
+| ------------ | ------------------------------ |  
+| PENDING      | The verdict outcome is pending |  
+| PASS         | See LL Evaluation Methodology  |  
+| DEGRADED     | See LL Evaluation Methodology  |  
+| FAIL         | See LL Evaluation Methodology  |  
+| INCONCLUSIVE | See LL Evaluation Methodology  |  
+| INAPPLICABLE | See LL Evaluation Methodology  |  
+| ERROR        | See LL Evaluation Methodology  |  

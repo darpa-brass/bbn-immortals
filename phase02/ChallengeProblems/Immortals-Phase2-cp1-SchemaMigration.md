@@ -129,8 +129,13 @@ results.
 ## Interface to the Test Harness (API)
 
 ### Description
-This challenge problem will utilize the unified API specified in the Test Harness API document. It is restricted to the 
-_postgresqlPerturbation_ requirement of the martiRouter component. This requirement provides a means to supply an arbitrary 
+This challenge problem will utilize the [Test Harness API](Immortals-Phase2-TestHarnessAPI.md), which specifies the 
+overall interaction sequence, general structure, and response data associated with all challenge problems. This section 
+of this document pertains to the specific input utilized to perturb this endpoint and is all-inclusive in terms of 
+defining the endpoint and data necessary to initiate the perturbation of this challenge problem.  
+
+As this challenge problem intends to exercise the adaptation of database schema changes, it will utilize the 
+_postgresqlPerturbation_ _requirements_ attribute of the _martiServerModel_. This requirement provides a means to supply an arbitrary 
 number of _tables_, each which contain an arbitrary number of _columns_ from the **DatabaseColumns** object listed in the 
 Data Dictionary.  These columns can be arranged in any way, but they must all be provided in the tables provided.
 
@@ -138,41 +143,37 @@ Data Dictionary.  These columns can be arranged in any way, but they must all be
 __Endpoint Type__: POST  
 __Endpoint URL__: /action/databaseSchemaPerturbation
 
-#### Sample Payload (wrapped in a TEST_ACTION)
+#### Sample SubmissionModel value
 ```  
 {
-    "ARGUMENTS": {
-        "martiServerModel": {
-            "requirements": {
-                "postgresqlPerturbation": {
-                    "tables": [
-                        {
-                            "columns": [
-                                "CotEvent_SourceId",
-                                "CotEvent_How",
-                                "CotEvent_ServerTime",
-                                "Position_CotEventId",
-                                "Position_PointCE",
-                                "Position_PointLE",
-                                "Position_TileX",
-                                "Position_Longitude",
-                                "Position_Latitude"
-                            ]
-                        },
-                        {
-                            "columns": [
-                                "Position_PointHae",
-                                "CotEvent_Detail",
-                                "Position_TileY",
-                                "CotEvent_CotType"
-                            ]
-                        }
-                    ]
-                }
+    "martiServerModel": {
+        "requirements": {
+            "postgresqlPerturbation": {
+                "tables": [
+                    {
+                        "columns": [
+                            "CotEvent_SourceId",
+                            "CotEvent_How",
+                            "CotEvent_ServerTime",
+                            "Position_PointCE",
+                            "Position_PointLE",
+                            "Position_TileX",
+                            "Position_Longitude",
+                            "Position_Latitude"
+                        ]
+                    },
+                    {
+                        "columns": [
+                            "Position_PointHae",
+                            "CotEvent_Detail",
+                            "Position_TileY",
+                            "CotEvent_CotType"
+                        ]
+                    }
+                ]
             }
         }
-    },
-    "TIME": "2017-09-18T18:09:25.063Z"
+    }
 }  
 ```  
 
@@ -182,9 +183,9 @@ __Endpoint URL__: /action/databaseSchemaPerturbation
 __Type__: JSON Object  
 __Description__: The main submission model  
 
-| Field            | Type                 | Description                             |  
-| ---------------- | -------------------- | --------------------------------------- |  
-| martiServerModel | MartiSubmissionModel | Marti server perturbation configuration |  
+| Field            | Type                 | Description                   |  
+| ---------------- | -------------------- | ----------------------------- |  
+| martiServerModel | MartiSubmissionModel | Marti server deployment model |  
 
 #### MartiSubmissionModel  
 __Type__: JSON Object  
@@ -222,21 +223,20 @@ __Description__: The configuration for a table in a schema
 __Type__: String Constant  
 __Description__: The possible columns the database may be constructed from. All columns must be used to construct a new schema!  
 
-| Values              | Description                                                   |  
-| ------------------- | ------------------------------------------------------------- |  
-| CotEvent_SourceId   | The foreign key for the source the event is associated with   |  
-| CotEvent_CotType    | The CoT event type                                            |  
-| CotEvent_How        | The standardized source type of the message                   |  
-| CotEvent_Detail     | The detail field of the CoT event                             |  
-| CotEvent_ServerTime | The timestamp for the event                                   |  
-| Position_CotEventId | The foreign key for the event the position is associated with |  
-| Position_PointHae   | Altitude                                                      |  
-| Position_PointCE    | Circular Error                                                |  
-| Position_PointLE    | Linear Error                                                  |  
-| Position_TileX      | The X tile the position is within                             |  
-| Position_TileY      | The Y tile the position is within                             |  
-| Position_Longitude  | The longitude of the position                                 |  
-| Position_Latitude   | The latitude of the position                                  |  
+| Values              | Description                                                 |  
+| ------------------- | ----------------------------------------------------------- |  
+| CotEvent_SourceId   | The foreign key for the source the event is associated with |  
+| CotEvent_CotType    | The CoT event type                                          |  
+| CotEvent_How        | The standardized source type of the message                 |  
+| CotEvent_Detail     | The detail field of the CoT event                           |  
+| CotEvent_ServerTime | The timestamp for the event                                 |  
+| Position_PointHae   | Altitude                                                    |  
+| Position_PointCE    | Circular Error                                              |  
+| Position_PointLE    | Linear Error                                                |  
+| Position_TileX      | The X tile the position is within                           |  
+| Position_TileY      | The Y tile the position is within                           |  
+| Position_Longitude  | The longitude of the position                               |  
+| Position_Latitude   | The latitude of the position                                |  
 
 
 ## Intent Specification and Evaluation Metrics
