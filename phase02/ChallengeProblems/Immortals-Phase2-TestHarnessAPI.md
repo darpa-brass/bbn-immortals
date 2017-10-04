@@ -76,7 +76,7 @@ __Endpoint Request Payload__: None
 
 __Endpoint Response__: A **TestAdapterState** object reflecting the current or last perturbation submission, or nothing if no perturbations have been submitted yet.
 
-### POST to /enabled
+### POST to /enable
 __Endpoint Request Payload__: A Json object of either '{"dasEnabled": true}' or '{"dasEnabled": false}' depending on if
 the DAS should be enabled. It will be enabled by default. disabling the DAS will allow running the Baseline scenarios
 without any DAS augmentation.
