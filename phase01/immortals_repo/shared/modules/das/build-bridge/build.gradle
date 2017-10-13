@@ -1,8 +1,0 @@
-apply plugin: immortals.CoreDefinitions
-apply plugin: immortals.Java8Component
-apply plugin: immortals.PublishJavaDfu
-
-dependencies {
-    compile 'org.gradle:gradle-tooling-api:2.8'
-    runtime "org.slf4j:slf4j-simple:${slf4jVersion}"
-}

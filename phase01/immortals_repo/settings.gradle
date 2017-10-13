@@ -1,7 +1,0 @@
-include 'applications:server:Marti'
-include 'applications:client:ATAKLite'
-include 'applications:client:ConsumingPipeRunner'
-include 'das:das-service'
-//include 'das:das-analysis:modulerunner-android' // TODO: Remove once refactored into finalized composition module
-//include 'das:das-analysis:modulerunner-java' // TODO: Remove once refactored into finalized composition module
-include 'das:infrastructure:LoggingServer'

@@ -1,8 +1,0 @@
-apply plugin: immortals.CoreDefinitions
-apply plugin: immortals.Java8Component
-apply plugin: immortals.PublishJavaDfu
-
-dependencies {
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    runtime "org.slf4j:slf4j-simple:${slf4jVersion}"
-}

@@ -1,8 +1,0 @@
-apply plugin: 'com.android.application'
-dependencies {
-    compile 'mil.darpa.immortals.dfus:LocationProviderAndroidGpsBuiltIn:+'
-    compile 'mil.darpa.immortals.dfus:LocationProviderBluetoothGpsSimulated:+'
-    compile 'mil.darpa.immortals.dfus:LocationProviderManualSimulated:+'
-    compile 'mil.darpa.immortals.dfus:LocationProviderSaasmSimulated:+'
-    compile 'mil.darpa.immortals.dfus:LocationProviderUsbGpsSimulated:+'
-}

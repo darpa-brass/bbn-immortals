@@ -1,4 +1,0 @@
-apply plugin: 'com.android.application'
-dependencies {
-    compile 'mil.darpa.immortals.dfus:LocationProviderAndroidGpsBuiltIn:+'
-}

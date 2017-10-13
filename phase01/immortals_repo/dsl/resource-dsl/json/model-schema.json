@@ -1,6 +1,0 @@
-{
-  "$schema": "http://json-schema.org/schema#",
-  "title": "Immortals: DSL Application Model Format",
-  
-  "$ref": "definitions.json#/definitions/model"
-}
