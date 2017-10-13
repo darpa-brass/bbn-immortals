@@ -1,0 +1,649 @@
+
+options
+	timeout = 30
+	gui_max_table_size = 1600
+
+html { (* "
+<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"> 
+ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">
+ <head>
+ <link rel=\"stylesheet\" type=\"text/css\" href=\"https://categoricaldata.net/css/simple.css\" />
+ <script src=\"https://categoricaldata.net/js/simple.js\"></script>
+ </head>
+ <body>
+" *) }
+
+md { (* "
+
+# AQL BRASS/IMMoRTALS example
+**Sources <-| CotEvents |-| CotEventPosition**
+
+---
+
+" *) }
+
+md { (* "
+## PREFACE - AQL and SQL
+
+This AQL tutorial is a literate AQL file:
+by running it and then selecting 'emit HTML' you get the document.
+
+ * immortals/svn/database/server/baseline_schema_ddl.sql
+ * immortals/svn/castor/takserver/castor_query_overview.xlsx
+" *) }
+
+
+md { (* "
+As information is being loaded from the file system
+we need to know where we are.
+" *) }
+
+pragma p0 = exec_cmdline {
+	"pwd"
+	"ls"
+}
+
+// HTML output is indicated by
+// html { (* " <html code> " *) }.
+// The imported javascript file renders the graphs (if any).
+// Markdown (a less verbose way to write HTML) is indicated by
+// md { (* " markdown code " *) }.
+
+md { (* "
+
+# AQL IMMoRTALS sample</h1>
+
+Jump to section:
+[Typesides](#typesides)
+[schemas](Schemas),
+[instances](Instances),
+[mappings](Mappings),
+[fdm](Delta and Sigma),
+[uberflowers](Uber-flowers),
+[conclusion](Conclusion).
+
+------------
+" *) }
+
+html { (* "
+  <svg width='300px' height='300px' 
+    xmlns='http://www.w3.org/2000/svg'>
+    <text x='10' y='50' font-size='30'>My SVG</text>
+  </svg>
+" *)
+}
+
+md { (* "
+[Typesides]:
+## Typesides
+
+<div id='typesides'/>
+
+Every AQL file begins with a __typeside__.
+The typeside for this tutorial contains two __java_types__: 
+*String*, which is bound to *java.lang.String*; and
+<i>Integer</i>, which is bound to <i>java.lang.Integer</i>.
+The <b>java_constants</b> section defines, for each java_type, javascript code that
+creates a value of that type from a string.  
+For example, when the string 100 is encountered in an 
+AQL program and needs to be interpreted as an <i>Integer</i>, 
+AQL will execute the <i>parseInt</i> function on the string 100,
+yielding a <i>java.lang.Integer</i>.
+Similarly, the <b>java_functions</b> section defines the <i>plus</i> function.
+" *) }
+
+typeside Ty = literal {
+	java_types
+		TEXT = "java.lang.String"
+		VARCHAR = "java.lang.String"
+		DATETIME = "java.util.Date"
+		INTEGER = "java.lang.Long"
+		REAL = "java.lang.Double"
+		BLOB = "java.util.ArrayList"
+		GEO = "java.lang.Long"
+		BOOLEAN = "java.lang.Boolean"
+		true = "java.lang.Boolean"
+	java_constants
+		TEXT = "return input[0]"
+		VARCHAR = "return input[0]"
+		DATETIME = "return new java.util.Date(java.lang.Long.decode(input[0]))"
+		INTEGER = "return java.lang.Long.decode(input[0])"
+		REAL = "return java.lang.Double.parseDouble(input[0])"
+		BLOB = "return []"
+		GEO = "return java.lang.Long.decode(input[0])"
+		BOOLEAN = "return new java.lang.Boolean(input[0])"
+		true = "return true;"
+	java_functions
+		int_to_real : INTEGER -> REAL = "return 0.0 + input[0]"
+		real_to_int : REAL -> INTEGER = "return Math.round(input[0]).longValue()"
+		date_to_int : DATETIME -> INTEGER = "return input[0].getTime()"
+		int_to_date : INTEGER -> DATETIME = "return new java.util.Date(input[0])"
+		txt_to_vc : TEXT -> VARCHAR = "return input[0]"
+		vc_to_txt : VARCHAR -> TEXT = "return input[0]"
+		real_to_geo : REAL -> GEO = "return Math.round(input[0] * 1E6).longValue()"
+		geo_to_real : GEO -> REAL = "return input[0] / 1E6"
+		now : -> DATETIME = "return java.util.Date.from(java.time.Instant.now())"
+		eqVc : VARCHAR, VARCHAR -> BOOLEAN = "return input[0].equals(input[1])"
+		eqInt : INTEGER, INTEGER -> BOOLEAN = "return input[0] == input[1]"
+		or : BOOLEAN, BOOLEAN -> BOOLEAN = "return input[0] || input[1]"
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+md { (* "
+---------	
+	<div id=\"schemas\">
+	<h2>Schemas</h2>
+
+	<p>A <b>schema</b> on a typeside <i>Ty</i> contains
+	    a set of <b>entities</b>,
+	    a set of <b>attributes</b> taking entities to types,
+	    a set of <b>foreign_keys</b> taking entities to entities,
+	    a set of <b>path_equations</b> between paths of foreign_keys, and
+		a set of <b>observation_equations</b> between attributes and foreign_keys.
+	</p>
+" *) }
+
+schema S0 = literal : Ty {
+	entities
+		Source
+		CotEvent
+		CotEventPosition
+	foreign_keys
+		source_id : CotEvent -> Source
+		cot_event_id : CotEventPosition -> CotEvent
+	path_equations
+
+  	attributes
+ 		// id : Source -> INTEGER
+  		name	 : Source -> VARCHAR
+  		channel  : Source -> INTEGER
+  		
+     	cot_type : CotEvent -> VARCHAR
+     	how : CotEvent -> VARCHAR
+     	detail	: CotEvent -> TEXT
+     	servertime : CotEvent -> INTEGER
+     	
+     	point_hae : CotEventPosition -> INTEGER
+     	point_ce : CotEventPosition -> INTEGER
+     	point_le : CotEventPosition -> INTEGER
+     	tilex : CotEventPosition -> GEO
+     	tiley : CotEventPosition -> GEO
+     	longitude : CotEventPosition -> REAL
+     	latitude : CotEventPosition -> REAL
+     observation_equations
+}
+
+instance s0_inst = import_csv : S0 {
+		Source -> "./data/sample_small/source.csv"
+		CotEvent -> "./data/sample_small/cot_event.csv"
+		CotEventPosition -> "./data/sample_small/cot_event_position.csv"
+}
+
+schema S2 = literal : Ty {
+	entities
+		Source
+		CotEvent
+		CotEventPosition
+	foreign_keys
+		source_id : CotEvent -> Source
+		cot_event_id : CotEventPosition -> CotEvent
+	path_equations
+
+  	attributes
+  		name	 : Source -> VARCHAR
+  		channel  : Source -> INTEGER
+  		
+     	cot_type : CotEvent -> VARCHAR
+     	how : CotEvent -> VARCHAR
+     	detail	: CotEvent -> TEXT
+     	server_time : CotEvent -> INTEGER
+     	
+     	point_hae : CotEventPosition -> INTEGER
+     	point_ce : CotEventPosition -> INTEGER
+     	point_le : CotEventPosition -> INTEGER
+     	tile_x : CotEventPosition -> GEO
+     	tile_y : CotEventPosition -> GEO
+     observation_equations
+}
+
+md { (* "
+## F: S1 -> S0
+The functor which makes (potentially) lossy adjustments to the schema.
+
+" *) }
+
+mapping F = literal : S2 -> S0 {
+	entities
+		Source -> Source
+		CotEvent -> CotEvent
+		CotEventPosition -> CotEventPosition
+	foreign_keys
+		source_id -> source_id
+		cot_event_id -> cot_event_id
+	attributes
+		name -> name
+		channel -> channel
+		
+		detail 	->  detail
+		how 	->  how
+		server_time ->  servertime
+		cot_type -> cot_type
+
+		point_hae ->  point_hae
+		point_ce ->  point_ce
+		point_le ->  point_le
+		tile_x ->  tilex
+		tile_y ->  tiley
+}
+
+instance s2_inst = delta F s0_inst
+
+
+md { (* "
+### Queries
+
+In each of the following cases both a positive and
+negative sample are generated
+by selecting a random ordering of some quantity.
+The negative query is generated by **negating the where clause**.
+e.g.
+
+  	select ce.id, ce.source_id, ce.cot_type
+	from cot_event as ce
+	where not(ce.cot_type = 'a-n-A-C-F-s')
+	order by random()
+	limit 1000
+
+" *)}
+
+
+md { (* "
+## Query 1 : cotEventsForConstantCotType
+Basic test against single table with a simple filter on a projected column.
+In the original query the source_id was extracted by the query.
+In AQL foreign-key values are meaningless so extracting them is meaningless.
+If what is intended is some meaningful key indicating a row in the source entity;
+then a uuid on the source entity is probably what is meant.
+
+	select ce.id, ce.source_id, ce.cot_type
+	from cot_event as ce
+	where ce.cot_type = 'a-n-A-C-F-s'
+" *) }
+
+query q1 = simple : S2 {
+	from ce : CotEvent
+	where ce.cot_type = "a-n-A-C-F-m"
+	return 
+		cot_type -> ce.cot_type
+}
+
+instance q1_inst = eval q1 s2_inst
+
+md { (* "
+## Query 2 : cotEventsForConstantTimeInterval
+Like query 1 except filter on non-projected column.
+
+	select ce.id, ce.source_id, ce.cot_type, ce.how
+	from cot_event as ce
+	where ce.servertime = 201705071635
+
+" *) }
+
+query q2 = simple : S2 {
+	from ce : CotEvent
+	where ce.server_time = 201705071635
+	return
+		cot_type -> ce.cot_type
+		how -> ce.how
+}
+
+instance q2_inst = eval q2 s2_inst
+
+
+md { (* "
+## Query 3 : cotEventsForConstantCompoundFilter
+Query with a simple compound filter
+
+	select ce.id, ce.source_id, ce.cot_type, ce.how
+	from cot_event as ce
+	where ce.servertime = 201705071635
+	and ce.cot_type = 'a-n-A-C-F-m'
+
+" *) }
+
+query q3 = simple : S2 {
+	from ce : CotEvent
+	where 
+		ce.server_time = 201705071635
+		ce.cot_type = "a-n-A-C-F-m"
+	return
+		cot_type -> ce.cot_type
+		how -> ce.how
+}
+
+instance q3_inst = eval q3 s2_inst
+
+
+md { (* "
+## Query 4 : cotEventsForConstantChannelJoin
+Simple join with filter
+
+	select s.name, ce.id, ce.cot_type, ce.servertime
+	from source as s
+	join cot_event as ce on s.id = ce.source_id
+	where s.channel = 7
+
+" *) }	
+
+query q4 = simple : S2 {
+	from
+		ce : CotEvent
+		s : Source
+	where
+		s = ce.source_id
+		s.channel = 7
+	return
+		name -> s.name
+		cot_type -> ce.cot_type
+		time -> ce.server_time
+}
+
+instance q4_inst = eval q4 s2_inst 
+
+md { (* "
+## Query 5 : cotEventsForConstantChannelJoin2
+Same as query4 but no projection of column from joined table.
+
+	select s.name, ce.cot_type, ce.servertime
+	from source as s
+	join cot_event as ce on s.id = ce.source_id
+	where s.channel = 5 or ce.cot_type = 'a-n-A-C-F-s'
+" *) }
+
+query q5s = simple : S2 {
+	from
+		ce : CotEvent
+		s : Source
+	where
+		s = ce.source_id
+		eqInt(s.channel,3) = true
+		//or(eqInt(s.channel,5), eqVc(ce.cot_type,"a-n-A-C-F-m")) = true
+	return
+		name -> s.name
+		cot_type -> ce.cot_type
+		time -> ce.server_time
+}
+
+instance q5s_inst = eval q5s s2_inst
+
+schema S5 = literal : Ty {
+	entities
+        Q
+    attributes
+        name : Q -> VARCHAR
+        time : Q -> INTEGER
+        type : Q -> VARCHAR
+        channel : Q -> INTEGER
+}
+
+query q5c = literal : S2 -> S5 {
+	entities Q -> {	
+	from
+		ce : CotEvent
+		s : Source
+	where
+		s = ce.source_id
+	return
+		name -> s.name
+		type -> ce.cot_type
+		channel -> s.channel
+		time -> ce.server_time
+}}
+
+instance s5_inst = eval q5c s2_inst
+schema S5simple = dst q5c
+
+query q5a = literal : S5 -> S5 {
+	entities
+		Q -> {
+			from q: Q
+			where eqInt(q.channel,3) = true
+			return
+				name -> q.name
+				type -> q.type
+				channel -> q.channel
+				time -> q.time
+		}
+}
+instance q5a_inst = eval q5a s5_inst
+
+query q5b = literal : S5 -> S5 {
+	entities
+		Q -> {
+			from q: Q
+			where 
+				q.type = "a-n-A-C-F-m"
+				eqInt(q.channel,3) = false
+			return
+				name -> q.name
+				type -> q.type
+				channel -> q.channel
+				time -> q.time
+		}
+}
+instance q5b_inst = eval q5b s5_inst
+
+instance q5c_inst = coproduct q5a_inst + q5b_inst : S5
+
+md { (* "
+## Query 6 : cotEventsForConstantMixedJoin
+Same as query5 except join across tables.
+
+	select s.name, ce.cot_type, ce.servertime
+	from source as s
+	join cot_event as ce on s.id = ce.source_id
+	where  s.channel = 5 
+		or ce.cot_type = 'a-n-A-C-F-m'
+
+" *) }
+
+query q6 = simple : S2 {
+	from
+		ce : CotEvent
+		s : Source
+	where
+		s = ce.source_id
+		or(eqInt(s.channel,5), eqVc(ce.cot_type,"a-n-A-C-F-m")) = true
+	return
+		name -> s.name
+		cot_type -> ce.cot_type
+		time -> ce.server_time
+}
+
+instance q6_inst = eval q6 s2_inst
+
+md { (* "
+## Query 7 : cotEventsOnChannelInRegion
+More complex join and filter
+
+	select s.name, ce.id, ce.cot_type, ce.servertime
+	from source as s
+	join cot_event as ce on s.id = ce.source_id
+	join cot_event_position cep on ce.id = cep.cot_event_id
+	where  s.channel = 3 and cep.tilex = 18830 and cep.tiley = 25704
+
+" *) }
+
+query q7 = simple : S2 {
+	from
+		ce : CotEvent
+		cep : CotEventPosition
+		s : Source
+	where
+		s = ce.source_id
+		ce = cep.cot_event_id
+		s.channel = 3
+	return
+		name -> s.name
+		cot_type -> ce.cot_type
+		time -> ce.server_time
+}
+
+/*
+query q7a = simple : S2 {
+	import q7
+	where cep.tilex = 18830 cep.tiley = 25704		
+}
+
+query q7b = simple : S2 {
+	import q7
+	where s.channel = 3		
+}
+*/
+
+instance q7_inst = eval q7 s2_inst
+
+md { (* "
+## Query 8 : cotEventsForUidAndInterval
+Simple parameterized query.
+
+	select s.id, s.name, ce.servertime, cep.tilex, cep.tiley
+	from source as s
+	join cot_event as ce on s.id = ce.source_id
+	where s.name = ? and ce.server_time = ?
+" *)}
+
+schema S8 = literal : Ty {
+	entities
+        Q
+    attributes
+        name : Q -> VARCHAR
+        time : Q -> INTEGER
+        tileX : Q -> GEO
+        tileY : Q -> GEO
+}
+
+query q8 = literal : S2 -> S8 {
+	entities
+      Q -> {
+		from
+			s : Source
+			ce : CotEvent
+			cep : CotEventPosition
+		where
+			s = ce.source_id
+			ce = cep.cot_event_id
+		return
+			name -> s.name
+			time -> ce.server_time
+			tileX -> cep.tile_x
+			tileY -> cep.tile_y
+      }
+}
+
+instance q8_inst = eval q8 s2_inst
+
+
+query q8a = simple : S8 {
+	from q : Q
+	where 
+		q.name = "A6A7DC"	
+		q.time = 201705071635	
+	return
+			name -> q.name
+			time -> q.time
+			tileX -> q.tileX
+			tileY -> q.tileY
+}
+instance q8a_inst = eval q8a q8_inst
+
+md { (* "
+
+Since this is a parameterized query, we reproduce the sampling
+that would be created with baseline application testing.
+For a subset of source name and servertime parameters,
+we take a representative sample of the query results for that value.
+If we just sample over the whole population of records, we
+might get just a few results for a set of parameters.
+
+	with sampleSizes as
+	(
+	select source_id, servertime, min(sample_size) as sample_size
+	from
+		(select s.id source_id, ce.servertime,
+		round((cast(count() over(partition by s.id, ce.servertime) as float) / cast( count() over() as float)) * 1000) as sample_size
+		from source s join cot_event ce on s.id = ce.source_id) as t1
+		group by t1.source_id, t1.servertime
+		),
+
+	samples as
+	(
+	select source_id, source_name, servertime, row_number() over(partition by source_id, servertime) as rownum, tilex, tiley
+	from
+		(select s.id as source_id, s.name as source_name, ce.servertime, cep.tilex, cep.tiley,
+		row_number() over(order by s.id, ce.servertime, random()) as rownum
+		from source s join cot_event ce on s.id = ce.source_id
+		join cot_event_position cep on ce.id = cep.cot_event_id
+		join (	select t1.id, t1.servertime
+				from (select distinct s2.id, ce2.servertime
+				      from source s2 join cot_event ce2 on s2.id = ce2.source_id
+				     ) t1
+				order by random()
+				limit 50) as t2 on s.id = t2.id and ce.servertime = t2.servertime
+		) as t3
+	)
+
+	select samples.source_id as id, samples.source_name as name, samples.servertime, samples.tilex, samples.tiley
+	from samples join sampleSizes on samples.source_id = sampleSizes.source_id and samples.servertime = sampleSizes.servertime
+	where samples.rownum <= sampleSizes.sample_size
+
+" *) }
+
+md { (* "
+## Query 9 : cotEventsForUidAndIntervalBound
+Compare to query 8 except trained using bound parameters.
+Effectively treating it as a canned query but
+returning all results from sample parameter binding.
+
+	select s.id, s.name, ce.servertime, cep.tilex, cep.tiley
+	from source as s
+	join cot_event as ce on s.id = ce.source_id
+	join cot_event_position cep on ce.id = cep.cot_event_id
+	where s.name = ? and ce.server_time = ?
+
+Samples:
+
+	where s.name = 'ABD19E' and servertime = 201705071645
+
+" *) }
+
+schema S9 = literal : Ty {
+	entities
+        Q
+    attributes
+        name : Q -> VARCHAR
+        time : Q -> INTEGER
+        tileX : Q -> GEO
+        tileY : Q -> GEO
+}
+
+query q9 = literal : S2 -> S9 {
+	entities 
+		Q -> {
+			from
+				s : Source
+				ce : CotEvent
+				cep : CotEventPosition
+			where
+				s = ce.source_id
+				ce = cep.cot_event_id
+			return
+				name -> s.name
+				time -> ce.server_time
+				tileX -> cep.tile_x
+				tileY -> cep.tile_y
+		}
+}
+
+instance q9_inst = eval q9 s2_inst

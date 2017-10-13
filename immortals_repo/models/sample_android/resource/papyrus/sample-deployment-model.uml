@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_Lwmi4L4rEeW-ZIFkk47N8Q" name="SampleDeployment">
+  <packagedElement xmi:type="uml:Component" xmi:id="_QAK6oL4rEeW-ZIFkk47N8Q" name="SituationAwareUser" visibility="public"/>
+  <packagedElement xmi:type="uml:Artifact" xmi:id="_kFFacL4rEeW-ZIFkk47N8Q" name="SituationAwareAndroidPackage" fileName="situation_aware_user.apk">
+    <nestedArtifact xmi:type="uml:Artifact" xmi:id="_ovsIYL4rEeW-ZIFkk47N8Q" name="CompiledResourceFile">
+      <manifestation xmi:type="uml:Manifestation" xmi:id="_zUfj4L4rEeW-ZIFkk47N8Q" client="_ovsIYL4rEeW-ZIFkk47N8Q" supplier="_QAK6oL4rEeW-ZIFkk47N8Q" utilizedElement="_QAK6oL4rEeW-ZIFkk47N8Q"/>
+    </nestedArtifact>
+    <nestedArtifact xmi:type="uml:Artifact" xmi:id="_tXoj4L4rEeW-ZIFkk47N8Q" name="AndroidManifest"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ExecutionEnvironment" xmi:id="_5escUL4rEeW-ZIFkk47N8Q" name="Android MarshmallowExecutionEnvironment">
+    <deployment xmi:type="uml:Deployment" xmi:id="_7bHswL4rEeW-ZIFkk47N8Q" client="_5escUL4rEeW-ZIFkk47N8Q" supplier="_kFFacL4rEeW-ZIFkk47N8Q" deployedArtifact="_kFFacL4rEeW-ZIFkk47N8Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Device" xmi:id="_EnJ-gL4sEeW-ZIFkk47N8Q" name="AndroidM:Mobile A"/>
+  <packagedElement xmi:type="uml:Device" xmi:id="_Huos0L4sEeW-ZIFkk47N8Q" name="AndroidM:Mobile B"/>
+  <packagedElement xmi:type="uml:Dependency" xmi:id="_hQohIL7AEeW4teU4Rr4ZNw" client="_tXoj4L4rEeW-ZIFkk47N8Q" supplier="_7bHswL4rEeW-ZIFkk47N8Q"/>
+  <packagedElement xmi:type="uml:Dependency" xmi:id="_VfEd8L7IEeW4teU4Rr4ZNw" client="_EnJ-gL4sEeW-ZIFkk47N8Q" supplier="_5escUL4rEeW-ZIFkk47N8Q"/>
+  <packagedElement xmi:type="uml:Dependency" xmi:id="_WH70wL7IEeW4teU4Rr4ZNw" client="_Huos0L4sEeW-ZIFkk47N8Q" supplier="_5escUL4rEeW-ZIFkk47N8Q"/>
+  <packagedElement xmi:type="uml:Device" xmi:id="_jHuE8L7IEeW4teU4Rr4ZNw" name="AndroidM:Mobile C"/>
+  <packagedElement xmi:type="uml:Dependency" xmi:id="_pnCRwL7IEeW4teU4Rr4ZNw" client="_jHuE8L7IEeW4teU4Rr4ZNw" supplier="_5escUL4rEeW-ZIFkk47N8Q"/>
+  <packagedElement xmi:type="uml:Component" xmi:id="_8XA3kL7LEeW4teU4Rr4ZNw" name="SituationAwareService"/>
+  <packagedElement xmi:type="uml:Artifact" xmi:id="_xpnEQL7MEeWdlY1dytmb3g" name="SituationAwareDistributionService" isLeaf="true" fileName="situation_aware_distribution_service.exe">
+    <manifestation xmi:type="uml:Manifestation" xmi:id="_PqPmUL7NEeWdlY1dytmb3g" client="_xpnEQL7MEeWdlY1dytmb3g" supplier="_8XA3kL7LEeW4teU4Rr4ZNw" utilizedElement="_8XA3kL7LEeW4teU4Rr4ZNw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ExecutionEnvironment" xmi:id="_RFNvgL7NEeWdlY1dytmb3g" name="Windows10">
+    <deployment xmi:type="uml:Deployment" xmi:id="_VBHkYL7NEeWdlY1dytmb3g" client="_RFNvgL7NEeWdlY1dytmb3g" supplier="_xpnEQL7MEeWdlY1dytmb3g" deployedArtifact="_xpnEQL7MEeWdlY1dytmb3g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Device" xmi:id="_WRr0YL7NEeWdlY1dytmb3g" name="WindowsServerA"/>
+  <packagedElement xmi:type="uml:Dependency" xmi:id="_csmpYL7NEeWdlY1dytmb3g" client="_WRr0YL7NEeWdlY1dytmb3g" supplier="_RFNvgL7NEeWdlY1dytmb3g"/>
+</uml:Model>

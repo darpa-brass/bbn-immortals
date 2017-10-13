@@ -1,0 +1,196 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.securboration</groupId>
+	<artifactId>immortals-vocab-to-triples</artifactId>
+
+	<parent>
+		<groupId>com.securboration</groupId>
+		<artifactId>immortals</artifactId>
+		<version>r2.0.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<name>immortals-vocab-to-triples</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-repository-api</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-repository-ingestor</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-package</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-adsl-generate</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-generate</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-uris-generate-immortals</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-uris-generate</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-vocab-instances</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-scratchpad</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-sa</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-java-project</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-feature-model</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-cp</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-core</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-bytecode</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-assertions</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-vocab</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-pojo-annotations</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-package</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-instances-generate</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration></configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+</project>

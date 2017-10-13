@@ -1,0 +1,188 @@
+{
+  "@type" : "com.securboration.immortals.ontology.cp.GmeInterchangeFormat",
+  "@id" : "6a888f28-a54c-4978-a2b3-0f3c7b156ef2",
+  "sessionIdentifier" : "S149813995847challenge",
+  "humanReadableDescription" : null,
+  "functionalitySpec" : [ "[Lcom.securboration.immortals.ontology.cp.FunctionalitySpec;", [ {
+    "@type" : "com.securboration.immortals.ontology.cp.FunctionalitySpec",
+    "@id" : "08f44eb8-1b1c-4f38-8710-a7d4ba9887e2",
+    "precedenceOfSpec" : null,
+    "functionalityPerformed" : "com.securboration.immortals.ontology.functionality.Functionality",
+    "functionalityProvided" : null,
+    "propertyConstraint" : [ "[Lcom.securboration.immortals.ontology.property.impact.PropertyConstraint;", [ {
+      "@type" : "com.securboration.immortals.ontology.property.impact.PropertyConstraint",
+      "@id" : "1d2add7b-a845-4161-96b6-f87ce07f2947",
+      "humanReadableForm" : "the implementer must possess TrustedProperty",
+      "constraintCriterion" : "PROPERTY_PRESENT",
+      "constraintMultiplicity" : null,
+      "constrainedProperty" : [ "[Lcom.securboration.immortals.ontology.property.Property;", [ {
+        "@type" : "com.securboration.immortals.ontology.resources.gps.properties.TrustedProperty",
+        "@id" : "7c1c5432-5e5e-4608-8912-a0009a3c77e1",
+        "truthConstraint" : null
+      } ] ],
+      "precedenceOfConstraint" : null
+    } ] ]
+  } ] ],
+  "missionSpec" : [ "[Lcom.securboration.immortals.ontology.cp.MissionSpec;", [ {
+    "@type" : "com.securboration.immortals.ontology.cp.MissionSpec",
+    "@id" : "5a509571-b9b4-4b39-beff-69d76d6a5b1e",
+    "precedenceOfSpec" : null,
+    "humanReadableForm" : "the client must issue > 10 PLI messages per minute",
+    "assertionCriterion" : "VALUE_GREATER_THAN_EXCLUSIVE",
+    "rightValue" : {
+      "@type" : "com.securboration.immortals.ontology.metrics.Metric",
+      "@id" : "2059ab84-ea07-4799-8c4f-2d3c9b6d1844",
+      "measurementType" : {
+        "@type" : "com.securboration.immortals.ontology.metrics.MeasurementType",
+        "@id" : "f1b8a3f9-7a0c-40a7-961a-ddabd2e20f1b",
+        "measurementType" : "PLI report rate",
+        "correspondingProperty" : "com.securboration.immortals.ontology.connectivity.PliReportRate"
+      },
+      "value" : "60.0",
+      "unit" : "messages/minute",
+      "linkId" : "PLIReportRate",
+      "applicableResourceInstance" : null,
+      "applicableResourceType" : "com.securboration.immortals.ontology.android.AndroidPlatform"
+    }
+  }, {
+    "@type" : "com.securboration.immortals.ontology.cp.MissionSpec",
+    "@id" : "75b07436-c0fb-49e5-b697-76905d38d092",
+    "precedenceOfSpec" : null,
+    "humanReadableForm" : "the link must never see > 25kbps in traffic",
+    "assertionCriterion" : "VALUE_LESS_THAN_INCLUSIVE",
+    "rightValue" : {
+      "@type" : "com.securboration.immortals.ontology.metrics.Metric",
+      "@id" : "7c5919fd-1b39-4302-83b5-ab84f34a7ed9",
+      "measurementType" : {
+        "@type" : "com.securboration.immortals.ontology.metrics.MeasurementType",
+        "@id" : "d9400381-dba2-49d7-9f33-d4b2ea9f4abc",
+        "measurementType" : "EWMA bandwidth consumption",
+        "correspondingProperty" : "com.securboration.immortals.ontology.connectivity.BandwidthKiloBitsPerSecond"
+      },
+      "value" : "384",
+      "unit" : "kb/s",
+      "linkId" : "TotalAvailableServerBandwidth",
+      "applicableResourceInstance" : null,
+      "applicableResourceType" : "com.securboration.immortals.ontology.resources.network.NetworkConnection"
+    }
+  }, {
+    "@type" : "com.securboration.immortals.ontology.cp.MissionSpec",
+    "@id" : "013d7105-3d6e-46dd-8eba-0050354745a8",
+    "precedenceOfSpec" : null,
+    "humanReadableForm" : "the software must provide at least 1 image updates per minute",
+    "assertionCriterion" : "VALUE_GREATER_THAN_INCLUSIVE",
+    "rightValue" : {
+      "@type" : "com.securboration.immortals.ontology.metrics.Metric",
+      "@id" : "03563843-a086-4d99-bf21-2767838f16f5",
+      "measurementType" : {
+        "@type" : "com.securboration.immortals.ontology.metrics.MeasurementType",
+        "@id" : "cc9e9d28-a4fe-4565-a159-24990e028302",
+        "measurementType" : "Image report rate",
+        "correspondingProperty" : "com.securboration.immortals.ontology.connectivity.ImageReportRate"
+      },
+      "value" : "30.0",
+      "unit" : "images/minute",
+      "linkId" : "ImageReportRate",
+      "applicableResourceInstance" : null,
+      "applicableResourceType" : "com.securboration.immortals.ontology.android.AndroidPlatform"
+    }
+  }, {
+    "@type" : "com.securboration.immortals.ontology.cp.MissionSpec",
+    "@id" : "e4756618-ba08-4852-b729-1a9357a584c1",
+    "precedenceOfSpec" : null,
+    "humanReadableForm" : "the default camera image size is 5.0 megapixels",
+    "assertionCriterion" : "VALUE_EQUALS",
+    "rightValue" : {
+      "@type" : "com.securboration.immortals.ontology.metrics.Metric",
+      "@id" : "4bd4cb75-8076-4b97-9514-e01a1f150d9d",
+      "measurementType" : {
+        "@type" : "com.securboration.immortals.ontology.metrics.MeasurementType",
+        "@id" : "b95dee96-0967-4b20-8943-73604fa444c5",
+        "measurementType" : "Number of Pixels",
+        "correspondingProperty" : "com.securboration.immortals.ontology.functionality.imagescaling.NumberOfPixels"
+      },
+      "value" : "5.0",
+      "unit" : "megapixels",
+      "linkId" : "DefaultImageSize",
+      "applicableResourceInstance" : null,
+      "applicableResourceType" : "com.securboration.immortals.ontology.android.AndroidPlatform"
+    }
+  }, {
+    "@type" : "com.securboration.immortals.ontology.cp.MissionSpec",
+    "@id" : "a4e98056-566d-4aeb-a6bd-ad30b622a2f9",
+    "precedenceOfSpec" : null,
+    "humanReadableForm" : "the software must support at least 25 concurrent clients",
+    "assertionCriterion" : "VALUE_GREATER_THAN_INCLUSIVE",
+    "rightValue" : {
+      "@type" : "com.securboration.immortals.ontology.metrics.Metric",
+      "@id" : "a6d541d0-56df-4bca-9ff6-d56f3d838423",
+      "measurementType" : {
+        "@type" : "com.securboration.immortals.ontology.metrics.MeasurementType",
+        "@id" : "c51ab021-016a-4bc7-972a-6798e13abb29",
+        "measurementType" : "Number of clients",
+        "correspondingProperty" : "com.securboration.immortals.ontology.connectivity.NumClients"
+      },
+      "value" : "2",
+      "unit" : "count",
+      "linkId" : "NumberOfClients",
+      "applicableResourceInstance" : null,
+      "applicableResourceType" : "com.securboration.immortals.ontology.server.ServerPlatform"
+    }
+  } ] ],
+  "availableResources" : [ "[Lcom.securboration.immortals.ontology.core.Resource;", [ {
+    "@type" : "com.securboration.immortals.ontology.android.AndroidPlatform",
+    "@id" : "8cafe18f-1778-4b71-801e-cf1ba7cb4785",
+    "humanReadableDescription" : "Marshmallow device with the following hardware: a USB port, a Bluetooth transceiver, a physical UI, an embedded GPS receiver, a network connection",
+    "resourceProperty" : null,
+    "cpus" : null,
+    "gpus" : null,
+    "os" : null,
+    "platformLibraries" : null,
+    "deviceMemory" : null,
+    "disks" : null,
+    "networkInterfaces" : null,
+    "androidPlatformVersion" : "6.0.1 Marshmallow",
+    "platformResources" : [ "[Lcom.securboration.immortals.ontology.resources.PlatformResource;", [ {
+      "@type" : "com.securboration.immortals.ontology.resources.network.NetworkConnection",
+      "@id" : "7a663cd9-41b0-457b-a2cd-2ed21d13d943",
+      "humanReadableDescription" : "a bidirectional connection between a MARTI server and ATAK client",
+      "resourceProperty" : null,
+      "localDevice" : "8cafe18f-1778-4b71-801e-cf1ba7cb4785",
+      "remoteDevice" : {
+        "@type" : "com.securboration.immortals.ontology.server.ServerPlatform",
+        "@id" : "9dacc230-aa82-41c9-a9cd-331786245474",
+        "humanReadableDescription" : null,
+        "resourceProperty" : null,
+        "cpus" : null,
+        "gpus" : null,
+        "os" : null,
+        "platformLibraries" : null,
+        "deviceMemory" : null,
+        "disks" : null,
+        "networkInterfaces" : null
+      },
+      "network" : null,
+      "oneWay" : false
+    }, {
+      "@type" : "com.securboration.immortals.ontology.resources.gps.GpsReceiverEmbedded",
+      "@id" : "303bee89-6278-4709-9b8e-7fdac8ab27e6",
+      "humanReadableDescription" : "an embedded GPS receiver",
+      "resourceProperty" : null,
+      "numChannels" : 0,
+      "receivableSpectrum" : null,
+      "constellation" : null
+    }, {
+      "@type" : "com.securboration.immortals.ontology.resources.UsbResource",
+      "@id" : "293a9462-eedb-4773-bfbb-eb29eddc3a55",
+      "humanReadableDescription" : "a USB port",
+      "resourceProperty" : null
+    } ] ]
+  }, "9dacc230-aa82-41c9-a9cd-331786245474", {
+    "@type" : "com.securboration.immortals.ontology.resources.gps.GpsSatelliteConstellation",
+    "@id" : "a635012c-0fe9-497e-91b6-3235dfc647a2",
+    "humanReadableDescription" : "a constellation of satellites",
+    "resourceProperty" : null,
+    "constellationName" : "GPS",
+    "satellites" : null
+  } ] ]
+}

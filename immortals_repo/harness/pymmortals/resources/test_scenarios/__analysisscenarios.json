@@ -1,0 +1,321 @@
+[
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "qemuEnableKvm",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [
+            "-enable-kvm"
+        ],
+        "deploymentModel": {
+            "sessionIdentifier": "qemuEnableKvm",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "qemuCpusIs2",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [
+            "-smp",
+            "2"
+        ],
+        "deploymentModel": {
+            "sessionIdentifier": "qemuCpusIs2",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "std",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "sessionIdentifier": "std",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "qemuMemIs2G",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [
+            "-m",
+            "2048"
+        ],
+        "deploymentModel": {
+            "sessionIdentifier": "qemuMemIs2G",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "qemuEnableKvmNS",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [
+            "-enable-kvm"
+        ],
+        "deploymentModel": {
+            "sessionIdentifier": "qemuEnableKvmNS",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "qemuCpusIs2NS",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [
+            "-smp",
+            "2"
+        ],
+        "deploymentModel": {
+            "sessionIdentifier": "qemuCpusIs2NS",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "stdNS",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "sessionIdentifier": "stdNS",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "qemuMemIs2GNS",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [
+            "-m",
+            "2048"
+        ],
+        "deploymentModel": {
+            "sessionIdentifier": "qemuMemIs2GNS",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "qemuCpusIs4NS",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [
+            "-smp",
+            "4"
+        ],
+        "deploymentModel": {
+            "sessionIdentifier": "qemuCpusIs4NS",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "NS4Clients",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "sessionIdentifier": "NS4Clients",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 4,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "NS4ClientsNoCreate",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "sessionIdentifier": "NS4ClientsNoCreate",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 4,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    },
+    {
+        "submissionFlow": "baseline",
+        "expectedResult": "NotApplicable",
+        "scenarioIdentifier": "Has4Clients",
+        "rootConfigurationModifications": {},
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "sessionIdentifier": "Has4Clients",
+            "server": {
+                "bandwidth": 10000000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 4,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        }
+    }
+]

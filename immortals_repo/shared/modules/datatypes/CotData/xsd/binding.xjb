@@ -1,0 +1,15 @@
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               version="1.0">
+  <jaxb:bindings schemaLocation="Event-PUBLIC_immortals.xsd">
+    <jaxb:bindings node="//xs:element[@name='event']">
+      <jaxb:bindings node="//xs:element[@name='detail']">
+        <jaxb:bindings node="//xs:element[@name='_flow-tags_']">
+          <jaxb:property>
+            <jaxb:baseType name="mil.darpa.immortals.datatypes.cot.xml.FlowTagMap"/>
+          </jaxb:property>
+        </jaxb:bindings>
+      </jaxb:bindings>
+    </jaxb:bindings>
+  </jaxb:bindings>
+</jaxb:bindings>

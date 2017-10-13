@@ -1,0 +1,10 @@
+{
+    "tables": [
+        {
+            "columns": ["ColumnA", "ColumnD"]
+        },
+        {
+            "columns": ["ColumnB", "ColumnC"]
+        }
+    ]
+}

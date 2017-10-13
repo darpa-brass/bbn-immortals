@@ -1,0 +1,22 @@
+[
+    {
+        "sessionIdentifier": "LocationProviderAndroidGpsBuiltIn",
+        "targetPlatform": "Android",
+        "dfuCompositionSequence": [
+            {
+                "classPackage": "'mil.darpa.immortals.dfus.location.LocationProviderAndroidGpsBuiltIn'",
+                "initializationMethod": "initialize",
+                "initializationMethodParameters": [
+                    {
+                        "providedByApplication": true,
+                        "applicationVariableName": "this"
+                    }
+                ],
+                "workMethod": "getLastKnownLocation",
+                "workMethodParameters": [],
+                "cleanupMethod": "onDestroy",
+                "cleanupMethodParameters": []
+            }
+        ]
+    }
+]

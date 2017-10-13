@@ -1,0 +1,181 @@
+[
+    {
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 90000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "2000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 3,
+                    "presentResources": [
+                        "bluetooth",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False"
+        },
+        "scenarioIdentifier": "bluetooth",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 384
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "2000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False"
+        },
+        "scenarioIdentifier": "bandwidth",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 90000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "2000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 3,
+                    "presentResources": [
+                        "usb",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": [
+                        "trustedLocations"
+                    ]
+                }
+            ]
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False"
+        },
+        "scenarioIdentifier": "trustedLocations",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 384
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "2000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "internalGps",
+                        "usb",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": [
+                        "trustedLocations"
+                    ]
+                }
+            ]
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False"
+        },
+        "scenarioIdentifier": "failAll",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 90000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "2000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 3,
+                    "presentResources": [
+                        "usb",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False"
+        },
+        "scenarioIdentifier": "usb",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 90000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "2000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 3,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False"
+        },
+        "scenarioIdentifier": "internalGps",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 90000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "2000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 3,
+                    "presentResources": [
+                        "userInterface"
+                    ],
+                    "requiredProperties": []
+                }
+            ]
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False"
+        },
+        "scenarioIdentifier": "userInterface",
+        "submissionFlow": "challenge"
+    }
+]

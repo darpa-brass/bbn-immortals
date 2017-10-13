@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>com.securboration</groupId>
+		<artifactId>immortals</artifactId>
+		<version>r2.0.0</version>
+		<relativePath>../../../pom.xml</relativePath>
+	</parent>
+	
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<artifactId>immortals-ontologies-domains-java-project</artifactId>
+	<packaging>jar</packaging>
+	
+	<name>IMMoRTALS Java project vocabulary</name>
+	<url>https://dsl-external.bbn.com/tracsvr/immortals</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-pojo-annotations</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency><!-- core -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-core</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency><!-- bytecode -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-bytecode</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency><!-- SA -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-sa</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency><!-- CP -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-cp</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<properties>
+		<!-- blank -->
+	</properties>
+
+	<repositories>
+		<!-- blank -->
+	</repositories>
+
+	<profiles>
+		<!-- blank -->
+	</profiles>
+
+	<build>
+		<plugins>
+			<plugin><!-- target 1.7 for android -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler-plugin.version}</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

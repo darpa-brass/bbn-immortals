@@ -1,0 +1,11 @@
+include 'buildSrc'
+includeBuild 'shared/modules'
+includeBuild 'applications/client/ATAKLite'
+includeBuild 'applications/client/CLITAK'
+includeBuild 'applications/client/ConsumingPipeRunner'
+includeBuild 'applications/client/SubstitutionRunner'
+includeBuild 'applications/client/CotDbApp'
+includeBuild 'applications/server/Marti'
+includeBuild 'das/das-service'
+//include 'das:das-analysis:modulerunner-android' // TODO: Remove once refactored into finalized composition module
+//include 'das:das-analysis:modulerunner-java' // TODO: Remove once refactored into finalized composition module

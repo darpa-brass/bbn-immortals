@@ -1,0 +1,255 @@
+@prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+IMMoRTALS_bytecode:AField-1899399b-205a-4480-8fe8-d3c183f2e751
+        a                             IMMoRTALS_bytecode:AField ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/fields/longitude" ;
+        IMMoRTALS:hasFieldDesc        "D" ;
+        IMMoRTALS:hasFieldName        "longitude" ;
+        IMMoRTALS:hasModifiers        "PRIVATE" , "FINAL" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AnAnnotation-79c13ccb-fe2d-452a-ab4c-9cdabc8c00a3
+        a                           IMMoRTALS_bytecode:AnAnnotation ;
+        IMMoRTALS:hasAnnotationClassName
+                "mil/darpa/immortals/core/annotations/SemanticTypeBinding" ;
+        IMMoRTALS:hasKeyValuePairs  IMMoRTALS_bytecode:AnnotationKeyValuePair-50312253-79d2-4281-8a74-597724e51b2b .
+
+IMMoRTALS_bytecode:ClasspathResource-5e9ad8f5-0fc4-4da5-9fee-58db15531be3
+        a                  IMMoRTALS_bytecode:ClasspathResource ;
+        IMMoRTALS:hasHash  "VmrRqAIgAm0FCZViZFzpaP8OfDbN4iY0MyYFuzTMPv8=" ;
+        IMMoRTALS:hasName  "META-INF/MANIFEST.MF" .
+                
+IMMoRTALS_bytecode:AMethod-79f564fe-7fb4-4830-ba25-deed4584bab9
+        a                             IMMoRTALS_bytecode:AMethod ;
+        IMMoRTALS:hasAnnotations      IMMoRTALS_bytecode:AnAnnotation-e2dd219d-2476-4b1f-8432-ae6f2cf8d334 ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/methods/getLongitude()D" ;
+        IMMoRTALS:hasMethodDesc       "()D" ;
+        IMMoRTALS:hasMethodName       "getLongitude" ;
+        IMMoRTALS:hasModifiers        "PUBLIC" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AnnotationKeyValuePair-d4bf7643-ecee-4926-9039-657bcd5479ee
+        a                   IMMoRTALS_bytecode:AnnotationKeyValuePair ;
+        IMMoRTALS:hasKey    "@mil/darpa/immortals/core/annotations/SemanticTypeBinding|semanticType" ;
+        IMMoRTALS:hasValue  "file://darpa.mil/immortals/r1.0/Datatypes#Coordinates" .
+
+IMMoRTALS_bytecode:AMethod-7f6bda44-ca21-4149-a00a-a41a44b0d95b
+        a                             IMMoRTALS_bytecode:AMethod ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/methods/hasAccuracy()Z" ;
+        IMMoRTALS:hasMethodDesc       "()Z" ;
+        IMMoRTALS:hasMethodName       "hasAccuracy" ;
+        IMMoRTALS:hasModifiers        "PUBLIC" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AField-847ae09f-165a-4795-94e8-173029b17236
+        a                             IMMoRTALS_bytecode:AField ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/fields/hasAltitude" ;
+        IMMoRTALS:hasFieldDesc        "Z" ;
+        IMMoRTALS:hasFieldName        "hasAltitude" ;
+        IMMoRTALS:hasModifiers        "PRIVATE" , "FINAL" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AnnotationKeyValuePair-50312253-79d2-4281-8a74-597724e51b2b
+        a                   IMMoRTALS_bytecode:AnnotationKeyValuePair ;
+        IMMoRTALS:hasKey    "@mil/darpa/immortals/core/annotations/SemanticTypeBinding|semanticType" ;
+        IMMoRTALS:hasValue  "file://darpa.mil/immortals/r1.0/Sensors#Altitude_MSL" .
+
+IMMoRTALS_bytecode:AnAnnotation-402f3607-aa47-4bc3-99a4-7e8b41a40153
+        a                           IMMoRTALS_bytecode:AnAnnotation ;
+        IMMoRTALS:hasAnnotationClassName
+                "mil/darpa/immortals/core/annotations/SemanticTypeBinding" ;
+        IMMoRTALS:hasKeyValuePairs  IMMoRTALS_bytecode:AnnotationKeyValuePair-5eb88cb8-c7eb-4eec-a340-0f7695247c5c .
+
+IMMoRTALS_bytecode:AField-f69d80b4-e1e2-4413-bedf-fb1eb348b749
+        a                             IMMoRTALS_bytecode:AField ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/fields/altitude" ;
+        IMMoRTALS:hasFieldDesc        "D" ;
+        IMMoRTALS:hasFieldName        "altitude" ;
+        IMMoRTALS:hasModifiers        "PRIVATE" , "FINAL" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AMethod-44bb8c7a-f8e5-4758-9fd7-29e5a763fdb4
+        a                             IMMoRTALS_bytecode:AMethod ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/methods/<init>(DDLjava/lang/Double;Ljava/lang/Float;JLjava/lang/String;)V" ;
+        IMMoRTALS:hasMethodDesc       "(DDLjava/lang/Double;Ljava/lang/Float;JLjava/lang/String;)V" ;
+        IMMoRTALS:hasMethodName       "<init>" ;
+        IMMoRTALS:hasModifiers        "PUBLIC" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AnnotationKeyValuePair-5eb88cb8-c7eb-4eec-a340-0f7695247c5c
+        a                   IMMoRTALS_bytecode:AnnotationKeyValuePair ;
+        IMMoRTALS:hasKey    "@mil/darpa/immortals/core/annotations/SemanticTypeBinding|semanticType" ;
+        IMMoRTALS:hasValue  "file://darpa.mil/immortals/r1.0/Sensors#Latitude" .
+
+IMMoRTALS_bytecode:AnnotationKeyValuePair-58dd8933-73ac-4373-8bca-677630a8be04
+        a                   IMMoRTALS_bytecode:AnnotationKeyValuePair ;
+        IMMoRTALS:hasKey    "@mil/darpa/immortals/core/annotations/SemanticTypeBinding|semanticType" ;
+        IMMoRTALS:hasValue  "file://darpa.mil/immortals/r1.0/Sensors#Longitude" .
+
+IMMoRTALS_bytecode:AnAnnotation-d72b6c94-096f-47aa-9f8a-0cb89ff7e642
+        a                           IMMoRTALS_bytecode:AnAnnotation ;
+        IMMoRTALS:hasAnnotationClassName
+                "mil/darpa/immortals/core/annotations/SemanticTypeBinding" ;
+        IMMoRTALS:hasKeyValuePairs  IMMoRTALS_bytecode:AnnotationKeyValuePair-8c89fe92-788a-4323-91f1-c9519488659e .
+
+IMMoRTALS_bytecode:AnnotationKeyValuePair-8c89fe92-788a-4323-91f1-c9519488659e
+        a                   IMMoRTALS_bytecode:AnnotationKeyValuePair ;
+        IMMoRTALS:hasKey    "@mil/darpa/immortals/core/annotations/SemanticTypeBinding|semanticType" ;
+        IMMoRTALS:hasValue  "file://darpa.mil/immortals/r1.0/Sensors#SensorReadTime" .
+
+IMMoRTALS_bytecode:AnAnnotation-80e72ef0-a6c6-4ad3-ad28-0b19e6b6fe28
+        a                           IMMoRTALS_bytecode:AnAnnotation ;
+        IMMoRTALS:hasAnnotationClassName
+                "mil/darpa/immortals/core/annotations/SemanticTypeBinding" ;
+        IMMoRTALS:hasKeyValuePairs  IMMoRTALS_bytecode:AnnotationKeyValuePair-d4bf7643-ecee-4926-9039-657bcd5479ee .
+
+IMMoRTALS_bytecode:BytecodeArtifactCoordinate-63a9be29-fb7b-48c4-857f-a383db296c29
+        a                        IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+        IMMoRTALS:hasArtifactId  "Coordinates" ;
+        IMMoRTALS:hasGroupId     "mil.darpa.immortals.datatypes" ;
+        IMMoRTALS:hasVersion     "1.0-LOCAL" .
+
+IMMoRTALS_bytecode:AField-51de2a82-900f-4c94-8e87-d3090c18c779
+        a                             IMMoRTALS_bytecode:AField ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/fields/accuracy" ;
+        IMMoRTALS:hasFieldDesc        "F" ;
+        IMMoRTALS:hasFieldName        "accuracy" ;
+        IMMoRTALS:hasModifiers        "PRIVATE" , "FINAL" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AMethod-d9a82b59-8ba6-46f9-ba9b-3b422750dbdd
+        a                             IMMoRTALS_bytecode:AMethod ;
+        IMMoRTALS:hasAnnotations      IMMoRTALS_bytecode:AnAnnotation-5b682338-b4f1-4f94-93bf-ab44950c2bfb ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/methods/getAccuracyMetric()F" ;
+        IMMoRTALS:hasMethodDesc       "()F" ;
+        IMMoRTALS:hasMethodName       "getAccuracyMetric" ;
+        IMMoRTALS:hasModifiers        "PUBLIC" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AnAnnotation-e2dd219d-2476-4b1f-8432-ae6f2cf8d334
+        a                           IMMoRTALS_bytecode:AnAnnotation ;
+        IMMoRTALS:hasAnnotationClassName
+                "mil/darpa/immortals/core/annotations/SemanticTypeBinding" ;
+        IMMoRTALS:hasKeyValuePairs  IMMoRTALS_bytecode:AnnotationKeyValuePair-58dd8933-73ac-4373-8bca-677630a8be04 .
+
+IMMoRTALS_bytecode:JarArtifact-7b0083b1-859a-48a1-8928-f99cfdf5adf4
+        a                         IMMoRTALS_bytecode:JarArtifact ;
+        IMMoRTALS:hasCoordinate   IMMoRTALS_bytecode:BytecodeArtifactCoordinate-63a9be29-fb7b-48c4-857f-a383db296c29 ;
+        IMMoRTALS:hasHash         "OY45wGF5u7iO4XdfIueUk6YXOX7eoh1AsnwglY93vgc=" ;
+        IMMoRTALS:hasJarContents  IMMoRTALS_bytecode:ClassArtifact-aed98c2b-3701-4ec6-89ae-0e571cf340bf , IMMoRTALS_bytecode:ClasspathResource-5e9ad8f5-0fc4-4da5-9fee-58db15531be3 ;
+        IMMoRTALS:hasName         "Coordinates-1.0-LOCAL.jar" .
+
+IMMoRTALS_bytecode:AField-d62757e8-9573-44b0-a0f8-217f1b875fa2
+        a                             IMMoRTALS_bytecode:AField ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/fields/provider" ;
+        IMMoRTALS:hasFieldDesc        "Ljava/lang/String;" ;
+        IMMoRTALS:hasFieldName        "provider" ;
+        IMMoRTALS:hasModifiers        "PRIVATE" , "FINAL" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803
+        a                             IMMoRTALS_bytecode:AClass ;
+        IMMoRTALS:hasAnnotations      IMMoRTALS_bytecode:AnAnnotation-80e72ef0-a6c6-4ad3-ad28-0b19e6b6fe28 ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=" ;
+        IMMoRTALS:hasBytecodeVersion  IMMoRTALS_bytecode:BytecodeVersion-356fda74-6af3-4f79-949b-366172f01fcb ;
+        IMMoRTALS:hasClassName        "mil/darpa/immortals/datatypes/Coordinates" ;
+        IMMoRTALS:hasClassUrl         "https://dsl-external.bbn.com/svn/immortals/trunk/shared/modules/datatypes/Coordinates/src/main/java/mil/darpa/immortals/datatypes/Coordinates.java" ;
+        IMMoRTALS:hasFields           IMMoRTALS_bytecode:AField-8d46ab3e-2ded-4ad1-88f9-73e56e2723a0 , IMMoRTALS_bytecode:AField-d62757e8-9573-44b0-a0f8-217f1b875fa2 , IMMoRTALS_bytecode:AField-bc6cae20-0841-4e20-bf06-ac5608a8049b , IMMoRTALS_bytecode:AField-1899399b-205a-4480-8fe8-d3c183f2e751 , IMMoRTALS_bytecode:AField-51de2a82-900f-4c94-8e87-d3090c18c779 , IMMoRTALS_bytecode:AField-f69d80b4-e1e2-4413-bedf-fb1eb348b749 , IMMoRTALS_bytecode:AField-847ae09f-165a-4795-94e8-173029b17236 , IMMoRTALS_bytecode:AField-33accc42-a229-4b8e-8ee1-350fae8862c6 ;
+        IMMoRTALS:hasMethods          IMMoRTALS_bytecode:AMethod-d1aa73d4-b4fe-48b8-a903-d13011e9ccb3 , IMMoRTALS_bytecode:AMethod-44bb8c7a-f8e5-4758-9fd7-29e5a763fdb4 , IMMoRTALS_bytecode:AMethod-7f6bda44-ca21-4149-a00a-a41a44b0d95b , IMMoRTALS_bytecode:AMethod-d9a82b59-8ba6-46f9-ba9b-3b422750dbdd , IMMoRTALS_bytecode:AMethod-563dfddb-1219-4db0-824f-829818a8466e , IMMoRTALS_bytecode:AMethod-ee780930-1d2a-4d56-a6de-00a9340c09f2 , IMMoRTALS_bytecode:AMethod-b0a03616-0eba-4e60-acd3-054c471c1a0a , IMMoRTALS_bytecode:AMethod-61dca611-2e82-4e5b-97c7-2a6d18f8d1f0 , IMMoRTALS_bytecode:AMethod-79f564fe-7fb4-4830-ba25-deed4584bab9 ;
+        IMMoRTALS:hasModifiers        "SUPER" , "PUBLIC" , "SYNCHRONIZED" .
+
+IMMoRTALS_bytecode:AnnotationKeyValuePair-213edba7-e53d-4b23-8aac-73c6cdf06217
+        a                   IMMoRTALS_bytecode:AnnotationKeyValuePair ;
+        IMMoRTALS:hasKey    "@mil/darpa/immortals/core/annotations/SemanticTypeBinding|semanticType" ;
+        IMMoRTALS:hasValue  "file://darpa.mil/immortals/r1.0/Sensors#Accuracy_GDOP" .
+
+IMMoRTALS_bytecode:AMethod-b0a03616-0eba-4e60-acd3-054c471c1a0a
+        a                             IMMoRTALS_bytecode:AMethod ;
+        IMMoRTALS:hasAnnotations      IMMoRTALS_bytecode:AnAnnotation-79c13ccb-fe2d-452a-ab4c-9cdabc8c00a3 ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/methods/getAltitudeMSL()D" ;
+        IMMoRTALS:hasMethodDesc       "()D" ;
+        IMMoRTALS:hasMethodName       "getAltitudeMSL" ;
+        IMMoRTALS:hasModifiers        "PUBLIC" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:ClassArtifact-aed98c2b-3701-4ec6-89ae-0e571cf340bf
+        a                        IMMoRTALS_bytecode:ClassArtifact ;
+        IMMoRTALS:hasClassModel  IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 ;
+        IMMoRTALS:hasHash        "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=" ;
+        IMMoRTALS:hasName        "mil/darpa/immortals/datatypes/Coordinates.class" .
+
+IMMoRTALS_bytecode:AMethod-563dfddb-1219-4db0-824f-829818a8466e
+        a                             IMMoRTALS_bytecode:AMethod ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/methods/getProvider()Ljava/lang/String;" ;
+        IMMoRTALS:hasMethodDesc       "()Ljava/lang/String;" ;
+        IMMoRTALS:hasMethodName       "getProvider" ;
+        IMMoRTALS:hasModifiers        "PUBLIC" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AMethod-61dca611-2e82-4e5b-97c7-2a6d18f8d1f0
+        a                             IMMoRTALS_bytecode:AMethod ;
+        IMMoRTALS:hasAnnotations      IMMoRTALS_bytecode:AnAnnotation-402f3607-aa47-4bc3-99a4-7e8b41a40153 ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/methods/getLatitude()D" ;
+        IMMoRTALS:hasMethodDesc       "()D" ;
+        IMMoRTALS:hasMethodName       "getLatitude" ;
+        IMMoRTALS:hasModifiers        "PUBLIC" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AMethod-d1aa73d4-b4fe-48b8-a903-d13011e9ccb3
+        a                             IMMoRTALS_bytecode:AMethod ;
+        IMMoRTALS:hasAnnotations      IMMoRTALS_bytecode:AnAnnotation-d72b6c94-096f-47aa-9f8a-0cb89ff7e642 ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/methods/getAcquisitionTime()J" ;
+        IMMoRTALS:hasMethodDesc       "()J" ;
+        IMMoRTALS:hasMethodName       "getAcquisitionTime" ;
+        IMMoRTALS:hasModifiers        "PUBLIC" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AField-bc6cae20-0841-4e20-bf06-ac5608a8049b
+        a                             IMMoRTALS_bytecode:AField ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/fields/latitude" ;
+        IMMoRTALS:hasFieldDesc        "D" ;
+        IMMoRTALS:hasFieldName        "latitude" ;
+        IMMoRTALS:hasModifiers        "PRIVATE" , "FINAL" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:BytecodeVersion-356fda74-6af3-4f79-949b-366172f01fcb
+        a                             IMMoRTALS_bytecode:BytecodeVersion ;
+        IMMoRTALS:hasMajorVersionTag  "51" ;
+        IMMoRTALS:hasMinorVersionTag  "0" ;
+        IMMoRTALS:hasPlatformVersionTag
+                "Java SE 7" .
+
+IMMoRTALS_bytecode:AField-33accc42-a229-4b8e-8ee1-350fae8862c6
+        a                             IMMoRTALS_bytecode:AField ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/fields/hasAccuracy" ;
+        IMMoRTALS:hasFieldDesc        "Z" ;
+        IMMoRTALS:hasFieldName        "hasAccuracy" ;
+        IMMoRTALS:hasModifiers        "PRIVATE" , "FINAL" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AField-8d46ab3e-2ded-4ad1-88f9-73e56e2723a0
+        a                             IMMoRTALS_bytecode:AField ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/fields/acquisitionTime" ;
+        IMMoRTALS:hasFieldDesc        "J" ;
+        IMMoRTALS:hasFieldName        "acquisitionTime" ;
+        IMMoRTALS:hasModifiers        "PRIVATE" , "FINAL" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .
+
+IMMoRTALS_bytecode:AnAnnotation-5b682338-b4f1-4f94-93bf-ab44950c2bfb
+        a                           IMMoRTALS_bytecode:AnAnnotation ;
+        IMMoRTALS:hasAnnotationClassName
+                "mil/darpa/immortals/core/annotations/SemanticTypeBinding" ;
+        IMMoRTALS:hasKeyValuePairs  IMMoRTALS_bytecode:AnnotationKeyValuePair-213edba7-e53d-4b23-8aac-73c6cdf06217 .
+
+IMMoRTALS_bytecode:AMethod-ee780930-1d2a-4d56-a6de-00a9340c09f2
+        a                             IMMoRTALS_bytecode:AMethod ;
+        IMMoRTALS:hasBytecodePointer  "nQyo9rrey9YkuDGiKyG+xoBkaFVAuVCJ0+w8UDHQ3p8=/methods/hasAltitude()Z" ;
+        IMMoRTALS:hasMethodDesc       "()Z" ;
+        IMMoRTALS:hasMethodName       "hasAltitude" ;
+        IMMoRTALS:hasModifiers        "PUBLIC" ;
+        IMMoRTALS:hasOwner            IMMoRTALS_bytecode:AClass-eefd5c3a-db9b-41f1-82bb-6ae626e15803 .

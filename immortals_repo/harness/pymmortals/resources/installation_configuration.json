@@ -1,0 +1,364 @@
+{
+    "installationRoot": "${HOME}/.immortals/",
+    "tempDirectory": "{installationRoot}tmp/",
+    "targetInstallationPlatforms": {
+        "osx": {
+            "identifier": "osx",
+            "packageManagerInitCommands": [
+                "brew update"
+            ],
+            "packageManagerInstallationCommand": "brew install"
+        },
+        "ubuntu": {
+            "identifier": "ubuntu",
+            "packageManagerInitCommands": [
+                "sudo apt-get update"
+            ],
+            "packageManagerInstallationCommand": "sudo apt-get -y install"
+        },
+        "fedora": {
+            "identifier": "fedora",
+            "packageManagerInitCommands": [],
+            "packageManagerInstallationCommand": "sudo dnf install -y"
+        }
+    },
+    "applications": [
+        {
+            "identifier": "python3.6",
+            "home": "{installationRoot}python{version}",
+            "homeExportVariable": "VIRTUAL_ENV",
+            "homeExportRequired": true,
+            "version": "3.6",
+            "versionExtractionCommand": "python3 --version",
+            "versionExtractionRegex": "(?<=Python )[0-9\\-._]+",
+            "pathExports": [
+                "bin"
+            ],
+            "requiredExecutables": [
+                "bin/python{version}",
+                "bin/pip{version}"
+            ],
+            "setupCommands": [],
+            "subInstaller": {
+                "installationCommand": "pip3.6 install",
+                "packageList": [
+                    "rdflib==4.2.1",
+                    "CherryPy==8.1.2",
+                    "bokeh==0.12.4",
+                    "bottle==0.11.6",
+                    "tornado==4.4.2",
+                    "requests==2.12.5",
+                    "pandas==0.19.2",
+                    "bokeh==0.12.4",
+                    "pcapy==0.11.1",
+                    "javalang==0.11.0",
+                    "janus==0.3.0",
+                    "websockets==3.4"
+                ]
+            },
+            "osx": {
+                "setupCommands": [
+                    "brew update",
+                    "brew install wget",
+                    "brew install python3",
+                    "pip3 install virtualenv",
+                    "virtualenv -p python3.6 {installationRoot}python3.6"
+                ],
+                "packageDependencies": []
+            },
+            "linux": {
+                "ubuntu": {
+                    "packageDependencies": [
+                        "software-properties-common",
+                        "curl",
+                        "wget",
+                        "vim",
+                        "subversion",
+                        "maven",
+                        "build-essential",
+                        "libpcap0.8",
+                        "libpcap0.8-dev",
+                        "virtualenv"
+                    ],
+                    "setupCommands": [
+                        "sudo add-apt-repository ppa:jonathonf/python-3.6 -y",
+                        "sudo apt-get update",
+                        "sudo apt-get -y install python3.6 python3.6-dev",
+                        "virtualenv -p python3.6 {installationRoot}python3.6",
+                        "sudo setcap cap_net_raw+eip {installationRoot}python3.6/bin/python3.6"
+                    ]
+                },
+                "fedora": {
+                    "packageDependencies": [
+                        "python3",
+                        "python3-devel",
+                        "gcc-c++",
+                        "python3-virtualenv",
+                        "libpcap",
+                        "libpcap-devel",
+                        "redhat-rpm-config"
+                    ],
+                    "setupCommands": [
+                        "virtualenv -p python3.6 {installationRoot}python3.6",
+                        "sudo setcap cap_net_raw+eip {installationRoot}python3.6/bin/python3.6"
+                    ]
+                }
+            }
+        },
+        {
+            "identifier": "java",
+            "version": "1.8",
+            "versionExtractionCommand": "java -version",
+            "versionExtractionRegex": "(?<=['java'|'openjdk'] version \")[0-9\\-._]+",
+            "homeExportVariable": "JAVA_HOME",
+            "homeExportRequired": true,
+            "pathExports": [
+                "bin"
+            ],
+            "requiredExecutables": [
+                "bin/java",
+                "bin/javac",
+                "bin/jar"
+            ],
+            "packageDependencies": [],
+            "setupCommands": [],
+            "osx": {
+                "home": "/Library/Java/JavaVirtualMachines/jdk*jdk/contents/Home/",
+                "setupCommands": [
+                    "brew cask install java"
+                ]
+            },
+            "linux": {
+                "ubuntu": {
+                    //                    "home": "/usr/lib/jvm/java-8-oracle",
+                    //                    "setupCommands": [
+                    //                        "sudo apt-get update",
+                    //                        "sudo apt-get -y install software-properties-common",
+                    //                        "sudo add-apt-repository -y ppa:webupd8team/java",
+                    //                        "sudo apt-get update",
+                    //                        "echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections",
+                    //                        "sudo apt-get install -y oracle-java8-installer"
+                    //                    ]
+                    "home": "/usr/lib/jvm/java-8-openjdk-amd64",
+                    "packageDependencies": [
+                        "openjdk-8-jdk-headless"
+                    ]
+                },
+                "fedora": {
+                    "home": "/usr/lib/jvm/java-1.8.0-openjdk*",
+                    "setupCommands": [],
+                    "packageDependencies": [
+                        "java-1.8.0-openjdk-devel"
+                    ]
+                }
+            }
+        },
+        {
+            "identifier": "android-sdk",
+            "home": "{installationRoot}android-sdk",
+            "homeExportVariable": "ANDROID_HOME",
+            "homeExportRequired": true,
+            "packageDependencies": [],
+            "pathExports": [
+                "tools/bin",
+                "emulator",
+                "platform-tools"
+            ],
+            "requiredExecutables": [
+                "tools/bin/sdkmanager",
+                "tools/bin/avdmanager"
+            ],
+            "setupCommands": [],
+            "subInstaller": {
+                "installationCommand": "sdkmanager --verbose",
+                "packageList": [
+                    "tools",
+                    "platform-tools",
+                    "build-tools;25.0.2",
+                    "platforms;android-21",
+                    "platforms;android-23",
+                    "extras;google;google_play_services",
+                    "extras;android;m2repository",
+                    "extras;google;m2repository",
+                    "system-images;android-21;default;x86_64",
+                    "system-images;android-23;default;x86_64"
+                ]
+            },
+            "osx": {
+                "setupCommands": [
+                    "wget https://dl.google.com/android/repository/tools_r25.2.3-macosx.zip --directory-prefix {tempDirectory}",
+                    "mkdir {home}",
+                    "unzip {tempDirectory}tools_r25.2.3-macosx.zip -d {home}",
+                    "mkdir {home}/licenses",
+                    "echo '\n8933bad161af4178b1185d1a37fbf41ea5269c55' > {home}/licenses/android-sdk-license"
+                ]
+            },
+            "linux": {
+                "ubuntu": {
+                    "setupCommands": [
+                        "sudo dpkg --add-architecture i386",
+                        "sudo apt-get -y update",
+                        "sudo apt-get -y install unzip libc6:i386 qemu libncurses5:i386 libstdc++6:i386 lib32z1 libpulse0 libx11-6:i386 libx11-6 libgl1-mesa-glx",
+                        "wget https://dl.google.com/android/repository/tools_r25.2.3-linux.zip --directory-prefix {tempDirectory}",
+                        "mkdir {home}",
+                        "unzip {tempDirectory}/tools_r25.2.3-linux.zip -d {home}",
+                        "mkdir {home}/licenses",
+                        "echo '\n8933bad161af4178b1185d1a37fbf41ea5269c55' > {home}/licenses/android-sdk-license",
+                        "sudo adduser ${USER} kvm"
+                    ]
+                },
+                "fedora": {
+                    "packageDependencies": [
+                        "glibc.i686",
+                        "glibc-devel.i686",
+                        "libstdc++.i686",
+                        "zlib-devel.i686",
+                        "ncurses-devel.i686",
+                        "libX11-devel.i686",
+                        "libXrender.i686",
+                        "libXrandr.i686",
+                        "ant",
+                        "ncurses-compat-libs",
+                        "expect"
+                    ],
+                    "setupCommands": [
+                        "wget https://dl.google.com/android/repository/tools_r25.2.3-linux.zip --directory-prefix {tempDirectory}",
+                        "mkdir {home}",
+                        "unzip {tempDirectory}/tools_r25.2.3-linux.zip -d {home}",
+                        "mkdir {home}/licenses",
+                        "echo '\n8933bad161af4178b1185d1a37fbf41ea5269c55' > {home}/licenses/android-sdk-license",
+                        "sudo usermod -a -G kvm ${USER}"
+                    ]
+                }
+            }
+        },
+        {
+            "identifier": "fuseki",
+            "version": "2.3.1",
+            "home": "{installationRoot}fuseki",
+            "versionExtractionCommand": "fuseki-server --version",
+            "versionExtractionRegex": "(?=.*\\nFuseki:\\s)(?<=VERSION:\\s)[0-9.]+",
+            "homeExportVariable": "FUSEKI_HOME",
+            "homeExportRequired": true,
+            "pathExports": [],
+            "packageDependencies": [],
+            "requiredExecutables": [
+                "fuseki-server"
+            ],
+            "setupCommands": [
+                "wget http://archive.apache.org/dist/jena/binaries/apache-jena-fuseki-{version}.tar.gz --directory-prefix {tempDirectory}",
+                "tar xvzf {tempDirectory}/apache-jena-fuseki-{version}.tar.gz -C {tempDirectory}",
+                "mv {tempDirectory}/apache-jena-fuseki-{version} {home}"
+            ]
+        },
+        {
+            "identifier": "gradle",
+            "version": "3.4.1",
+            "home": "{installationRoot}gradle",
+            "versionExtractionCommand": "gradle --version",
+            "versionExtractionRegex": "(?=\\-*)(?<=\nGradle\\s)[0-9.]+",
+            "pathExports": [
+                "bin"
+            ],
+            "requiredExecutables": [
+                "bin/gradle"
+            ],
+            "homeExportVariable": "GRADLE_HOME",
+            "homeExportRequired": true,
+            "packageDependencies": [],
+            "setupCommands": [
+                "wget https://services.gradle.org/distributions/gradle-{version}-bin.zip --directory-prefix {tempDirectory}",
+                "unzip {tempDirectory}/gradle-{version}-bin.zip -d {installationRoot}",
+                "mv {installationRoot}gradle-{version} {home}"
+            ],
+            "linux": {
+                "ubuntu": {
+                    "packageDependencies": [
+                        "unzip"
+                    ]
+                }
+            }
+        },
+        {
+            "identifier": "maven",
+            "home": "{installationRoot}apache-maven",
+            "pathExports": [
+                "bin"
+            ],
+            "requiredExecutables": [
+                "bin/mvn"
+            ],
+            "homeExportRequired": false,
+            "setupCommands": [
+                "wget http://www-us.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz --directory-prefix {tempDirectory}",
+                "tar xvzf {tempDirectory}apache-maven-3.3.9-bin.tar.gz -C {installationRoot}",
+                "mv {installationRoot}/apache-maven-3.3.9 {home}"
+            ],
+            "packageDependencies": []
+        },
+        {
+            "identifier": "z3",
+            "version": "4.4.1",
+            "home": "{installationRoot}z3",
+            "versionExtractionCommand": "z3 --version",
+            "versionExtractionRegex": "(?<=Z3 version )[0-9.]+(?=.*)",
+            "pathExports": [
+                "bin"
+            ],
+            "requiredExecutables": [
+                "bin/z3"
+            ],
+            "homeExportRequired": false,
+            "packageDependencies": [],
+            "setupCommands": [],
+            "osx": {
+                "setupCommands": [
+                    "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-osx-10.11.zip --directory-prefix {tempDirectory}",
+                    "unzip {tempDirectory}/z3-{version}-x64-osx-10.11.zip -d {installationRoot}",
+                    "mv {installationRoot}z3-{version}-x64-osx-10.11 {home}"
+                ]
+            },
+            "linux": {
+                "ubuntu": {
+                    "setupCommands": [
+                        "sudo apt-get -y install unzip",
+                        "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-ubuntu-14.04.zip --directory-prefix {tempDirectory}",
+                        "unzip {tempDirectory}/z3-{version}-x64-ubuntu-14.04.zip -d {installationRoot}",
+                        "mv {installationRoot}z3-{version}-x64-ubuntu-14.04 {home}"
+                    ]
+                },
+                "fedora": {
+                    "setupCommands": [
+                        "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-debian-8.2.zip --directory-prefix {tempDirectory}",
+                        "unzip {tempDirectory}/z3-{version}-x64-debian-8.2.zip -d {installationRoot}",
+                        "mv {installationRoot}z3-{version}-x64-debian-8.2 {home}"
+                    ]
+                }
+            }
+        },
+        {
+            "identifier": "stack",
+            "pathExports": [],
+            "requiredExecutables": [
+                "stack"
+            ],
+            "homeExportRequired": false,
+            "packageDependencies": [],
+            "setupCommands": [],
+            "osx": {
+                "setupCommands": [
+                    "brew update",
+                    "brew install haskell-stack"
+                ]
+            },
+            "linux": {
+                "packageDependencies": [
+                    "haskell-platform"
+                ],
+                "setupCommands": [
+                    "wget -qO- https://get.haskellstack.org/ | sh"
+                ]
+            }
+        }
+    ]
+}

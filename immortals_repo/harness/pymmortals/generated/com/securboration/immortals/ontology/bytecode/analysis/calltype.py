@@ -1,0 +1,10 @@
+from enum import Enum
+
+
+# noinspection PyPep8Naming
+class CallType(Enum):
+    INVOKE_SPECIAL = 'INVOKE_SPECIAL'
+    INVOKE_VIRTUAL = 'INVOKE_VIRTUAL'
+    INVOKE_STATIC = 'INVOKE_STATIC'
+    INVOKE_INTERFACE = 'INVOKE_INTERFACE'
+    INVOKE_DYNAMIC = 'INVOKE_DYNAMIC'

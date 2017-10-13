@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="app_name">ATAKLite</string>
+  <string name="hello_world">Hello world!</string>
+  <string name="action_settings">Settings</string>
+  <string name="pref_server_config_title">TakServer Configuration</string>
+  <string name="pref_server_config_host_title">Host</string>
+  <string name="pref_server_config_host_summary">IPV4 Address of TakServer</string>
+  <string name="title_activity_settings">Settings</string>
+
+  <string name="main_current_coordinates">My Current Coordinates: (%1$s, %2$s)</string>
+  <string name="main_my_callsign">My Callsign: %1$s</string>
+  <string name="main_user_list_callsign">Callsign: %1$s</string>
+  <string name="main_user_list_location_report_count">Locations: %1$d</string>
+  <string name="main_user_list_image_reports">Images: %1$d</string>
+  <string name="main_save_transaction_history">Save History</string>
+  <string name="main_load_transaction_history">Load History</string>
+
+  <string name="pref_server_config_port_title">Port</string>
+  <string name="pref_server_config_port_summary">TakServer TCP Port</string>
+
+  <string name="pref_server_config_sa_service_state_summary">Situation Awareness (SA) Service Enabled</string>
+  <string name="pref_server_config_sa_service_state_title">SA Service Enabled</string>
+
+  <string name="pref_client_config_id_title">Client ID</string>
+  <string name="pref_client_config_id_summary">Unique client ID</string>
+
+  <string name="pref_client_test_settings_title">Test Settings</string>
+  <string name="pref_auto_image_send_title">Automatically Send Images</string>
+  <string name="pref_auto_image_send_frequency_title">Image Send Frequency In Milliseconds</string>
+
+  <!--Keys used for accessing preference storage. Modifying text string will cause compatibility issues!!-->
+  <string name="key_pref_server_config_title">pref_server_config_title</string>
+  <string name="key_pref_server_config_host">pref_server_config_host</string>
+  <string name="key_pref_server_config_port">pref_server_config_port</string>
+  <string name="key_pref_server_config_sa_service_state">pref_server_config_sa_service_state</string>
+  <string name="key_pref_client_config_id">pref_client_config_id</string>
+
+</resources>

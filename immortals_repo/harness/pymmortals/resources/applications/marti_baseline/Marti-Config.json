@@ -1,0 +1,27 @@
+{
+  "analyticsConfig" : {
+    // The Target.
+    // Options supported:
+    //    "DEFAULT" - The default platform analytics, Which is Log.i("ImmortalsAnalytics", <data.) in this case.
+    //    "STDOUT" - Standard Output
+    //    "NET_LOG4J - Log4j server. If selected, a url and port must be specified.
+    "target" : "DEFAULT",
+    // The verbosity of the logging
+    // Options supported:
+    //    "Metadata" - Bare event data such as event identifier, source, and remote source
+    //    "Data" - Bare event data with the associated object (such as coordinates) serialized to JSON, if any.
+    "verbosity" : "Data",
+    // The URL for network logging targets
+    "url" : "127.0.0.1",
+    // The port for network logging targets
+    "port" : 7707
+  },
+  "storageDirectory": "storage",
+  "postGreSqlConfig": {
+        "enabled": false,
+        "serverName": "localhost",
+        "serverPort": 5432,
+        "serverUsername": "immortals",
+        "serverPassword": "immortals"
+  }
+}

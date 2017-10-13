@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.securboration</groupId>
+	<artifactId>immortals</artifactId>
+	<packaging>pom</packaging>
+	<version>r2.0.0</version>
+	<name>IMMoRTALS system</name>
+	<url>http://www.securboration.com</url>
+
+	<dependencies></dependencies>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<repo.url>https://dsl-external.bbn.com/svn/immortals/trunk</repo.url>
+		<immortals.version>r2.0.0</immortals.version>
+		<immortals-lib.version>0.0.3</immortals-lib.version>
+		<immortals-ns>http://darpa.mil/immortals/ontology</immortals-ns>
+		
+		<!-- 
+		Every module in the project should override this property 
+		-->
+		<root-path>.</root-path>
+		
+		<!-- 
+		ALL dependency library versions should be defined here (i.e., no child
+		POM should contain an explicit version number for any dependency) 
+		-->
+		
+		
+		
+		<!-- ASM provides bytecode analysis/instrumentation functionality -->
+		<asm.version>5.0.4</asm.version>
+		
+		<!-- general purpose dependencies for file IO, configuration, etc. -->
+		<commons-compress.version>1.9</commons-compress.version>
+		<commons-io.version>2.4</commons-io.version>
+		<commons-lang.version>3.6</commons-lang.version>
+		
+		<!-- gradle -->
+		<gradle.version>3.4.1</gradle.version>
+		<groovy.version>2.4.10</groovy.version>
+		
+		<!-- javaparser -->
+		<javaparser.version>2.5.1</javaparser.version>
+		
+		<!-- jena -->
+		<jena.version>3.0.0</jena.version>
+		
+		<json.version>20160212</json.version>
+		
+		<!-- maven plugin development -->
+		<maven-plugin-api.version>3.3.9</maven-plugin-api.version>
+		<maven-plugin-annotations.version>3.4</maven-plugin-annotations.version>
+		
+		
+		<jstl.version>1.2</jstl.version>
+		<spring.version>4.1.7.RELEASE</spring.version>
+		<spring-boot.version>1.2.6.RELEASE</spring-boot.version>
+		<jackson.version>2.6.1</jackson.version>
+		<jersey-container-servlet.version>2.10.1</jersey-container-servlet.version>
+		<servlet.version>3.1.0</servlet.version>
+		<junit.version>4.12</junit.version>
+		<log4j2.version>2.0.1</log4j2.version>
+		<tomcat.version>8.0.26</tomcat.version>
+		
+		
+		<!-- plugin properties -->
+		<shade-plugin.version>2.4.3</shade-plugin.version>
+		<maven-plugin.version>3.3</maven-plugin.version>
+		<compiler-plugin.version>3.1</compiler-plugin.version>
+		<install-plugin.version>2.5.2</install-plugin.version>
+	</properties>
+	
+	<repositories>
+		<repository>
+			<id>gradle-releases</id>
+			<url>https://repo.gradle.org/gradle/libs-releases-local/</url>
+		</repository>
+	</repositories>
+
+	<modules>
+		<!-- toolchain: tools for generating ontologies, annotation API -->
+		<module>toolchain/object-to-triples</module>
+		<!--<module>toolchain/maven-plugin</module>-->
+		<module>toolchain/config</module>
+		<module>toolchain/uri-generator</module>
+		<module>toolchain/annotation-parser</module>
+		
+		<!-- gradle plugin -->
+		<module>toolchain/project-to-triples</module>
+		
+		<!-- ingest: tools for ingesting knowledge -->
+		<module>ingest/deployment-ingestor</module>
+		<module>ingest/repository-ingestor</module>
+		
+		<!-- vocabulary: code bindings for the vocabulary in the ontology -->
+		<module>vocabulary/ontology-pojo-annotations</module>
+		<module>vocabulary/ontology-vocab-instances</module>
+		<module>vocabulary/ontology-generate</module>
+		<module>vocabulary/ontology-instances-generate</module>
+		<module>vocabulary/ontology-package</module>
+		<module>vocabulary/dsl-generate</module>
+		<module>vocabulary/uris-generate</module>
+		<module>vocabulary/uris-generate-immortals</module>
+		<module>vocabulary/ontology-vocab-aggregated</module>
+		
+		<module>vocabulary/ontology-vocab-domains/bytecode</module>
+		<module>vocabulary/ontology-vocab-domains/core</module>
+		<module>vocabulary/ontology-vocab-domains/sa</module>
+		<module>vocabulary/ontology-vocab-domains/cp</module>
+		<module>vocabulary/ontology-vocab-domains/scratchpad</module>
+		<module>vocabulary/ontology-vocab-domains/java-project</module>
+		<module>vocabulary/ontology-vocab-domains/assertional</module>
+		<module>vocabulary/ontology-vocab-domains/fm</module>
+		<module>vocabulary/ontology-vocab-domains/analysis</module>
+		<module>vocabulary/ontology-vocab-domains/functional</module>
+		<module>vocabulary/ontology-vocab-domains/resources</module>
+		<module>vocabulary/ontology-vocab-domains/inference</module>
+		
+		<!-- mechanisms for interacting with the knowledge repository -->
+		<module>knowledge-repo/repository-api</module>
+		<module>knowledge-repo/repository-service</module>
+		
+		<!-- map objects to semantic constructs -->
+		<module>toolchain/semantic-object-mapper</module>
+		
+		<!-- tests -->
+		<module>tests/test-das-workflow</module>
+		
+		<!-- generates Java classes containing constants linked to ontology URIs for consumption by WebGME -->
+		<!--<module>vocabulary/uris-generate-webgme</module>-->
+		
+		<!-- ontology POJO interface -->
+		<module>toolchain/ontology-pojo-api</module>
+		
+		<!-- scratchpads -->
+		<module>scratchpad/scratchpad-spec</module>
+		
+		<!-- experimental -->
+		<!--<module>toolchain/experimental</module>-->
+		
+		<!-- visualization service -->
+		<module>toolchain/visualization/ontograph</module>
+		
+		<!-- bytecode analysis -->
+		<module>toolchain/bytecode-analyzer</module>
+		
+		<module>toolchain/constraint-analysis</module>
+		
+		<!-- exaples -->
+		<module>examples/atak-example</module>
+		
+	</modules>
+
+	<profiles>
+		
+		<profile>
+			<id>addHeaders</id>
+			<activation>
+				<property>
+					<name>addHeaders</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.mycila</groupId>
+						<artifactId>license-maven-plugin</artifactId>
+						<version>2.11</version>
+						<configuration>
+							<header>${root-path}/etc/licenses/securboration.lic</header>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>format</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>removeHeaders</id>
+			<activation>
+				<property>
+					<name>removeHeaders</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.mycila</groupId>
+						<artifactId>license-maven-plugin</artifactId>
+						<version>2.11</version>
+						<configuration>
+							<header>${root-path}/etc/licenses/securboration.lic</header>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>remove</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>owaspCheck</id>
+			<activation>
+				<property>
+					<name>owaspCheck</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.owasp</groupId>
+						<artifactId>dependency-check-maven</artifactId>
+						<version>1.4.5</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+	</profiles>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.14.1</version>
+				<configuration>
+					<testFailureIgnore>false</testFailureIgnore>
+					<trimStackTrace>false</trimStackTrace>
+				</configuration>
+			</plugin>
+
+			<!--
+			NOTE: Java 8 compliance level is *REQUIRED* due to extensive
+			use of functional interfaces/lambdas and other Java 8 features
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler-plugin.version}</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-config-files</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/target/classes</outputDirectory>
+							<resources>
+								<resource>
+									<filtering>false</filtering>
+									<directory>${project.parent.basedir}/logger-default</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>

@@ -1,0 +1,238 @@
+[
+    {
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 24013
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c1000irr24013bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "10000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 16013
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c1000irr16013bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 8013
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c1000irr8013bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 513
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c1000irr513bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 547
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c60000irr547bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 413
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c60000irr413bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 280
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c60000irr280bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 147
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c60000irr147bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 22
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": true
+        },
+        "scenarioIdentifier": "2c60000irr22bw",
+        "submissionFlow": "challenge"
+    }
+]

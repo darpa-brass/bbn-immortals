@@ -1,0 +1,13 @@
+{
+  // The identifier of the DFU class
+//  "classPackageIdentifier" : "mil.darpa.immortals.dfus.crypto.jca.JcaAesEncryptionOutputStream",
+  "classPackageIdentifier" : "mil.darpa.immortals.dfus.crypto.jca.JcaBlowfishEncryptionOutputStream",
+  "aspect" : "com.securboration.immortals.ontology.functionality.alg.encryption.AspectCipherEncrypt",
+  "functionalityBeingPerformed" : "com.securboration.immortals.ontology.functionality.alg.encryption.Cipher",
+  "constructorParameterMap": {
+    "mil.darpa.immortals.annotation.dsl.ontology.functionality.alg.encryption.EncryptionKey": "fGPgAeiHCivZqzJnESrasQ==",
+    "mil.darpa.immortals.annotation.dsl.ontology.functionality.Output" : "$PROVIDED_BY_APPLICATION!"
+  },
+  "initializationParameterMap": {},
+  "executionParameterMap": {}
+}

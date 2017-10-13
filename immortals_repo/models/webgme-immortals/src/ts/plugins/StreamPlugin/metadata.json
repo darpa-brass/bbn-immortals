@@ -1,0 +1,82 @@
+{
+  "id": "StreamPlugin",
+  "name": "Stream Processing Plugin",
+  "version": "0.1.0",
+  "description": "This is a external store synchronizer, it posts topics via some streaming tool.",
+  "icon": {
+    "class": "glyphicon glyphicon-cog",
+    "src": ""
+  },
+  "disableServerSideExecution": false,
+  "disableBrowserSideExecution": true,
+  "writeAccessRequired": true,
+  "configStructure": [
+    {
+      "name": "schematicVersion",
+      "displayName": "Schematic Version",
+      "description": "Specify the type and version to be used.",
+      "value": "model-flat:1.0.0",
+      "valueType": "string",
+      "valueItems": [
+        "schema-tree:1.0.0",
+        "schema-flat:1.0.0",
+        "model-tree:1.0.0",
+        "model-flat:1.0.0"
+      ]
+    },
+    {
+      "name": "syntacticVersion",
+      "displayName": "Syntactic Version",
+      "description": "Specify the type and version to be used for output.",
+      "value": "ttl:1.0.0",
+      "valueType": "string",
+      "valueItems": [
+        "json:1.0.0",
+        "ttl:1.0.0"
+      ]
+    },
+    {
+      "name": "deliveryUrl",
+      "displayName": "Delivery URL",
+      "discription": "Host IP address or name: for stream processing server.",
+      "regex": "^[0-9a-zA-Z:\/\\.-_]+$",
+      "regexMessage": "Name can only contain digits, latin characters, slash, dot, hyphen and underscore!",
+      "description": "What is the ip address or name of the zookeeper host.",
+      "value": "kafka://127.0.0.1:9092",
+      "valueType": "string",
+      "readOnly": false
+    },
+    {
+      "name": "deliveryType",
+      "displayName": "Delivery Type",
+      "description": "Which delivery mechanism? kafka or dummy?",
+      "readOnly": false,
+      "value": "kafka:001",
+      "valueType": "string",
+      "valueItems": [
+        "kafka:001",
+        "dummy"
+      ]
+    },
+    {
+      "name": "branch",
+      "displayName": "Branch",
+      "description": "extract model indicated by branch",
+      "value": "master",
+      "valueType": "string",
+      "readOnly": false
+    },
+    {
+      "name": "grainSize",
+      "displayName": "Grain Size",
+      "description": "how fine should the commits be?",
+      "readOnly": false,
+      "value": "coarse",
+      "valueType": "string",
+      "valueItems": [
+        "coarse",
+        "fine"
+      ]
+    }
+  ]
+}

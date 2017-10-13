@@ -1,0 +1,41 @@
+1) Download and install VoltDB (https://github.com/VoltDB/voltdb).
+
+Go to folder where you want to download VoltDB.
+Run commands:
+git init
+git pull https://github.com/VoltDB/voltdb.git
+ant
+
+
+2) Set environment variables.
+
+Set VOLTDB_HOME environment variable to installation directory of VoltDB.
+Add $VOLTDB_HOME/bin to PATH environment variable.
+
+
+3) Start VoltDB database.
+
+Go to Castor/voltdb7 folder.
+Run command: ant (add & if want to run on background)
+
+
+4) Run Castor over UW-CSE database under schema 1.
+
+Go to uwcse folder.
+Run command to create UW-CSE schema and load data: sh load-schema1.sh
+
+Go to uwcse/target-professorStudentCoauthor.
+Run command: sh run-schema1.sh
+
+
+5) Stop VoltDB.
+
+Go to Castor/voltdb7 folder.
+Run command: ant stop
+
+
+Note 1: To learn over a different schema, stop the database, go to step 3, and use the new schema in step 4.
+
+Note 2: To learn other target relations, go to their corresponding directories in step 4 and follow same procedure.
+
+Note 3: Target relation advisedBy (in folder target-advisedby) is set to run for 5 folds, which replicates the results in "Schema Independent Relational Learning" (http://dl.acm.org/citation.cfm?id=3035923).

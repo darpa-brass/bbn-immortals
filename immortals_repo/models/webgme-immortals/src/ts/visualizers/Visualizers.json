@@ -1,0 +1,8 @@
+[
+  {
+    "id": "Cytoscape",
+    "title": "Cytoscape",
+    "panel": "panels/cytoscape/CytoscapePanel",
+    "DEBUG_ONLY": false
+  }
+]

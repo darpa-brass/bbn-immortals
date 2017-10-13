@@ -1,0 +1,26 @@
+// This file is required to use simulated location providers.
+//
+// It should be placed in your android home directory (The one with the DCIM, Android, Movies, Music, etc. folders).
+// "adb push <this file> /sdcard/" is one way of doing so
+//
+// The following filenames are supported and corellate to their similarly identified Location Providers:
+// "LocationProviderAndroidGpsBuiltIn.json"
+// "LocationProviderBluetoothGpsSimulated.json"
+// "LocationProviderManualSimulated.json"
+// "LocationProviderSaasmSimulated.json"
+// "LocationProviderUsbGpsSimulated.json"
+{
+  // The initial latitude of the provider
+  //"initialLatitude": 0.0000,
+  // The initial longitude of the provider
+  //"initialLongitude": 0.0000,
+  // A country to start in. If "initialLatitude" and "initialLongitude" are commented out or removed and this is set, an
+  //  arbitrary location within the specified country will be used as the starting point.
+  // Currently valid countries (case-sensitive): "UnitedStates", "Australia", "Argentina", "Russia"
+  "country" : "UnitedStates",
+  // The direction the "GPS" should move
+  // Valid values (case-sensitive): "North", "South", "East", "West"
+  "direction": "South",
+  // The rate in degrees per second the "GPS" should move
+  "degreeChangePerSecond": 0.001
+}

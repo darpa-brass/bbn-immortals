@@ -1,0 +1,19 @@
+{
+    "applicationIdentifier": "marti",
+    "instanceIdentifier": "martiRouter",
+    "deploymentPlatformEnvironment": "java_local",
+    "buildRoot": "applications/server/Marti/",
+    "executableFile": "applications/server/Marti/Marti-immortals.jar",
+    "applicationDeploymentDirectory": "{deploymentDirectory}{instanceIdentifier}/",
+    "filesToCopy": [
+        {
+            "sourceFilepath": "harness/pymmortals/resources/applications/marti_baseline/Marti-Config.json",
+            "targetFilepath": "{applicationDeploymentDirectory}Marti-Config.json"
+        }
+    ],
+    "filesForCleanup": [
+        "{deploymentDirectory}{instanceIdentifier}"
+    ],
+    "configurationOverrides": [
+    ]
+}

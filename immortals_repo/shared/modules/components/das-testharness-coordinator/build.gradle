@@ -1,0 +1,49 @@
+apply plugin: immortals.CoreDefinitions
+apply plugin: immortals.Java8Component
+apply plugin: immortals.PublishJavaDfu
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "IMMoRTALS-DAS-TestHarness-Coordinator",
+                "Main-Class": "mil.darpa.immortals.core.das.CoordinatorMain"
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+task(copyArtifacts) {
+    doLast {
+        copy {
+            from('build/libs/') {
+                include '*.jar'
+            }
+            into('./')
+        }
+    }
+}
+
+jar.finalizedBy(copyArtifacts)
+
+dependencies {
+    compile project(':components:analytics-log4j-client')
+    compile project(':components:websockets')
+    compile project(':components:bundles:product-analysis-bundle-base')
+    compile project(':components:bundles:product-validator-bundle')
+    compile project(':components:build-bridge')
+    compile project(':components:source-composer')
+    compile project(':datatypes:Coordinates')
+    compile 'io.airlift:airline:0.7'
+    compile "org.slf4j:slf4j-api:${project.slf4jVersion}"
+    compile "org.slf4j:slf4j-log4j12:${project.slf4jVersion}"
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+    compile 'ch.qos.logback:logback-core:1.1.7'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'javax.json:javax.json-api:1.0'
+    compile 'org.glassfish:javax.json:1.0.4'
+    compile 'org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.26'
+    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.26'
+    compile 'org.glassfish.jersey.inject:jersey-hk2:2.26'
+    compile 'org.osgi:org.osgi.core:4.3.0'
+    testCompile 'junit:junit:4.11'
+}

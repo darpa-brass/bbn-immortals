@@ -1,0 +1,8 @@
+{
+  "controlPointFormat" : "InputStream",
+  "javaType" : "String",
+  "SemanticTypeUnit" : "GeneralText",
+  "dataTransferUnitsPerBurst" : 1000,
+  "dataTransferBurstCount" : 10,
+  "testIterations" : 1
+}

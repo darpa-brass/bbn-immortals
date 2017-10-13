@@ -1,0 +1,20 @@
+## systemd Config
+
+# webgme.service
+# goes to /usr/local/lib/systemd/system/
+#
+
+[Unit]
+Description=WebGME Listen Socket"
+# Documentation=https://webgme.org
+
+[Socket]
+ListenStream=3000
+ListenStream=0.0.0.0:3000
+Service=webgme.service
+
+# man systemd.special
+# Services that can be socket-activated shall add Wants=
+# dependencies to this unit for their socket unit during installation.
+[Install]
+WantedBy=sockets.target

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>com.securboration</groupId>
+	<artifactId>immortals-example-maven-plugin</artifactId>
+	<packaging>maven-plugin</packaging>
+	<version>r1.0.0</version>
+	
+	<name>maven plugin example</name>
+	<url>https://dsl-external.bbn.com/tracsvr/immortals</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>${maven-plugin-api.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-core</artifactId>
+			<version>${maven-plugin-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-debug-all</artifactId>
+			<version>${asm.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>apache-jena-libs</artifactId>
+			<version>${jena.version}</version>
+			<type>pom</type>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-core</artifactId>
+			<version>${jena.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.maven.plugin-tools</groupId>
+			<artifactId>maven-plugin-annotations</artifactId>
+			<version>${maven-plugin-annotations.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<root-path>.</root-path>
+		
+		<!--
+		ASM provides bytecode instrumentation functionality
+		-->
+		<asm.version>5.0.4</asm.version>
+		
+		<commons-io.version>2.4</commons-io.version>
+		<commons-lang.version>3.4</commons-lang.version>
+		
+		<jena.version>3.0.0</jena.version>
+		<maven-plugin-api.version>3.3.9</maven-plugin-api.version>
+		<maven-plugin-annotations.version>3.4</maven-plugin-annotations.version>
+	</properties>
+
+
+	<repositories>
+		<!-- blank -->
+	</repositories>
+
+	<profiles>
+		<!-- blank -->
+	</profiles>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+				  <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+				</configuration>
+				<executions>
+					<execution>
+						<id>mojo-descriptor</id>
+						<goals>
+						  <goal>descriptor</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- 
+			Creates an "uberjar" artifact with any transitive dependencies extracted and 
+			flattened into a single JAR structure alongside the application classes.
+			
+			This way, users of the plugin don't have to these dependencies manually.
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.4.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<excludes>
+									<!-- empty for now -->
+								</excludes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+		</plugins>
+
+	</build>
+
+</project>

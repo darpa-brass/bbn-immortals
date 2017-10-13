@@ -1,0 +1,542 @@
+[
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 32013
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c1000irr32013bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 24013
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c1000irr24013bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 16013
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c1000irr16013bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 8013
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c1000irr8013bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 513
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c1000irr513bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 547
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c60000irr547bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 413
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c60000irr413bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 280
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c60000irr280bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 147
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c60000irr147bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 2,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 22
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "2c60000irr22bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 6,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 288116
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "6c1000irr288116bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 6,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 216116
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "6c1000irr216116bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 6,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 144116
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "6c1000irr144116bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 6,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 72116
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "6c1000irr72116bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 6,
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 4616
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "6c1000irr4616bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 6,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 4916
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "6c60000irr4916bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 6,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 3716
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "6c60000irr3716bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 6,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 2516
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "6c60000irr2516bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 6,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 1316
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "6c60000irr1316bw",
+        "submissionFlow": "challenge"
+    },
+    {
+        "androidEmulatorQemuParameters": [],
+        "deploymentModel": {
+            "clients": [
+                {
+                    "count": 6,
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "60000",
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": []
+                }
+            ],
+            "server": {
+                "bandwidth": 191
+            }
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {},
+        "scenarioIdentifier": "6c60000irr191bw",
+        "submissionFlow": "challenge"
+    }
+]

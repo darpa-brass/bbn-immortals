@@ -1,0 +1,218 @@
+[
+    {
+        "scenarioIdentifier": "p2cp1baselineA",
+        "submissionModel": null,
+        "expectedResult": "Valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "BaselineA",
+        "perturbationScenario": "P2CP1DatabaseSchema"
+    },
+    {
+        "scenarioIdentifier": "p2cp1baselineB",
+        "submissionModel": {
+            "martiServerModel": {
+                "requirements": {
+                    "postgresqlPerturbation": {
+                        "tables": [
+                            {
+                                "columns": [
+                                    "CotEvent_SourceId",
+                                    "CotEvent_How",
+                                    "CotEvent_ServerTime",
+                                    "Position_PointCE",
+                                    "Position_PointLE",
+                                    "Position_TileX",
+                                    "Position_Longitude",
+                                    "Position_Latitude"
+                                ]
+                            },
+                            {
+                                "columns": [
+                                    "Position_PointHae",
+                                    "CotEvent_Detail",
+                                    "Position_TileY",
+                                    "CotEvent_CotType"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "expectedResult": "Valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "BaselineB",
+        "perturbationScenario": "P2CP1DatabaseSchema"
+    },
+    {
+        "scenarioIdentifier": "p2cp1challenge",
+        "submissionModel": {
+            "martiServerModel": {
+                "requirements": {
+                    "postgresqlPerturbation": {
+                        "tables": [
+                            {
+                                "columns": [
+                                    "CotEvent_SourceId",
+                                    "CotEvent_How",
+                                    "CotEvent_ServerTime",
+                                    "Position_PointCE",
+                                    "Position_PointLE",
+                                    "Position_TileX",
+                                    "Position_Longitude",
+                                    "Position_Latitude"
+                                ]
+                            },
+                            {
+                                "columns": [
+                                    "Position_PointHae",
+                                    "CotEvent_Detail",
+                                    "Position_TileY",
+                                    "CotEvent_CotType"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "expectedResult": "Valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "Challenge",
+        "perturbationScenario": "P2CP1DatabaseSchema"
+    },
+    {
+        "scenarioIdentifier": "p2cp2baselineA",
+        "submissionModel": null,
+        "expectedResult": "Valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "BaselineA",
+        "perturbationScenario": "P2CP2DataInTransit"
+    },
+    {
+        "scenarioIdentifier": "p2cp2baselineB",
+        "submissionModel": {
+            "globalModel": {
+                "requirements": {
+                    "dataInTransit": {
+                        "securityStandard": "NIST800Dash171"
+                    }
+                }
+            }
+        },
+        "expectedResult": "Valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "BaselineB",
+        "perturbationScenario": "P2CP2DataInTransit"
+    },
+    {
+        "scenarioIdentifier": "p2cp2challenge",
+        "submissionModel": {
+            "globalModel": {
+                "requirements": {
+                    "dataInTransit": {
+                        "securityStandard": "NIST800Dash171"
+                    }
+                }
+            }
+        },
+        "expectedResult": "Valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "Challenge",
+        "perturbationScenario": "P2CP2DataInTransit"
+    },
+    {
+        "scenarioIdentifier": "p2cp3baselineA",
+        "submissionModel": null,
+        "expectedResult": "Valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "BaselineA",
+        "perturbationScenario": "P2CP3LibraryOrPlatformUpgrade"
+    },
+    {
+        "scenarioIdentifier": "p2cp3baselineB",
+        "submissionModel": {
+            "atakLiteClientModel": {
+                "requirements": {
+                    "deploymentPlatformVersion": "Android23",
+                    "libraryUpgrade": {
+                        "libraryIdentifier": "ToBeDetermined",
+                        "libraryVersion": "1.3.3.7"
+                    },
+                    "partialLibraryUpgrade": {
+                        "libraryIdentifier": "ToBeDetermined",
+                        "libraryVersion": "1.3.3.7"
+                    }
+                }
+            },
+            "martiServerModel": {
+                "requirements": {
+                    "libraryUpgrade": {
+                        "libraryIdentifier": "ImageSaverLibrary",
+                        "libraryVersion": "2"
+                    },
+                    "partialLibraryUpgrade": {
+                        "libraryIdentifier": "Dom4jCot",
+                        "libraryVersion": "2"
+                    }
+                }
+            }
+        },
+        "expectedResult": "Valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "BaselineB",
+        "perturbationScenario": "P2CP3LibraryOrPlatformUpgrade"
+    },
+    {
+        "scenarioIdentifier": "p2cp3challenge",
+        "submissionModel": {
+            "atakLiteClientModel": {
+                "requirements": {
+                    "deploymentPlatformVersion": "Android23",
+                    "libraryUpgrade": {
+                        "libraryIdentifier": "ToBeDetermined",
+                        "libraryVersion": "1.3.3.7"
+                    },
+                    "partialLibraryUpgrade": {
+                        "libraryIdentifier": "ToBeDetermined",
+                        "libraryVersion": "1.3.3.7"
+                    }
+                }
+            },
+            "martiServerModel": {
+                "requirements": {
+                    "libraryUpgrade": {
+                        "libraryIdentifier": "ImageSaverLibrary",
+                        "libraryVersion": "2"
+                    },
+                    "partialLibraryUpgrade": {
+                        "libraryIdentifier": "Dom4jCot",
+                        "libraryVersion": "2"
+                    }
+                }
+            }
+        },
+        "expectedResult": "Valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "Challenge",
+        "perturbationScenario": "P2CP3LibraryOrPlatformUpgrade"
+    }
+]

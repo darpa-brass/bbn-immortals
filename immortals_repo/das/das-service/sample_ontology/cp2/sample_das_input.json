@@ -1,0 +1,47 @@
+{
+  "schema": "mission~update",
+  "version": "0.0.1",
+  "baseline": "cp2~baseline",
+  "name": "cp~baseline-1.0.0",
+
+  "comment": "This represents a perturbation to the baseline.
+  In general this should be easily converted into aset of selections and updates / replacements.
+  In this way the ",
+  "mission": {
+    "devices": [{
+      "amount": 10,
+      "execution_environ": "android~client",
+      "name": "Android Client"
+    }, {
+      "amount": 1,
+      "execution_environ": "atak~server",
+      "name": "ATAK Server"
+    }],
+    "PLI": {
+      "quantifier": "all",
+      "report_rate": {"min": 3}
+    },
+    "image": {
+      "quantifier": "all",
+      "report rate": 4,
+      "resolution": "1024x1290",
+      "grayscale": true
+    },
+    "functionalityPoints": [{
+      "missionFunctionalityUri": "<http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#LocationProvider~instance0>",
+      "propertyUris": ["<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps/properties#TrustedProperty>"]
+    }],
+    "resourceUris": [
+      "<http://darpa.mil/immortals/ontology/r2.0.0/resources#BluetoothResource>",
+      "<http://darpa.mil/immortals/ontology/r2.0.0/resources#UsbResource>",
+      "<http://darpa.mil/immortals/ontology/r2.0.0/resources#UserInterface>",
+      "<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#SaasmReceiver~instance0>",
+      "<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsSatellite>",
+      "<http://darpa.mil/immortals/ontology/r1.0.0/resources/GPSDevice>",
+      "<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsReceiver>",
+      "<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsReceiverUsb>",
+      "<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsReceiverBluetooth>",
+      "<http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsReceiverSaasm>"
+    ]
+  }
+}

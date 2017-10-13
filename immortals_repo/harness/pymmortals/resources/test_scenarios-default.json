@@ -1,0 +1,586 @@
+[
+    {
+        "submissionFlow": "challenge",
+        "expectedResult": "valid",
+        "scenarioIdentifier": "badTrustedLocations0",
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 20480
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "2000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "bluetooth",
+                        "internalGps",
+                        "userInterface",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": ["trustedLocations"]
+                }
+            ]
+        },
+        "androidEmulatorQemuParameters": [],
+        "rootConfigurationModifications": {}
+    },
+    {
+        "submissionFlow": "challenge",
+        "expectedResult": "valid",
+        "scenarioIdentifier": "badTrustedLocations1",
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 20480
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "2000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 2,
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface"
+                    ],
+                    "requiredProperties": ["trustedLocations"]
+                }
+            ]
+        },
+        "androidEmulatorQemuParameters": [],
+        "rootConfigurationModifications": {}
+    },
+    {
+        "scenarioIdentifier": "maxClientsMinIntervalBaseline",
+        "submissionFlow": "challenge",
+        "expectedResult": "valid",
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 2048000
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "60000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 6,
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface"
+                    ],
+                    "requiredProperties": ["trustedLocations"]
+                }
+            ]
+        },
+        "androidEmulatorQemuParameters": [],
+        "rootConfigurationModifications": {}
+    },
+    {
+        "scenarioIdentifier": "maxClientsMaxIntervalBaseline",
+        "submissionFlow": "challenge",
+        "expectedResult": "valid",
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 20480
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "1000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 6,
+                    "presentResources": [
+                        "bluetooth",
+                        "usb",
+                        "internalGps",
+                        "userInterface"
+                    ],
+                    "requiredProperties": ["trustedLocations"]
+                }
+            ]
+        },
+        "androidEmulatorQemuParameters": [],
+        "rootConfigurationModifications": {}
+        
+        //    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.presentResources=invalid",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "compass",
+//                        "internalGps"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "noSolution",
+//        "scenarioIdentifier": "clients.presentResources=none",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "all",
+//        "expectedResult": "NotApplicable",
+//        "scenarioIdentifier": "FailBandwidth",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 384
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "noSolution",
+//        "scenarioIdentifier": "server.bandwidth=0",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 0
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "noSolution",
+//        "scenarioIdentifier": "LLScenario0",
+//        "deploymentModel": {
+//            "clients": [
+//                {
+//                    "presentResources": [
+//                        "gpsSatellites",
+//                        "internalGps"
+//                    ],
+//                    "count": 6,
+//                    "imageBroadcastIntervalMS": 1020,
+//                    "latestSABroadcastIntervalMS": 1003,
+//                    "requiredProperties": []
+//                }
+//            ],
+//            "server": {
+//                "bandwidth": 9
+//            }
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.count-excessive",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "120000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.count=0",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 0,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.count=1",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 1,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.count=excessive",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 28,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.count=negative",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": -1,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.imageBroadcastIntervalMS=excessive",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "120000",
+//                    "latestSABroadcastIntervalMS": "",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.imageBroadcastIntervalMS=negative",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "-2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.imageBroadcastIntervalMS=tooLow",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "500",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.latestSABroadcastIntervalMS=excessive",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "120000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.latestSABroadcastIntervalMS=negative",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "-1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.latestSABroadcastIntervalMS=tooLow",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "100",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.presentResources=invalid",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "compass",
+//                        "internalGps"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "clients.requiredProperties=invalid",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 20480
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": [
+//                        "nahnah"
+//                    ]
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "server.bandwidth=excessive",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": 2048000000
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+//    },
+//    {
+//        "submissionFlow": "challenge",
+//        "expectedResult": "invalidSubmission",
+//        "scenarioIdentifier": "server.bandwidth=negative",
+//        "deploymentModel": {
+//            "server": {
+//                "bandwidth": -1
+//            },
+//            "clients": [
+//                {
+//                    "imageBroadcastIntervalMS": "2000",
+//                    "latestSABroadcastIntervalMS": "1000",
+//                    "count": 2,
+//                    "presentResources": [
+//                        "internalGps",
+//                        "gpsSatellites"
+//                    ],
+//                    "requiredProperties": []
+//                }
+//            ]
+//        },
+//        "androidEmulatorQemuParameters": [],
+//        "rootConfigurationModifications": {}
+    }
+]

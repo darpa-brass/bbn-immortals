@@ -1,0 +1,33 @@
+{
+    "formula": "(NumberOfClients*(PLIReportRate/60.0)*3.2) + (NumberOfClients*(ImageReportRate/60.0)*((((DefaultImageSize*1000000)*24)/15.0)/1000)) + ((NumberOfClients-1)*NumberOfClients*(PLIReportRate/60.0)*3.2)+ ((NumberOfClients-1)*NumberOfClients*(ImageReportRate/60.0)*((((DefaultImageSize*1000000)*24)/15.0)/1000))",
+    "resultUnit": "kbps",
+    "variableData": [
+        {
+            "variableIdentifier": "NumberOfClients",
+            "unit": "clients",
+            "minValue": 2,
+            "maxValue": 6,
+            "step": 1
+        },
+        {
+            "variableIdentifier": "PLIReportRate",
+            "unit": "reports/min",
+            "values": [60]
+        },
+        {
+            "variableIdentifier": "ImageReportRate",
+            "unit": "reports/min",
+            "minValue": 0,
+            "maxValue": 6,
+            "step": 0.01
+        },
+        {
+            "variableIdentifier": "DefaultImageSize",
+            "unit": "megapixels",
+            "values": [
+                0.015625,
+                5
+            ]
+        }
+    ]
+}

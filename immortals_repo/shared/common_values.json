@@ -1,0 +1,85 @@
+{
+    // The sustitution values in this surrounded by "${" and "}" Are parsed as GROOVY GStrings.
+    //
+    // It is highly recommended you include ${IMMORTALS_ROOT} in directories you would like to place things into as the
+    // target application directories are copied to a folder named after the augmentation sessionIentifier in "synthPath"
+    // prior to augmentation.
+    //
+    // The filler values in provided to the "valueMap" parameter within ${IMMORTALS_ROOT}/buildSrc/build.gradle and are
+    // dependent on the location of this project and environment variables.
+    //
+    //
+    // THe following list of directories are projects consuming the values in this file. A copy of this file with the 
+    // variables filled and a copy of the common.gradle file will be copied to each of these directories
+    // (relative to IMMORTALS_ROOT) so they can utilize immortals resources independently of their path (which changes
+    // due to augmented applications being copied prior to augmentation).
+    "commonValueConsumers": [
+        "shared",
+        "shared/modules",
+        "shared/modules/buildSrc",
+        "shared/modules/core",
+        "das/das-service",
+        "applications/client/ATAKLite",
+        "applications/client/CLITAK",
+        "applications/client/ConsumingPipeRunner",
+        "applications/client/CotDbApp",
+        "applications/client/SubstitutionRunner",
+        "applications/server/Marti"
+    ],
+    // The group identifier for immortals components
+    "rootGroup": "mil.darpa.immortals",
+    // The location of the repository to store published immortals modules (DFUs, converters, datatypes, etc.)
+    "localRepoPath": "${IMMORTALS_ROOT}/shared/IMMORTALS_REPO/",
+    "synthPath": "${IMMORTALS_ROOT}/PRODUCTS/",
+    "synthModulePath": "${synthPath}modules/",
+    "synthModuleDfuPath": "${synthPath}modules/dfus/",
+    "synthRepoPath": "${synthPath}IMMORTALS_REPO/",
+    // The location of the repository that stores external dependencies in the repo
+    "cacheRepoPath": "${IMMORTALS_ROOT}/shared/REMOTE_CACHE_REPO/",
+    // The default publish version for the client and server
+    "defaultSoftwarePublishVersion": "1.0-LOCAL",
+    // Note that none of these impact projects within the shared/modules project as it is separate.
+    "immortalsDependencyVersion": "+",
+    // The default immortals core library to grab.
+    "defaultImmortalsCoreDependencyVersion": "+",
+    // The default immortals library versions to grab. "+" indicates the latest
+    "defaultImmortalsDependencyVersion": "+",
+    // The location of the android SDK jar for projects that compile against it
+    "androidSDKJar": "${ANDROID_HOME}/platforms/android-21/android.jar",
+    // The Android SDK to compile with
+    "androidCompileSdkVersion": 21,
+    // The Android build tools to build with
+    "androidBuildToolsVersion": "25.0.2",
+    // The minimum Android version to publish for. Don't forget to update this in the AndroidManifest!
+    "androidMinSdkVersion": 21,
+    // The target Android version to publish for. Don't forget to update this in the AndroidManifest!
+    "androidTargetSdkVersion": 21,
+    // The default publish version for items that are maven repository-bound.
+    "defaultModulePublishVersion": "1.0-LOCAL",
+    // The java source compatibility to use for applications and DFUs (1.7 is necessary due to analysis limitations)
+    "dfuAndApplicationsJavaSourceCompatibility": 1.7,
+    "toolJavaSourceCompatibility": 1.8,
+    // sfl4j is used everywhere. With umpteen versions. That are fully backwards compatible (1.5.7+ onwards, with small breakages leading up to that) This is to simplify management of that artifact project-wide
+    //slf4jCloneVersion": '1.7.12'
+    "slf4jVersion": "1.7.21",
+    // Default directories for models produced by Knowledge Repo gradle plugin
+    "krgpDirectory": "/krgp/",
+    "jarDirectory": "/krgp/jars/",
+    "dfuDirectory": "/krgp/DFUS/",
+    "nakedClassesDirectory": "/krgp/nakedClasses/",
+    "IMMoRTALS_Version": "r2.0.0",
+    "configuration": {
+        "testHarness": {
+            "enabled": true,
+            "protocol": "http://",
+            "url": "brass-th",
+            "port": 80
+        },
+        "testAdapter": {
+            "enabled": true,
+            "protocol": "http://",
+            "url": "brass-ta",
+            "port": 80
+        }
+    }
+}

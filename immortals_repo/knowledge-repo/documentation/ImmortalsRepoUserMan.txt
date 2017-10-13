@@ -1,0 +1,160 @@
+======Knowledge Repository Service======
+Knowledge Repository Service (KRS) provides an easy way to store and query rdf models that have been produced as a result of
+IMMoRTALS bytecode analysis. Every time the KRS is started, it will initialize from a locally-stored, "dbStorage" directory, meaning any
+models that the user previously added will persist across executions. Once the graphs the user wants have been added to the database,
+they can associate them with specific context(s). Now simply pass KRS a context identifier and then the graphs encompassing that
+context will be merged and pushed to a fuseki instance. This push can be configured using various meta-data, like type of model. Once in a fuseki
+instance, the user can perform sparql queries on exactly the data they want, no more, no less.
+
+An example of this process is as follows:
+
+1) Launch KRS
+2) Add three graphs to model using:
+
++-----------------------------------------------------------+---------------------------------------------------------+------------------------------------------+
+|                       Method Header                       |                           Params                        |                    Output                |
++-----------------------------------------------------------+---------------------------------------------------------+------------------------------------------+
+| @RequestMapping(                                          |  ttl  => The body of the RDF graph being pushed         |  String => the auto-generated graph name |
+|                     method = RequestMethod.POST,          |  type => The type of graph being added, e.g. jar, dfu   |                                          |
+|                     value = "/graph",                     |                                                         |                                          |
+|                     consumes = MediaType.ALL_VALUE,       |                                                         |                                          |
+|                     produces = MediaType.TEXT_PLAIN_VALUE |                                                         |                                          |
+|             )                                             |                                                         |                                          |
+|             public @ResponseBody String graphCreate(      |                                                         |                                          |
+|                     @RequestBody String ttl,              |                                                         |                                          |
+|                     @RequestParam("type") String type     |                                                         |                                          |
+|            )                                              |                                                         |                                          |
++-----------------------------------------------------------+---------------------------------------------------------+------------------------------------------+
+
+  With the ttl of these graphs being concepts involved with bandwidth, for example, and the type being two jars and one DFU. We will get back three
+  graph names, graph1Jar, graph2Jar, and graph3DFU.
+  
+3) Create a context using:
+
++-----------------------------------------------------------+-------------------------------------------------------------+-------------------------------------------------------------------------------+
+|                       Method Header                       |                             Params                          |                                      Output                                   |
++-----------------------------------------------------------+-------------------------------------------------------------+-------------------------------------------------------------------------------+
+| @RequestMapping(                                          |  name => Context identifier, auto-generated if not provided |  String => identifier of created context                                      |
+|                     method = RequestMethod.POST,          |  desc => Description of context purpose                     |  DuplicateIdentifierException => If context with provided name already exists |
+|                     value = "/context",                   |                                                             |  (HttpStatus.CONFLICT=409)                                                    |
+|                     consumes = MediaType.ALL_VALUE,       |                                                             |                                                                               |
+|                     produces = MediaType.TEXT_PLAIN_VALUE |                                                             |                                                                               |
+|             )                                             |                                                             |                                                                               |
+|             public @ResponseBody String contextCreate(    |                                                             |                                                                               |
+|                     @RequestParam("name")                 |                                                             |                                                                               |
+|              Optional<String> String name,                |                                                             |                                                                               |
+|                     @RequestBody String desc              |                                                             |                                                                               |
+|            )                                              |                                                             |                                                                               |
++-----------------------------------------------------------+-------------------------------------------------------------+-------------------------------------------------------------------------------+
+
+	With the name being bwContext, for example, and the description being "I describe graphs that are useful in an environment where bandwidth is an unstable resource".
+	We will get back the name we provided, or an auto-generated name if we didn't provide one.
+	
+4) Pair graphs with context using:
+
++-------------------------------------------------------------------+-----------------------------------------------------+-------------------------------------------------------+
+|                           Method Header                           |                         Params                      |                          Output                       |
++-------------------------------------------------------------------+-----------------------------------------------------+-------------------------------------------------------+
+| @RequestMapping(                                                  |  contextID => context you want to pair a graph with |  String => Success Message                            |
+|                     method = RequestMethod.PATCH,                 |  graphID => graph you want to pair with context     |  NoEntryPresentException => If either IDs don't exist |
+|                     value = "/context/{contextId}/add/{graphId}", |                                                     |  (HttpStatus.NOT_FOUND=404)                      |
+|                     consumes = MediaType.ALL_VALUE,               |                                                     |                                                       |
+|                     produces = MediaType.TEXT_PLAIN_VALUE         |                                                     |                                                       |
+|             )                                                     |                                                     |                                                       |
+|             public @ResponseBody String contextUpdateAdd(         |                                                     |                                                       |
+|                     @PathVariable("contextId")                    |                                                     |                                                       |
+|              String contextID,                                    |                                                     |                                                       |
+|                      @PathVariable("graphId")                     |                                                     |                                                       |
+|              String graphID                                       |                                                     |                                                       |
+|            )                                                      |                                                     |                                                       |
++-------------------------------------------------------------------+-----------------------------------------------------+-------------------------------------------------------+
+										 
+	With the context identifier bwContext, and the graph identifiers being graph1Jar, graph2Jar, and graph3DFU. This will return a message indicating
+	the association of context with graph was successful.
+	
+5) View graphs in a context using:
+
++------------------------------------------------------------+--------------------------------------------------+-------------------------------------------------------+
+|                       Method Header                        |                      Params                      |                        Output                         |
++------------------------------------------------------------+--------------------------------------------------+-------------------------------------------------------+
+| @RequestMapping(                                           |  contextId => context you want to view graphs in | List<String> => list of graphIds conforming to params |
+|             method = RequestMethod.GET,                    |  type => type of graphs you want to view         |                                                       |
+|             value = "/graph",                              |                                                  |                                                       |
+|             produces = MediaType.APPLICATION_JSON_VALUE    |                                                  |                                                       |
+|     )                                                      |                                                  |                                                       |
+|     public @ResponseBody List<String> graphRetrieveByType( |                                                  |                                                       |
+|             @RequestParam("contextId")                     |                                                  |                                                       |
+|                     Optional<String> contextId,            |                                                  |                                                       |
+|             @RequestParam("type")                          |                                                  |                                                       |
+|                     String type                            |                                                  |                                                       |
+|     )                                                      |                                                  |                                                       |
++------------------------------------------------------------+--------------------------------------------------+-------------------------------------------------------+
+								  
+	If we want make sure the context we will push to fuseki contains the graphs we want it to, or if we want to create a new context that's a subset of bwContext, we
+	would pass the context identifier as bwContext and type as being the type of graph we want to see, jar, for example. We will get back an array of graph names conforming
+	to our request, graph1Jar and graph2Jar. We could, subsequently, take these graph names and associate them with a different context if that was advantageous to us.
+	
+6) Delete contexts using:
+
++----------------------------------------------------------+-----------------------------------------------------------------+---------------------------------------------------------------------------------------+
+|                      Method Header                       |                             Params                              |                                        Output                                         |
++----------------------------------------------------------+-----------------------------------------------------------------+---------------------------------------------------------------------------------------+
+| @RequestMapping(                                         |  contextId => context you want to delete, if not provided,      | String => Message indicated how many contexts were deleted                            |
+|             method = RequestMethod.DELETE,               |  delete all contexts                                            | GraphContextReferenceException => If specified context(s) still had associated graphs |
+|             value = {"/context/{contextId}", "/context"},|                                                                 | (HttpStatus.CONFLICT=409)                                                             |
+|             produces = MediaType.TEXT_PLAIN_VALUE        |                                                                 | ProtectedEntryException => If attempting to delete protected entry e.g. 'unassigned'  |
+|     )                                                    |                                                                 | (HttpStatus.METHOD_NOT_ALLOWED=405)                                                   |
+|     public @ResponseBody String contextDelete(           |                                                                 |                                                                                       |
+|             @PathVariable("contextId")                   |                                                                 |                                                                                       |
+|                     Optional<String> contextId,          |                                                                 |                                                                                       |
+|     )                                                    |                                                                 |                                                                                       |
++----------------------------------------------------------+-----------------------------------------------------------------+---------------------------------------------------------------------------------------+
+
+    If we want to clear out contexts that are no longer being used, we can delete all at once or specify one by its identifier, in this case bwContext. If graphs are
+    still associated with this context, you must first associate the graph with a different context, or remove its assignment altogether.
+        
+7) Remove graph from context using:
+
++--------------------------------------------------------------+-------------------------------------------------------------+--------------------------------------------------------+
+|                        Method Header                         |                           Params                            |                         Output                         |
++--------------------------------------------------------------+-------------------------------------------------------------+--------------------------------------------------------+
+| @RequestMapping(                                             |  contextId => context you want to remove graph from         | String => Success message                              |
+|             method = RequestMethod.PATCH,                    |  graphId => graph you want to remove from specified context | NoEntryPresentException => If either ID's do not exist |
+|             value = "/context/{contextId}/delete/{graphId}", |                                                             | (HttpStatus.NOT_FOUND=404)                                                       |
+|             consumes = MediaType.ALL_VALUE,                  |                                                             |                                                        |
+|             produces = MediaType.TEXT_PLAIN_VALUE            |                                                             |                                                        |
+|     )                                                        |                                                             |                                                        |
+|     public @ResponseBody String contextUpdateDelete(         |                                                             |                                                        |
+|             @PathVariable("contextId")                       |                                                             |                                                        |
+|                     String contextId,                        |                                                             |                                                        |
+|             @PathVariable("graphId")                         |                                                             |                                                        |
+|                     String graphID                           |                                                             |                                                        |
+|     )                                                        |                                                             |                                                        |
++--------------------------------------------------------------+-------------------------------------------------------------+--------------------------------------------------------+
+        
+   If we then decide to exclude a graph from the context bwContext, then we simply provide their identifiers to the above method, and if, for example, graph1Jar
+   was passed as the graphID parameter, its contextual pairing with bwContext would be removed.
+   
+   	
+8) Create context graph in fuseki using:
+
++---------------------------------------------------+--------------------------------------------------+-----------------------------------------------------------+
+|                   Method Header                   |                      Params                      |                          Output                           |
++---------------------------------------------------+--------------------------------------------------+-----------------------------------------------------------+
+| @RequestMapping(                                  |  contextID => context you want to push to fuseki | String => Context identifier                              |
+|             method = RequestMethod.POST,          |                                                  | NoEntryPresentException => If context ID does not exist   |
+|             value = "/pushContext",               |                                                  | (HttpStatus.NOT_FOUND=404)                                |
+|             produces = MediaType.TEXT_PLAIN_VALUE |                                                  | IOException => If parsing jar for existing schemas failed |
+|     )                                             |                                                  | (HttpStatus.NOT_ACCEPTABLE=406)                                                          |
+|     public @ResponseBody String pushContext(      |                                                  |                                                           |
+|             @RequestParam("conID")                |                                                  |                                                           |
+|                     String contextID              |                                                  |                                                           |
+|     )                                             |                                                  |                                                           |
++---------------------------------------------------+--------------------------------------------------+-----------------------------------------------------------+
+
+    With contextID being bwContext. This will merge all the associated graphs into one, uber rdf model and push this to a fuseki instance, where it can be queried using
+	sparql. We will get back our contextID if it was successful.
+	
+  
+  
+

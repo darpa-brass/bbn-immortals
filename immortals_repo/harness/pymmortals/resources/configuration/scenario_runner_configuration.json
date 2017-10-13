@@ -1,0 +1,24 @@
+{
+    "sessionIdentifier": "{sessionIdentifier}",
+    "deploymentDirectory": "{runtimeRoot}/{sessionIdentifier}/deployment_environment/",
+    "scenario": {
+        "scenarioIdentifier": "{sessionIdentifier}",
+        "durationMS": 10000,
+        "deploymentApplications": [
+        ],
+        "validatorIdentifiers": [
+            "client-location-produce",
+            "client-location-share",
+            "client-location-source-trusted",
+            "client-location-trusted",
+            "client-location-source-usb",
+            "client-location-source-bluetooth",
+            "client-location-source-androidgps",
+            "client-location-source-manual",
+            "client-image-produce",
+            "client-image-share",
+            "bandwidth-maximum-validator"
+        ]
+    },
+    "validate": true
+}

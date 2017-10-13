@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>immortals</artifactId>
+        <groupId>com.securboration</groupId>
+        <version>r2.0.0</version>
+        <relativePath>../../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>immortals-ontologies-domains-inference</artifactId>
+    <packaging>jar</packaging>
+
+    <name>IMMoRTALS Inference vocabulary</name>
+    <url>https://dsl-external.bbn.com/tracsvr/immortals</url>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-ontologies-pojo-annotations</artifactId>
+            <version>${immortals.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency><!-- core -->
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-ontologies-core</artifactId>
+            <version>${immortals.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-ontologies-domains-java-project</artifactId>
+            <version>${immortals.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin><!-- target 1.7 for android -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

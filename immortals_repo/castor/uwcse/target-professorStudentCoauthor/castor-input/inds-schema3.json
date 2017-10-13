@@ -1,0 +1,16 @@
+{
+	"inds": [
+		{
+			"leftRelation": "professor",
+			"leftAttributeNumber": 0,
+			"rightRelation": "course",
+			"rightAttributeNumber": 2
+		},
+		{
+			"leftRelation": "course",
+			"leftAttributeNumber": 2,
+			"rightRelation": "professor",
+			"rightAttributeNumber": 0
+		}
+	]
+}

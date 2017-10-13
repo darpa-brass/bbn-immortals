@@ -1,0 +1,17 @@
+{
+    "server": {
+        "bandwidth": 384
+    },
+    "clients": [
+        {
+            "imageBroadcastIntervalMS": "2000",
+            "latestSABroadcastIntervalMS": "1000",
+            "count": 2,
+            "presentResources" : [
+                "internalGps",
+                "gpsSatellites"
+            ],
+            "requiredProperties" : []
+        }
+    ]
+}

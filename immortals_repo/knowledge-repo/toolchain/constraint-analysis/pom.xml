@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>immortals</artifactId>
+        <groupId>com.securboration</groupId>
+        <version>r2.0.0</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>constraint-analysis</artifactId>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-ontologies-pojo-annotations</artifactId>
+            <version>${immortals.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency><!-- core -->
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-ontologies-core</artifactId>
+            <version>${immortals.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency><!-- CP -->
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-ontologies-domains-cp</artifactId>
+            <version>${immortals.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-adsl-generate</artifactId>
+            <version>${immortals.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-project-to-triples</artifactId>
+            <version>r2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-tests-das-workflow</artifactId>
+            <version>r2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+    </dependencies>
+</project>

@@ -1,0 +1,78 @@
+apply plugin: 'eclipse'
+
+apply from: 'shared/common.gradle'
+
+task('dslSetup', type: Exec) {
+    group = 'Immortals'
+    description = 'Sets up the environment to build the DSL. If the proper Haskell tools are not installed this will fail!'
+    workingDir = IMMORTALS_ROOT + 'dsl/resource-dsl'
+    executable = 'stack'
+    args = ['setup']
+}
+
+task('dslClean', type: Exec) {
+    group = 'Immortals'
+    description = 'Cleans the DSL. If the proper Haskell tools are not installed this will fail!'
+    workingDir = IMMORTALS_ROOT + 'dsl/resource-dsl'
+    executable = 'stack'
+    args = ['clean']
+}
+
+task('dslBuild', type: Exec) {
+    group = 'Immortals'
+    description = 'Builds the DSL. If the proper Haskell tools are not installed this will fail!'
+    workingDir = IMMORTALS_ROOT + 'dsl/resource-dsl'
+    executable = 'stack'
+    args = ['build']
+}.dependsOn(dslSetup)
+
+task('knowledgeRepoClean', type: Exec) {
+    group = 'Immortals'
+    description = "Cleans the knowledge-repo"
+    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
+    executable = 'mvn'
+    args = ['-DskipTests', 'clean']
+}
+
+// TODO: Might be a good idea to clean this from the repo too...
+task('knowledgeRepoBuild', type: Exec) {
+    dependsOn gradle.includedBuild('modules').task(':build')
+    group = 'Immortals'
+    description = 'Builds the knowledge-repo'
+    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
+    executable = 'mvn'
+    args = ['-DskipTests', 'install']
+}
+
+task('buildAll') {
+    group = 'Immortals'
+    description = 'Builds _everything_ within the immortals repo'
+    dependsOn gradle.includedBuild('modules').task(':build')
+    dependsOn gradle.includedBuild('ATAKLite').task(':build')
+    dependsOn gradle.includedBuild('CotDbApp').task(':build')
+    dependsOn gradle.includedBuild('ConsumingPipeRunner').task(':build')
+    dependsOn gradle.includedBuild('CLITAK').task(':build')
+    dependsOn gradle.includedBuild('Marti').task(':build')
+    dependsOn(dslBuild)
+    dependsOn(knowledgeRepoBuild)
+    finalizedBy gradle.includedBuild('DAS').task(':build')
+}
+
+task('cleanAll') {
+    group = 'Immortals'
+    description = 'Cleans _everything_ within the immortals repo'
+    finalizedBy gradle.includedBuild('DAS').task(':clean')
+    finalizedBy(knowledgeRepoClean)
+    finalizedBy(dslClean)
+    dependsOn gradle.includedBuild('Marti').task(':clean')
+    dependsOn gradle.includedBuild('CLITAK').task(':clean')
+    dependsOn gradle.includedBuild('ConsumingPipeRunner').task(':clean')
+    dependsOn gradle.includedBuild('CotDbApp').task(':clean')
+    dependsOn gradle.includedBuild('ATAKLite').task(':clean')
+    finalizedBy(gradle.includedBuild('modules').task(':clean'))
+}
+task('deploy') {
+    finalizedBy(buildAll)
+    finalizedBy(':applications:client:ATAKLite:clean')
+}
+

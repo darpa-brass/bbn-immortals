@@ -1,0 +1,62 @@
+apply plugin: immortals.CoreDefinitions
+apply plugin: immortals.Java8Component
+apply plugin: immortals.PublishJavaDfu
+
+sourceSets {
+    validation {
+        java {
+            srcDirs = ['src/validation/java']
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "TakServerDataManager",
+                "Implementation-Version": defaultSoftwarePublishVersion,
+                "Main-Class": "mil.darpa.immortals.TakServerDataManager.DatabaseManager"
+    }
+}
+
+task('fatJar', type: Jar) {
+    manifest {
+        attributes "Implementation-Title": "TakServerDataManager",
+                "Implementation-Version": defaultSoftwarePublishVersion,
+                "Main-Class": "mil.darpa.immortals.TakServerDataManager.DatabaseManager"
+    }
+
+    baseName = project.name + '-all'
+
+    from {
+        configurations.compile.filter { !it.name.endsWith("android.jar") }.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    with jar
+}
+
+
+
+task('validate', type: Test) {
+    group = 'Verification'
+    description = 'Executes all the validation tests'
+    testClassesDir = sourceSets.validation.output.classesDir
+    classpath = sourceSets.validation.runtimeClasspath
+}
+
+dependencies {
+    compile project(':datatypes:CotData')
+    compile project(':datatypes:Coordinates')
+    compile 'commons-codec:commons-codec:1.2'
+    compile "org.slf4j:slf4j-api:${project.slf4jVersion}"
+    compile('org.postgresql:postgresql:9.4.1208')
+}
+
+dependencies {
+    validationCompile(sourceSets.main.output)
+    validationCompile(configurations.compile)
+    validationCompile(configurations.runtime)
+    validationCompile('junit:junit:4.12')
+}
+
+

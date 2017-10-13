@@ -1,0 +1,35 @@
+{
+    "applicationIdentifier": "ataklite",
+    "instanceIdentifier": "ATAKLite-{sessionIdentifier}_{CID}",
+    "deploymentPlatformEnvironment": "android_emulator",
+    "buildRoot": "{runtimeRoot}/{sessionIdentifier}/applications/client/ATAKLite/",
+    "executableFile": "{runtimeRoot}/{sessionIdentifier}/applications/client/ATAKLite/ATAKLite-debug.apk",
+    "applicationDeploymentDirectory": "{deploymentDirectory}{instanceIdentifier}/",
+    "packageIdentifier": "com.bbn.ataklite",
+    "mainActivity": "com.bbn.ataklite.MainActivity",
+    "permissions": [
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE"
+    ],
+    "filesToCopy": [
+        {
+            "sourceFilepath": "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/ATAKLite-Config.json",
+            "targetFilepath": "/sdcard/ataklite/ATAKLite-Config.json"
+        },
+        {
+            "sourceFilepath": "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/sample_image.jpg",
+            "targetFilepath": "/sdcard/ataklite/sample_image.jpg"
+        },
+        {
+            "sourceFilepath": "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/env.json",
+            "targetFilepath": "/sdcard/ataklite/env.json"
+        }
+    ],
+    "filesForCleanup": [
+        "/sdcard/ataklite"
+    ],
+    "configurationOverrides": [
+    ]
+}

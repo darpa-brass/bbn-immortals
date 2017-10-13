@@ -1,0 +1,783 @@
+@prefix freebase: <http://rdf.freebase.com/ns/>.
+@prefix fn: <http://www.w3.org/2005/xpath-functions/#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>.
+@prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#>.
+@prefix IMMoRTALS_cp1: <http://darpa.mil/immortals/ontology/r2.0.0/cp#>.
+@prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#>.
+@prefix IMMoRTALS_cp_java: <http://darpa.mil/immortals/ontology/r2.0.0/cp/java#>.
+@prefix IMMoRTALS_ordering: <http://darpa.mil/immortals/ontology/r2.0.0/ordering#>.
+@prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#>.
+@prefix IMMoRTALS_android: <http://darpa.mil/immortals/ontology/r2.0.0/android#>.
+@prefix IMMoRTALS_core: <http://darpa.mil/immortals/ontology/r2.0.0/core#>.
+@prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#>.
+@prefix IMMoRTALS_resources_gps: <http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#>.
+@prefix IMMoRTALS_resources_gps_properties: <http://darpa.mil/immortals/ontology/r2.0.0/resources/gps/properties#>.
+@prefix IMMoRTALS_resources_memory: <http://darpa.mil/immortals/ontology/r2.0.0/resources/memory#>.
+@prefix IMMoRTALS_resources_network: <http://darpa.mil/immortals/ontology/r2.0.0/resources/network#>.
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#>.
+@prefix IMMoRTALS_functionality_locationprovider: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#>.
+@prefix IMMoRTALS_functionality_imageprocessor: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/imageprocessor#>.
+@prefix IMMoRTALS_functionality_dataproperties: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#>.
+@prefix IMMoRTALS_property: <http://darpa.mil/immortals/ontology/r2.0.0/property#>.
+@prefix IMMoRTALS_property_impact: <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#>.
+@prefix IMMoRTALS_com_securboration_immortals_example_instantiation: <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/example/instantiation#>.
+@prefix IMMoRTALS_metrics: <http://darpa.mil/immortals/ontology/r2.0.0/metrics#>.
+@prefix IMMoRTALS_connectivity: <http://darpa.mil/immortals/ontology/r2.0.0/connectivity#>.
+@prefix IMMoRTALS_server: <http://darpa.mil/immortals/ontology/r2.0.0/server#>.
+@prefix IMMoRTALS_image_fidelity: <http://darpa.mil/immortals/ontology/r2.0.0/image/fidelity#>.
+@prefix IMMoRTALS_model: <http://darpa.mil/immortals/ontology/r2.0.0/model#>.
+@prefix IMMoRTALS_ptr: <http://darpa.mil/immortals/ontology/r2.0.0/pointer#>.
+@prefix IMMoRTALS_attr: <http://darpa.mil/immortals/ontology/r2.0.0/attribute#>.
+@prefix IMMoRTALS_impl: <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/example/instantiation#>.
+@prefix IMMoRTALS_spec: <http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#>.
+
+IMMoRTALS_model:Object-00000000-0000-0000-0000-000000000000 IMMoRTALS:name "_OBJECT";
+    a IMMoRTALS_cp1:undefined;
+    IMMoRTALS:base IMMoRTALS_model:Object-00000000-0000-0000-0000-000000000000.
+IMMoRTALS_resources:CardinalityTarget-01bd5309-9bd1-642f-ae7e-59768df1953d IMMoRTALS:name "CardinalityTarget";
+    a IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Cardinality-62fc2d7c-df8d-94d6-c3e5-fe8bf64dc6d3;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu--LPBluetoothGPsSimulated-a7ddd231-704f-cf3e-16c0-5359deeff522.
+IMMoRTALS_model:FunctionalRoot IMMoRTALS:name "Functional Root";
+    a IMMoRTALS_cp1:Root;
+    IMMoRTALS:base IMMoRTALS_model:Object-00000000-0000-0000-0000-000000000000;
+    IMMoRTALS:hasFco IMMoRTALS_resources:Fco, IMMoRTALS_resources:MetaLanguage, IMMoRTALS_resources:Atak-3d0217b4-3879-2fa4-0268-0380d43d4a88, IMMoRTALS_resources:Language.
+IMMoRTALS_resources:Location-042e09cb-25c8-ac33-b89b-2be0f04f97f8 IMMoRTALS:name "location";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "Location";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Df--LocationProviderFunctionalityUri-b47137c7-2a2b-d28d-f96d-7caa1d6a5bb3;
+    IMMoRTALS:hasDst IMMoRTALS_resources:EventConstructor-ab2416ac-ded2-adb7-126d-df01b3419d80.
+IMMoRTALS_resources:Network-06b9555b-ed4b-22f6-d6b4-44467cd5a516 IMMoRTALS:name "Network";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:BandwidthResourceProfile-06c369ac-cf1d-d96e-e85d-ac8d3b964c5c IMMoRTALS:name "Bandwidth Resource Profile";
+    a IMMoRTALS_resources:ResourceProfile;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceProfile;
+    IMMoRTALS:hasConstrainingMetricLinkId "TotalAvailableServerBandwidth";
+    IMMoRTALS:hasUnit "kb/s";
+    IMMoRTALS:hasFormula "(NumberOfClients*(PLIReportRate/60.0)*3.2) + (NumberOfClients*(ImageReportRate/60.0)*((((DefaultImageSize*1000000)*24)/15.0)/1000)) + ((NumberOfClients-1)*NumberOfClients*(PLIReportRate/60.0)*3.2)+ ((NumberOfClients-1)*NumberOfClients*(ImageReportRate/60.0)*((((DefaultImageSize*1000000)*24)/15.0)/1000))";
+    IMMoRTALS:hasApplicableResourceType IMMoRTALS_resources_network:NetworkBandwidth.
+IMMoRTALS_resources:Res-Usb-07bb3cd1-6299-22e4-ba8b-e2735caf8dd0 IMMoRTALS:name "Res: USB";
+    a IMMoRTALS_resources:Resource;
+    IMMoRTALS:base IMMoRTALS_resources:Resource;
+    IMMoRTALS:hasUri "http://darpa.mil/immortals/ontology/r2.0.0/resources#UsbResource".
+IMMoRTALS_resources:ResourceConsumption-0913d68a-b533-3dcc-730f-8485db23a7a4 IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--LPAndroidGpsBuiltin-86fd24e7-4a60-5ec7-aad3-1001c724ca98;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-GpsConstellation-b54b62a1-f586-bc48-14ca-ae71485c27a4.
+IMMoRTALS_resources:PliReportRate-095c6061-2eaa-6ec2-3f64-3112ffb5c670 IMMoRTALS:name "PLI Report Rate";
+    a IMMoRTALS_resources:Binding;
+    IMMoRTALS:base IMMoRTALS_resources:Binding;
+    IMMoRTALS:hasLocal "PLIReportRate".
+IMMoRTALS_resources:Image-0cc7186c-fdc6-7dd9-5a4d-fa5c6e419cfc IMMoRTALS:name "image";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "Bitmap";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:ImageReader-51797245-f6b5-54eb-c2f5-51504dfa148a;
+    IMMoRTALS:hasDst IMMoRTALS_resources:DataFusing-2e6059b7-d906-ec3d-b447-bae28867fbc8.
+IMMoRTALS_resources:Vp3--MessageFormater-0e941d26-aec3-1490-903b-fc4e4a680f03 IMMoRTALS:name "VP3: Message Formater";
+    a IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:base IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:hasHumanReadableForm "Outgoing image reports: This data flow fuses data from\nCP1 and CP2, then goes to CP3 and then to the network.\n\n".
+IMMoRTALS_resources:Explanation-0ee5bd82-02e5-2dfb-74b2-41c0dbd650ef IMMoRTALS:name "Explanation";
+    a IMMoRTALS_resources:Application;
+    IMMoRTALS:base IMMoRTALS_resources:Application;
+    IMMoRTALS:hasSrc <http://darpa.mil/immortals/ontology/r2.0.0/resources#WhatIsProvenance?-710e8309-1797-7103-8944-7978152eff94>;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Provenance.
+IMMoRTALS_resources:ResourceConsumption-0f361aa1-728a-539a-846c-43ab94f43f9d IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--JcABlowfish-25d7ddb0-1a2e-a2e7-e5a2-35b02b832b4f;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-PhysicalMemory-1dbd250e-93c6-135f-9d84-97707b024c7f.
+IMMoRTALS_resources:DfuProvenance-1071ad89-d9a8-72c4-0566-caa1f5f03fd5 IMMoRTALS:name "DFU Provenance";
+    a IMMoRTALS_resources:Provenance;
+    IMMoRTALS:base IMMoRTALS_resources:Provenance;
+    IMMoRTALS:hasType "sparql";
+    IMMoRTALS:hasCode "    PREFIX im: <http://darpa.mil/immortals/ontology/r2.0.0#>      PREFIX dfu: <http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#>      PREFIX lp_func: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#>      PREFIX bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#>      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>       SELECT DISTINCT ?dfu ?className ?artifactId ?version ?functionalityUri ?propertyType ?resource     WHERE {       ?dfu a dfu:DfuInstance .       ?dfu im:hasFunctionalityAbstraction ?functionalityUri .       ?dfu im:hasClassPointer ?classPointer .       ?class a bytecode:AClass .              ?class im:hasBytecodePointer ?classPointer .       ?class im:hasClassName ?className .       ?jar a bytecode:JarArtifact .       ?jar im:hasJarContents ?content .       ?content a bytecode:ClassArtifact .       ?content im:hasClassModel ?class .       ?jar im:hasCoordinate ?coordinate .       ?coordinate im:hasVersion ?version .       ?coordinate im:hasArtifactId ?artifactId .       optional {        ?dfu im:hasDfuProperties ?propertyInstance .        ?propertyInstance a ?propertyType .      }      optional {        ?dfu im:hasResourceDependencies ?resource .      }     }     ORDER BY ?dfu";
+    IMMoRTALS:hasHumanReadableForm "The SPARQL used to validate a DFU's expectations.".
+IMMoRTALS_resources:Dispatcher-10ab33c9-fcda-6ed3-ca83-ff23de9e4fc8 IMMoRTALS:name "Dispatcher";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:Vp22-LocationProducer-1474ce7b-7f85-30ab-fdbb-b5057aa5d738 IMMoRTALS:name "VP2.2: Location Producer";
+    a IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:base IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:hasHumanReadableForm "Outgoing SA reports. This data flow starts with that\nCP1, then goes to CP3 and then to the network.";
+    IMMoRTALS:hasDataflowEdge IMMoRTALS_resources:CotMessage-e270d617-d4aa-9f02-c905-cc697e5feecb, IMMoRTALS_resources:ByteArray-d5fd0837-deb9-14df-6e2d-6c5c841eb4f3, IMMoRTALS_resources:LocationTopic-e1cd9283-5a5b-57ca-9031-4e93c15d2fe3, IMMoRTALS_resources:Location-042e09cb-25c8-ac33-b89b-2be0f04f97f8, IMMoRTALS_resources:PeriodicTrigger-56090c2d-f4a0-aff7-be58-ada9d5968783;
+    IMMoRTALS:hasDataflowNode IMMoRTALS_resources:Df--LocationProviderFunctionalityUri-b47137c7-2a2b-d28d-f96d-7caa1d6a5bb3, IMMoRTALS_resources:PeriodicTrigger-629c109e-b40a-49f7-0894-f6850207a565, IMMoRTALS_resources:EventConstructor-ab2416ac-ded2-adb7-126d-df01b3419d80, IMMoRTALS_resources:WireProtocolMarshalling-e89b0323-4cf9-6cdb-2efc-a0442e690725, IMMoRTALS_resources:Dispatcher-10ab33c9-fcda-6ed3-ca83-ff23de9e4fc8, IMMoRTALS_resources:Network-83fd1a40-ea9f-637c-709e-21a547f3c35e;
+    IMMoRTALS:hasDocumentation IMMoRTALS_resources:Documentation-3d1d9ae6-99f2-4a25-0874-eb3465d8ea1e, IMMoRTALS_resources:Documentation-2f8fc553-b3a5-a24c-2d13-1a54a4b33874.
+IMMoRTALS_resources:FilePathToImage-1ba90d7e-4a3b-36f1-1158-139aee1252b3 IMMoRTALS:name "file path to image";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "FilePath";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:PeriodicTrigger-e7d85f85-b3de-087d-aebe-93663921c32d;
+    IMMoRTALS:hasDst IMMoRTALS_resources:ImageReader-51797245-f6b5-54eb-c2f5-51504dfa148a.
+IMMoRTALS_resources:Res-PhysicalMemory-1dbd250e-93c6-135f-9d84-97707b024c7f IMMoRTALS:name "Res: Physical Memory";
+    a IMMoRTALS_resources:Resource;
+    IMMoRTALS:base IMMoRTALS_resources:Resource;
+    IMMoRTALS:hasUri "http://darpa.mil/immortals/ontology/r2.0.0/resources/memory#PhysicalMemoryResource".
+IMMoRTALS_resources:LanguageFolder-1fe606f6-5c39-77b1-1b3a-42eabd219b32 IMMoRTALS:name "Language Folder";
+    a IMMoRTALS_resources:Documentation;
+    IMMoRTALS:base IMMoRTALS_resources:Documentation;
+    IMMoRTALS:hasHumanReadableForm "Here is a good place to store all nodes that are part of the META language. Keep in mind that the FCO cannot be moved.\n\nIn the META-Aspect under the Helper-tab you can see that it has a containment rule for any node (it can contain FCOs).".
+IMMoRTALS_resources:Application-20dae02a-27e7-380a-4003-9bf0ca13d1d1 IMMoRTALS:name "_Application";
+    a IMMoRTALS_resources:Application;
+    IMMoRTALS:base IMMoRTALS_resources:Application;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:DfuProvenance-1071ad89-d9a8-72c4-0566-caa1f5f03fd5;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu.
+IMMoRTALS_resources:Dfu--JcABlowfish-25d7ddb0-1a2e-a2e7-e5a2-35b02b832b4f IMMoRTALS:name "DFU: JCA Blowfish";
+    a IMMoRTALS_resources:Dfu;
+    IMMoRTALS:base IMMoRTALS_resources:Dfu;
+    IMMoRTALS:hasArtifactId "CryptoJCA";
+    IMMoRTALS:hasClassName "mil/darpa/immortals/dfus/crypto/jca/JcaBlowfish";
+    IMMoRTALS:hasUrn "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance-6dde0687-8f0c-4d45-8b7b-807a9ee95055";
+    IMMoRTALS:hasVersion "1.0-LOCAL";
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_resources:Fa6--Cypher-75816315-eede-4866-2b48-644f309d09d2.
+IMMoRTALS_resources:CardinalityTarget-2aa61371-8045-678f-1f76-123217ebae96 IMMoRTALS:name "CardinalityTarget";
+    a IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Cardinality-d181ba72-59f2-9379-5dab-b3ee1b4b7e9a;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu--JcABlowfish-25d7ddb0-1a2e-a2e7-e5a2-35b02b832b4f.
+IMMoRTALS_resources:DataFusing-2e6059b7-d906-ec3d-b447-bae28867fbc8 IMMoRTALS:name "Data Fusing";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:Documentation-2ebd6dee-2787-355c-0ae8-82f4e7cacafa IMMoRTALS:name "_Documentation";
+    a IMMoRTALS_resources:Documentation;
+    IMMoRTALS:base IMMoRTALS_resources:Documentation;
+    IMMoRTALS:hasHumanReadableForm "Controls Points are the variation points in the ATAK product line.\n".
+IMMoRTALS_resources:Documentation-2f8fc553-b3a5-a24c-2d13-1a54a4b33874 IMMoRTALS:name "_Documentation";
+    a IMMoRTALS_resources:Documentation;
+    IMMoRTALS:base IMMoRTALS_resources:Documentation;
+    IMMoRTALS:hasHumanReadableForm "Control Point 2 (CP2) identifies a stage in the dataflow where the image and location data are combined and serialized to a CoT XML message. This operation serves as an internal variation point for manipulating the image in response to some external requirements-level feature, like bandwidth, coupled with domain-specific rules on mitigating bandwidth resource violations.\n".
+IMMoRTALS_resources:NeedsCp2-329d9cf3-292a-0a8a-7379-60329d7ae599 IMMoRTALS:name "needs CP2";
+    a IMMoRTALS_resources:Requires;
+    IMMoRTALS:base IMMoRTALS_resources:Requires;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c;
+    IMMoRTALS:hasDst IMMoRTALS_cp2:cp2DataflowGraph.
+IMMoRTALS_resources:DataflowEdge-34ef570c-c0cb-f904-754a-2490e56248c9 IMMoRTALS:name "Dataflow Edge";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:WireProtocolDemarshaling-adbbfc7e-0bae-edcb-1989-a29d058edd27;
+    IMMoRTALS:hasDst IMMoRTALS_resources:AtakImageProvider-d3475d15-7a34-c0e1-c897-c2b0fe827d64.
+IMMoRTALS_resources:Vp1--LocationProviderFunctionalityUri-382b8e58-bf80-b6f3-8db3-396cd8938456 IMMoRTALS:name "VP1: Location Provider-functionality uri";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_functionality_locationprovider:LocationProvider.
+IMMoRTALS_resources:ProvenanceConnector-3a75e25d-8c8c-8bf9-4e75-c49a1515e525 IMMoRTALS:name "_Provenance connector";
+    a IMMoRTALS_resources:Application;
+    IMMoRTALS:base IMMoRTALS_resources:Application;
+    IMMoRTALS:hasSrc <http://darpa.mil/immortals/ontology/r2.0.0/resources#WhatIsProvenance?-710e8309-1797-7103-8944-7978152eff94>;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Application.
+IMMoRTALS_resources:ResourceConsumption-3ae16220-54d4-288e-3e9f-7e2fcc7ab6db IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--jcAAes-c1ad8d4f-c1a7-bda1-fc75-a69dd61dc47e;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-Cpu-7b1f2781-26f9-e91d-3fac-7f3452aa2b5e.
+IMMoRTALS_resources:Requires-3c63e3c4-3888-3886-4bbd-69e9ca7cdb01 IMMoRTALS:name "Requires";
+    a IMMoRTALS_resources:Requires;
+    IMMoRTALS:base IMMoRTALS_resources:Requires;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Vp21-ImageConsumer-51543126-38d2-b1bb-cace-b7dc51420d3a.
+IMMoRTALS_resources:Atak-3d0217b4-3879-2fa4-0268-0380d43d4a88 IMMoRTALS:name "ATAK";
+    a IMMoRTALS_resources:FeatureModel;
+    IMMoRTALS:base IMMoRTALS_resources:FeatureModel;
+    IMMoRTALS:hasHumanReadableForm "Functional Dependencies between Discrete-Functional-Units and Control-Points.";
+    IMMoRTALS:hasCardinalityTarget IMMoRTALS_resources:CardinalityTarget-67e9179a-dd35-6079-84d6-5ee84476f364, IMMoRTALS_resources:CardinalityTarget-2aa61371-8045-678f-1f76-123217ebae96, IMMoRTALS_resources:CardinalityTarget-dc395633-d74a-f42a-d958-c1dd0ba324d6, IMMoRTALS_resources:CardinalityTarget-01bd5309-9bd1-642f-ae7e-59768df1953d, IMMoRTALS_resources:CardinalityTarget-dd900a4b-d10f-a94a-15be-3db88b44f2ec, IMMoRTALS_resources:CardinalityTarget-60dbe382-7e74-d933-dca2-89e835a97fbb, IMMoRTALS_resources:CardinalityTarget-ae37e646-32a8-f7f5-af38-c38aba83db5b, IMMoRTALS_resources:CardinalityTarget-64ae652e-e427-91b8-ed66-b731e9b55911, IMMoRTALS_resources:CardinalityTarget-f4d2cf09-380e-38bb-5835-04df947e3439;
+    IMMoRTALS:hasConstraint IMMoRTALS_resources:NeedsCp2-329d9cf3-292a-0a8a-7379-60329d7ae599, IMMoRTALS_resources:NeedsEncryption-9ae0bcfb-3def-38ee-c439-bf51b1a8c6e4, IMMoRTALS_resources:Requires-c87c93fa-6674-2af4-bf47-aeb6538843ae, IMMoRTALS_resources:NeedsCp1-de95820f-73bb-7eb2-f010-1640cc78e085, IMMoRTALS_resources:NeedsLogger-f4edfd3b-b928-bba4-4007-dab3590a17af, IMMoRTALS_resources:NeedsCp3-6e7b9d27-6bd7-5720-e503-2b5c12ca129f, IMMoRTALS_resources:NeedsCp4-d4bd6441-957e-a150-275b-006c7536982c, IMMoRTALS_resources:Requires-3c63e3c4-3888-3886-4bbd-69e9ca7cdb01, IMMoRTALS_resources:Requires-6b22153a-4bb0-2a0c-97e4-7c2dbb16f65a;
+    IMMoRTALS:hasCardinalitySource IMMoRTALS_resources:CardinalitySource-fd7caf60-8fa7-74d8-1318-f01171913dcb, IMMoRTALS_resources:CardinalitySource-ea5afe98-c80e-b4e4-7815-27a830fc0e57, IMMoRTALS_resources:CardinalitySource-87860072-5503-543a-e41f-ab24bec40344;
+    IMMoRTALS:hasFeature IMMoRTALS_resources:Vp4--IncomingConditioner-71999c5e-32bd-a673-d87d-b9e67f194b71, IMMoRTALS_cp2:cp2DataflowGraph, IMMoRTALS_resources:Vp3--MessageFormater-0e941d26-aec3-1490-903b-fc4e4a680f03, IMMoRTALS_resources:Vp21-ImageConsumer-51543126-38d2-b1bb-cace-b7dc51420d3a, IMMoRTALS_resources:Vp22-LocationProducer-1474ce7b-7f85-30ab-fdbb-b5057aa5d738, IMMoRTALS_resources:Vp23-LocationConsumer-518baff0-7793-9f92-2a1c-687b942ed36d;
+    IMMoRTALS:hasResourceConsumption IMMoRTALS_resources:ResourceConsumption-e4aa6c23-0c73-c95b-6c83-470c3097590a, IMMoRTALS_resources:ResourceConsumption-3dd82b64-a04b-e967-7421-3f1329aa1a6a, IMMoRTALS_resources:ResourceConsumption-ec205601-7937-4d69-ee1f-6a6141e7f009, IMMoRTALS_resources:ResourceConsumption-fe048062-783c-0882-00cd-431596b6b5ee, IMMoRTALS_resources:ResourceConsumption-7dba7b75-4969-33a6-72fc-71e85677768c, IMMoRTALS_resources:ResourceConsumption-ee97d052-9ab7-58a2-c4a4-092a3abcb454, IMMoRTALS_resources:ResourceConsumption-0913d68a-b533-3dcc-730f-8485db23a7a4, IMMoRTALS_resources:ResourceConsumption-3ae16220-54d4-288e-3e9f-7e2fcc7ab6db, IMMoRTALS_resources:ResourceConsumption-ae44cbbb-d72a-8f5c-a034-023257873b60, IMMoRTALS_resources:ResourceConsumption-4c8980b7-62c0-51bf-619e-47de59ff244b, IMMoRTALS_resources:ResourceConsumption-0f361aa1-728a-539a-846c-43ab94f43f9d, IMMoRTALS_resources:ResourceConsumption-91ac31b1-0220-cceb-0dd9-59b6d6ffb311, IMMoRTALS_resources:ResourceConsumption-fd7875bc-aac4-98df-cafa-464aa4c2706b, IMMoRTALS_resources:ResourceConsumption-e2a15ce4-f886-4db0-9cc0-b9893e23dd01, IMMoRTALS_resources:ResourceConsumption-bf689fe3-4b73-f288-6c1e-fa33115fbba5;
+    IMMoRTALS:hasVariationPoint IMMoRTALS_resources:Vp1--LocationProvider-566e516f-f986-debe-9546-1cf805e846da, IMMoRTALS_resources:Vp5--Logger-7dc7b620-369a-c9f3-3986-be1636c0d99b, IMMoRTALS_resources:Vp6--Cypher-461eef5b-3af5-02f2-6cac-49db2d0a1940;
+    IMMoRTALS:hasConstraint IMMoRTALS_resources:Cardinality-62fc2d7c-df8d-94d6-c3e5-fe8bf64dc6d3, IMMoRTALS_resources:Cardinality-a9afd7a8-08a9-42c4-e016-f51640f3e1ce, IMMoRTALS_resources:Cardinality-d181ba72-59f2-9379-5dab-b3ee1b4b7e9a;
+    IMMoRTALS:hasFeature IMMoRTALS_resources:Dfu--SAFileOperator-a901ddec-6bc0-8999-0f80-c7f59ac86c3e, IMMoRTALS_resources:Dfu--JcABlowfish-25d7ddb0-1a2e-a2e7-e5a2-35b02b832b4f, IMMoRTALS_resources:Dfu--LPAndroidGpsBuiltin-86fd24e7-4a60-5ec7-aad3-1001c724ca98, IMMoRTALS_resources:Dfu--jcAAes-c1ad8d4f-c1a7-bda1-fc75-a69dd61dc47e, IMMoRTALS_resources:Dfu--SAFileByteWriter-9bdcd830-2346-43a6-1615-248af3d77e0d, IMMoRTALS_resources:Dfu--LPSaaSmSimulated-e3487ba1-834f-052f-3c44-6085deeee473, IMMoRTALS_resources:Dfu--LPUSbGpsSimulated-f742bfc3-ffdc-8f4c-8664-3ec6d2988c3e, IMMoRTALS_resources:Dfu--LPManualSimulated-b37ee93d-b18e-b630-4c1c-c8e5bd84d02b, IMMoRTALS_resources:Dfu--LPBluetoothGPsSimulated-a7ddd231-704f-cf3e-16c0-5359deeff522, IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c;
+    IMMoRTALS:hasResource IMMoRTALS_resources:Res-FileSystem-efaaa7a7-cf9f-c230-8ee5-f170121ab0d3, IMMoRTALS_resources:Res-UserInterface-767aaefd-bb9d-f7db-7d2d-7a0e3534166f, IMMoRTALS_resources:Res-Cpu-7b1f2781-26f9-e91d-3fac-7f3452aa2b5e, IMMoRTALS_resources:Res-PhysicalMemory-1dbd250e-93c6-135f-9d84-97707b024c7f, IMMoRTALS_resources:Res-GpsRecvEmbedded-4bf2e2cc-09d0-5603-a455-34676731c9b8, IMMoRTALS_resources:Res-GpsConstellation-b54b62a1-f586-bc48-14ca-ae71485c27a4, IMMoRTALS_resources:Res-Usb-07bb3cd1-6299-22e4-ba8b-e2735caf8dd0, IMMoRTALS_resources:Res-Bluetooth-e7c44d73-fb27-bdc7-8f6e-cf441f92d0a8;
+    IMMoRTALS:hasDocumentation IMMoRTALS_resources:Documentation-2ebd6dee-2787-355c-0ae8-82f4e7cacafa.
+IMMoRTALS_resources:Documentation-3d1d9ae6-99f2-4a25-0874-eb3465d8ea1e IMMoRTALS:name "_Documentation";
+    a IMMoRTALS_resources:Documentation;
+    IMMoRTALS:base IMMoRTALS_resources:Documentation;
+    IMMoRTALS:hasHumanReadableForm "The Network is a placeholder (possibly by dependency injection).".
+IMMoRTALS_resources:NumberOfClients-3d54a70c-abd9-5cb1-5060-37ddf48a2bd5 IMMoRTALS:name "Number of Clients";
+    a IMMoRTALS_resources:Binding;
+    IMMoRTALS:base IMMoRTALS_resources:Binding;
+    IMMoRTALS:hasLocal "NumberOfClients".
+IMMoRTALS_resources:ResourceConsumption-3dd82b64-a04b-e967-7421-3f1329aa1a6a IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--LPBluetoothGPsSimulated-a7ddd231-704f-cf3e-16c0-5359deeff522;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-Bluetooth-e7c44d73-fb27-bdc7-8f6e-cf441f92d0a8.
+IMMoRTALS_resources:Vp6--Cypher-461eef5b-3af5-02f2-6cac-49db2d0a1940 IMMoRTALS:name "VP6: Cypher";
+    a IMMoRTALS_resources:VariationPoint;
+    IMMoRTALS:base IMMoRTALS_resources:VariationPoint;
+    IMMoRTALS:hasFunctionalityAbstraction IMMoRTALS_resources:Fa6--Cypher-75816315-eede-4866-2b48-644f309d09d2.
+IMMoRTALS_resources:Res-GpsRecvEmbedded-4bf2e2cc-09d0-5603-a455-34676731c9b8 IMMoRTALS:name "Res: GPS Recv Embedded";
+    a IMMoRTALS_resources:Resource;
+    IMMoRTALS:base IMMoRTALS_resources:Resource;
+    IMMoRTALS:hasUri "http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsReceiverEmbedded".
+IMMoRTALS_resources:ResourceConsumption-4c8980b7-62c0-51bf-619e-47de59ff244b IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--JcABlowfish-25d7ddb0-1a2e-a2e7-e5a2-35b02b832b4f;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-Cpu-7b1f2781-26f9-e91d-3fac-7f3452aa2b5e.
+IMMoRTALS_resources:ByteArray-50b9472c-d96d-5555-c807-09bfbf38d2bb IMMoRTALS:name "byte array";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "ByteArray";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:WireProtocolMarshalling-6ddf4c38-4b2d-2d51-88d6-c5a7154f616d;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dispatcher-95ef7cd2-fb0e-2f59-6ca9-9ac0e5b82980.
+IMMoRTALS_resources:Vp21-ImageConsumer-51543126-38d2-b1bb-cace-b7dc51420d3a IMMoRTALS:name "VP2.1: Image Consumer";
+    a IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:base IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:hasHumanReadableForm "Incoming Image reports. This data flow starts with thatCP1, then goes to CP3 and then to the network.";
+    IMMoRTALS:hasDocumentation IMMoRTALS_resources:Documentation-6aaf3a0e-f4f2-235c-1a66-188d8f54e276, IMMoRTALS_resources:Documentation-783d65bb-dea5-cb35-3f01-e9ed4e3f301c;
+    IMMoRTALS:hasDataflowEdge IMMoRTALS_resources:ByteArray-90ddf76a-99ee-95cf-5958-6e85aff96ef1, IMMoRTALS_resources:LocationTopic-a4ed6dde-1d0c-d6da-a744-4c4aeabaf5e1, IMMoRTALS_resources:DataflowEdge-79bb6235-fecd-389c-0d10-1fc19ece653e, IMMoRTALS_resources:DataflowEdge-34ef570c-c0cb-f904-754a-2490e56248c9;
+    IMMoRTALS:hasDataflowNode IMMoRTALS_resources:AtakImageProvider-d3475d15-7a34-c0e1-c897-c2b0fe827d64, IMMoRTALS_resources:AtakImageDisplay-9db3b1c1-4e64-caf4-e96a-7cdc9b943614, IMMoRTALS_resources:WireProtocolDemarshaling-adbbfc7e-0bae-edcb-1989-a29d058edd27, IMMoRTALS_resources:Receiver-558bcc94-bb8d-efc3-fdf6-fdfaf57995ca, IMMoRTALS_resources:Network-c6dde51d-adc8-e26c-47eb-237c6c14195c.
+IMMoRTALS_resources:ImageReader-51797245-f6b5-54eb-c2f5-51504dfa148a IMMoRTALS:name "Image Reader";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:Vp23-LocationConsumer-518baff0-7793-9f92-2a1c-687b942ed36d IMMoRTALS:name "VP2.3: Location Consumer";
+    a IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:base IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:hasHumanReadableForm "Incoming SA reports. This data flow starts with thatCP1, then goes to CP3 and then to the network.";
+    IMMoRTALS:hasDocumentation IMMoRTALS_resources:Documentation-78e2fb6d-91e4-e51c-dfd3-364a8b53ee4b, IMMoRTALS_resources:Documentation-6a70a4d8-bbb3-0d75-fab4-c72a4a383c21;
+    IMMoRTALS:hasDataflowEdge IMMoRTALS_resources:ByteArray-900269bc-d6af-bbe6-b98a-b1226a95b0a6, IMMoRTALS_resources:LocationTopic-a432f308-524d-f8f3-4796-93ed2fd62bb6, IMMoRTALS_resources:DataflowEdge-7964fce3-b18c-16b5-edc2-c0665ba2bb69, IMMoRTALS_resources:DataflowEdge-562b94b5-8854-11e2-215c-97cfdb205efb;
+    IMMoRTALS:hasDataflowNode IMMoRTALS_resources:AtakLocationDisplay-9d6c2f17-0125-e4dd-09b8-a37b5ef8e843, IMMoRTALS_resources:WireProtocolDemarshaling-ad6462a8-44ef-c3e2-f95b-7d3ac0e20370, IMMoRTALS_resources:Receiver-55545242-f4cc-c1ea-1d24-225d30154b9d, IMMoRTALS_resources:Network-c6027bcb-e289-cc45-a739-fcdba978c70b.
+IMMoRTALS_resources:Receiver-55545242-f4cc-c1ea-1d24-225d30154b9d IMMoRTALS:name "Receiver";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:Receiver-558bcc94-bb8d-efc3-fdf6-fdfaf57995ca IMMoRTALS:name "Receiver";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:PeriodicTrigger-56090c2d-f4a0-aff7-be58-ada9d5968783 IMMoRTALS:name "Periodic Trigger";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:PeriodicTrigger-629c109e-b40a-49f7-0894-f6850207a565;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Df--LocationProviderFunctionalityUri-b47137c7-2a2b-d28d-f96d-7caa1d6a5bb3.
+IMMoRTALS_resources:DataflowEdge-562b94b5-8854-11e2-215c-97cfdb205efb IMMoRTALS:name "Dataflow Edge";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:WireProtocolDemarshaling-ad6462a8-44ef-c3e2-f95b-7d3ac0e20370;
+    IMMoRTALS:hasDst IMMoRTALS_resources:AtakImageProvider-d3475d15-7a34-c0e1-c897-c2b0fe827d64.
+IMMoRTALS_resources:Vp1--LocationProvider-566e516f-f986-debe-9546-1cf805e846da IMMoRTALS:name "VP1: Location Provider";
+    a IMMoRTALS_resources:VariationPoint;
+    IMMoRTALS:base IMMoRTALS_resources:VariationPoint;
+    IMMoRTALS:hasUuid "BCC0A94D-C2B1-40AD-8056-E3DDBD46585E";
+    IMMoRTALS:hasOwnerClass IMMoRTALS_bytecode:SaCommService-c627cc37-0bcc-b4df-a1c8-0713476fd1a3;
+    IMMoRTALS:hasDataflowEntryPoint IMMoRTALS_cp2:cp2DataflowGraph;
+    IMMoRTALS:hasUsageParadigm <http://darpa.mil/immortals/ontology/r2.0.0/spec#DeclareInitWorkClean>;
+    IMMoRTALS:hasBinding IMMoRTALS_resources:ImageReportRate-62f7d22b-e810-0ac8-6218-d1b0a2bd57ef, IMMoRTALS_resources:DefaultImageSize-a8de7034-9b7d-c479-bf80-c6b3f4d5b727, IMMoRTALS_resources:TotalAvailableServerBandwidth-af54e16a-71af-9c38-dee3-d8a1cdc60848, IMMoRTALS_resources:NumberOfClients-3d54a70c-abd9-5cb1-5060-37ddf48a2bd5, IMMoRTALS_resources:PliReportRate-095c6061-2eaa-6ec2-3f64-3112ffb5c670;
+    IMMoRTALS:hasResourceProfile IMMoRTALS_resources:BandwidthResourceProfile-06c369ac-cf1d-d96e-e85d-ac8d3b964c5c;
+    IMMoRTALS:hasResource IMMoRTALS_resources_network:NetworkBandwidth;
+    IMMoRTALS:hasAClass IMMoRTALS_bytecode:SaCommService-c627cc37-0bcc-b4df-a1c8-0713476fd1a3;
+    IMMoRTALS:hasFunctionalityAbstraction IMMoRTALS_functionality_locationprovider:LocationProvider;
+    IMMoRTALS:hasAspect IMMoRTALS_functionality_locationprovider:GetCurrentLocationAspect-81776732-89cc-3137-f132-fd7597bcd11e.
+IMMoRTALS_resources:Application-5d21af6d-e0d1-72e2-cf1f-04e00103a206 IMMoRTALS:name "_Application";
+    a IMMoRTALS_resources:Application;
+    IMMoRTALS:base IMMoRTALS_resources:Application;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:FunctionalityProvenance-f6001b41-fe99-5f0f-039c-e8d557b9bdf9;
+    IMMoRTALS:hasDst IMMoRTALS_resources:FunctionalityAbstraction.
+#These assertions collide with an ontology concept of the same name
+#IMMoRTALS_functionality_locationprovider:LocationProvider IMMoRTALS:name "F: Location Provider";
+#    a IMMoRTALS_resources:FunctionalityAbstraction;
+#    IMMoRTALS:base IMMoRTALS_resources:FunctionalityAbstraction;
+#    IMMoRTALS:hasHumanReadableForm "used to gather self-location used in self-SA reports and images".
+IMMoRTALS_resources:CardinalityTarget-60dbe382-7e74-d933-dca2-89e835a97fbb IMMoRTALS:name "CardinalityTarget";
+    a IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Cardinality-62fc2d7c-df8d-94d6-c3e5-fe8bf64dc6d3;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu--LPAndroidGpsBuiltin-86fd24e7-4a60-5ec7-aad3-1001c724ca98.
+IMMoRTALS_resources:PeriodicTrigger-629c109e-b40a-49f7-0894-f6850207a565 IMMoRTALS:name "Periodic Trigger";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:ImageReportRate-62f7d22b-e810-0ac8-6218-d1b0a2bd57ef IMMoRTALS:name "Image Report Rate";
+    a IMMoRTALS_resources:Binding;
+    IMMoRTALS:base IMMoRTALS_resources:Binding;
+    IMMoRTALS:hasLocal "ImageReportRate".
+IMMoRTALS_resources:Cardinality-62fc2d7c-df8d-94d6-c3e5-fe8bf64dc6d3 IMMoRTALS:name "Cardinality";
+    a IMMoRTALS_resources:Cardinality;
+    IMMoRTALS:base IMMoRTALS_resources:Cardinality;
+    IMMoRTALS:hasHigh "1";
+    IMMoRTALS:hasLow "1".
+IMMoRTALS_resources:LocationTopic-6489dd98-5d8f-1640-361b-2b70fa7b49ab IMMoRTALS:name "location topic";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "ByteArray";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dispatcher-95ef7cd2-fb0e-2f59-6ca9-9ac0e5b82980;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Network-06b9555b-ed4b-22f6-d6b4-44467cd5a516.
+IMMoRTALS_resources:CardinalityTarget-64ae652e-e427-91b8-ed66-b731e9b55911 IMMoRTALS:name "CardinalityTarget";
+    a IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Cardinality-a9afd7a8-08a9-42c4-e016-f51640f3e1ce;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu--SAFileOperator-a901ddec-6bc0-8999-0f80-c7f59ac86c3e.
+IMMoRTALS_resources:CotMessage-6734990c-d37e-de88-6f2f-a98a45798883 IMMoRTALS:name "COT message";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "COTMessage";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:DataFusing-2e6059b7-d906-ec3d-b447-bae28867fbc8;
+    IMMoRTALS:hasDst IMMoRTALS_resources:WireProtocolMarshalling-6ddf4c38-4b2d-2d51-88d6-c5a7154f616d.
+IMMoRTALS_resources:CardinalityTarget-67e9179a-dd35-6079-84d6-5ee84476f364 IMMoRTALS:name "CardinalityTarget";
+    a IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu--SAFileByteWriter-9bdcd830-2346-43a6-1615-248af3d77e0d;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Cardinality-a9afd7a8-08a9-42c4-e016-f51640f3e1ce.
+IMMoRTALS_resources:Documentation-6a70a4d8-bbb3-0d75-fab4-c72a4a383c21 IMMoRTALS:name "_Documentation";
+    a IMMoRTALS_resources:Documentation;
+    IMMoRTALS:base IMMoRTALS_resources:Documentation;
+    IMMoRTALS:hasHumanReadableForm "Control Point 2 (CP2) identifies a stage in the dataflow where the image and location data are combined and serialized to a CoT XML message. This operation serves as an internal variation point for manipulating the image in response to some external requirements-level feature, like bandwidth, coupled with domain-specific rules on mitigating bandwidth resource violations.\n".
+IMMoRTALS_resources:Documentation-6aaf3a0e-f4f2-235c-1a66-188d8f54e276 IMMoRTALS:name "_Documentation";
+    a IMMoRTALS_resources:Documentation;
+    IMMoRTALS:base IMMoRTALS_resources:Documentation;
+    IMMoRTALS:hasHumanReadableForm "Control Point 2 (CP2) identifies a stage in the dataflow where the image and location data are combined and serialized to a CoT XML message. This operation serves as an internal variation point for manipulating the image in response to some external requirements-level feature, like bandwidth, coupled with domain-specific rules on mitigating bandwidth resource violations.\n".
+IMMoRTALS_resources:Requires-6b22153a-4bb0-2a0c-97e4-7c2dbb16f65a IMMoRTALS:name "Requires";
+    a IMMoRTALS_resources:Requires;
+    IMMoRTALS:base IMMoRTALS_resources:Requires;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Vp22-LocationProducer-1474ce7b-7f85-30ab-fdbb-b5057aa5d738.
+IMMoRTALS_resources:WireProtocolMarshalling-6ddf4c38-4b2d-2d51-88d6-c5a7154f616d IMMoRTALS:name "Wire Protocol Marshalling";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:NeedsCp3-6e7b9d27-6bd7-5720-e503-2b5c12ca129f IMMoRTALS:name "needs CP3";
+    a IMMoRTALS_resources:Requires;
+    IMMoRTALS:base IMMoRTALS_resources:Requires;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Vp3--MessageFormater-0e941d26-aec3-1490-903b-fc4e4a680f03.
+<http://darpa.mil/immortals/ontology/r2.0.0/resources#WhatIsProvenance?-710e8309-1797-7103-8944-7978152eff94> IMMoRTALS:name "What is Provenance?";
+    a IMMoRTALS_resources:Provenance;
+    IMMoRTALS:base IMMoRTALS_resources:Provenance;
+    IMMoRTALS:hasUrl "https://www.w3.org/2009/12/rdf-ws/papers/ws08";
+    IMMoRTALS:hasHumanReadableForm "A node to provide origin or validation information about members of a class.\n\n[provenance working group(https://www.w3.org/TR/prov-overview/)";
+    IMMoRTALS:hasType "NONE".
+IMMoRTALS_resources:Vp4--IncomingConditioner-71999c5e-32bd-a673-d87d-b9e67f194b71 IMMoRTALS:name "VP4: Incoming Conditioner";
+    a IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:base IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:hasHumanReadableForm "Incoming SA + image reports: This data flow starts with the\nnetwork to CP4, which decodes the network traffic and sends things on to\nthe display.".
+IMMoRTALS_resources:Fa6--Cypher-75816315-eede-4866-2b48-644f309d09d2 IMMoRTALS:name "FA6: Cypher";
+    a IMMoRTALS_resources:FunctionalityAbstraction;
+    IMMoRTALS:base IMMoRTALS_resources:FunctionalityAbstraction;
+    IMMoRTALS:hasUrn "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#Cipher".
+IMMoRTALS_resources:Res-UserInterface-767aaefd-bb9d-f7db-7d2d-7a0e3534166f IMMoRTALS:name "Res: User Interface";
+    a IMMoRTALS_resources:Resource;
+    IMMoRTALS:base IMMoRTALS_resources:Resource;
+    IMMoRTALS:hasUri "http://darpa.mil/immortals/ontology/r2.0.0/resources#UserInterface".
+IMMoRTALS_resources:Documentation-783d65bb-dea5-cb35-3f01-e9ed4e3f301c IMMoRTALS:name "_Documentation";
+    a IMMoRTALS_resources:Documentation;
+    IMMoRTALS:base IMMoRTALS_resources:Documentation;
+    IMMoRTALS:hasHumanReadableForm "The Network is a placeholder that indicates intent.".
+IMMoRTALS_resources:Documentation-78e2fb6d-91e4-e51c-dfd3-364a8b53ee4b IMMoRTALS:name "_Documentation";
+    a IMMoRTALS_resources:Documentation;
+    IMMoRTALS:base IMMoRTALS_resources:Documentation;
+    IMMoRTALS:hasHumanReadableForm "The Network is a placeholder that indicates intent.".
+IMMoRTALS_resources:DataflowEdge-7964fce3-b18c-16b5-edc2-c0665ba2bb69 IMMoRTALS:name "Dataflow Edge";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:WireProtocolDemarshaling-ad6462a8-44ef-c3e2-f95b-7d3ac0e20370;
+    IMMoRTALS:hasDst IMMoRTALS_resources:AtakLocationDisplay-9d6c2f17-0125-e4dd-09b8-a37b5ef8e843.
+IMMoRTALS_resources:DataflowEdge-79bb6235-fecd-389c-0d10-1fc19ece653e IMMoRTALS:name "Dataflow Edge";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:WireProtocolDemarshaling-adbbfc7e-0bae-edcb-1989-a29d058edd27;
+    IMMoRTALS:hasDst IMMoRTALS_resources:AtakImageDisplay-9db3b1c1-4e64-caf4-e96a-7cdc9b943614.
+IMMoRTALS_resources:Res-Cpu-7b1f2781-26f9-e91d-3fac-7f3452aa2b5e IMMoRTALS:name "Res: CPU";
+    a IMMoRTALS_resources:Resource;
+    IMMoRTALS:base IMMoRTALS_resources:Resource;
+    IMMoRTALS:hasUri "http://darpa.mil/immortals/ontology/r2.0.0/resources/compute#Cpu".
+IMMoRTALS_resources:ResourceConsumption-7dba7b75-4969-33a6-72fc-71e85677768c IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--LPUSbGpsSimulated-f742bfc3-ffdc-8f4c-8664-3ec6d2988c3e;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-Usb-07bb3cd1-6299-22e4-ba8b-e2735caf8dd0.
+IMMoRTALS_resources:Vp5--Logger-7dc7b620-369a-c9f3-3986-be1636c0d99b IMMoRTALS:name "VP5: Logger";
+    a IMMoRTALS_resources:VariationPoint;
+    IMMoRTALS:base IMMoRTALS_resources:VariationPoint;
+    IMMoRTALS:hasFunctionalityAbstraction IMMoRTALS_resources:Fa--Logger-da5e56b5-0a00-510d-5efb-323e703ce93d.
+IMMoRTALS_resources:CardinalityTarget-7e85891a-224b-5f76-7120-597757f4201b IMMoRTALS:name "CardinalityTarget";
+    a IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Cardinality-9d2c85f8-1516-cd93-3e5f-fb999950db3f;
+    IMMoRTALS:hasDst IMMoRTALS_resources:BitmapScaler-c106accd-ce0f-17d1-33e0-36c21985f59a.
+IMMoRTALS_resources:Location-816a46d0-221c-edb9-1eb1-4e03cb69f1b0 IMMoRTALS:name "location";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "Location";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Vp1--LocationProviderFunctionalityUri-382b8e58-bf80-b6f3-8db3-396cd8938456;
+    IMMoRTALS:hasDst IMMoRTALS_resources:DataFusing-2e6059b7-d906-ec3d-b447-bae28867fbc8.
+IMMoRTALS_functionality_locationprovider:GetCurrentLocationAspect-81776732-89cc-3137-f132-fd7597bcd11e IMMoRTALS:name "Acquire Location";
+    a <http://darpa.mil/immortals/ontology/r2.0.0/#Aspect>;
+    IMMoRTALS:base <http://darpa.mil/immortals/ontology/r2.0.0/#Aspect>.
+IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c IMMoRTALS:name "App: ATAK";
+    a IMMoRTALS_resources:Application;
+    IMMoRTALS:base IMMoRTALS_resources:Application.
+IMMoRTALS_resources:Network-83fd1a40-ea9f-637c-709e-21a547f3c35e IMMoRTALS:name "Network";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:Dfu--LPAndroidGpsBuiltin-86fd24e7-4a60-5ec7-aad3-1001c724ca98 IMMoRTALS:name "DFU: LP Android Gps BuiltIn";
+    a IMMoRTALS_resources:Dfu;
+    IMMoRTALS:base IMMoRTALS_resources:Dfu;
+    IMMoRTALS:hasArtifactId "LocationProviderAndroidGpsBuiltIn";
+    IMMoRTALS:hasClassName "mil/darpa/immortals/dfus/location/LocationProviderAndroidGpsBuiltIn";
+    IMMoRTALS:hasUrn "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance-9f45b096-f557-42e6-90fa-9debd50d3a26";
+    IMMoRTALS:hasVersion "1.0-LOCAL";
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_functionality_locationprovider:LocationProvider.
+IMMoRTALS_resources:CardinalitySource-87860072-5503-543a-e41f-ab24bec40344 IMMoRTALS:name "CardinalitySource";
+    a IMMoRTALS_resources:CardinalitySource;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalitySource;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Vp6--Cypher-461eef5b-3af5-02f2-6cac-49db2d0a1940;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Cardinality-d181ba72-59f2-9379-5dab-b3ee1b4b7e9a.
+IMMoRTALS_resources:ByteArray-900269bc-d6af-bbe6-b98a-b1226a95b0a6 IMMoRTALS:name "byte array";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "ByteArray";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Receiver-55545242-f4cc-c1ea-1d24-225d30154b9d;
+    IMMoRTALS:hasDst IMMoRTALS_resources:WireProtocolDemarshaling-ad6462a8-44ef-c3e2-f95b-7d3ac0e20370.
+IMMoRTALS_resources:ByteArray-90ddf76a-99ee-95cf-5958-6e85aff96ef1 IMMoRTALS:name "byte array";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "ByteArray";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Receiver-558bcc94-bb8d-efc3-fdf6-fdfaf57995ca;
+    IMMoRTALS:hasDst IMMoRTALS_resources:WireProtocolDemarshaling-adbbfc7e-0bae-edcb-1989-a29d058edd27.
+IMMoRTALS_cp2:cp2DataflowGraph IMMoRTALS:name "VP2.0: Image Producer";
+    a IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:base IMMoRTALS_resources:DfuDataFlow;
+    IMMoRTALS:hasHumanReadableForm "Outgoing SA reports. This data flow starts with that\nCP1, then goes to CP3 and then to the network.";
+    IMMoRTALS:hasDfu IMMoRTALS_resources:BitmapScaler-c106accd-ce0f-17d1-33e0-36c21985f59a;
+    IMMoRTALS:hasFeatureConstraint IMMoRTALS_resources:Cardinality-9d2c85f8-1516-cd93-3e5f-fb999950db3f;
+    IMMoRTALS:hasDataflowEdge IMMoRTALS_resources:Location-816a46d0-221c-edb9-1eb1-4e03cb69f1b0, IMMoRTALS_resources:Image-0cc7186c-fdc6-7dd9-5a4d-fa5c6e419cfc, IMMoRTALS_resources:PeriodicTrigger-d34d4336-f374-ee7d-1872-c84aeeb0e1cb, IMMoRTALS_resources:FilePathToImage-1ba90d7e-4a3b-36f1-1158-139aee1252b3, IMMoRTALS_resources:CotMessage-6734990c-d37e-de88-6f2f-a98a45798883, IMMoRTALS_resources:ByteArray-50b9472c-d96d-5555-c807-09bfbf38d2bb, IMMoRTALS_resources:LocationTopic-6489dd98-5d8f-1640-361b-2b70fa7b49ab;
+    IMMoRTALS:hasCardinalityTarget IMMoRTALS_resources:CardinalityTarget-7e85891a-224b-5f76-7120-597757f4201b;
+    IMMoRTALS:hasCardinalitySource IMMoRTALS_resources:CardinalitySource-aa4c6320-8382-ae4e-149f-8c821376adc2;
+    IMMoRTALS:hasDataflowNode IMMoRTALS_resources:Vp1--LocationProviderFunctionalityUri-382b8e58-bf80-b6f3-8db3-396cd8938456, IMMoRTALS_resources:PeriodicTrigger-e7d85f85-b3de-087d-aebe-93663921c32d, IMMoRTALS_resources:ImageReader-51797245-f6b5-54eb-c2f5-51504dfa148a, IMMoRTALS_resources:DataFusing-2e6059b7-d906-ec3d-b447-bae28867fbc8, IMMoRTALS_resources:WireProtocolMarshalling-6ddf4c38-4b2d-2d51-88d6-c5a7154f616d, IMMoRTALS_resources:Dispatcher-95ef7cd2-fb0e-2f59-6ca9-9ac0e5b82980, IMMoRTALS_resources:Network-06b9555b-ed4b-22f6-d6b4-44467cd5a516;
+    IMMoRTALS:hasDocumentation IMMoRTALS_resources:Documentation-b859d5fd-9e26-0baf-ae5e-8ed75efe8c56, IMMoRTALS_resources:Documentation-aacb8a48-b471-e3c6-8b39-7fb79f955e3c.
+IMMoRTALS_resources:ResourceConsumption-91ac31b1-0220-cceb-0dd9-59b6d6ffb311 IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--LPManualSimulated-b37ee93d-b18e-b630-4c1c-c8e5bd84d02b;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-UserInterface-767aaefd-bb9d-f7db-7d2d-7a0e3534166f.
+IMMoRTALS_resources:Dispatcher-95ef7cd2-fb0e-2f59-6ca9-9ac0e5b82980 IMMoRTALS:name "Dispatcher";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:NeedsEncryption-9ae0bcfb-3def-38ee-c439-bf51b1a8c6e4 IMMoRTALS:name "needs encryption";
+    a IMMoRTALS_resources:Requires;
+    IMMoRTALS:base IMMoRTALS_resources:Requires;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Vp6--Cypher-461eef5b-3af5-02f2-6cac-49db2d0a1940.
+IMMoRTALS_resources:Dfu--SAFileByteWriter-9bdcd830-2346-43a6-1615-248af3d77e0d IMMoRTALS:name "DFU: SA File Byte Writer";
+    a IMMoRTALS_resources:Dfu;
+    IMMoRTALS:base IMMoRTALS_resources:Dfu;
+    IMMoRTALS:hasArtifactId "LatestSaFileOperator";
+    IMMoRTALS:hasClassName "mil/darpa/immortals/dfus/LatestSaFileByteWriter";
+    IMMoRTALS:hasUrn "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance-d5ec0350-2e29-4192-95bf-184c638f9a39";
+    IMMoRTALS:hasVersion "1.0-LOCAL";
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_resources:Fa--Logger-da5e56b5-0a00-510d-5efb-323e703ce93d.
+IMMoRTALS_resources:Cardinality-9d2c85f8-1516-cd93-3e5f-fb999950db3f IMMoRTALS:name "Cardinality";
+    a IMMoRTALS_resources:Cardinality;
+    IMMoRTALS:base IMMoRTALS_resources:Cardinality;
+    IMMoRTALS:hasLow "1";
+    IMMoRTALS:hasHigh "n".
+IMMoRTALS_resources:AtakLocationDisplay-9d6c2f17-0125-e4dd-09b8-a37b5ef8e843 IMMoRTALS:name "ATAK Location Display";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:AtakImageDisplay-9db3b1c1-4e64-caf4-e96a-7cdc9b943614 IMMoRTALS:name "ATAK Image Display";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources_network:NetworkBandwidth IMMoRTALS:name "Network Bandwidth";
+    a IMMoRTALS_resources:Resource;
+    IMMoRTALS:base IMMoRTALS_resources:Resource;
+    IMMoRTALS:hasUri "http://darpa.mil/immortals/ontology/r2.0.0/resources/network#NetworkBandwidth".
+<http://darpa.mil/immortals/ontology/r2.0.0/#not-available-NA> IMMoRTALS:name "na";
+    a IMMoRTALS_cp1:undefined;
+    IMMoRTALS:base <http://darpa.mil/immortals/ontology/r2.0.0/#not-available-NA>.
+IMMoRTALS_resources:LocationTopic-a432f308-524d-f8f3-4796-93ed2fd62bb6 IMMoRTALS:name "location topic";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "ByteArray";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Network-c6027bcb-e289-cc45-a739-fcdba978c70b;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Receiver-55545242-f4cc-c1ea-1d24-225d30154b9d.
+IMMoRTALS_resources:LocationTopic-a4ed6dde-1d0c-d6da-a744-4c4aeabaf5e1 IMMoRTALS:name "location topic";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "ByteArray";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Network-c6dde51d-adc8-e26c-47eb-237c6c14195c;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Receiver-558bcc94-bb8d-efc3-fdf6-fdfaf57995ca.
+IMMoRTALS_resources:Dfu--LPBluetoothGPsSimulated-a7ddd231-704f-cf3e-16c0-5359deeff522 IMMoRTALS:name "DFU: LP Bluetooth GPS Simulated";
+    a IMMoRTALS_resources:Dfu;
+    IMMoRTALS:base IMMoRTALS_resources:Dfu;
+    IMMoRTALS:hasArtifactId "LocationProviderBluetoothGpsSimulated";
+    IMMoRTALS:hasClassName "mil/darpa/immortals/dfus/location/LocationProviderBluetoothGpsSimulated";
+    IMMoRTALS:hasUrn "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance-e25c3c65-a2a2-4dca-b105-844985e2f7b2";
+    IMMoRTALS:hasVersion "1.0-LOCAL";
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_functionality_locationprovider:LocationProvider.
+IMMoRTALS_resources:DefaultImageSize-a8de7034-9b7d-c479-bf80-c6b3f4d5b727 IMMoRTALS:name "Default Image Size";
+    a IMMoRTALS_resources:Binding;
+    IMMoRTALS:base IMMoRTALS_resources:Binding;
+    IMMoRTALS:hasLocal "DefaultImageSize".
+IMMoRTALS_resources:Dfu--SAFileOperator-a901ddec-6bc0-8999-0f80-c7f59ac86c3e IMMoRTALS:name "DFU: SA File Operator";
+    a IMMoRTALS_resources:Dfu;
+    IMMoRTALS:base IMMoRTALS_resources:Dfu;
+    IMMoRTALS:hasVersion "1.0-LOCAL";
+    IMMoRTALS:hasArtifactId "LatestSaFileOperator";
+    IMMoRTALS:hasClassName "mil/darpa/immortals/dfus/LatestSaFileByteReader";
+    IMMoRTALS:hasUrn "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance-20deee25-8d2a-4be9-b0c3-00a6db8ba738";
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_resources:Fa--Logger-da5e56b5-0a00-510d-5efb-323e703ce93d.
+IMMoRTALS_resources:Cardinality-a9afd7a8-08a9-42c4-e016-f51640f3e1ce IMMoRTALS:name "Cardinality";
+    a IMMoRTALS_resources:Cardinality;
+    IMMoRTALS:base IMMoRTALS_resources:Cardinality;
+    IMMoRTALS:hasHigh "1";
+    IMMoRTALS:hasLow "1".
+IMMoRTALS_resources:CardinalitySource-aa4c6320-8382-ae4e-149f-8c821376adc2 IMMoRTALS:name "CardinalitySource";
+    a IMMoRTALS_resources:CardinalitySource;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalitySource;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Image-0cc7186c-fdc6-7dd9-5a4d-fa5c6e419cfc;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Cardinality-9d2c85f8-1516-cd93-3e5f-fb999950db3f.
+IMMoRTALS_resources:Documentation-aacb8a48-b471-e3c6-8b39-7fb79f955e3c IMMoRTALS:name "_Documentation";
+    a IMMoRTALS_resources:Documentation;
+    IMMoRTALS:base IMMoRTALS_resources:Documentation;
+    IMMoRTALS:hasHumanReadableForm "Control Point 2 (CP2) identifies a stage in the dataflow where the image and location data are combined and serialized to a CoT XML message. This operation serves as an internal variation point for manipulating the image in response to some external requirements-level feature, like bandwidth, coupled with domain-specific rules on mitigating bandwidth resource violations.\n".
+IMMoRTALS_resources:EventConstructor-ab2416ac-ded2-adb7-126d-df01b3419d80 IMMoRTALS:name "Event Constructor";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:WireProtocolDemarshaling-ad6462a8-44ef-c3e2-f95b-7d3ac0e20370 IMMoRTALS:name "Wire Protocol Demarshaling";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:WireProtocolDemarshaling-adbbfc7e-0bae-edcb-1989-a29d058edd27 IMMoRTALS:name "Wire Protocol Demarshaling";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:CardinalityTarget-ae37e646-32a8-f7f5-af38-c38aba83db5b IMMoRTALS:name "CardinalityTarget";
+    a IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Cardinality-62fc2d7c-df8d-94d6-c3e5-fe8bf64dc6d3;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu--LPManualSimulated-b37ee93d-b18e-b630-4c1c-c8e5bd84d02b.
+IMMoRTALS_resources:ResourceConsumption-ae44cbbb-d72a-8f5c-a034-023257873b60 IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--jcAAes-c1ad8d4f-c1a7-bda1-fc75-a69dd61dc47e;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-PhysicalMemory-1dbd250e-93c6-135f-9d84-97707b024c7f.
+IMMoRTALS_resources:Application-ae45f77a-367d-a5c3-b51b-1c688d1d3ad2 IMMoRTALS:name "_Application";
+    a IMMoRTALS_resources:Application;
+    IMMoRTALS:base IMMoRTALS_resources:Application;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:DfuProvenance-1071ad89-d9a8-72c4-0566-caa1f5f03fd5;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu.
+IMMoRTALS_resources:TotalAvailableServerBandwidth-af54e16a-71af-9c38-dee3-d8a1cdc60848 IMMoRTALS:name "Total Available Server Bandwidth";
+    a IMMoRTALS_resources:Binding;
+    IMMoRTALS:base IMMoRTALS_resources:Binding;
+    IMMoRTALS:hasLocal "TotalAvailableServerBandwidth".
+IMMoRTALS_resources:Dfu--LPManualSimulated-b37ee93d-b18e-b630-4c1c-c8e5bd84d02b IMMoRTALS:name "DFU: LP Manual Simulated";
+    a IMMoRTALS_resources:Dfu;
+    IMMoRTALS:base IMMoRTALS_resources:Dfu;
+    IMMoRTALS:hasArtifactId "LocationProviderManualSimulated";
+    IMMoRTALS:hasClassName "mil/darpa/immortals/dfus/location/LocationProviderManualSimulated";
+    IMMoRTALS:hasUrn "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance-43d52f79-3821-4a62-96aa-66c9ec1e6f2f";
+    IMMoRTALS:hasVersion "1.0-LOCAL";
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_functionality_locationprovider:LocationProvider.
+IMMoRTALS_resources:Df--LocationProviderFunctionalityUri-b47137c7-2a2b-d28d-f96d-7caa1d6a5bb3 IMMoRTALS:name "DF: Location Provider-functionality uri";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_functionality_locationprovider:LocationProvider.
+IMMoRTALS_resources:Res-GpsConstellation-b54b62a1-f586-bc48-14ca-ae71485c27a4 IMMoRTALS:name "Res: GPS Constellation";
+    a IMMoRTALS_resources:Resource;
+    IMMoRTALS:base IMMoRTALS_resources:Resource;
+    IMMoRTALS:hasUri "http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#GpsSatelliteConstellation".
+IMMoRTALS_resources:Documentation-b859d5fd-9e26-0baf-ae5e-8ed75efe8c56 IMMoRTALS:name "_Documentation";
+    a IMMoRTALS_resources:Documentation;
+    IMMoRTALS:base IMMoRTALS_resources:Documentation;
+    IMMoRTALS:hasHumanReadableForm "The BitmapScaler is a DFU that provides the ImageResizer functionality and satisfies other dataflow conditions that make it a suitable variant for CP2.".
+IMMoRTALS_resources:ResourceConsumption-bf689fe3-4b73-f288-6c1e-fa33115fbba5 IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--LPSaaSmSimulated-e3487ba1-834f-052f-3c44-6085deeee473;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-Usb-07bb3cd1-6299-22e4-ba8b-e2735caf8dd0.
+IMMoRTALS_resources:BitmapScaler-c106accd-ce0f-17d1-33e0-36c21985f59a IMMoRTALS:name "Bitmap Scaler";
+    a IMMoRTALS_resources:Dfu;
+    IMMoRTALS:base IMMoRTALS_resources:Dfu;
+    IMMoRTALS:hasClassName "mil/darpa/immortals/dfus/images/BitmapScaler";
+    IMMoRTALS:hasArtifactId "ImageUtilsAndroid";
+    IMMoRTALS:hasVersion "1.0-LOCAL".
+IMMoRTALS_resources:Dfu--jcAAes-c1ad8d4f-c1a7-bda1-fc75-a69dd61dc47e IMMoRTALS:name "DFU:JCA AES";
+    a IMMoRTALS_resources:Dfu;
+    IMMoRTALS:base IMMoRTALS_resources:Dfu;
+    IMMoRTALS:hasArtifactId "CryptoJCA";
+    IMMoRTALS:hasClassName "mil/darpa/immortals/dfus/crypto/jca/JcaAes";
+    IMMoRTALS:hasUrn "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance-90d886d0-05c8-4cc7-9197-e6a61844afb9";
+    IMMoRTALS:hasVersion "1.0-LOCAL";
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_resources:Fa6--Cypher-75816315-eede-4866-2b48-644f309d09d2.
+IMMoRTALS_resources:Network-c6027bcb-e289-cc45-a739-fcdba978c70b IMMoRTALS:name "Network";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_bytecode:SaCommService-c627cc37-0bcc-b4df-a1c8-0713476fd1a3 IMMoRTALS:name "SA Comm Service";
+    a IMMoRTALS_resources:AClass;
+    IMMoRTALS:base IMMoRTALS_resources:AClass;
+    IMMoRTALS:hasTemplateFile "applications/client/ATAKLite/src-templates/com/bbn/ataklite/service/SACommunicationService.java";
+    IMMoRTALS:hasClassUrl "applications/client/ATAKLite/src/com/bbn/ataklite/service/SACommunicationService.java";
+    IMMoRTALS:hasClassName "SACommunicationService".
+IMMoRTALS_resources:Network-c6dde51d-adc8-e26c-47eb-237c6c14195c IMMoRTALS:name "Network";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:Requires-c87c93fa-6674-2af4-bf47-aeb6538843ae IMMoRTALS:name "Requires";
+    a IMMoRTALS_resources:Requires;
+    IMMoRTALS:base IMMoRTALS_resources:Requires;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Vp23-LocationConsumer-518baff0-7793-9f92-2a1c-687b942ed36d.
+IMMoRTALS_resources:Fco IMMoRTALS:name "_FCO";
+    a <00000000-0000-0000-0000-000000000000>;
+    IMMoRTALS:base IMMoRTALS_model:Object-00000000-0000-0000-0000-000000000000.
+IMMoRTALS_resources:Cardinality-d181ba72-59f2-9379-5dab-b3ee1b4b7e9a IMMoRTALS:name "Cardinality";
+    a IMMoRTALS_resources:Cardinality;
+    IMMoRTALS:base IMMoRTALS_resources:Cardinality;
+    IMMoRTALS:hasLow "1";
+    IMMoRTALS:hasHigh "n".
+IMMoRTALS_resources:AtakImageProvider-d3475d15-7a34-c0e1-c897-c2b0fe827d64 IMMoRTALS:name "ATAK Image Provider";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:PeriodicTrigger-d34d4336-f374-ee7d-1872-c84aeeb0e1cb IMMoRTALS:name "Periodic Trigger";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:PeriodicTrigger-e7d85f85-b3de-087d-aebe-93663921c32d;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Vp1--LocationProviderFunctionalityUri-382b8e58-bf80-b6f3-8db3-396cd8938456.
+IMMoRTALS_resources:NeedsCp4-d4bd6441-957e-a150-275b-006c7536982c IMMoRTALS:name "needs CP4";
+    a IMMoRTALS_resources:Requires;
+    IMMoRTALS:base IMMoRTALS_resources:Requires;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Vp4--IncomingConditioner-71999c5e-32bd-a673-d87d-b9e67f194b71.
+IMMoRTALS_resources:ByteArray-d5fd0837-deb9-14df-6e2d-6c5c841eb4f3 IMMoRTALS:name "byte array";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "ByteArray";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:WireProtocolMarshalling-e89b0323-4cf9-6cdb-2efc-a0442e690725;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dispatcher-10ab33c9-fcda-6ed3-ca83-ff23de9e4fc8.
+IMMoRTALS_resources:Fa--Logger-da5e56b5-0a00-510d-5efb-323e703ce93d IMMoRTALS:name "FA: Logger";
+    a IMMoRTALS_resources:FunctionalityAbstraction;
+    IMMoRTALS:base IMMoRTALS_resources:FunctionalityAbstraction;
+    IMMoRTALS:hasUrn " http://darpa.mil/immortals/ontology/r2.0.0/functionality/logger#Logger".
+IMMoRTALS_resources:CardinalityTarget-dc395633-d74a-f42a-d958-c1dd0ba324d6 IMMoRTALS:name "CardinalityTarget";
+    a IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Cardinality-62fc2d7c-df8d-94d6-c3e5-fe8bf64dc6d3;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu--LPSaaSmSimulated-e3487ba1-834f-052f-3c44-6085deeee473.
+IMMoRTALS_resources:CardinalityTarget-dd900a4b-d10f-a94a-15be-3db88b44f2ec IMMoRTALS:name "CardinalityTarget";
+    a IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Cardinality-62fc2d7c-df8d-94d6-c3e5-fe8bf64dc6d3;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu--LPUSbGpsSimulated-f742bfc3-ffdc-8f4c-8664-3ec6d2988c3e.
+IMMoRTALS_resources:NeedsCp1-de95820f-73bb-7eb2-f010-1640cc78e085 IMMoRTALS:name "needs CP1";
+    a IMMoRTALS_resources:Requires;
+    IMMoRTALS:base IMMoRTALS_resources:Requires;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Vp1--LocationProvider-566e516f-f986-debe-9546-1cf805e846da.
+IMMoRTALS_resources:LocationTopic-e1cd9283-5a5b-57ca-9031-4e93c15d2fe3 IMMoRTALS:name "location topic";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "ByteArray";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dispatcher-10ab33c9-fcda-6ed3-ca83-ff23de9e4fc8;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Network-83fd1a40-ea9f-637c-709e-21a547f3c35e.
+IMMoRTALS_resources:CotMessage-e270d617-d4aa-9f02-c905-cc697e5feecb IMMoRTALS:name "COT message";
+    a IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowEdge;
+    IMMoRTALS:hasDataType "COTMessage";
+    IMMoRTALS:hasSrc IMMoRTALS_resources:EventConstructor-ab2416ac-ded2-adb7-126d-df01b3419d80;
+    IMMoRTALS:hasDst IMMoRTALS_resources:WireProtocolMarshalling-e89b0323-4cf9-6cdb-2efc-a0442e690725.
+IMMoRTALS_resources:ResourceConsumption-e2a15ce4-f886-4db0-9cc0-b9893e23dd01 IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--LPSaaSmSimulated-e3487ba1-834f-052f-3c44-6085deeee473;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-GpsConstellation-b54b62a1-f586-bc48-14ca-ae71485c27a4.
+IMMoRTALS_resources:Dfu--LPSaaSmSimulated-e3487ba1-834f-052f-3c44-6085deeee473 IMMoRTALS:name "DFU: LP SAASM Simulated";
+    a IMMoRTALS_resources:Dfu;
+    IMMoRTALS:base IMMoRTALS_resources:Dfu;
+    IMMoRTALS:hasArtifactId "LocationProviderSaasmSimulated";
+    IMMoRTALS:hasClassName "mil/darpa/immortals/dfus/location/LocationProviderSaasmSimulated";
+    IMMoRTALS:hasUrn "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance-e02937d1-c517-4134-bc82-f6d9c8f6df5c";
+    IMMoRTALS:hasVersion "1.0-LOCAL";
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_functionality_locationprovider:LocationProvider.
+IMMoRTALS_resources:ResourceConsumption-e4aa6c23-0c73-c95b-6c83-470c3097590a IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--LPBluetoothGPsSimulated-a7ddd231-704f-cf3e-16c0-5359deeff522;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-GpsConstellation-b54b62a1-f586-bc48-14ca-ae71485c27a4.
+IMMoRTALS_resources:Res-Bluetooth-e7c44d73-fb27-bdc7-8f6e-cf441f92d0a8 IMMoRTALS:name "Res: Bluetooth";
+    a IMMoRTALS_resources:Resource;
+    IMMoRTALS:base IMMoRTALS_resources:Resource;
+    IMMoRTALS:hasUri "http://darpa.mil/immortals/ontology/r2.0.0/resources#BluetoothResource".
+IMMoRTALS_resources:PeriodicTrigger-e7d85f85-b3de-087d-aebe-93663921c32d IMMoRTALS:name "Periodic Trigger";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:WireProtocolMarshalling-e89b0323-4cf9-6cdb-2efc-a0442e690725 IMMoRTALS:name "Wire Protocol Marshalling";
+    a IMMoRTALS_resources:DataflowNode;
+    IMMoRTALS:base IMMoRTALS_resources:DataflowNode.
+IMMoRTALS_resources:CardinalitySource-ea5afe98-c80e-b4e4-7815-27a830fc0e57 IMMoRTALS:name "CardinalitySource";
+    a IMMoRTALS_resources:CardinalitySource;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalitySource;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Vp1--LocationProvider-566e516f-f986-debe-9546-1cf805e846da;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Cardinality-62fc2d7c-df8d-94d6-c3e5-fe8bf64dc6d3.
+IMMoRTALS_resources:ResourceConsumption-ec205601-7937-4d69-ee1f-6a6141e7f009 IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--SAFileByteWriter-9bdcd830-2346-43a6-1615-248af3d77e0d;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-FileSystem-efaaa7a7-cf9f-c230-8ee5-f170121ab0d3.
+IMMoRTALS_resources:ResourceConsumption-ee97d052-9ab7-58a2-c4a4-092a3abcb454 IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--LPAndroidGpsBuiltin-86fd24e7-4a60-5ec7-aad3-1001c724ca98;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-GpsRecvEmbedded-4bf2e2cc-09d0-5603-a455-34676731c9b8.
+IMMoRTALS_resources:Res-FileSystem-efaaa7a7-cf9f-c230-8ee5-f170121ab0d3 IMMoRTALS:name "Res: File System";
+    a IMMoRTALS_resources:Resource;
+    IMMoRTALS:base IMMoRTALS_resources:Resource;
+    IMMoRTALS:hasUri "http://darpa.mil/immortals/ontology/r2.0.0/resources#FileSystemResource".
+<http://darpa.mil/immortals/ontology/r2.0.0/spec#DeclareInitWorkClean> IMMoRTALS:name "Declare Init Work Clean";
+    a IMMoRTALS_spec:UsageParadigm;
+    IMMoRTALS:base IMMoRTALS_spec:UsageParadigm.
+IMMoRTALS_resources:CardinalityTarget-f4d2cf09-380e-38bb-5835-04df947e3439 IMMoRTALS:name "CardinalityTarget";
+    a IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalityTarget;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Cardinality-d181ba72-59f2-9379-5dab-b3ee1b4b7e9a;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Dfu--jcAAes-c1ad8d4f-c1a7-bda1-fc75-a69dd61dc47e.
+IMMoRTALS_resources:NeedsLogger-f4edfd3b-b928-bba4-4007-dab3590a17af IMMoRTALS:name "needs logger";
+    a IMMoRTALS_resources:Requires;
+    IMMoRTALS:base IMMoRTALS_resources:Requires;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:App-Atak-838e3878-c1fe-0e3f-f81b-18d458c9023c;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Vp5--Logger-7dc7b620-369a-c9f3-3986-be1636c0d99b.
+IMMoRTALS_resources:FunctionalityProvenance-f6001b41-fe99-5f0f-039c-e8d557b9bdf9 IMMoRTALS:name "Functionality Provenance";
+    a IMMoRTALS_resources:Provenance;
+    IMMoRTALS:base IMMoRTALS_resources:Provenance;
+    IMMoRTALS:hasHumanReadableForm "The Functionality Abstraction has different names:\n\n  * Control Point\n  * Variation Point\n  * Functionality Feature";
+    IMMoRTALS:hasType "NONE".
+IMMoRTALS_resources:Dfu--LPUSbGpsSimulated-f742bfc3-ffdc-8f4c-8664-3ec6d2988c3e IMMoRTALS:name "DFU: LP USB GPS Simulated";
+    a IMMoRTALS_resources:Dfu;
+    IMMoRTALS:base IMMoRTALS_resources:Dfu;
+    IMMoRTALS:hasArtifactId "LocationProviderUsbGpsSimulated";
+    IMMoRTALS:hasClassName "mil/darpa/immortals/dfus/location/LocationProviderUsbGpsSimulated";
+    IMMoRTALS:hasUrn "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance-a6b697be-0126-47d4-a927-9b541b87eff1";
+    IMMoRTALS:hasVersion "1.0-LOCAL";
+    IMMoRTALS:hasFunctionalityUri IMMoRTALS_functionality_locationprovider:LocationProvider.
+IMMoRTALS_resources:ResourceConsumption-fd7875bc-aac4-98df-cafa-464aa4c2706b IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--SAFileOperator-a901ddec-6bc0-8999-0f80-c7f59ac86c3e;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-FileSystem-efaaa7a7-cf9f-c230-8ee5-f170121ab0d3.
+IMMoRTALS_resources:CardinalitySource-fd7caf60-8fa7-74d8-1318-f01171913dcb IMMoRTALS:name "CardinalitySource";
+    a IMMoRTALS_resources:CardinalitySource;
+    IMMoRTALS:base IMMoRTALS_resources:CardinalitySource;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Vp5--Logger-7dc7b620-369a-c9f3-3986-be1636c0d99b;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Cardinality-a9afd7a8-08a9-42c4-e016-f51640f3e1ce.
+IMMoRTALS_resources:ResourceConsumption-fe048062-783c-0882-00cd-431596b6b5ee IMMoRTALS:name "ResourceConsumption";
+    a IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:base IMMoRTALS_resources:ResourceConsumption;
+    IMMoRTALS:hasAmount "0"^^xsd:integer;
+    IMMoRTALS:hasSrc IMMoRTALS_resources:Dfu--LPUSbGpsSimulated-f742bfc3-ffdc-8f4c-8664-3ec6d2988c3e;
+    IMMoRTALS:hasDst IMMoRTALS_resources:Res-GpsConstellation-b54b62a1-f586-bc48-14ca-ae71485c27a4.

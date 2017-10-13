@@ -1,0 +1,15 @@
+node_modules/
+bower_components/
+server*.log
+blob-local-storage/
+.nrepl-*
+npm-debug.log*
+dist/
+dist-server/
+dist-client/
+*.js.map
+log/*
+config/
+*.ttl
+immortals_model.json
+

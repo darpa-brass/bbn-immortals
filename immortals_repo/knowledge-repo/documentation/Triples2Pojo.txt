@@ -1,0 +1,20 @@
+==Issues List==
+
+- Some vocabulary is no longer defined for properties/concepts currently in the ontology. All reported offenders are:
+-- hasDependentVariable
+-- hasIndependentVariable
+-- (has)FunctionalityAbstraction
+-- ByteArray
+-- hasConfigurationAspect
+-- configurationVariable
+-- CotMessage
+-- DfuDataFlow
+-- hasConstraintCriterion **
+
+** I think the referenced field is supposed to be hasTriggeringConstraintCriterion
+
+-An instance that can be multiple types currently breaks Triples2Pojo, as it doesn't know which to pick. A possible fix is examining types
+ for which one the instance more (closely?) resembles.
+ 
+-Similarly, a concept with a predicate that has two objects can break the program.
+ 

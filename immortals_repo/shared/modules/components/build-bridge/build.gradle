@@ -1,0 +1,10 @@
+apply plugin: immortals.CoreDefinitions
+apply plugin: immortals.Java8Component
+apply plugin: immortals.PublishJavaDfu
+
+dependencies {
+    compile 'org.gradle:gradle-tooling-api:3.4.1'
+    compile project(':core')
+    runtime "org.slf4j:slf4j-simple:${slf4jVersion}"
+    compile 'commons-io:commons-io:1.4'
+}

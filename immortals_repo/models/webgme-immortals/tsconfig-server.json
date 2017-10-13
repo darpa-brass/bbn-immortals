@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig",
+  
+    "outDir": "./dist-server",
+   
+    "module": "umd"
+}

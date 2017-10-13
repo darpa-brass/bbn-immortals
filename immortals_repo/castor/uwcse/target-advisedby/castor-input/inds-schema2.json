@@ -1,0 +1,28 @@
+{
+	"inds": [
+		{
+			"leftRelation": "courselevel",
+			"leftAttributeNumber": 0,
+			"rightRelation": "taughtby",
+			"rightAttributeNumber": 0
+		},
+		{
+			"leftRelation": "taughtby",
+			"leftAttributeNumber": 0,
+			"rightRelation": "courselevel",
+			"rightAttributeNumber": 0
+		},
+		{
+			"leftRelation": "professor",
+			"leftAttributeNumber": 0,
+			"rightRelation": "taughtby",
+			"rightAttributeNumber": 1
+		},
+		{
+			"leftRelation": "taughtby",
+			"leftAttributeNumber": 1,
+			"rightRelation": "professor",
+			"rightAttributeNumber": 0
+		}
+	]
+}

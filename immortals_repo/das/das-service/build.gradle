@@ -1,0 +1,53 @@
+apply from: 'common.gradle'
+
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "Immortals-DAS",
+                "Implementation-Version": "$defaultSoftwarePublishVersion",
+                "Main-Class": "mil.darpa.immortals.core.das.DAS"
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    destinationDir = file('./')
+    archiveName = "das.jar"
+}
+
+clean {
+    delete fileTree(dir: './', includes: ['build', 'das.jar'])
+}
+
+dependencies {
+    compile 'mil.darpa.immortals:core:+'
+    compile 'mil.darpa.immortals.datatypes:Coordinates:+'
+    compile 'mil.darpa.immortals.dfus:LocationProviderAndroidGpsBuiltIn:+'
+    compile 'mil.darpa.immortals.dfus:LocationProviderBluetoothGpsSimulated:+'
+    compile 'mil.darpa.immortals.dfus:LocationProviderManualSimulated:+'
+    compile 'mil.darpa.immortals.dfus:LocationProviderSaasmSimulated:+'
+    compile 'mil.darpa.immortals.dfus:LocationProviderUsbGpsSimulated:+'
+    compile 'mil.darpa.immortals.javatypeconverters:CoordinateLocationConverter:+'
+    compile 'org.apache.velocity:velocity:1.7'
+    compile 'org.apache.jena:apache-jena-libs:3.1.0'
+    compile 'javax.json:javax.json-api:1.0'
+    compile 'org.glassfish:javax.json:1.0.4'
+    compile 'org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.22.2'
+    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.22.2'
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+    compile 'asm:asm:3.3.1'
+    testCompile 'junit:junit:4.9'
+  	compile 'mil.darpa.immortals.components:source-composer:+'
+	  compile 'org.apache.commons:commons-jexl:2.0'
+	  compile 'org.apache.commons:commons-math3:3.6.1'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.1'
+}

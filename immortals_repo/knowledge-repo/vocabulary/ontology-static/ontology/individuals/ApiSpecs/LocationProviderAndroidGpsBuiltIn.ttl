@@ -1,0 +1,78 @@
+@prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_pattern_spec: <http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_spec: <http://darpa.mil/immortals/ontology/r2.0.0/spec#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_functionality_alg_encryption: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#> .
+
+#Define an overall usage paradigm
+IMMoRTALS_spec:DeclareInitWorkClean
+        a                       IMMoRTALS_pattern_spec:AbstractUsageParadigm ;
+        IMMoRTALS:hasComponent  IMMoRTALS_spec:Declare , IMMoRTALS_spec:Init , IMMoRTALS_spec:DoWork , IMMoRTALS_spec:Cleanup ;
+        IMMoRTALS:hasDurableId  "declare-init-doWork-cleanup" .
+
+#Define the components of the usage paradigm
+IMMoRTALS_spec:DeclareInitWorkClean.DeclareComponent
+        a                       IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId "declare-init-doWork-cleanup.component.declare" ;
+        IMMoRTALS:hasMultiplicityOperator "1" ;
+        IMMoRTALS:hasOrdering "0"^^xsd:int .
+
+IMMoRTALS_spec:DeclareInitWorkClean.InitComponent
+        a                       IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId  "declare-init-doWork-cleanup.component.init" ;
+        IMMoRTALS:hasMultiplicityOperator "[0,1]" ;
+        IMMoRTALS:hasOrdering   "1"^^xsd:int .
+
+IMMoRTALS_spec:DeclareInitWorkClean.DoWorkComponent
+        a                       IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId  "declare-init-doWork-cleanup.component.doWork" ;
+        IMMoRTALS:hasMultiplicityOperator "[1]" ;
+        IMMoRTALS:hasOrdering   "2"^^xsd:int .
+
+IMMoRTALS_spec:DeclareInitWorkClean.CleanupComponent
+        a                       IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId  "declare-init-doWork-cleanup.component.cleanup" ;
+        IMMoRTALS:hasMultiplicityOperator "[0,1]" ;
+        IMMoRTALS:hasOrdering   "3"^^xsd:int .
+
+#The above is abstract; it's about high-level patterns.
+#Below we describe a specific instance of the above pattern
+
+#Define an APISpec
+IMMoRTALS_spec:LocationProviderAndroidGpsBuiltIn
+        a                           IMMoRTALS_pattern_spec:LibraryFunctionalAspectSpec ;
+        IMMoRTALS:hasAspect         <http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#GetCurrentLocationAspect> ;
+        IMMoRTALS:hasComponent      IMMoRTALS_spec:ApiSpec.LocationProviderAndroidGpsBuiltIn.component.declare , IMMoRTALS_spec:ApiSpec.LocationProviderAndroidGpsBuiltIn.component.init , IMMoRTALS_spec:ApiSpec.LocationProviderAndroidGpsBuiltIn.component.work , IMMoRTALS_spec:ApiSpec.LocationProviderAndroidGpsBuiltIn.component.clean ;
+        IMMoRTALS:hasDurableId      "ApiSpec.LocationProviderAndroidGpsBuiltIn" ;
+        IMMoRTALS:hasFunctionality  <http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#LocationProvider> ;
+        IMMoRTALS:hasLibraryCoordinateTag "mil.darpa.immortals.dfus:LocationProviderAndroidGpsBuiltIn:1.0-LOCAL" ;
+        IMMoRTALS:hasUsageParadigm  IMMoRTALS_spec:DeclareInitWorkClean .
+
+#Define APISpec components
+IMMoRTALS_spec:ApiSpec.LocationProviderAndroidGpsBuiltIn.component.declare
+        a                       IMMoRTALS_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage IMMoRTALS_spec:DeclareInitWorkClean.DeclareComponent ;
+        IMMoRTALS:hasDurableId  "ApiSpec.LocationProviderAndroidGpsBuiltIn.component.declare" ;
+        IMMoRTALS:hasSpec       "LocationProviderAndroidGpsBuiltIn $lp = new LocationProviderAndroidGpsBuiltIn();" .
+
+IMMoRTALS_spec:ApiSpec.LocationProviderAndroidGpsBuiltIn.component.init
+        a                       IMMoRTALS_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage IMMoRTALS_spec:DeclareInitWorkClean.InitComponent ;
+        IMMoRTALS:hasDurableId  "ApiSpec.LocationProviderAndroidGpsBuiltIn.component.init" ;
+        IMMoRTALS:hasSpec       "$lp.initialize(#AndroidContext Context $ac);" .
+
+IMMoRTALS_spec:ApiSpec.LocationProviderAndroidGpsBuiltIn.component.work
+        a                       IMMoRTALS_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage IMMoRTALS_spec:DeclareInitWorkClean.WorkComponent ;
+        IMMoRTALS:hasDurableId  "ApiSpec.LocationProviderAndroidGpsBuiltIn.component.work" ;
+        IMMoRTALS:hasSpec       "$lp.getLastKnownLocation();" .
+
+IMMoRTALS_spec:ApiSpec.LocationProviderAndroidGpsBuiltIn.component.clean
+        a                       IMMoRTALS_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage IMMoRTALS_spec:DeclareInitWorkClean.CleanComponent ;
+        IMMoRTALS:hasDurableId  "ApiSpec.LocationProviderAndroidGpsBuiltIn.component.clean" ;
+        IMMoRTALS:hasSpec       "" .

@@ -1,0 +1,118 @@
+apply plugin: 'groovy'
+
+
+import groovy.json.JsonBuilder
+import groovy.json.JsonParserType
+import groovy.json.JsonSlurper
+import groovy.text.GStringTemplateEngine
+
+buildscript {
+    String IMMORTALS_ROOT = new File(buildscript.sourceFile.getParent() + "/../").getCanonicalPath() + '/'
+
+    // Read the common values file
+    File jsonFile = new File(IMMORTALS_ROOT + 'shared/common_values.json')
+    def inData = new JsonSlurper().setType(JsonParserType.LAX).parseText(jsonFile.text)
+
+    // Create the initial value map
+    def jsonData0 = [
+            'IMMORTALS_ROOT': IMMORTALS_ROOT,
+            'ANDROID_HOME'  : System.getenv('ANDROID_HOME')
+    ]
+
+    // Copy the common values to nonStringJsonData to be added after String processing or to the data to be processed
+    def nonStringJsonData = [:]
+    for (String key : inData.keySet()) {
+        def val = inData[key]
+
+        if (val.getClass() == String) {
+            // If it's a string it can have its values filled
+            jsonData0[key] = val
+
+        } else {
+            // Otherwise, put it aside for reinsertion prior to writing to disk
+            nonStringJsonData[key] = val
+        }
+
+    }
+
+    def jsonData1 = null
+    while (jsonData0 != jsonData1) {
+        // While the map keeps changing, try value subsitution. This allows substitution of map value variables 
+        // with the values of map keys
+        jsonData1 = jsonData0
+        jsonData0 = [:]
+
+        for (String key : jsonData1.keySet()) {
+            String val = jsonData1[key]
+            if (val.getClass() == String) {
+                jsonData0[key] = new GStringTemplateEngine().createTemplate(val).make(jsonData1).toString()
+            } else {
+                jsonData0[key] = val
+            }
+        }
+    }
+
+    // Add back the non-strings
+    jsonData0.putAll(nonStringJsonData)
+
+    // Define the common file paths
+    def commonJsonSrcPath = IMMORTALS_ROOT + 'buildSrc/common.json'
+    def commonGradleSrcPath = IMMORTALS_ROOT + 'buildSrc/common.gradle'
+
+    // Write the new json file to disk
+    new File(commonJsonSrcPath).write(new JsonBuilder(jsonData0).toString())
+
+    apply from: 'common.gradle'
+
+    copy {
+        from(commonJsonSrcPath)
+        into(IMMORTALS_ROOT + 'buildSrc/src/main/resources/')
+    }
+
+    copy {
+        from(commonGradleSrcPath)
+        into(IMMORTALS_ROOT + 'buildSrc/src/main/resources/')
+    }
+
+    // Copy the common files to all applicable projects
+    for (String path : commonValueConsumers) {
+        copy {
+            from(commonJsonSrcPath)
+            into(IMMORTALS_ROOT + path + '/')
+        }
+        copy {
+            from(commonGradleSrcPath)
+            into(IMMORTALS_ROOT + path)
+        }
+    }
+}
+
+task('publishProjectToTriples', type: Exec) {
+    group = 'Immortals'
+    description = 'Builds and publishes KR project-to-triples in the local IMMORTALS_REPO.'
+    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
+    executable = 'mvn'
+    args = ['-pl', 'toolchain/project-to-triples', '-DskipTests', '-am', 'install']
+}
+
+task('publishAdsl', type: Exec) {
+    group = 'Immortals'
+    description = 'Builds and publishes the knowledge-repo ADSL to the local IMMORTALS_REPO.'
+    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
+    executable = 'mvn'
+    args = ['-pl', 'vocabulary/dsl-generate', '-DskipTests', '-am', 'install']
+}
+
+task('publishKRToolingIfNecessary') {
+    doLast {
+        if (!file(localRepoPath + 'com/securboration/immortals-adsl-generate/r2.0.0/immortals-adsl-generate-r2.0.0.jar').exists()) {
+            publishAdsl.execute()
+
+            if (!file(localRepoPath + 'com/securboration/immortals-project-to-triples/r2.0.0/immortals-project-to-triples-r2.0.0.jar').exists()) {
+                publishProjectToTriples.execute()
+            }
+        }
+    }
+}
+
+publishKRToolingIfNecessary.execute()

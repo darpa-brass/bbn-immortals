@@ -1,0 +1,83 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        url = "$System.env.ANDROID_HOME/extras/android/m2repository"
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+task copyArtifacts(type: Copy) {
+    from('build/libs') {
+        include '*.jar'
+    }
+    into('./')
+}
+
+build.dependsOn(':misc:AndroidRunner:publish')
+
+GradleBuild publishQuirkyDependencies = task('publishQuirkyDependencies', type: GradleBuild) {
+    tasks = [
+            ':misc:AndroidRunner:publish'
+    ]
+}
+
+clean.doLast {
+
+}
+
+
+task fatJar(type: Jar) {
+    dependsOn(project.publishQuirkyDependencies)
+    manifest {
+        attributes 'Implementation-Title': 'ModuleRunnerGenerator',
+                'Implementation-Version': '1.3.3.7',
+                'Main-Class': 'mil.darpa.immortals.sourcecomposer.ApplicationGenerator'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+
+fatJar.dependsOn(build)
+fatJar.finalizedBy(copyArtifacts)
+build.finalizedBy(copyArtifacts)
+
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    compile 'com.google.code.findbugs:jsr305:3.0.1'
+    compile 'com.google.code.gson:gson:2.5'
+    compile 'dom4j:dom4j:1.6.1'
+    compile 'org.apache.commons:commons-csv:1.1'
+    compile 'commons-io:commons-io:2.4'
+    compile project(':misc:module-runner-data-generator')
+    compile files('/usr/local/opt/android-sdk/platforms/android-21/android.jar')
+//    compile 'mil.darpa.immortals.misc:AndroidRunner-skeleton:+'
+    compile 'mil.darpa.immortals.misc:AndroidRunner-skeleton:+'
+//    compile project(':misc:AndroidRunner')
+//    compile project(':components:das-analysis:applications:AndroidRunner')
+//    compile project(':misc:modulerunner:templates:AndroidBasicMainActivity')
+    compile project(':dfus:LocationProviderAndroidGpsBuiltIn')
+    compile project(':dfus:LocationProviderBluetoothGpsSimulated')
+    compile project(':dfus:LocationProviderManualSimulated')
+    compile project(':dfus:LocationProviderSaasmSimulated')
+    compile project(':dfus:LocationProviderUsbGpsSimulated')
+    compile project(':dfus:ImageUtilsAndroid')
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:support-v4:21.0.3'
+}

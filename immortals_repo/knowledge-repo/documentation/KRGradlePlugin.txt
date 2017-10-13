@@ -1,0 +1,56 @@
+Knowledge Repo Gradle Plugin (KRGP)
+
+== Summary ==
+ The KRGP will parse through files on a project's classpath, as defined by the gradle project properties,
+ and perform bytecode analysis. The KRGP will convert the files found into rdf models and these models will be 
+ output based on the type of information found as well as origin of the model (jar, class, embedded). Additionally,
+ call graphs are produced to the directory 'krgp/analysis', based on the specific classpath analyzed. Finally, the
+ plugin also looks for various Functionality annotations that are attached to the source code; the @FunctionalityTest
+ annotation will prompt the KRGP to invoke the corresponding method and record its location, whether the
+ test was successful and its start time.
+	
+ There will be an Uber file produced to the base directory, containing the overall, "JavaProject" model.
+ 
+ Additionally, there are various configurations that allow for models produced to be automatically pushed to
+ a running Fuseki instance using the Knowledge Repository Service (KRS), as well as control what 
+ classpaths the user would like analyzed.
+	
+== Setup ==
+The KRGP needs the following placed in the gradle build file of the project:
+
+	1) buildscript {
+		repositories {
+			repositories {
+				mavenLocal()
+			}
+			dependencies {
+				classpath group: 'com.securboration', name: 'immortals-project-to-triples', version: 'r2.0.0'
+			}
+		}
+	 }
+
+	2) version = IMMoRTALS_Version**
+	
+    3) apply plugin: 'com.securboration.p2t'**
+    
+	After the compilation and copying process, put 3) in the gradle build file. 
+
+**2) and 3) reference the common.gradle resource, so place these instructions after it has been applied.
+
+== Configuration == 
+There are three configurations to prepare before the plugin can push the graphs produced automatically:
+
+    1) pushContext -> disabled by default, if true will attempt to push graphs produced by plugin to Fuseki instance
+    2) repoServiceAddress -> http://localhost:8080/ by default, where the KRS is hosted
+    3) repoServiceContextID -> unique identifier of context previously created by KRS
+    
+Once these configurations are properly populated, the graphs will be pushed automatically after bytecode analysis.
+
+Another configuration option that can be set is:
+
+    completeAnalysis -> disabled by default, if true every classpath will be analyzed (may result in increased execution times)
+    
+By default, only the "compile" and "testCompile" classpaths are analyzed.
+	
+== Running the plugin == 
+"gradle kranalyze" will now execute the KRGP

@@ -1,0 +1,9 @@
+apply plugin: immortals.CoreDefinitions
+apply plugin: immortals.JavaDfu
+apply plugin: immortals.DfuBase
+apply plugin: immortals.PublishJavaDfu
+
+dependencies {
+    compile project(':datatypes:Coordinates')
+    compile files (androidSDKJar)
+}

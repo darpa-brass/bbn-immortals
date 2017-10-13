@@ -1,0 +1,87 @@
+buildscript {
+    apply from: 'common.gradle'
+    dependencies {
+        classpath group: 'com.securboration', name: 'immortals-project-to-triples', version: 'r2.0.0'
+    }
+}
+apply plugin: 'eclipse'
+apply plugin: 'java'
+apply from: 'dependencies.gradle'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+apply plugin: 'com.securboration.p2t'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src', 'src-gen']
+        }
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+
+    validation {
+        java {
+            srcDirs = ['validation']
+        }
+        resources {
+            srcDirs = ['validation-resources']
+        }
+
+    }
+}
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "Marti-immortals",
+                "Implementation-Version": "$defaultSoftwarePublishVersion",
+                "Main-Class": "com.bbn.marti.service.MartiMain"
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    destinationDir = file('./')
+    archiveName = "Marti-immortals.jar"
+}
+
+clean {
+    delete fileTree(dir: './', includes: ['build', 'Marti-immortals.jar'])
+}
+
+
+task('validate', type: Test) {
+    group = 'Verification'
+    description = 'Executes all the validation tests'
+    testClassesDir = sourceSets.validation.output.classesDir
+    classpath = sourceSets.validation.runtimeClasspath
+}
+
+
+dependencies {
+    compile('mil.darpa.immortals:core:+')
+	compile('mil.darpa.immortals.dfus:TakServerDataManager:+')
+    compile('mil.darpa.immortals.dfus:ImageUtilsJava:+')
+    compile('mil.darpa.immortals.components:analytics-log4j-client:+')
+    compile('org.glassfish.jersey:jersey-bom:2.22.2')
+    compile('org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.22.2')
+    compile('org.glassfish.jersey.media:jersey-media-json-jackson:2.22.2')
+    compile('javax.json:javax.json-api:1.0')
+    compile('org.glassfish:javax.json:1.0.4')
+ }
+    
+dependencies {
+    testCompile('ch.qos.logback:logback-classic:1.2.3')
+    testCompile('com.bbn.ataklite:CLITAK:+')
+    testCompile('junit:junit:4.12')
+    testCompile('mil.darpa.immortals.components:product-validator-bundle:+')
+    validationCompile(sourceSets.main.output)
+    validationCompile(configurations.compile)
+    validationCompile(configurations.runtime)
+    validationCompile('ch.qos.logback:logback-classic:1.2.3')
+    validationCompile('com.bbn.ataklite:CLITAK:+')
+    validationCompile('junit:junit:4.12')
+    validationCompile('mil.darpa.immortals.components:product-validator-bundle:+')
+}

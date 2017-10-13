@@ -1,0 +1,24 @@
+@prefix im: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix cp: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/cp#> .
+@prefix bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#> .
+@prefix res: <http://darpa.mil/immortals/ontology/r2.0.0/resources/network#> .
+
+bytecode:AClass-cd68135a-3597-4931-a725-2bbaa0b0173b
+	a bytecode:AClass;
+	im:hasClassName "SACommunicationService";
+	im:hasClassUrl "https://dsl-external.bbn.com/svn/immortals/trunk/client/ATAKLite/src/com/bbn/ataklite/service/SACommunicationService.java".
+
+cp:CO
+	a cp:ControlPoint;
+	im:hasControlPointUuid "BCC0A94D-C2B1-40AD-8056-E3DDBD46585E";
+	im:hasOwnerClass bytecode:AClass-cd68135a-3597-4931-a725-2bbaa0b0173b;
+	im:hasFunctionalityPerformed <http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#LocationProvider>;
+	im:hasAggregateResourceProfile cp:resourceProfile1 ;
+	im:dataflowEntryPoint <http://darpa.mil/immortals/ontology/r2.0.0/cp2#cp2DataflowGraph> . 
+
+cp:resourceProfile1
+	a cp:ResourceProfile;
+	im:hasApplicableResourceType <http://darpa.mil/immortals/ontology/r2.0.0/resources/network#NetworkBandwidth>;
+	im:constrainingMetricLinkID "TotalAvailableServerBandwidth" ;
+	im:formula "(NumberOfClients*(PLIReportRate/60.0)*3.2) + (NumberOfClients*(ImageReportRate/60.0)*((((DefaultImageSize*1000000)*24)/15.0)/1000)) + ((NumberOfClients-1)*NumberOfClients*(PLIReportRate/60.0)*3.2)+ ((NumberOfClients-1)*NumberOfClients*(ImageReportRate/60.0)*((((DefaultImageSize*1000000)*24)/15.0)/1000))";
+	im:hasUnit "kb/s".

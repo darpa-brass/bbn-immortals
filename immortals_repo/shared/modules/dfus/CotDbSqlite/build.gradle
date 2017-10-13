@@ -1,0 +1,38 @@
+apply plugin: immortals.CoreDefinitions
+apply plugin: immortals.JavaDfuWithoutAndroid
+apply plugin: immortals.DfuBase
+apply plugin: immortals.PublishJavaDfu
+jar {
+    manifest {
+        attributes "Implementation-Title": "CotDbSqlite",
+                "Implementation-Version": defaultSoftwarePublishVersion,
+                "Main-Class": "mil.darpa.immortals.cotdb.sqlite.CotDB"
+    }
+}
+
+task('fatJar', type: Jar) {
+    manifest {
+        attributes "Implementation-Title": "ImmortalsCotDB",
+                "Implementation-Version": defaultSoftwarePublishVersion,
+                "Main-Class": "mil.darpa.immortals.cotdb.sqlite.CotDB"
+    }
+
+    baseName = project.name + '-all'
+
+    from {
+        configurations.compile.filter { !it.name.endsWith("android.jar") }.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    with jar
+}
+
+dependencies {
+    compile project(':datatypes:CotData')
+    compile project(':datatypes:Coordinates')
+    compile 'org.xerial:sqlite-jdbc:3.16.1'
+    compile 'commons-codec:commons-codec:1.2'
+    compile "org.slf4j:slf4j-api:${project.slf4jVersion}"
+}
+
+

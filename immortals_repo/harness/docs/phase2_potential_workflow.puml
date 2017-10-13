@@ -1,0 +1,151 @@
+@startuml
+
+participant User
+participant WebGME
+participant PymmortalsCoordinator
+participant Analysis
+participant TripleConverter
+participant DAS
+participant KnowledgeRepository
+participant Fuseki
+participant TripleStorage
+participant PymmortalsScenarioRunner
+
+
+'
+' Startup Sequence
+'
+== IMMoRTALS Platform Startup ==
+User -> PymmortalsCoordinator: Start
+activate PymmortalsCoordinator
+
+PymmortalsCoordinator -> Fuseki: Start
+activate Fuseki
+
+Fuseki -> PymmortalsCoordinator: Running
+deactivate Fuseki
+
+PymmortalsCoordinator -> KnowledgeRepository: Start
+activate KnowledgeRepository
+
+KnowledgeRepository -> PymmortalsCoordinator: Running
+deactivate KnowledgeRepository
+
+PymmortalsCoordinator -> DAS: Start
+activate DAS
+
+DAS -> PymmortalsCoordinator: Running
+deactivate DAS
+
+PymmortalsCoordinator -> User: Running
+deactivate PymmortalsCoordinator
+
+
+newpage
+'
+' Analysis Sequence
+'
+== Potential Analysis Workflow==
+
+User -> PymmortalsCoordinator: Analyze DFUs
+activate PymmortalsCoordinator
+
+PymmortalsCoordinator -> PymmortalsCoordinator: Startup If Necessary [See IMMoRTALS Platform Startup]
+
+PymmortalsCoordinator -> KnowledgeRepository: createAnalysisContext() [REST]
+KnowledgeRepository -> PymmortalsCoordinator: analysisContextId
+
+PymmortalsCoordinator -> KnowledgeRepository: Get DFUs that need analysis [REST]
+activate KnowledgeRepository
+
+note over KnowledgeRepository
+    I recall using hashes was being
+    discussed as a way to "version"
+    DFUs. I am not sure if this is
+    still the case or not, but this
+    would be dependent on that or
+    executing analysis on DFUs without
+    analysis information collected
+end note
+KnowledgeRepository -> PymmortalsCoordinator: List of DFUs for analysis
+deactivate KnowledgeRepository
+
+note over PymmortalsCoordinator 
+    This will ideally be automated by a 
+    specification provided with the 
+    DFU indicating possible values or
+    value ranges
+end note
+PymmortalsCoordinator -> PymmortalsCoordinator: Generate DFU Substitution Values
+
+PymmortalsCoordinator -> DAS: synthesizeNewApplications()
+activate DAS
+
+DAS -> PymmortalsCoordinator: Applications produced
+deactivate DAS
+
+PymmortalsCoordinator -> PymmortalsCoordinator: buildApplications(analysisContextId)
+
+
+
+loop while produced applications exist
+    PymmortalsCoordinator -> Analysis: executeScenario(@DeploymentModel POJO_JSON, analysisContextId, AugmentedApplications)
+    activate Analysis
+    
+    Analysis -> PymmortalsCoordinator: Triples Produced
+    deactivate Analysis
+    
+    PymmortalsCoordinator -> KnowledgeRepository: [REST] pushKnowledgeArtifact(analysisContextId, ttl, metadata)
+    activate KnowledgeRepository
+    
+    KnowledgeRepository -> PymmortalsCoordinator: Done
+    deactivate KnowledgeRepository
+end
+
+PymmortalsCoordinator -> KnowledgeRepository: [REST] runInferences(analysisContextId)
+activate KnowledgeRepository
+
+KnowledgeRepository -> PymmortalsCoordinator: Done
+deactivate KnowledgeRepository
+
+PymmortalsCoordinator -> User: Done
+deactivate PymmortalsCoordinator
+
+User -> User: SVN Commit
+
+
+newpage
+'
+' Execution Sequence (Baseline scenario executions  and failure scenarios omitted for simplicity)
+'
+== Execution ==
+User -> PymmortalsCoordinator: perturb (@DeploymentModel POJO_JSON)
+activate PymmortalsCoordinator
+
+PymmortalsCoordinator -> TripleConverter: convertDeploymentModelToTriples (@DeploymentModel CLIParameters)
+
+activate TripleConverter
+
+TripleConverter -> PymmortalsCoordinator: Triples
+deactivate TripleConverter
+
+PymmortalsCoordinator -> DAS: augmentApplications (@DeploymentModel Triples)
+activate DAS
+
+note over DAS
+    Given the analysis candidate
+    workflow, we could probably
+    perform analysis on-the-fly 
+    if we notice usage with an
+    unexpected input from the
+    application
+end note
+DAS -> PymmortalsCoordinator: Application Augmentation Complete
+deactivate DAS
+
+PymmortalsCoordinator -> PymmortalsScenarioRunner: executeScenario(@DeploymentModel POJO_JSON, AugmentedApplications)
+activate PymmortalsScenarioRunner
+PymmortalsScenarioRunner -> PymmortalsCoordinator: ExecutionComplete
+deactivate PymmortalsScenarioRunner
+
+@enduml

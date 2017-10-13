@@ -1,0 +1,1184 @@
+[
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 872,
+                    "end": 1488904984280,
+                    "start": 1488904983408
+                },
+                "applicationStopDuration": {
+                    "delta": 1402,
+                    "end": 1488905044483,
+                    "start": 1488905043081
+                },
+                "createEmulatorDuration": {
+                    "delta": 32923,
+                    "end": 1488904630994,
+                    "start": 1488904598071
+                },
+                "deployApplicationDuration": {
+                    "delta": 15269,
+                    "end": 1488904944340,
+                    "start": 1488904929071
+                },
+                "executionDuration": {
+                    "delta": -58801,
+                    "end": 1488904984280,
+                    "start": 1488905043081
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 32923,
+                    "end": 1488904630994,
+                    "start": 1488904598071
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 121954,
+                    "end": 1488904752949,
+                    "start": 1488904630995
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 777,
+                    "end": 1488904981405,
+                    "start": 1488904980628
+                },
+                "applicationStopDuration": {
+                    "delta": 1700,
+                    "end": 1488905043080,
+                    "start": 1488905041380
+                },
+                "createEmulatorDuration": {
+                    "delta": 60952,
+                    "end": 1488904691947,
+                    "start": 1488904630995
+                },
+                "deployApplicationDuration": {
+                    "delta": 20739,
+                    "end": 1488904928187,
+                    "start": 1488904907448
+                },
+                "executionDuration": {
+                    "delta": -59975,
+                    "end": 1488904981405,
+                    "start": 1488905041380
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 60952,
+                    "end": 1488904691947,
+                    "start": 1488904630995
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 92107,
+                    "end": 1488904784055,
+                    "start": 1488904691948
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 1733,
+                    "end": 1488904991325,
+                    "start": 1488904989592
+                },
+                "applicationStopDuration": {
+                    "delta": 1179,
+                    "end": 1488905046905,
+                    "start": 1488905045726
+                },
+                "createEmulatorDuration": {
+                    "delta": 76999,
+                    "end": 1488904826855,
+                    "start": 1488904749856
+                },
+                "deployApplicationDuration": {
+                    "delta": 15712,
+                    "end": 1488904977899,
+                    "start": 1488904962187
+                },
+                "executionDuration": {
+                    "delta": -54401,
+                    "end": 1488904991325,
+                    "start": 1488905045726
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 76999,
+                    "end": 1488904826855,
+                    "start": 1488904749856
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 78337,
+                    "end": 1488904905194,
+                    "start": 1488904826857
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 1308,
+                    "end": 1488904987589,
+                    "start": 1488904986281
+                },
+                "applicationStopDuration": {
+                    "delta": 1241,
+                    "end": 1488905045725,
+                    "start": 1488905044484
+                },
+                "createEmulatorDuration": {
+                    "delta": 57906,
+                    "end": 1488904749854,
+                    "start": 1488904691948
+                },
+                "deployApplicationDuration": {
+                    "delta": 16376,
+                    "end": 1488904961348,
+                    "start": 1488904944972
+                },
+                "executionDuration": {
+                    "delta": -56895,
+                    "end": 1488904987589,
+                    "start": 1488905044484
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 57906,
+                    "end": 1488904749854,
+                    "start": 1488904691948
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 106359,
+                    "end": 1488904856214,
+                    "start": 1488904749855
+                }
+            }
+        ],
+        "sessionIdentifier": "Has4Client",
+        "startTimestamp": 1488904445.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 910,
+                    "end": 1488901548301,
+                    "start": 1488901547391
+                },
+                "applicationStopDuration": {
+                    "delta": 851,
+                    "end": 1488901602699,
+                    "start": 1488901601848
+                },
+                "createEmulatorDuration": {
+                    "delta": 39004,
+                    "end": 1488901436989,
+                    "start": 1488901397985
+                },
+                "deployApplicationDuration": {
+                    "delta": 7917,
+                    "end": 1488901536424,
+                    "start": 1488901528507
+                },
+                "executionDuration": {
+                    "delta": -53547,
+                    "end": 1488901548301,
+                    "start": 1488901601848
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 39004,
+                    "end": 1488901436989,
+                    "start": 1488901397985
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 56199,
+                    "end": 1488901493189,
+                    "start": 1488901436990
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 779,
+                    "end": 1488901545388,
+                    "start": 1488901544609
+                },
+                "applicationStopDuration": {
+                    "delta": 821,
+                    "end": 1488901601847,
+                    "start": 1488901601026
+                },
+                "createEmulatorDuration": {
+                    "delta": 41403,
+                    "end": 1488901328804,
+                    "start": 1488901287401
+                },
+                "deployApplicationDuration": {
+                    "delta": 7521,
+                    "end": 1488901528147,
+                    "start": 1488901520626
+                },
+                "executionDuration": {
+                    "delta": -55638,
+                    "end": 1488901545388,
+                    "start": 1488901601026
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 41403,
+                    "end": 1488901328804,
+                    "start": 1488901287401
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 43716,
+                    "end": 1488901372521,
+                    "start": 1488901328805
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 844,
+                    "end": 1488901542607,
+                    "start": 1488901541763
+                },
+                "applicationStopDuration": {
+                    "delta": 804,
+                    "end": 1488901601025,
+                    "start": 1488901600221
+                },
+                "createEmulatorDuration": {
+                    "delta": 33628,
+                    "end": 1488901219768,
+                    "start": 1488901186140
+                },
+                "deployApplicationDuration": {
+                    "delta": 7511,
+                    "end": 1488901520365,
+                    "start": 1488901512854
+                },
+                "executionDuration": {
+                    "delta": -57614,
+                    "end": 1488901542607,
+                    "start": 1488901600221
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 33628,
+                    "end": 1488901219768,
+                    "start": 1488901186140
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 38703,
+                    "end": 1488901258474,
+                    "start": 1488901219771
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 727,
+                    "end": 1488901539760,
+                    "start": 1488901539033
+                },
+                "applicationStopDuration": {
+                    "delta": 858,
+                    "end": 1488901600220,
+                    "start": 1488901599362
+                },
+                "createEmulatorDuration": {
+                    "delta": 26857,
+                    "end": 1488901129889,
+                    "start": 1488901103032
+                },
+                "deployApplicationDuration": {
+                    "delta": 7161,
+                    "end": 1488901512413,
+                    "start": 1488901505252
+                },
+                "executionDuration": {
+                    "delta": -59602,
+                    "end": 1488901539760,
+                    "start": 1488901599362
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 26857,
+                    "end": 1488901129889,
+                    "start": 1488901103032
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 33732,
+                    "end": 1488901163622,
+                    "start": 1488901129890
+                }
+            }
+        ],
+        "sessionIdentifier": "NS4Client",
+        "startTimestamp": 1488901050.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 675,
+                    "end": 1488902273310,
+                    "start": 1488902272635
+                },
+                "applicationStopDuration": {
+                    "delta": 685,
+                    "end": 1488902328603,
+                    "start": 1488902327918
+                },
+                "createEmulatorDuration": {
+                    "delta": 7089,
+                    "end": 1488902183192,
+                    "start": 1488902176103
+                },
+                "deployApplicationDuration": {
+                    "delta": 7118,
+                    "end": 1488902257214,
+                    "start": 1488902250096
+                },
+                "executionDuration": {
+                    "delta": -54608,
+                    "end": 1488902273310,
+                    "start": 1488902327918
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 7089,
+                    "end": 1488902183192,
+                    "start": 1488902176103
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 18332,
+                    "end": 1488902201525,
+                    "start": 1488902183193
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 828,
+                    "end": 1488902276141,
+                    "start": 1488902275313
+                },
+                "applicationStopDuration": {
+                    "delta": 735,
+                    "end": 1488902329338,
+                    "start": 1488902328603
+                },
+                "createEmulatorDuration": {
+                    "delta": 8086,
+                    "end": 1488902213877,
+                    "start": 1488902205791
+                },
+                "deployApplicationDuration": {
+                    "delta": 6924,
+                    "end": 1488902264664,
+                    "start": 1488902257740
+                },
+                "executionDuration": {
+                    "delta": -52462,
+                    "end": 1488902276141,
+                    "start": 1488902328603
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 8086,
+                    "end": 1488902213877,
+                    "start": 1488902205791
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 16118,
+                    "end": 1488902229997,
+                    "start": 1488902213879
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 657,
+                    "end": 1488902267847,
+                    "start": 1488902267190
+                },
+                "applicationStopDuration": {
+                    "delta": 900,
+                    "end": 1488902327102,
+                    "start": 1488902326202
+                },
+                "createEmulatorDuration": {
+                    "delta": 7097,
+                    "end": 1488902127007,
+                    "start": 1488902119910
+                },
+                "deployApplicationDuration": {
+                    "delta": 6353,
+                    "end": 1488902241950,
+                    "start": 1488902235597
+                },
+                "executionDuration": {
+                    "delta": -58355,
+                    "end": 1488902267847,
+                    "start": 1488902326202
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 7097,
+                    "end": 1488902127007,
+                    "start": 1488902119910
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 17025,
+                    "end": 1488902144033,
+                    "start": 1488902127008
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 783,
+                    "end": 1488902270632,
+                    "start": 1488902269849
+                },
+                "applicationStopDuration": {
+                    "delta": 815,
+                    "end": 1488902327917,
+                    "start": 1488902327102
+                },
+                "createEmulatorDuration": {
+                    "delta": 8126,
+                    "end": 1488902155994,
+                    "start": 1488902147868
+                },
+                "deployApplicationDuration": {
+                    "delta": 7096,
+                    "end": 1488902249507,
+                    "start": 1488902242411
+                },
+                "executionDuration": {
+                    "delta": -56470,
+                    "end": 1488902270632,
+                    "start": 1488902327102
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 8126,
+                    "end": 1488902155994,
+                    "start": 1488902147868
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 16241,
+                    "end": 1488902172236,
+                    "start": 1488902155995
+                }
+            }
+        ],
+        "sessionIdentifier": "NS4ClientsNoCreat",
+        "startTimestamp": 1488902097.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 932,
+                    "end": 1488832946274,
+                    "start": 1488832945342
+                },
+                "applicationStopDuration": {
+                    "delta": 1742,
+                    "end": 1488833006160,
+                    "start": 1488833004418
+                },
+                "createEmulatorDuration": {
+                    "delta": 53519,
+                    "end": 1488832772411,
+                    "start": 1488832718892
+                },
+                "deployApplicationDuration": {
+                    "delta": 36026,
+                    "end": 1488832920765,
+                    "start": 1488832884739
+                },
+                "executionDuration": {
+                    "delta": -58144,
+                    "end": 1488832946274,
+                    "start": 1488833004418
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 53519,
+                    "end": 1488832772411,
+                    "start": 1488832718892
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 110230,
+                    "end": 1488832882645,
+                    "start": 1488832772415
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 1080,
+                    "end": 1488832949357,
+                    "start": 1488832948277
+                },
+                "applicationStopDuration": {
+                    "delta": 1663,
+                    "end": 1488833007824,
+                    "start": 1488833006161
+                },
+                "createEmulatorDuration": {
+                    "delta": 29471,
+                    "end": 1488832718889,
+                    "start": 1488832689418
+                },
+                "deployApplicationDuration": {
+                    "delta": 20354,
+                    "end": 1488832942394,
+                    "start": 1488832922040
+                },
+                "executionDuration": {
+                    "delta": -56804,
+                    "end": 1488832949357,
+                    "start": 1488833006161
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 29471,
+                    "end": 1488832718889,
+                    "start": 1488832689418
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 91202,
+                    "end": 1488832810094,
+                    "start": 1488832718892
+                }
+            }
+        ],
+        "sessionIdentifier": "qemuCpusIs",
+        "startTimestamp": 1488832616.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 686,
+                    "end": 1488898229791,
+                    "start": 1488898229105
+                },
+                "applicationStopDuration": {
+                    "delta": 805,
+                    "end": 1488898287563,
+                    "start": 1488898286758
+                },
+                "createEmulatorDuration": {
+                    "delta": 29825,
+                    "end": 1488898165104,
+                    "start": 1488898135279
+                },
+                "deployApplicationDuration": {
+                    "delta": 7579,
+                    "end": 1488898224033,
+                    "start": 1488898216454
+                },
+                "executionDuration": {
+                    "delta": -56967,
+                    "end": 1488898229791,
+                    "start": 1488898286758
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 29825,
+                    "end": 1488898165104,
+                    "start": 1488898135279
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 41052,
+                    "end": 1488898206158,
+                    "start": 1488898165106
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 604,
+                    "end": 1488898227103,
+                    "start": 1488898226499
+                },
+                "applicationStopDuration": {
+                    "delta": 898,
+                    "end": 1488898286757,
+                    "start": 1488898285859
+                },
+                "createEmulatorDuration": {
+                    "delta": 26299,
+                    "end": 1488898079620,
+                    "start": 1488898053321
+                },
+                "deployApplicationDuration": {
+                    "delta": 7015,
+                    "end": 1488898216060,
+                    "start": 1488898209045
+                },
+                "executionDuration": {
+                    "delta": -58756,
+                    "end": 1488898227103,
+                    "start": 1488898285859
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 26299,
+                    "end": 1488898079620,
+                    "start": 1488898053321
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 35934,
+                    "end": 1488898115555,
+                    "start": 1488898079621
+                }
+            }
+        ],
+        "sessionIdentifier": "qemuCpusIs2N",
+        "startTimestamp": 1488898011.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 769,
+                    "end": 1488900508568,
+                    "start": 1488900507799
+                },
+                "applicationStopDuration": {
+                    "delta": 884,
+                    "end": 1488900567464,
+                    "start": 1488900566580
+                },
+                "createEmulatorDuration": {
+                    "delta": 27522,
+                    "end": 1488900445726,
+                    "start": 1488900418204
+                },
+                "deployApplicationDuration": {
+                    "delta": 5819,
+                    "end": 1488900502649,
+                    "start": 1488900496830
+                },
+                "executionDuration": {
+                    "delta": -58012,
+                    "end": 1488900508568,
+                    "start": 1488900566580
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 27522,
+                    "end": 1488900445726,
+                    "start": 1488900418204
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 42047,
+                    "end": 1488900487775,
+                    "start": 1488900445728
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 705,
+                    "end": 1488900505796,
+                    "start": 1488900505091
+                },
+                "applicationStopDuration": {
+                    "delta": 942,
+                    "end": 1488900566580,
+                    "start": 1488900565638
+                },
+                "createEmulatorDuration": {
+                    "delta": 25895,
+                    "end": 1488900354202,
+                    "start": 1488900328307
+                },
+                "deployApplicationDuration": {
+                    "delta": 5901,
+                    "end": 1488900496418,
+                    "start": 1488900490517
+                },
+                "executionDuration": {
+                    "delta": -59842,
+                    "end": 1488900505796,
+                    "start": 1488900565638
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 25895,
+                    "end": 1488900354202,
+                    "start": 1488900328307
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 34687,
+                    "end": 1488900388891,
+                    "start": 1488900354204
+                }
+            }
+        ],
+        "sessionIdentifier": "qemuCpusIs4N",
+        "startTimestamp": 1488900277.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 910,
+                    "end": 1488834422441,
+                    "start": 1488834421531
+                },
+                "applicationStopDuration": {
+                    "delta": 2005,
+                    "end": 1488834483611,
+                    "start": 1488834481606
+                },
+                "createEmulatorDuration": {
+                    "delta": 51222,
+                    "end": 1488834234869,
+                    "start": 1488834183647
+                },
+                "deployApplicationDuration": {
+                    "delta": 42663,
+                    "end": 1488834394107,
+                    "start": 1488834351444
+                },
+                "executionDuration": {
+                    "delta": -59165,
+                    "end": 1488834422441,
+                    "start": 1488834481606
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 51222,
+                    "end": 1488834234869,
+                    "start": 1488834183647
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 115006,
+                    "end": 1488834349880,
+                    "start": 1488834234874
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 1098,
+                    "end": 1488834425543,
+                    "start": 1488834424445
+                },
+                "applicationStopDuration": {
+                    "delta": 1428,
+                    "end": 1488834485040,
+                    "start": 1488834483612
+                },
+                "createEmulatorDuration": {
+                    "delta": 44901,
+                    "end": 1488834183644,
+                    "start": 1488834138743
+                },
+                "deployApplicationDuration": {
+                    "delta": 22986,
+                    "end": 1488834418416,
+                    "start": 1488834395430
+                },
+                "executionDuration": {
+                    "delta": -58069,
+                    "end": 1488834425543,
+                    "start": 1488834483612
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 44901,
+                    "end": 1488834183644,
+                    "start": 1488834138743
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 104037,
+                    "end": 1488834287683,
+                    "start": 1488834183646
+                }
+            }
+        ],
+        "sessionIdentifier": "qemuEnableKv",
+        "startTimestamp": 1488834069.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 688,
+                    "end": 1488897941516,
+                    "start": 1488897940828
+                },
+                "applicationStopDuration": {
+                    "delta": 857,
+                    "end": 1488897999304,
+                    "start": 1488897998447
+                },
+                "createEmulatorDuration": {
+                    "delta": 26181,
+                    "end": 1488897877204,
+                    "start": 1488897851023
+                },
+                "deployApplicationDuration": {
+                    "delta": 7849,
+                    "end": 1488897935655,
+                    "start": 1488897927806
+                },
+                "executionDuration": {
+                    "delta": -56931,
+                    "end": 1488897941516,
+                    "start": 1488897998447
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 26181,
+                    "end": 1488897877204,
+                    "start": 1488897851023
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 40227,
+                    "end": 1488897917432,
+                    "start": 1488897877205
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 660,
+                    "end": 1488897938825,
+                    "start": 1488897938165
+                },
+                "applicationStopDuration": {
+                    "delta": 865,
+                    "end": 1488897998446,
+                    "start": 1488897997581
+                },
+                "createEmulatorDuration": {
+                    "delta": 37999,
+                    "end": 1488897786051,
+                    "start": 1488897748052
+                },
+                "deployApplicationDuration": {
+                    "delta": 7164,
+                    "end": 1488897927517,
+                    "start": 1488897920353
+                },
+                "executionDuration": {
+                    "delta": -58756,
+                    "end": 1488897938825,
+                    "start": 1488897997581
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 37999,
+                    "end": 1488897786051,
+                    "start": 1488897748052
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 34631,
+                    "end": 1488897820683,
+                    "start": 1488897786052
+                }
+            }
+        ],
+        "sessionIdentifier": "qemuEnableKvmN",
+        "startTimestamp": 1488897703.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 920,
+                    "end": 1488833772912,
+                    "start": 1488833771992
+                },
+                "applicationStopDuration": {
+                    "delta": 1303,
+                    "end": 1488833831953,
+                    "start": 1488833830650
+                },
+                "createEmulatorDuration": {
+                    "delta": 34778,
+                    "end": 1488833537260,
+                    "start": 1488833502482
+                },
+                "deployApplicationDuration": {
+                    "delta": 23448,
+                    "end": 1488833765915,
+                    "start": 1488833742467
+                },
+                "executionDuration": {
+                    "delta": -57738,
+                    "end": 1488833772912,
+                    "start": 1488833830650
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 34778,
+                    "end": 1488833537260,
+                    "start": 1488833502482
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 95166,
+                    "end": 1488833632429,
+                    "start": 1488833537263
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 863,
+                    "end": 1488833769991,
+                    "start": 1488833769128
+                },
+                "applicationStopDuration": {
+                    "delta": 1676,
+                    "end": 1488833830648,
+                    "start": 1488833828972
+                },
+                "createEmulatorDuration": {
+                    "delta": 52768,
+                    "end": 1488833590032,
+                    "start": 1488833537264
+                },
+                "deployApplicationDuration": {
+                    "delta": 42408,
+                    "end": 1488833741480,
+                    "start": 1488833699072
+                },
+                "executionDuration": {
+                    "delta": -58981,
+                    "end": 1488833769991,
+                    "start": 1488833828972
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 52768,
+                    "end": 1488833590032,
+                    "start": 1488833537264
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 107016,
+                    "end": 1488833697058,
+                    "start": 1488833590042
+                }
+            }
+        ],
+        "sessionIdentifier": "qemuMemIs2",
+        "startTimestamp": 1488833426.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 579,
+                    "end": 1488898821984,
+                    "start": 1488898821405
+                },
+                "applicationStopDuration": {
+                    "delta": 680,
+                    "end": 1488898881394,
+                    "start": 1488898880714
+                },
+                "createEmulatorDuration": {
+                    "delta": 27987,
+                    "end": 1488898668957,
+                    "start": 1488898640970
+                },
+                "deployApplicationDuration": {
+                    "delta": 7095,
+                    "end": 1488898811376,
+                    "start": 1488898804281
+                },
+                "executionDuration": {
+                    "delta": -58730,
+                    "end": 1488898821984,
+                    "start": 1488898880714
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 27987,
+                    "end": 1488898668957,
+                    "start": 1488898640970
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 34681,
+                    "end": 1488898703640,
+                    "start": 1488898668959
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 657,
+                    "end": 1488898824644,
+                    "start": 1488898823987
+                },
+                "applicationStopDuration": {
+                    "delta": 742,
+                    "end": 1488898882137,
+                    "start": 1488898881395
+                },
+                "createEmulatorDuration": {
+                    "delta": 34120,
+                    "end": 1488898762104,
+                    "start": 1488898727984
+                },
+                "deployApplicationDuration": {
+                    "delta": 7249,
+                    "end": 1488898818974,
+                    "start": 1488898811725
+                },
+                "executionDuration": {
+                    "delta": -56751,
+                    "end": 1488898824644,
+                    "start": 1488898881395
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 34120,
+                    "end": 1488898762104,
+                    "start": 1488898727984
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 39144,
+                    "end": 1488898801249,
+                    "start": 1488898762105
+                }
+            }
+        ],
+        "sessionIdentifier": "qemuMemIs2GN",
+        "startTimestamp": 1488898590.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 922,
+                    "end": 1488833353500,
+                    "start": 1488833352578
+                },
+                "applicationStopDuration": {
+                    "delta": 1873,
+                    "end": 1488833414626,
+                    "start": 1488833412753
+                },
+                "createEmulatorDuration": {
+                    "delta": 51748,
+                    "end": 1488833170851,
+                    "start": 1488833119103
+                },
+                "deployApplicationDuration": {
+                    "delta": 41386,
+                    "end": 1488833324294,
+                    "start": 1488833282908
+                },
+                "executionDuration": {
+                    "delta": -59253,
+                    "end": 1488833353500,
+                    "start": 1488833412753
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 51748,
+                    "end": 1488833170851,
+                    "start": 1488833119103
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 109866,
+                    "end": 1488833280721,
+                    "start": 1488833170855
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 1180,
+                    "end": 1488833356685,
+                    "start": 1488833355505
+                },
+                "applicationStopDuration": {
+                    "delta": 1674,
+                    "end": 1488833416302,
+                    "start": 1488833414628
+                },
+                "createEmulatorDuration": {
+                    "delta": 34012,
+                    "end": 1488833119101,
+                    "start": 1488833085089
+                },
+                "deployApplicationDuration": {
+                    "delta": 23637,
+                    "end": 1488833349629,
+                    "start": 1488833325992
+                },
+                "executionDuration": {
+                    "delta": -57943,
+                    "end": 1488833356685,
+                    "start": 1488833414628
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 34012,
+                    "end": 1488833119101,
+                    "start": 1488833085089
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 101002,
+                    "end": 1488833220104,
+                    "start": 1488833119102
+                }
+            }
+        ],
+        "sessionIdentifier": "st",
+        "startTimestamp": 1488833019.0
+    },
+    {
+        "emulators": [
+            {
+                "applicationStartDuration": {
+                    "delta": 681,
+                    "end": 1488898521804,
+                    "start": 1488898521123
+                },
+                "applicationStopDuration": {
+                    "delta": 772,
+                    "end": 1488898579499,
+                    "start": 1488898578727
+                },
+                "createEmulatorDuration": {
+                    "delta": 25885,
+                    "end": 1488898459914,
+                    "start": 1488898434029
+                },
+                "deployApplicationDuration": {
+                    "delta": 7048,
+                    "end": 1488898515943,
+                    "start": 1488898508895
+                },
+                "executionDuration": {
+                    "delta": -56923,
+                    "end": 1488898521804,
+                    "start": 1488898578727
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 25885,
+                    "end": 1488898459914,
+                    "start": 1488898434029
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 39334,
+                    "end": 1488898499249,
+                    "start": 1488898459915
+                }
+            },
+            {
+                "applicationStartDuration": {
+                    "delta": 690,
+                    "end": 1488898519120,
+                    "start": 1488898518430
+                },
+                "applicationStopDuration": {
+                    "delta": 853,
+                    "end": 1488898578726,
+                    "start": 1488898577873
+                },
+                "createEmulatorDuration": {
+                    "delta": 29363,
+                    "end": 1488898376413,
+                    "start": 1488898347050
+                },
+                "deployApplicationDuration": {
+                    "delta": 6714,
+                    "end": 1488898508593,
+                    "start": 1488898501879
+                },
+                "executionDuration": {
+                    "delta": -58753,
+                    "end": 1488898519120,
+                    "start": 1488898577873
+                },
+                "startEmulatorP1Duration": {
+                    "delta": 29363,
+                    "end": 1488898376413,
+                    "start": 1488898347050
+                },
+                "startEmulatorP2Duration": {
+                    "delta": 34891,
+                    "end": 1488898411306,
+                    "start": 1488898376415
+                }
+            }
+        ],
+        "sessionIdentifier": "stdN",
+        "startTimestamp": 1488898299.0
+    }
+]

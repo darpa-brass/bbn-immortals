@@ -1,0 +1,29 @@
+{
+	"headMode": "professorStudentCoauthor(+professor,+student)",
+	"bodyModes": [
+		"studentinfo(+student,#phase,#years)",
+		"studentinfo(+student,#phase,-years)",
+		"studentinfo(+student,-phase,#years)",
+		"studentinfo(+student,-phase,-years)",
+		"studentinfo(-student,+phase,-years)",
+		"studentinfo(-student,-phase,+years)",
+		"professor(+professor,#faculty)",
+		"professor(+professor,-faculty)",
+		"professor(-professor,+faculty)",
+		"course(+course,#level,-professor,-date)",
+		"course(+course,-level,-professor,-date)",
+		"course(-course,+level,-professor,-date)",
+		"course(-course,#level,+professor,-date)",
+		"course(-course,#level,-professor,+date)",
+		"course(-course,-level,+professor,-date)",
+		"course(-course,-level,-professor,+date)",
+		"ta(+course,-student,-date)",
+		"ta(-course,+student,-date)",
+		"ta(-course,-student,+date)",
+		"publication(+ref,-student)",
+		"publication(-ref,+student)",
+		"publication(+ref,-professor)",
+		"publication(-ref,+professor)"
+	],
+	"spName": "UWCSEProcedure"
+}

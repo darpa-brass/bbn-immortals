@@ -1,0 +1,26 @@
+
+
+<!--
+<consumes type="memory" value="(20MB 50MB)"/>
+Might become
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xml:base="file://securboration/">
+
+<rdf:Description rdf:about="immortals/1.0#MemoryConstraint_F897">
+  <immortals:hasConstraintRange rdf:resource="immortals/1.0#MemoryConstraintRange_F897_1">
+  <immortals:hasResourceDependency rdf:resource="immortals/1.0#DynamicMemory">
+</rdf:Description>
+
+<rdf:Description rdf:about="immortals/1.0#MemoryConstraintRange_F897_1">…</rdf:Description>
+
+<rdf:Description rdf:about="immortals/1.0#StaticMemory"><dc:title>Static Memory</dc:title></rdf:Description>
+
+<rdf:Description rdf:about="immortals/1.0#DynamicMemory"><dc:title>Dynamic Memory</dc:title></rdf:Description>
+
+<rdf:Description rdf:about="immortals/1.0#PhysicalMemory"><dc:title>Physical Memory</dc:title></rdf:Description>
+
+</rdf:RDF>

@@ -1,0 +1,142 @@
+[
+    {
+        "scenarioIdentifier": "dbpopulator00",
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 384
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "10000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 4,
+                    "presentResources": [
+                        "usb",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": [
+                        "trustedLocations"
+                    ]
+                }
+            ],
+            "sessionIdentifier": "dbpopulator"
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False",
+            "validationEnvironment.startServer": "False"
+        },
+        "submissionFlow": "challenge"
+    },
+    {
+        "scenarioIdentifier": "dbpopulator01",
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 384
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "10000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 4,
+                    "presentResources": [
+                        "userInterface"
+                    ],
+                    "requiredProperties": [
+                    ]
+                }
+            ],
+            "sessionIdentifier": "dbpopulator"
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False",
+            "validationEnvironment.startServer": "False"
+        },
+        "submissionFlow": "challenge"
+    },
+    {
+        "scenarioIdentifier": "dbpopulator02",
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 384
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "10000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 4,
+                    "presentResources": [
+                        "bluetooth",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": [
+                    ]
+                }
+            ],
+            "sessionIdentifier": "dbpopulator"
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False",
+            "validationEnvironment.startServer": "False"
+        },
+        "submissionFlow": "challenge"
+    },
+    {
+        "scenarioIdentifier": "dbpopulator03",
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 384
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "10000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 4,
+                    "presentResources": [
+                        "internalGps",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": [
+                    ]
+                }
+            ],
+            "sessionIdentifier": "dbpopulator"
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "False",
+            "validationEnvironment.startServer": "False"
+        },
+        "submissionFlow": "challenge"
+    },
+    {
+        "scenarioIdentifier": "dbpopulator04",
+        "deploymentModel": {
+            "server": {
+                "bandwidth": 384
+            },
+            "clients": [
+                {
+                    "imageBroadcastIntervalMS": "10000",
+                    "latestSABroadcastIntervalMS": "1000",
+                    "count": 4,
+                    "presentResources": [
+                        "usb",
+                        "gpsSatellites"
+                    ],
+                    "requiredProperties": [
+                    ]
+                }
+            ],
+            "sessionIdentifier": "dbpopulator"
+        },
+        "expectedResult": "valid",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True",
+            "validationEnvironment.startServer": "False"
+        },
+        "submissionFlow": "challenge"
+    }
+]

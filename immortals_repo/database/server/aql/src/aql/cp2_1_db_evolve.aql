@@ -1,0 +1,284 @@
+/**
+ * This AQL tutorial is a literate AQL file:
+ * by running it and then selecting 'emit HTML' you get the document.
+ *
+ * immortals/svn/database/server/baseline_schema_ddl.sql
+ * immortals/svn/castor/takserver/castor_query_overview.xlsx
+ */
+
+// HTML output is indicated by
+// html { (* " <html code> " *) }.
+// The imported javascript file renders the graphs (if any).
+// Markdown (a less verbose way to write HTML) is indicated by
+// md { (* " markdown code " *) }.
+
+html { (* "
+<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+ <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">
+
+	<html>
+	<head>
+		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
+		<title>AQL Tutorial</title>
+		<link rel=\"stylesheet\" type=\"text/css\" href=\"http://categoricaldata.net/css/simple.css\" />
+	</head>
+	<body>
+		<h1>AQL Tutorial</h1>
+
+		<p> Jump to section:
+		    <a href=\"#typesides\">Typesides</a>,
+			<a href=\"#schemas\">Schemas</a>,
+			<a href=\"#instances\">Instances</a>,
+			<a href=\"#mappings\">Mappings</a>,
+			<a href=\"#fdm\">Delta and Sigma</a>,
+			<a href=\"#uberflowers\">Uber-flowers</a>,
+			<a href=\"#conclusion\">Conclusion</a>.
+		</p>
+
+		<hr/>
+		<div id=\"typesides\">
+			<h2>Typesides</h2>
+			<p>Every AQL file begins with a <b>typeside</b>.
+				The typeside for this tutorial contains two <b>java_types</b>: <i>String</i>,
+				which is bound to <i>java.lang.String</i>;
+				and <i>Integer</i>, which is bound to <i>java.lang.Integer</i>.  The
+				<b>java_constants</b> section defines, for each java_type, javascript code that
+				creates a value of that type from a string.  For example, when the string
+				100 is encountered in an AQL program and needs to be interpreted as an
+				<i>Integer</i>, AQL will execute the <i>parseInt</i> function on the
+				string 100, yielding a <i>java.lang.Integer</i>.  Similarly, the
+				<b>java_functions</b> section defines the <i>plus</i> function.
+			</p>
+		</div>" *) }
+
+
+typeside Ty = literal {
+	java_types
+		TEXT = "java.lang.String"
+		VARCHAR = "java.lang.String"
+		DATETIME = "java.util.Date"
+		INTEGER = "java.lang.Long"
+		REAL = "java.lang.Double"
+		BLOB = "java.util.ArrayList"
+		GEO = "java.lang.Long"
+	java_constants
+		TEXT = "return input[0]"
+		VARCHAR = "return input[0]"
+		DATETIME = "return new java.util.Date(java.lang.Long.decode(input[0]))"
+		INTEGER = "return java.lang.Long.decode(input[0])"
+		REAL = "return java.lang.Double.parseDouble(input[0])"
+		BLOB = "return []"
+		GEO = "return java.lang.Long.decode(input[0])"
+	java_functions
+		int_to_real : INTEGER -> REAL = "return 0.0 + input[0]"
+		real_to_int : REAL -> INTEGER = "return Math.round(input[0]).longValue()"
+		date_to_int : DATETIME -> INTEGER = "return input[0].getTime()"
+		int_to_date : INTEGER -> DATETIME = "return new java.util.Date(input[0])"
+		txt_to_vc : TEXT -> VARCHAR = "return input[0]"
+		vc_to_txt : VARCHAR -> TEXT = "return input[0]"
+		real_to_geo : REAL -> GEO = "return Math.round(input[0] * 1E6).longValue()"
+		geo_to_real : GEO -> REAL = "return input[0] / 1E6"
+		now : -> DATETIME = "return java.util.Date.from(java.time.Instant.now())"
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+html { (* "
+	<hr/>
+	<div id=\"schemas\">
+	<h2>Schemas</h2>
+
+	<p>A <b>schema</b> on a typeside <i>Ty</i> contains
+	    a set of <b>entities</b>,
+	    a set of <b>attributes</b> taking entities to types,
+	    a set of <b>foreign_keys</b> taking entities to entities,
+	    a set of <b>path_equations</b> between paths of foreign_keys, and
+		a set of <b>observation_equations</b> between attributes and foreign_keys.
+	</p>
+" *) }
+
+md { (* "
+	## Raw Schema
+	This schema
+" *)}
+
+schema S0 = literal : Ty {
+	entities
+		CotEvent
+  	attributes
+  		receiveTime	: CotEvent -> DATETIME
+     	uid : CotEvent -> TEXT
+     	type : CotEvent -> TEXT
+     	version : CotEvent -> TEXT
+     	hae : CotEvent -> REAL
+     	ce : CotEvent -> REAL
+     	le : CotEvent -> REAL
+     	time : CotEvent -> DATETIME
+     	start : CotEvent -> DATETIME
+     	stale : CotEvent -> DATETIME
+     	how : CotEvent -> TEXT
+     	detail : CotEvent -> TEXT
+     	opex : CotEvent -> TEXT
+     	qos : CotEvent -> TEXT
+     	access : CotEvent -> TEXT
+     	editable : CotEvent -> INTEGER
+     	pointLat : CotEvent -> REAL
+     	pointLon : CotEvent -> REAL
+     	contactCallsign : CotEvent -> TEXT
+     	contactEndpoint : CotEvent -> TEXT
+     	imageHeight : CotEvent -> INTEGER
+     	imageWidth : CotEvent -> INTEGER
+     	imageMime : CotEvent -> TEXT
+     	imageSize : CotEvent -> INTEGER
+     	imageData : CotEvent -> BLOB
+}
+
+schema S1 = literal : Ty {
+	entities
+		CotEvent
+		CotEventPosition
+	foreign_keys
+		cot_event_id : CotEventPosition -> CotEvent
+	path_equations
+
+  	attributes
+     	cot_type : CotEvent -> VARCHAR
+     	how : CotEvent -> VARCHAR
+     	detail	: CotEvent -> TEXT
+     	server_time : CotEvent -> INTEGER
+     	point_hae : CotEventPosition -> INTEGER
+     	point_ce : CotEventPosition -> INTEGER
+     	point_le : CotEventPosition -> INTEGER
+     	tile_x : CotEventPosition -> GEO
+     	tile_y : CotEventPosition -> GEO
+     observation_equations
+}
+
+schema S2 = literal : Ty {
+	entities
+		Source
+		CotEvent
+		CotEventPosition
+	foreign_keys
+		source_id : CotEvent -> Source
+		cot_event_id : CotEventPosition -> CotEvent
+	path_equations
+
+  	attributes
+  		name	 : Source -> VARCHAR
+  		channel  : Source -> INTEGER
+     	cot_type : CotEvent -> VARCHAR
+     	how : CotEvent -> VARCHAR
+     	detail	: CotEvent -> TEXT
+     	server_time : CotEvent -> INTEGER
+     	point_hae : CotEventPosition -> INTEGER
+     	point_ce : CotEventPosition -> INTEGER
+     	point_le : CotEventPosition -> INTEGER
+     	tile_x : CotEventPosition -> GEO
+     	tile_y : CotEventPosition -> GEO
+     observation_equations
+}
+
+md { (* "
+## F: S1 -> S0
+The functor which maps the common to the old schema
+This functor is used to prduce the delta mapping that
+takes instances of type S0 to instances of S1.
+
+" *) }
+
+mapping F = literal : S1 -> S0 {
+	entities
+		CotEvent -> CotEvent
+		CotEventPosition -> CotEvent
+	foreign_keys
+		cot_event_id -> CotEvent
+	attributes
+		point_ce ->  ce.real_to_int
+		detail 	->  detail
+		point_hae ->  hae.real_to_int
+		how 	->  how.txt_to_vc
+		point_le ->  le.real_to_int
+		tile_x ->  pointLat.real_to_geo
+		tile_y ->  pointLon.real_to_geo
+		server_time ->  receiveTime.date_to_int
+		cot_type -> type.txt_to_vc
+}
+
+md { (* "
+## G: S1 -> S2
+The functor which maps the common to the new schema
+This functor is used to prduce the sigma (join) mapping that
+takes instances of type S1 to instances of S2.
+" *) }
+mapping G = literal : S1 -> S2 {
+	entities
+		CotEvent -> CotEvent
+		CotEventPosition -> CotEventPosition
+	foreign_keys
+		cot_event_id -> cot_event_id
+	attributes
+		point_ce ->  point_ce
+		detail 	->  detail
+		point_hae 	->  point_hae
+		how 	->  how
+		point_le ->   point_le
+		tile_x ->   tile_x
+		tile_y ->   tile_y
+		server_time ->   server_time
+		cot_type 	->   cot_type
+}
+
+md { (* "
+## I_0: S0 -> S0-inst
+The functor which maps a schema to an instance.
+
+" *) }
+
+instance I = literal : S0 {
+	generators
+		e1 e2 : CotEvent
+	equations
+		e1.receiveTime = now()
+		e1.type = "a-n-A-C-F-s"
+		e1.hae = "182"
+		e1.ce = "354"
+		e1.le = "117"
+		e1.how = "manual"
+		e1.detail = "this Nashville"
+		e1.pointLat = "36.16"
+		e1.pointLon = "-86.78"
+
+		e2.receiveTime = "201705071635"
+		e2.type = "a-n-A-C-F-s"
+		e2.hae = "43.0"
+		e2.ce = "100.0"
+		e2.le = "5.8"
+		e2.how = "manual"
+		e2.detail = "this is Boston"
+		e2.pointLat = "42.36"
+		e2.pointLon = "-71.06"
+}
+
+md { (* "
+##
+Now that we have a few records we can
+translate them into the new schema.
+
+There are two mappings __F__ and __G__ first we apply delta_F and then sigma_G
+" *) }
+
+instance deltaFI = delta F I
+
+instance sigmaGdeltaFI = sigma G deltaFI
+
+instance s2_inst = sigma G delta F I
+
+md { (* "
+##
+The resulting database has labelled nulls in the source table.
+That needs to be fixed.
+" *) }
+
+
+

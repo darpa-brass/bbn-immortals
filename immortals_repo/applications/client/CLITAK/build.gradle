@@ -1,0 +1,73 @@
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+apply from: 'common.gradle'
+apply from: 'dependencies.gradle'
+
+group "com.bbn.ataklite"
+version "1.0-LOCAL"
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+
+publishing {
+    publications {
+        JavaLib(MavenPublication) {
+            from project.components.java
+        }
+    }
+    repositories {
+        maven {
+            url project.localRepoPath
+        }
+    }
+}
+
+task appJar(type: Jar) {
+    manifest {
+        attributes "Implementation-Title": "CLITAK",
+                "Implementation-Version": "$defaultSoftwarePublishVersion",
+                "Main-Class": "com.bbn.ataklite.Main"
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+
+    destinationDir = file('./')
+    archiveName = "CLITAK.jar"
+}
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "CLITAK-lib",
+                "Implementation-Version": "$defaultSoftwarePublishVersion"
+    }
+}
+
+jar.finalizedBy(publish)
+jar.finalizedBy(appJar)
+
+clean {
+    delete fileTree(dir: './', includes: ['build', 'CLITAK.jar'])
+}
+
+dependencies {
+    compile 'mil.darpa.immortals:core:+'
+    compile 'mil.darpa.immortals.datatypes:CotData:+'
+    compile 'mil.darpa.immortals.datatypes:Coordinates:+'
+    compile 'com.google.code.gson:gson:2.5'
+    compile 'com.google.code.findbugs:jsr305:3.0.1'
+    compile 'mil.darpa.immortals:core:+'
+    compile 'com.securboration:immortals-adsl-generate:+'
+    compile 'mil.darpa.immortals.javatypeconverters:CotDataCoordinateConverter:+'
+    compile 'mil.darpa.immortals.datatypes:Coordinates:+'
+    compile 'mil.darpa.immortals.dfus:ImageUtilsJava:+'
+    compile 'mil.darpa.immortals.dfus:LatestSaFileOperator:+'
+    compile 'mil.darpa.immortals.dfus:JavaTemporaryLocationProviderManualSimulated:+'
+    compile 'mil.darpa.immortals.components:analytics-log4j-client:+'
+}

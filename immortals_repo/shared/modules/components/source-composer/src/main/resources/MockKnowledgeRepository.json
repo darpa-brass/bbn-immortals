@@ -1,0 +1,87 @@
+{
+    "dfus": [
+    ],
+    "applications": [
+        {
+            "compositionTarget": "Client_ATAKLite",
+            "deploymentPlatform": "Android",
+            "applicationBasePath": "applications/client/ATAKLite/",
+            "gradleModificationFile": "dependencies.gradle",
+            "controlPoints": [
+                {
+                    "controlPointUuid": "2CFFD66F-43A1-47DB-A6D1-57490A7DD020",
+                    "augmentationType": "CompositionAugmentation",
+                    "synthesisTargetFiles": [
+                        "src/com/bbn/ataklite/service/SACommunicationService.java"
+                    ],
+                    "fileCopyMap": {},
+                    "originalDfu": {
+                        "consumingPipeSpecification": {
+                            "dependencyString": "mil.darpa.immortals.dfus:ImageUtilsAndroid:+",
+                            "classPackage": "mil.darpa.immortals.dfus.images.BitmapReader",
+                            "constructorParameters": [
+                                {
+                                    "providedByApplication": true,
+                                    "classType": "mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe<android.graphics.Bitmap>"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "controlPointUuid": "BCC0A94D-C2B1-40AD-8056-E3DDBD46585E",
+                    "augmentationType": "SubstitutionAugmentation",
+                    "synthesisTargetFiles": [
+                        "src-templates/com/bbn/ataklite/service/SACommunicationService.java"
+                    ],
+                    "fileCopyMap": {
+                        "src-templates/com/bbn/ataklite/service/SACommunicationService.java": "src/com/bbn/ataklite/service/SACommunicationService.java"
+                    },
+                    "originalDfu": null
+                }
+            ]
+        },
+        {
+            "compositionTarget": "Client_ConsumingPipeRunner",
+            "deploymentPlatform": "Android",
+            "applicationBasePath": "applications/client/ConsumingPipeRunner/",
+            "gradleModificationFile": "dependencies.gradle",
+            "controlPoints": [
+                {
+                    "controlPointUuid": "A08F0747-8EDF-4933-8BDA-BDB20825344A",
+                    "augmentationType": "CompositionAugmentation",
+                    "synthesisTargetFiles": [
+                        "src/main/java/mil/darpa/immortals/applications/client/consumingpiperunner/MainActivity.java"
+                    ],
+                    "fileCopyMap": {},
+                    "originalDfu": {
+                        "consumingPipeSpecification": {
+                            "dependencyString": "mil.darpa.immortals.components:product-data-generator-bundle:+",
+                            "classPackage": "mil.darpa.immortals.GenericConsumingPipeDfu",
+                            "constructorParameters": []
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "compositionTarget": "Client_SubstitutionRunner",
+            "deploymentPlatform": "Android",
+            "applicationBasePath": "applications/client/SubstitutionRunner",
+            "gradleModificationFile": "dependencies.gradle",
+            "controlPoints": [
+                {
+                    "controlPointUuid": "222B2DFF-35D6-47D3-9979-6814D5043E97",
+                    "augmentationType": "SubstitutionAugmentation",
+                    "synthesisTargetFiles": [
+                        "src-templates/main/java/mil/darpa/immortals/modulerunner/MainActivity.java"
+                    ],
+                    "fileCopyMap": {
+                        "src-templates/main/java/mil/darpa/immortals/modulerunner/MainActivity.java": "src/main/java/mil/darpa/immortals/modulerunner/MainActivity.java"
+                    },
+                    "originalDfu": null
+                }
+            ]
+        }
+    ]
+}
