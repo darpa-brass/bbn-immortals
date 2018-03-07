@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 IMMORTALSRC_PATH=""
 
 if [ "$IMMORTALSRC" != "" ];then
@@ -35,4 +37,4 @@ fi
 
 export IMMORTALS_OVERRIDE_FILE="`pwd`/sample_override_file.json"
 
-python3.6 tools.py orchestrate p2smoketest
+python3.5 tools.py orchestrate smoke

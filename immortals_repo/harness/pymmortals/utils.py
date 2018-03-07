@@ -121,7 +121,11 @@ def path_helper(dir_should_exist: bool, root_path: str, subpath: str) -> str:
     return path
 
 
-def extract_environment_variables(string: str) -> List[str]:
+def extract_environment_variables(string):
+    """
+    :type string: str
+    :rtype: list[str]
+    """
     l = []
     idx = 0
     while idx >= 0:
@@ -150,7 +154,11 @@ def extract_environment_variables(string: str) -> List[str]:
     return l
 
 
-def extract_metavars(string: str) -> List[str]:
+def extract_metavars(string):
+    """
+    :type string: str
+    :rtype: List[str]
+    """
     l = []
     idx = 0
     while idx >= 0:
@@ -179,7 +187,13 @@ def extract_metavars(string: str) -> List[str]:
     return l
 
 
-def _replace_env_var(string: str, env_var: str, env_var_value: str) -> str:
+def _replace_env_var(string, env_var, env_var_value):
+    """
+    :type string: str
+    :type env_var: str
+    :type env_var_value: str
+    :rtype: str
+    """
     return_string = string
     template_string = '${' + env_var + '}'
 
@@ -189,7 +203,13 @@ def _replace_env_var(string: str, env_var: str, env_var_value: str) -> str:
     return return_string
 
 
-def _replace_metavar(string: str, metavar: str, metavar_value: str) -> str:
+def _replace_metavar(string, metavar, metavar_value):
+    """
+    :type string: str
+    :type metavar: str
+    :type metavar_value: str
+    :rtype: str
+    """
     return_string = string
     template_string = '{' + metavar + '}'
 
@@ -199,15 +219,28 @@ def _replace_metavar(string: str, metavar: str, metavar_value: str) -> str:
     return return_string
 
 
-def fill_dict(d: Dict[str, object], value_pool: Union[Dict[str, object], None]) -> Dict[str, object]:
+# def fill_dict(d: Dict[str, object], value_pool: Union[Dict[str, object], None]) -> Dict[str, object]:
+def fill_dict(target_dict, value_pool):
+    """
+    :type target_dict: dict[str]
+    :type value_pool: dict[str]
+    :rtype: dict[str]
+    """
     if value_pool is None:
         value_pool = {}
 
-    return _fill_dict(d=d, value_pool=value_pool, parents=[])
+    return _fill_dict(d=target_dict, value_pool=value_pool, parents=None)
 
 
-def _fill_dict(d: Dict[str, object], value_pool: Dict[str, object],
-               parents=List[Dict[str, object]]) -> Dict[str, object]:
+# def _fill_dict(d: Dict[str, object], value_pool: Dict[str, object],
+#                parents=List[Dict[str, object]]) -> Dict[str, object]:
+def _fill_dict(d, value_pool, parents):
+    """
+    :type d: dict[str]
+    :type value_pool: dict[str]
+    :type parents: list[dict[str]] or None
+    :rtype: dict[str]
+    """
     if parents is None:
         child_parents = []
     else:
@@ -243,7 +276,13 @@ def _fill_dict(d: Dict[str, object], value_pool: Dict[str, object],
     return d
 
 
-def _fill_list(l: List, value_pool: Dict[str, object], parents: List[Dict[str, object]] = None) -> List:
+def _fill_list(l, value_pool, parents):
+    """
+    :type l: list
+    :type value_pool: dict[str, object]
+    :type parents: list[dict[str, object]]
+    :rtype: list
+    """
     if parents is None:
         child_parents = []
     else:
@@ -277,7 +316,13 @@ def _fill_list(l: List, value_pool: Dict[str, object], parents: List[Dict[str, o
     return l
 
 
-def _fillout_string(string: str, value_pool: Dict[str, object], parents: List[Dict[str, object]]) -> str:
+def _fillout_string(string, value_pool, parents):
+    """
+    :type string: str
+    :type value_pool: dict[str, object]
+    :type parents: list[dict[str, object]]
+    :rtype: str
+    """
     env_vars = extract_environment_variables(string)
 
     for env_var in env_vars:
@@ -353,12 +398,6 @@ def resolve_platform():
                 raise Exception('Ubuntu detected, but could not find apt!')
             else:
                 platform = 'ubuntu'
-
-        elif os.path.exists('/etc/fedora-release'):
-            if subprocess.call(['which', 'dnf'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0:
-                raise Exception('Fedora detected, but could not find dnf!')
-            else:
-                platform = 'fedora'
 
     if platform is None:
         raise Exception('Could not determine distribution of platform  "' + sys.platform + '"!')

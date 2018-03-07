@@ -347,6 +347,9 @@ public class ClassMethodLineManipulator {
                         if(StatementTypeQuery.isExprStmt(ifpart)){
                             levelStatements.add(ifpart);
                         }
+                        else if(StatementTypeQuery.isReturnStmt(ifpart)){
+                            levelStatements.add(ifpart);
+                        }
                         else{
                                 List<Statement> stmts = ((BlockStmt)((IfStmt) s).getThenStmt()).getStmts();
                                 if(stmts != null)

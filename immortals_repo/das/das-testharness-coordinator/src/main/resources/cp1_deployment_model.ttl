@@ -1,0 +1,101 @@
+@prefix IMMoRTALS_resources_logical: <http://darpa.mil/immortals/ontology/r2.0.0/resources/logical#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_resource_containment: <http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#> .
+
+IMMoRTALS_resources_logical:Column-57d58048-9e3b-420d-bda9-04b3542941d6
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_resources:DataBase-2709d61a-07a0-4b4b-ab7e-666f041f8ca2
+        a                             IMMoRTALS_resources:DataBase ;
+        IMMoRTALS:hasDataBaseSchemas  IMMoRTALS_resources_logical:DBSchema-97ff373d-7cc2-4761-b819-5031392bee77 , IMMoRTALS_resources_logical:DBSchema-96fd46da-ad51-4c60-bcd8-17197cae121a .
+
+IMMoRTALS_resources:ResourceMigrationTarget-f4dc7479-cb4f-4297-96e7-47f275922e0a
+        a                            IMMoRTALS_resources:ResourceMigrationTarget ;
+        IMMoRTALS:hasRationale       "Need to upgrade schema to support new operations" ;
+        IMMoRTALS:hasTargetResource  IMMoRTALS_resources_logical:DBSchema-96fd46da-ad51-4c60-bcd8-17197cae121a .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-355d9f0c-4f1e-4ac3-a6b6-1bd4edc655b3
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the old schema instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources_logical:DBSchema-97ff373d-7cc2-4761-b819-5031392bee77 .
+
+IMMoRTALS_resources_logical:Table-76a4eee6-e19c-486e-9e24-d6b07cdd86e5
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-72e2e48f-f225-488c-9515-f82a3d40bedc .
+
+IMMoRTALS_resources_logical:Table-ab471edb-76d5-4b0f-9b40-6826904c05d3
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-2351e7da-e70a-4895-8671-890a1fdcd4e5 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-16dd7fff-91e5-4e74-b11c-d51fd175c106
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the new schema instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources_logical:DBSchema-96fd46da-ad51-4c60-bcd8-17197cae121a .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-83bc54b7-1173-4c95-909f-f015a3fe439b
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-84ff1e2c-e903-4bb3-8849-1579802bd615 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the marti server instance. Also contains a database resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.MartiServer .
+
+IMMoRTALS_gmei:DeploymentModelCP1
+        a                               IMMoRTALS_gmei:DeploymentModel ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_resources_logical:DBSchema-96fd46da-ad51-4c60-bcd8-17197cae121a , IMMoRTALS_cp2:ClientServerEnvironment.MartiServer , IMMoRTALS_resources_logical:DBSchema-97ff373d-7cc2-4761-b819-5031392bee77 , IMMoRTALS_resources:DataBase-2709d61a-07a0-4b4b-ab7e-666f041f8ca2 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Describes a marti database in need of upgrading schema versions to the specified target." ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.DeploymentModelCP1" ;
+        IMMoRTALS:hasResourceContainmentModel
+                IMMoRTALS_resource_containment:ResourceContainmentModel-2c1d9c98-9475-4687-8ea3-3bc0c0b9ac2b ;
+        IMMoRTALS:hasResourceMigrationTargets
+                IMMoRTALS_resources:ResourceMigrationTarget-f4dc7479-cb4f-4297-96e7-47f275922e0a .
+
+IMMoRTALS_cp2:ClientServerEnvironment.MartiServer
+        a                            IMMoRTALS_resources:Server ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$MartiServer" .
+
+IMMoRTALS_resources_logical:Column-cc212d12-6f66-446f-8d57-ca53924e8b7a
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_resources_logical:Column-2351e7da-e70a-4895-8671-890a1fdcd4e5
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_resources_logical:Table-5c1d849b-3947-46c9-a44b-1875a5840f8e
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-57d58048-9e3b-420d-bda9-04b3542941d6 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-84ff1e2c-e903-4bb3-8849-1579802bd615
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-355d9f0c-4f1e-4ac3-a6b6-1bd4edc655b3 , IMMoRTALS_resource_containment:ConcreteResourceNode-16dd7fff-91e5-4e74-b11c-d51fd175c106 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the marti database instance. Also contains two schema resource nodes." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources:DataBase-2709d61a-07a0-4b4b-ab7e-666f041f8ca2 .
+
+IMMoRTALS_resources_logical:DBSchema-96fd46da-ad51-4c60-bcd8-17197cae121a
+        a                     IMMoRTALS_resources_logical:DBSchema ;
+        IMMoRTALS:hasName     "CurrentSchema" ;
+        IMMoRTALS:hasTables   IMMoRTALS_resources_logical:Table-188d4546-cf78-44a7-ae75-0a625166e90c , IMMoRTALS_resources_logical:Table-ab471edb-76d5-4b0f-9b40-6826904c05d3 ;
+        IMMoRTALS:hasVersion  "currentVersion" .
+
+IMMoRTALS_resources_logical:Column-72e2e48f-f225-488c-9515-f82a3d40bedc
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_resources_logical:Table-188d4546-cf78-44a7-ae75-0a625166e90c
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-cc212d12-6f66-446f-8d57-ca53924e8b7a .
+
+IMMoRTALS_resources_logical:DBSchema-97ff373d-7cc2-4761-b819-5031392bee77
+        a                     IMMoRTALS_resources_logical:DBSchema ;
+        IMMoRTALS:hasName     "OldSchema" ;
+        IMMoRTALS:hasTables   IMMoRTALS_resources_logical:Table-5c1d849b-3947-46c9-a44b-1875a5840f8e , IMMoRTALS_resources_logical:Table-76a4eee6-e19c-486e-9e24-d6b07cdd86e5 ;
+        IMMoRTALS:hasVersion  "oldVersion" .
+
+IMMoRTALS_resource_containment:ResourceContainmentModel-2c1d9c98-9475-4687-8ea3-3bc0c0b9ac2b
+        a                           IMMoRTALS_resource_containment:ResourceContainmentModel ;
+        IMMoRTALS:hasResourceModel  IMMoRTALS_resource_containment:ConcreteResourceNode-83bc54b7-1173-4c95-909f-f015a3fe439b .

@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Dict, FrozenSet
 
+from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.result.status.dasoutcome import DasOutcome
+from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.result.status.verdictoutcome import VerdictOutcome
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.submissionmodel import SubmissionModel
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.testadapterendpoint import TestAdapterEndpoint
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.testharnessendpoint import TestHarnessEndpoint
@@ -17,6 +19,7 @@ class PerturbationScenario(ValuedEnum):
     P2CP1DatabaseSchema = TestAdapterEndpoint.CP1
     P2CP2DataInTransit = TestAdapterEndpoint.CP2
     P2CP3LibraryOrPlatformUpgrade = TestAdapterEndpoint.CP3
+
     # P2CP3AndroidPlatform = TestAdapterEndpoint.CP3
     # P2CP3AndroidLibraryUpgrade = TestAdapterEndpoint.CP3
     # P2CP3AndroidLibraryMutation = TestAdapterEndpoint.CP3
@@ -25,12 +28,6 @@ class PerturbationScenario(ValuedEnum):
 
     def __init__(self, endpoint: TestAdapterEndpoint):
         self.endpoint = endpoint
-
-
-class SubmissionResult(ValuedEnum):
-    InvalidSubmission = 'InvalidSubmission'
-    NoSolution = 'NoSolution'
-    Valid = 'Valid'
 
     @property
     def identifier(self) -> str:
@@ -62,14 +59,16 @@ class Phase2TestScenario(Serializable):
     def __init__(self,
                  submissionFlow: Phase2SubmissionFlow,
                  perturbationScenario: PerturbationScenario,
-                 expectedResult: SubmissionResult,
+                 expectedAdaptationResult: DasOutcome,
+                 expectedVerdictOutcome: VerdictOutcome,
                  scenarioIdentifier: str,
                  submissionModel: SubmissionModel,
                  rootConfigurationModifications: Dict[str, str]):
         super().__init__()
         self.submissionFlow = submissionFlow
         self.perturbationScenario = perturbationScenario
-        self.expectedResult = expectedResult
+        self.expectedAdaptationResult = expectedAdaptationResult
+        self.expectedVerdictOutcome = expectedVerdictOutcome
         self.scenarioIdentifier = scenarioIdentifier
         self.submissionModel = submissionModel
         self.rootConfigurationModifications = rootConfigurationModifications

@@ -64,8 +64,13 @@ public class TreeManipulator {
             }
             else if (s.getClass().getSimpleName().toString().equals("ForStmt")){
                 ForStmt forstmt = (ForStmt)s;
-                BlockStmt blkstmt = (BlockStmt)forstmt.getBody();
-                tempDepthLevels[i++] = GetHeighestDepthLevel(blkstmt);
+                if(StatementTypeQuery.isExprStmt(forstmt.getBody())){
+                    GetHeighestDepthLevel((ExpressionStmt) forstmt.getBody());
+                }
+                else {
+                    BlockStmt blkstmt = (BlockStmt) forstmt.getBody();
+                    tempDepthLevels[i++] = GetHeighestDepthLevel(blkstmt);
+                }
 
             }
             else if (s.getClass().getSimpleName().toString().equals("WhileStmt")){
@@ -109,6 +114,10 @@ public class TreeManipulator {
 
         }
         return 1 + FindMax(tempDepthLevels);
+    }
+
+    public int GetHeighestDepthLevel(ExpressionStmt stmt){
+        return 1;
     }
 
     private int GetHeighestDepthLevel(SwitchStmt s) {
@@ -176,30 +185,41 @@ public class TreeManipulator {
 
         int ifLength;
         int elseLength;
-        if(StatementTypeQuery.isExprStmt(ifStmt.getThenStmt()))
-            ifLength = 1;
-        else
-            ifLength = GetHeighestDepthLevel((BlockStmt)ifStmt.getThenStmt());
-        if(ifStmt.getElseStmt() != null && StatementTypeQuery.isExprStmt(ifStmt.getElseStmt()))
-            elseLength = 1;
-        else{
-            if(ifStmt.getElseStmt() != null){
-                if(StatementTypeQuery.isIfElseStmt(ifStmt.getElseStmt())){
-                    elseLength  = 1 + GetHeighestDepthLevel((IfStmt)ifStmt.getElseStmt());
+        try{
+            if(StatementTypeQuery.isExprStmt(ifStmt.getThenStmt()))
+                ifLength = 1;
+            else if(StatementTypeQuery.isReturnStmt(ifStmt.getThenStmt())){
+                ifLength = 1;
+            }
+            else
+                ifLength = GetHeighestDepthLevel((BlockStmt)ifStmt.getThenStmt());
+            if(ifStmt.getElseStmt() != null && StatementTypeQuery.isExprStmt(ifStmt.getElseStmt()))
+                elseLength = 1;
+            else{
+                if(ifStmt.getElseStmt() != null){
+                    if(StatementTypeQuery.isIfElseStmt(ifStmt.getElseStmt())){
+                        elseLength  = 1 + GetHeighestDepthLevel((IfStmt)ifStmt.getElseStmt());
+                    }
+                    else{
+                        elseLength = GetHeighestDepthLevel((BlockStmt)ifStmt.getElseStmt());
+                    }
+
                 }
                 else{
-                    elseLength = GetHeighestDepthLevel((BlockStmt)ifStmt.getElseStmt());
+                    elseLength = 0;
                 }
 
-            }
-            else{
-                elseLength = 0;
+
             }
 
+            return Math.max(ifLength,elseLength);
+
+        }catch (ClassCastException ex){
+            Debugger.log(ex.toString());
 
         }
+        return -1;
 
-        return Math.max(ifLength,elseLength);
 
     }
 

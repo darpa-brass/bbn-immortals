@@ -15,8 +15,8 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
 
+import com.securboration.immortals.bca.tools.MethodPrinter;
 import com.securboration.immortals.bcad.transformers.helpers.OpcodeHelper;
-import com.securboration.immortals.bcas.printer.MethodPrinter;
 
 /**
  * An instruction graph is a sequence of single-instruction nodes where each

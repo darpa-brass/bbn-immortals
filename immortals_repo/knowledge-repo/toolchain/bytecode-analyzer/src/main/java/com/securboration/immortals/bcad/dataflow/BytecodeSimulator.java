@@ -33,6 +33,7 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
+import com.securboration.immortals.bca.tools.MethodPrinter;
 import com.securboration.immortals.bcad.dataflow.DataflowHelper.LocalVariableSpec;
 import com.securboration.immortals.bcad.dataflow.StackEmulator.Entry;
 import com.securboration.immortals.bcad.dataflow.value.JavaValue;
@@ -40,7 +41,6 @@ import com.securboration.immortals.bcad.dataflow.value.JavaValueObject;
 import com.securboration.immortals.bcad.dataflow.value.JavaValues;
 import com.securboration.immortals.bcad.transformers.helpers.OpcodeHelper;
 import com.securboration.immortals.bcas.block.BasicBlock;
-import com.securboration.immortals.bcas.printer.MethodPrinter;
 
 public class BytecodeSimulator {
     

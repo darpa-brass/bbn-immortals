@@ -108,7 +108,7 @@ a summary of what is happening in the DAS and SUT. As that is an ongoing task, t
 JSON Objects for now.
 
 #### Sample TestAdapterState value
-```
+```  
 {
     "adaptation": {
         "adaptationStatus": "SUCCESS",
@@ -118,15 +118,15 @@ JSON Objects for now.
     "validation": {
         "executedTests": [
             {
-                "actualStatus": "COMPLETE",
-                "desiredStatus": "COMPLETE",
+                "actualStatus": "COMPLETE_PASS",
+                "desiredStatus": "COMPLETE_PASS",
                 "details": {},
                 "intent": "SendLocation",
                 "testIdentifier": "LocationSendTest"
             },
             {
-                "actualStatus": "COMPLETE",
-                "desiredStatus": "COMPLETE",
+                "actualStatus": "COMPLETE_PASS",
+                "desiredStatus": "COMPLETE_PASS",
                 "details": {},
                 "intent": "SendImage",
                 "testIdentifier": "ImageSendTest"
@@ -134,88 +134,93 @@ JSON Objects for now.
         ],
         "verdictOutcome": "PASS"
     }
-}
-```
+}  
+```  
 
 ### Data Dictionary
 
-#### TestAdapterState
-__Type__: JSON Object
-__Description__: The overall status of the Test Adapter used for all done, status, and perturbation responses
+#### TestAdapterState  
+__Type__: JSON Object  
+__Description__: The overall status of the Test Adapter used for all done, status, and perturbation responses  
 
-| Field      | Type                  | Description                                                                      |
-| ---------- | --------------------- | -------------------------------------------------------------------------------- |
-| adaptation | AdaptationStateObject | The state of the DAS adaptation                                                  |
-| identifier | str                   | The internal identifier used to bind this perturbation to any artifacts produced |
-| validation | ValidationStateObject | The state of the validation                                                      |
+| Field      | Type                  | Description                                                                      |  
+| ---------- | --------------------- | -------------------------------------------------------------------------------- |  
+| adaptation | AdaptationStateObject | The state of the DAS adaptation                                                  |  
+| identifier | str                   | The internal identifier used to bind this perturbation to any artifacts produced |  
+| timestamp  | int                   | Last Updated time (equivalent to Java 'System.currentTimeMillis()')              |  
+| validation | ValidationStateObject | The state of the validation                                                      |  
 
-#### AdaptationStateObject
-__Type__: JSON Object
-__Description__: The state of the DAS adaptation
+#### AdaptationStateObject  
+__Type__: JSON Object  
+__Description__: The state of the DAS adaptation  
 
-| Field            | Type                | Description                                     |
-| ---------------- | ------------------- | ----------------------------------------------- |
-| adaptationStatus | DasOutcome          | Indicates the current state of the DAS          |
-| details          | Generic JSON Object | A POJO object detailing the behavior of the DAS |
+| Field            | Type                | Description                                     |  
+| ---------------- | ------------------- | ----------------------------------------------- |  
+| adaptationStatus | DasOutcome          | Indicates the current state of the DAS          |  
+| details          | Generic JSON Object | A POJO object detailing the behavior of the DAS |  
 
-#### DasOutcome
-__Type__: String Constant
-__Description__: The current state of the DAS
+#### DasOutcome  
+__Type__: String Constant  
+__Description__: The current state of the DAS  
 
-| Values         | Description                                               |
-| -------------- | --------------------------------------------------------- |
-| PENDING        | DAS execution is pending (non-terminal)                   |
-| RUNNING        | DAS is executing analysis and augmentation (non-terminal) |
-| NOT_APPLICABLE | Baseline Submission - No DAS needed                       |
-| NOT_POSSIBLE   | An invalid perturbation has been submitted                |
-| SUCCESS        | Augmentation Successful                                   |
-| ERROR          | An error has occured                                      |
+| Values         | Description                                                  |  
+| -------------- | ------------------------------------------------------------ |  
+| PENDING        | DAS execution is pending (non-terminal)                      |  
+| RUNNING        | DAS is executing analysis and adaptation (non-terminal)      |  
+| NOT_APPLICABLE | Baseline Submission - No DAS needed                          |  
+| NOT_POSSIBLE   | An invalid perturbation has been submitted                   |  
+| SUCCESS        | Adaptation Successful                                        |  
+| FAIL           | Adaptation attempted but failed adaptation module validation |  
+| ERROR          | An unexpected error has occured                              |  
 
-#### ValidationStateObject
-__Type__: JSON Object
-__Description__: The current state of intent satisfaction validation
+#### ValidationStateObject  
+__Type__: JSON Object  
+__Description__: The current state of intent satisfaction validation  
 
-| Field          | Type                  | Description                                       |
-| -------------- | --------------------- | ------------------------------------------------- |
-| executedTests  | List[TestStateObject] | The tests executed to support the verdict outcome |
-| verdictOutcome | VerdictOutcome        | The outcome of the intent preservation            |
+| Field          | Type                  | Description                                       |  
+| -------------- | --------------------- | ------------------------------------------------- |  
+| executedTests  | List[TestStateObject] | The tests executed to support the verdict outcome |  
+| verdictOutcome | VerdictOutcome        | The outcome of the intent preservation            |  
 
-#### TestStateObject
-__Type__: JSON Object
-__Description__: The current state of an intent test validation
+#### TestStateObject  
+__Type__: JSON Object  
+__Description__: The current state of an intent test validation  
 
-| Field          | Type                | Description                                                             |
-| -------------- | ------------------- | ----------------------------------------------------------------------- |
-| actualStatus   | TestOutcome         | The current state for the test                                          |
-| desiredStatus  | TestOutcome         | The desired outcome for the test. Will always be 'COMPLETE' for Phase 2 |
-| details        | Generic JSON Object | Details relating to the resultant test state.                           |
-| intent         | str                 | The intent the test validates                                           |
-| testIdentifier | str                 | An identifier for the test                                              |
+| Field          | Type                | Description                                                             |  
+| -------------- | ------------------- | ----------------------------------------------------------------------- |  
+| actualStatus   | TestOutcome         | The current state for the test                                          |  
+| desiredStatus  | TestOutcome         | The desired outcome for the test. Will always be 'COMPLETE' for Phase 2 |  
+| details        | Generic JSON Object | Details relating to the resultant test state.                           |  
+| intent         | str                 | The intent the test validates                                           |  
+| testIdentifier | str                 | An identifier for the test                                              |  
 
-#### TestOutcome
-__Type__: String Constant
-__Description__: The outcome of a test
+#### TestOutcome  
+__Type__: String Constant  
+__Description__: The outcome of a test  
 
-| Values         | Description                                              |
-| -------------- | -------------------------------------------------------- |
-| PENDING        | Indicates the specified action is pending (non-terminal) |
-| RUNNING        | Indicates the specified action is running (non-terminal  |
-| NOT_APPLICABLE | Indicates the specified action is not applicable         |
-| COMPLETE       | See LL Evaluation Methodology                            |
-| INVALID        | See LL Evaluation Methodology                            |
-| INCOMPLETE     | See LL Evaluation Methodology                            |
-| ERROR          | See LL Evaluation Methodology                            |
+| Values            | Description                                              |  
+| ----------------- | -------------------------------------------------------- |  
+| PENDING           | Indicates the specified action is pending (non-terminal) |  
+| RUNNING           | Indicates the specified action is running (non-terminal  |  
+| NOT_APPLICABLE    | Indicates the specified action is not applicable         |  
+| COMPLETE_PASS     | Indicates the test completed with a 'PASS'               |  
+| COMPLETE_DEGRADED | Indicates the test completed with a 'DEGRADED'           |  
+| COMPLETE_FAIL     | Indicates the test completed with a 'FAIL'               |  
+| INVALID           | See LL Evaluation Methodology                            |  
+| INCOMPLETE        | See LL Evaluation Methodology                            |  
+| ERROR             | See LL Evaluation Methodology                            |  
 
-#### VerdictOutcome
-__Type__: String Constant
-__Description__: See LL Evaluation Methodology
+#### VerdictOutcome  
+__Type__: String Constant  
+__Description__: See LL Evaluation Methodology  
 
-| Values       | Description                    |
-| ------------ | ------------------------------ |
-| PENDING      | The verdict outcome is pending |
-| PASS         | See LL Evaluation Methodology  |
-| DEGRADED     | See LL Evaluation Methodology  |
-| FAIL         | See LL Evaluation Methodology  |
-| INCONCLUSIVE | See LL Evaluation Methodology  |
-| INAPPLICABLE | See LL Evaluation Methodology  |
-| ERROR        | See LL Evaluation Methodology  |
+| Values       | Description                    |  
+| ------------ | ------------------------------ |  
+| PENDING      | The verdict outcome is pending |  
+| RUNNING      | The validation is running      |  
+| PASS         | See LL Evaluation Methodology  |  
+| DEGRADED     | See LL Evaluation Methodology  |  
+| FAIL         | See LL Evaluation Methodology  |  
+| INCONCLUSIVE | See LL Evaluation Methodology  |  
+| INAPPLICABLE | See LL Evaluation Methodology  |  
+| ERROR        | See LL Evaluation Methodology  |  

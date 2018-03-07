@@ -11,6 +11,7 @@ class DfuCutpoint(FeatureInjectionCutpoint):
     def __init__(self,
                  dfu: DfuInstance = None,
                  humanReadableDesc: str = None,
+                 injectedCodeTemplate: str = None,
                  uuid: str = None):
-        super().__init__(humanReadableDesc=humanReadableDesc, uuid=uuid)
+        super().__init__(humanReadableDesc=humanReadableDesc, injectedCodeTemplate=injectedCodeTemplate, uuid=uuid)
         self.dfu = dfu

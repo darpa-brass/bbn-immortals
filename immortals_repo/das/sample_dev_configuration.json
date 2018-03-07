@@ -1,0 +1,64 @@
+// To use this, set export IMMORTALS_OVERRIDE_FILE to the filepath to this file prior to running start.sh
+
+// The minimum configuration to run properly outside of the evaluation environment is as follows
+//{
+//    "testHarness": {
+//        "port": 44444,
+//        "url": "127.0.0.1"
+//    },
+//    "testAdapter": {
+//        "port": 55555,
+//        "url": "127.0.0.1"
+//    },
+//    "debug": {
+//        "useMockApplicationDeployment": true
+//    }
+//}
+
+// This is a more detailed configuration. You can trim out anything you won't need to modify as long as the above
+// minimum configuration values are set
+{
+    "testHarness": {
+        "port": 44444,
+        "url": "127.0.0.1"
+    },
+    "fuseki": {
+        // If true, it will not be started by the launcher and you will be given a chance to start it manually.
+        // If you are not running your own instance of this service that you want to control, leave this as false.
+        "userManaged": false,
+        "port": 3030,
+        "url": "127.0.0.1"
+    },
+    "knowledgeRepoService": {
+        "userManaged": false,
+        "port": 9999
+    },
+    "dasService": {
+        // If true, it will not be started by the launcher and you will be given a chance to start it manually.
+        // If you are not running your own instance of this service that you want to control, leave this as false.
+        "userManaged": false,
+        // How long to wait after starting this service up before starting the next
+        "port": 8080,
+        "url": "127.0.0.1"
+    },
+    "testAdapter": {
+        "userManaged": false,
+        "port": 55555,
+        "url": "127.0.0.1"
+    },
+    "debug": {
+        // If true, Fuseki will not be started
+        "useMockFuseki": false,
+        // If true, the KnowledgeRepository will not be started
+        "useMockKnowledgeRepository": false,
+        // If true, the DAS will not be started and a mock das will be used by the Test Adapter to interact with the LL Test Harness
+        "useMockDas": false,
+        // If true, a mock application deployment will be used by the Test Adapter to interact with the LL Test Harness
+        "useMockApplicationDeployment": true,
+        // If true, calls to the test harness submitter are replaced with logging statments. The mock test harness never sends anything.
+        "useMockTestHarness": true
+    },
+    "globals": {
+        "headless": false
+    }
+}

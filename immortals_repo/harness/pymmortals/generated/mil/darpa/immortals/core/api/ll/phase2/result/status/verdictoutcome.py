@@ -5,7 +5,7 @@ from typing import FrozenSet
 # noinspection PyPep8Naming
 class VerdictOutcome(Enum):
     def __init__(self, description: str):
-        self.description: str = description
+        self.description = description  # type: str
 
     PENDING = (
         "The verdict outcome is pending")

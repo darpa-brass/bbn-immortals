@@ -31,9 +31,11 @@ public class ThreadedImmortalRunner extends Thread{
             //String fileName = "/home/ubuntu/research/HDD/tempAntRun" + ".txt";
             //TODO: arpit, uncomment this after discussion with Austin, how does bbn's test mechanism handles infinte loop.
             Command.exec(new String[]{"bash","-c",this.buildAnRunImmortals.antRuncommand + "  &>  " + fileName});
+
             String testResultXml = "";
             try {
-                result =  ((FileReaderUtil.Contains(this.buildAnRunImmortals.testResultXmlFile,this.buildAnRunImmortals.testSuiteName))    && (FileReaderUtil.Contains(this.buildAnRunImmortals.testResultXmlFile,this.buildAnRunImmortals.runSuccessString)));
+                String resultFile = FileOperationUtil.getLatestResultFile(this.buildAnRunImmortals.testResultPath,this.buildAnRunImmortals.testFileRegEx);
+                result =  ((FileReaderUtil.Contains(resultFile,this.buildAnRunImmortals.testSuiteName))    && (FileReaderUtil.Contains(resultFile,this.buildAnRunImmortals.runSuccessString)));
                 //result = (FileReaderUtil.Contains(fileName,this.buildAndRunAnts.runSuccessString));
                 if(result){
                     System.out.println("**************************************Test results are true. Reduction performed.  ***************************************************");

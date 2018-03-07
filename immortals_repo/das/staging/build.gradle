@@ -1,0 +1,12 @@
+apply plugin: mil.darpa.immortals.DasJavaComponent
+
+dependencies {
+    compile 'mil.darpa.immortals:ImmortalsConfig:+'
+    compile project(':shared:modules:core')
+    compile 'dom4j:dom4j:1.6.1'
+    compile 'org.apache.commons:commons-csv:1.1'
+    compile 'commons-io:commons-io:1.4'
+    compile 'io.airlift:airline:0.7'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'org.gradle:gradle-tooling-api:3.4.1'
+}

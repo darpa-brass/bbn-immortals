@@ -5,8 +5,10 @@ import com.bbn.marti.immortals.net.tcp.Transport;
 import mil.darpa.immortals.core.synthesis.AbstractMultisuccessorConsumingPipe;
 import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
 import mil.darpa.immortals.datatypes.cot.dom4j.StreamingCotProcessor;
+import mil.darpa.immortals.dfus.ElevationData;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import mil.darpa.immortals.dfus.ElevationApi;
 
 import javax.annotation.Nullable;
 import java.util.LinkedList;
@@ -21,9 +23,11 @@ public class CotByteBufferPipe extends AbstractMultisuccessorConsumingPipe<byte[
 
     public final InputTransportClosed inputTransportClosed;
     private StreamingCotProcessor cotProc = new StreamingCotProcessor();
+    private ElevationApi elevationApi = new ElevationApi();
 
     public CotByteBufferPipe(@Nullable ConsumingPipe<CotEventContainer>... next) {
         super(false, next);
+        elevationApi.init();
         inputTransportClosed = new InputTransportClosed(this);
     }
 
@@ -42,6 +46,8 @@ public class CotByteBufferPipe extends AbstractMultisuccessorConsumingPipe<byte[
             }
         }
         for (CotEventContainer cot : cotList) {
+            ElevationData elevationData = elevationApi.getElevation(Double.parseDouble(cot.getLon()), Double.parseDouble(cot.getLat()));
+            cot.setHae(elevationData.getHae(), elevationData.getLe());
             distributeOutput(cot);
         }
         return null;
@@ -58,7 +64,6 @@ public class CotByteBufferPipe extends AbstractMultisuccessorConsumingPipe<byte[
     public String toString() {
         return "CoT " + super.toString();
     }
-
 
     public class InputTransportClosed implements ConsumingPipe<Transport> {
         private final CotByteBufferPipe protocol;

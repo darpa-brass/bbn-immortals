@@ -17,6 +17,7 @@ class FunctionalAspectInstance(Serializable):
     def __init__(self,
                  abstractAspect: Type[FunctionalAspect] = None,
                  argsToSemanticTypes: List[ArgToSemanticTypeBinding] = None,
+                 concreteResourceDependencies: List[Resource] = None,
                  methodPointer: str = None,
                  properties: List[Property] = None,
                  recipe: str = None,
@@ -25,6 +26,7 @@ class FunctionalAspectInstance(Serializable):
         super().__init__()
         self.abstractAspect = abstractAspect
         self.argsToSemanticTypes = argsToSemanticTypes
+        self.concreteResourceDependencies = concreteResourceDependencies
         self.methodPointer = methodPointer
         self.properties = properties
         self.recipe = recipe

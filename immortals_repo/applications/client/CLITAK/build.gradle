@@ -1,7 +1,37 @@
+import groovy.json.JsonSlurper
+import mil.darpa.immortals.config.ImmortalsConfig
+
+import java.nio.file.Paths
+
+buildscript {
+    def IMMORTALS_REPO = new JsonSlurper().parseText(Paths.get(getBuildscript().getSourceFile().parent)
+            .resolve('immortals_config.json').toFile().text).globals.immortalsRepo
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url IMMORTALS_REPO
+        }
+        maven {
+            url 'https://repo.gradle.org/gradle/libs-releases'
+        }
+    }
+    dependencies {
+        classpath 'mil.darpa.immortals:ImmortalsGradle:+'
+        classpath 'mil.darpa.immortals:ImmortalsConfig:+'
+        classpath 'com.android.tools.build:gradle:2.3.3'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url ImmortalsConfig.instance.globals.immortalsRepo
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'maven-publish'
-
-apply from: 'common.gradle'
 apply from: 'dependencies.gradle'
 
 group "com.bbn.ataklite"
@@ -23,7 +53,7 @@ publishing {
     }
     repositories {
         maven {
-            url project.localRepoPath
+            url ImmortalsConfig.instance.globals.immortalsRepo
         }
     }
 }
@@ -31,7 +61,6 @@ publishing {
 task appJar(type: Jar) {
     manifest {
         attributes "Implementation-Title": "CLITAK",
-                "Implementation-Version": "$defaultSoftwarePublishVersion",
                 "Main-Class": "com.bbn.ataklite.Main"
     }
 
@@ -44,8 +73,7 @@ task appJar(type: Jar) {
 
 jar {
     manifest {
-        attributes "Implementation-Title": "CLITAK-lib",
-                "Implementation-Version": "$defaultSoftwarePublishVersion"
+        attributes "Implementation-Title": "CLITAK-lib"
     }
 }
 
@@ -57,17 +85,11 @@ clean {
 }
 
 dependencies {
-    compile 'mil.darpa.immortals:core:+'
     compile 'mil.darpa.immortals.datatypes:CotData:+'
     compile 'mil.darpa.immortals.datatypes:Coordinates:+'
     compile 'com.google.code.gson:gson:2.5'
     compile 'com.google.code.findbugs:jsr305:3.0.1'
     compile 'mil.darpa.immortals:core:+'
     compile 'com.securboration:immortals-adsl-generate:+'
-    compile 'mil.darpa.immortals.javatypeconverters:CotDataCoordinateConverter:+'
     compile 'mil.darpa.immortals.datatypes:Coordinates:+'
-    compile 'mil.darpa.immortals.dfus:ImageUtilsJava:+'
-    compile 'mil.darpa.immortals.dfus:LatestSaFileOperator:+'
-    compile 'mil.darpa.immortals.dfus:JavaTemporaryLocationProviderManualSimulated:+'
-    compile 'mil.darpa.immortals.components:analytics-log4j-client:+'
 }

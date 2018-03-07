@@ -1,0 +1,464 @@
+2017-12-21 18:53:12,359   INFO  [main] HOST: PID of this Volt process is 12891
+2017-12-21 18:53:12,369   INFO  [main] HOST: Command line arguments: org.voltdb.VoltDB initialize deployment deployment.xml force
+2017-12-21 18:53:12,370   INFO  [main] HOST: Command line JVM arguments: -Xmx2048m -Djava.awt.headless=true -Djavax.security.auth.useSubjectCredsOnly=false -Dsun.net.inetaddr.ttl=300 -Dsun.net.inetaddr.negative.ttl=3600 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseTLAB -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseCondCardMark -Dsun.rmi.dgc.server.gcInterval=9223372036854775807 -Dsun.rmi.dgc.client.gcInterval=9223372036854775807 -XX:CMSWaitDuration=120000 -XX:CMSMaxAbortablePrecleanTime=120000 -XX:+ExplicitGCInvokesConcurrent -XX:+CMSScavengeBeforeRemark -XX:+CMSClassUnloadingEnabled -Dlog4j.configuration=file:///home/peter/voltdb/voltdb/log4j.xml -Djava.library.path=default
+2017-12-21 18:53:12,371   INFO  [main] HOST: Command line JVM classpath: /home/peter/voltdb/voltdb/voltdb-7.9.jar:/home/peter/voltdb/lib/avro-1.7.7.jar:/home/peter/voltdb/lib/jackson-mapper-asl-1.9.13.jar:/home/peter/voltdb/lib/jetty-util-9.3.21.v20170918.jar:/home/peter/voltdb/lib/kafka-clients-0.8.2.2.jar:/home/peter/voltdb/lib/httpcore-4.3.3.jar:/home/peter/voltdb/lib/tomcat-juli.jar:/home/peter/voltdb/lib/httpasyncclient-4.0.2.jar:/home/peter/voltdb/lib/scala-library-2.11.5.jar:/home/peter/voltdb/lib/jetty-http-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jetty-server-9.3.21.v20170918.jar:/home/peter/voltdb/lib/owner-1.0.9.jar:/home/peter/voltdb/lib/commons-logging-1.1.3.jar:/home/peter/voltdb/lib/snmp4j-2.5.2.jar:/home/peter/voltdb/lib/tomcat-jdbc.jar:/home/peter/voltdb/lib/jetty-continuation-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jackson-core-asl-1.9.13.jar:/home/peter/voltdb/lib/jna.jar:/home/peter/voltdb/lib/commons-codec-1.6.jar:/home/peter/voltdb/lib/protobuf-java-3.4.0.jar:/home/peter/voltdb/lib/jetty-security-9.3.21.v20170918.jar:/home/peter/voltdb/lib/slf4j-nop-1.6.2.jar:/home/peter/voltdb/lib/felix.jar:/home/peter/voltdb/lib/owner-java8-1.0.9.jar:/home/peter/voltdb/lib/scala-parser-combinators_2.11-1.0.2.jar:/home/peter/voltdb/lib/scala-xml_2.11-1.0.2.jar:/home/peter/voltdb/lib/httpclient-4.3.6.jar:/home/peter/voltdb/lib/snappy-java-1.1.1.7.jar:/home/peter/voltdb/lib/slf4j-api-1.6.2.jar:/home/peter/voltdb/lib/log4j-1.2.16.jar:/home/peter/voltdb/lib/super-csv-2.1.0.jar:/home/peter/voltdb/lib/jetty-io-9.3.21.v20170918.jar:/home/peter/voltdb/lib/vmetrics.jar:/home/peter/voltdb/lib/kafka_2.11-0.8.2.2.jar:/home/peter/voltdb/lib/jetty-servlet-9.3.21.v20170918.jar:/home/peter/voltdb/lib/lz4-1.2.0.jar:/home/peter/voltdb/lib/jsch-0.1.51.jar:/home/peter/voltdb/lib/servlet-api-3.1.jar:/home/peter/voltdb/lib/httpcore-nio-4.3.2.jar:/home/peter/voltdb/lib/jline-2.10.jar:/home/peter/voltdb/lib/metrics-core-2.2.0.jar:/home/peter/voltdb/lib/commons-lang3-3.0.jar
+2017-12-21 18:53:12,877   INFO  [main] CONSOLE: When using the INIT command, some deployment file settings (hostcount and voltdbroot path) are ignored
+2017-12-21 18:53:12,877   INFO  [main] HOST: When using the INIT command, some deployment file settings (hostcount and voltdbroot path) are ignored
+2017-12-21 18:53:12,899   INFO  [main] HOST: Initialized VoltDB root directory voltdbroot
+2017-12-21 18:53:12,899   INFO  [main] CONSOLE: Initialized VoltDB root directory voltdbroot
+2017-12-21 18:53:13,647   INFO  [main] HOST: PID of this Volt process is 12911
+2017-12-21 18:53:13,661   INFO  [main] CONSOLE: Initializing VoltDB...
+
+ _    __      ____  ____  ____ 
+| |  / /___  / / /_/ __ \/ __ )
+| | / / __ \/ / __/ / / / __  |
+| |/ / /_/ / / /_/ /_/ / /_/ / 
+|___/\____/_/\__/_____/_____/
+
+--------------------------------
+
+2017-12-21 18:53:13,662   INFO  [main] HOST: Searching for license file located /home/peter/Immortals/trunk/castor/voltdb7/license.xml
+2017-12-21 18:53:13,664   INFO  [main] CONSOLE: Build: 7.9 voltdb-7.8.1-95-g119b564 Community Edition
+2017-12-21 18:53:13,668   INFO  [main] HOST: Command line arguments: org.voltdb.VoltDB probe placementgroup 0 mesh 
+2017-12-21 18:53:13,673   INFO  [main] HOST: Command line JVM arguments: -Xmx25000m -Djava.awt.headless=true -Djavax.security.auth.useSubjectCredsOnly=false -Dsun.net.inetaddr.ttl=300 -Dsun.net.inetaddr.negative.ttl=3600 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseTLAB -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseCondCardMark -Dsun.rmi.dgc.server.gcInterval=9223372036854775807 -Dsun.rmi.dgc.client.gcInterval=9223372036854775807 -XX:CMSWaitDuration=120000 -XX:CMSMaxAbortablePrecleanTime=120000 -XX:+ExplicitGCInvokesConcurrent -XX:+CMSScavengeBeforeRemark -XX:+CMSClassUnloadingEnabled -Dlog4j.configuration=file:///home/peter/voltdb/voltdb/log4j.xml -Djava.library.path=default
+2017-12-21 18:53:13,673   INFO  [main] HOST: Command line JVM classpath: /home/peter/voltdb/voltdb/voltdb-7.9.jar:/home/peter/voltdb/lib/avro-1.7.7.jar:/home/peter/voltdb/lib/jackson-mapper-asl-1.9.13.jar:/home/peter/voltdb/lib/jetty-util-9.3.21.v20170918.jar:/home/peter/voltdb/lib/kafka-clients-0.8.2.2.jar:/home/peter/voltdb/lib/httpcore-4.3.3.jar:/home/peter/voltdb/lib/tomcat-juli.jar:/home/peter/voltdb/lib/httpasyncclient-4.0.2.jar:/home/peter/voltdb/lib/scala-library-2.11.5.jar:/home/peter/voltdb/lib/jetty-http-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jetty-server-9.3.21.v20170918.jar:/home/peter/voltdb/lib/owner-1.0.9.jar:/home/peter/voltdb/lib/commons-logging-1.1.3.jar:/home/peter/voltdb/lib/snmp4j-2.5.2.jar:/home/peter/voltdb/lib/tomcat-jdbc.jar:/home/peter/voltdb/lib/jetty-continuation-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jackson-core-asl-1.9.13.jar:/home/peter/voltdb/lib/jna.jar:/home/peter/voltdb/lib/commons-codec-1.6.jar:/home/peter/voltdb/lib/protobuf-java-3.4.0.jar:/home/peter/voltdb/lib/jetty-security-9.3.21.v20170918.jar:/home/peter/voltdb/lib/slf4j-nop-1.6.2.jar:/home/peter/voltdb/lib/felix.jar:/home/peter/voltdb/lib/owner-java8-1.0.9.jar:/home/peter/voltdb/lib/scala-parser-combinators_2.11-1.0.2.jar:/home/peter/voltdb/lib/scala-xml_2.11-1.0.2.jar:/home/peter/voltdb/lib/httpclient-4.3.6.jar:/home/peter/voltdb/lib/snappy-java-1.1.1.7.jar:/home/peter/voltdb/lib/slf4j-api-1.6.2.jar:/home/peter/voltdb/lib/log4j-1.2.16.jar:/home/peter/voltdb/lib/super-csv-2.1.0.jar:/home/peter/voltdb/lib/jetty-io-9.3.21.v20170918.jar:/home/peter/voltdb/lib/vmetrics.jar:/home/peter/voltdb/lib/kafka_2.11-0.8.2.2.jar:/home/peter/voltdb/lib/jetty-servlet-9.3.21.v20170918.jar:/home/peter/voltdb/lib/lz4-1.2.0.jar:/home/peter/voltdb/lib/jsch-0.1.51.jar:/home/peter/voltdb/lib/servlet-api-3.1.jar:/home/peter/voltdb/lib/httpcore-nio-4.3.2.jar:/home/peter/voltdb/lib/jline-2.10.jar:/home/peter/voltdb/lib/metrics-core-2.2.0.jar:/home/peter/voltdb/lib/commons-lang3-3.0.jar
+2017-12-21 18:53:14,022   INFO  [main] CONSOLE: Loaded node-specific settings from voltdbroot/config/path.properties
+2017-12-21 18:53:14,022   INFO  [main] HOST: Loaded node-specific settings from voltdbroot/config/path.properties
+2017-12-21 18:53:14,206   INFO  [main] NETWORK: Default network thread count: 2
+2017-12-21 18:53:14,238   INFO  [main] HOST: Beginning inter-node communication on port 3021.
+2017-12-21 18:53:14,241   INFO  [main] HOST: Attempting to bind to leader ip 0.0.0.0/0.0.0.0:3021
+2017-12-21 18:53:14,242   INFO  [main] CONSOLE: Connecting to VoltDB cluster as the leader...
+2017-12-21 18:53:14,289   INFO  [main] ZK-SERVER: binding to port /127.0.0.1:7181
+2017-12-21 18:53:14,302   INFO  [main] ZK-SERVER: Created server with tickTime 3000 minSessionTimeout 6000 maxSessionTimeout 60000
+2017-12-21 18:53:14,377   INFO  [main] ZK-SERVER: Initiating client connection, connectString=127.0.0.1:7181 sessionTimeout=2000 watcher=org.voltcore.zk.ZKUtil$1@71d44a3
+2017-12-21 18:53:14,386   INFO  [main-SendThread()] ZK-CLIENT: Opening socket connection to server /127.0.0.1:7181
+2017-12-21 18:53:14,388   INFO  [NIOServerCxn.Factory:/127.0.0.1:7181] ZK-SERVER: Accepted socket connection from /127.0.0.1:38832
+2017-12-21 18:53:14,389   INFO  [main-SendThread(localhost:7181)] ZK-CLIENT: Socket connection established to localhost/127.0.0.1:7181, initiating session
+2017-12-21 18:53:14,391   INFO  [NIOServerCxn.Factory:/127.0.0.1:7181] ZK-SERVER: Client attempting to establish new session at /127.0.0.1:38832
+2017-12-21 18:53:14,407   INFO  [ZooKeeperServer] ZK-SERVER: Established session 0x24a3e32d8b800000 with negotiated timeout 6000 for client /127.0.0.1:38832
+2017-12-21 18:53:14,408   INFO  [main-SendThread(localhost:7181)] ZK-CLIENT: Session establishment complete on server localhost/127.0.0.1:7181, sessionid = 0x24a3e32d8b800000, negotiated timeout = 6000
+2017-12-21 18:53:14,480   INFO  [Socket Joiner] HOST: Attempting to bind to internal ip 0.0.0.0/0.0.0.0:3021
+2017-12-21 18:53:14,506   INFO  [main] HOST: Host id of this node is: 0
+2017-12-21 18:53:14,506   INFO  [main] CONSOLE: Host id of this node is: 0
+2017-12-21 18:53:14,522   INFO  [main] HOST: Starting a new database cluster
+2017-12-21 18:53:14,523   INFO  [main] CONSOLE: Starting a new database cluster
+2017-12-21 18:53:14,572   INFO  [main] HOST: URL of deployment: voltdbroot/config/deployment.xml
+2017-12-21 18:53:14,577   INFO  [main] HOST: Dead host timeout set to 90000 milliseconds
+2017-12-21 18:53:14,591   INFO  [main] HOST: Elastic duration set to 50 milliseconds
+2017-12-21 18:53:14,591   INFO  [main] HOST: Elastic throughput set to 2 mb/s
+2017-12-21 18:53:14,591   INFO  [main] HOST: Max temptable size set to 10240 mb
+2017-12-21 18:53:14,592   INFO  [main] HOST: Snapshot priority set to 6 [0 - 10]
+2017-12-21 18:53:14,592   INFO  [main] HOST: Query timeout set to 3000000 milliseconds
+2017-12-21 18:53:14,592   WARN  [main] CONSOLE: User authentication is not enabled. The database is accessible and could be modified or shut down by anyone on the network.
+2017-12-21 18:53:14,932   INFO  [Leader elector-/db/leaders/globalservice] HOST: Host 0 promoted to be the global service provider
+2017-12-21 18:53:15,594   INFO  [main] HOST: Framework properties are: {org.osgi.framework.system.packages.extra=com.google_voltpatches.common.base;version=1.0.0,com.google_voltpatches.common.collect;version=1.0.0,com.google_voltpatches.common.io;version=1.0.0,com.google_voltpatches.common.net;version=1.0.0,com.google_voltpatches.common.util.concurrent;version=1.0.0,com.yammer.metrics;version=1.0.0,com.yammer.metrics.core;version=1.0.0,com.yammer.metrics.reporting;version=1.0.0,com.yammer.metrics.stats;version=1.0.0,com.yammer.metrics.util;version=1.0.0,jsr166y;version=1.0.0,org.apache.log4j;version=1.0.0,org.slf4j;version=1.0.0,org.voltcore.network;version=1.0.0,org.voltcore.logging;version=1.0.0,org.voltcore.utils;version=1.0.0,org.voltdb;include:="VoltType",version=1.0.0,org.voltdb.client;version=1.0.0,org.voltdb.common;exclude="Permission",version=1.0.0,org.voltdb.importer;version=1.0.0,org.voltdb.importer.formatter;version=1.0.0,org.voltdb.types;version=1.0.0, org.osgi.framework.storage.clean=onFirstInit, felix.cache.rootdir=/home/peter/Immortals/trunk/castor/voltdb7/voltdbroot/.bundles-cache, felix.cache.locking=false}
+2017-12-21 18:53:15,858   INFO  [main] EXPORT: System is not using any export functionality.
+2017-12-21 18:53:15,859   INFO  [main] EXPORT: Cleaning out contents of export overflow directory /home/peter/Immortals/trunk/castor/voltdb7/voltdbroot/export_overflow for create with force
+2017-12-21 18:53:15,876   INFO  [main] IMPORT: Final importer count:0
+2017-12-21 18:53:15,876   INFO  [main] IMPORT: Currently loaded importer modules: [], types: []
+2017-12-21 18:53:15,919   INFO  [main] CONSOLE: Initializing the database. This may take a moment...
+2017-12-21 18:53:16,069   INFO  [SP 0 Site - 0:0] HOST: Loading native VoltDB code (voltdb-7.9). A confirmation message will follow if the loading is successful.
+2017-12-21 18:53:16,130   INFO  [SP 0 Site - 0:0] HOST: Successfully loaded native VoltDB library voltdb-7.9.
+2017-12-21 18:53:16,132   WARN  [SP 1 Site - 0:1] DBBPOOL: Strict java memory checking is enabled, don't do release builds or performance runs with this enabled. Invoke "ant clean" and "ant -Djmemcheck=NO_MEMCHECK" to disable.
+2017-12-21 18:53:16,409   INFO  [main] TM: Setting maximum size of MPI read pool to: 20
+2017-12-21 18:53:16,541   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:0 as leader for partition 0
+2017-12-21 18:53:16,626   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:1 as leader for partition 1
+2017-12-21 18:53:16,687   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:2 as leader for partition 2
+2017-12-21 18:53:16,695   INFO  [LeaderCache] TM: SP 0:0 for partition 0 found (including self) 1 surviving replicas to repair.  Survivors: 0:0
+2017-12-21 18:53:16,706   INFO  [LeaderCache] TM: SP 0:1 for partition 1 found (including self) 1 surviving replicas to repair.  Survivors: 0:1
+2017-12-21 18:53:16,715   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:3 as leader for partition 3
+2017-12-21 18:53:16,722   INFO  [LeaderCache] TM: SP 0:2 for partition 2 found (including self) 1 surviving replicas to repair.  Survivors: 0:2
+2017-12-21 18:53:16,730   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:4 as leader for partition 4
+2017-12-21 18:53:16,735   INFO  [LeaderCache] TM: SP 0:3 for partition 3 found (including self) 1 surviving replicas to repair.  Survivors: 0:3
+2017-12-21 18:53:16,739   INFO  [LeaderCache] TM: SP 0:2 for partition 2 finished leader promotion. Took 23 ms.
+2017-12-21 18:53:16,739   INFO  [LeaderCache] TM: SP 0:1 for partition 1 finished leader promotion. Took 44 ms.
+2017-12-21 18:53:16,741   INFO  [LeaderCache] TM: SP 0:0 for partition 0 finished leader promotion. Took 140 ms.
+2017-12-21 18:53:16,744   INFO  [LeaderCache] TM: SP 0:3 for partition 3 finished leader promotion. Took 9 ms.
+2017-12-21 18:53:16,747   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 2
+2017-12-21 18:53:16,748   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 1
+2017-12-21 18:53:16,748   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 0
+2017-12-21 18:53:16,748   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 3
+2017-12-21 18:53:16,749   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:5 as leader for partition 5
+2017-12-21 18:53:16,763   INFO  [LeaderCache] TM: SP 0:4 for partition 4 found (including self) 1 surviving replicas to repair.  Survivors: 0:4
+2017-12-21 18:53:16,768   INFO  [LeaderCache] TM: SP 0:4 for partition 4 finished leader promotion. Took 10 ms.
+2017-12-21 18:53:16,768   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:2 for partition:2
+2017-12-21 18:53:16,768   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:3 for partition:3
+2017-12-21 18:53:16,772   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:1 for partition:1
+2017-12-21 18:53:16,775   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:0 for partition:0
+2017-12-21 18:53:16,788   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 4
+2017-12-21 18:53:16,790   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:6 as leader for partition 6
+2017-12-21 18:53:16,819   INFO  [LeaderCache] TM: SP 0:5 for partition 5 found (including self) 1 surviving replicas to repair.  Survivors: 0:5
+2017-12-21 18:53:16,820   INFO  [LeaderCache] TM: SP 0:5 for partition 5 finished leader promotion. Took 28 ms.
+2017-12-21 18:53:16,827   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:4 for partition:4
+2017-12-21 18:53:16,861   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 5
+2017-12-21 18:53:16,898   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:7 as leader for partition 7
+2017-12-21 18:53:16,925   INFO  [LeaderCache] TM: SP 0:6 for partition 6 found (including self) 1 surviving replicas to repair.  Survivors: 0:6
+2017-12-21 18:53:16,925   INFO  [LeaderCache] TM: SP 0:6 for partition 6 finished leader promotion. Took 44 ms.
+2017-12-21 18:53:16,979   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:5 for partition:5
+2017-12-21 18:53:17,017   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 6
+2017-12-21 18:53:17,090   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:6 for partition:6
+2017-12-21 18:53:17,095   INFO  [LeaderCache] TM: SP 0:7 for partition 7 found (including self) 1 surviving replicas to repair.  Survivors: 0:7
+2017-12-21 18:53:17,096   INFO  [LeaderCache] TM: SP 0:7 for partition 7 finished leader promotion. Took 29 ms.
+2017-12-21 18:53:17,110   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 7
+2017-12-21 18:53:17,142   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:7 for partition:7
+2017-12-21 18:53:17,165   INFO  [LeaderCache] TM: MP 0:8 for partition 16383 finished leader promotion. Took 22 ms.
+2017-12-21 18:53:17,173   INFO  [LeaderCache] HOST: [Cartographer MP] Sending leader change notification with new leader:
+2017-12-21 18:53:17,174   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:8 for partition:16383
+2017-12-21 18:53:17,312   INFO  [main] HOST: Database start action is Create.
+2017-12-21 18:53:17,312   INFO  [main] HOST: Listening for native wire protocol clients on port 21212.
+2017-12-21 18:53:17,312   INFO  [main] HOST: Listening for admin wire protocol clients on port 21211.
+2017-12-21 18:53:17,313   INFO  [main] HOST: Local machine HTTP monitoring is disabled.
+2017-12-21 18:53:17,314   INFO  [main] HOST: Json API disabled.
+2017-12-21 18:53:17,314   INFO  [main] HOST: Maximum usable Java heap set to 24983 mb.
+2017-12-21 18:53:17,314   INFO  [main] HOST: Minimum required Java heap for catalog and server config is 384 MB.
+2017-12-21 18:53:17,318   INFO  [main] HOST: Cluster has 1 hosts with leader hostname: "localhost". 8 local sites count. K = 0.
+2017-12-21 18:53:17,318   INFO  [main] HOST: The entire cluster has 1 copy of each of the 8 logical partitions.
+2017-12-21 18:53:17,318   INFO  [main] HOST: Detection of network partitions in the cluster is not enabled.
+2017-12-21 18:53:17,318   INFO  [main] HOST: Client authentication is not enabled. Anonymous clients accepted.
+2017-12-21 18:53:17,318   INFO  [main] HOST: No schedule set for automated snapshots.
+2017-12-21 18:53:17,318   INFO  [main] HOST: Using "/home/peter/Immortals/trunk/castor/voltdb7/voltdbroot" for voltdbroot directory.
+2017-12-21 18:53:17,319   INFO  [main] HOST: CPU INFO:         2 Cores, 1 Sockets, 2 Hardware Threads
+2017-12-21 18:53:17,319   INFO  [main] HOST: CPU DESC:         Intel(R) Core(TM) i7-4650U CPU @ 1.70GHz 4096 KB cache
+2017-12-21 18:53:17,319   INFO  [main] HOST: HOST MEMORY (MB): 5519
+2017-12-21 18:53:17,319   INFO  [main] HOST: OS PROFILE:       Linux 4.10.0-42-generic amd64 en_US
+2017-12-21 18:53:17,319   INFO  [main] HOST: DB VERSION:       7.9
+2017-12-21 18:53:17,319   INFO  [main] HOST: JAVA VERSION:     1.8.0_151
+2017-12-21 18:53:17,319   INFO  [main] HOST: JAVA RUNTIME:     Java(TM) SE Runtime Environment (1.8.0_151-b12)
+2017-12-21 18:53:17,319   INFO  [main] HOST: JAVA VM:          Java HotSpot(TM) 64-Bit Server VM (25.151-b12, mixed mode)
+2017-12-21 18:53:17,321   INFO  [main] HOST: About to list cluster interfaces for all nodes with format [ip1 ip2 ... ipN] client-port,admin-port,http-port
+2017-12-21 18:53:17,322   INFO  [main] HOST:   Host id: 0 with interfaces: 10.0.2.15 21212,21211,-1 [SELF]
+2017-12-21 18:53:17,328   WARN  [main] CONSOLE: This is not a highly available cluster. K-Safety is set to 0.
+2017-12-21 18:53:17,328   WARN  [main] CONSOLE: Durability is turned off. Command logging is off.
+2017-12-21 18:53:17,344   INFO  [SnapshotDaemon] LOGGING: This node was selected as the leader for snapshot truncation
+2017-12-21 18:53:17,347   INFO  [SnapshotDaemon] LOGGING: Checking for existence of snapshot truncation request
+2017-12-21 18:53:17,348   INFO  [Thread-16] HOST: Logging config info
+2017-12-21 18:53:17,433   INFO  [Thread-17] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 18:53:17,434   INFO  [Thread-17] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 18:53:17,439   INFO  [Thread-17] CONSOLE: Server Operational State is: NORMAL
+2017-12-21 18:53:17,440   INFO  [Thread-17] CONSOLE: Server completed initialization.
+2017-12-21 18:54:05,653   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2017-12-21 18:54:05,653   INFO  [NTPServiceThread-0] COMPILER: 	CREATE TABLE source(source_id VARCHAR(16) NOT NULL, name VARCHAR(16), channel VARCHAR(16) NOT NULL, CONSTRAINT source_pkey PRIMARY KEY (source_id))
+2017-12-21 18:54:05,935   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE added.
+
+2017-12-21 18:54:05,944   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 18:54:05,945   INFO  [NTPServiceThread-Priority-0] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 18:54:06,057   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 4CD3E2F85B, deployment hash BD666CBF80, version 0
+2017-12-21 18:54:06,057   INFO  [MP Site - 0:8] HOST: To: catalog hash: 41E837EDF6, deployment hash: BD666CBF80
+2017-12-21 18:54:06,066   INFO  [SP 0 Site - 0:0] HOST: Site 0:0 acknowledged data and catalog prechecks.
+2017-12-21 18:54:06,118   INFO  [SP 6 Site - 0:6] IMPORT: Final importer count:0
+2017-12-21 18:54:06,119   INFO  [SP 6 Site - 0:6] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 18:54:06,119   INFO  [SP 6 Site - 0:6] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 18:54:06,153   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 95.838369
+2017-12-21 18:54:06,153   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 41E837EDF6, BD666CBF80).
+2017-12-21 18:54:49,102   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2017-12-21 18:54:49,102   INFO  [NTPServiceThread-1] COMPILER: 	DROP TABLE SOURCE IF EXISTS CASCADE
+2017-12-21 18:54:49,155   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE dropped.
+
+2017-12-21 18:54:49,156   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 18:54:49,156   INFO  [NTPServiceThread-Priority-0] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 18:54:49,264   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 41E837EDF6, deployment hash BD666CBF80, version 1
+2017-12-21 18:54:49,264   INFO  [MP Site - 0:8] HOST: To: catalog hash: 8391EA2C47, deployment hash: BD666CBF80
+2017-12-21 18:54:49,266   INFO  [SP 1 Site - 0:1] HOST: Site 0:1 acknowledged data and catalog prechecks.
+2017-12-21 18:54:49,288   INFO  [SP 6 Site - 0:6] IMPORT: Final importer count:0
+2017-12-21 18:54:49,291   INFO  [SP 6 Site - 0:6] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 18:54:49,292   INFO  [SP 6 Site - 0:6] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 18:54:49,308   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 43.179584999999996
+2017-12-21 18:54:49,308   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 8391EA2C47, BD666CBF80).
+2017-12-21 18:54:49,336   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2017-12-21 18:54:49,336   INFO  [NTPServiceThread-0] COMPILER: 	CREATE TABLE source(source_id VARCHAR(16) NOT NULL, name VARCHAR(16), channel VARCHAR(16) NOT NULL, CONSTRAINT source_pkey PRIMARY KEY (source_id))
+2017-12-21 18:54:49,374   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE added.
+
+2017-12-21 18:54:49,374   INFO  [NTPServiceThread-Priority-0] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 18:54:49,387   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 18:54:49,399   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 8391EA2C47, deployment hash BD666CBF80, version 2
+2017-12-21 18:54:49,399   INFO  [MP Site - 0:8] HOST: To: catalog hash: 41E837EDF6, deployment hash: BD666CBF80
+2017-12-21 18:54:49,401   INFO  [SP 2 Site - 0:2] HOST: Site 0:2 acknowledged data and catalog prechecks.
+2017-12-21 18:54:49,447   INFO  [SP 0 Site - 0:0] IMPORT: Final importer count:0
+2017-12-21 18:54:49,447   INFO  [SP 0 Site - 0:0] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 18:54:49,447   INFO  [SP 0 Site - 0:0] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 18:54:49,458   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 58.802223
+2017-12-21 18:54:49,458   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 41E837EDF6, BD666CBF80).
+2017-12-21 18:58:24,933   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2017-12-21 18:58:24,937   INFO  [NTPServiceThread-1] COMPILER: 	DROP TABLE SOURCE IF EXISTS CASCADE
+2017-12-21 18:58:25,003   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE dropped.
+
+2017-12-21 18:58:25,014   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 18:58:25,014   INFO  [NTPServiceThread-Priority-1] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 18:58:25,127   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 41E837EDF6, deployment hash BD666CBF80, version 3
+2017-12-21 18:58:25,127   INFO  [MP Site - 0:8] HOST: To: catalog hash: 8391EA2C47, deployment hash: BD666CBF80
+2017-12-21 18:58:25,128   INFO  [SP 3 Site - 0:3] HOST: Site 0:3 acknowledged data and catalog prechecks.
+2017-12-21 18:58:25,146   INFO  [SP 6 Site - 0:6] IMPORT: Final importer count:0
+2017-12-21 18:58:25,146   INFO  [SP 6 Site - 0:6] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 18:58:25,146   INFO  [SP 6 Site - 0:6] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 18:58:25,158   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 31.06532
+2017-12-21 18:58:25,158   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 8391EA2C47, BD666CBF80).
+2017-12-21 18:58:25,186   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2017-12-21 18:58:25,186   INFO  [NTPServiceThread-0] COMPILER: 	CREATE TABLE source(source_id VARCHAR(16) NOT NULL, name VARCHAR(16), channel VARCHAR(16) NOT NULL, CONSTRAINT source_pkey PRIMARY KEY (source_id))
+2017-12-21 18:58:25,266   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE added.
+
+2017-12-21 18:58:25,267   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 18:58:25,267   INFO  [NTPServiceThread-Priority-1] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 18:58:25,380   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 8391EA2C47, deployment hash BD666CBF80, version 4
+2017-12-21 18:58:25,380   INFO  [MP Site - 0:8] HOST: To: catalog hash: 41E837EDF6, deployment hash: BD666CBF80
+2017-12-21 18:58:25,382   INFO  [SP 4 Site - 0:4] HOST: Site 0:4 acknowledged data and catalog prechecks.
+2017-12-21 18:58:25,414   INFO  [SP 3 Site - 0:3] IMPORT: Final importer count:0
+2017-12-21 18:58:25,414   INFO  [SP 3 Site - 0:3] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 18:58:25,415   INFO  [SP 3 Site - 0:3] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 18:58:25,430   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 50.214973
+2017-12-21 18:58:25,430   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 41E837EDF6, BD666CBF80).
+2017-12-21 19:00:44,187   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:00:44,188   INFO  [NTPServiceThread-1] COMPILER: 	DROP TABLE SOURCE IF EXISTS CASCADE
+2017-12-21 19:00:44,219   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE dropped.
+
+2017-12-21 19:00:44,226   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:00:44,226   INFO  [NTPServiceThread-Priority-2] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:00:44,334   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 41E837EDF6, deployment hash BD666CBF80, version 5
+2017-12-21 19:00:44,334   INFO  [MP Site - 0:8] HOST: To: catalog hash: 8391EA2C47, deployment hash: BD666CBF80
+2017-12-21 19:00:44,335   INFO  [SP 5 Site - 0:5] HOST: Site 0:5 acknowledged data and catalog prechecks.
+2017-12-21 19:00:44,445   INFO  [SP 0 Site - 0:0] IMPORT: Final importer count:0
+2017-12-21 19:00:44,446   INFO  [SP 0 Site - 0:0] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:00:44,447   INFO  [SP 0 Site - 0:0] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:00:44,478   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 144.748275
+2017-12-21 19:00:44,479   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 8391EA2C47, BD666CBF80).
+2017-12-21 19:00:44,524   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:00:44,524   INFO  [NTPServiceThread-0] COMPILER: 	CREATE TABLE source(source_id VARCHAR(16) NOT NULL, name VARCHAR(16), channel VARCHAR(16) NOT NULL, CONSTRAINT source_pkey PRIMARY KEY (source_id))
+2017-12-21 19:00:44,686   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE added.
+
+2017-12-21 19:00:44,686   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:00:44,686   INFO  [NTPServiceThread-Priority-2] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:00:44,793   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 8391EA2C47, deployment hash BD666CBF80, version 6
+2017-12-21 19:00:44,793   INFO  [MP Site - 0:8] HOST: To: catalog hash: 41E837EDF6, deployment hash: BD666CBF80
+2017-12-21 19:00:44,795   INFO  [SP 6 Site - 0:6] HOST: Site 0:6 acknowledged data and catalog prechecks.
+2017-12-21 19:00:44,823   INFO  [SP 3 Site - 0:3] IMPORT: Final importer count:0
+2017-12-21 19:00:44,824   INFO  [SP 3 Site - 0:3] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:00:44,824   INFO  [SP 3 Site - 0:3] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:00:44,858   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 65.275077
+2017-12-21 19:00:44,859   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 41E837EDF6, BD666CBF80).
+2017-12-21 19:10:17,661   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:10:17,661   INFO  [NTPServiceThread-1] COMPILER: 	DROP TABLE SOURCE IF EXISTS CASCADE
+2017-12-21 19:10:17,718   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE dropped.
+
+2017-12-21 19:10:17,724   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:10:17,724   INFO  [NTPServiceThread-Priority-3] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:10:17,831   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 41E837EDF6, deployment hash BD666CBF80, version 7
+2017-12-21 19:10:17,831   INFO  [MP Site - 0:8] HOST: To: catalog hash: 8391EA2C47, deployment hash: BD666CBF80
+2017-12-21 19:10:17,834   INFO  [SP 7 Site - 0:7] HOST: Site 0:7 acknowledged data and catalog prechecks.
+2017-12-21 19:10:17,845   INFO  [SP 4 Site - 0:4] IMPORT: Final importer count:0
+2017-12-21 19:10:17,845   INFO  [SP 4 Site - 0:4] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:10:17,846   INFO  [SP 4 Site - 0:4] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:10:17,872   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 40.379936
+2017-12-21 19:10:17,872   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 8391EA2C47, BD666CBF80).
+2017-12-21 19:10:17,889   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:10:17,890   INFO  [NTPServiceThread-0] COMPILER: 	CREATE TABLE source(source_id VARCHAR(16) NOT NULL, name VARCHAR(16), channel VARCHAR(16) NOT NULL, CONSTRAINT source_pkey PRIMARY KEY (source_id))
+2017-12-21 19:10:17,923   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE added.
+
+2017-12-21 19:10:17,923   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:10:17,923   INFO  [NTPServiceThread-Priority-3] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:10:18,031   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 8391EA2C47, deployment hash BD666CBF80, version 8
+2017-12-21 19:10:18,031   INFO  [MP Site - 0:8] HOST: To: catalog hash: 41E837EDF6, deployment hash: BD666CBF80
+2017-12-21 19:10:18,032   INFO  [SP 0 Site - 0:0] HOST: Site 0:0 acknowledged data and catalog prechecks.
+2017-12-21 19:10:18,044   INFO  [SP 5 Site - 0:5] IMPORT: Final importer count:0
+2017-12-21 19:10:18,044   INFO  [SP 5 Site - 0:5] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:10:18,044   INFO  [SP 5 Site - 0:5] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:10:18,071   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 39.955596
+2017-12-21 19:10:18,071   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 41E837EDF6, BD666CBF80).
+2017-12-21 19:14:00,990   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:14:00,990   INFO  [NTPServiceThread-1] COMPILER: 	DROP TABLE SOURCE IF EXISTS CASCADE
+2017-12-21 19:14:01,048   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE dropped.
+
+2017-12-21 19:14:01,055   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:14:01,055   INFO  [NTPServiceThread-Priority-4] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:14:01,165   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 41E837EDF6, deployment hash BD666CBF80, version 9
+2017-12-21 19:14:01,166   INFO  [MP Site - 0:8] HOST: To: catalog hash: 8391EA2C47, deployment hash: BD666CBF80
+2017-12-21 19:14:01,169   INFO  [SP 1 Site - 0:1] HOST: Site 0:1 acknowledged data and catalog prechecks.
+2017-12-21 19:14:01,206   INFO  [SP 7 Site - 0:7] IMPORT: Final importer count:0
+2017-12-21 19:14:01,207   INFO  [SP 7 Site - 0:7] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:14:01,207   INFO  [SP 7 Site - 0:7] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:14:01,229   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 63.859218999999996
+2017-12-21 19:14:01,229   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 8391EA2C47, BD666CBF80).
+2017-12-21 19:14:01,265   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:14:01,265   INFO  [NTPServiceThread-0] COMPILER: 	CREATE TABLE source(source_id VARCHAR(16) NOT NULL, name VARCHAR(16), channel VARCHAR(16) NOT NULL, CONSTRAINT source_pkey PRIMARY KEY (source_id))
+2017-12-21 19:14:01,341   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE added.
+
+2017-12-21 19:14:01,345   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:14:01,345   INFO  [NTPServiceThread-Priority-4] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:14:01,458   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 8391EA2C47, deployment hash BD666CBF80, version 10
+2017-12-21 19:14:01,458   INFO  [MP Site - 0:8] HOST: To: catalog hash: 41E837EDF6, deployment hash: BD666CBF80
+2017-12-21 19:14:01,465   INFO  [SP 2 Site - 0:2] HOST: Site 0:2 acknowledged data and catalog prechecks.
+2017-12-21 19:14:01,502   INFO  [SP 0 Site - 0:0] IMPORT: Final importer count:0
+2017-12-21 19:14:01,506   INFO  [SP 0 Site - 0:0] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:14:01,506   INFO  [SP 0 Site - 0:0] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:14:01,555   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 97.194806
+2017-12-21 19:14:01,555   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 41E837EDF6, BD666CBF80).
+2017-12-21 19:14:53,642   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:14:53,643   INFO  [NTPServiceThread-1] COMPILER: 	DROP TABLE SOURCE IF EXISTS CASCADE
+2017-12-21 19:14:53,747   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE dropped.
+
+2017-12-21 19:14:53,785   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:14:53,785   INFO  [NTPServiceThread-Priority-4] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:14:53,858   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 41E837EDF6, deployment hash BD666CBF80, version 11
+2017-12-21 19:14:53,858   INFO  [MP Site - 0:8] HOST: To: catalog hash: 8391EA2C47, deployment hash: BD666CBF80
+2017-12-21 19:14:53,860   INFO  [SP 3 Site - 0:3] HOST: Site 0:3 acknowledged data and catalog prechecks.
+2017-12-21 19:14:53,950   INFO  [SP 7 Site - 0:7] IMPORT: Final importer count:0
+2017-12-21 19:14:53,953   INFO  [SP 7 Site - 0:7] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:14:53,953   INFO  [SP 7 Site - 0:7] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:14:53,973   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 115.333152
+2017-12-21 19:14:53,973   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 8391EA2C47, BD666CBF80).
+2017-12-21 19:14:54,006   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:14:54,006   INFO  [NTPServiceThread-0] COMPILER: 	CREATE TABLE source(source_id VARCHAR(16) NOT NULL, name VARCHAR(16), channel VARCHAR(16) NOT NULL, CONSTRAINT source_pkey PRIMARY KEY (source_id))
+2017-12-21 19:14:54,111   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE added.
+
+2017-12-21 19:14:54,117   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:14:54,117   INFO  [NTPServiceThread-Priority-4] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:14:54,222   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 8391EA2C47, deployment hash BD666CBF80, version 12
+2017-12-21 19:14:54,222   INFO  [MP Site - 0:8] HOST: To: catalog hash: 41E837EDF6, deployment hash: BD666CBF80
+2017-12-21 19:14:54,223   INFO  [SP 4 Site - 0:4] HOST: Site 0:4 acknowledged data and catalog prechecks.
+2017-12-21 19:14:54,232   INFO  [SP 6 Site - 0:6] IMPORT: Final importer count:0
+2017-12-21 19:14:54,239   INFO  [SP 6 Site - 0:6] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:14:54,239   INFO  [SP 6 Site - 0:6] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:14:54,249   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 27.001365
+2017-12-21 19:14:54,249   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 41E837EDF6, BD666CBF80).
+2017-12-21 19:16:35,254   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:16:35,254   INFO  [NTPServiceThread-1] COMPILER: 	DROP TABLE SOURCE IF EXISTS CASCADE
+2017-12-21 19:16:35,282   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE dropped.
+
+2017-12-21 19:16:35,293   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:16:35,293   INFO  [NTPServiceThread-Priority-5] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:16:35,402   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 41E837EDF6, deployment hash BD666CBF80, version 13
+2017-12-21 19:16:35,402   INFO  [MP Site - 0:8] HOST: To: catalog hash: 8391EA2C47, deployment hash: BD666CBF80
+2017-12-21 19:16:35,403   INFO  [SP 5 Site - 0:5] HOST: Site 0:5 acknowledged data and catalog prechecks.
+2017-12-21 19:16:35,418   INFO  [SP 6 Site - 0:6] IMPORT: Final importer count:0
+2017-12-21 19:16:35,418   INFO  [SP 6 Site - 0:6] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:16:35,418   INFO  [SP 6 Site - 0:6] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:16:35,433   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 31.253369
+2017-12-21 19:16:35,433   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 8391EA2C47, BD666CBF80).
+2017-12-21 19:16:35,457   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:16:35,457   INFO  [NTPServiceThread-0] COMPILER: 	CREATE TABLE source(source_id VARCHAR(16) NOT NULL, name VARCHAR(16), channel VARCHAR(16) NOT NULL, CONSTRAINT source_pkey PRIMARY KEY (source_id))
+2017-12-21 19:16:35,528   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE added.
+
+2017-12-21 19:16:35,533   INFO  [NTPServiceThread-Priority-5] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:16:35,535   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:16:35,543   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 8391EA2C47, deployment hash BD666CBF80, version 14
+2017-12-21 19:16:35,543   INFO  [MP Site - 0:8] HOST: To: catalog hash: 41E837EDF6, deployment hash: BD666CBF80
+2017-12-21 19:16:35,544   INFO  [SP 6 Site - 0:6] HOST: Site 0:6 acknowledged data and catalog prechecks.
+2017-12-21 19:16:35,564   INFO  [SP 5 Site - 0:5] IMPORT: Final importer count:0
+2017-12-21 19:16:35,565   INFO  [SP 5 Site - 0:5] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:16:35,565   INFO  [SP 5 Site - 0:5] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:16:35,580   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 36.499088
+2017-12-21 19:16:35,580   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 41E837EDF6, BD666CBF80).
+2017-12-21 19:21:59,829   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:21:59,830   INFO  [NTPServiceThread-1] COMPILER: 	DROP TABLE SOURCE IF EXISTS CASCADE
+2017-12-21 19:21:59,860   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE dropped.
+
+2017-12-21 19:21:59,869   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:21:59,870   INFO  [NTPServiceThread-Priority-6] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:21:59,977   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 41E837EDF6, deployment hash BD666CBF80, version 15
+2017-12-21 19:21:59,977   INFO  [MP Site - 0:8] HOST: To: catalog hash: 8391EA2C47, deployment hash: BD666CBF80
+2017-12-21 19:21:59,982   INFO  [SP 7 Site - 0:7] HOST: Site 0:7 acknowledged data and catalog prechecks.
+2017-12-21 19:21:59,997   INFO  [SP 1 Site - 0:1] IMPORT: Final importer count:0
+2017-12-21 19:21:59,998   INFO  [SP 1 Site - 0:1] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:21:59,998   INFO  [SP 1 Site - 0:1] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:22:00,007   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 29.376109
+2017-12-21 19:22:00,007   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 8391EA2C47, BD666CBF80).
+2017-12-21 19:22:00,033   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:22:00,033   INFO  [NTPServiceThread-0] COMPILER: 	CREATE TABLE source(source_id VARCHAR(16) NOT NULL, name VARCHAR(16), channel VARCHAR(16) NOT NULL, CONSTRAINT source_pkey PRIMARY KEY (source_id))
+2017-12-21 19:22:00,060   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE added.
+
+2017-12-21 19:22:00,061   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:22:00,061   INFO  [NTPServiceThread-Priority-6] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:22:00,168   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 8391EA2C47, deployment hash BD666CBF80, version 16
+2017-12-21 19:22:00,168   INFO  [MP Site - 0:8] HOST: To: catalog hash: 41E837EDF6, deployment hash: BD666CBF80
+2017-12-21 19:22:00,171   INFO  [SP 0 Site - 0:0] HOST: Site 0:0 acknowledged data and catalog prechecks.
+2017-12-21 19:22:00,189   INFO  [SP 1 Site - 0:1] IMPORT: Final importer count:0
+2017-12-21 19:22:00,206   INFO  [SP 1 Site - 0:1] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:22:00,206   INFO  [SP 1 Site - 0:1] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:22:00,214   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 46.190155
+2017-12-21 19:22:00,214   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 41E837EDF6, BD666CBF80).
+2017-12-21 19:24:20,639   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:24:20,639   INFO  [NTPServiceThread-1] COMPILER: 	DROP TABLE SOURCE IF EXISTS CASCADE
+2017-12-21 19:24:20,683   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE dropped.
+
+2017-12-21 19:24:20,703   INFO  [NTPServiceThread-Priority-7] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:24:20,703   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:24:20,711   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 41E837EDF6, deployment hash BD666CBF80, version 17
+2017-12-21 19:24:20,711   INFO  [MP Site - 0:8] HOST: To: catalog hash: 8391EA2C47, deployment hash: BD666CBF80
+2017-12-21 19:24:20,711   INFO  [SP 1 Site - 0:1] HOST: Site 0:1 acknowledged data and catalog prechecks.
+2017-12-21 19:24:20,726   INFO  [SP 7 Site - 0:7] IMPORT: Final importer count:0
+2017-12-21 19:24:20,726   INFO  [SP 7 Site - 0:7] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:24:20,726   INFO  [SP 7 Site - 0:7] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:24:20,749   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 38.494699999999995
+2017-12-21 19:24:20,749   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 8391EA2C47, BD666CBF80).
+2017-12-21 19:24:20,782   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2017-12-21 19:24:20,782   INFO  [NTPServiceThread-0] COMPILER: 	CREATE TABLE source(source_id VARCHAR(16) NOT NULL, name VARCHAR(16), channel VARCHAR(16) NOT NULL, CONSTRAINT source_pkey PRIMARY KEY (source_id))
+2017-12-21 19:24:20,824   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table SOURCE added.
+
+2017-12-21 19:24:20,828   INFO  [NTPServiceThread-Priority-7] HOST: Verify user procedure classes and write catalog jar
+2017-12-21 19:24:20,829   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2017-12-21 19:24:20,848   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 8391EA2C47, deployment hash BD666CBF80, version 18
+2017-12-21 19:24:20,848   INFO  [MP Site - 0:8] HOST: To: catalog hash: 41E837EDF6, deployment hash: BD666CBF80
+2017-12-21 19:24:20,849   INFO  [SP 2 Site - 0:2] HOST: Site 0:2 acknowledged data and catalog prechecks.
+2017-12-21 19:24:20,878   INFO  [SP 1 Site - 0:1] IMPORT: Final importer count:0
+2017-12-21 19:24:20,878   INFO  [SP 1 Site - 0:1] HOST: Resource limit monitoring configured to run every 60 seconds
+2017-12-21 19:24:20,878   INFO  [SP 1 Site - 0:1] HOST: RSS limit: 80% (4.31 GB)
+2017-12-21 19:24:20,891   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 43.788339
+2017-12-21 19:24:20,891   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 41E837EDF6, BD666CBF80).
+2017-12-21 19:44:15,059   INFO  [Thread-2] CONSOLE: ********************************************************************************
+2017-12-21 19:44:15,064   INFO  [Thread-2] CONSOLE: * The VoltDB server will shut down due to a control-C or other JVM exit. *
+2017-12-21 19:44:15,067   INFO  [Thread-2] CONSOLE: ********************************************************************************

@@ -1,5 +1,6 @@
 package com.securboration.immortals.ontology.bytecode;
 
+import com.securboration.immortals.ontology.bytecode.analysis.BasicBlockDecomposition;
 import com.securboration.immortals.ontology.bytecode.analysis.Instruction;
 
 /**
@@ -39,6 +40,16 @@ public class AMethod extends ClassStructure {
      * like DUP_X2 isn't.
      */
     private Instruction[] interestingInstructions;
+    
+    /**
+     * A basic block-oriented view of the instructions that make up this method
+     */
+    private BasicBlockDecomposition basicBlockAnalysis;
+    
+    /**
+     * The arguments to the method
+     */
+    private MethodArg[] methodArgs;
 
     public String getMethodName() {
         return methodName;
@@ -80,5 +91,25 @@ public class AMethod extends ClassStructure {
     
     public void setInterestingInstructions(Instruction[] interestingInstructions) {
         this.interestingInstructions = interestingInstructions;
+    }
+
+    
+    public BasicBlockDecomposition getBasicBlockAnalysis() {
+        return basicBlockAnalysis;
+    }
+
+    
+    public void setBasicBlockAnalysis(BasicBlockDecomposition basicBlockAnalysis) {
+        this.basicBlockAnalysis = basicBlockAnalysis;
+    }
+
+    
+    public MethodArg[] getMethodArgs() {
+        return methodArgs;
+    }
+
+    
+    public void setMethodArgs(MethodArg[] methodArgs) {
+        this.methodArgs = methodArgs;
     }
 }

@@ -3,6 +3,7 @@ import os
 import sys
 from subprocess import Popen, PIPE
 
+from pymmortals import immortalsglobals as ig
 from pymmortals.datatypes.root_configuration import get_configuration
 from pymmortals.datatypes.testing_p1 import TestScenario
 from pymmortals.testing.phase1.harness_listeners import TABehaviorValidator
@@ -69,7 +70,7 @@ def smoke_test(args):
         if next_test_scenario is not None:
             start_das(next_test_scenario)
         else:
-            sys.exit()
+            ig.force_exit()
 
     test_listener = TABehaviorValidator(done_listener=done_listener, test_suite_identifier=args.mode)
 

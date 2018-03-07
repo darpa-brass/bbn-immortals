@@ -2,10 +2,7 @@ package com.bbn.filter;
 
 import com.bbn.cot.CotEventContainer;
 import org.apache.log4j.Logger;
-import org.dom4j.Attribute;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.InvalidXPathException;
+import org.dom4j.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,10 +88,10 @@ public class FlowTagFilter implements Filter<CotEventContainer> {
      * @throw ClassCastException if the message's flow tag Nodes are not all of type element
      */
     public List<String> unfilterAll(CotEventContainer c) {
-        List<Attribute> attrs = (List<Attribute>) c.getDocument().selectNodes(flowTagAttrXPath);
+        List<Node> attrs = c.getDocument().selectNodes(flowTagAttrXPath);
         List<String> removed = new ArrayList<String>(attrs.size());
 
-        for (Attribute attr : attrs) {
+        for (Node attr : attrs) {
             removed.add(attr.getName());
             attr.detach();
         }

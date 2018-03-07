@@ -1,0 +1,18 @@
+import java.nio.file.Paths
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+
+def IMMORTALS_REPO = Paths.get(getBuildscript().getSourceFile().parentFile.parentFile.parent).resolve('shared/IMMORTALS_REPO').toAbsolutePath()
+repositories {
+    maven {
+        url IMMORTALS_REPO.toString()
+    }
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile project(':ImmortalsConfig')
+    compile 'com.securboration:immortals-project-to-triples:r2.0.0'
+}

@@ -1,29 +1,45 @@
+import mil.darpa.immortals.config.ImmortalsConfig
+
 buildscript {
     repositories {
-        repositories {
-            jcenter()
+        mavenCentral()
+        jcenter()
+        maven {
+            url gradle.IMMORTALS_REPO
         }
-        dependencies {
-            classpath 'com.android.tools.build:gradle:2.3.3'
+        maven {
+            url 'https://repo.gradle.org/gradle/libs-releases'
         }
+    }
+    dependencies {
+        classpath 'mil.darpa.immortals:ImmortalsGradle:+'
+        classpath 'mil.darpa.immortals:ImmortalsConfig:+'
+        classpath 'com.android.tools.build:gradle:2.3.3'
     }
 }
 
-apply from: 'common.gradle'
-apply from: 'dependencies.gradle'
+repositories {
+    mavenCentral()
+    maven {
+        url gradle.IMMORTALS_REPO
+    }
+}
 
 apply plugin: 'com.android.application'
+apply plugin: 'mil.darpa.immortals'
+
+def bc = ImmortalsConfig.instance.build
 
 android {
-    compileSdkVersion androidCompileSdkVersion
-    buildToolsVersion androidBuildToolsVersion
+    compileSdkVersion bc.augmentations.androidCompileSdkVersion
+    buildToolsVersion bc.augmentations.androidBuildToolsVersion
 
     defaultConfig {
         applicationId "com.bbn.ataklite"
-        minSdkVersion androidMinSdkVersion
-        targetSdkVersion androidTargetSdkVersion
+        minSdkVersion bc.augmentations.androidMinSdkVersion
+        targetSdkVersion bc.augmentations.androidTargetSdkVersion
         versionCode 1
-        versionName defaultSoftwarePublishVersion
+        versionName bc.das.publishVersion
     }
 
     sourceSets {
@@ -57,27 +73,12 @@ android {
         }
     }
 
-    clean {
-        delete fileTree(dir: './', includes: ['build', '*.apk'])
-    }
-
-    task(dasBuild) {
-    }
-    dasBuild.dependsOn('clean')
-    dasBuild.finalizedBy('assembleDebug')
-    dasBuild.finalizedBy('copyArtifacts')
-
-    task(copyArtifacts) {
-        doLast {
-            copy {
-                from('build/outputs/apk') {
-                    include '*.apk'
-                }
-                into('./')
-            }
+    clean.doLast {
+        def f = new File('./*.apk')
+        if (f.exists()) {
+            f.delete()
         }
     }
-
 }
 
 // TODO: Matt wants these to be part of the ontology. Revisit once we have basic synthesis working...
@@ -89,10 +90,5 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305:3.0.1'
     compile 'mil.darpa.immortals:core:+'
     compile 'com.securboration:immortals-adsl-generate:+'
-    compile 'mil.darpa.immortals.javatypeconverters:CoordinateLocationConverter:+'
     compile 'mil.darpa.immortals.datatypes:Coordinates:+'
-    compile 'mil.darpa.immortals.dfus:ImageUtilsAndroid:+'
-    compile 'mil.darpa.immortals.dfus:LatestSaFileOperator:+'
-    compile 'mil.darpa.immortals.dfus:LocationProviderAndroidGpsBuiltIn:+'
-    compile 'mil.darpa.immortals.components:analytics-log4j-client:+'
 }

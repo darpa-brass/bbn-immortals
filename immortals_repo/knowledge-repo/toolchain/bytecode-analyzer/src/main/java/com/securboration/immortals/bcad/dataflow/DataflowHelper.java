@@ -12,7 +12,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import com.securboration.immortals.bcas.printer.MethodPrinter;
+import com.securboration.immortals.bca.tools.MethodPrinter;
 import com.securboration.immortals.ontology.functionality.datatype.DataType;
 
 public class DataflowHelper {

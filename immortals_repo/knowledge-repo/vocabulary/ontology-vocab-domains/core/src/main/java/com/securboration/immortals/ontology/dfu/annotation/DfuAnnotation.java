@@ -18,7 +18,7 @@ import com.securboration.immortals.ontology.property.Property;
     " in bytecode.  This is a programmer-facing variant of the DFU" +
     " abstraction.  @author jstaples ")
 @GenerateAnnotation
-public class DfuAnnotation {
+public class DfuAnnotation implements ResourceDependent {
 
     /**
      * The functionality performed by the DFU 
@@ -28,11 +28,19 @@ public class DfuAnnotation {
     private Class<? extends Functionality> functionalityBeingPerformed;
     
     /**
-     * The resources upon which the DFU depends, if any
+     * The abstract resources upon which the DFU depends, if any
      */
     @com.securboration.immortals.ontology.annotations.RdfsComment(
-        "The resources upon which the DFU depends, if any")
+        "The abstract resources upon which the DFU depends, if any")
     private Class<? extends Resource>[] resourceDependencies;
+    
+    /**
+     * The resources upon which the DFU depends, if any (referenced by URI)
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+            "The resources upon which the DFU depends, if any (referenced by " +
+            "URI)")
+    private String[] resourceDependencyUris;
     
     /**
      * The functional aspects of the DFU
@@ -101,6 +109,17 @@ public class DfuAnnotation {
     
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    
+    @Override
+    public String[] getResourceDependencyUris() {
+        return resourceDependencyUris;
+    }
+
+    
+    public void setResourceDependencyUris(String[] resourceDependencyUris) {
+        this.resourceDependencyUris = resourceDependencyUris;
     }
 
 }

@@ -1,0 +1,291 @@
+2018-03-03 13:57:44,844   INFO  [main] HOST: PID of this Volt process is 3400
+2018-03-03 13:57:44,884   INFO  [main] HOST: Command line arguments: org.voltdb.VoltDB initialize deployment deployment.xml force
+2018-03-03 13:57:44,898   INFO  [main] HOST: Command line JVM arguments: -Xmx2048m -Djava.awt.headless=true -Djavax.security.auth.useSubjectCredsOnly=false -Dsun.net.inetaddr.ttl=300 -Dsun.net.inetaddr.negative.ttl=3600 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseTLAB -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseCondCardMark -Dsun.rmi.dgc.server.gcInterval=9223372036854775807 -Dsun.rmi.dgc.client.gcInterval=9223372036854775807 -XX:CMSWaitDuration=120000 -XX:CMSMaxAbortablePrecleanTime=120000 -XX:+ExplicitGCInvokesConcurrent -XX:+CMSScavengeBeforeRemark -XX:+CMSClassUnloadingEnabled -Dlog4j.configuration=file:///home/peter/voltdb/voltdb/log4j.xml -Djava.library.path=default
+2018-03-03 13:57:44,898   INFO  [main] HOST: Command line JVM classpath: /home/peter/voltdb/voltdb/voltdb-7.9.jar:/home/peter/voltdb/lib/avro-1.7.7.jar:/home/peter/voltdb/lib/jackson-mapper-asl-1.9.13.jar:/home/peter/voltdb/lib/jetty-util-9.3.21.v20170918.jar:/home/peter/voltdb/lib/kafka-clients-0.8.2.2.jar:/home/peter/voltdb/lib/httpcore-4.3.3.jar:/home/peter/voltdb/lib/tomcat-juli.jar:/home/peter/voltdb/lib/httpasyncclient-4.0.2.jar:/home/peter/voltdb/lib/scala-library-2.11.5.jar:/home/peter/voltdb/lib/jetty-http-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jetty-server-9.3.21.v20170918.jar:/home/peter/voltdb/lib/owner-1.0.9.jar:/home/peter/voltdb/lib/commons-logging-1.1.3.jar:/home/peter/voltdb/lib/snmp4j-2.5.2.jar:/home/peter/voltdb/lib/tomcat-jdbc.jar:/home/peter/voltdb/lib/jetty-continuation-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jackson-core-asl-1.9.13.jar:/home/peter/voltdb/lib/jna.jar:/home/peter/voltdb/lib/commons-codec-1.6.jar:/home/peter/voltdb/lib/protobuf-java-3.4.0.jar:/home/peter/voltdb/lib/jetty-security-9.3.21.v20170918.jar:/home/peter/voltdb/lib/slf4j-nop-1.6.2.jar:/home/peter/voltdb/lib/felix.jar:/home/peter/voltdb/lib/owner-java8-1.0.9.jar:/home/peter/voltdb/lib/scala-parser-combinators_2.11-1.0.2.jar:/home/peter/voltdb/lib/scala-xml_2.11-1.0.2.jar:/home/peter/voltdb/lib/httpclient-4.3.6.jar:/home/peter/voltdb/lib/snappy-java-1.1.1.7.jar:/home/peter/voltdb/lib/slf4j-api-1.6.2.jar:/home/peter/voltdb/lib/log4j-1.2.16.jar:/home/peter/voltdb/lib/super-csv-2.1.0.jar:/home/peter/voltdb/lib/jetty-io-9.3.21.v20170918.jar:/home/peter/voltdb/lib/vmetrics.jar:/home/peter/voltdb/lib/kafka_2.11-0.8.2.2.jar:/home/peter/voltdb/lib/jetty-servlet-9.3.21.v20170918.jar:/home/peter/voltdb/lib/lz4-1.2.0.jar:/home/peter/voltdb/lib/jsch-0.1.51.jar:/home/peter/voltdb/lib/servlet-api-3.1.jar:/home/peter/voltdb/lib/httpcore-nio-4.3.2.jar:/home/peter/voltdb/lib/jline-2.10.jar:/home/peter/voltdb/lib/metrics-core-2.2.0.jar:/home/peter/voltdb/lib/commons-lang3-3.0.jar
+2018-03-03 13:57:45,754   INFO  [main] CONSOLE: When using the INIT command, some deployment file settings (hostcount and voltdbroot path) are ignored
+2018-03-03 13:57:45,754   INFO  [main] HOST: When using the INIT command, some deployment file settings (hostcount and voltdbroot path) are ignored
+2018-03-03 13:57:45,777   INFO  [main] HOST: Initialized VoltDB root directory voltdbroot
+2018-03-03 13:57:45,777   INFO  [main] CONSOLE: Initialized VoltDB root directory voltdbroot
+2018-03-03 13:57:46,537   INFO  [main] HOST: PID of this Volt process is 3419
+2018-03-03 13:57:46,543   INFO  [main] CONSOLE: Initializing VoltDB...
+
+ _    __      ____  ____  ____ 
+| |  / /___  / / /_/ __ \/ __ )
+| | / / __ \/ / __/ / / / __  |
+| |/ / /_/ / / /_/ /_/ / /_/ / 
+|___/\____/_/\__/_____/_____/
+
+--------------------------------
+
+2018-03-03 13:57:46,543   INFO  [main] HOST: Searching for license file located /home/peter/Immortals/trunk/castor/voltdb7/license.xml
+2018-03-03 13:57:46,549   INFO  [main] CONSOLE: Build: 7.9 voltdb-7.8.1-95-g119b564 Community Edition
+2018-03-03 13:57:46,549   INFO  [main] HOST: Command line arguments: org.voltdb.VoltDB probe placementgroup 0 mesh 
+2018-03-03 13:57:46,553   INFO  [main] HOST: Command line JVM arguments: -Xmx25000m -Djava.awt.headless=true -Djavax.security.auth.useSubjectCredsOnly=false -Dsun.net.inetaddr.ttl=300 -Dsun.net.inetaddr.negative.ttl=3600 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseTLAB -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseCondCardMark -Dsun.rmi.dgc.server.gcInterval=9223372036854775807 -Dsun.rmi.dgc.client.gcInterval=9223372036854775807 -XX:CMSWaitDuration=120000 -XX:CMSMaxAbortablePrecleanTime=120000 -XX:+ExplicitGCInvokesConcurrent -XX:+CMSScavengeBeforeRemark -XX:+CMSClassUnloadingEnabled -Dlog4j.configuration=file:///home/peter/voltdb/voltdb/log4j.xml -Djava.library.path=default
+2018-03-03 13:57:46,557   INFO  [main] HOST: Command line JVM classpath: /home/peter/voltdb/voltdb/voltdb-7.9.jar:/home/peter/voltdb/lib/avro-1.7.7.jar:/home/peter/voltdb/lib/jackson-mapper-asl-1.9.13.jar:/home/peter/voltdb/lib/jetty-util-9.3.21.v20170918.jar:/home/peter/voltdb/lib/kafka-clients-0.8.2.2.jar:/home/peter/voltdb/lib/httpcore-4.3.3.jar:/home/peter/voltdb/lib/tomcat-juli.jar:/home/peter/voltdb/lib/httpasyncclient-4.0.2.jar:/home/peter/voltdb/lib/scala-library-2.11.5.jar:/home/peter/voltdb/lib/jetty-http-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jetty-server-9.3.21.v20170918.jar:/home/peter/voltdb/lib/owner-1.0.9.jar:/home/peter/voltdb/lib/commons-logging-1.1.3.jar:/home/peter/voltdb/lib/snmp4j-2.5.2.jar:/home/peter/voltdb/lib/tomcat-jdbc.jar:/home/peter/voltdb/lib/jetty-continuation-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jackson-core-asl-1.9.13.jar:/home/peter/voltdb/lib/jna.jar:/home/peter/voltdb/lib/commons-codec-1.6.jar:/home/peter/voltdb/lib/protobuf-java-3.4.0.jar:/home/peter/voltdb/lib/jetty-security-9.3.21.v20170918.jar:/home/peter/voltdb/lib/slf4j-nop-1.6.2.jar:/home/peter/voltdb/lib/felix.jar:/home/peter/voltdb/lib/owner-java8-1.0.9.jar:/home/peter/voltdb/lib/scala-parser-combinators_2.11-1.0.2.jar:/home/peter/voltdb/lib/scala-xml_2.11-1.0.2.jar:/home/peter/voltdb/lib/httpclient-4.3.6.jar:/home/peter/voltdb/lib/snappy-java-1.1.1.7.jar:/home/peter/voltdb/lib/slf4j-api-1.6.2.jar:/home/peter/voltdb/lib/log4j-1.2.16.jar:/home/peter/voltdb/lib/super-csv-2.1.0.jar:/home/peter/voltdb/lib/jetty-io-9.3.21.v20170918.jar:/home/peter/voltdb/lib/vmetrics.jar:/home/peter/voltdb/lib/kafka_2.11-0.8.2.2.jar:/home/peter/voltdb/lib/jetty-servlet-9.3.21.v20170918.jar:/home/peter/voltdb/lib/lz4-1.2.0.jar:/home/peter/voltdb/lib/jsch-0.1.51.jar:/home/peter/voltdb/lib/servlet-api-3.1.jar:/home/peter/voltdb/lib/httpcore-nio-4.3.2.jar:/home/peter/voltdb/lib/jline-2.10.jar:/home/peter/voltdb/lib/metrics-core-2.2.0.jar:/home/peter/voltdb/lib/commons-lang3-3.0.jar
+2018-03-03 13:57:46,954   INFO  [main] CONSOLE: Loaded node-specific settings from voltdbroot/config/path.properties
+2018-03-03 13:57:46,954   INFO  [main] HOST: Loaded node-specific settings from voltdbroot/config/path.properties
+2018-03-03 13:57:47,179   INFO  [main] NETWORK: Default network thread count: 2
+2018-03-03 13:57:47,243   INFO  [main] HOST: Beginning inter-node communication on port 3021.
+2018-03-03 13:57:47,255   INFO  [main] HOST: Attempting to bind to leader ip 0.0.0.0/0.0.0.0:3021
+2018-03-03 13:57:47,260   INFO  [main] CONSOLE: Connecting to VoltDB cluster as the leader...
+2018-03-03 13:57:47,312   INFO  [main] ZK-SERVER: binding to port /127.0.0.1:7181
+2018-03-03 13:57:47,326   INFO  [main] ZK-SERVER: Created server with tickTime 3000 minSessionTimeout 6000 maxSessionTimeout 60000
+2018-03-03 13:57:47,438   INFO  [main] ZK-SERVER: Initiating client connection, connectString=127.0.0.1:7181 sessionTimeout=2000 watcher=org.voltcore.zk.ZKUtil$1@34123d65
+2018-03-03 13:57:47,447   INFO  [main-SendThread()] ZK-CLIENT: Opening socket connection to server /127.0.0.1:7181
+2018-03-03 13:57:47,456   INFO  [NIOServerCxn.Factory:/127.0.0.1:7181] ZK-SERVER: Accepted socket connection from /127.0.0.1:49732
+2018-03-03 13:57:47,456   INFO  [main-SendThread(localhost:7181)] ZK-CLIENT: Socket connection established to localhost/127.0.0.1:7181, initiating session
+2018-03-03 13:57:47,459   INFO  [NIOServerCxn.Factory:/127.0.0.1:7181] ZK-SERVER: Client attempting to establish new session at /127.0.0.1:49732
+2018-03-03 13:57:47,476   INFO  [ZooKeeperServer] ZK-SERVER: Established session 0x255cc0dea2000000 with negotiated timeout 6000 for client /127.0.0.1:49732
+2018-03-03 13:57:47,476   INFO  [main-SendThread(localhost:7181)] ZK-CLIENT: Session establishment complete on server localhost/127.0.0.1:7181, sessionid = 0x255cc0dea2000000, negotiated timeout = 6000
+2018-03-03 13:57:47,557   INFO  [Socket Joiner] HOST: Attempting to bind to internal ip 0.0.0.0/0.0.0.0:3021
+2018-03-03 13:57:47,598   INFO  [main] HOST: Host id of this node is: 0
+2018-03-03 13:57:47,598   INFO  [main] CONSOLE: Host id of this node is: 0
+2018-03-03 13:57:47,614   INFO  [main] HOST: Starting a new database cluster
+2018-03-03 13:57:47,614   INFO  [main] CONSOLE: Starting a new database cluster
+2018-03-03 13:57:47,653   INFO  [main] HOST: URL of deployment: voltdbroot/config/deployment.xml
+2018-03-03 13:57:47,659   INFO  [main] HOST: Dead host timeout set to 90000 milliseconds
+2018-03-03 13:57:47,674   INFO  [main] HOST: Elastic duration set to 50 milliseconds
+2018-03-03 13:57:47,674   INFO  [main] HOST: Elastic throughput set to 2 mb/s
+2018-03-03 13:57:47,674   INFO  [main] HOST: Max temptable size set to 10240 mb
+2018-03-03 13:57:47,675   INFO  [main] HOST: Snapshot priority set to 6 [0 - 10]
+2018-03-03 13:57:47,675   INFO  [main] HOST: Query timeout set to 3000000 milliseconds
+2018-03-03 13:57:47,675   WARN  [main] CONSOLE: User authentication is not enabled. The database is accessible and could be modified or shut down by anyone on the network.
+2018-03-03 13:57:48,068   INFO  [Leader elector-/db/leaders/globalservice] HOST: Host 0 promoted to be the global service provider
+2018-03-03 13:57:48,426   INFO  [main] HOST: Framework properties are: {org.osgi.framework.system.packages.extra=com.google_voltpatches.common.base;version=1.0.0,com.google_voltpatches.common.collect;version=1.0.0,com.google_voltpatches.common.io;version=1.0.0,com.google_voltpatches.common.net;version=1.0.0,com.google_voltpatches.common.util.concurrent;version=1.0.0,com.yammer.metrics;version=1.0.0,com.yammer.metrics.core;version=1.0.0,com.yammer.metrics.reporting;version=1.0.0,com.yammer.metrics.stats;version=1.0.0,com.yammer.metrics.util;version=1.0.0,jsr166y;version=1.0.0,org.apache.log4j;version=1.0.0,org.slf4j;version=1.0.0,org.voltcore.network;version=1.0.0,org.voltcore.logging;version=1.0.0,org.voltcore.utils;version=1.0.0,org.voltdb;include:="VoltType",version=1.0.0,org.voltdb.client;version=1.0.0,org.voltdb.common;exclude="Permission",version=1.0.0,org.voltdb.importer;version=1.0.0,org.voltdb.importer.formatter;version=1.0.0,org.voltdb.types;version=1.0.0, org.osgi.framework.storage.clean=onFirstInit, felix.cache.rootdir=/home/peter/Immortals/trunk/castor/voltdb7/voltdbroot/.bundles-cache, felix.cache.locking=false}
+2018-03-03 13:57:49,165   INFO  [main] IMPORT: Final importer count:0
+2018-03-03 13:57:49,165   INFO  [main] IMPORT: Currently loaded importer modules: [], types: []
+2018-03-03 13:57:49,173   INFO  [main] EXPORT: System is not using any export functionality.
+2018-03-03 13:57:49,174   INFO  [main] EXPORT: Cleaning out contents of export overflow directory /home/peter/Immortals/trunk/castor/voltdb7/voltdbroot/export_overflow for create with force
+2018-03-03 13:57:49,204   INFO  [main] CONSOLE: Initializing the database. This may take a moment...
+2018-03-03 13:57:49,621   INFO  [SP 0 Site - 0:0] HOST: Loading native VoltDB code (voltdb-7.9). A confirmation message will follow if the loading is successful.
+2018-03-03 13:57:49,833   INFO  [SP 0 Site - 0:0] HOST: Successfully loaded native VoltDB library voltdb-7.9.
+2018-03-03 13:57:49,841   WARN  [SP 2 Site - 0:2] DBBPOOL: Strict java memory checking is enabled, don't do release builds or performance runs with this enabled. Invoke "ant clean" and "ant -Djmemcheck=NO_MEMCHECK" to disable.
+2018-03-03 13:57:50,130   INFO  [main] TM: Setting maximum size of MPI read pool to: 20
+2018-03-03 13:57:50,246   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:0 as leader for partition 0
+2018-03-03 13:57:50,265   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:1 as leader for partition 1
+2018-03-03 13:57:50,280   INFO  [LeaderCache] TM: SP 0:0 for partition 0 found (including self) 1 surviving replicas to repair.  Survivors: 0:0
+2018-03-03 13:57:50,310   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:2 as leader for partition 2
+2018-03-03 13:57:50,323   INFO  [LeaderCache] TM: SP 0:1 for partition 1 found (including self) 1 surviving replicas to repair.  Survivors: 0:1
+2018-03-03 13:57:50,332   INFO  [LeaderCache] TM: SP 0:1 for partition 1 finished leader promotion. Took 17 ms.
+2018-03-03 13:57:50,343   INFO  [LeaderCache] TM: SP 0:0 for partition 0 finished leader promotion. Took 78 ms.
+2018-03-03 13:57:50,362   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 1
+2018-03-03 13:57:50,376   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:3 as leader for partition 3
+2018-03-03 13:57:50,386   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 0
+2018-03-03 13:57:50,394   INFO  [LeaderCache] TM: SP 0:2 for partition 2 found (including self) 1 surviving replicas to repair.  Survivors: 0:2
+2018-03-03 13:57:50,394   INFO  [LeaderCache] TM: SP 0:2 for partition 2 finished leader promotion. Took 8 ms.
+2018-03-03 13:57:50,400   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:0 for partition:0
+2018-03-03 13:57:50,404   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:1 for partition:1
+2018-03-03 13:57:50,408   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 2
+2018-03-03 13:57:50,432   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:4 as leader for partition 4
+2018-03-03 13:57:50,463   INFO  [LeaderCache] TM: SP 0:3 for partition 3 found (including self) 1 surviving replicas to repair.  Survivors: 0:3
+2018-03-03 13:57:50,463   INFO  [LeaderCache] TM: SP 0:3 for partition 3 finished leader promotion. Took 45 ms.
+2018-03-03 13:57:50,494   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:2 for partition:2
+2018-03-03 13:57:50,498   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 3
+2018-03-03 13:57:50,518   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:5 as leader for partition 5
+2018-03-03 13:57:50,530   INFO  [LeaderCache] TM: SP 0:4 for partition 4 found (including self) 1 surviving replicas to repair.  Survivors: 0:4
+2018-03-03 13:57:50,531   INFO  [LeaderCache] TM: SP 0:4 for partition 4 finished leader promotion. Took 21 ms.
+2018-03-03 13:57:50,539   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:3 for partition:3
+2018-03-03 13:57:50,551   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 4
+2018-03-03 13:57:50,592   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:6 as leader for partition 6
+2018-03-03 13:57:50,599   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:4 for partition:4
+2018-03-03 13:57:50,617   INFO  [LeaderCache] TM: SP 0:5 for partition 5 found (including self) 1 surviving replicas to repair.  Survivors: 0:5
+2018-03-03 13:57:50,618   INFO  [LeaderCache] TM: SP 0:5 for partition 5 finished leader promotion. Took 30 ms.
+2018-03-03 13:57:50,627   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 5
+2018-03-03 13:57:50,672   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:7 as leader for partition 7
+2018-03-03 13:57:50,672   INFO  [LeaderCache] TM: SP 0:6 for partition 6 found (including self) 1 surviving replicas to repair.  Survivors: 0:6
+2018-03-03 13:57:50,672   INFO  [LeaderCache] TM: SP 0:6 for partition 6 finished leader promotion. Took 27 ms.
+2018-03-03 13:57:50,688   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:5 for partition:5
+2018-03-03 13:57:50,694   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 6
+2018-03-03 13:57:50,740   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:6 for partition:6
+2018-03-03 13:57:50,749   INFO  [LeaderCache] TM: SP 0:7 for partition 7 found (including self) 1 surviving replicas to repair.  Survivors: 0:7
+2018-03-03 13:57:50,752   INFO  [LeaderCache] TM: SP 0:7 for partition 7 finished leader promotion. Took 26 ms.
+2018-03-03 13:57:50,765   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 7
+2018-03-03 13:57:50,780   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:7 for partition:7
+2018-03-03 13:57:50,816   INFO  [LeaderCache] TM: MP 0:8 for partition 16383 finished leader promotion. Took 35 ms.
+2018-03-03 13:57:50,830   INFO  [LeaderCache] HOST: [Cartographer MP] Sending leader change notification with new leader:
+2018-03-03 13:57:50,830   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:8 for partition:16383
+2018-03-03 13:57:50,983   INFO  [main] HOST: Database start action is Create.
+2018-03-03 13:57:50,984   INFO  [main] HOST: Listening for native wire protocol clients on port 21212.
+2018-03-03 13:57:50,984   INFO  [main] HOST: Listening for admin wire protocol clients on port 21211.
+2018-03-03 13:57:50,987   INFO  [main] HOST: Local machine HTTP monitoring is disabled.
+2018-03-03 13:57:50,987   INFO  [main] HOST: Json API disabled.
+2018-03-03 13:57:50,987   INFO  [main] HOST: Maximum usable Java heap set to 24983 mb.
+2018-03-03 13:57:50,987   INFO  [main] HOST: Minimum required Java heap for catalog and server config is 384 MB.
+2018-03-03 13:57:51,008   INFO  [main] HOST: Cluster has 1 hosts with leader hostname: "localhost". 8 local sites count. K = 0.
+2018-03-03 13:57:51,008   INFO  [main] HOST: The entire cluster has 1 copy of each of the 8 logical partitions.
+2018-03-03 13:57:51,008   INFO  [main] HOST: Detection of network partitions in the cluster is not enabled.
+2018-03-03 13:57:51,008   INFO  [main] HOST: Client authentication is not enabled. Anonymous clients accepted.
+2018-03-03 13:57:51,008   INFO  [main] HOST: No schedule set for automated snapshots.
+2018-03-03 13:57:51,008   INFO  [main] HOST: Using "/home/peter/Immortals/trunk/castor/voltdb7/voltdbroot" for voltdbroot directory.
+2018-03-03 13:57:51,008   INFO  [main] HOST: CPU INFO:         2 Cores, 1 Sockets, 2 Hardware Threads
+2018-03-03 13:57:51,008   INFO  [main] HOST: CPU DESC:         Intel(R) Core(TM) i7-4650U CPU @ 1.70GHz 4096 KB cache
+2018-03-03 13:57:51,008   INFO  [main] HOST: HOST MEMORY (MB): 5397
+2018-03-03 13:57:51,008   INFO  [main] HOST: OS PROFILE:       Linux 4.13.0-36-generic amd64 en_US
+2018-03-03 13:57:51,008   INFO  [main] HOST: DB VERSION:       7.9
+2018-03-03 13:57:51,008   INFO  [main] HOST: JAVA VERSION:     1.8.0_161
+2018-03-03 13:57:51,008   INFO  [main] HOST: JAVA RUNTIME:     Java(TM) SE Runtime Environment (1.8.0_161-b12)
+2018-03-03 13:57:51,008   INFO  [main] HOST: JAVA VM:          Java HotSpot(TM) 64-Bit Server VM (25.161-b12, mixed mode)
+2018-03-03 13:57:51,008   INFO  [main] HOST: About to list cluster interfaces for all nodes with format [ip1 ip2 ... ipN] client-port,admin-port,http-port
+2018-03-03 13:57:51,008   INFO  [main] HOST:   Host id: 0 with interfaces: 10.0.2.15 21212,21211,-1 [SELF]
+2018-03-03 13:57:51,009   WARN  [main] CONSOLE: This is not a highly available cluster. K-Safety is set to 0.
+2018-03-03 13:57:51,010   WARN  [main] CONSOLE: Durability is turned off. Command logging is off.
+2018-03-03 13:57:51,038   INFO  [SnapshotDaemon] LOGGING: This node was selected as the leader for snapshot truncation
+2018-03-03 13:57:51,042   INFO  [SnapshotDaemon] LOGGING: Checking for existence of snapshot truncation request
+2018-03-03 13:57:51,050   INFO  [Thread-16] HOST: Logging config info
+2018-03-03 13:57:51,148   INFO  [Thread-17] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-03-03 13:57:51,150   INFO  [Thread-17] HOST: RSS limit: 80% (4.22 GB)
+2018-03-03 13:57:51,155   INFO  [Thread-17] CONSOLE: Server Operational State is: NORMAL
+2018-03-03 13:57:51,156   INFO  [Thread-17] CONSOLE: Server completed initialization.
+2018-03-03 16:26:45,131   INFO  [Estimated Time Updater] HOST: 3718665 estimated time update.
+2018-03-03 20:44:55,524   INFO  [Volt Server Network - 0] HOST: ********************************************************************************
+2018-03-03 20:44:55,525   INFO  [Volt Server Network - 0] HOST: * User null from localhost/127.0.0.1:45174 issued a @PrepareShutdown *
+2018-03-03 20:44:55,525   INFO  [Volt Server Network - 0] HOST: ********************************************************************************
+2018-03-03 20:44:55,565   INFO  [SP 0 Site - 0:0] HOST: Server is entering admin mode and pausing.
+2018-03-03 20:44:55,587   INFO  [SP 1 Site - 0:1] HOST: ********************************************************************************
+2018-03-03 20:44:55,587   INFO  [SP 1 Site - 0:1] HOST: * VoltDB shutdown operation requested and in progress. Cluster will terminate shortly. *
+2018-03-03 20:44:55,587   INFO  [SP 1 Site - 0:1] HOST: ********************************************************************************
+2018-03-03 20:44:55,637   INFO  [ZooKeeperServer] ZK-SERVER: Processed session termination for sessionid: 0x255cc0dea2000000
+2018-03-03 20:44:55,918   INFO  [Thread-18] HOST: ********************************************************************************
+2018-03-03 20:44:55,918   INFO  [Thread-18] HOST: * VoltDB shutting down as requested by @Shutdown command. *
+2018-03-03 20:44:55,918   INFO  [Thread-18] HOST: ********************************************************************************
+2018-03-03 20:44:55,919   INFO  [Thread-2] CONSOLE: ********************************************************************************
+2018-03-03 20:44:55,919   INFO  [Thread-2] CONSOLE: * The VoltDB server will shut down due to a control-C or other JVM exit. *
+2018-03-03 20:44:55,919   INFO  [Thread-2] CONSOLE: ********************************************************************************
+2018-03-03 23:18:01,672   INFO  [main] HOST: PID of this Volt process is 13219
+2018-03-03 23:18:01,678   INFO  [main] HOST: Command line arguments: org.voltdb.VoltDB initialize deployment deployment.xml force
+2018-03-03 23:18:01,681   INFO  [main] HOST: Command line JVM arguments: -Xmx2048m -Djava.awt.headless=true -Djavax.security.auth.useSubjectCredsOnly=false -Dsun.net.inetaddr.ttl=300 -Dsun.net.inetaddr.negative.ttl=3600 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseTLAB -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseCondCardMark -Dsun.rmi.dgc.server.gcInterval=9223372036854775807 -Dsun.rmi.dgc.client.gcInterval=9223372036854775807 -XX:CMSWaitDuration=120000 -XX:CMSMaxAbortablePrecleanTime=120000 -XX:+ExplicitGCInvokesConcurrent -XX:+CMSScavengeBeforeRemark -XX:+CMSClassUnloadingEnabled -Dlog4j.configuration=file:///home/peter/voltdb/voltdb/log4j.xml -Djava.library.path=default
+2018-03-03 23:18:01,685   INFO  [main] HOST: Command line JVM classpath: /home/peter/voltdb/voltdb/voltdb-7.9.jar:/home/peter/voltdb/lib/avro-1.7.7.jar:/home/peter/voltdb/lib/jackson-mapper-asl-1.9.13.jar:/home/peter/voltdb/lib/jetty-util-9.3.21.v20170918.jar:/home/peter/voltdb/lib/kafka-clients-0.8.2.2.jar:/home/peter/voltdb/lib/httpcore-4.3.3.jar:/home/peter/voltdb/lib/tomcat-juli.jar:/home/peter/voltdb/lib/httpasyncclient-4.0.2.jar:/home/peter/voltdb/lib/scala-library-2.11.5.jar:/home/peter/voltdb/lib/jetty-http-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jetty-server-9.3.21.v20170918.jar:/home/peter/voltdb/lib/owner-1.0.9.jar:/home/peter/voltdb/lib/commons-logging-1.1.3.jar:/home/peter/voltdb/lib/snmp4j-2.5.2.jar:/home/peter/voltdb/lib/tomcat-jdbc.jar:/home/peter/voltdb/lib/jetty-continuation-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jackson-core-asl-1.9.13.jar:/home/peter/voltdb/lib/jna.jar:/home/peter/voltdb/lib/commons-codec-1.6.jar:/home/peter/voltdb/lib/protobuf-java-3.4.0.jar:/home/peter/voltdb/lib/jetty-security-9.3.21.v20170918.jar:/home/peter/voltdb/lib/slf4j-nop-1.6.2.jar:/home/peter/voltdb/lib/felix.jar:/home/peter/voltdb/lib/owner-java8-1.0.9.jar:/home/peter/voltdb/lib/scala-parser-combinators_2.11-1.0.2.jar:/home/peter/voltdb/lib/scala-xml_2.11-1.0.2.jar:/home/peter/voltdb/lib/httpclient-4.3.6.jar:/home/peter/voltdb/lib/snappy-java-1.1.1.7.jar:/home/peter/voltdb/lib/slf4j-api-1.6.2.jar:/home/peter/voltdb/lib/log4j-1.2.16.jar:/home/peter/voltdb/lib/super-csv-2.1.0.jar:/home/peter/voltdb/lib/jetty-io-9.3.21.v20170918.jar:/home/peter/voltdb/lib/vmetrics.jar:/home/peter/voltdb/lib/kafka_2.11-0.8.2.2.jar:/home/peter/voltdb/lib/jetty-servlet-9.3.21.v20170918.jar:/home/peter/voltdb/lib/lz4-1.2.0.jar:/home/peter/voltdb/lib/jsch-0.1.51.jar:/home/peter/voltdb/lib/servlet-api-3.1.jar:/home/peter/voltdb/lib/httpcore-nio-4.3.2.jar:/home/peter/voltdb/lib/jline-2.10.jar:/home/peter/voltdb/lib/metrics-core-2.2.0.jar:/home/peter/voltdb/lib/commons-lang3-3.0.jar
+2018-03-03 23:18:02,280   INFO  [main] CONSOLE: When using the INIT command, some deployment file settings (hostcount and voltdbroot path) are ignored
+2018-03-03 23:18:02,280   INFO  [main] HOST: When using the INIT command, some deployment file settings (hostcount and voltdbroot path) are ignored
+2018-03-03 23:18:02,296   INFO  [main] HOST: Initialized VoltDB root directory voltdbroot
+2018-03-03 23:18:02,296   INFO  [main] CONSOLE: Initialized VoltDB root directory voltdbroot
+2018-03-03 23:18:03,162   INFO  [main] HOST: PID of this Volt process is 13238
+2018-03-03 23:18:03,174   INFO  [main] CONSOLE: Initializing VoltDB...
+
+ _    __      ____  ____  ____ 
+| |  / /___  / / /_/ __ \/ __ )
+| | / / __ \/ / __/ / / / __  |
+| |/ / /_/ / / /_/ /_/ / /_/ / 
+|___/\____/_/\__/_____/_____/
+
+--------------------------------
+
+2018-03-03 23:18:03,174   INFO  [main] HOST: Searching for license file located /home/peter/Immortals/trunk/castor/voltdb7/license.xml
+2018-03-03 23:18:03,175   INFO  [main] CONSOLE: Build: 7.9 voltdb-7.8.1-95-g119b564 Community Edition
+2018-03-03 23:18:03,175   INFO  [main] HOST: Command line arguments: org.voltdb.VoltDB probe placementgroup 0 mesh 
+2018-03-03 23:18:03,179   INFO  [main] HOST: Command line JVM arguments: -Xmx25000m -Djava.awt.headless=true -Djavax.security.auth.useSubjectCredsOnly=false -Dsun.net.inetaddr.ttl=300 -Dsun.net.inetaddr.negative.ttl=3600 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseTLAB -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseCondCardMark -Dsun.rmi.dgc.server.gcInterval=9223372036854775807 -Dsun.rmi.dgc.client.gcInterval=9223372036854775807 -XX:CMSWaitDuration=120000 -XX:CMSMaxAbortablePrecleanTime=120000 -XX:+ExplicitGCInvokesConcurrent -XX:+CMSScavengeBeforeRemark -XX:+CMSClassUnloadingEnabled -Dlog4j.configuration=file:///home/peter/voltdb/voltdb/log4j.xml -Djava.library.path=default
+2018-03-03 23:18:03,179   INFO  [main] HOST: Command line JVM classpath: /home/peter/voltdb/voltdb/voltdb-7.9.jar:/home/peter/voltdb/lib/avro-1.7.7.jar:/home/peter/voltdb/lib/jackson-mapper-asl-1.9.13.jar:/home/peter/voltdb/lib/jetty-util-9.3.21.v20170918.jar:/home/peter/voltdb/lib/kafka-clients-0.8.2.2.jar:/home/peter/voltdb/lib/httpcore-4.3.3.jar:/home/peter/voltdb/lib/tomcat-juli.jar:/home/peter/voltdb/lib/httpasyncclient-4.0.2.jar:/home/peter/voltdb/lib/scala-library-2.11.5.jar:/home/peter/voltdb/lib/jetty-http-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jetty-server-9.3.21.v20170918.jar:/home/peter/voltdb/lib/owner-1.0.9.jar:/home/peter/voltdb/lib/commons-logging-1.1.3.jar:/home/peter/voltdb/lib/snmp4j-2.5.2.jar:/home/peter/voltdb/lib/tomcat-jdbc.jar:/home/peter/voltdb/lib/jetty-continuation-9.3.21.v20170918.jar:/home/peter/voltdb/lib/jackson-core-asl-1.9.13.jar:/home/peter/voltdb/lib/jna.jar:/home/peter/voltdb/lib/commons-codec-1.6.jar:/home/peter/voltdb/lib/protobuf-java-3.4.0.jar:/home/peter/voltdb/lib/jetty-security-9.3.21.v20170918.jar:/home/peter/voltdb/lib/slf4j-nop-1.6.2.jar:/home/peter/voltdb/lib/felix.jar:/home/peter/voltdb/lib/owner-java8-1.0.9.jar:/home/peter/voltdb/lib/scala-parser-combinators_2.11-1.0.2.jar:/home/peter/voltdb/lib/scala-xml_2.11-1.0.2.jar:/home/peter/voltdb/lib/httpclient-4.3.6.jar:/home/peter/voltdb/lib/snappy-java-1.1.1.7.jar:/home/peter/voltdb/lib/slf4j-api-1.6.2.jar:/home/peter/voltdb/lib/log4j-1.2.16.jar:/home/peter/voltdb/lib/super-csv-2.1.0.jar:/home/peter/voltdb/lib/jetty-io-9.3.21.v20170918.jar:/home/peter/voltdb/lib/vmetrics.jar:/home/peter/voltdb/lib/kafka_2.11-0.8.2.2.jar:/home/peter/voltdb/lib/jetty-servlet-9.3.21.v20170918.jar:/home/peter/voltdb/lib/lz4-1.2.0.jar:/home/peter/voltdb/lib/jsch-0.1.51.jar:/home/peter/voltdb/lib/servlet-api-3.1.jar:/home/peter/voltdb/lib/httpcore-nio-4.3.2.jar:/home/peter/voltdb/lib/jline-2.10.jar:/home/peter/voltdb/lib/metrics-core-2.2.0.jar:/home/peter/voltdb/lib/commons-lang3-3.0.jar
+2018-03-03 23:18:03,564   INFO  [main] CONSOLE: Loaded node-specific settings from voltdbroot/config/path.properties
+2018-03-03 23:18:03,564   INFO  [main] HOST: Loaded node-specific settings from voltdbroot/config/path.properties
+2018-03-03 23:18:03,717   INFO  [main] NETWORK: Default network thread count: 2
+2018-03-03 23:18:03,741   INFO  [main] HOST: Beginning inter-node communication on port 3021.
+2018-03-03 23:18:03,746   INFO  [main] HOST: Attempting to bind to leader ip 0.0.0.0/0.0.0.0:3021
+2018-03-03 23:18:03,748   INFO  [main] CONSOLE: Connecting to VoltDB cluster as the leader...
+2018-03-03 23:18:03,780   INFO  [main] ZK-SERVER: binding to port /127.0.0.1:7181
+2018-03-03 23:18:03,786   INFO  [main] ZK-SERVER: Created server with tickTime 3000 minSessionTimeout 6000 maxSessionTimeout 60000
+2018-03-03 23:18:03,844   INFO  [main] ZK-SERVER: Initiating client connection, connectString=127.0.0.1:7181 sessionTimeout=2000 watcher=org.voltcore.zk.ZKUtil$1@34123d65
+2018-03-03 23:18:03,849   INFO  [main-SendThread()] ZK-CLIENT: Opening socket connection to server /127.0.0.1:7181
+2018-03-03 23:18:03,853   INFO  [main-SendThread(localhost:7181)] ZK-CLIENT: Socket connection established to localhost/127.0.0.1:7181, initiating session
+2018-03-03 23:18:03,853   INFO  [NIOServerCxn.Factory:/127.0.0.1:7181] ZK-SERVER: Accepted socket connection from /127.0.0.1:50096
+2018-03-03 23:18:03,855   INFO  [NIOServerCxn.Factory:/127.0.0.1:7181] ZK-SERVER: Client attempting to establish new session at /127.0.0.1:50096
+2018-03-03 23:18:03,873   INFO  [ZooKeeperServer] ZK-SERVER: Established session 0x255dc157a7800000 with negotiated timeout 6000 for client /127.0.0.1:50096
+2018-03-03 23:18:03,874   INFO  [main-SendThread(localhost:7181)] ZK-CLIENT: Session establishment complete on server localhost/127.0.0.1:7181, sessionid = 0x255dc157a7800000, negotiated timeout = 6000
+2018-03-03 23:18:03,935   INFO  [Socket Joiner] HOST: Attempting to bind to internal ip 0.0.0.0/0.0.0.0:3021
+2018-03-03 23:18:03,982   INFO  [main] HOST: Host id of this node is: 0
+2018-03-03 23:18:03,982   INFO  [main] CONSOLE: Host id of this node is: 0
+2018-03-03 23:18:03,998   INFO  [main] HOST: Starting a new database cluster
+2018-03-03 23:18:03,998   INFO  [main] CONSOLE: Starting a new database cluster
+2018-03-03 23:18:04,040   INFO  [main] HOST: URL of deployment: voltdbroot/config/deployment.xml
+2018-03-03 23:18:04,046   INFO  [main] HOST: Dead host timeout set to 90000 milliseconds
+2018-03-03 23:18:04,054   INFO  [main] HOST: Elastic duration set to 50 milliseconds
+2018-03-03 23:18:04,055   INFO  [main] HOST: Elastic throughput set to 2 mb/s
+2018-03-03 23:18:04,055   INFO  [main] HOST: Max temptable size set to 10240 mb
+2018-03-03 23:18:04,055   INFO  [main] HOST: Snapshot priority set to 6 [0 - 10]
+2018-03-03 23:18:04,055   INFO  [main] HOST: Query timeout set to 3000000 milliseconds
+2018-03-03 23:18:04,055   WARN  [main] CONSOLE: User authentication is not enabled. The database is accessible and could be modified or shut down by anyone on the network.
+2018-03-03 23:18:04,311   INFO  [Leader elector-/db/leaders/globalservice] HOST: Host 0 promoted to be the global service provider
+2018-03-03 23:18:04,567   INFO  [main] HOST: Framework properties are: {org.osgi.framework.system.packages.extra=com.google_voltpatches.common.base;version=1.0.0,com.google_voltpatches.common.collect;version=1.0.0,com.google_voltpatches.common.io;version=1.0.0,com.google_voltpatches.common.net;version=1.0.0,com.google_voltpatches.common.util.concurrent;version=1.0.0,com.yammer.metrics;version=1.0.0,com.yammer.metrics.core;version=1.0.0,com.yammer.metrics.reporting;version=1.0.0,com.yammer.metrics.stats;version=1.0.0,com.yammer.metrics.util;version=1.0.0,jsr166y;version=1.0.0,org.apache.log4j;version=1.0.0,org.slf4j;version=1.0.0,org.voltcore.network;version=1.0.0,org.voltcore.logging;version=1.0.0,org.voltcore.utils;version=1.0.0,org.voltdb;include:="VoltType",version=1.0.0,org.voltdb.client;version=1.0.0,org.voltdb.common;exclude="Permission",version=1.0.0,org.voltdb.importer;version=1.0.0,org.voltdb.importer.formatter;version=1.0.0,org.voltdb.types;version=1.0.0, org.osgi.framework.storage.clean=onFirstInit, felix.cache.rootdir=/home/peter/Immortals/trunk/castor/voltdb7/voltdbroot/.bundles-cache, felix.cache.locking=false}
+2018-03-03 23:18:05,401   INFO  [main] IMPORT: Final importer count:0
+2018-03-03 23:18:05,409   INFO  [main] IMPORT: Currently loaded importer modules: [], types: []
+2018-03-03 23:18:05,420   INFO  [main] EXPORT: System is not using any export functionality.
+2018-03-03 23:18:05,424   INFO  [main] EXPORT: Cleaning out contents of export overflow directory /home/peter/Immortals/trunk/castor/voltdb7/voltdbroot/export_overflow for create with force
+2018-03-03 23:18:05,460   INFO  [main] CONSOLE: Initializing the database. This may take a moment...
+2018-03-03 23:18:05,850   INFO  [SP 0 Site - 0:0] HOST: Loading native VoltDB code (voltdb-7.9). A confirmation message will follow if the loading is successful.
+2018-03-03 23:18:05,973   INFO  [SP 0 Site - 0:0] HOST: Successfully loaded native VoltDB library voltdb-7.9.
+2018-03-03 23:18:05,986   WARN  [SP 0 Site - 0:0] DBBPOOL: Strict java memory checking is enabled, don't do release builds or performance runs with this enabled. Invoke "ant clean" and "ant -Djmemcheck=NO_MEMCHECK" to disable.
+2018-03-03 23:18:06,259   INFO  [main] TM: Setting maximum size of MPI read pool to: 20
+2018-03-03 23:18:06,349   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:0 as leader for partition 0
+2018-03-03 23:18:06,392   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:1 as leader for partition 1
+2018-03-03 23:18:06,415   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:2 as leader for partition 2
+2018-03-03 23:18:06,418   INFO  [LeaderCache] TM: SP 0:0 for partition 0 found (including self) 1 surviving replicas to repair.  Survivors: 0:0
+2018-03-03 23:18:06,420   INFO  [LeaderCache] TM: SP 0:1 for partition 1 found (including self) 1 surviving replicas to repair.  Survivors: 0:1
+2018-03-03 23:18:06,459   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:3 as leader for partition 3
+2018-03-03 23:18:06,461   INFO  [LeaderCache] TM: SP 0:2 for partition 2 found (including self) 1 surviving replicas to repair.  Survivors: 0:2
+2018-03-03 23:18:06,503   INFO  [LeaderCache] TM: SP 0:3 for partition 3 found (including self) 1 surviving replicas to repair.  Survivors: 0:3
+2018-03-03 23:18:06,503   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:4 as leader for partition 4
+2018-03-03 23:18:06,519   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:5 as leader for partition 5
+2018-03-03 23:18:06,520   INFO  [LeaderCache] TM: SP 0:4 for partition 4 found (including self) 1 surviving replicas to repair.  Survivors: 0:4
+2018-03-03 23:18:06,523   INFO  [LeaderCache] TM: SP 0:4 for partition 4 finished leader promotion. Took 5 ms.
+2018-03-03 23:18:06,523   INFO  [LeaderCache] TM: SP 0:3 for partition 3 finished leader promotion. Took 29 ms.
+2018-03-03 23:18:06,527   INFO  [LeaderCache] TM: SP 0:2 for partition 2 finished leader promotion. Took 78 ms.
+2018-03-03 23:18:06,528   INFO  [LeaderCache] TM: SP 0:0 for partition 0 finished leader promotion. Took 137 ms.
+2018-03-03 23:18:06,528   INFO  [LeaderCache] TM: SP 0:1 for partition 1 finished leader promotion. Took 108 ms.
+2018-03-03 23:18:06,530   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 4
+2018-03-03 23:18:06,535   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 3
+2018-03-03 23:18:06,535   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 2
+2018-03-03 23:18:06,535   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 0
+2018-03-03 23:18:06,535   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 1
+2018-03-03 23:18:06,557   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:6 as leader for partition 6
+2018-03-03 23:18:06,562   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:3 for partition:3
+2018-03-03 23:18:06,564   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:0 for partition:0
+2018-03-03 23:18:06,565   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:1 for partition:1
+2018-03-03 23:18:06,566   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:4 for partition:4
+2018-03-03 23:18:06,566   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:2 for partition:2
+2018-03-03 23:18:06,578   INFO  [LeaderCache] TM: SP 0:5 for partition 5 found (including self) 1 surviving replicas to repair.  Survivors: 0:5
+2018-03-03 23:18:06,578   INFO  [LeaderCache] TM: SP 0:5 for partition 5 finished leader promotion. Took 22 ms.
+2018-03-03 23:18:06,580   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 5
+2018-03-03 23:18:06,594   INFO  [LeaderAppointer-Babysitters] TM: Appointing HSId 0:7 as leader for partition 7
+2018-03-03 23:18:06,628   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:5 for partition:5
+2018-03-03 23:18:06,689   INFO  [LeaderCache] TM: SP 0:6 for partition 6 found (including self) 1 surviving replicas to repair.  Survivors: 0:6
+2018-03-03 23:18:06,693   INFO  [LeaderCache] TM: SP 0:6 for partition 6 finished leader promotion. Took 73 ms.
+2018-03-03 23:18:06,705   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 6
+2018-03-03 23:18:06,742   INFO  [LeaderCache] TM: SP 0:7 for partition 7 found (including self) 1 surviving replicas to repair.  Survivors: 0:7
+2018-03-03 23:18:06,742   INFO  [LeaderCache] TM: SP 0:7 for partition 7 finished leader promotion. Took 22 ms.
+2018-03-03 23:18:06,781   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:6 for partition:6
+2018-03-03 23:18:06,788   INFO  [LeaderCache] EXPORT: ExportManager accepting mastership for partition 7
+2018-03-03 23:18:06,826   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:7 for partition:7
+2018-03-03 23:18:06,855   INFO  [LeaderCache] TM: MP 0:8 for partition 16383 finished leader promotion. Took 27 ms.
+2018-03-03 23:18:06,865   INFO  [LeaderCache] HOST: [Cartographer MP] Sending leader change notification with new leader:
+2018-03-03 23:18:06,865   INFO  [LeaderCache] HOST: [Cartographer] Sending leader change notification with new leader:0:8 for partition:16383
+2018-03-03 23:18:06,947   INFO  [main] HOST: Database start action is Create.
+2018-03-03 23:18:06,948   INFO  [main] HOST: Listening for native wire protocol clients on port 21212.
+2018-03-03 23:18:06,948   INFO  [main] HOST: Listening for admin wire protocol clients on port 21211.
+2018-03-03 23:18:06,948   INFO  [main] HOST: Local machine HTTP monitoring is disabled.
+2018-03-03 23:18:06,948   INFO  [main] HOST: Json API disabled.
+2018-03-03 23:18:06,948   INFO  [main] HOST: Maximum usable Java heap set to 24983 mb.
+2018-03-03 23:18:06,948   INFO  [main] HOST: Minimum required Java heap for catalog and server config is 384 MB.
+2018-03-03 23:18:06,952   INFO  [main] HOST: Cluster has 1 hosts with leader hostname: "localhost". 8 local sites count. K = 0.
+2018-03-03 23:18:06,952   INFO  [main] HOST: The entire cluster has 1 copy of each of the 8 logical partitions.
+2018-03-03 23:18:06,952   INFO  [main] HOST: Detection of network partitions in the cluster is not enabled.
+2018-03-03 23:18:06,952   INFO  [main] HOST: Client authentication is not enabled. Anonymous clients accepted.
+2018-03-03 23:18:06,952   INFO  [main] HOST: No schedule set for automated snapshots.
+2018-03-03 23:18:06,952   INFO  [main] HOST: Using "/home/peter/Immortals/trunk/castor/voltdb7/voltdbroot" for voltdbroot directory.
+2018-03-03 23:18:06,952   INFO  [main] HOST: CPU INFO:         2 Cores, 1 Sockets, 2 Hardware Threads
+2018-03-03 23:18:06,952   INFO  [main] HOST: CPU DESC:         Intel(R) Core(TM) i7-4650U CPU @ 1.70GHz 4096 KB cache
+2018-03-03 23:18:06,953   INFO  [main] HOST: HOST MEMORY (MB): 5397
+2018-03-03 23:18:06,953   INFO  [main] HOST: OS PROFILE:       Linux 4.13.0-36-generic amd64 en_US
+2018-03-03 23:18:06,953   INFO  [main] HOST: DB VERSION:       7.9
+2018-03-03 23:18:06,953   INFO  [main] HOST: JAVA VERSION:     1.8.0_161
+2018-03-03 23:18:06,953   INFO  [main] HOST: JAVA RUNTIME:     Java(TM) SE Runtime Environment (1.8.0_161-b12)
+2018-03-03 23:18:06,953   INFO  [main] HOST: JAVA VM:          Java HotSpot(TM) 64-Bit Server VM (25.161-b12, mixed mode)
+2018-03-03 23:18:06,953   INFO  [main] HOST: About to list cluster interfaces for all nodes with format [ip1 ip2 ... ipN] client-port,admin-port,http-port
+2018-03-03 23:18:06,953   INFO  [main] HOST:   Host id: 0 with interfaces: 10.0.2.15 21212,21211,-1 [SELF]
+2018-03-03 23:18:06,960   WARN  [main] CONSOLE: This is not a highly available cluster. K-Safety is set to 0.
+2018-03-03 23:18:06,960   WARN  [main] CONSOLE: Durability is turned off. Command logging is off.
+2018-03-03 23:18:06,979   INFO  [SnapshotDaemon] LOGGING: This node was selected as the leader for snapshot truncation
+2018-03-03 23:18:06,991   INFO  [Thread-16] HOST: Logging config info
+2018-03-03 23:18:07,000   INFO  [SnapshotDaemon] LOGGING: Checking for existence of snapshot truncation request
+2018-03-03 23:18:07,080   INFO  [Thread-17] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-03-03 23:18:07,081   INFO  [Thread-17] HOST: RSS limit: 80% (4.22 GB)
+2018-03-03 23:18:07,082   INFO  [Thread-17] CONSOLE: Server Operational State is: NORMAL
+2018-03-03 23:18:07,082   INFO  [Thread-17] CONSOLE: Server completed initialization.

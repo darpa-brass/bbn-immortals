@@ -10,7 +10,9 @@ class FeatureInjectionCutpoint(HumanReadable, UniquelyIdentifiable):
 
     def __init__(self,
                  humanReadableDesc: str = None,
+                 injectedCodeTemplate: str = None,
                  uuid: str = None):
         super().__init__()
         self.humanReadableDesc = humanReadableDesc
+        self.injectedCodeTemplate = injectedCodeTemplate
         self.uuid = uuid

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<deployment>
+    <cluster hostcount="1" kfactor="0"/>
+    <partition-detection enabled="false"/>
+    <heartbeat/>
+    <ssl/>
+    <httpd enabled="false">
+        <jsonapi enabled="false"/>
+    </httpd>
+    <snapshot enabled="false"/>
+    <commandlog enabled="false"/>
+    <systemsettings>
+        <temptables maxsize="10240"/>
+        <snapshot/>
+        <elastic/>
+        <query timeout="3000000"/>
+        <procedure/>
+        <resourcemonitor>
+            <memorylimit/>
+        </resourcemonitor>
+    </systemsettings>
+    <security enabled="false"/>
+</deployment>

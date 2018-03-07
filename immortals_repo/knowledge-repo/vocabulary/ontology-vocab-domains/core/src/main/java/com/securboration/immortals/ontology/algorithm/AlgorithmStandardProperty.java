@@ -14,8 +14,7 @@ public class AlgorithmStandardProperty extends AlgorithmConfigurationProperty {
     private String standardName;
     private String ownerOrganization;
     private String url;
-    private boolean isCurrentBest;
-    
+
     public AlgorithmStandardProperty(){}
 
     public String getStandardName() {
@@ -41,12 +40,5 @@ public class AlgorithmStandardProperty extends AlgorithmConfigurationProperty {
     public void setUrl(String url) {
         this.url = url;
     }
-
-    public boolean isCurrentBest() {
-        return isCurrentBest;
-    }
-
-    public void setCurrentBest(boolean currentBest) {
-        isCurrentBest = currentBest;
-    }
+    
 }

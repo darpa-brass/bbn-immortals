@@ -1,0 +1,63 @@
+import java.nio.file.Paths
+
+def IMMORTALS_ROOT = Paths.get(buildscript.sourceFile.parentFile.parent)
+def IMMORTALS_REPO = IMMORTALS_ROOT.resolve("shared/IMMORTALS_REPO")
+
+// Files to delete as part of a clean to force knowledge repository rebuild
+def DELETION_FILES = [
+        file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-adsl-generate/r2.0.0/immortals-adsl-generate-r2.0.0.jar'),
+        file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-adsl-generate/r2.0.0/immortals-adsl-generate-r2.0.0.pom'),
+        file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-adsl-generate/maven-metadata-local.xml'),
+        file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-project-to-triples/r2.0.0/immortals-project-to-triples-r2.0.0.jar'),
+        file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-project-to-triples/r2.0.0/immortals-project-to-triples-r2.0.0.pom'),
+        file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-project-to-triples/maven-metadata-local.xml')
+]
+
+// If clean was called, lets not waste time building the knowledge repo...
+def DO_CLEAN = getStartParameter().taskRequests.size() > 0 &&
+        getStartParameter().taskRequests.get(0).args.size() > 0 &&
+        getStartParameter().taskRequests.get(0).args[0] == "clean"
+
+
+if (DO_CLEAN) {
+    for (f in DELETION_FILES) {
+        if (f.exists()) {
+            f.delete()
+        }
+    }
+
+    exec {
+        workingDir = IMMORTALS_ROOT.resolve('knowledge-repo').toString()
+        executable = 'mvn'
+        args = ['-pl', 'vocabulary/dsl-generate', 'clean']
+    }
+
+    exec {
+        workingDir = IMMORTALS_ROOT.resolve('knowledge-repo').toString()
+        executable = 'mvn'
+        args = ['-pl', 'toolchain/project-to-triples', 'clean']
+    }
+} else {
+    // Publish the ADSL if it has not been published
+    if (!file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-adsl-generate/r2.0.0/immortals-adsl-generate-r2.0.0.jar').exists()) {
+        exec {
+            workingDir = IMMORTALS_ROOT.resolve('knowledge-repo').toString()
+            executable = 'mvn'
+            args = ['-pl', 'vocabulary/dsl-generate', '-DskipTests', '-am', 'install']
+        }
+    }
+
+    // Publish the gradle plugin if it has not been published
+    if (!file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-project-to-triples/r2.0.0/immortals-project-to-triples-r2.0.0.jar').exists()) {
+        exec {
+            workingDir = IMMORTALS_ROOT.resolve('knowledge-repo').toString()
+            executable = 'mvn'
+            args = ['-pl', 'toolchain/project-to-triples', '-DskipTests', '-am', 'install']
+        }
+    }
+
+}
+
+include 'ImmortalsConfig'
+include 'ImmortalsGradle'
+

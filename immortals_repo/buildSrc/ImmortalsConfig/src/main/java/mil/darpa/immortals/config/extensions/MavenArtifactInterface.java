@@ -1,0 +1,25 @@
+package mil.darpa.immortals.config.extensions;
+
+import mil.darpa.immortals.config.AppConfigInterface;
+
+import javax.annotation.Nonnull;
+
+/**
+ * Created by awellman@bbn.com on 2/20/18.
+ */
+public interface MavenArtifactInterface extends AppConfigInterface {
+
+    String getMavenRepositoryUrl();
+
+    String getMavenGroupId();
+
+    String getMavenArtifactId();
+
+    String getMavenVersion();
+
+    String getMavenFullDependencyCoordinate();
+
+    static String toDependencyCoordinate(@Nonnull MavenArtifactInterface a) {
+        return a.getMavenGroupId() + ":" + a.getMavenArtifactId() + ":" + a.getMavenVersion();
+    }
+}

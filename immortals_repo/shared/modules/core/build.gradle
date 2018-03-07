@@ -1,11 +1,1 @@
-apply plugin: immortals.CoreDefinitions
-apply plugin: immortals.JavaDfuWithoutAndroid
-apply plugin: immortals.PublishJavaDfu
-
-dependencies {
-    compile 'com.securboration:immortals-adsl-generate:+'
-    compile 'com.google.code.findbugs:jsr305:3.0.1'
-    compile 'com.google.code.gson:gson:2.5'
-    compile "org.slf4j:slf4j-api:${project.slf4jVersion}"
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-}
+apply plugin: mil.darpa.immortals.JavaModule

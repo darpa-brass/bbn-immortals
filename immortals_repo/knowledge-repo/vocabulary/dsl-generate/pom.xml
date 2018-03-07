@@ -27,6 +27,7 @@
 			<artifactId>immortals-ontologies-vocab</artifactId>
 			<version>${immortals.version}</version>
 			<scope>compile</scope>
+			<optional>true</optional>
 		</dependency>
 		
 		<dependency>
@@ -34,17 +35,23 @@
 			<artifactId>immortals-ontologies-vocab-instances</artifactId>
 			<version>${immortals.version}</version>
 			<scope>compile</scope>
+			<optional>true</optional>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.7.21</version>
+			<scope>compile</scope>
+			<optional>true</optional>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.21</version>
 			<scope>test</scope>
+			<optional>true</optional>
 		</dependency>
 
 	</dependencies>
@@ -102,7 +109,7 @@
 								<argument>Turtle</argument><!-- output lang -->
 								<argument>${immortals.version}</argument><!-- ontology version -->
 								<argument>${project.basedir}/../ontology-vocab-aggregated/target/classes/</argument><!-- comma separated classpaths to scan -->
-								<argument>com.securboration.immortals.instantiation</argument><!-- comma separated skip prefixes -->
+								<argument>com.securboration.immortals.instantiation,com.securboration.immortals.ontology.property.impact</argument><!-- comma separated skip prefixes -->
 								<argument>mil.darpa.immortals.annotation.dsl</argument><!-- output package prefix -->
 								<argument>${project.basedir}/target/generated-sources</argument><!-- output dir -->
 							</arguments>

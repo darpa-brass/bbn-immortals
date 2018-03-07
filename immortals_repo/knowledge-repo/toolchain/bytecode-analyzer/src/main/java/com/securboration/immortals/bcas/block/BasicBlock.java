@@ -17,7 +17,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
 
-import com.securboration.immortals.bcas.printer.MethodPrinter;
+import com.securboration.immortals.bca.tools.MethodPrinter;
 
 
 /**

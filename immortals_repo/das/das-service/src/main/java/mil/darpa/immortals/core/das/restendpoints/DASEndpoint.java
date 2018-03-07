@@ -1,106 +1,110 @@
 package mil.darpa.immortals.core.das.restendpoints;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.lang.NullPointerException;
-
+import mil.darpa.immortals.ImmortalsUtils;
+import mil.darpa.immortals.config.ImmortalsConfig;
+import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
+import mil.darpa.immortals.core.api.ll.phase2.result.status.DasOutcome;
 import mil.darpa.immortals.core.das.AdaptationManager;
-import mil.darpa.immortals.core.das.AdaptationStatus;
-import mil.darpa.immortals.core.das.AdaptationStatusValue;
 import mil.darpa.immortals.core.das.DAS;
-import mil.darpa.immortals.core.das.DASStatus;
 import mil.darpa.immortals.core.das.DASStatusValue;
 import mil.darpa.immortals.core.das.SUTInformation;
-
+import mil.darpa.immortals.core.das.sparql.SessionIdentifier;
+import mil.darpa.immortals.das.context.ContextManager;
+import mil.darpa.immortals.das.context.DasAdaptationContext;
+import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.nio.file.Files;
+import java.util.LinkedList;
 
 @Path("das")
 public class DASEndpoint {
 
-	static final Logger logger = LoggerFactory.getLogger(DASEndpoint.class);
-	
-	@GET
-	@Path("/test")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String test() {
-		
-		logger.trace("/test REST endpoint invoked.");
+    static final Logger logger = LoggerFactory.getLogger(DASEndpoint.class);
 
-		return "Basic REST services working with DAS.";
-	}
-	
+    static final ImmortalsUtils.NetworkLogger networkLogger = new ImmortalsUtils.NetworkLogger("DAS", null);
+
+    @GET
+    @Path("/test")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String test() {
+
+        logger.trace("/test REST endpoint invoked.");
+
+        return "Basic REST services working with DAS.";
+    }
+
     @GET
     @Path("/sut-about")
     @Produces(MediaType.APPLICATION_JSON)
     public SUTInformation getAbout() {
-    	
-		logger.trace("/sut-about REST endpoint invoked.");
-		
-    	return DAS.getSUTInformation();
+
+        logger.trace("/sut-about REST endpoint invoked.");
+
+        return DAS.getSUTInformation();
     }
-    
+
     @GET
     @Path("/das-status")
     @Produces(MediaType.APPLICATION_JSON)
-    public DASStatus getDASStatus() {    	
+    public DASStatusValue getDASStatus() {
 
-		logger.trace("/das-status REST endpoint invoked.");
+        logger.trace("/das-status REST endpoint invoked.");
 
-    	return DAS.getDASStatus();
+        return DAS.getStatus();
     }
-    
+
     @POST
-    @Path("/deployment-model")
+    @Path("/submitAdaptationRequest")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public AdaptationStatus triggerAdaptation(String deploymentModelRdf) {
+    public Response submitAdaptationRequest(String rdf) {
+        // Helper class for network logging. Controls information display level based on logging level and
+        // standardizes send/receive/ack message formats and logging endpoint
+        networkLogger.logPostReceived("/bbn/das/submitAdaptationRequest", rdf);
 
-		logger.error("/deployment-model REST endpoint invoked.");
+        try {
+            // Create the file
+            java.nio.file.Path rdfPath =
+                    ImmortalsConfig.getInstance().extensions.getProducedTtlOutputDirectory().resolve("deploymentModel.ttl");
+            Files.write(rdfPath, rdf.getBytes());
 
-    	AdaptationStatus result = null;
+            AdaptationManager am = AdaptationManager.getInstance();
+            String knowledgeRepoGraphUri = am.initializeKnowledgeRepo();
 
-    	try {
-			if (DAS.getDASStatus().getStatus() != DASStatusValue.RUNNING) {
-				logger.trace("DAS not available (another request may be in progress).");
-				result = new AdaptationStatus(AdaptationStatusValue.ERROR,
-						"DAS is not available (another request may currently be in progress)");
-			} else {
-				logger.trace("DAS beginning adaptation.");
+            String adaptationIdentifier = SessionIdentifier.select(knowledgeRepoGraphUri);
+            DasAdaptationContext dac = ContextManager.getContext(adaptationIdentifier, 
+            		knowledgeRepoGraphUri, knowledgeRepoGraphUri);
 
-				DAS.getDASStatus().setStatus(DASStatusValue.OFFLINE_ADAPTATION);
 
-				AdaptationManager am = AdaptationManager.getInstance();
-				result = am.triggerAdaptation(deploymentModelRdf);
+            // Set the initial adaptation details for the ACK
+            AdaptationDetails initialDetails = new AdaptationDetails(
+                    DasOutcome.RUNNING,
+                    dac.getAdaptationIdentifer(),
+                    "Phase1DetailsObjectToBeUpdatedToPhase2"
+            );
 
-				logger.trace("DAS completed adaptation session.");
-			}
-		} catch (NullPointerException ex) {
-    		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    		PrintStream prs = new PrintStream(baos);
-    		ex.printStackTrace(prs);
-    		prs.close();
-    		String exst = baos.toString();
-    		logger.error("programming error, NullPointerException: ", exst);
-			result = new AdaptationStatus(AdaptationStatusValue.ERROR,
-					"An program error has occurred: NullPointerException: " + exst);
-		} catch (Throwable ex) {
-    		logger.error("Unexpected error in DAS:", ex);
-			result =  new AdaptationStatus(AdaptationStatusValue.ERROR,
-    				"An unexpected error has occurred: " + ex.getMessage());
-    	} finally {
-    		DAS.getDASStatus().setStatus(DASStatusValue.RUNNING);
-    		result.close();
-    	}
-    	
-    	return result;
+			Runnable adaptationTask = () -> {
+				am.triggerAdaptation(dac);
+				};
+			Thread t = new Thread(adaptationTask);
+
+            // A fatal exception handler also exists in the error handler to bubble problems up as necessary
+            t.setUncaughtExceptionHandler(ImmortalsErrorHandler.fatalExceptionHandler);
+            t.start();
+
+            // Helper class for network logging. Controls information validity based on logging level and
+            // standardizes send/receive/ack message formats and logging endpoint
+            networkLogger.logPostReceivedAckSending("/bbn/das/submitAdaptationRequest", initialDetails);
+            return Response.ok(initialDetails).build();
+        } catch (Exception e) {
+            ImmortalsErrorHandler.reportFatalException(e);
+            return Response.serverError().entity(e.toString()).build();
+        }
     }
 
 }

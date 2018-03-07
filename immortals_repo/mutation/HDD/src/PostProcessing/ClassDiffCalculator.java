@@ -71,7 +71,7 @@ public class ClassDiffCalculator {
 
     public static void main(String[] args){
         int percentage = 10 ;
-        String className = "Checksum";
+        String className = "OptionGroup";
 
 
 

@@ -22,9 +22,6 @@ public class AspectCipherDecrypt extends DefaultAspectBase {
                 in()});
         super.setOutputs(new Output[]{
                 out()});
-        super.setInverseAspect(
-            AspectCipherEncrypt.class
-            );
         super.setImpactStatements(new ImpactStatement[] {
                 decryptImpact()});
     }

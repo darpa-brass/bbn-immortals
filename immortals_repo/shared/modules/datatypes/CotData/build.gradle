@@ -1,18 +1,15 @@
+import mil.darpa.immortals.config.ImmortalsConfig
+
 plugins {
     id 'com.intershop.gradle.jaxb' version '2.0.0'
 }
 
-apply plugin: immortals.CoreDefinitions
-apply plugin: immortals.JavaDfu
-apply plugin: immortals.DfuBase
-apply plugin: immortals.PublishJavaDfu
-
+apply plugin: mil.darpa.immortals.JavaModule
 
 jaxb {
     javaGen {
         ImmortalsCot {
-            packageName = 'mil.darpa.immortals.datatypes.cot'
-//            binding = file('xsd/binding.xjb')
+            packageName = "${project.group}.cot"
             schemas = files(
                     'xsd/Event-PUBLIC_immortals.xsd'
             )
@@ -21,6 +18,6 @@ jaxb {
 }
 
 dependencies {
+    compile project(':shared:modules:datatypes:Coordinates')
     compile 'commons-codec:commons-codec:1.2'
-    compile "org.slf4j:slf4j-api:${project.slf4jVersion}"
 }

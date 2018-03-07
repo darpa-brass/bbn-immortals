@@ -16,10 +16,10 @@ CREATE SEQUENCE cot_event_id_seq
 
 CREATE TABLE source
 (
-  id integer NOT NULL DEFAULT nextval('source_id_seq'::regclass),
+  source_id integer NOT NULL DEFAULT nextval('source_id_seq'::regclass),
   name character varying,
   channel integer NOT NULL DEFAULT floor(random()*(16)),
-  CONSTRAINT source_pkey PRIMARY KEY (id)
+  CONSTRAINT source_pkey PRIMARY KEY (source_id)
 );
 
 CREATE TABLE cot_event
@@ -32,7 +32,7 @@ CREATE TABLE cot_event
   servertime bigint NOT NULL DEFAULT cast (to_char(chunk_time(current_timestamp, '5 minutes'), 'YYYYMMDDHH24MI') as bigint),
   CONSTRAINT cot_event_pkey PRIMARY KEY (id),
   CONSTRAINT source_pk FOREIGN KEY (source_id)
-      REFERENCES source (id) MATCH SIMPLE
+      REFERENCES source (source_id) MATCH SIMPLE
       ON UPDATE RESTRICT ON DELETE RESTRICT
 );
 

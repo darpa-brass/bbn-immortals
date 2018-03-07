@@ -1,6 +1,8 @@
 package com.securboration.immortals.ontology.dfu.annotation;
 
+import com.securboration.immortals.ontology.annotations.RdfsComment;
 import com.securboration.immortals.ontology.core.Resource;
+import com.securboration.immortals.ontology.functionality.DesignPattern;
 import com.securboration.immortals.ontology.functionality.FunctionalAspect;
 import com.securboration.immortals.ontology.pojos.markup.GenerateAnnotation;
 import com.securboration.immortals.ontology.property.Property;
@@ -22,7 +24,7 @@ import com.securboration.immortals.ontology.property.Property;
     " abstraction might have init and increment functional aspects. " +
     " @author jstaples ")
 @GenerateAnnotation
-public class FunctionalAspectAnnotation {
+public class FunctionalAspectAnnotation implements ResourceDependent {
     
     /**
      * Resources specific to this functional aspect
@@ -30,6 +32,14 @@ public class FunctionalAspectAnnotation {
     @com.securboration.immortals.ontology.annotations.RdfsComment(
         "Resources specific to this functional aspect")
     private Class<? extends Resource>[] aspectSpecificResourceDependencies;
+    
+    /**
+     * The resources upon which this aspect depends, if any (referenced by URI)
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+            "The resources upon which this aspect depends, if any " +
+            "(referenced by URI)")
+    private String[] resourceDependencyUris;
 
     /**
      * The functional aspect
@@ -44,6 +54,14 @@ public class FunctionalAspectAnnotation {
     @com.securboration.immortals.ontology.annotations.RdfsComment(
         "The properties associated with the aspect")
     private Property[] properties;
+
+    /**
+     * What design pattern does this implementation follow, e.g. Streaming, block
+     */
+    @RdfsComment(
+            "What design pattern does this implementation follow, e.g. Streaming, block"
+    )
+    private DesignPattern designPattern;
     
     public Class<? extends FunctionalAspect> getAspect() {
         return aspect;
@@ -72,4 +90,21 @@ public class FunctionalAspectAnnotation {
         this.properties = properties;
     }
 
+    @Override
+    public String[] getResourceDependencyUris() {
+        return resourceDependencyUris;
+    }
+
+    
+    public void setResourceDependencyUris(String[] resourceDependencyUris) {
+        this.resourceDependencyUris = resourceDependencyUris;
+    }
+
+    public DesignPattern getDesignPattern() {
+        return designPattern;
+    }
+
+    public void setDesignPattern(DesignPattern designPattern) {
+        this.designPattern = designPattern;
+    }
 }

@@ -1,0 +1,35 @@
+import mil.darpa.immortals.config.ImmortalsConfig
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "IMMoRTALS-DAS-Launcher",
+                "Main-Class": "mil.darpa.immortals.das.DasLauncher"
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+task(copyArtifacts) {
+    doLast {
+        copy {
+            from('build/libs/') {
+                include '*.jar'
+            }
+            into('../')
+        }
+    }
+}
+
+jar.finalizedBy(copyArtifacts)
+
+clean.doLast {
+    file("../das-launcher-${ImmortalsConfig.instance.build.das.publishVersion}.jar").delete()
+}
+
+dependencies {
+    compile 'mil.darpa.immortals:ImmortalsConfig:+'
+    compile "org.slf4j:slf4j-api:${ImmortalsConfig.instance.build.das.slf4jVersion}"
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+    compile 'ch.qos.logback:logback-core:1.1.7'
+    compile 'info.picocli:picocli:2.2.1'
+}

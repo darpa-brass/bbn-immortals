@@ -1,0 +1,10 @@
+{
+	"sessionIdentifier" : "Cp2Challenge",
+	"globalModel": {
+		"requirements": {
+			"dataInTransit": {
+				"securityStandard": "NIST800Dash171"
+			}
+		}
+	}
+}

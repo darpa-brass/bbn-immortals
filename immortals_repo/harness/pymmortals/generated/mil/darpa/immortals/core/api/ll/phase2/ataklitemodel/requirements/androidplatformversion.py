@@ -5,7 +5,7 @@ from typing import FrozenSet
 # noinspection PyPep8Naming
 class AndroidPlatformVersion(Enum):
     def __init__(self, description: str):
-        self.description: str = description
+        self.description = description  # type: str
 
     Android21 = (
         "Baseline Android API version 21")

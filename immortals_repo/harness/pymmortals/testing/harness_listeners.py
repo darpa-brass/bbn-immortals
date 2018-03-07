@@ -104,11 +104,11 @@ class NetworkExpectationValidator:
         immortals_assert(self.submission_validated)
         immortals_assert(not self.ack_validated)
 
-        immortals_assert(endpoint == self.endpoint, \
+        immortals_assert(endpoint == self.endpoint,
                          ('Endpoint ' + endpoint.name + ' != ' + str(self.endpoint.name)))
 
         immortals_assert(self.ack_code is not None)
-        immortals_assert(self.ack_code == status_code, \
+        immortals_assert(self.ack_code == status_code,
                          ('Status code ' + str(status_code) + ' != ' + str(self.ack_code)))
 
         self._validate_values(body_str=body_str, expected_values=self.ack_values)
@@ -120,7 +120,12 @@ class NetworkExpectationValidator:
 
     @staticmethod
     def _validate_values(body_str: str, expected_values: Dict[str, str]):
-        if expected_values is not None:
+        if expected_values is None:
+
+            if body_str is not None and body_str != 'null' and body_str != '':
+                immortals_assert(False, "Unexpected body!" + body_str)
+
+        else:
             for key in expected_values:
                 target_d = json.loads(body_str)
 
@@ -131,7 +136,7 @@ class NetworkExpectationValidator:
                     value = target_d[path_element]
                     target_d = value
 
-                immortals_assert(target_d[override_tail] == expected_values[key], \
+                immortals_assert(target_d[override_tail] == expected_values[key],
                                  ('Value of "' + str(target_d[override_tail]) + '" for "' + key
                                   + '" Does not match expected value of "' + str(expected_values[key]) + '"!'))
 
@@ -139,7 +144,7 @@ class NetworkExpectationValidator:
 def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[NetworkExpectationValidator]:
     flow = test_scenario.submissionFlow
 
-    validators: List[NetworkExpectationValidator] = list()
+    validators = list()  # type: List[NetworkExpectationValidator]
 
     validators.append(
         NetworkExpectationValidator(
@@ -162,13 +167,13 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
             ),
         )
 
-    if flow == Phase2SubmissionFlow.BaselineA or flow == Phase2SubmissionFlow.BaselineB:
+    if flow == Phase2SubmissionFlow.BaselineA:
         validators.append(
             NetworkExpectationValidator(
                 endpoint=test_scenario.perturbationScenario.endpoint,
                 submission_values=None,
                 ack_values={
-                    "adaptation.adaptationStatus": "NOT_APPLICABLE",
+                    "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
                     "validation.verdictOutcome": "RUNNING"
                 },
                 ack_code=200
@@ -179,8 +184,33 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
             NetworkExpectationValidator(
                 endpoint=TestHarnessEndpoint.DONE,
                 submission_values={
-                    "adaptation.adaptationStatus": "NOT_APPLICABLE",
-                    "validation.verdictOutcome": "PASS"
+                    "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
+                    "validation.verdictOutcome": test_scenario.expectedVerdictOutcome.name
+                },
+                ack_values=None,
+                ack_code=200
+            )
+        )
+
+    elif flow == Phase2SubmissionFlow.BaselineB:
+        validators.append(
+            NetworkExpectationValidator(
+                endpoint=test_scenario.perturbationScenario.endpoint,
+                submission_values={},
+                ack_values={
+                    "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
+                    "validation.verdictOutcome": "RUNNING"
+                },
+                ack_code=200
+            )
+        )
+
+        validators.append(
+            NetworkExpectationValidator(
+                endpoint=TestHarnessEndpoint.DONE,
+                submission_values={
+                    "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
+                    "validation.verdictOutcome": test_scenario.expectedVerdictOutcome.name
                 },
                 ack_values=None,
                 ack_code=200
@@ -191,7 +221,7 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
         validators.append(
             NetworkExpectationValidator(
                 endpoint=test_scenario.perturbationScenario.endpoint,
-                submission_values=None,
+                submission_values={},
                 ack_values={
                     "adaptation.adaptationStatus": "RUNNING",
                     "validation.verdictOutcome": "PENDING"
@@ -204,7 +234,7 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
             NetworkExpectationValidator(
                 endpoint=TestHarnessEndpoint.STATUS,
                 submission_values={
-                    "adaptation.adaptationStatus": "SUCCESS",
+                    "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
                     "validation.verdictOutcome": "RUNNING"
                 },
                 ack_values=None,
@@ -216,8 +246,8 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
             NetworkExpectationValidator(
                 endpoint=TestHarnessEndpoint.DONE,
                 submission_values={
-                    "adaptation.adaptationStatus": "SUCCESS",
-                    "validation.verdictOutcome": "PASS"
+                    "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
+                    "validation.verdictOutcome": test_scenario.expectedVerdictOutcome.name
                 },
                 ack_values=None,
                 ack_code=200
@@ -305,16 +335,17 @@ class ScenarioExecution(Phase2TestHarnessListenerInterface):
     def __init__(self, test_scenario: Phase2TestScenario, logger: logging.Logger):
 
         self.test_scenario = test_scenario
-        self._submissions: List[TestAdapterSubmission] = \
+        self._submissions = \
             produce_test_adapter_submissions(ll_input=test_scenario.submissionModel,
                                              submission_flow=test_scenario.submissionFlow,
-                                             perturbation_scenario=test_scenario.perturbationScenario)
-        self.finished: bool = False
+                                             perturbation_scenario=test_scenario.perturbationScenario
+                                             )  # type: List[TestAdapterSubmission]
+        self.finished = False  # type: bool
 
-        self._logger: logging.Logger = logger
-        self._expected_activity: List[NetworkExpectationValidator] = \
-            generate_expected_activity(test_scenario=test_scenario)
-        self._pending_acks: List[NetworkExpectationValidator] = list()
+        self._logger = logger  # type: logging.Logger
+        self._expected_activity = \
+            generate_expected_activity(test_scenario=test_scenario)  # type: List[NetworkExpectationValidator]
+        self._pending_acks = list()  # type: List[NetworkExpectationValidator]
 
     def _log_expected_and_actual(self, validator: NetworkExpectationValidator,
                                  endpoint: Union[TestAdapterEndpoint, TestHarnessEndpoint],
@@ -360,30 +391,44 @@ class TABehaviorValidator(Phase2TestHarnessListenerInterface):
     :type _scenario_executions: list[ScenarioExecution]
     """
 
-    def __init__(self, done_listener: Callable, test_suite_identifier: str):
-        self._log_filename: str = test_suite_identifier + '-results.txt'
+    def __init__(self, done_listener: Callable, test_suite_identifier: str, test_identifier: str):
+        """
+        :param done_listener: The listener to call when the validation is finished
+        :param test_suite_identifier: The test suite to get the tests from
+        :param test_identifier: The test within the test suite. If not supplied, all tests from the test suite will run
+        """
+        self._log_filename = test_suite_identifier + '-results.txt'  # type: str
         lfh = logging.FileHandler(self._log_filename)
         lfh.setFormatter(logging.Formatter('%(message)s'))
-        self._logger: logging.Logger = logging.getLogger(self._log_filename)
+        self._logger = logging.getLogger(self._log_filename)  # type: logging.Logger
         self._logger.setLevel(logging.INFO)
         self._logger.addHandler(lfh)
         sh = logging.StreamHandler(stream=sys.stdout)
         self._logger.addHandler(sh)
-        self._lock: RLock = RLock()
+        self._lock = RLock()  # type: RLock
 
-        self._done_listener: Callable = done_listener
+        self._done_listener = done_listener  # type: Callable
 
-        test_scenarios_d = resourcemanager.get_test_suite(test_suite_identifier)
+        self._scenario_executions = list()  # type: List[ScenarioExecution]
 
-        self._scenario_executions: List[ScenarioExecution] = []
+        if test_identifier is not None:
+            self._scenario_executions.append(ScenarioExecution(
+                test_scenario=Phase2TestScenario.from_dict(resourcemanager.get_p2_test(
+                    suite_identifier=test_suite_identifier, test_identifier=test_identifier)),
+                logger=self._logger))
 
-        for test in test_scenarios_d:
-            self._scenario_executions.append(
-                ScenarioExecution(Phase2TestScenario.from_dict(test), self._logger))
+        else:
+            test_scenarios_d = resourcemanager.get_p2_test_suite(test_suite_identifier)
+
+            for test in test_scenarios_d:
+                self._scenario_executions.append(
+                    ScenarioExecution(Phase2TestScenario.from_dict(test), self._logger))
 
     def get_current_test_scenario(self) -> Optional[Phase2TestScenario]:
         if len(self._scenario_executions) > 0:
-            return self._scenario_executions[0].test_scenario
+            scenario = self._scenario_executions[0].test_scenario  # type: Phase2TestScenario
+            self._logger.info('# TEST: ' + scenario.perturbationScenario.name + '.' + scenario.scenarioIdentifier)
+            return scenario
         else:
             return None
 

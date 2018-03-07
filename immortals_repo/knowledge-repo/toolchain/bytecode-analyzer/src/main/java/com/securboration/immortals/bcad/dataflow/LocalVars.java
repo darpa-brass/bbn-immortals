@@ -17,11 +17,11 @@ import org.objectweb.asm.tree.VarInsnNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.securboration.immortals.bca.tools.MethodPrinter;
 import com.securboration.immortals.bcad.dataflow.DataflowHelper.LocalVariableSpec;
 import com.securboration.immortals.bcad.dataflow.DataflowHelper.ParameterSpec;
 import com.securboration.immortals.bcad.transformers.helpers.OpcodeHelper;
 import com.securboration.immortals.bcas.block.BasicBlock;
-import com.securboration.immortals.instantiation.bytecode.printing.MethodPrinter;
 
 public class LocalVars {
     

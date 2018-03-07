@@ -1,11 +1,12 @@
 package Helper;
 
 import java.io.*;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.nio.file.StandardCopyOption.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -69,5 +70,73 @@ public class FileOperationUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static List<String> getFileNames(List<String> fileNames, Path dir) {
+        try(DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
+            for (Path path : stream) {
+                if(path.toFile().isDirectory()) {
+                    getFileNames(fileNames, path);
+                } else {
+                    fileNames.add(path.toAbsolutePath().toString());
+                    System.out.println(path.getFileName());
+                }
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return fileNames;
+    }
+
+    public static List<String> getFileNames(String dirPath, String regex){
+        List<String> files = new ArrayList<String>();
+        File folder = new File(dirPath);
+        for (final File fileEntry : folder.listFiles()) {
+            if (!fileEntry.isDirectory()) {
+                Pattern p = Pattern.compile(regex);
+                Matcher m = p.matcher(fileEntry.toString());
+                boolean b = m.matches();
+                Debugger.log(b);
+                if(m.matches())
+                    files.add(fileEntry.getAbsoluteFile().toString());
+            }
+        }
+
+
+        return files;
+    }
+
+    public static String getLatestResultFile(String dirPath, String regex){
+        List<String> files = new ArrayList<String>();
+        long lastModified = 0;
+        String latestFile = Globals.EmptyString;
+        File folder = new File(dirPath);
+        for (final File fileEntry : folder.listFiles()) {
+
+            if (!fileEntry.isDirectory()) {
+                Pattern p = Pattern.compile(regex);
+                Matcher m = p.matcher(fileEntry.toString());
+                boolean b = m.matches();
+                Debugger.log(b);
+                if(m.matches())
+                    if(fileEntry.lastModified() > lastModified){
+
+                        latestFile = fileEntry.getAbsoluteFile().toString();
+                        lastModified = fileEntry.lastModified();
+                    }
+
+            }
+        }
+
+
+        return latestFile;
+    }
+
+    public static void main(String[] args){
+        //.*MFile123\.tx.*
+        List<String> files = getFileNames("/root/arpit-marti/applications/server/Marti/build/test-results/validate/",".*Tests.*xml.*");
+        Debugger.log(files);
+
     }
 }

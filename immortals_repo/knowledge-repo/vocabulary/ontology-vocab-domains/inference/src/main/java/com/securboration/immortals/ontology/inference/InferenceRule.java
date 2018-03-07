@@ -1,5 +1,10 @@
 package com.securboration.immortals.ontology.inference;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.securboration.immortals.ontology.core.HumanReadable;
+
 /**
  * An inference rule consists of
  * <ol>
@@ -13,46 +18,28 @@ package com.securboration.immortals.ontology.inference;
  * @author jstaples
  *
  */
-public class InferenceRule {
+public class InferenceRule implements HumanReadable {
+    
+    private String humanReadableDesc;
 
     /**
      * Another inference rule that must be executed before this one (sequential
      * ordering). If multiple rules are specified, all must be executed before
      * this one.
      */
-    private InferenceRule[] explicitPrecondition;
+    private final List<InferenceRule> explicitPrecondition = new ArrayList<>();
 
     /**
      * A logical predicate that must be executed before this one (logical
      * ordering). If multiple predicates are specified, all must be executed
      * before this one.
      */
-    private AskQuery[] predicate;
+    private final List<AskQuery> predicate = new ArrayList<>();
 
     /**
      * A query whose execution possibly creates new triples
      */
     private ConstructQuery forwardInferenceRule;
-
-    
-    public InferenceRule[] getExplicitPrecondition() {
-        return explicitPrecondition;
-    }
-
-    
-    public void setExplicitPrecondition(InferenceRule[] explicitPrecondition) {
-        this.explicitPrecondition = explicitPrecondition;
-    }
-
-    
-    public AskQuery[] getPredicate() {
-        return predicate;
-    }
-
-    
-    public void setPredicate(AskQuery[] predicate) {
-        this.predicate = predicate;
-    }
 
     
     public ConstructQuery getForwardInferenceRule() {
@@ -62,6 +49,26 @@ public class InferenceRule {
     
     public void setForwardInferenceRule(ConstructQuery forwardInferenceRule) {
         this.forwardInferenceRule = forwardInferenceRule;
+    }
+
+    
+    public List<InferenceRule> getExplicitPrecondition() {
+        return explicitPrecondition;
+    }
+
+    
+    public List<AskQuery> getPredicate() {
+        return predicate;
+    }
+
+
+    @Override
+    public String getHumanReadableDesc() {
+        return humanReadableDesc;
+    }
+    
+    public void setHumanReadableDesc(String humanReadableDesc){
+        this.humanReadableDesc = humanReadableDesc;
     }
     
 }

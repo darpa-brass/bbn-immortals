@@ -1,9 +1,13 @@
 OUTPUT_FOLDER="out"
+TARGET="query1_all"
+POS_EXAMPLES="examples/query1_all_pos.csv"
+NEG_EXAMPLES="examples/query1_all_neg.csv"
 
 mkdir $OUTPUT_FOLDER
 
-# Without -globalDefinition option
-java -jar ../../../Castor/Castor.jar -parameters castor-input/parameters.json -inds castor-input/inds.json -dataModel castor-input/datamodel.json -posTrainExamplesFile examples/query1_all_pos.csv -negTrainExamplesFile examples/query1_all_neg.csv -outputDefinitionFile "${OUTPUT_FOLDER}/definition.txt" -outputSQL > "${OUTPUT_FOLDER}/out.txt"
+# Generate dataModel file
+java -cp ../../../Castor/Castor.jar castor.clients.PreprocessClient -metadata ../../metadata.json -target ${TARGET} -examplesFile ${POS_EXAMPLES} -ddl ../../ddl-schema-baseline-strings.sql -outputModes castor-input/dataModel.json
 
-# With -globalDefinition option
-#java -jar ../../../Castor/Castor.jar -parameters castor-input/parameters.json -inds castor-input/inds.json -dataModel castor-input/datamodel.json -posTrainExamplesFile examples/query1_all_pos.csv -negTrainExamplesFile examples/query1_all_neg.csv -outputDefinitionFile "${OUTPUT_FOLDER}/definition.txt" -outputSQL -globalDefinition > "${OUTPUT_FOLDER}/out.txt"
+# Run Castor
+echo "Running Castor..."
+java -jar ../../../Castor/Castor.jar -parameters castor-input/parameters.json -ddl ../../ddl-schema-baseline-strings.sql -dataModel castor-input/datamodel.json -posTrainExamplesFile ${POS_EXAMPLES} -negTrainExamplesFile ${NEG_EXAMPLES} -outputDefinitionFile "${OUTPUT_FOLDER}/definition.txt" -outputSQL > "${OUTPUT_FOLDER}/out.txt"

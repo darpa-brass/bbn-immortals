@@ -208,20 +208,15 @@ of this document pertains to the specific input utilized to perturb this endpoin
 defining the endpoint and data necessary to initiate the perturbation of this challenge problem.  
 
 As this challenge problem intends to exercise the ability of integrating incompatible library changes, it will utilize to the 
-_atakliteClientModel_ and _martiServerModel_ fields of the root **SubmissionModel**.  Both models will utilize the 
-_libraryUpgrade_ field of their _requirements_. The _atakliteClientModel_ will utilize an additional 
-_deploymentPlatformVersion_ _requirements_ attribute to introduce an additional form of library upgrade.
+_atakliteClientModel_ and _martiServerModel_ fields of the root **SubmissionModel**.  Both of these models will utilize the 
+_libraryUpgrade_ and _partialLibraryUpgrade_ attributes of their _requirements_. The _atakliteClientModel_ will utilize an additional 
+_deploymentPlatformVersion_ attribute to introduce an additional form of library upgrade.
 
- For the _martiServerModel_ _libraryUpgrade_ _requirements_, allowable _libraryIdentifier_ values are listed in the 
- **JavaLibrary** definition in the Data Dictionary. The provided _libraryVersion_ must match with corresponding 
- **LatestVersion** value.  
- 
- The _atakliteClientModel_ _libraryUpgrade_ _requirements_ allowable _libraryIdentifier_ values are listed in the 
- **AndroidLibrary** definition in the Data Dictionary. The provided _libraryVersion_ must match with corresponding 
- **LatestVersion** value.  
- 
- The valid values for the _deploymentPlatformVersion_ field of _atakliteClientModel_ _requirements_ are listed in the 
- **AndroidPlatformVersion** definition in the Data Dictionary.
+ - The valid _atakLiteClientModel_ _deploymentPlatformVersion_ values are defined in the **AndroidPlatformVersion** object
+ - The valid _atakLiteClientModel_ _libraryUpgrade_ values are defined in the **ClientUpgradeLibrary** object
+ - The valid _atakLiteClientModel_ _partialLibraryUpgrade_ values are defined in the **ClientPartialUpgradeLibrary** object
+ - The valid _martiServerModel_ _libraryUpgrade_ values are defined in the **ServerUpgradeLibrary** object
+ - The valid _martiServerModel_ _partialLibraryUpgrade_ values are defined in the **ServerPartialUpgradeLibrary** object
  
 ### Endpoint Usage
 __Endpoint Type__: POST  
@@ -233,26 +228,14 @@ __Endpoint URL__: /action/libraryEvolution
     "atakLiteClientModel": {
         "requirements": {
             "deploymentPlatformVersion": "Android23",
-            "libraryUpgrade": {
-                "libraryIdentifier": "ToBeDetermined",
-                "libraryVersion": "1.3.3.7"
-            },
-            "partialLibraryUpgrade": {
-                "libraryIdentifier": "ToBeDetermined",
-                "libraryVersion": "1.3.3.7"
-            }
+            "libraryUpgrade": "ToBeDetermined_X_X",
+            "partialLibraryUpgrade": "Dropbox_X_X"
         }
     },
     "martiServerModel": {
         "requirements": {
-            "libraryUpgrade": {
-                "libraryIdentifier": "ImageSaverLibrary",
-                "libraryVersion": "2"
-            },
-            "partialLibraryUpgrade": {
-                "libraryIdentifier": "Dom4jCot",
-                "libraryVersion": "2"
-            }
+            "libraryUpgrade": "ImageSaverLibrary_2",
+            "partialLibraryUpgrade": "Dom4jCot_2"
         }
     }
 }  
@@ -281,11 +264,11 @@ __Description__: The model of adaptation for all ATAKLite Clients
 __Type__: JSON Object  
 __Description__: A requirement specification for an ATAKLite instance  
 
-| Field                     | Type                                    | Description                                                           |  
-| ------------------------- | --------------------------------------- | --------------------------------------------------------------------- |  
-| deploymentPlatformVersion | AndroidPlatformVersion                  | Which version of the Android platform the clients must be deployed on |  
-| libraryUpgrade            | ClientLibraryUpgradeRequirements        | A library upgrade that will trigger a mutation                        |  
-| partialLibraryUpgrade     | ClientPartialLibraryUpgradeRequirements | A library upgrade that will trigger a partial library upgrade         |  
+| Field                     | Type                        | Description                                                           |  
+| ------------------------- | --------------------------- | --------------------------------------------------------------------- |  
+| deploymentPlatformVersion | AndroidPlatformVersion      | Which version of the Android platform the clients must be deployed on |  
+| libraryUpgrade            | ClientUpgradeLibrary        | A library upgrade that will trigger a mutation                        |  
+| partialLibraryUpgrade     | ClientPartialUpgradeLibrary | A library upgrade that will trigger a partial library upgrade         |  
 
 #### AndroidPlatformVersion  
 __Type__: String Constant  
@@ -296,39 +279,21 @@ __Description__: Possible Android platforms to deploy on
 | Android21 | Baseline Android API version 21                                         |  
 | Android23 | Newer Android API version 23 which requires runtime permission requests |  
 
-#### ClientLibraryUpgradeRequirements  
-__Type__: JSON Object  
-__Description__: A library upgrade that will trigger a mutation to cause the library to be compatible  
-
-| Field             | Type                 | Description                           |  
-| ----------------- | -------------------- | ------------------------------------- |  
-| libraryIdentifier | ClientUpgradeLibrary | A library used within the application |  
-| libraryVersion    | str                  | The required version of the library   |  
-
 #### ClientUpgradeLibrary  
 __Type__: String Constant  
 __Description__: A client upgrade library that will cause a mutation  
 
-| Values         | Description                    | LatestVersion |  
-| -------------- | ------------------------------ | ------------- |  
-| ToBeDetermined | A yet-to-be determined library | 1.3.3.7       |  
-
-#### ClientPartialLibraryUpgradeRequirements  
-__Type__: JSON Object  
-__Description__: A library upgrade that will trigger a partial library upgrade to allow the library to be compatible  
-
-| Field             | Type                        | Description                         |  
-| ----------------- | --------------------------- | ----------------------------------- |  
-| libraryIdentifier | ClientPartialUpgradeLibrary | The identifier for the library      |  
-| libraryVersion    | str                         | The required version of the library |  
+| Values             | Description                |  
+| ------------------ | -------------------------- |  
+| ToBeDetermined_X_X | Libraries to be determined |  
 
 #### ClientPartialUpgradeLibrary  
 __Type__: String Constant  
 __Description__: A client library upgrade that will cause a partial upgrade  
 
-| Values         | Description                    | LatestVersion |  
-| -------------- | ------------------------------ | ------------- |  
-| ToBeDetermined | A yet-to-be determined library | 1.3.3.7       |  
+| Values      | Description                                                    |  
+| ----------- | -------------------------------------------------------------- |  
+| Dropbox_X_X | Version of dropbox containing a resolution for a security flaw |  
 
 #### MartiSubmissionModel  
 __Type__: JSON Object  
@@ -342,42 +307,23 @@ __Description__: The model of adaptation for the Marti server
 __Type__: JSON Object  
 __Description__: A requirement specification for a Marti server  
 
-| Field                 | Type                                    | Description                                                   |  
-| --------------------- | --------------------------------------- | ------------------------------------------------------------- |  
-| libraryUpgrade        | ServerLibraryUpgradeRequirements        | A library upgrade that will trigger a mutation                |  
-| partialLibraryUpgrade | ServerPartialLibraryUpgradeRequirements | A library upgrade that will trigger a partial library upgrade |  
-
-#### ServerLibraryUpgradeRequirements  
-__Type__: JSON Object  
-__Description__: A library upgrade that will trigger a mutation to cause the library to be compatible  
-
-| Field             | Type                 | Description                           |  
-| ----------------- | -------------------- | ------------------------------------- |  
-| libraryIdentifier | ServerUpgradeLibrary | A library used within the application |  
-| libraryVersion    | str                  | The required version of the library   |  
+| Field                 | Type                        | Description                                                   |  
+| --------------------- | --------------------------- | ------------------------------------------------------------- |  
+| libraryUpgrade        | ServerUpgradeLibrary        | A library upgrade that will trigger a mutation                |  
+| partialLibraryUpgrade | ServerPartialUpgradeLibrary | A library upgrade that will trigger a partial library upgrade |  
 
 #### ServerUpgradeLibrary  
 __Type__: String Constant  
 __Description__: A server upgrade library that will cause a mutation  
 
-| Values            | Description                      | LatestVersion |  
-| ----------------- | -------------------------------- | ------------- |  
-| ImageSaverLibrary | A library used for saving images | 2             |  
-
-#### ServerPartialLibraryUpgradeRequirements  
-__Type__: JSON Object  
-__Description__: A library upgrade that will trigger a partial library upgrade to allow the library to be compatible  
-
-| Field             | Type                        | Description                           |  
-| ----------------- | --------------------------- | ------------------------------------- |  
-| libraryIdentifier | ServerPartialUpgradeLibrary | A library used within the application |  
-| libraryVersion    | str                         | The required version of the library   |  
+| Values              | Description               |  
+| ------------------- | ------------------------- |  
+| ImageSaverLibrary_2 | Newer image saver library |  
 
 #### ServerPartialUpgradeLibrary  
 __Type__: String Constant  
 __Description__: A server library upgrade that will cause a partial upgrade  
 
-| Values   | Description                                                        | LatestVersion |  
-| -------- | ------------------------------------------------------------------ | ------------- |  
-| Dom4jCot | Dom4J library used for decoding incoming XML data into CoT objects | 2             |  
-
+| Values     | Description                  |  
+| ---------- | ---------------------------- |  
+| Dom4jCot_2 | Newer cot processing library |  

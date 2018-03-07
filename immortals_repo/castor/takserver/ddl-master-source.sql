@@ -1,0 +1,9 @@
+DROP TABLE source IF EXISTS;
+
+CREATE TABLE source
+(
+ id VARCHAR(16) NOT NULL,
+ name VARCHAR(16) NOT NULL,
+ channel VARCHAR(16) NOT NULL,
+ CONSTRAINT source_pkey PRIMARY KEY (id)
+ );

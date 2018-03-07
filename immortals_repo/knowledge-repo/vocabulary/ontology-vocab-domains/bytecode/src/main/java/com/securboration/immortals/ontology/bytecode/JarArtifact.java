@@ -19,7 +19,8 @@ public class JarArtifact extends BytecodeArtifact {
      * Identifies this artifact type
      */
     private BytecodeArtifactCoordinate coordinate;
-
+    
+    private String fileSystemPath;
     
     public ClasspathElement[] getJarContents() {
         return jarContents;
@@ -36,5 +37,12 @@ public class JarArtifact extends BytecodeArtifact {
     public void setCoordinate(BytecodeArtifactCoordinate coordinate) {
         this.coordinate = coordinate;
     }
-    
+
+    public String getFileSystemPath() {
+        return fileSystemPath;
+    }
+
+    public void setFileSystemPath(String fileSystemPath) {
+        this.fileSystemPath = fileSystemPath;
+    }
 }

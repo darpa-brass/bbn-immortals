@@ -1,10 +1,6 @@
 package com.bbn.cot;
 
 import com.bbn.filter.Images;
-import mil.darpa.immortals.core.Semantics;
-import mil.darpa.immortals.core.annotations.SemanticTypeBinding;
-import mil.darpa.immortals.core.annotations.triple.Triple;
-import mil.darpa.immortals.core.annotations.triple.Triples;
 import org.dom4j.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +15,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-@SemanticTypeBinding(semanticType = Semantics.Datatype_CotMessage)
-@Triples({
-        @Triple(predicateUri = Semantics.Predicate_DependsOn, objectUri = Semantics.Library_dom4j),
-        @Triple(predicateUri = Semantics.Predicate_DependsOn, objectUri = Semantics.Library_awt)
-})
-
 public class CotEventContainer {
     public static final String PRIMARY_KEY = "primary_key";
     public static final String IMAGE_KEY = "image";
@@ -32,7 +22,7 @@ public class CotEventContainer {
     protected Map<String, Object> context;
     protected Document doc;
     protected String uid = null;
-    
+
     Logger logger = LoggerFactory.getLogger(CotEventContainer.class);
 
     public CotEventContainer() {
@@ -156,6 +146,11 @@ public class CotEventContainer {
         return Double.parseDouble(getPointAttribute("hae"));
     }
 
+    public void setHae(double value, double le) {
+        setPointAddtribute("hae", Double.toString(value));
+        setPointAddtribute("le", Double.toString(value));
+    }
+
     public String getHow() {
         return getRootAttribute("how");
     }
@@ -176,7 +171,17 @@ public class CotEventContainer {
      */
 
     public List<Element> getLinks() {
-        return doc.selectNodes("/event/detail/link");
+        List<Node> nodes = doc.selectNodes("/event/detail/link");
+
+        if (nodes == null) {
+            return null;
+        } else {
+            List<Element> elements = new ArrayList<>(nodes.size());
+            for (Node n : nodes) {
+                elements.add(n.getParent());
+            }
+            return elements;
+        }
     }
 
     public String getLon() {
@@ -189,6 +194,10 @@ public class CotEventContainer {
 
     private String getPointAttribute(String attribute) {
         return doc.getRootElement().element("point").attributeValue(attribute);
+    }
+
+    private void setPointAddtribute(String key, String value) {
+        doc.getRootElement().element("point").attribute(key).setData(value);
     }
 
     public String getQos() {

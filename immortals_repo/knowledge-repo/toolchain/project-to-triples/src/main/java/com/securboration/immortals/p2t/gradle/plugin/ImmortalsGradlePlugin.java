@@ -14,10 +14,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 
-import com.securboration.immortals.project2triples.GradleData;
-import com.securboration.immortals.project2triples.ProjectToTriplesMain;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -27,7 +26,37 @@ import javax.xml.ws.http.HTTPException;
 
 
 public class ImmortalsGradlePlugin implements Plugin<Project>{
-	
+
+    public static class ImmortalsPluginExtension {
+        
+        private boolean staticAnalysisEnabled = false;
+
+        private String targetDir = null;
+        
+        private String[] includedLibs;
+
+        public boolean isStaticAnalysisEnabled() {
+            return staticAnalysisEnabled;
+        }
+
+        public void setStaticAnalysisEnabled(boolean value) {
+            staticAnalysisEnabled = value;
+        }
+
+        public String getTargetDir() {
+            return targetDir;
+        }
+
+        public String[] getIncludedLibs() {
+            return includedLibs;
+        }
+
+        public void setIncludedLibs(String[] includedLibs) {
+            this.includedLibs = includedLibs;
+        }
+    }
+    
+    
 	/**
 	 * These are blocked from being read
 	 */
@@ -119,9 +148,29 @@ public class ImmortalsGradlePlugin implements Plugin<Project>{
 			fw.write("WARNING: Context graph(s) were unable to be pushed to fuseki instance");
 		}
 	}
+	private static final String TASK_GROUP = "IMMoRTALS";
 
-    @Override
+	@Override
     public void apply(Project p) {
-		p.getTasks().create("kranalyze", AnalyzerGradleTask.class);
+	    
+	    p.getExtensions().add("krgp", new ImmortalsPluginExtension());
+
+		Task bytecode = p.getTasks().create("bytecode", BytecodeGradleTask.class);
+		bytecode.setGroup(TASK_GROUP);
+		bytecode.setDescription("Perform bytecode-triple generation for the current project.");
+		
+		Task constraint = p.getTasks().create("constraint", ConstraintGradleTask.class);
+		constraint.setGroup(TASK_GROUP);
+		constraint.setDescription("Enforce all constraints on current ontology.");
+		
+		Task cleanUp = p.getTasks().create("cleanup", PluginCleanupGradleTask.class);
+		cleanUp.shouldRunAfter(bytecode, constraint);
+		cleanUp.setGroup(TASK_GROUP);
+		cleanUp.setDescription("Cleanup tools, emit results.");
+		
+		Task all = p.getTasks().create("krgp").dependsOn(bytecode, constraint, cleanUp);
+		all.setGroup(TASK_GROUP);
+		all.setDescription("Executes the bytecode, constraint, and frame tasks.");
+
     }
 }

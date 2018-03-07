@@ -1,5 +1,0 @@
-#!/usr/bin/env expect
-
-spawn telnet 127.0.0.1 36143
-send "load_plugin ./droidscope_art/DECAF_plugins/java_function_tracer/libjavatracer.so\r"
-sleep 2

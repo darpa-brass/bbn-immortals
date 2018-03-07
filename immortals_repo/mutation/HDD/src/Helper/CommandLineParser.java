@@ -39,6 +39,9 @@ public class CommandLineParser {
         options.addOption("compileOutputPath",true,"compile output path");
         options.addOption("testResultOutputPath", true,"test result output path");
         options.addOption("isDebug", true,"set to produce verbose output");
+        options.addOption("totalTests", true,"total number of tests");
+        options.addOption("percentRemoval", true,"percentage of tests need removal");
+
 
 
 
@@ -99,6 +102,8 @@ public class CommandLineParser {
     public String getRunCommand(){return commandLine.getOptionValue("runCommand");}
     public String getBuildSuccessString2(){return commandLine.getOptionValue("buildSuccessString2");}
     public boolean getIsDebug(){return Boolean.parseBoolean(commandLine.getOptionValue("isDebug"));}
+    public int getTotalTests(){return Integer.parseInt(commandLine.getOptionValue("totalTests"));}
+    public int getPercentRemoval(){return Integer.parseInt(commandLine.getOptionValue("percentRemoval"));}
 
 
 

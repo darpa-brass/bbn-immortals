@@ -24,8 +24,17 @@ public class Stuffs {
         return Globals.EmptyString;
     }
 
+    public static String GetRelativePathFromFullPath(String root, String fullPath){
+        String ans = fullPath.replace(root,"");
+        System.out.println(ans);
+
+        return ans;
+    }
+
     public static void main(String[] args){
         System.out.println(DeriveMethodNameFromFullName("com.bbn.marti.Tests.testImageSave"));
+        String ans = GetRelativePathFromFullPath("/root/arpit-marti/applications/server/Marti/","/root/arpit-marti/applications/server/Marti/src/com/bbn/marti/net/CotEventSender.java");
+        System.out.println(ans);
 
     }
 }

@@ -1,0 +1,6 @@
+jar {
+    manifest {
+        attributes "Main-Class": "mil.darpa.immortals.config.ImmortalsConfig"
+    }
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}

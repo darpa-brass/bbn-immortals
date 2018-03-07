@@ -6,7 +6,7 @@ import time
 import traceback
 from abc import abstractmethod
 from threading import RLock
-from typing import Dict, IO, Set, Callable, Type
+from typing import Dict, IO, Set, Callable, Type, Union
 
 from pymmortals import threadprocessrouter as tpr
 from pymmortals.datatypes.root_configuration import get_configuration
@@ -45,9 +45,9 @@ class EventReceiverInterface:
 
 
 class _FileLogger(EventReceiverInterface):
-    _init_lock: RLock = RLock()
-    _filepath_file_map: Dict[str, IO] = {}
-    _filepath_lock_map: Dict[str, RLock] = {}
+    _init_lock = RLock()  # type: RLock
+    _filepath_file_map = {}  # type: Dict[str, IO]
+    _filepath_lock_map = {}  # type: Dict[str, RLock]
 
     @staticmethod
     def flush():
@@ -70,10 +70,10 @@ class _FileLogger(EventReceiverInterface):
                 _FileLogger._filepath_file_map[afp] = the_file
                 _FileLogger._filepath_lock_map[afp] = the_lock
 
-        self._lock: RLock = the_lock
-        self._file: IO = the_file
+        self._lock = the_lock  # type: RLock
+        self._file = the_file  # type: IO
 
-        self.transformer: Callable = None if transformer is None else transformer.transform
+        self.transformer = None if transformer is None else transformer.transform  # type: Callable
 
     def receive_event(self, event_tag: EventTag, data: object):
         """
@@ -90,11 +90,11 @@ class _FileLogger(EventReceiverInterface):
 # noinspection PyClassHasNoInit
 class EventRouter:
     def __init__(self):
-        self._lock: RLock = RLock()
-        self._raw_event_tag_subscriptions: Dict[EventTag, Set] = {k: set() for k in EventTags.get_all_tags()}
-        self._raw_event_type_subscriptions: Dict[EventType, Set] = {k: set() for k in EventType}
-        self._event_tag_submission_listeners: Dict[EventTag, Set] = {}
-        self._file_loggers: Set[_FileLogger] = set()
+        self._lock = RLock()  # type: RLock
+        self._raw_event_tag_subscriptions = {k: set() for k in EventTags.get_all_tags()}  # type: Dict[EventTag, Set]
+        self._raw_event_type_subscriptions = {k: set() for k in EventType}  # type: Dict[EventType, Set]
+        self._event_tag_submission_listeners = {}  # type: Dict[EventTag, Set]
+        self._file_loggers = set()  # type: Set[_FileLogger]
 
     def submit(self, event_tag: EventTag, data: object):
         self._submit(event_tag=event_tag, data=data, recurse_errors=True)
@@ -290,9 +290,9 @@ class AbstractEventReceiver:
         raise NotImplementedError
 
     def __init__(self, event_router: EventRouter):
-        self._event_router: EventRouter = event_router
-        self._monitored_events: Set[EventTag or EventType] = set()
-        self._subscription_lock: RLock = RLock()
+        self._event_router = event_router  # type: EventRouter
+        self._monitored_events = set()  # type: Set[Union[EventTag, EventType]]
+        self._subscription_lock = RLock()  # type: RLock
 
     def disconnect(self):
         with self._subscription_lock:

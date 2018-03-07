@@ -1,78 +1,280 @@
-apply plugin: 'eclipse'
+import mil.darpa.immortals.config.ImmortalsConfig
+import mil.darpa.immortals.das.ImmortalsServiceManifest
 
-apply from: 'shared/common.gradle'
+import java.nio.file.Paths
 
-task('dslSetup', type: Exec) {
-    group = 'Immortals'
-    description = 'Sets up the environment to build the DSL. If the proper Haskell tools are not installed this will fail!'
-    workingDir = IMMORTALS_ROOT + 'dsl/resource-dsl'
-    executable = 'stack'
-    args = ['setup']
+// Make the plugins and repositories (including the local one) available
+buildscript {
+    def IMMORTALS_REPO = Paths.get(getBuildscript().getSourceFile().parent).resolve('shared/IMMORTALS_REPO').toAbsolutePath()
+    repositories {
+        mavenCentral()
+        maven {
+            url IMMORTALS_REPO.toString()
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath 'mil.darpa.immortals:ImmortalsConfig:+'
+        classpath 'mil.darpa.immortals:ImmortalsGradle:+'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
 }
 
-task('dslClean', type: Exec) {
-    group = 'Immortals'
-    description = 'Cleans the DSL. If the proper Haskell tools are not installed this will fail!'
-    workingDir = IMMORTALS_ROOT + 'dsl/resource-dsl'
-    executable = 'stack'
-    args = ['clean']
+// Apply global plugins to all projects
+allprojects {
+    apply plugin: 'eclipse'
 }
 
-task('dslBuild', type: Exec) {
-    group = 'Immortals'
-    description = 'Builds the DSL. If the proper Haskell tools are not installed this will fail!'
-    workingDir = IMMORTALS_ROOT + 'dsl/resource-dsl'
-    executable = 'stack'
-    args = ['build']
-}.dependsOn(dslSetup)
+// TODO: Remove this once you validate it will not break eclipse.
+// Apply the java plugin since it makes project management easier
+apply plugin: 'java'
 
-task('knowledgeRepoClean', type: Exec) {
-    group = 'Immortals'
-    description = "Cleans the knowledge-repo"
-    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
-    executable = 'mvn'
-    args = ['-DskipTests', 'clean']
+// Get the root repository
+def IMMORTALS_ROOT = ImmortalsConfig.instance.globals.immortalsRoot
+
+/**
+ * @param exe The executable name to search the path for
+ * @return bool
+ */
+def isInPath(String exe) {
+    def result = exec {
+        commandLine 'which', exe
+        setIgnoreExitValue(true)
+    }.exitValue
+    return result == 0
 }
 
-// TODO: Might be a good idea to clean this from the repo too...
-task('knowledgeRepoBuild', type: Exec) {
-    dependsOn gradle.includedBuild('modules').task(':build')
-    group = 'Immortals'
-    description = 'Builds the knowledge-repo'
-    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
+/**
+ * @param var_key The environment variable to check if it has been set
+ * @return bool
+ */
+static def isEnvVarSet(String var_key) {
+    return (System.env[var_key] != null)
+}
+
+/**
+ * Helper method to complain about non-existent executables
+ */
+def exceptionOnNotExistsInPath(String exe, String requirementDetails, String downloadUrl) {
+    if (!isInPath(exe)) {
+        throw new GradleException("Cannot complete requested operation since executable '${exe}' needed for ${requirementDetails} is not in the path! Please see harness/README-setup.md or ${downloadUrl} to download!")
+    }
+}
+
+/**
+ * Helper method to complain about unset environment variables
+ */
+static def exceptionOnEnvVarUnset(String var_key, String requirementDetails, String downloadUrl) {
+    if (!isEnvVarSet(var_key)) {
+        throw new GradleException("Cannot complete requested operation since environment variable '${var_key}' needed for ${requirementDetails} is defined! Please see harness/README-setup.md or ${downloadUrl} to download!")
+    }
+}
+
+def buildKnowledgeRepo = task('buildKnowledgeRepo', type: Exec) {
+    group = 'IMMoRTALS Deploy'
+    description = 'Builds the knowledge repository war file'
+    workingDir = IMMORTALS_ROOT.resolve('knowledge-repo').toString()
     executable = 'mvn'
     args = ['-DskipTests', 'install']
 }
 
-task('buildAll') {
-    group = 'Immortals'
-    description = 'Builds _everything_ within the immortals repo'
-    dependsOn gradle.includedBuild('modules').task(':build')
-    dependsOn gradle.includedBuild('ATAKLite').task(':build')
-    dependsOn gradle.includedBuild('CotDbApp').task(':build')
-    dependsOn gradle.includedBuild('ConsumingPipeRunner').task(':build')
-    dependsOn gradle.includedBuild('CLITAK').task(':build')
-    dependsOn gradle.includedBuild('Marti').task(':build')
-    dependsOn(dslBuild)
-    dependsOn(knowledgeRepoBuild)
-    finalizedBy gradle.includedBuild('DAS').task(':build')
+def publish = task('publish') {
+    subprojects.each {
+        it.afterEvaluate {
+            // Collect all publish tasks
+            if (it.tasks.findByName('publish')) {
+                dependsOn("${it.path}:publish")
+            }
+        }
+    }
+
+    afterEvaluate {
+        finalizedBy(buildPublishClitak)
+    }
 }
 
-task('cleanAll') {
-    group = 'Immortals'
-    description = 'Cleans _everything_ within the immortals repo'
-    finalizedBy gradle.includedBuild('DAS').task(':clean')
-    finalizedBy(knowledgeRepoClean)
-    finalizedBy(dslClean)
-    dependsOn gradle.includedBuild('Marti').task(':clean')
-    dependsOn gradle.includedBuild('CLITAK').task(':clean')
-    dependsOn gradle.includedBuild('ConsumingPipeRunner').task(':clean')
-    dependsOn gradle.includedBuild('CotDbApp').task(':clean')
-    dependsOn gradle.includedBuild('ATAKLite').task(':clean')
-    finalizedBy(gradle.includedBuild('modules').task(':clean'))
-}
-task('deploy') {
-    finalizedBy(buildAll)
-    finalizedBy(':applications:client:ATAKLite:clean')
+def buildPublishClitak = task('buildPublishClitak', type: GradleBuild) {
+    buildFile = "${rootDir}/applications/client/CLITAK/build.gradle"
+    tasks = ['build', 'publish']
+    dependsOn(publish)
 }
 
+def buildMarti = task('buildMarti', type: GradleBuild) {
+    buildFile = "${rootDir}/applications/server/Marti/build.gradle"
+    tasks = ['build']
+    dependsOn(publish, buildPublishClitak)
+}
+
+def buildAtakLite = task('buildAtakLite', type: GradleBuild) {
+    buildFile = "${rootDir}/applications/client/ATAKLite/build.gradle"
+    tasks = ['build']
+    dependsOn(publish)
+}
+
+def setupExtensions = task("setupExtensions") {
+    afterEvaluate {
+        try {
+            ImmortalsServiceManifest.deploy()
+        } catch (Exception e) {
+            println(e.getMessage())
+        }
+    }
+}
+
+def immortalize = task('immortalize') {
+    group = "IMMoRTALS Deploy"
+    description = "Executes the analysis of all relevant files. If this is run without cleaning the target artifact directory you will likely encounter unexpected errors!"
+
+    if (System.env['ANDROID_HOME'] == null) {
+        dependsOn(
+                build,
+                task('immortalizeMarti', type: GradleBuild) {
+                    buildFile = "${rootDir}/applications/server/Marti/build.gradle"
+                    tasks = ['immortalize']
+                }
+        )
+        afterEvaluate {
+            finalizedBy(
+                    task('printImmortalizeDetails') {
+                        doLast {
+                            if (!isEnvVarSet('ANDROID_HOME')) {
+                                System.err.println('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                                System.err.println('ATAKLite was not build or analyzed due to ANDROID_HOME not being set to an      ')
+                                System.err.println('Anrdoid SDK! If you need to include ATAKLite please see harness/README-setup.md ')
+                                System.err.println('or https://developer.android.com/studio/releases/platform-tools.html.           ')
+                                System.err.println('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                            }
+                        }
+                    }
+            )
+        }
+    } else {
+        dependsOn(
+                task('immortalizeAtakLite', type: GradleBuild) {
+                    buildFile = "${rootDir}/applications/client/ATAKLite/build.gradle"
+                    tasks = ['immortalize']
+                },
+                task('immortalizeMarti', type: GradleBuild) {
+                    buildFile = "${rootDir}/applications/server/Marti/build.gradle"
+                    tasks = ['immortalize']
+                }
+        )
+    }
+
+    subprojects.each {
+        it.afterEvaluate {
+            if (it.tasks.findByName('immortalize')) {
+                dependsOn("${it.path}:immortalize")
+            }
+        }
+    }
+}
+
+// TODO: This should probably be part of the ImmortalsServiceManifest "deploy" method and "setupExtensions"...
+def setupdb = task('setupdb') {
+    group = "IMMoRTALS Deploy"
+    description = "Sets up the files for the database and then installs the immortals schema"
+
+    afterEvaluate {
+        doFirst {
+            exceptionOnNotExistsInPath('psql', 'databases', 'https://www.postgresql.org/')
+        }
+    }
+
+    doLast {
+        def commands = [
+                ['unzip', '-n', IMMORTALS_ROOT.resolve('castor/takserver/large_data_set.zip').toString(), '-d', IMMORTALS_ROOT.resolve('castor/takserver').toString()],
+                ['unzip', '-n', IMMORTALS_ROOT.resolve('castor/takserver/master_cot_event.zip').toString(), '-d', IMMORTALS_ROOT.resolve('castor/takserver').toString()],
+                ['unzip', '-n', IMMORTALS_ROOT.resolve('castor/takserver/large_data_set.zip').toString(), '-d', IMMORTALS_ROOT.resolve('database/server').toString()],
+                ['unzip', '-n', IMMORTALS_ROOT.resolve('castor/takserver/master_cot_event.zip').toString(), '-d', IMMORTALS_ROOT.resolve('database/server').toString()],
+                ['bash', IMMORTALS_ROOT.resolve('database/server/setup-postgres-db.sh').toString(), '--unattended'],
+                ['bash', IMMORTALS_ROOT.resolve('database/server/setup-immortals-schema0.sh').toString()]
+        ]
+
+        for (String[] cmd : commands) {
+            exec {
+                commandLine = cmd
+            }
+        }
+    }
+}
+
+// TODO: Make this a task definition once you remove applying java
+build {
+    group = 'IMMoRTALS'
+    afterEvaluate {
+        doFirst {
+            exceptionOnNotExistsInPath('mvn', 'everything', 'https://maven.apache.org/')
+        }
+
+        if (System.env['ANDROID_HOME'] == null) {
+            finalizedBy(
+                    buildPublishClitak,
+                    buildMarti,
+                    task('printBuildDetails') {
+                        doLast {
+                            if (!isEnvVarSet('ANDROID_HOME')) {
+                                System.err.println('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                                System.err.println('ATAKLite was not built due to ANDROID_HOME not being set to an android SDK!')
+                                System.err.println('If you need to use ATAKLite please see harness/README-setup.md or')
+                                System.err.println('https://developer.android.com/studio/releases/platform-tools.html.')
+                                System.err.println('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                            }
+                        }
+
+                    }
+            )
+        } else {
+            build.finalizedBy(buildPublishClitak, buildMarti, buildAtakLite)
+        }
+
+        subprojects.each {
+            it.afterEvaluate {
+                if (it.tasks.findByName('build')) {
+                    dependsOn("${it.path}:build")
+                }
+            }
+        }
+    }
+}
+
+afterEvaluate {
+    clean.group = "IMMoRTALS"
+}
+
+/**
+ * The deploy task.
+ */
+def deploy = task('deploy') {
+    group = 'IMMoRTALS'
+    description = 'Executes the full build and all deploy tasks required to deploy an operational system.'
+
+    afterEvaluate {
+        doFirst {
+//            exceptionOnNotExistsInPath('stack', 'compiling DSL', 'https://www.haskellstack.org')
+//            exceptionOnNotExistsInPath('z3', 'compiling DSL', 'https://github.com/Z3Prover/z3')
+            exceptionOnEnvVarUnset('ANDROID_HOME', 'ATAKLite', 'https://developer.android.com/studio/releases/platform-tools.html')
+        }
+
+    }
+
+    dependsOn(build)
+    finalizedBy(buildKnowledgeRepo, setupdb, immortalize, setupExtensions)
+}
+
+def redeploy = task('redeploy') {
+    group = 'IMMoRTALS'
+    description = 'Executes the full build and all deploy tasks that should be performed after a clean'
+
+    afterEvaluate {
+        doFirst {
+//            exceptionOnNotExistsInPath('stack', 'compiling DSL', 'https://www.haskellstack.org')
+//            exceptionOnNotExistsInPath('z3', 'compiling DSL', 'https://github.com/Z3Prover/z3')
+            exceptionOnEnvVarUnset('ANDROID_HOME', 'ATAKLite', 'https://developer.android.com/studio/releases/platform-tools.html')
+        }
+
+    }
+
+    dependsOn(build)
+    finalizedBy(buildKnowledgeRepo, immortalize, setupExtensions)
+}

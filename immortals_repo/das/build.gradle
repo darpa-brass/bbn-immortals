@@ -1,0 +1,41 @@
+import mil.darpa.immortals.config.ImmortalsConfig
+
+
+subprojects {
+    repositories {
+        mavenCentral()
+        maven {
+            url ImmortalsConfig.instance.globals.immortalsRepo
+        }
+        maven {
+            url 'https://repo.gradle.org/gradle/libs-releases'
+        }
+    }
+
+    apply plugin: 'java'
+
+    version = ImmortalsConfig.instance.build.das.publishVersion
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    test {
+        useJUnit {
+            excludeCategories 'mil.darpa.immortals.das.testing.DeploymentTests'
+        }
+    }
+
+    task testDeployment(type: Test) {
+        useJUnit {
+            includeCategories 'mil.darpa.immortals.das.testing.DeploymentTests'
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+        }
+    }
+
+}

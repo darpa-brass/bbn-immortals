@@ -1,1 +1,8 @@
+import groovy.json.JsonSlurper
+
+import java.nio.file.Paths
+
 rootProject.name = 'Marti'
+
+gradle.ext.IMMORTALS_REPO = new JsonSlurper().parseText(Paths.get(buildscript.sourceFile.parent)
+        .resolve('immortals_config.json').toFile().text)['globals']['immortalsRepo']

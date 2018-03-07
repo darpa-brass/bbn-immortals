@@ -4,10 +4,10 @@ DROP TABLE source IF EXISTS;
 
 CREATE TABLE source
 (
- id VARCHAR(16) NOT NULL,
+ source_id VARCHAR(16) NOT NULL,
  name VARCHAR(16),
  channel VARCHAR(16) NOT NULL,
- CONSTRAINT source_pkey PRIMARY KEY (id)
+ CONSTRAINT source_pkey PRIMARY KEY (source_id)
  );
 
 CREATE TABLE cot_event
@@ -20,13 +20,13 @@ CREATE TABLE cot_event
   servertime VARCHAR(16) NOT NULL,
   CONSTRAINT cot_event_pkey PRIMARY KEY (id),
   CONSTRAINT source_pk FOREIGN KEY (source_id)
-    REFERENCES public.source (id) MATCH SIMPLE
+    REFERENCES public.source (source_id) MATCH SIMPLE
     ON UPDATE RESTRICT ON DELETE RESTRICT
 );
 
 CREATE TABLE cot_event_position
 (
-  cot_event_id VARCHAR(16) NOT NULL,
+  id VARCHAR(16) NOT NULL,
   point_hae VARCHAR(16) NOT NULL,
   point_ce VARCHAR(16) NOT NULL,
   point_le VARCHAR(16) NOT NULL,
@@ -34,8 +34,8 @@ CREATE TABLE cot_event_position
   tileY VARCHAR(16) NOT NULL,
   longitude VARCHAR(24) NOT NULL,
   latitude VARCHAR(24) NOT NULL,
-  CONSTRAINT cot_event_position_pkey PRIMARY KEY (cot_event_id),
-  CONSTRAINT cot_event_fk FOREIGN KEY (cot_event_id)
+  CONSTRAINT cot_event_position_pkey PRIMARY KEY (id),
+  CONSTRAINT cot_event_fk FOREIGN KEY (id)
      REFERENCES public.cot_event (id) MATCH SIMPLE
      ON UPDATE RESTRICT ON DELETE RESTRICT
 );

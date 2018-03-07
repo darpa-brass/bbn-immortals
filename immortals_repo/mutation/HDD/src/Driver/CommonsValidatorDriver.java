@@ -17,6 +17,8 @@ import static java.lang.System.exit;
  * Created by arpit on 9/28/16.
  */
 public class CommonsValidatorDriver {
+    public static String rootFolder;
+
     public static void main(String args[]) throws Exception {
 
 
@@ -46,16 +48,16 @@ public class CommonsValidatorDriver {
         String testclassRelativePath = commandLineParser.getTestClassRelativePath();
         String testClassName = Stuffs.DeriveClassNameFromFullPath(testclassRelativePath);
         //String testClassName = "UrlValidatorTest";
-        String rootFolder = commandLineParser.getRootFolder();
+        rootFolder = commandLineParser.getRootFolder();
         String relativeFilePath = commandLineParser.getRelativePath();
         String methodName = commandLineParser.getmehtodame();
         String className = commandLineParser.getClassName();
         String testJarFile = commandLineParser.getTestJarFileName();
         String jarFile = commandLineParser.getJarFileName();
         String buildCommand = commandLineParser.getBuildcommand();
-        buildCommand = Globals.antBuildCommand;
+//        buildCommand = Globals.antBuildCommand;
 
-        String runCommand = Globals.antTestCommand;
+        String runCommand = commandLineParser.getRunCommand();
         String buildSuccessString = "BUILD SUCCESS";
         String runSuccessString = "";
 
@@ -71,7 +73,8 @@ public class CommonsValidatorDriver {
         FileOperationUtil.createDirectory(resultFolder);
         FileOperationUtil.copyFile(pristineFolder + relativeFilePath,resultFolder + className + ".java");
         FileOperationUtil.copyFile(pristineFolder + testclassRelativePath,rootFolder + testclassRelativePath);
-        int percentage = 20;
+        Globals.TotalNoOfTests = commandLineParser.getTotalTests();
+        int percentage = commandLineParser.getPercentRemoval();
         BuildAndRunAbstract buildAndRun;
         boolean buildOK;
         if( testSuiteName.isEmpty())
@@ -86,6 +89,7 @@ public class CommonsValidatorDriver {
             exit(-100);
         }
 
+        
         for(int i = 1;i<=10;i++){
 
             buildOK = buildAndRun.build();
@@ -104,7 +108,7 @@ public class CommonsValidatorDriver {
                 FileOperationUtil.copyFile(pristineFolder + testclassRelativePath,rootFolder + testclassRelativePath);
                 PrepareClassBasedOnLabeling prepareClassBasedOnLabeling2 = new PrepareClassBasedOnLabeling(rootFolder + testclassRelativePath,0);
                 prepareClassBasedOnLabeling2.processAsPerPercentage(percentage);
-                Globals.NoOfTestsToConsider = prepareClassBasedOnLabeling.deletedMethodList.size();
+                Globals.NoOfTestsToConsider = prepareClassBasedOnLabeling2.deletedMethodList.size();
                 buildOK = buildAndRun.build();
                 if(buildOK && prepareClassBasedOnLabeling2.deletedMethodList.size() > 0){
                     FileWriterUtil.appendLine(resultFolder + className + ".txt", i + "," + percentage + ","+ prepareClassBasedOnLabeling2.deletedMethodList.size() );
@@ -165,6 +169,5 @@ public class CommonsValidatorDriver {
 
 
     }
-
 
 }

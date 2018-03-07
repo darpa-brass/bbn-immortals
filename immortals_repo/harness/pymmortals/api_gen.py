@@ -2,7 +2,6 @@ import copy
 import os
 from typing import Dict, List, Set
 
-from pymmortals.datatypes.root_configuration import get_configuration
 from pymmortals.datatypes.serializable import Serializable
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.atakliterequirements import \
     AtakliteRequirements
@@ -10,10 +9,6 @@ from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.a
     ATAKLiteSubmissionModel
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements.androidplatformversion import \
     AndroidPlatformVersion
-from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements.clientlibraryupgraderequirements import \
-    ClientLibraryUpgradeRequirements
-from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements.clientpartiallibraryupgraderequirements import \
-    ClientPartialLibraryUpgradeRequirements
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements.clientpartialupgradelibrary import \
     ClientPartialUpgradeLibrary
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements.clientupgradelibrary import \
@@ -27,10 +22,6 @@ from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.globalmodel.glo
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.martirequirements import MartiRequirements
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.martisubmissionmodel import \
     MartiSubmissionModel
-from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.serverlibraryupgraderequirements import \
-    ServerLibraryUpgradeRequirements
-from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.serverpartiallibraryupgraderequirements import \
-    ServerPartialLibraryUpgradeRequirements
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.serverpartialupgradelibrary import \
     ServerPartialUpgradeLibrary
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.serverupgradelibrary import \
@@ -53,10 +44,13 @@ from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.result.teststat
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.result.validationstateobject import \
     ValidationStateObject
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.submissionmodel import SubmissionModel
-from pymmortals.pojoizer import Pojoizer, ConversionMethod, DocumentationTag
+from pymmortals.markdownifier import Markdownifier
+from pymmortals.pojoizer import DocumentationTag
 
+_immortals_root = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + '/../../') + '/'
 _target_package = 'pymmortals.generated'
-_target_module_directory = get_configuration().immortalsRoot + '/harness/' + _target_package.replace('.', '/') + '/'
+_target_module_directory = _immortals_root + 'harness/' + _target_package.replace('.',
+                                                                                  '/') + '/'
 _default_root_dir = 'shared/modules/core/src/main/java/'
 _default_packages_root = 'mil/darpa/immortals/core/api/ll/phase2'
 
@@ -82,7 +76,7 @@ def _merge_dict(source_dict: Dict, target_dict: Dict) -> Dict:
     return target_dict
 
 
-_sample_cp1_submission_model: SubmissionModel = SubmissionModel(
+_sample_cp1_submission_model = SubmissionModel(
     martiServerModel=MartiSubmissionModel(
         requirements=MartiRequirements(
             postgresqlPerturbation=DatabasePerturbation(
@@ -111,7 +105,7 @@ _sample_cp1_submission_model: SubmissionModel = SubmissionModel(
             )
         )
     )
-)
+)  # type: SubmissionModel
 
 _sample_cp2_submission_model = SubmissionModel(
     globalModel=GlobalSubmissionModel(
@@ -121,35 +115,23 @@ _sample_cp2_submission_model = SubmissionModel(
             )
         )
     )
-)
+)  # type: SubmissionModel
 
 _sample_cp3_submission_model = SubmissionModel(
     martiServerModel=MartiSubmissionModel(
         requirements=MartiRequirements(
-            partialLibraryUpgrade=ServerPartialLibraryUpgradeRequirements(
-                libraryIdentifier=ServerPartialUpgradeLibrary.Dom4jCot,
-                libraryVersion=ServerPartialUpgradeLibrary.Dom4jCot.latestVersion
-            ),
-            libraryUpgrade=ServerLibraryUpgradeRequirements(
-                libraryIdentifier=ServerUpgradeLibrary.ImageSaverLibrary,
-                libraryVersion=ServerUpgradeLibrary.ImageSaverLibrary.latestVersion
-            )
+            partialLibraryUpgrade=ServerPartialUpgradeLibrary.Dom4jCot_2,
+            libraryUpgrade=ServerUpgradeLibrary.ImageSaverLibrary_2
         )
     ),
     atakLiteClientModel=ATAKLiteSubmissionModel(
         requirements=AtakliteRequirements(
             deploymentPlatformVersion=AndroidPlatformVersion.Android23,
-            partialLibraryUpgrade=ClientPartialLibraryUpgradeRequirements(
-                libraryIdentifier=ClientPartialUpgradeLibrary.ToBeDetermined,
-                libraryVersion=ClientPartialUpgradeLibrary.ToBeDetermined.latestVersion
-            ),
-            libraryUpgrade=ClientLibraryUpgradeRequirements(
-                libraryIdentifier=ClientUpgradeLibrary.ToBeDetermined,
-                libraryVersion=ClientUpgradeLibrary.ToBeDetermined.latestVersion
-            )
+            partialLibraryUpgrade=ClientPartialUpgradeLibrary.Dropbox_X_X,
+            libraryUpgrade=ClientUpgradeLibrary.ToBeDetermined_X_X
         )
     )
-)
+)  # type: SubmissionModel
 
 _sample_unified_submission_model = copy.deepcopy(
     _sample_cp1_submission_model.to_dict(include_metadata=False, strip_nulls=True))
@@ -164,16 +146,9 @@ _sample_test_adapter_state = TestAdapterState(
     adaptation=AdaptationStateObject(
         adaptationStatus=DasOutcome.SUCCESS,
         details=AdaptationDetails(
-            adaptationStatusValue="SomeValue",
-            audits=[
-                "DAS did this",
-                "DAS did that",
-                "DAS is done"
-            ],
-            auditsAsString="DAS did this\nDAS did that\ DAS is done",
-            details="Some Additional Details",
-            selectedDfu="Phase 1 input here",
-            sessionIdentifier="PerturbationValidationInstanceIdentifier"
+            dasOutcome=DasOutcome.SUCCESS,
+            adaptationIdentifier="PerturbationValidationInstanceIdentifier",
+            details="Some Additional Details"
         )
     ),
     validation=ValidationStateObject(
@@ -182,11 +157,11 @@ _sample_test_adapter_state = TestAdapterState(
             TestStateObject(
                 testIdentifier="LocationSendTest",
                 intent="SendLocation",
-                desiredStatus=TestOutcome.COMPLETE,
-                actualStatus=TestOutcome.COMPLETE,
+                desiredStatus=TestOutcome.COMPLETE_PASS,
+                actualStatus=TestOutcome.COMPLETE_PASS,
                 details=TestDetails(
                     testIdentifier="LocationSendTest",
-                    currentState=TestOutcome.COMPLETE,
+                    currentState=TestOutcome.COMPLETE_PASS,
                     errorMessages=[],
                     detailMessages=["A sent to B",
                                     "B sent to A"]
@@ -195,11 +170,11 @@ _sample_test_adapter_state = TestAdapterState(
             TestStateObject(
                 testIdentifier="ImageSendTest",
                 intent="SendImage",
-                desiredStatus=TestOutcome.COMPLETE,
-                actualStatus=TestOutcome.COMPLETE,
+                desiredStatus=TestOutcome.COMPLETE_PASS,
+                actualStatus=TestOutcome.COMPLETE_PASS,
                 details=TestDetails(
                     testIdentifier="ImageSendTest",
-                    currentState=TestOutcome.COMPLETE,
+                    currentState=TestOutcome.COMPLETE_PASS,
                     errorMessages=[],
                     detailMessages=["A sent image to B",
                                     "B sent image to A"]
@@ -211,14 +186,12 @@ _sample_test_adapter_state = TestAdapterState(
 
 
 class ApiGenerator:
-    def __init__(self, root_dir: str, packages_root: str):
+    def __init__(self):
         # Pojoize the shared POJOs
-        self.pojoizer: Pojoizer = Pojoizer(conversion_method=ConversionMethod.VARS,
-                                           target_directory=_target_module_directory,
-                                           target_package=_target_package,
-                                           do_generate_markdown=True)
-        self.pojoizer.load_directory(root_directory=root_dir,
-                                     packages_root=packages_root)
+        self.markdownifier = Markdownifier()  # type: Markdownifier
+
+    def load_directory(self, root_dir: str, packages_root: str):
+        self.markdownifier.load_directory(root_directory=root_dir, packages_root=packages_root)
 
     def markdownify(self, apis: Set[DocumentationTag], input_example: Serializable):
         lines = list()
@@ -230,15 +203,19 @@ class ApiGenerator:
         lines.append('\n')
         lines.append('### Data Dictionary')
         lines.append('\n')
-        lines = lines + self.pojoizer.generate_pojo_spec_lines(apis=apis, omit_unstable=True,
-                                                               root_class_name=input_example.__class__.__name__)
-
+        lines = lines + self.markdownifier.markdownify(apis=apis, input_example=input_example)
         return lines
 
 
 def generate_apis():
-    ag = ApiGenerator(root_dir=os.path.join(get_configuration().immortalsRoot, 'shared/modules/core/src/main/java/'),
+    ag = ApiGenerator()
+    ag.load_directory(root_dir=os.path.join(_immortals_root,
+                                            'das/das-testharness-coordinator/src/main/java/'),
                       packages_root=_default_packages_root)
+
+    ag.load_directory(
+        root_dir=os.path.join(_immortals_root, 'das/das-context/src/main/java/'),
+        packages_root=_default_packages_root)
     cp1_lines = ag.markdownify(apis={DocumentationTag.P2CP1}, input_example=_sample_cp1_submission_model)
     open('ll_p2_cp1_api.md', 'w').writelines(cp1_lines)
 

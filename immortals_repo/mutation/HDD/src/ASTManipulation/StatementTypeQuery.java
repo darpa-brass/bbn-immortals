@@ -83,4 +83,6 @@ public class StatementTypeQuery {
     public static boolean isContinueStmt(Statement s){return FindType(s) == StatementType.ContnueStmt;}
     public static boolean isSynchronizedStmt(Statement s){return FindType(s) == StatementType.SynchronizedStmt;}
     public static boolean isWhileStmt(Statement s){return FindType(s) == StatementType.WhileStmt;}
+
+    public static boolean isReturnStmt(Statement s){return FindType(s) == StatementType.ReturnStmt;}
 }

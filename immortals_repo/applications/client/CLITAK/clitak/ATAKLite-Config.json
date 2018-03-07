@@ -29,7 +29,9 @@
   // Whether or not to attempt to load own previously saved location updates on startup
   "loadOwnLocationUpdatesFromLog" : true,
   // The storage path for saved location updates
-  "locationLogExternalStoragePath" : "ataklite/LocationLog.json",
+  "locationLogExternalStoragePath" : "clitak/LocationLog.json",
+  // Storage location
+  "storageDirectory" : "clitak/",
   // Server configuration details
   "serverConfig" : {
     // The URL of the server to connect to

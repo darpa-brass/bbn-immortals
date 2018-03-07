@@ -4,10 +4,6 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Base64;
 import android.util.Log;
-import mil.darpa.immortals.core.Semantics;
-import mil.darpa.immortals.core.annotations.SemanticTypeBinding;
-import mil.darpa.immortals.core.annotations.triple.Triple;
-import mil.darpa.immortals.core.annotations.triple.Triples;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -27,11 +23,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@SemanticTypeBinding(semanticType = Semantics.Datatype_CotMessage)
-@Triples({
-        @Triple(predicateUri = Semantics.Predicate_DependsOn, objectUri = Semantics.Ecosystem_Platform_Android),
-        @Triple(predicateUri = Semantics.Predicate_DependsOn, objectUri = Semantics.Library_dom4j)
-})
+
 public class CoTMessage implements Serializable {
 
     private static final long STALE_PERIOD_MS = 30000;
@@ -54,7 +46,7 @@ public class CoTMessage implements Serializable {
     private Integer imageWidth;
     private Bitmap.CompressFormat imageMime;
     private int imageSize;
-    
+
     private static final AtomicInteger imageCounter = new AtomicInteger();
 
     public void setImage(byte[] imageData, int imageHeight, int imageWidth, Bitmap.CompressFormat imageMime) {

@@ -10,6 +10,7 @@ class DataflowCutpoint(FeatureInjectionCutpoint):
     def __init__(self,
                  dataflowId: str = None,
                  humanReadableDesc: str = None,
+                 injectedCodeTemplate: str = None,
                  uuid: str = None):
-        super().__init__(humanReadableDesc=humanReadableDesc, uuid=uuid)
+        super().__init__(humanReadableDesc=humanReadableDesc, injectedCodeTemplate=injectedCodeTemplate, uuid=uuid)
         self.dataflowId = dataflowId

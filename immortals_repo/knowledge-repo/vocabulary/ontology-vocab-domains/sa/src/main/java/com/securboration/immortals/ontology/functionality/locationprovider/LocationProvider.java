@@ -20,6 +20,7 @@ public class LocationProvider extends Functionality {
                 new InitializeAspect(),
                 new GetLastKnownLocationAspect(),
                 new GetCurrentLocationAspect(),
+                new HighAccuracyLocationProvider()
         });
     }
     

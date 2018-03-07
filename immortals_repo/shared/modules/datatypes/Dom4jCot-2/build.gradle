@@ -1,8 +1,5 @@
-apply plugin: immortals.CoreDefinitions
-apply plugin: immortals.JavaDfu
-apply plugin: immortals.DfuBase
-apply plugin: immortals.PublishJavaDfu
+apply plugin: mil.darpa.immortals.ShadowJavaModule
 
 dependencies {
-    compile 'dom4j:dom4j:1.6.1'
+    compile 'org.dom4j:dom4j:2.1.0'
 }

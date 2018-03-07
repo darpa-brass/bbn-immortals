@@ -70,6 +70,7 @@
 						</goals>
 						<configuration>
 							<resources>
+								<!--
 								<resource>
 									<directory>${project.basedir}/../ontology-static/ontology</directory>
 									<excludes>
@@ -77,9 +78,11 @@
 									</excludes>
 									<targetPath>ontology/static</targetPath>
 								</resource>
+								TODO -->
 								<resource>
 									<directory>${project.basedir}/../ontology-generate/target/classes/ontology</directory>
 									<excludes>
+										<exclude>immortals_uber.ttl</exclude>
 										<exclude>immortals_scratchpad.ttl</exclude>
 									</excludes>
 									<targetPath>ontology/immortals-vocab</targetPath>

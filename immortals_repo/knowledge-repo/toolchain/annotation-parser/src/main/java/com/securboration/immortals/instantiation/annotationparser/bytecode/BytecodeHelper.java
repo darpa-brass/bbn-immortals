@@ -12,8 +12,6 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import com.securboration.immortals.instantiation.bytecode.printing.MethodPrinter;
-
 public class BytecodeHelper {
     
     public static String hash(byte[] data){
@@ -36,17 +34,6 @@ public class BytecodeHelper {
                          // mappings
         
         return cn;
-    }
-    
-    public static String getMethodBytecode(MethodNode mn){
-        
-        if(mn.instructions == null){
-            return null;
-        } else if(mn.instructions.size() == 0){
-            return null;
-        }
-        
-        return MethodPrinter.print(mn);
     }
     
     public static MethodNode getDeclaredMethod(

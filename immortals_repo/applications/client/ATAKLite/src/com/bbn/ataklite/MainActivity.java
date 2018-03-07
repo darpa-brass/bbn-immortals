@@ -25,7 +25,6 @@ import com.bbn.ataklite.service.SACommunicationService;
 import com.bbn.ataklite.service.SAIntentReceiver;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import mil.darpa.immortals.analytics.protocols.log4j.Log4jAnalyticsEndpoint;
 import mil.darpa.immortals.core.analytics.*;
 
 import javax.annotation.Nonnull;
@@ -81,18 +80,18 @@ public class MainActivity extends Activity implements MonitoredEntityFragment.On
         } else if (config.analyticsConfig.target == ATAKLiteConfig.AnalyticsTarget.STDOUT) {
             Analytics.initializeEndpoint(new AnalyticsStdoutEndpoint());
 
-        } else if (config.analyticsConfig.target == ATAKLiteConfig.AnalyticsTarget.NET_LOG4J) {
-            if (config.analyticsConfig.port <= 0 || config.analyticsConfig.url == null || config.analyticsConfig.url.equals("")) {
-                throw new RuntimeException("NET_LOG4J logging configured but the url and port are not configured!");
-            }
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Analytics.initializeEndpoint(new Log4jAnalyticsEndpoint(config.analyticsConfig.url, config.analyticsConfig.port));
-                }
-            });
-            Analytics.registerThread(t);
-            t.start();
+//        } else if (config.analyticsConfig.target == ATAKLiteConfig.AnalyticsTarget.NET_LOG4J) {
+//            if (config.analyticsConfig.port <= 0 || config.analyticsConfig.url == null || config.analyticsConfig.url.equals("")) {
+//                throw new RuntimeException("NET_LOG4J logging configured but the url and port are not configured!");
+//            }
+//            Thread t = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Analytics.initializeEndpoint(new Log4jAnalyticsEndpoint(config.analyticsConfig.url, config.analyticsConfig.port));
+//                }
+//            });
+//            Analytics.registerThread(t);
+//            t.start();
 
         } else {
             throw new RuntimeException("Unexpected analytics backend '" + config.analyticsConfig.target + "Specified!");

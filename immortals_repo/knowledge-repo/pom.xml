@@ -109,6 +109,7 @@
 		<module>vocabulary/ontology-vocab-aggregated</module>
 		
 		<module>vocabulary/ontology-vocab-domains/bytecode</module>
+		<module>vocabulary/ontology-vocab-domains/constraint</module>
 		<module>vocabulary/ontology-vocab-domains/core</module>
 		<module>vocabulary/ontology-vocab-domains/sa</module>
 		<module>vocabulary/ontology-vocab-domains/cp</module>
@@ -124,12 +125,10 @@
 		<!-- mechanisms for interacting with the knowledge repository -->
 		<module>knowledge-repo/repository-api</module>
 		<module>knowledge-repo/repository-service</module>
+		<module>knowledge-repo/ratiocination-engine</module>
 		
 		<!-- map objects to semantic constructs -->
 		<module>toolchain/semantic-object-mapper</module>
-		
-		<!-- tests -->
-		<module>tests/test-das-workflow</module>
 		
 		<!-- generates Java classes containing constants linked to ontology URIs for consumption by WebGME -->
 		<!--<module>vocabulary/uris-generate-webgme</module>-->
@@ -153,6 +152,9 @@
 		
 		<!-- exaples -->
 		<module>examples/atak-example</module>
+		
+		<!-- tests -->
+		<module>tests/test-das-workflow</module>
 		
 	</modules>
 

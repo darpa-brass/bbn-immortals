@@ -33,6 +33,26 @@ else
     source "$IMMORTALSRC_PATH"
 fi
 
+# This is hacky, but should help minimize some build issues...
+if [ "${1}" == "clean" ];then
+
+    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+    if [ "$SCRIPT_DIR" == "`pwd`" ];then 
+        # Get rid of the build artifacts
+        if [ -d "shared/IMMORTALS_REPO" ];then
+            rm -r "shared/IMMORTALS_REPO"
+        fi
+
+        if [ -d "knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS" ];then
+            rm -r "knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS"
+        fi
+    
+        # Cleans knowledge-repo
+        mvn --file knowledge-repo/pom.xml clean
+    fi
+fi
+
 ##############################################################################
 ##
 ##  Gradle start up script for UN*X

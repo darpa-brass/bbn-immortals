@@ -1,15 +1,17 @@
 package com.securboration.immortals.ontology.functionality.imagescaling;
 
+import com.securboration.immortals.ontology.constraint.PropertyImpactType;
 import com.securboration.immortals.ontology.functionality.Input;
 import com.securboration.immortals.ontology.functionality.Output;
 import com.securboration.immortals.ontology.functionality.aspects.DefaultAspectBase;
 import com.securboration.immortals.ontology.functionality.compression.LossyTransformation;
 import com.securboration.immortals.ontology.functionality.dataproperties.DataPropertyImpact;
 import com.securboration.immortals.ontology.functionality.dataproperties.ImpactType;
-import com.securboration.immortals.ontology.functionality.datatype.DataProperty;
 import com.securboration.immortals.ontology.functionality.datatype.Image;
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.ontology.property.Property;
+import com.securboration.immortals.ontology.property.impact.ImpactStatement;
+import com.securboration.immortals.ontology.property.impact.PropertyImpact;
 
 @ConceptInstance
 public class EnlargeImage extends DefaultAspectBase{
@@ -17,9 +19,19 @@ public class EnlargeImage extends DefaultAspectBase{
         super("enlarge");
         super.setOutputs(new Output[]{imageOut()});
         super.setInputs(new Input[]{imageIn(),desiredSizeIn()});
+        super.setImpactStatements(new ImpactStatement[] {getImpactOfEnlargingImage()});
     }
     
-    private static DataProperty getImpactOfShrinkOnNumPixels(){
+    private static ImpactStatement getImpactOfEnlargingImage() {
+        PropertyImpact impact = new PropertyImpact();{
+            impact.setImpactedProperty(NumberOfPixels.class);
+            impact.setImpactOnProperty(PropertyImpactType.PROPERTY_INCREASES);
+        }
+        
+        return impact;
+    }
+    
+    private static DataPropertyImpact getImpactOfShrinkOnNumPixels(){
         DataPropertyImpact p = new DataPropertyImpact();
         
         p.setImpact(ImpactType.INCREASES);

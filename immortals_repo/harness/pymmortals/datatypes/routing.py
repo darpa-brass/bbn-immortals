@@ -57,7 +57,7 @@ class EventTag:
 
 
 _type_tag_dictionary = {}
-_all_tags: Set[EventTag] = set()
+_all_tags = set()  # type: Set[EventTag]
 
 
 # noinspection PyClassHasNoInit

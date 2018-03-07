@@ -1,0 +1,332 @@
+{
+    "installationRoot": "${HOME}/.immortals/",
+    "tempDirectory": "{installationRoot}tmp/",
+    "targetInstallationPlatforms": {
+        "osx": {
+            "identifier": "osx",
+            "packageManagerInitCommands": [
+                "brew update"
+            ],
+            "packageManagerInstallationCommand": "brew install",
+            "requiredPlatformPackages": []
+        },
+        "ubuntu": {
+            "identifier": "ubuntu",
+            "packageManagerInitCommands": [
+                "sudo apt-get update"
+            ],
+            "packageManagerInstallationCommand": "sudo apt-get -y install",
+            "requiredPlatformPackages": [
+                "software-properties-common",
+                "curl",
+                "wget",
+                "vim",
+                "subversion",
+                "maven",
+                "build-essential",
+                "apt-transport-https",
+                "ca-certificates",
+                "unzip",
+                "python3-pip",
+                "python3-bottle",
+                "python3-cherrypy3",
+                "python3-requests"
+            ]
+        }
+    },
+    "applications": [
+        {
+            "identifier": "java",
+            "version": "1.8",
+            "versionExtractionCommand": "java -version",
+            "versionExtractionRegex": "(?<=['java'|'openjdk'] version \")[0-9\\-._]+",
+            "environmentTag": "BASE",
+            "homeExportVariable": "JAVA_HOME",
+            "homeExportRequired": true,
+            "pathExports": [
+                "bin"
+            ],
+            "requiredExecutables": [
+                "bin/java",
+                "bin/javac",
+                "bin/jar"
+            ],
+            "packageDependencies": [],
+            "setupCommands": [],
+            "osx": {
+                "home": "/Library/Java/JavaVirtualMachines/jdk*jdk/contents/Home/",
+                "setupCommands": [
+                    "brew cask install java"
+                ]
+            },
+            "linux": {
+                "ubuntu": {
+                    "home": "/usr/lib/jvm/java-8-openjdk-amd64",
+                    "packageDependencies": [
+                        "openjdk-8-jdk-headless"
+                    ]
+                }
+            }
+        },
+        {
+            "identifier": "android-sdk",
+            "environmentTag": "ANDROID",
+            "home": "{installationRoot}android-sdk",
+            "homeExportVariable": "ANDROID_HOME",
+            "homeExportRequired": true,
+            "packageDependencies": [],
+            "pathExports": [
+                "tools/bin",
+                "emulator",
+                "platform-tools"
+            ],
+            "requiredExecutables": [
+                "tools/bin/sdkmanager",
+                "tools/bin/avdmanager"
+            ],
+            "setupCommands": [],
+            "subInstaller": {
+                "installationCommand": "sdkmanager --verbose",
+                "packageList": [
+                    "tools",
+                    "platform-tools",
+                    "build-tools;25.0.2",
+                    "platforms;android-21",
+                    "platforms;android-23",
+                    "extras;google;google_play_services",
+                    "extras;android;m2repository",
+                    "extras;google;m2repository"
+                ]
+            },
+            "osx": {
+                "setupCommands": [
+                    "wget tools_r25.2.3-macosx.zip --directory-prefix {tempDirectory}",
+                    "mkdir {home}",
+                    "unzip {tempDirectory}tools_r25.2.3-macosx.zip -d {home}",
+                    "mkdir {home}/licenses",
+                    "echo '\n8933bad161af4178b1185d1a37fbf41ea5269c55\n\nd56f5187479451eabf01fb78af6dfcb131a6481e' > {home}/licenses/android-sdk-license"
+                ]
+            },
+            "linux": {
+                "ubuntu": {
+                    "setupCommands": [
+                        "sudo dpkg --add-architecture i386",
+                        "sudo apt-get -y update",
+                        "sudo apt-get -y install libc6:i386 qemu libncurses5:i386 libstdc++6:i386 lib32z1 libpulse0 libx11-6:i386 libx11-6 libgl1-mesa-glx",
+                        "wget https://dl.google.com/android/repository/tools_r25.2.3-linux.zip --directory-prefix {tempDirectory}",
+                        "mkdir {home}",
+                        "unzip {tempDirectory}/tools_r25.2.3-linux.zip -d {home}",
+                        "mkdir {home}/licenses",
+                        "echo '\n8933bad161af4178b1185d1a37fbf41ea5269c55\n\nd56f5187479451eabf01fb78af6dfcb131a6481e' > {home}/licenses/android-sdk-license",
+                        "if [ -e '/dev/kvm' ];then\n  sudo adduser ${USER} kvm\nfi"
+                    ]
+                }
+            }
+        },
+        {
+            "identifier": "fuseki",
+            "environmentTag": "FULL",
+            "version": "2.3.1",
+            "home": "{installationRoot}fuseki",
+            "versionExtractionCommand": "./fuseki-server --version",
+            "versionExtractionRegex": "(?=.*\\nFuseki:\\s)(?<=VERSION:\\s)[0-9.]+",
+            "homeExportVariable": "FUSEKI_HOME",
+            "homeExportRequired": true,
+            "pathExports": [],
+            "packageDependencies": [],
+            "requiredExecutables": [
+                "fuseki-server"
+            ],
+            "setupCommands": [
+                "wget http://archive.apache.org/dist/jena/binaries/apache-jena-fuseki-{version}.tar.gz --directory-prefix {tempDirectory}",
+                "tar xvzf {tempDirectory}/apache-jena-fuseki-{version}.tar.gz -C {tempDirectory}",
+                "mv {tempDirectory}/apache-jena-fuseki-{version} {home}"
+            ]
+        },
+        {
+            "identifier": "gradle",
+            "environmentTag": "FULL",
+            "version": "3.4.1",
+            "versionExtractionCommand": "gradle --version",
+            "versionExtractionRegex": "(?=\\-*)(?<=\nGradle\\s)[0-9.]+",
+            "home": "{installationRoot}gradle",
+            "pathExports": [
+                "bin"
+            ],
+            "requiredExecutables": [
+                "bin/gradle"
+            ],
+            "homeExportVariable": "GRADLE_HOME",
+            "homeExportRequired": true,
+            "packageDependencies": [],
+            "setupCommands": [
+                "wget https://services.gradle.org/distributions/gradle-{version}-bin.zip --directory-prefix {tempDirectory}",
+                "unzip {tempDirectory}/gradle-{version}-bin.zip -d {installationRoot}",
+                "mv {installationRoot}gradle-{version} {home}"
+            ]
+        },
+        {
+            "identifier": "maven",
+            "version": "3",
+            "versionExtractionCommand": "mvn --version",
+            "versionExtractionRegex": "(?<=Apache Maven )[0-9]",
+            "environmentTag": "BASE",
+            "home": "{installationRoot}apache-maven",
+            "pathExports": [
+                "bin"
+            ],
+            "requiredExecutables": [
+                "bin/mvn"
+            ],
+            "homeExportRequired": false,
+            "setupCommands": [
+                "wget http://www-us.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz --directory-prefix {tempDirectory}",
+                "tar xvzf {tempDirectory}apache-maven-3.3.9-bin.tar.gz -C {installationRoot}",
+                "mv {installationRoot}/apache-maven-3.3.9 {home}"
+            ],
+            "packageDependencies": []
+        },
+        {
+            "identifier": "z3",
+            "environmentTag": "DSL",
+            "version": "4.4.1",
+            "home": "{installationRoot}z3",
+            "versionExtractionCommand": "z3 --version",
+            "versionExtractionRegex": "(?<=Z3 version )[0-9.]+(?=.*)",
+            "pathExports": [
+                "bin"
+            ],
+            "requiredExecutables": [
+                "bin/z3"
+            ],
+            "homeExportRequired": false,
+            "packageDependencies": [],
+            "setupCommands": [],
+            "osx": {
+                "setupCommands": [
+                    "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-osx-10.11.zip --directory-prefix {tempDirectory}",
+                    "unzip {tempDirectory}/z3-{version}-x64-osx-10.11.zip -d {installationRoot}",
+                    "mv {installationRoot}z3-{version}-x64-osx-10.11 {home}"
+                ]
+            },
+            "linux": {
+                "ubuntu": {
+                    "setupCommands": [
+                        "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-ubuntu-14.04.zip --directory-prefix {tempDirectory}",
+                        "unzip {tempDirectory}/z3-{version}-x64-ubuntu-14.04.zip -d {installationRoot}",
+                        "mv {installationRoot}z3-{version}-x64-ubuntu-14.04 {home}"
+                    ]
+                }
+            }
+        },
+        {
+            "identifier": "stack",
+            "environmentTag": "DSL",
+            "pathExports": [],
+            "requiredExecutables": [
+                "stack"
+            ],
+            "homeExportRequired": false,
+            "packageDependencies": [],
+            "setupCommands": [],
+            "osx": {
+                "setupCommands": [
+                    "brew update",
+                    "brew install haskell-stack"
+                ]
+            },
+            "linux": {
+                "packageDependencies": [
+                    "haskell-platform"
+                ],
+                "setupCommands": [
+                    "wget -qO- https://get.haskellstack.org/ | sh"
+                ]
+            }
+        },
+        //        "wget https://dl.google.com/android/repository/tools_r25.2.3-linux.zip --directory-prefix {tempDirectory}",
+        //        "mkdir {home}",
+        //        "unzip {tempDirectory}/tools_r25.2.3-linux.zip -d {home}",
+        //        "mkdir {home}/licenses",
+        //        "echo '\n8933bad161af4178b1185d1a37fbf41ea5269c55\n\nd56f5187479451eabf01fb78af6dfcb131a6481e' > {home}/licenses/android-sdk-license",
+        //        "if [ -e '/dev/kvm' ];then\n  sudo adduser ${USER} kvm\nfi"
+        {
+            "identifier": "voltdb",
+            "environmentTag": "DATABASE",
+            "version": "8.0",
+            "home": "{installationRoot}voltdb",
+            "versionExtractionCommand": "voltdb --version",
+            "versionExtractionRegex": "(?<=voltdb version )[0-9.]+",
+            "homeExportVariable": "VOLTDB_HOME",
+            "homeExportRequired": true,
+            "pathExports": [
+                "bin"
+            ],
+            "packageDependencies": [],
+            "requiredExecutables": [
+                "bin/voltdb"
+            ],
+            "osx": {
+                "packageDependencies": [
+                    "ant",
+                    "cmake",
+                    "ccache"
+                ]
+            },
+            "linux": {
+                "ubuntu": {
+                    "packageDependencies": [
+                        "ant",
+                        "build-essential",
+                        "ant-optional",
+                        "openjdk-8-jdk-headless",
+                        "cmake",
+                        "ntp",
+                        "ccache",
+                        "git-svn",
+                        "python-httplib2",
+                        "python-setuptools",
+                        "python-dev",
+                        "apt-show-versions"
+                    ]
+                }
+            },
+            "setupCommands": [
+                "git clone https://github.com/VoltDB/voltdb {home}",
+                "cd {home}",
+                "ant"
+            ]
+        },
+        {
+            "identifier": "postgresql",
+            "environmentTag": "DATABASE",
+            "versionExtractionCommand": "psql --version",
+            "versionExtractionRegex": "(?<=psql \\(PostgreSQL\\) )[0-9.+]+",
+            "setupCommands": [],
+            "requiredExecutables": [
+                "psql"
+            ],
+            "homeExportRequired": false,
+            "linux": {
+                "ubuntu": {
+                    "version": "9.5",
+                    "packageDependencies": [
+                        "unzip",
+                        "postgresql-{version}"
+                    ],
+                    "setupCommands": [
+                        "sudo usermod -a -G postgres ${USER}",
+                        "sudo -u postgres psql -a -c \"CREATE USER ${USER} SUPERUSER INHERIT CREATEDB CREATEROLE;\"",
+                        "createdb"
+                    ]
+                }
+            },
+            "osx": {
+                "version": "9.5",
+                "packageDependencies": [
+                    "postgresql"
+                ]
+            }
+        }
+    ]
+}

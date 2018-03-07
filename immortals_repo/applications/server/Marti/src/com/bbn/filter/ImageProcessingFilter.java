@@ -5,6 +5,7 @@ import com.bbn.filter.Images.ImageData;
 import com.bbn.marti.util.Assertion;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
+import org.dom4j.Node;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ public class ImageProcessingFilter implements Filter<CotEventContainer> {
     private static Logger log = Logger.getLogger(ImageFormattingFilter.class);
 
     public CotEventContainer filter(CotEventContainer c) {
-        List<Element> imageElems = (List<Element>) c.getDocument().selectNodes(Images.IMAGE_PATH);
+        List<Node> imageElems = c.getDocument().selectNodes(Images.IMAGE_PATH);
 
         if (imageElems.size() > 0) {
             log.debug("stripping " + imageElems.size() + " images from the cot message");
@@ -26,9 +27,9 @@ public class ImageProcessingFilter implements Filter<CotEventContainer> {
             Assertion.zero(dataList.size());
 
             // convert each image element to an ImageData construct attached to the CoT message
-            for (Element imageElem : imageElems) {
+            for (Node imageElem : imageElems) {
                 // convert element to imageData
-                ImageData data = Images.imageDataFromElement(imageElem);
+                ImageData data = Images.imageDataFromElement((Element)imageElem);
 
                 // add data to data list if nonnull (something terrible could have happened)
                 if (data != null) {

@@ -15,4 +15,6 @@ import org.postgresql.ds.PGPoolingDataSource;
 public interface DataDFU {
 
 	CachedRowSet execute(PGPoolingDataSource dataSource, Map<String, Object> parameters) throws Exception;
+	
+	public static final String COT_SCHEMA = "http://mil.darpa.immortals.schemas#DefaultCotSchema";
 }

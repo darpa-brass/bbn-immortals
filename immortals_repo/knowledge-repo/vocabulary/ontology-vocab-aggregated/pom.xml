@@ -85,16 +85,30 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
+		<dependency><!-- functional -->
 			<groupId>com.securboration</groupId>
 			<artifactId>immortals-ontologies-functional</artifactId>
 			<version>${immortals.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
+		<dependency><!-- resources -->
 			<groupId>com.securboration</groupId>
 			<artifactId>immortals-ontologies-domains-resources</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-constraint</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency><!-- inference -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-inference</artifactId>
 			<version>${immortals.version}</version>
 			<scope>compile</scope>
 		</dependency>
@@ -140,6 +154,7 @@
 								<source>${project.basedir}/../ontology-vocab-domains/analysis/src/main/java</source>
 								<source>${project.basedir}/../ontology-vocab-domains/java-project/src/main/java</source>
 								<source>${project.basedir}/../ontology-vocab-domains/functional/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/constraint/src/main/java</source>
 								<source>${project.basedir}/../ontology-vocab-domains/resources/src/main/java</source>
 								<source>${project.basedir}/../ontology-vocab-domains/fm/src/main/java</source>
 							</sources>

@@ -1,20 +1,8 @@
-Knowledge Repo Gradle Plugin (KRGP)
+Knowledge Repository Gradle Plugin (KRGP)
 
-== Summary ==
- The KRGP will parse through files on a project's classpath, as defined by the gradle project properties,
- and perform bytecode analysis. The KRGP will convert the files found into rdf models and these models will be 
- output based on the type of information found as well as origin of the model (jar, class, embedded). Additionally,
- call graphs are produced to the directory 'krgp/analysis', based on the specific classpath analyzed. Finally, the
- plugin also looks for various Functionality annotations that are attached to the source code; the @FunctionalityTest
- annotation will prompt the KRGP to invoke the corresponding method and record its location, whether the
- test was successful and its start time.
-	
- There will be an Uber file produced to the base directory, containing the overall, "JavaProject" model.
- 
- Additionally, there are various configurations that allow for models produced to be automatically pushed to
- a running Fuseki instance using the Knowledge Repository Service (KRS), as well as control what 
- classpaths the user would like analyzed.
-	
+== Purpose ==
+The KRGP is a means to automate the various functionality provided by the knowledge repo, in the form of a custom gradle plugin.
+
 == Setup ==
 The KRGP needs the following placed in the gradle build file of the project:
 
@@ -28,29 +16,46 @@ The KRGP needs the following placed in the gradle build file of the project:
 			}
 		}
 	 }
-
-	2) version = IMMoRTALS_Version**
 	
-    3) apply plugin: 'com.securboration.p2t'**
+    2) apply plugin: 'com.securboration.p2t'**
     
-	After the compilation and copying process, put 3) in the gradle build file. 
+	After the compilation and copying process, put 2) in the gradle build file. 
 
-**2) and 3) reference the common.gradle resource, so place these instructions after it has been applied.
-
-== Configuration == 
-There are three configurations to prepare before the plugin can push the graphs produced automatically:
-
-    1) pushContext -> disabled by default, if true will attempt to push graphs produced by plugin to Fuseki instance
-    2) repoServiceAddress -> http://localhost:8080/ by default, where the KRS is hosted
-    3) repoServiceContextID -> unique identifier of context previously created by KRS
+    **2) references the common.gradle resource, so place this instructions after it has been applied.
     
-Once these configurations are properly populated, the graphs will be pushed automatically after bytecode analysis.
+ Additionally, the user needs to specify where the aggregate plugin results will be produced to. This is done via creating a
+ gradle property named "pluginOutput" and populating it with the path of the directory where you would like the artifacts to go, e.g. "C:/IMMoRTALS/krgp".
+ This can be done explicitly via the command line e.g. "gradle bytecode -PpluginOutput='C:/IMMoRTALS/krgp'" or with a static property set somewhere in the
+ gradle environment.
 
-Another configuration option that can be set is:
+== Directives ==
 
-    completeAnalysis -> disabled by default, if true every classpath will be analyzed (may result in increased execution times)
+- Bytecode Structure Generation
+    -- This will parse for source files as well as any dependencies present in the gradle project and analyze the bytecode. The results are
+    -- bytecode structures in the format of triples, produced to {$pluginOutput} + "projectName" + "/structures/". If the user wants these rdf graphs pushed
+    -- to a fuseki instance, that can be performed as well, but only once configuration options are provided:
+	        1) pushContext -> disabled by default, if true will attempt to push graphs produced by plugin to Fuseki instance
+            2) repoServiceAddress -> http://localhost:8080/ by default, where the service is hosted
+            3) repoServiceContextID -> unique identifier of context previously created
+    -- Bytecode generation can be executed with "gradle bytecode"
     
-By default, only the "compile" and "testCompile" classpaths are analyzed.
-	
-== Running the plugin == 
-"gradle kranalyze" will now execute the KRGP
+- Constraint Assessment*
+  -- This will enforce any constraints given in the current ontology. Violations as well as repairs will be detailed in a report
+  -- and converted to triples. This rdf graph will be produced to {$pluginOutput} + "projectName" + "/reports/".
+  -- Constraint Assessment can be executed with "gradle constraint -PgraphName='X'", where X is the name of the graph you want pushed to fuseki
+  
+- Analysis Frame Assessment*
+  -- This will analyze any present data flows in the current ontology. A report of the inconsistencies, like differing data
+  -- properties and the mishandling of the observed data in general will be converted to triples. This rdf graph will be produced to 
+  -- {$pluginOutput} + "projectName" + "/reports/"
+  -- Analysis Frame Assessment can be executed with "gradle frame -PgraphName='X'", where X is the name of the graph you want pushed to fuseki
+  
+- Complete Coverage
+  -- Additionally, the user can perform all of the functionality above with the single command "gradle krgp -PgraphName='X'", where X is the name of the graph you want pushed to fuseki
+
+* In order to perform both constraint and analysis frame assessments, data flow information must be supplemented in the form of ttl graphs. Furthermore,
+  they must be placed in {$pluginOutput} + "projectName" + "structures/supplements", unless otherwise specified with the "supplements" property e.g. -Psupplements="C:/IMMORTALS/supplements"
+  
+== Example ==
+Complete example projects with varying dataflow environments and utilizing all the functionality described above are available at trunk/knowledge-repo/examples. Specifying
+-Pbehavior="good" will simulate a positive result where data flows are consistent whereas -Pbehavior="bad" will result in errors that will be resolved by IMMoRTALS

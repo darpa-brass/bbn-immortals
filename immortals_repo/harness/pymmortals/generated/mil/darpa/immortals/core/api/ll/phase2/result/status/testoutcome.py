@@ -5,7 +5,7 @@ from typing import FrozenSet
 # noinspection PyPep8Naming
 class TestOutcome(Enum):
     def __init__(self, description: str):
-        self.description: str = description
+        self.description = description  # type: str
 
     PENDING = (
         "Indicates the specified action is pending (non-terminal)")
@@ -16,8 +16,14 @@ class TestOutcome(Enum):
     NOT_APPLICABLE = (
         "Indicates the specified action is not applicable")
 
-    COMPLETE = (
-        "See LL Evaluation Methodology")
+    COMPLETE_PASS = (
+        "Indicates the test completed with a 'PASS'")
+
+    COMPLETE_DEGRADED = (
+        "Indicates the test completed with a 'DEGRADED'")
+
+    COMPLETE_FAIL = (
+        "Indicates the test completed with a 'FAIL'")
 
     INVALID = (
         "See LL Evaluation Methodology")

@@ -3,12 +3,11 @@ package com.bbn.marti.service;
 import com.bbn.marti.immortals.SubmissionServiceFunctionalUnit;
 import com.bbn.marti.immortals.converters.TcpInitializationDataToTcpSocketServer;
 import com.bbn.marti.immortals.pipelines.TcpSocketServerToCotServerChannel;
-import mil.darpa.immortals.analytics.protocols.log4j.Log4jAnalyticsEndpoint;
+import com.google.gson.Gson;
 import mil.darpa.immortals.core.analytics.Analytics;
 import mil.darpa.immortals.core.analytics.AnalyticsEndpointInterface;
 import mil.darpa.immortals.core.analytics.AnalyticsEvent;
 import mil.darpa.immortals.core.analytics.AnalyticsVerbosity;
-import mil.darpa.immortals.core.api.ApiHelper;
 import mil.darpa.immortals.core.api.applications.AnalyticsConfig;
 import mil.darpa.immortals.core.api.applications.AnalyticsTarget;
 import mil.darpa.immortals.core.api.applications.MartiConfig;
@@ -24,7 +23,7 @@ import java.rmi.registry.Registry;
 public class MartiMain {
 
     public static final String DEFAULT_CONFIG_FILE = "Marti-Config.json";
-    
+
     public static int defaultPort = 3334;
 
     private SubscriptionManager subMgr;
@@ -33,14 +32,16 @@ public class MartiMain {
     private BrokerService brokerService;
     public static MartiConfig martiConfig;
 
+    public static final Gson gson = new Gson();
+
     private SubmissionServiceFunctionalUnit submissionService;
-    
+
     public static MartiConfig getConfig() {
         return martiConfig;
     }
 
     CoreConfig.ReadTcpConfigurationData readTcpConfigurationData;
-    
+
     public void initializeAnalytics(@Nullable AnalyticsEndpointInterface analyticsEndpointInterface) {
         AnalyticsConfig analyticsConfig = martiConfig.analyticsConfig;
         if (analyticsConfig == null || analyticsConfig.target == AnalyticsTarget.DEFAULT ||
@@ -49,7 +50,7 @@ public class MartiMain {
 
                 @Override
                 public void log(AnalyticsEvent e) {
-                    System.out.println("ImmortalsAnalytics: " + ApiHelper.getSharedGson().toJson(e));
+                    System.out.println("ImmortalsAnalytics: " + gson.toJson(e));
                 }
 
                 @Override
@@ -69,18 +70,19 @@ public class MartiMain {
             }
             Analytics.initializeEndpoint(analyticsEndpointInterface);
 
-        } else if (analyticsConfig.target == AnalyticsTarget.NET_LOG4J) {
-            if (analyticsConfig.port <= 0 || analyticsConfig.url == null || analyticsConfig.url.equals("")) {
-                throw new RuntimeException("NET_LOG4J logging configured but the url and port are not configured!");
-            }
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Analytics.initializeEndpoint(new Log4jAnalyticsEndpoint(analyticsConfig.url, analyticsConfig.port));
-                }
-            });
-            Analytics.registerThread(t);
-            t.start();
+//        } else if (analyticsConfig.target == AnalyticsTarget.NET_LOG4J) {
+//            if (analyticsConfig.port <= 0 || analyticsConfig.url == null || analyticsConfig.url.equals("")) {
+//                throw new RuntimeException("NET_LOG4J logging configured but the url and port are not configured!");
+//            }
+//            final AnalyticsConfig ac = analyticsConfig;
+//            Thread t = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Analytics.initializeEndpoint(new Log4jAnalyticsEndpoint(ac.url, ac.port));
+//                }
+//            });
+//            Analytics.registerThread(t);
+//            t.start();
 
         } else {
             throw new RuntimeException("Unexpected analytics backend '" + analyticsConfig.target + "Specified!");
@@ -101,17 +103,17 @@ public class MartiMain {
 
             if (inputFile.exists()) {
                 FileReader fr = new FileReader(inputFile);
-                config = ApiHelper.getSharedGson().fromJson(fr, MartiConfig.class);
+                config = gson.fromJson(fr, MartiConfig.class);
             } else {
                 throw new RuntimeException("Configuration file must exist at location '" + inputFile.getAbsolutePath() + "'!");
             }
         }
-        
+
         this.martiConfig = config;
         this.coreConfig = CoreConfig.getInstance();
         monitor = CoreMonitor.getInstance();
         this.martiConfig = config;
-        
+
         File storage = new File(config.storageDirectory);
         if (!storage.exists()) {
             storage.mkdir();
@@ -157,7 +159,7 @@ public class MartiMain {
     public void initializeServices1() throws IOException {
         // Initialize analytics
         // ???
-        
+
         // New SubscriptionManager
         subMgr = new SubscriptionManager();
 

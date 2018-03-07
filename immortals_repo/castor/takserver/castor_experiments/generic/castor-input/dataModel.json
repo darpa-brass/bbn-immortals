@@ -1,0 +1,18 @@
+{
+  "headMode": "query1_all(+event,+source,+type)",
+  "bodyModes": [
+    "a68b4ff7366904c4288c2782091c2c1c8(+event,-source,#type,-how,-detail,#time)",
+    "a68b4ff7366904c4288c2782091c2c1c8(+event,-source,#type,-how,-detail,-time)",
+    "a68b4ff7366904c4288c2782091c2c1c8(+event,-source,-type,-how,-detail,#time)",
+    "a68b4ff7366904c4288c2782091c2c1c8(+event,-source,-type,-how,-detail,-time)",
+    "a68b4ff7366904c4288c2782091c2c1c8(-event,+source,#type,-how,-detail,#time)",
+    "a68b4ff7366904c4288c2782091c2c1c8(-event,+source,#type,-how,-detail,-time)",
+    "a68b4ff7366904c4288c2782091c2c1c8(-event,+source,-type,-how,-detail,#time)",
+    "a68b4ff7366904c4288c2782091c2c1c8(-event,+source,-type,-how,-detail,-time)",
+    "a3b9c7dd5e64c419ba804e0eaccf119a5(+event,-point,-point,-point,#tile,#tile,-coordinate,-coordinate)",
+    "a3b9c7dd5e64c419ba804e0eaccf119a5(+event,-point,-point,-point,#tile,-tile,-coordinate,-coordinate)",
+    "a3b9c7dd5e64c419ba804e0eaccf119a5(+event,-point,-point,-point,-tile,#tile,-coordinate,-coordinate)",
+    "a3b9c7dd5e64c419ba804e0eaccf119a5(+event,-point,-point,-point,-tile,-tile,-coordinate,-coordinate)"
+  ],
+  "spName": "CastorProcedure_query1_all"
+}

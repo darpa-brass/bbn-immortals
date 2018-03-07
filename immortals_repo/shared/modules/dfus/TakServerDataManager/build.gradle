@@ -1,6 +1,6 @@
-apply plugin: immortals.CoreDefinitions
-apply plugin: immortals.Java8Component
-apply plugin: immortals.PublishJavaDfu
+apply plugin: mil.darpa.immortals.JavaModule
+
+import mil.darpa.immortals.config.ImmortalsConfig
 
 sourceSets {
     validation {
@@ -13,15 +13,17 @@ sourceSets {
 jar {
     manifest {
         attributes "Implementation-Title": "TakServerDataManager",
-                "Implementation-Version": defaultSoftwarePublishVersion,
+                "Implementation-Version": ImmortalsConfig.instance.build.das.publishVersion,
                 "Main-Class": "mil.darpa.immortals.TakServerDataManager.DatabaseManager"
     }
 }
 
+
+
 task('fatJar', type: Jar) {
     manifest {
         attributes "Implementation-Title": "TakServerDataManager",
-                "Implementation-Version": defaultSoftwarePublishVersion,
+                "Implementation-Version": ImmortalsConfig.instance.build.das.publishVersion,
                 "Main-Class": "mil.darpa.immortals.TakServerDataManager.DatabaseManager"
     }
 
@@ -45,10 +47,9 @@ task('validate', type: Test) {
 }
 
 dependencies {
-    compile project(':datatypes:CotData')
-    compile project(':datatypes:Coordinates')
+    compile project(':shared:modules:datatypes:CotData')
+    compile project(':shared:modules:datatypes:Coordinates')
     compile 'commons-codec:commons-codec:1.2'
-    compile "org.slf4j:slf4j-api:${project.slf4jVersion}"
     compile('org.postgresql:postgresql:9.4.1208')
 }
 

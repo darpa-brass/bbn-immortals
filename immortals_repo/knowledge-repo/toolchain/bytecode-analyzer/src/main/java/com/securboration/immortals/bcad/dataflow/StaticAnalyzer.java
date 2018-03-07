@@ -19,12 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.securboration.immortals.bca.AnalysisClassloader;
+import com.securboration.immortals.bca.tools.MethodPrinter;
 import com.securboration.immortals.bcad.dataflow.DataflowHelper.LocalVariableSpec;
 import com.securboration.immortals.bcad.dataflow.DataflowHelper.ReturnValueSpec;
 import com.securboration.immortals.bcad.dataflow.value.JavaValue;
 import com.securboration.immortals.bcad.transformers.helpers.OpcodeHelper;
 import com.securboration.immortals.bcas.block.BasicBlock;
-import com.securboration.immortals.bcas.printer.MethodPrinter;
 import com.securboration.immortals.helpers.ImmortalsPointerHelper;
 import com.securboration.immortals.instantiation.annotationparser.bytecode.BytecodeHelper;
 import com.securboration.immortals.ontology.functionality.datatype.DataType;

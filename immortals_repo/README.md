@@ -1,58 +1,82 @@
 # IMMoRTALS Repository README
 
-## Environment Setup
+## Quick Start
 
-I recommend at least 30GB of space be set aside for the environment (The built docker image is 17GB currently), and usually set it to 40GB myself.
+For most users who do not need to run the entire DAS, the following should suffice:
 
-### Docker and SSH
-__+__ Contained  
-__+__ Little speed penalty to emulators  
-__-__ Harder to actively work in with  no GUI  
+1. Install JDK 8 (Oracle or OpenJDK) and set your `JAVA_HOME` environment variable to the installation directory.
+2. Install maven 3.x and make sure the `mvn` executable it is in your PATH
+3. If you need to build android components, you must set up the Android SDK (everything else will build fine without it)
+    1. Extract the [Android SDK Tools](https://developer.android.com/studio/index.html#downloads) to a location. 
+    **The location containing the extracted "tools" folder will be the sdk root and must be writeable 
+    by the user!**
+    2.  Set your `ANDROID_HOME` to the directory containing the "tools" folder.
+    3.  Within `ANDROID_HOME`, execute the following to read and (assuming you choose to) accept the licenses:
+        `./tools/bin/sdkmanager --licenses`
+3. From the immortals_root with the proper exports and executables in the path, perform the following:  
+    `./gradlew build`  
 
-This is by far the easiest and most self-contained way to set up the environment.
+## Immortals Build System Overview
 
-1. Install [Docker](http://www.docker.com) if it is not already installed.  
-2. Check out the repository using svn or svn-git if you have not already:  
-   `svn co https://dsl-external.bbn.com/svn/immortals/trunk immortals_root`  
-3. Build the image with the following command where _immortals_root_ is your repository root (which contains the Dockerfile) and _/home/user/.ssh/id_rsa.pub_ matches the absolute path of your public ssh key readable by the root user.  Image construction including the automatic initial gradle build took 12 minutes on my machine (and may take longer depending on internet speed) and may seem stuck after the base immortals dependencies have been installed:  
-  ``docker build --tag immortals_environment --build-arg PUBLIC_KEY="`cat /home/user/.ssh/id_rsa.pub`" immortals_root``  
-4. Execute the following command to start it where _immortals_instance_ is the desired container name:  
-   `docker run --name immortals_instance -d immortals_environment`
-5. Determine the container IP address by executing the following command:  
-   `docker inspect immortals_instance | grep IPAddress`
-   ```
-            "SecondaryIPAddresses": null,
-            "IPAddress": "172.17.0.3",
-                    "IPAddress": "172.17.0.3",
-   ```
-6. SSH into the system using the address determined above:
-  `ssh root@172.17.0.3`
+### General Gradle Sequence
 
-See the [Docker Run Reference](https://docs.docker.com/engine/reference/run/) for details about forwarding from the host to the docker container's SSH port (hint: "--publish 22:<hostMachinePort>") or forwarding kvm for x86 emulation on Linux (hint: "--device /dev/kvm:/dev/kvm"). Scripting rsync to copy source files to the container can also help make integration testing run smoother.
+When you execute `./gradlew build` on any Gradle project, the following occurs:
+1.  The buildSrc project is built (if it exists).  
+2.  The build configuration is evaluated and validated.  
+3.  If validation is successful, the project and subprojects are built.  
 
-### Local Automated Installation
-__+__ No speed penalty to emulators  
-__+__ Easy to actively work in  
-__+__ Installation script is easy to understand
-__-__ Less Contained  
-__-__ Slightly more complicated to set up
+### IMMoRTALS buildSrc directory
 
-Provides local environment installation by examining what is currently available on your system and generating a bash script that can be used to set up your environment.  Less self contained, but attempts to not trample over existing installations of software when possible. See _harness/README-setup.md_
+The buildSrc projects is used in immortals to define global configurations used by the build itself, different DAS 
+components, built artifacts, and applications or libraries to be used by the DAS. It produces two artifacts:
 
+* ImmortalsConfig
+    - This jar is published to the IMMORTALS_REPO and contains a POJO of the DAS configuration.  The defaults are 
+    defined within the source code.
+     - A JSON copy of this is written to the root of the immortals directory as __immortals_config.json__ for 
+     language-agnostic use.
+     - __immortals_config.json__ is also written to the application directories to define the IMMORTALS_REPO location 
+     in a path and environment independent manner. In a real world scenario, this would point to a static DAS. All other 
+     information from the file is ignored.
+     - The DAS configuration can be overridden during execution by setting the environment variable 
+     **IMMORTALS_OVERRIDE_FILE** equal to the path of a modified configuration file prior to prior to execution of 
+     anything that uses the ImmortalsConfig jar.
+* ImmortalsGradle
+     - This jar contains gradle plugins to simplify the construction of DFUs and facilitate analysis
 
-### Virtual Machine Installation
-__+__ Contained  
-__-__ Slightly more complicated to set up  
-__-__ Significant speed penality to emulators  
+### Build Workflow
 
-Same installation method as **Local Automated Installation** after setting up the virtual machine.
+Below is a sequence diagram of the build sequence. Each participant is an isolated component with a manually 
+constructed build dependency sequence, and cross-communication between the components at runtime is handled through 
+artifacts published to the local repository such as the **ImmortalsConfig** artifact or __immortals_config.json__ file.
+ 
+![Submission Wokflow](docs/architecture/build_sequence.png)
 
 
+## DAS Execution (WIP)
+
+The Overall system including the evaluation infrastructure consists of the following:
+
+![Deployment Model](docs/architecture/deployment_diagram.png)
+
+### Start Sequence
+The start sequence is as follows:
+1.  Start Test Harness
+2.  Start Das
+    1.  Start Fuseki
+    2.  Start Repository Service
+    3.  Start Das Service
+3.  Start Test Adapter
+
+Once the Test Adapter is successfully started, it notifies the Test Harness, which begins the evaluation process.
+
+The best way to set up a local environment is to copy the immortals_config.json file, modify values necessary for your 
+environment, remove the unmodified values, and add this to your normal terminal or IDE exports. This will override 
+your local values while allowing the defaults (which may change) to be loaded from the backing classes.
 
 ## Root Project Build Instructions
-Docker container directory: `/immortals/`  
-Build Command: `./gradlew buildAll`  
-Clean Command: `./gradlew cleanAll`  
+Build Command: `./gradlew build`  
+Clean Command: `./gradlew clean`  
 
 ## Application Instructions:
 Dependent on the root project being built.  
@@ -91,10 +115,6 @@ Application Dependencies:
  * **env.json** in _/sdcard/ataklite/_ on the android filesystem  
  * **ATAKLite-Config.json** in _/sdcard/ataklite/_ on the android filesystem  
 
-## Global Build Configuration
-Various configuration values used immortals-wide for building are imported from the shared/common.gradle file, including
-android version details, publishing versioning, and default dependency versioning for items fetched from *IMMORTALS_REPO*.
-
 ## Tips and Tricks
- * **shared/IMMORTALS_REPO** contains the dependencies (DFUs, utilities, etc) produced by the project and should be regenerated by performing a `./gradle cleanAll buildAll` from the root whenever the repository is updated.
+ * **shared/IMMORTALS_REPO** contains the dependencies (DFUs, utilities, etc) produced by the project and should be regenerated by performing a `./gradle clean build` from the root whenever the repository is updated.
  * Since artifacts produced by the project are published to the local IMMORTALS_REPO every build, the local maven cache should __NOT__ be enabled in any gradle scripts. Gradle will manage its own cache that knows not to cache the local repository.

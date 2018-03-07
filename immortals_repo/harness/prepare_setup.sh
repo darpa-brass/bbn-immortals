@@ -25,4 +25,4 @@ else
     source "$IMMORTALSRC_PATH"
 fi
 
-python3 prepare_setup.py "$@"
+python3 -m installer.prepare "$@"

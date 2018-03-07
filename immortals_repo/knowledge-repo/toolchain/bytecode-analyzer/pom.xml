@@ -26,6 +26,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.securboration</groupId>
+			<artifactId>immortals-annotation-parser</artifactId>
+			<version>${immortals.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.securboration</groupId>
 			<artifactId>immortals-object-to-triples</artifactId>
 			<version>${immortals.version}</version>
 		</dependency>
@@ -56,11 +61,6 @@
 			<artifactId>commons-io</artifactId>
 			<version>${commons-io.version}</version>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.securboration</groupId>
-			<artifactId>immortals-annotation-parser</artifactId>
-			<version>${immortals.version}</version>
 		</dependency>
 	</dependencies>
 

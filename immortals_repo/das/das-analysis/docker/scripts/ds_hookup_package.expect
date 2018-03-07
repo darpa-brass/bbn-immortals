@@ -1,8 +1,0 @@
-#!/usr/bin/expect -f
-
-set package [lindex $argv 0]
-
-spawn telnet 127.0.0.1 36143
-
-send "do_hookapitests $package\r"
-sleep 2

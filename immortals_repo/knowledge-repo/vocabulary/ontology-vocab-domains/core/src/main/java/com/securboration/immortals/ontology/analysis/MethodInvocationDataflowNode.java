@@ -1,5 +1,7 @@
 package com.securboration.immortals.ontology.analysis;
 
+import com.securboration.immortals.ontology.annotations.RdfsComment;
+
 /**
  * A dataflow node that involves the transfer of information via method
  * invocation within the same process
@@ -37,6 +39,9 @@ public class MethodInvocationDataflowNode extends IntraProcessDataflowNode {
             "The pointer of the method being invoked")
     private String javaMethodPointer;
     
+    @RdfsComment("The line number where this method invoked in source code")
+    private int lineNumber;
+    
     public String getJavaClassName() {
         return javaClassName;
     }
@@ -60,4 +65,13 @@ public class MethodInvocationDataflowNode extends IntraProcessDataflowNode {
     public void setJavaMethodPointer(String javaMethodPointer) {
         this.javaMethodPointer = javaMethodPointer;
     }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+    
 }

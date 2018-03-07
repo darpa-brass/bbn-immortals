@@ -95,6 +95,12 @@
 					</dependency>
 					<dependency>
 						<groupId>com.securboration</groupId>
+						<artifactId>immortals-ontologies-constraint</artifactId>
+						<version>${immortals.version}</version>
+						<scope>compile</scope>
+					</dependency>
+					<dependency>
+						<groupId>com.securboration</groupId>
 						<artifactId>immortals-ontologies-domains-resources</artifactId>
 						<version>${immortals.version}</version>
 						<scope>compile</scope>
@@ -180,6 +186,9 @@
 						</configuration>
 					</execution>
 
+					<!--
+					Generate triples from java classes: functional
+					-->
 					<execution>
 						<id>java-to-triples-functional</id>
 						<phase>process-classes</phase>
@@ -189,11 +198,33 @@
 						<configuration>
 							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
 							<arguments>
-								<argument>${project.basedir}/target/classes/ontology/immortals_bytecode.ttl</argument>
+								<argument>${project.basedir}/target/classes/ontology/immortals_functional.ttl</argument>
 								<argument>Turtle</argument>
 								<argument>${immortals.version}</argument>
 								<argument>${project.basedir}/../ontology-vocab-domains/functional/target/classes/</argument>
 								<argument>${project.basedir}/../ontology-vocab-domains/functional/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+
+					<!--
+					Generate triples from java classes: resources
+					-->
+					<execution>
+						<id>java-to-triples-constraint</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_resources.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/constraint/target/classes</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/constraint/src/main/java</argument>
 								<argument>com.securboration.immortals.instantiation</argument>
 							</arguments>
 						</configuration>
@@ -208,7 +239,7 @@
 						<configuration>
 							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
 							<arguments>
-								<argument>${project.basedir}/target/classes/ontology/immortals_bytecode.ttl</argument>
+								<argument>${project.basedir}/target/classes/ontology/immortals_resources.ttl</argument>
 								<argument>Turtle</argument>
 								<argument>${immortals.version}</argument>
 								<argument>${project.basedir}/../ontology-vocab-domains/resources/target/classes/</argument>
@@ -324,6 +355,49 @@
 								<argument>${project.basedir}/../ontology-vocab-domains/fm/target/classes/</argument>
 								<argument>${project.basedir}/../ontology-vocab-domains/fm/src/main/java</argument>
 								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<!--
+					Generate triples from java classes: inference
+					-->
+					<execution>
+						<id>java-to-triples-inference</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_inference.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/inference/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/inference/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					
+					<!--
+					Build uber vocabulary
+					-->
+					<execution>
+						<id>construct-uber-vocabulary</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.j2t.aggregator.VocabularyAggregator</mainClass>
+							<arguments>
+								<argument>Turtle</argument><!-- lang -->
+								<argument>${project.basedir}/target/classes/ontology/immortals_uber.ttl</argument><!-- output path -->
+								<argument>${project.basedir}/target/classes/ontology</argument><!-- path to ontology files -->
+								<!-- other paths to ontology files -->
 							</arguments>
 						</configuration>
 					</execution>

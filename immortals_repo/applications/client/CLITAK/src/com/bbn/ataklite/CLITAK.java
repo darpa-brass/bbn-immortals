@@ -6,7 +6,6 @@ import com.bbn.ataklite.service.SAIntentCLIReceiver;
 import com.bbn.ataklite.service.SAIntentReceiverInterface;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import mil.darpa.immortals.analytics.protocols.log4j.Log4jAnalyticsEndpoint;
 import mil.darpa.immortals.core.analytics.Analytics;
 import mil.darpa.immortals.core.analytics.AnalyticsEndpointInterface;
 import mil.darpa.immortals.core.analytics.AnalyticsEventType;
@@ -86,11 +85,11 @@ public class CLITAK {
             }
             Analytics.initializeEndpoint(analyticsEndpointInterface);
 
-        } else if (config.analyticsConfig.target == ATAKLiteConfig.AnalyticsTarget.NET_LOG4J) {
-            if (config.analyticsConfig.port <= 0 || config.analyticsConfig.url == null || config.analyticsConfig.url.equals("")) {
-                throw new RuntimeException("NET_LOG4J logging configured but the url and port are not configured!");
-            }
-            Analytics.initializeEndpoint(new Log4jAnalyticsEndpoint(config.analyticsConfig.url, config.analyticsConfig.port));
+//        } else if (config.analyticsConfig.target == ATAKLiteConfig.AnalyticsTarget.NET_LOG4J) {
+//            if (config.analyticsConfig.port <= 0 || config.analyticsConfig.url == null || config.analyticsConfig.url.equals("")) {
+//                throw new RuntimeException("NET_LOG4J logging configured but the url and port are not configured!");
+//            }
+//            Analytics.initializeEndpoint(new Log4jAnalyticsEndpoint(config.analyticsConfig.url, config.analyticsConfig.port));
 
         } else {
             throw new RuntimeException("Unexpected analytics backend '" + config.analyticsConfig.target + "Specified!");

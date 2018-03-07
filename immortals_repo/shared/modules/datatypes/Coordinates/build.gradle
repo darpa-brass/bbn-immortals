@@ -1,4 +1,5 @@
-apply plugin: immortals.CoreDefinitions
-apply plugin: immortals.JavaDfu
-apply plugin: immortals.DfuBase
-apply plugin: immortals.PublishJavaDfu
+apply plugin: mil.darpa.immortals.JavaModule
+
+dependencies {
+    compile project(':shared:modules:core')
+}

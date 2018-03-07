@@ -37,7 +37,7 @@ public class SACommunicationService {
     
     private ATAKLiteConfig config;
 
-    private TestEventBroadcaster testEventBroadcaster = new TestEventBroadcaster(this);
+    private final TestEventBroadcaster testEventBroadcaster;
 
     public synchronized void start() {
 
@@ -110,8 +110,13 @@ public class SACommunicationService {
         Analytics.log(Analytics.newEvent(AnalyticsEventType.ClientShutdown, Analytics.getOwnSourceIdentifier(), null));
     }
 
+    public ATAKLiteConfig getConfig() {
+        return config;
+    }
+
     public SACommunicationService(ATAKLiteConfig config) {
         this.config = config;
+        testEventBroadcaster = new TestEventBroadcaster(this);
         // Load the intent broadcaster to communicate with the UI
         intentBroadcaster = new SAIntentBroadcaster();
     }
@@ -184,7 +189,7 @@ public class SACommunicationService {
 
             String imageName = message.getUid() + "-" + System.currentTimeMillis() + ".jpg";
 
-            File imageFile = new File(ATAKLiteConfig.CONFIG_DIRECTORY, imageName);
+            File imageFile = new File(config.storageDirectory, imageName);
 
 
             try {

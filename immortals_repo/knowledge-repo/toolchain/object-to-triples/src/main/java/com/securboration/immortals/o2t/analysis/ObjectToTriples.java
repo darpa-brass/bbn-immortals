@@ -342,7 +342,11 @@ public class ObjectToTriples {
                 return r;
             }
             
-            return getResourceForType(Type.getType(c));
+            Resource r = getResourceForType(Type.getType(c));
+            
+            context.getNamingContext().bindUri(c, r.getURI());
+            
+            return r;
         }
         
         

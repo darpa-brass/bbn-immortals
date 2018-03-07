@@ -135,7 +135,7 @@ def _add_orchestrate_parser(subparsers):
     o_parser = subparsers.add_parser('orchestrate', help='Orchestrate an end-to-end scenario')
     o_parser.add_argument('mode',
                           metavar='MODE',
-                          choices=resourcemanager.get_test_list())
+                          choices=resourcemanager.get_p1_test_list())
     o_parser.add_argument('-r', '--immortalsRoot', type=str)
     o_parser.set_defaults(func=orchestrate_main)
 

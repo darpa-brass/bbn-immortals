@@ -14,10 +14,14 @@
     // (relative to IMMORTALS_ROOT) so they can utilize immortals resources independently of their path (which changes
     // due to augmented applications being copied prior to augmentation).
     "commonValueConsumers": [
+        "buildSrc/ImmortalsConfig/src/main/resources",
         "shared",
         "shared/modules",
         "shared/modules/buildSrc",
         "shared/modules/core",
+        "shared/das-components",
+        "shared/das-components/das-base",
+        "shared/das-components/das-base/src/main/resources",
         "das/das-service",
         "applications/client/ATAKLite",
         "applications/client/CLITAK",

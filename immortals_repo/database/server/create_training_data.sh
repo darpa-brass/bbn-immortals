@@ -5,6 +5,11 @@ IMPORTANT: Running this file will create query training data files (positive and
 
 You can check in the resulting files to the appropriate location in the Immortals repo (e.g., castor folder). This script assumes the baseline schema in the local Immortals database is populated.
 
+You should run this file like so:
+
+(1) Create tmp dir in database/server dir and make sure the user postgres has read/write privs to it.
+(2) Run the following from database/server/tmp: sudo -u postgres ../create_training_data.sh
+
 Continue ('yes' or 'no')?: "
 
 while true; do
@@ -80,13 +85,13 @@ limit $neg_limit"
 
 ################################################################################################################################
 posQuery4="select s.name, ce.id, ce.cot_type, ce.servertime
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id
 where channel = 7
 order by random()
 limit $pos_limit"
 
 negQuery4="select s.name, ce.id, ce.cot_type, ce.servertime
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id
 where channel <> 7
 order by random()
 limit $neg_limit"
@@ -96,13 +101,13 @@ limit $neg_limit"
 
 ################################################################################################################################
 posQuery5="select ce.id, ce.cot_type, ce.servertime
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id
 where channel = 7
 order by random()
 limit $pos_limit"
 
 negQuery5="select ce.id, ce.cot_type, ce.servertime
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id
 where channel <> 7
 order by random()
 limit $neg_limit"
@@ -112,13 +117,13 @@ limit $neg_limit"
 
 ################################################################################################################################
 posQuery6="select s.name, ce.id, ce.cot_type, ce.servertime
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id
 where s.channel = 5 or ce.cot_type = 'a-n-A-C-F-s'
 order by random()
 limit $pos_limit"
 
 negQuery6="select s.name, ce.id, ce.cot_type, ce.servertime
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id
 where not (s.channel = 5 or ce.cot_type = 'a-n-A-C-F-s')
 order by random()
 limit $neg_limit"
@@ -128,14 +133,14 @@ limit $neg_limit"
 
 ################################################################################################################################
 posQuery7="select s.name, ce.id, ce.cot_type, ce.servertime
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id
 join baseline.cot_event_position cep on ce.id = cep.cot_event_id
 where  s.channel = 6 and tilex = 18830 and tiley = 25704
 order by random()
 limit $pos_limit"
 
 negQuery7="select s.name, ce.id, ce.cot_type, ce.servertime
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id
 join baseline.cot_event_position cep on ce.id = cep.cot_event_id
 where  not (s.channel = 6 and tilex = 18830 and tiley = 25704)
 order by random()
@@ -149,9 +154,9 @@ posQuery8="with sampleSizes as
 (	
 select source_id, servertime, min(sample_size) as sample_size	
 from	
-(select s.id source_id, ce.servertime, 	
-ceil((cast(count(*) over(partition by s.id, ce.servertime) as float) / cast( count(*) over() as float)) * 5000) as sample_size	
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id) as t1	
+(select s.source_id source_id, ce.servertime, 	
+ceil((cast(count(*) over(partition by s.source_id, ce.servertime) as float) / cast( count(*) over() as float)) * 5000) as sample_size	
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id) as t1	
 group by t1.source_id, t1.servertime	
 ),	
 	
@@ -159,13 +164,13 @@ samples as
 (	
 select source_id, source_name, ce_id, servertime, row_number() over(partition by source_name, servertime) as rownum, tilex, tiley	
 from	
-(select s.id as source_id, s.name as source_name, ce.id as ce_id, ce.servertime, cep.tilex, cep.tiley,	
+(select s.source_id as source_id, s.name as source_name, ce.id as ce_id, ce.servertime, cep.tilex, cep.tiley,	
 row_number() over(order by s.name, ce.servertime, random()) as rownum	
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id	
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id	
 join baseline.cot_event_position cep on ce.id = cep.cot_event_id	
 join (	select t1.name, t1.servertime
 	from (select distinct s2.name, ce2.servertime
-	      from baseline.source s2 join baseline.cot_event ce2 on s2.id = ce2.source_id
+	      from baseline.source s2 join baseline.cot_event ce2 on s2.source_id = ce2.source_id
 	     ) t1
 	order by random()
 	limit 50) as t2 on s.name = t2.name and ce.servertime = t2.servertime
@@ -181,14 +186,14 @@ negQuery8="select 'none' as c1"
 
 
 ################################################################################################################################
-posQuery9="select s.id, s.name, ce.id, ce.servertime, cep.tilex, cep.tiley
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id
+posQuery9="select s.source_id, s.name, ce.id, ce.servertime, cep.tilex, cep.tiley
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id
 join baseline.cot_event_position cep on ce.id = cep.cot_event_id
 where s.name = 'ABD19E' and servertime = 201705071645
 limit $pos_limit"
 
-negQuery9="select s.id, s.name, ce.id, ce.servertime, cep.tilex, cep.tiley
-from baseline.source s join baseline.cot_event ce on s.id = ce.source_id
+negQuery9="select s.source_id, s.name, ce.id, ce.servertime, cep.tilex, cep.tiley
+from baseline.source s join baseline.cot_event ce on s.source_id = ce.source_id
 join baseline.cot_event_position cep on ce.id = cep.cot_event_id
 where not (s.name = 'ABD19E' and servertime = 201705071645)
 order by random()
@@ -196,8 +201,8 @@ limit $neg_limit"
 ################################################################################################################################
 
 
-for ((i=1; i<=$number_queries;i++));
-do
+i=1
+while [ "$i" -le $number_queries ]; do
     posQname="posQuery$i"
     negQname="negQuery$i"
 
@@ -214,5 +219,6 @@ do
     echo "Processing query: $negQname ..."
 	command="COPY ($neg_sql) to '$negTarget' WITH (FORMAT CSV, DELIMITER ',', HEADER TRUE, QUOTE '\"')"
 	psql -a -d $immortals_db -c "$command"
+	i=$(( i + 1 ))
 done
  

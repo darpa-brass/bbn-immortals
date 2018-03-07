@@ -1,4 +1,5 @@
 from pymmortals.generated.com.securboration.immortals.ontology.bytecode.aclass import AClass
+from pymmortals.generated.com.securboration.immortals.ontology.bytecode.analysis.basicblockdecomposition import BasicBlockDecomposition
 from pymmortals.generated.com.securboration.immortals.ontology.bytecode.analysis.instruction import Instruction
 from pymmortals.generated.com.securboration.immortals.ontology.bytecode.anannotation import AnAnnotation
 from pymmortals.generated.com.securboration.immortals.ontology.bytecode.classstructure import ClassStructure
@@ -14,6 +15,7 @@ class AMethod(ClassStructure):
 
     def __init__(self,
                  annotations: List[AnAnnotation] = None,
+                 basicBlockAnalysis: BasicBlockDecomposition = None,
                  bytecode: str = None,
                  bytecodePointer: str = None,
                  interestingInstructions: List[Instruction] = None,
@@ -22,6 +24,7 @@ class AMethod(ClassStructure):
                  modifiers: List[Modifier] = None,
                  owner: AClass = None):
         super().__init__(annotations=annotations, modifiers=modifiers, owner=owner)
+        self.basicBlockAnalysis = basicBlockAnalysis
         self.bytecode = bytecode
         self.bytecodePointer = bytecodePointer
         self.interestingInstructions = interestingInstructions

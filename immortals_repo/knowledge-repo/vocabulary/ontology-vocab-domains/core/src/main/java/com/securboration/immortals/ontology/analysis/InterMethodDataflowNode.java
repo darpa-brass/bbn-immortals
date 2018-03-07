@@ -1,5 +1,7 @@
 package com.securboration.immortals.ontology.analysis;
 
+import com.securboration.immortals.ontology.annotations.RdfsComment;
+
 public class InterMethodDataflowNode extends InterProcessDataflowNode {
     
     /**
@@ -26,6 +28,9 @@ public class InterMethodDataflowNode extends InterProcessDataflowNode {
     @com.securboration.immortals.ontology.annotations.RdfsComment(
             "The pointer of the method being invoked")
     private String javaMethodPointer;
+    
+    @RdfsComment("Line number where method is located in java source code")
+    private int lineNumber;
 
     public String getJavaClassName() {
         return javaClassName;
@@ -49,5 +54,13 @@ public class InterMethodDataflowNode extends InterProcessDataflowNode {
 
     public void setJavaMethodPointer(String javaMethodPointer) {
         this.javaMethodPointer = javaMethodPointer;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
     }
 }

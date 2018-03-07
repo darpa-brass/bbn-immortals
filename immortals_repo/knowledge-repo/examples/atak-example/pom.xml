@@ -30,6 +30,12 @@
 			<version>${commons-compress.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+			<scope>compile</scope>
+		</dependency>
 		
 		<!-- these should really be "provided" scoped but we include them for the benefit of the analyzer -->
 		<dependency>

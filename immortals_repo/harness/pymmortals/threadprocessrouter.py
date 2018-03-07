@@ -11,7 +11,6 @@ from threading import Thread, Timer, RLock
 
 from pymmortals import immortalsglobals as ig
 from pymmortals.datatypes.root_configuration import get_configuration
-from pymmortals.datatypes.routing import EventTags
 
 _shutting_down = False
 _lock = RLock()
@@ -27,13 +26,13 @@ class _StdEndpointSet:
     def __init__(self, stdout_absfilepath: str, stderr_absfilepath: str,
                  log_out_to_host: bool = False, log_err_to_host: bool = False):
         self.out_filepath = stdout_absfilepath
-        self.out: BufferedIOBase = open(stdout_absfilepath, 'w')
+        self.out = open(stdout_absfilepath, 'w')  # type: BufferedIOBase
 
         self.err_filepath = stderr_absfilepath
-        self.err: BufferedIOBase = open(stderr_absfilepath, 'w')
+        self.err = open(stderr_absfilepath, 'w')  # type: BufferedIOBase
 
-        self.out_in: BufferedReader = open(stdout_absfilepath, 'r') if log_out_to_host else None
-        self.err_in: BufferedReader = open(stderr_absfilepath, 'r') if log_err_to_host else None
+        self.out_in = open(stdout_absfilepath, 'r') if log_out_to_host else None  # type: BufferedReader
+        self.err_in = open(stderr_absfilepath, 'r') if log_err_to_host else None  # type: BufferedReader
 
     def write_out_line(self, message):
         self.out.write(message + '\n')
@@ -72,8 +71,7 @@ def get_std_endpoint(log_dirpath: str, file_tag: str) -> _StdEndpointSet:
 class ImmortalsSubprocess:
     def __init__(self, command_processor: 'ImmortalsSubprocess' or None,
                  log_tag: str, log_dirpath: str = None):
-        self.__command_processor: 'ImmortalsSubprocess' or subprocess = \
-            command_processor if command_processor is not None else subprocess
+        self.__command_processor = command_processor if command_processor is not None else subprocess
 
         if log_dirpath is None:
             log_dirpath = get_configuration().artifactRoot
@@ -322,6 +320,7 @@ def _thread_executor(method, swallow_and_shutdown_on_exception, args=()):
         # logging.error(msg)
 
         if swallow_and_shutdown_on_exception:
+            ig.set_exit_code(-1)
             ig.exception_handler(*sys.exc_info())
 
         else:

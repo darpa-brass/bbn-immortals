@@ -13,7 +13,9 @@ public class BuildAnRunImmortals extends BuildAndRunAbstract {
     public String antRuncommand;
     private long TIME_TO_WAIT_BEFORE_GIVING_UP;
     public String testResultXmlFile;
-    public BuildAnRunImmortals(String buildCommand, String testsuitename, String runCommand, String buildSuccessString, String runSuccessString, String testResultXmlFile){
+    public String testResultPath;
+    public String testFileRegEx;
+    public BuildAnRunImmortals(String buildCommand, String testsuitename, String runCommand, String buildSuccessString, String runSuccessString, String testResultPath, String testFileRegex){
         this.buildCommand = buildCommand;
         this.antCompileCommand = buildCommand;
         this.antRuncommand = runCommand;
@@ -26,6 +28,9 @@ public class BuildAnRunImmortals extends BuildAndRunAbstract {
         this.runCommand = runCommand;
         this.testSuiteName = testsuitename;
         this.testResultXmlFile = testResultXmlFile;
+        this.testResultPath = testResultPath;
+        this.testFileRegEx = testFileRegex;
+
 
     }
 
@@ -39,9 +44,10 @@ public class BuildAnRunImmortals extends BuildAndRunAbstract {
             Command.exec(new String[]{"bash","-c",this.antCompileCommand +   " &> "  + Globals.compileOutputPath});
             try {
                 //result =  (FileReaderUtil.Contains(Globals.compileOutputPath,"BUILD SUCCESS"));
+                this.buildSuccessString = "BUILD SUCCESSFUL";
                 result =  (FileReaderUtil.Contains(Globals.compileOutputPath,this.buildSuccessString));
                 // TODO: arpit, remove this line later. dummy line make build pass.
-                result = true;
+                //result = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }

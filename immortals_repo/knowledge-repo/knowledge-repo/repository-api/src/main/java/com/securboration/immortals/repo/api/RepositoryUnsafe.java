@@ -23,6 +23,11 @@ public class RepositoryUnsafe extends Repository {
         super(configuration);
     }
     
+    @Override
+    public FusekiClient getFusekiClient(){
+        return super.getFusekiClient();
+    }
+    
     /**
      * Converts an object, assumed to be one of the types defined in the
      * IMMoRTALS vocabulary, into a Model
@@ -104,6 +109,18 @@ public class RepositoryUnsafe extends Repository {
     public void pushGraph(Model graph,String name){
         
         getFusekiClient().setModel(graph, name);
+    }
+    
+    /**
+     * Appends a model to an existing graph
+     * 
+     * @param m
+     *            the model to append
+     * @param graphName
+     *            the graph to which the model is appended
+     */
+    public void appendToGraph(Model m,String graphName){
+        getFusekiClient().addToModel(m, graphName);
     }
 
 }

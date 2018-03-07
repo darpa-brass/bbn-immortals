@@ -1,118 +1,71 @@
 apply plugin: 'groovy'
+apply plugin: 'eclipse'
 
+import java.nio.file.Files
 
-import groovy.json.JsonBuilder
-import groovy.json.JsonParserType
-import groovy.json.JsonSlurper
-import groovy.text.GStringTemplateEngine
+// Determine global info
+def parentPath = buildscript.sourceFile.toPath().parent.toAbsolutePath()
+def IMMORTALS_ROOT = parentPath.parent.toAbsolutePath()
+def IMMORTALS_REPO = IMMORTALS_ROOT.resolve('shared/IMMORTALS_REPO').toAbsolutePath()
 
-buildscript {
-    String IMMORTALS_ROOT = new File(buildscript.sourceFile.getParent() + "/../").getCanonicalPath() + '/'
+// Record that info to a package in the configuration to be used globally on the system
+def resourcePath = parentPath.resolve('ImmortalsConfig/src/main/resources/')
+Files.createDirectories(resourcePath)
+Files.write(resourcePath.resolve('IMMORTALS_ROOT_PATH'), [IMMORTALS_ROOT.toString() + '/'])
+Files.write(resourcePath.resolve('IMMORTALS_REPO_PATH'), [IMMORTALS_REPO.toString() + '/'])
 
-    // Read the common values file
-    File jsonFile = new File(IMMORTALS_ROOT + 'shared/common_values.json')
-    def inData = new JsonSlurper().setType(JsonParserType.LAX).parseText(jsonFile.text)
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'eclipse'
 
-    // Create the initial value map
-    def jsonData0 = [
-            'IMMORTALS_ROOT': IMMORTALS_ROOT,
-            'ANDROID_HOME'  : System.getenv('ANDROID_HOME')
-    ]
+    group = 'mil.darpa.immortals'
+    version = '2.0-LOCAL'
+    sourceCompatibility = 1.8
 
-    // Copy the common values to nonStringJsonData to be added after String processing or to the data to be processed
-    def nonStringJsonData = [:]
-    for (String key : inData.keySet()) {
-        def val = inData[key]
-
-        if (val.getClass() == String) {
-            // If it's a string it can have its values filled
-            jsonData0[key] = val
-
-        } else {
-            // Otherwise, put it aside for reinsertion prior to writing to disk
-            nonStringJsonData[key] = val
-        }
-
+    repositories {
+        mavenCentral()
     }
 
-    def jsonData1 = null
-    while (jsonData0 != jsonData1) {
-        // While the map keeps changing, try value subsitution. This allows substitution of map value variables 
-        // with the values of map keys
-        jsonData1 = jsonData0
-        jsonData0 = [:]
+    task sourceJar(type: Jar) {
+        classifier 'sources'
+        from sourceSets.main.allJava
+    }
 
-        for (String key : jsonData1.keySet()) {
-            String val = jsonData1[key]
-            if (val.getClass() == String) {
-                jsonData0[key] = new GStringTemplateEngine().createTemplate(val).make(jsonData1).toString()
-            } else {
-                jsonData0[key] = val
+    publishing {
+        publications {
+            JavaComponent(MavenPublication) {
+                from components.java
+                artifact tasks.sourceJar
+            }
+        }
+        repositories {
+            maven {
+                url IMMORTALS_REPO.toString()
             }
         }
     }
 
-    // Add back the non-strings
-    jsonData0.putAll(nonStringJsonData)
-
-    // Define the common file paths
-    def commonJsonSrcPath = IMMORTALS_ROOT + 'buildSrc/common.json'
-    def commonGradleSrcPath = IMMORTALS_ROOT + 'buildSrc/common.gradle'
-
-    // Write the new json file to disk
-    new File(commonJsonSrcPath).write(new JsonBuilder(jsonData0).toString())
-
-    apply from: 'common.gradle'
-
-    copy {
-        from(commonJsonSrcPath)
-        into(IMMORTALS_ROOT + 'buildSrc/src/main/resources/')
-    }
-
-    copy {
-        from(commonGradleSrcPath)
-        into(IMMORTALS_ROOT + 'buildSrc/src/main/resources/')
-    }
-
-    // Copy the common files to all applicable projects
-    for (String path : commonValueConsumers) {
-        copy {
-            from(commonJsonSrcPath)
-            into(IMMORTALS_ROOT + path + '/')
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java']
+            }
+            resources {
+                srcDirs = ['src/main/resources']
+            }
         }
-        copy {
-            from(commonGradleSrcPath)
-            into(IMMORTALS_ROOT + path)
-        }
-    }
-}
-
-task('publishProjectToTriples', type: Exec) {
-    group = 'Immortals'
-    description = 'Builds and publishes KR project-to-triples in the local IMMORTALS_REPO.'
-    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
-    executable = 'mvn'
-    args = ['-pl', 'toolchain/project-to-triples', '-DskipTests', '-am', 'install']
-}
-
-task('publishAdsl', type: Exec) {
-    group = 'Immortals'
-    description = 'Builds and publishes the knowledge-repo ADSL to the local IMMORTALS_REPO.'
-    workingDir = IMMORTALS_ROOT + 'knowledge-repo'
-    executable = 'mvn'
-    args = ['-pl', 'vocabulary/dsl-generate', '-DskipTests', '-am', 'install']
-}
-
-task('publishKRToolingIfNecessary') {
-    doLast {
-        if (!file(localRepoPath + 'com/securboration/immortals-adsl-generate/r2.0.0/immortals-adsl-generate-r2.0.0.jar').exists()) {
-            publishAdsl.execute()
-
-            if (!file(localRepoPath + 'com/securboration/immortals-project-to-triples/r2.0.0/immortals-project-to-triples-r2.0.0.jar').exists()) {
-                publishProjectToTriples.execute()
+        test {
+            java {
+                srcDirs = ['src/test/java']
             }
         }
     }
+    dependencies {
+        compile 'com.google.code.findbugs:jsr305:3.0.1'
+        compile 'com.google.code.gson:gson:2.7'
+        testCompile 'junit:junit:4.12'
+    }
 }
 
-publishKRToolingIfNecessary.execute()
+build.finalizedBy(':ImmortalsConfig:publish', ':ImmortalsGradle:publish')

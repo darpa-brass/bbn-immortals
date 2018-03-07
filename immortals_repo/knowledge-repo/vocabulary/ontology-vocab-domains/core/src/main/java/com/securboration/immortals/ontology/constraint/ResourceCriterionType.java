@@ -19,4 +19,6 @@ public enum ResourceCriterionType {
     WHEN_RESOURCE_ADDED,
     WHEN_RESOURCE_REMOVED,
     
+    WHEN_RESOURCE_ALTERED
+    
 }

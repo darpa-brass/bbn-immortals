@@ -6,14 +6,14 @@ from typing import List, Callable, Union, Optional
 
 import requests
 
-from pymmortals.datatypes.root_configuration import get_configuration
+from pymmortals.immortalsglobals import get_configuration
 from pymmortals.datatypes.testing import Phase2SubmissionFlow, PerturbationScenario
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.enabledas import EnableDas
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.submissionmodel import SubmissionModel
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.testadapterendpoint import TestAdapterEndpoint
 from pymmortals import threadprocessrouter as tpr
 
-_URL_TEMPLATE = get_configuration().testAdapter.protocol + \
+_URL_TEMPLATE = get_configuration().testAdapter.protocol + '://' + \
                 get_configuration().testAdapter.url + \
                 ':' + str(get_configuration().testAdapter.port) + '{path}'
 
@@ -29,6 +29,7 @@ def set_logger(logger):
 
 def post(endpoint: TestAdapterEndpoint, body: dict):
     global _logger
+
     _logger.sending_post_listener(endpoint=endpoint, body_dict=body)
 
     url = _URL_TEMPLATE.format(path=endpoint.path)
@@ -96,9 +97,9 @@ class TestAdapterSubmission:
 def produce_test_adapter_submissions(ll_input: SubmissionModel,
                                      submission_flow: Phase2SubmissionFlow,
                                      perturbation_scenario: PerturbationScenario) -> List[TestAdapterSubmission]:
-    rval: List[TestAdapterSubmission] = list()
+    rval = list()  # type: List[TestAdapterSubmission]
 
-    scd: SubmissionModel = copy.deepcopy(ll_input)
+    scd = copy.deepcopy(ll_input)  # type: SubmissionModel
 
     if scd is not None and scd.sessionIdentifier is not None:
         session_identifier = scd.sessionIdentifier
@@ -123,7 +124,7 @@ def produce_test_adapter_submissions(ll_input: SubmissionModel,
     if perturbation_scenario.endpoint == TestAdapterEndpoint.CP1:
         rval.append(
             TestAdapterSubmission(
-                ll_input=scd_copy,
+                ll_input=(None if submission_flow == Phase2SubmissionFlow.BaselineA else scd_copy),
                 method=send_cp1
             )
         )
@@ -131,7 +132,7 @@ def produce_test_adapter_submissions(ll_input: SubmissionModel,
     elif perturbation_scenario.endpoint == TestAdapterEndpoint.CP2:
         rval.append(
             TestAdapterSubmission(
-                ll_input=scd_copy,
+                ll_input=(None if submission_flow == Phase2SubmissionFlow.BaselineA else scd_copy),
                 method=send_cp2
             )
         )
@@ -139,7 +140,7 @@ def produce_test_adapter_submissions(ll_input: SubmissionModel,
     elif perturbation_scenario.endpoint == TestAdapterEndpoint.CP3:
         rval.append(
             TestAdapterSubmission(
-                ll_input=scd_copy,
+                ll_input=(None if submission_flow == Phase2SubmissionFlow.BaselineA else scd_copy),
                 method=send_cp3
             )
         )

@@ -7,27 +7,26 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
-import com.securboration.immortals.bca.BytecodeAnalyzer;
 import com.securboration.immortals.instantiation.annotationparser.bytecode.BytecodeHelper;
 import com.securboration.immortals.instantiation.annotationparser.traversal.AnnotationParser;
 import com.securboration.immortals.instantiation.annotationparser.traversal.JarTraverser;
-import com.securboration.immortals.o2t.UniqueMethodCall;
-import com.securboration.immortals.ontology.*;
 import com.securboration.immortals.ontology.bytecode.*;
-import com.securboration.immortals.ontology.bytecode.analysis.Instruction;
-import com.securboration.immortals.ontology.bytecode.analysis.MethodCall;
 
 
 import com.securboration.immortals.ontology.java.compiler.NamedClasspath;
 
 import com.securboration.immortals.semanticweaver.ObjectMapper;
 
+import com.securboration.immortals.utility.GradleTaskHelper;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -40,11 +39,10 @@ import com.securboration.immortals.ontology.java.build.BuildScript;
 import com.securboration.immortals.ontology.java.project.JavaProject;
 import com.securboration.immortals.ontology.java.source.CompiledJavaSourceFile;
 import com.securboration.immortals.ontology.java.vcs.VcsCoordinate;
-import org.xeustechnologies.jcl.JarClassLoader;
 
 public class ProjectToTriplesMain {
 
-	private static final boolean ignoreBinaries = true;
+	private static final boolean IGNORE_BINARIES = true;
 	private ObjectToTriplesConfiguration o2tc;
 	private SourceFinder sf;
 
@@ -64,7 +62,7 @@ public class ProjectToTriplesMain {
 		
 	}
 
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args) {
 		System.out.println("testing");
 	}
 	
@@ -72,14 +70,12 @@ public class ProjectToTriplesMain {
 		return "Hello, world!";
 	}
 	
-	public String gradleDataToTriples(GradleData gd) throws Exception{
+	public String gradleDataToTriples(GradleData gd, GradleTaskHelper taskHelper, ArrayList<String> includedLibs) throws Exception{
 		String uuid = getUUID();
-		o2tc = new ObjectToTriplesConfiguration(gd.getImmortalsVersion());
-		//o2tc = new ObjectToTriplesConfiguration("r2.0.0"); //TODO hard coded
+		o2tc = new ObjectToTriplesConfiguration("r2.0.0");
 		JavaProject x = new JavaProject();
 		//Set base directory
 		String basedir = gd.getBaseDir();
-		String plugindir = basedir + "/krgp/";
 		
 		//SourceFinder (the .java files)
 		String svnLocation = gd.getSvnLocation();
@@ -103,11 +99,10 @@ public class ProjectToTriplesMain {
 		else{
 			sf = new SourceFinder(basedir, svnLocation,sourceFiles);
 		}
-
 		//buildScript
 		Path ppom = Paths.get(gd.getPathToBuildFile());
 		BuildScript buildScript;
-		if (!Files.exists(ppom) || ppom.toString().equals("")){
+		if (ppom.toFile().exists() || ppom.toString().equals("")){
 			buildScript = new BuildScript(null,null,null);
 		}
 		else{
@@ -120,13 +115,9 @@ public class ProjectToTriplesMain {
 		// Initialize data structures that will be used across classpaths
 		ArrayList<NamedClasspath> gradlePaths = new ArrayList<>();
 		Set<String> compiledSourcesHash = new HashSet<>();
-		HashMap<String, UniqueMethodCall> methodCalls;
 		Set<String> elementPathList = new HashSet<>();
 		NamedClasspath gpc;
-		CallGraph callGraph;
 		
-		StaticCallGraph staticCallGraph;
-		DynamicCallGraph dynamicCallGraph = new DynamicCallGraph();
 		JarArtifact jal;
         String completeAnalysis = String.valueOf(gd.getProperty("completeAnalysis"));
 		
@@ -134,10 +125,6 @@ public class ProjectToTriplesMain {
 
             HashSet<String> defaultClassPaths = new HashSet<>();
             defaultClassPaths.add(COMPILE_CLASSPATH_NAME);
-            // plugin takes too long right now, need to optimize before analyzing any more classpaths
-            //defaultClassPaths.add(RUNTIME_CLASSPATH_NAME);
-            defaultClassPaths.add(TEST_COMPILE_CLASSPATH_NAME);
-            //defaultClassPaths.add(TEST_RUNTIME_CLASSPATH_NAME);
 
             HashMap<String, ArrayList<String>> tempClasspath = new HashMap<>();
             tempClasspath.putAll(gd.getClasspathNameToClasspathList());
@@ -147,117 +134,123 @@ public class ProjectToTriplesMain {
                 }
             }
         }
-		HashSet<String> classFilesWithTestDependencies = new HashSet<>();
-        classFilesWithTestDependencies.addAll(gd.getClasspathNameToClasspathList().get(TEST_COMPILE_CLASSPATH_NAME));
-		classFilesWithTestDependencies.addAll(gd.getClasspathNameToClasspathList().get(COMPILE_CLASSPATH_NAME));
-		classFilesWithTestDependencies.addAll(gd.getClassFilePaths());
-		
+        
+        ArrayList<String> customAnnotClasses = new ArrayList<>();
+        customAnnotClasses.addAll(gd.getClasspathNameToClasspathList().get("compile"));
+        customAnnotClasses.addAll(getPackagePaths(gd.getClassFilePaths()));
+        
+        String[] neededClassPaths = new String[customAnnotClasses.size()];
+        int i = 0;
+        for (String classPath : customAnnotClasses) {
+            neededClassPaths[i] = classPath;
+            i++;
+        }
+        
 		// For each classpath...
 		for (String key : gd.getClasspathNameToClasspathList().keySet()){
-			ArrayList<FunctionalityCheck> functionalityChecks = new ArrayList<>();
-			ArrayList<FunctionalityExemplarDriver> functionalityDrivers = new ArrayList<>();
 			ArrayList<String> jarPath = gd.getClasspathNameToClasspathList().get(key);
-			callGraph = new CallGraph();
-			staticCallGraph = new StaticCallGraph();
-			methodCalls = new HashMap<>();
+			// Debugging statement
 			gpc = new NamedClasspath();
 			// Add all methods on this classpath to cache
-			// TODO Create config option for creating call graph
-			if (false) {
-				methodCalls.putAll(addMethodsToCache(jarPath, plugindir
-						+ "/" + key + CLASS_ARTIFACTS_DIRECTORY));
-				methodCalls.putAll(addMethodsToCache(gd.getClassFilePaths(), plugindir
-						+ "/" + key + CLASS_ARTIFACTS_DIRECTORY));
-			}
 			for (String path : new HashSet<>(gd.getClassFilePaths())) {
 				ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration(gd.getImmortalsVersion());
-				AnnotationParser annotationParser = new AnnotationParser(config);
+				AnnotationParser annotationParser = new AnnotationParser(config, neededClassPaths);
 				
-				CompiledJavaSourceFile sourceFile = processClassFileFromString(path, methodCalls);
+				CompiledJavaSourceFile sourceFile = processClassFileFromString(path, taskHelper, String.valueOf(gd.getProperty("vcsAnchor")), gd);
 				
-				//TODO same as above...
-				if (false) {
-					for (ClassArtifact art : sourceFile.getCorrespondingClass()) {
-						constructCPElementGraph(art, methodCalls, staticCallGraph, dynamicCallGraph,
-								functionalityChecks, classFilesWithTestDependencies, functionalityDrivers);
-					}
-				}
 				if (elementPathList.add(path)) {
 					compiledSourcesHash.add(sourceFile.getHash());
 					Model classModel = ObjectToTriples.convert(o2tc, sourceFile);
 					String serialModel = OntologyHelper.serializeModel(classModel, "Turtle", false);
-					recordCPElement(serialModel, plugindir
+					recordCPElement(serialModel, taskHelper.getResultsDir() + gd.getCompiledProjectName()
 							+ SOURCES_DIRECTORY + sourceFile.getName() + RDFFormat.TURTLE.ext);
 
 					byte[] bytecode = FileUtils.readFileToByteArray(new File(path));
 					annotationParser.visitClass(BytecodeHelper.hash(bytecode), bytecode);
+					annotationParser.visitMethods(BytecodeHelper.hash(bytecode), bytecode);
 					//Serialize each dfu element for each class file
 					serialModel = serializeCPElement(config);
 					if (!serialModel.equals("")) {
-						recordCPElement(serialModel, plugindir
+						recordCPElement(serialModel, taskHelper.getResultsDir() + gd.getCompiledProjectName()
 								+ DFUS_DIRECTORY + sourceFile.getName() + "-DFU" + RDFFormat.TURTLE.ext);
 					}
 				}
 			}
 			for (String path : jarPath) {
 				ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration(gd.getImmortalsVersion());
-				AnnotationParser annotationParser = new AnnotationParser(config);
+				AnnotationParser annotationParser = new AnnotationParser(config, neededClassPaths);
 				// Check if we have already processed this file
 				if (elementPathList.add(path)) {
 					// Single class file on path
 					if (path.endsWith(".class")) {
 						// Analyze class file element
-						ClasspathElement element = JarIngestor.ingest(new File(path), sf, methodCalls);
+						ClasspathElement element = JarIngestor.ingest(new File(path), sf);
 						// If it's brand new, serialize and output
 						if (gpc.addElementHashValue(element.getHash())) {
-							System.out.println("New file, adding to master list : " + path);
+							taskHelper.getPw().println("New file, adding to master list : " + path);
 
 							//Serialize Rdf model and output for each class file
 							Model classModel = ObjectToTriples.convert(o2tc, element);
 							String serialModel = OntologyHelper.serializeModel(classModel, "Turtle", false);
-							recordCPElement(serialModel, plugindir
+							recordCPElement(serialModel, taskHelper.getResultsDir()
 									 + "/" + key + CLASS_ARTIFACTS_DIRECTORY + element.getName() + RDFFormat.TURTLE.ext);
 
 							// Traverse class for dfu's
 							byte[] bytecode = FileUtils.readFileToByteArray(new File(path));
 							annotationParser.visitClass(BytecodeHelper.hash(bytecode), bytecode);
+							annotationParser.visitMethods(BytecodeHelper.hash(bytecode), bytecode);
 							//Serialize each dfu element for each class file
 							serialModel = serializeCPElement(config);
 							if (!serialModel.equals("")) {
-								recordCPElement(serialModel, plugindir
+								recordCPElement(serialModel, taskHelper.getResultsDir()
 										+ DFUS_DIRECTORY + element.getName() + "-DFU" + RDFFormat.TURTLE.ext);
-							}
-							
-							// Record call graph info
-							if (element instanceof ClassArtifact) {
-								constructCPElementGraph((ClassArtifact) element, methodCalls, staticCallGraph);
 							}
 						}
 						// Jar file(s) on path
 					} else {
 						
 						// Analyze jar artifact
-						jal = analyzeJar(path, methodCalls);
+						jal = analyzeJar(path, (includedLibs != null && includedLibs.stream()
+                                .noneMatch(lib -> path.contains(lib)) ? false : true));
+						jal.setFileSystemPath(path);
+                        String cachedURI = null;
+                        
+                        if (taskHelper.isPreviousTaskDetected()) {
+                            cachedURI = checkCache(jal.getHash(), gd.getCompiledProjectName(), taskHelper);
+                        }
 						
-						// If it's brand new, serialize and output
+                        // If it's brand new, serialize and output
 						if (gpc.addElementHashValue(jal.getHash())) {
-							System.out.println("New file, adding to master list : " + path);
-							
-							Model jarArtModel = ObjectToTriples.convert(o2tc, jal);
-							String serialModel = OntologyHelper.serializeModel(jarArtModel, "Turtle", false);
-							recordCPElement(serialModel, plugindir
-									+ JARS_DIRECTORY + jal.getName() + RDFFormat.TURTLE.ext);
+							taskHelper.getPw().println("New file, adding to master list : " + path);
+							if (cachedURI == null) {
+							    
+                                Model jarArtModel = ObjectToTriples.convert(o2tc, jal);
+                                
+                                String jarURI = o2tc.getNamingContext().getNameForObject(jal);
+                                addToCache(jal.getHash(), jarURI, gd.getCompiledProjectName(), taskHelper);
+                                
+                                String serialModel = OntologyHelper.serializeModel(jarArtModel, "Turtle", false);
+                                recordCPElement(serialModel, taskHelper.getResultsDir() + gd.getCompiledProjectName()
+                                        + JARS_DIRECTORY + jal.getName() + RDFFormat.TURTLE.ext);
 
-							// Traverse jar for DFU's
-							JarTraverser.traverseJar(new File(path), annotationParser);
-							// Serialize DFU elements and output for each jar
-							serialModel = serializeCPElement(config);
-							if (!serialModel.equals("")) {
-								recordCPElement(serialModel, plugindir
-										+ DFUS_DIRECTORY + jal.getName() + "DFU" + RDFFormat.TURTLE.ext);
-							}
-							// Record call graph info
-							constructJarGraph(jal, methodCalls, staticCallGraph);
+                                // Traverse jar for DFU's
+                                JarTraverser.traverseJar(new File(path), annotationParser, annotationParser);
+                                // Serialize DFU elements and output for each jar
+                                serialModel = serializeCPElement(config);
+                                if (!serialModel.equals("")) {
+                                    recordCPElement(serialModel, taskHelper.getResultsDir() + gd.getCompiledProjectName()
+                                            + DFUS_DIRECTORY + jal.getName() + "DFU" + RDFFormat.TURTLE.ext);
+                                }
+                                // Record call graph info
+                            } else if(!cachedURI.equals("jarAlreadyBelongsToCurrentProject")){
+                                JarArtifact dummyJar = new JarArtifact();
+                                dummyJar.setName(jal.getName());
+                                o2tc.getNamingContext().setNameForObject(dummyJar, cachedURI);
+
+                                Model dummyJarModel = ObjectToTriples.convert(o2tc, dummyJar);
+                                recordCPElement(OntologyHelper.serializeModel(dummyJarModel, "TTL", false), taskHelper.getResultsDir()
+                                        + gd.getCompiledProjectName() + JARS_DIRECTORY + jal.getName() + RDFFormat.TURTLE.ext);
+                            }
 						}
 					}
 					/*
@@ -265,63 +258,13 @@ public class ProjectToTriplesMain {
 					 *  because it might contain different information, depending on what other artifacts 
 					 *  are on the path with it.
  					 */
-				} else {
-					//TODO config option for call graph
-					if (false) {
-						System.out.println("Recurring file has already been processed : " + path);
-						if (path.endsWith(".class")) {
-							ClasspathElement element = JarIngestor.ingest(new File(path), sf, methodCalls);
-							gpc.addElementHashValue(element.getHash());
-							if (element instanceof ClassArtifact) {
-								constructCPElementGraph((ClassArtifact) element, methodCalls, staticCallGraph);
-							}
-						} else {
-							jal = analyzeJar(path, methodCalls);
-							gpc.addElementHashValue(jal.getHash());
-							constructJarGraph(jal, methodCalls, staticCallGraph);
-						}
-					}
 				}
 			}
-			// Serialize static analysis call graph info
-			callGraph.setStaticCallGraph(staticCallGraph);
-			callGraph.setDynamicCallGraph(dynamicCallGraph);
 			gpc.setClasspathName(key);
 			gradlePaths.add(gpc);
 			NamedClasspath dummyClasspath = new NamedClasspath();
 			ObjectToTriples.convert(o2tc, gpc);
 			o2tc.getNamingContext().setNameForObject(dummyClasspath, o2tc.getNamingContext().getNameForObject(gpc));
-			// TODO config option for call graph
-			if (false) {
-				callGraph.setClasspath(dummyClasspath);
-				Model graphModel = ObjectToTriples.convert(o2tc, callGraph);
-				String serializedGraphModel = OntologyHelper.serializeModel(graphModel, "TURTLE", false);
-				recordCPElement(serializedGraphModel, plugindir
-						+ ANALYSIS_DIRECTORY + key + "/" + gpc.getClasspathName() + "-analysis" + RDFFormat.TURTLE.ext);
-
-				CallGraph dummyGraph = new CallGraph();
-				o2tc.getNamingContext().setNameForObject(dummyGraph, o2tc.getNamingContext().getNameForObject(callGraph));
-				for (FunctionalityCheck check : functionalityChecks) {
-					for (FunctionalityTestRun testRun : check.getFunctionalityTestRuns()) {
-						testRun.setCallGraph(dummyGraph);
-					}
-
-					check.setClasspath(dummyClasspath);
-					Model m = ObjectToTriples.convert(o2tc, check);
-					String serializedModel = OntologyHelper.serializeModel(m, "TURTLE", false);
-					recordCPElement(serializedModel, plugindir + ANALYSIS_DIRECTORY + key
-							+ CHECKS_DIRECTORY + check.getMethodPointer().replace("/", "X")
-							+ "-FunctCheck" + RDFFormat.TURTLE.ext);
-				}
-
-				for (FunctionalityExemplarDriver driver : functionalityDrivers) {
-					Model m = ObjectToTriples.convert(o2tc, driver);
-					String serializedModel = OntologyHelper.serializeModel(m, "TURTLE", false);
-					recordCPElement(serializedModel, plugindir + ANALYSIS_DIRECTORY + key
-							+ DRIVERS_DIRECTORY + driver.getTemplateTaught().replace(" ", "_")
-							+ "-FunctDriver" + RDFFormat.TURTLE.ext);
-				}
-			}
 		}
 		
 		// Record and serialize the overall, JavaProject ontology info
@@ -332,7 +275,8 @@ public class ProjectToTriplesMain {
 		// TODO update this with new method call cache system
 		String jarPath = gd.getCompiledProjectJarPath();
 		if (jarPath != null && !jarPath.equals("")){
-			JarArtifact cs = analyzeJar(jarPath);
+			JarArtifact cs = analyzeJar(jarPath, (includedLibs != null && includedLibs.stream()
+                    .noneMatch(lib -> jarPath.contains(lib)) ? false : true));
 			x.setCompiledSoftware(cs);
 		}
 		
@@ -343,310 +287,80 @@ public class ProjectToTriplesMain {
 		return OntologyHelper.serializeModel(m, "Turtle", false);
 	}
 
-	/** Updates a call graph with the given method edge info
-	 * @param callerHash - identifier for the method caller
-	 * @param calledHash - identifier for the method called
-	 * @param graph - Call graph that will be updated
-	 * @param note - Optional note describing issues with the update
-	 */
-	private void updateGraph(String callerHash, String calledHash, StaticCallGraph graph, Optional<String> note, int order) {
-		StaticCallGraphEdge edge = new StaticCallGraphEdge();
-		edge.setCallerHash(callerHash);
-		edge.setCalledHash(calledHash);
-		edge.setOrder(order);
-		note.ifPresent(edge::setNote);
-		StaticCallGraphEdge[] edges = graph.getStaticCallGraphEdges();
-		List<StaticCallGraphEdge> edgeList;
-		if (edges == null) {
-			edgeList = new ArrayList<>();
-		} else {
-			edgeList = Arrays.asList(edges);
-			edgeList = new ArrayList<>(edgeList);
-		}
-		edgeList.add(edge);
-		graph.setStaticCallGraphEdges(edgeList.toArray(new StaticCallGraphEdge[edgeList.size()]));
-	}
+    private Set<String> getPackagePaths(ArrayList<String> classFilePaths) throws IOException {
+	    
+	    Set<String> packagePaths = new HashSet<>();
+	    
+	    for (String classFilePath : classFilePaths) {
+            Path p = Paths.get(classFilePath);
+            byte[] binaryForm = Files.readAllBytes(p);
+            
+            ClassReader cr = new ClassReader(binaryForm);
+            ClassNode cn = new ClassNode();
+            cr.accept(cn, 0);
+            
+            classFilePath = classFilePath.replace("\\", "/");
+            packagePaths.add(classFilePath.substring(0, classFilePath.indexOf(cn.name)));
+        }
+        return packagePaths;
+    }
 
-	/** Test jar methods against current cache and build the resulting call graph 
-	 * @param jal - Jar artifact that will be analyzed for call graph edges
-	 * @param methodCalls - Current cache to test against
-	 * @param graph - graph that will have constructed edges added to
-	 */
-	private void constructJarGraph(JarArtifact jal, HashMap<String, UniqueMethodCall> methodCalls, StaticCallGraph graph) {
-		for (ClasspathElement element : jal.getJarContents()) {
-			if (element instanceof ClassArtifact) {
-				AClass aClass = ((ClassArtifact) element).getClassModel();
-				for (AMethod method : aClass.getMethods()) {
-					int methodCallOrder = 1;
-					for (Instruction instruction : method.getInterestingInstructions()) {
-						if (instruction instanceof MethodCall) {
-							MethodCall methodCall = (MethodCall) instruction;
-							Optional<String> note = Optional.empty();
-							if (methodCall.getInvocationType().equals(InvocationType.getType(INTERFACE_OP_CODE))) {
-								note = Optional.of(INTERFACE_METHOD_CALLED_NOTE);
-							}
-							UniqueMethodCall testAgainstCache = new UniqueMethodCall(methodCall.getCalledMethodName(),
-									methodCall.getCalledMethodDesc(), methodCall.getOwner());
-							boolean foundInCache = false;
-							for (Map.Entry<String, UniqueMethodCall> entry : methodCalls.entrySet()) {
-								if (entry.getValue().equals(testAgainstCache)) {
-									updateGraph(method.getBytecodePointer(), entry.getKey(), graph, note, methodCallOrder);
-									methodCallOrder++;
-									foundInCache = true;
-								}
-							}
-							
-							if (!foundInCache) {
-								note = note.map(s -> Optional.of(INTERFACE_METHOD_CALLED_NOTE + AMBIGUOUS_METHOD_CALLED_NOTE)).orElseGet(() ->
-										Optional.of(AMBIGUOUS_METHOD_CALLED_NOTE));
-								updateGraph(method.getBytecodePointer(), constructAmbiguousEdgePointer(methodCall),
-										graph, note, methodCallOrder);
-								methodCallOrder++;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    private String checkCache(String discoveredJarHash, String projectName, GradleTaskHelper taskHelper) throws IOException {
+        JSONParser parser = new JSONParser();
+        File cacheFile = new File(taskHelper.getResultsDir() + "/cache/");
+        cacheFile = new File(cacheFile.getAbsolutePath() + "/cachedJars.json");
+        JSONArray cachedJars;
+        try {
+            cachedJars = (JSONArray) parser.parse(new FileReader(cacheFile.getAbsolutePath()));
+        } catch (ParseException parseException) {
+            cachedJars = new JSONArray();
+        }
+        
+        for (Object o : cachedJars) {
+            JSONObject cachedJar = (JSONObject) o;
+            
+            String cachedJarHash = (String) cachedJar.get("jarBytecode");
+            String cachedJarOwner = (String) cachedJar.get("projectOwner");
+            
+            if (cachedJarHash.equals(discoveredJarHash) && cachedJarOwner.equals(projectName)) {
+                return "jarAlreadyBelongsToCurrentProject";
+            } else if (cachedJarHash.equals(discoveredJarHash)) {
+                return (String) cachedJar.get("jarURI");
+            }
+        }
+        return null;
+    }
+    
+    private void addToCache(String jarBytecode, String jarURI, String projectName, GradleTaskHelper taskHelper) throws IOException {
+	    File cacheFile = new File(taskHelper.getResultsDir() + "/cache/");
+	    cacheFile.mkdirs();
+	    cacheFile = new File(cacheFile.getAbsolutePath() + "/cachedJars.json");
+	    cacheFile.createNewFile();
+	    
+        JSONParser parser = new JSONParser();
+        JSONArray cachedJars;
+        try {
+            cachedJars = (JSONArray) parser.parse(new FileReader(cacheFile.getAbsolutePath()));
+        } catch (ParseException parseException) {
+            cachedJars = new JSONArray();
+        }
+        
+        JSONObject newCachedJar = new JSONObject();
+        newCachedJar.put("jarBytecode", jarBytecode);
+        newCachedJar.put("jarURI", jarURI);
+        newCachedJar.put("projectOwner", projectName);
+        
+        cachedJars.add(newCachedJar);
+        
+        try (FileWriter file = new FileWriter(cacheFile.getAbsolutePath())) {
 
-	/** Test classpath artifact methods against current cache and build the resulting call graph 
-	 * @param artifact - Artifact that will be analyzed for call graph edges
-	 * @param methodCalls - Current cache to test against
-	 * @param graph - graph that will have constructed edges added to
-	 */
-	private void constructCPElementGraph(ClassArtifact artifact, HashMap<String, UniqueMethodCall> methodCalls, StaticCallGraph graph) {
-		AClass aClass = artifact.getClassModel();
-		for (AMethod method : aClass.getMethods()) {
-			int methodCallOrder = 1;
-			for (Instruction instruction : method.getInterestingInstructions()) {
-				if (instruction instanceof MethodCall) {
-					MethodCall methodCall = (MethodCall) instruction;
-					UniqueMethodCall testAgainstCache = new UniqueMethodCall(methodCall.getCalledMethodName(),
-							methodCall.getCalledMethodDesc(), methodCall.getOwner());
-					boolean foundInCache = false;
-					for (Map.Entry<String, UniqueMethodCall> entry : methodCalls.entrySet()) {
-						if (entry.getValue().equals(testAgainstCache)) {
-							updateGraph(method.getBytecodePointer(), entry.getKey(), graph, Optional.empty(), methodCallOrder);
-							methodCallOrder++;
-							foundInCache = true;
-						}
-					}
+            file.write(cachedJars.toJSONString());
+            file.flush();
 
-					if (!foundInCache) {
-						updateGraph(method.getBytecodePointer(), constructAmbiguousEdgePointer(methodCall),
-								graph, Optional.of(AMBIGUOUS_METHOD_CALLED_NOTE), methodCallOrder);
-						methodCallOrder++;
-					}
-				}
-			}
-		}
-	}
-
-	/** Test source file methods against current cache and build the resulting call graph. Additionally,
-	 *  if any of the methods should contain a @FunctionalityTest annotation, invoke and record the results
-	 *  in the ontology.
-	 * @param artifact - Artifact that will be analyzed for call graph edges
-	 * @param methodCalls - Current cache to test against
-	 * @param staticCallGraph - graph that will have constructed edges added to
-	 * @param testDependencyDir - directory that contains needed dependencies to invoke test method
-	 */
-	private void constructCPElementGraph(ClassArtifact artifact, HashMap<String, UniqueMethodCall> methodCalls,
-										 StaticCallGraph staticCallGraph, DynamicCallGraph dynamicCallGraph,
-										 ArrayList<FunctionalityCheck> checks, HashSet<String> testDependencyDir,
-										 ArrayList<FunctionalityExemplarDriver> drivers) {
-		AClass aClass = artifact.getClassModel();
-		FunctionalityExemplarDriver driver;
-		Stack<String> driverTemplate;
-
-		for (AMethod aMethod : aClass.getMethods()) {
-			int methodCallOrder = 1;
-			driverTemplate = new Stack<>();
-			driver = new FunctionalityExemplarDriver();
-			AnAnnotation[] annotations = aMethod.getAnnotations();
-			if (annotations != null) {
-				for (AnAnnotation anAnnotation : annotations) {
-					if (anAnnotation.getAnnotationClassName().equals(FUNCTIONALITY_TEST)) {
-						FunctionalityTestRun testRun = BytecodeAnalyzer.invokeTestMethod(
-								aClass.getClassName().replace("/", "."),
-								testDependencyDir, aMethod.getMethodName(), dynamicCallGraph);
-						if (testRun == null) {
-							System.out.println("Unable to invoke FunctionalityTest-annotated method: " +
-									aMethod.getMethodName() + ", with class name: " + aClass.getClassName());
-							testRun = new FunctionalityTestRun();
-							testRun.setSuccess(false);
-						}
-						AnnotationKeyValuePair[] functionalityType = anAnnotation.getKeyValuePairs();
-						FunctionalityCheck check = new FunctionalityCheck();
-						
-						check.setMethodPointer(aMethod.getBytecodePointer());
-						check.setType(functionalityType[0].getValue());
-						FunctionalityTestRun[] functionalityTestRuns = { testRun };
-						check.setFunctionalityTestRuns(functionalityTestRuns);
-						checks.add(check);
-					} else if (anAnnotation.getAnnotationClassName().equals(EXEMPLAR_DRIVER)) {
-						String template = anAnnotation.getKeyValuePairs()[0].getValue();
-						driverTemplate.push(template);
-					}
-				} 
-			}
-			for (Instruction instruction : aMethod.getInterestingInstructions()) {
-				if (instruction instanceof MethodCall) {
-					MethodCall methodCall = (MethodCall) instruction;
-					UniqueMethodCall testAgainstCache = new UniqueMethodCall(methodCall.getCalledMethodName(),
-							methodCall.getCalledMethodDesc(), methodCall.getOwner());
-					boolean foundInCache = false;
-					for (Map.Entry<String, UniqueMethodCall> entry : methodCalls.entrySet()) {
-						if (entry.getValue().equals(testAgainstCache)) {
-							updateGraph(aMethod.getBytecodePointer(), entry.getKey(), staticCallGraph, Optional.empty(), methodCallOrder);
-							methodCallOrder++;
-							foundInCache = true;
-							if (!driverTemplate.isEmpty()) {
-								String[] currentInstructions = driver.getInstructions();
-
-								List<String> instructionList;
-								if (currentInstructions == null) {
-									instructionList = new ArrayList<>();
-								} else {
-									instructionList = Arrays.asList(currentInstructions);
-									instructionList = new ArrayList<>(instructionList);
-								}
-								instructionList.add(entry.getKey());
-								driver.setTemplateTaught(driverTemplate.peek());
-								driver.setInstructions(instructionList.toArray(new String[instructionList.size()]));
-							}
-						}
-					}
-
-					if (!foundInCache) {
-						updateGraph(aMethod.getBytecodePointer(), constructAmbiguousEdgePointer(methodCall),
-								staticCallGraph, Optional.of(AMBIGUOUS_METHOD_CALLED_NOTE), methodCallOrder);
-						methodCallOrder++;
-						if (!driverTemplate.isEmpty()) {
-							driver.setNote("WARNING: Unable to locate one or more method source/destination(s), attempting" +
-									" to invoke the given sequence will likely result in unpredictable behavior.");
-						}
-					}
-				}
-			}
-			if (driver.getNote() != null) {
-				drivers.add(driver);
-			}
-		}
-	}
-
-	/** Analyze paths for methods and build up cache
-	 * @param paths - Paths to analyze for method calls
-	 * @return - Mapping of method pointer to wrapper object UniqueMethodCall, containing method name, method description,
-	 * and owner name.
-	 * @throws NoSuchAlgorithmException - if the algorithm used to create our object's hash's is not available 
-	 */
-	private HashMap<String, UniqueMethodCall> addMethodsToCache(ArrayList<String> paths, String classArtifactPath) throws NoSuchAlgorithmException {
-		HashMap<String, UniqueMethodCall> methodCalls = new HashMap<>();
-		JarArtifact jal;
-		JarClassLoader jarClassLoader;
-		Set<String> superClasses;
-		for (String path : paths) {
-			superClasses = new HashSet<>();
-			jarClassLoader = new JarClassLoader();
-			jarClassLoader.add(path);
-			if (path.endsWith(".class")) {
-				try {
-					AClass aClass = analyzeClass(FileUtils.readFileToByteArray(new File(path)));
-					for (AMethod method : aClass.getMethods()) {
-						methodCalls.put(aClass.getBytecodePointer() + "/methods/" + method.getMethodName() + method.getMethodDesc(),
-								new UniqueMethodCall(method.getMethodName(), method.getMethodDesc(), aClass.getClassName()));
-					}
-				} catch (IOException exc) {
-					System.out.println("Unable to read file with path: " + path);
-				}
-			} else {
-				try {
-					jal = analyzeJar(path);
-				} catch (IOException exc) {
-					System.out.println("Unable to read file with path: " + path);
-					continue;
-				}
-				for (ClasspathElement element : jal.getJarContents()) {
-					if (element instanceof ClassArtifact) {
-						AClass aClass = ((ClassArtifact) element).getClassModel();
-						for (AMethod method : aClass.getMethods()) {
-							methodCalls.put(aClass.getBytecodePointer() + "/methods/" + method.getMethodName() + method.getMethodDesc(), new UniqueMethodCall(method.getMethodName(), method.getMethodDesc(), aClass.getClassName()));
-							Class clazz;
-							try {
-								clazz = jarClassLoader.loadClass(aClass.getClassName().replace("/", ".")).getSuperclass();
-							} catch (ClassNotFoundException exc) {
-								System.out.println("Unable to find superclass for class: " + aClass.getClassName());
-								continue;
-							} catch (IllegalAccessError exc) {
-								System.out.println("Encountered classpath error when instantiating superclass of class: " + aClass.getClassName());
-								continue;
-							} catch (NoClassDefFoundError exc) {
-								System.out.println("Could not find class definition for superclass of class: " + aClass.getClassName());
-								continue;
-							}
-							if (clazz == null) {
-								continue;
-							}
-							try {
-								String clazzName = clazz.getCanonicalName();
-								if (clazzName == null) {
-									//anonymous class
-									continue;
-								}
-							} catch (NoClassDefFoundError exc) {
-								// anonymous inner class
-								continue;
-							}
-							InputStream in = jarClassLoader.getResourceAsStream(clazz.getCanonicalName().replace(".", "/") + ".class");
-							if (in == null) {
-									continue;
-							}
-
-							AClass superClass;
-							try {
-								superClass = analyzeClass(IOUtils.toByteArray(in));
-							} catch (IOException exc) {
-								System.out.println("Unable to read superclass of class: " + aClass.getClassName());
-								continue;
-							}
-							
-							while (!superClass.getClassName().equals("java/lang/Object")) {
-								for (AMethod superMethod : superClass.getMethods()) {
-									if (superMethod.getMethodName().equals(method.getMethodName()) && superMethod.getMethodDesc().equals(method.getMethodDesc())) {
-										methodCalls.put(superClass.getBytecodePointer() + "/methods/" + superMethod.getMethodName() + superMethod.getMethodDesc(), new UniqueMethodCall(superMethod.getMethodName(), superMethod.getMethodDesc(), superClass.getClassName()));
-										if (superClasses.add(superClass.getClassName())) {
-											Model m = ObjectToTriples.convert(o2tc, superClass);
-											try {
-												String serializedModel = OntologyHelper.serializeModel(m, "TURTLE", false);
-												recordCPElement(serializedModel, classArtifactPath + superClass.getClassName().replace("/", ".") + ".ttl");
-											} catch (IOException exc) {
-												exc.printStackTrace();
-											}
-										}
-									}
-								}
-								try {
-									clazz = jarClassLoader.loadClass(superClass.getClassName().replace("/", ".")).getSuperclass();
-									InputStream stream = jarClassLoader.getResourceAsStream(clazz.getCanonicalName().replace(".", "/") + ".class");
-									if (stream == null) {
-										System.out.println("Classloader can not see class with name: " + clazz.getCanonicalName());
-										break;
-									}
-									superClass = analyzeClass(IOUtils.toByteArray(jarClassLoader.getResourceAsStream(clazz.getCanonicalName().replace(".", "/") + ".class")));
-								} catch (ClassNotFoundException exc) {
-									System.out.println("Unable to find superclass of class: " + aClass.getClassName());
-								} catch (IOException exc) {
-									System.out.println("Unable to read superclass of class: " + aClass.getClassName());
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return methodCalls;
-	}
+        } catch (IOException e) {
+            taskHelper.getPw().println(e.getLocalizedMessage());
+        }
+    }
 	
 	// Serialize classpath element, passing an o2tc object and returning a string representation
 	private String serializeCPElement(ObjectToTriplesConfiguration config) throws IOException {
@@ -655,7 +369,7 @@ public class ProjectToTriplesMain {
 		ObjectMapper mapper = config.getMapper();
 		String serialModel = "";
 
-		if (mapper.getObjectsToSerialize().size() != 0) {
+		if (!mapper.getObjectsToSerialize().isEmpty()) {
 
 			for (Object o : mapper.getObjectsToSerialize()) {
 				Model dfuModel = ObjectToTriples.convert(config, o);
@@ -687,23 +401,10 @@ public class ProjectToTriplesMain {
 		mod2Rdf.getParentFile().mkdirs();
 		mod2Rdf.createNewFile();
 
-		FileWriter fileWriter = new FileWriter(mod2Rdf);
-		fileWriter.write(serialMod);
-		fileWriter.flush();
-		fileWriter.close();
-	}
-	
-	private void print(Object o){
-		System.out.println(o.toString());
-	}
-	
-	private void printList(ArrayList<String> a){
-		a.stream().forEach(System.out::println);
-	}
-	
-	private <T> void printArray(T[] ar){
-		Stream<T> s = Arrays.stream(ar);
-		s.forEach(System.out::println);
+        try (FileWriter fileWriter = new FileWriter(mod2Rdf)) {
+            fileWriter.write(serialMod);
+            fileWriter.flush();
+        }
 	}
 	
 	private void detectDirectory(String src, Set<String> dirSet){
@@ -719,26 +420,16 @@ public class ProjectToTriplesMain {
 	private String getUUID() {
 		return UUID.randomUUID().toString();
 	}
-	
-	private CompiledJavaSourceFile[] processClassFileStrings(ArrayList<String> classes, HashMap<String, UniqueMethodCall> pointers) throws Exception{
-		CompiledJavaSourceFile[] compiledSourceFiles = new CompiledJavaSourceFile[classes.size()];
-		for (int x = 0; x < classes.size(); x++){
-			compiledSourceFiles[x] = processClassFileFromString(classes.get(x), pointers);
-		}
-		return compiledSourceFiles;
-	}
-	
-	private CompiledJavaSourceFile processClassFileFromString(String path, HashMap<String, UniqueMethodCall> pointers) throws Exception {
+
+	private CompiledJavaSourceFile processClassFileFromString(String path, GradleTaskHelper taskHelper, String vcsAnchor, GradleData gradleData) throws Exception {
 		Path p = Paths.get(path);
 		byte[] binaryForm = Files.readAllBytes(p);
 		String hash = hash(binaryForm);
 		String name = p.getFileName().toString();
-		VcsCoordinate vcsInfo = new VcsCoordinate();
-		vcsInfo.setVersion("TEMP"); //TODO
-		vcsInfo.setVersionControlUrl("www.TEMP.com"); //TODO
+		
 		String sourceEncoding = "UTF-8"; //TODO guessing
 		
-		AClass ac = analyzeClass(binaryForm, pointers);
+		AClass ac = analyzeClass(binaryForm);
 		AClass[] inneracs = ac.getInnerClasses();
 		
 		ClassArtifact[] cas;
@@ -765,32 +456,59 @@ public class ProjectToTriplesMain {
 		cas[0] = builder;
 		
 		CompiledJavaSourceFile c = new CompiledJavaSourceFile();
-		if (ignoreBinaries){
+		if (IGNORE_BINARIES){
 			c.setBinaryForm(new byte[]{0});
 		}
 		else{
 			c.setBinaryForm(binaryForm);
 		}
+		
+		String tempClassName = ac.getClassName();
+
+		while(tempClassName.contains("$")) {
+            tempClassName = tempClassName.substring(0, tempClassName.indexOf('$'));
+        }
+        
+        final String className = tempClassName;
+        
+        ArrayList<String> javaSources = gradleData.getSourceFilePaths();
+		List<String> list = javaSources.stream().map(source -> {
+            try {
+                return getPath(source);
+            } catch (IOException e) {
+                taskHelper.getPw().println(e.getLocalizedMessage());
+            }
+            return null;
+        }).filter(source -> source.contains(className)).collect(Collectors.toList());
+		
+		String sourceFilePath = null;
+		if (!list.isEmpty()) {
+		    sourceFilePath = list.get(0);
+        }
+        
+		if (!vcsAnchor.equals("null") && sourceFilePath != null) {
+            String fileRemoteURL = sourceFilePath.substring(sourceFilePath.indexOf(vcsAnchor) + vcsAnchor.length() + 1);
+            VcsCoordinate vcsInfo = new VcsCoordinate();
+            vcsInfo.setVersion("TEMP"); //TODO
+            vcsInfo.setVersionControlUrl("https://dsl-external.bbn.com/svn/immortals/trunk" + fileRemoteURL); //TODO
+            c.setVcsInfo(vcsInfo);
+            c.setAbsoluteFilePath(sourceFilePath);
+        } else {
+		    taskHelper.getPw().println("Unable to set remote URL and link to local file location, check you've set the correct parameters and/or there are no" +
+                    "package with file path conflicts.");
+        }
+		
 		c.setCorrespondingClass(cas);
 		c.setHash(hash);
 		c.setName(name);
 		c.setSourceEncoding(sourceEncoding);
-		c.setVcsInfo(vcsInfo);
 		return c;
 	}
-	
-	private AClass analyzeClass(byte[] cb, HashMap<String, UniqueMethodCall> pointers) throws Exception{
-		//getClassNode code
-		ClassReader cr = new ClassReader(cb);
-		ClassNode cn = new ClassNode();
-		cr.accept(cn, 0);
-		String hash = hash(cb);
-		
-		//processClass code
-		JarIngestor ji = new JarIngestor(sf);
-		return ji.processClass(hash, cn, pointers);
-	}
 
+    private static String getPath(String path) throws IOException{
+        return new File(path).toPath().toRealPath().toFile().getAbsolutePath().replace("\\", "/");
+    }
+    
 	private AClass analyzeClass(byte[] cb) throws NoSuchAlgorithmException {
 		//getClassNode code
 		ClassReader cr = new ClassReader(cb);
@@ -803,7 +521,7 @@ public class ProjectToTriplesMain {
 		return ji.processClass(hash, cn);
 	}
 	
-	private JarArtifact analyzeJar(String jarFile) throws IOException{
+	private JarArtifact analyzeJar(String jarFile, boolean fullAnalysis) throws IOException{
 		Path p = Paths.get(jarFile);
 		byte[] jar = Files.readAllBytes(p);
 		String name = p.getFileName().toString();
@@ -817,24 +535,7 @@ public class ProjectToTriplesMain {
 			bac.setGroupId("[Error]");
 			bac.setVersion("[Error]");
 		}
-		return JarIngestor.ingest(jar, name, bac.getGroupId(), bac.getArtifactId(), bac.getVersion(), sf);
-	}
-
-	private JarArtifact analyzeJar(String jarFile, HashMap<String, UniqueMethodCall> pointers) throws IOException{
-		Path p = Paths.get(jarFile);
-		byte[] jar = Files.readAllBytes(p);
-		String name = p.getFileName().toString();
-		BytecodeArtifactCoordinate bac;
-		try{
-			bac = JarIngestor.getCoordinate(p.toFile());
-		}
-		catch (Exception e){
-			bac = new BytecodeArtifactCoordinate();
-			bac.setArtifactId("[Error]");
-			bac.setGroupId("[Error]");
-			bac.setVersion("[Error]");
-		}
-		return JarIngestor.ingest(jar, name, bac.getGroupId(), bac.getArtifactId(), bac.getVersion(), sf, pointers);
+		return JarIngestor.ingest(jar, name, bac.getGroupId(), bac.getArtifactId(), bac.getVersion(), sf, fullAnalysis);
 	}
 	
 	private static String hash(byte[] in) throws NoSuchAlgorithmException{
@@ -843,31 +544,9 @@ public class ProjectToTriplesMain {
 		return Base64.getEncoder().encodeToString(md.digest());
 	}
 	
-	private static String constructAmbiguousEdgePointer(MethodCall methodCall) {
-		String result = "non-platform-call.";
-		result += (methodCall.getOwner().replace("/", "."));
-		result += methodCall.getCalledMethodName();
-		result += methodCall.getCalledMethodDesc();
-		
-		return result;
-	}
-
-	public static final String FUNCTIONALITY_TEST = "mil/darpa/immortals/annotation/dsl/ontology/FunctionalityTest";
-	public static final String EXEMPLAR_DRIVER = "mil/darpa/immortals/annotation/dsl/ontology/FunctionalityExemplarDriver";
-	
-	private final static String AMBIGUOUS_METHOD_CALLED_NOTE = "The owner of the method being called cannot be identified through static analysis. ";
-	private final static String INTERFACE_METHOD_CALLED_NOTE = "The owner of the method is an interface. This may result in incomplete analysis. ";
-	private final static int INTERFACE_OP_CODE = 185;
-	
-	private final static String COMPILE_CLASSPATH_NAME = "compile";
-	private final static String RUNTIME_CLASSPATH_NAME = "runtime";
-	private final static String TEST_COMPILE_CLASSPATH_NAME = "testCompile";
-	private final static String TEST_RUNTIME_CLASSPATH_NAME = "testRuntime";
-	private final static String CLASS_ARTIFACTS_DIRECTORY = "/classes/";
-	private final static String ANALYSIS_DIRECTORY = "/analysis/";
-	private final static String SOURCES_DIRECTORY = "/sources/";
-	private final static String JARS_DIRECTORY = "/jars/";
-	private final static String DFUS_DIRECTORY = "/dfus/";
-	private final static String CHECKS_DIRECTORY = "/checks/";
-	private final static String DRIVERS_DIRECTORY = "/drivers/";
+	private static final String COMPILE_CLASSPATH_NAME = "compile";
+	private static final String CLASS_ARTIFACTS_DIRECTORY = "/classes/";
+	private static final String SOURCES_DIRECTORY = "/structures/sources/";
+	private static final String JARS_DIRECTORY = "/structures/jars/";
+	private static final String DFUS_DIRECTORY = "/structures/dfus/";
 }

@@ -13,14 +13,4 @@ package com.securboration.immortals.ontology.analysis;
     " disk IO  @author jstaples ")
 public class InterProcessDataflowNode extends DataflowNode {
     
-    // Where does this process begin augmenting the data being transferred to another process?
-    private InterProcessFunctionalityEntry entry;
-
-    public InterProcessFunctionalityEntry getEntry() {
-        return entry;
-    }
-
-    public void setEntry(InterProcessFunctionalityEntry entry) {
-        this.entry = entry;
-    }
 }

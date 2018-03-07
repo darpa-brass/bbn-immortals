@@ -1,13 +1,9 @@
 package mil.darpa.immortals.datatypes;
 
 
-import mil.darpa.immortals.core.Semantics;
-import mil.darpa.immortals.core.annotations.SemanticTypeBinding;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@SemanticTypeBinding(semanticType = Semantics.Datatype_Coordinates)
 public class Coordinates {
 
     private final double latitude;
@@ -20,7 +16,7 @@ public class Coordinates {
 
     private final String provider;
 
-    public Coordinates(@Nonnull double latitude, @Nonnull double longitude, @Nullable Double altitude, @Nullable Float accuracy, @Nonnull long acquisitionTime, @Nonnull String provider) {
+    public Coordinates(double latitude, double longitude, @Nullable Double altitude, @Nullable Float accuracy, long acquisitionTime, @Nonnull String provider) {
         this.latitude = latitude;
         this.longitude = longitude;
 
@@ -49,24 +45,21 @@ public class Coordinates {
     /**
      * @return the measured latitude
      */
-    public
-    @SemanticTypeBinding(semanticType = Semantics.Sensor_Latitude) double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
     /**
      * @return the measured longitude
      */
-    public
-    @SemanticTypeBinding(semanticType = Semantics.Sensor_Longitude) double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
     /**
      * @return the measured altitude in meters above mean sea level
      */
-    public
-    @SemanticTypeBinding(semanticType = Semantics.Sensor_Altitude_MSL) double getAltitudeMSL() {
+    public double getAltitudeMSL() {
         return altitude;
     }
 
@@ -81,8 +74,7 @@ public class Coordinates {
     // alternative mechanism for location). Probably doesn't make sense to do
     // this in the code itself but rather in some artifact that exists alongside
     // the code and is specific to a specific set of performance constraints.
-    public
-    @SemanticTypeBinding(semanticType = Semantics.Sensor_Accuracy_GDOP) float getAccuracyMetric() {
+    public float getAccuracyMetric() {
         return accuracy;
     }
 
@@ -92,8 +84,7 @@ public class Coordinates {
     // The ontology will contain additional triples identifying acquisition time
     // offset as a metric for location performance. We could also have an age
     // limit that triggers a new location provider being swapped in.
-    public
-    @SemanticTypeBinding(semanticType = Semantics.Sensor_SensorReadTime) long getAcquisitionTime() {
+    public long getAcquisitionTime() {
         return acquisitionTime;
     }
 }

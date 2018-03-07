@@ -2,7 +2,10 @@ package mil.darpa.immortals.core.das;
 
 public enum DASStatusValue {
 
-    RUNNING("Running"),
+    STOPPED("Stopped"),
+    STOPPING("Stopping"),
+    STARTING("Starting"),
+	RUNNING("Running"),
     ERROR("Error"),
     OFFLINE_ADAPTATION("Offline Adaptation");
 

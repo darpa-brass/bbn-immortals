@@ -51,10 +51,12 @@ public class EnvironmentConfiguration {
         }
     }
 
-
-    private static final String androidEnvironmentFilepathA = "/storage/sdcard/ataklite/env.json";
-    private static final String androidEnvironmentFilepathB = "/storage/emulated/0/ataklite/env.json";
-    private static final String javaEnvironmentFilepathA = "clitak/env.json";
+    private static final String[] envFileLocations = {
+            "/storage/sdcard/ataklite/env.json",
+            "/storage/emulated/0/ataklite/env.json",
+            "/sdcard/ataklite/env.json",
+            "clitak/env.json"
+    };
 
     private static EnvironmentConfiguration simulatedEnvironment;
 
@@ -70,26 +72,33 @@ public class EnvironmentConfiguration {
     public static EnvironmentConfiguration getAndroidEnvironment() {
         try {
             if (simulatedEnvironment == null) {
-                File inputFile = new File(androidEnvironmentFilepathA);
+                File inputFile = null;
 
-                if (inputFile.exists()) {
-                    FileReader fr = new FileReader(inputFile);
-                    simulatedEnvironment = new Gson().fromJson(fr, EnvironmentConfiguration.class);
-                } else {
-                    inputFile = new File(androidEnvironmentFilepathB);
-                    if (inputFile.exists()) {
-                        FileReader fr = new FileReader(inputFile);
-                        simulatedEnvironment = new Gson().fromJson(fr, EnvironmentConfiguration.class);
+                String envPath = System.getProperty("mil.darpa.immortals.envfile");
+                if (envPath != null) {
+                    inputFile = new File(envPath);
+                    if (!inputFile.exists()) {
+                        inputFile = null;
+                    }
+                }
 
-                    } else {
-                        inputFile = new File(javaEnvironmentFilepathA);
+                if (inputFile == null) {
+                    for (String candidatePath : envFileLocations) {
+                        inputFile = new File(candidatePath);
+
                         if (inputFile.exists()) {
-                            FileReader fr = new FileReader(inputFile);
-                            simulatedEnvironment = new Gson().fromJson(fr, EnvironmentConfiguration.class);
-                        } else{
-                            throw new RuntimeException("Attempt to get simulated environment configuration file failed!");
+                            break;
+                        } else {
+                            inputFile = null;
                         }
                     }
+                }
+
+                if (inputFile == null) {
+                    throw new RuntimeException("Attempt to get simulated environment configuration file failed!");
+                } else {
+                    FileReader fr = new FileReader(inputFile);
+                    simulatedEnvironment = new Gson().fromJson(fr, EnvironmentConfiguration.class);
                 }
             }
 

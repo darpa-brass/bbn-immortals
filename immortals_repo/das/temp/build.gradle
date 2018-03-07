@@ -1,0 +1,34 @@
+apply plugin: mil.darpa.immortals.DasJavaComponent
+
+import mil.darpa.immortals.config.ImmortalsConfig
+
+def defaultSoftwarePublishVersion = ImmortalsConfig.instance.build.das.publishVersion
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "SourceComposer",
+                "Implementation-Version": defaultSoftwarePublishVersion,
+                "Main-Class": "mil.darpa.immortals.das.sourcecomposer.Main"
+
+    }
+
+    from {
+        configurations.compile.filter { !it.name.endsWith("android.jar") }.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+clean.doLast {
+    file("source-composer-all-${defaultSoftwarePublishVersion}.jar").delete()
+}
+
+dependencies {
+    compile "org.gradle:gradle-tooling-api:${ImmortalsConfig.instance.build.das.gradleVersion}"
+    compile project(':shared:modules:core')
+    compile project(':shared:modules:datatypes:Coordinates')
+    compile 'dom4j:dom4j:1.6.1'
+    compile 'org.apache.commons:commons-csv:1.1'
+    compile 'commons-io:commons-io:1.4'
+    compile 'io.airlift:airline:0.7'
+}

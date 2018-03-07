@@ -11,8 +11,8 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
+import com.securboration.immortals.bca.tools.MethodPrinter;
 import com.securboration.immortals.bcas.block.BasicBlock;
-import com.securboration.immortals.bcas.printer.MethodPrinter;
 
 public class JimpleTransformer {
     

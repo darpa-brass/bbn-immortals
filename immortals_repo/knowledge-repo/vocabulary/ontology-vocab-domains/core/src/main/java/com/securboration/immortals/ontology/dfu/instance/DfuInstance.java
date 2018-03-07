@@ -36,11 +36,18 @@ public class DfuInstance {
     private Class<? extends Functionality> functionalityAbstraction;
     
     /**
-     * The resources upon which the DFU depends, if any
+     * The abstract resources upon which the DFU depends, if any
      */
     @com.securboration.immortals.ontology.annotations.RdfsComment(
-        "The resources upon which the DFU depends, if any")
+        "The abstract resources upon which the DFU depends, if any")
     private Class<? extends Resource>[] resourceDependencies;
+    
+    /**
+     * The concrete resources upon which the DFU depends, if any
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The concrete resources upon which the DFU depends, if any")
+    private Resource[] concreteResourceDependencies;
     
     /**
      * Properties bound directly to the DFU
@@ -125,6 +132,19 @@ public class DfuInstance {
     
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+
+    
+    public Resource[] getConcreteResourceDependencies() {
+        return concreteResourceDependencies;
+    }
+
+
+    
+    public void setConcreteResourceDependencies(
+            Resource[] concreteResourceDependencies) {
+        this.concreteResourceDependencies = concreteResourceDependencies;
     }
 
 }

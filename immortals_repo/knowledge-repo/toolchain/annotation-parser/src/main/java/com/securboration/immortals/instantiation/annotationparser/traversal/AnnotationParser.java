@@ -1,6 +1,10 @@
 package com.securboration.immortals.instantiation.annotationparser.traversal;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -15,7 +19,6 @@ import org.objectweb.asm.tree.MethodNode;
 
 import com.securboration.immortals.instantiation.annotationparser.bytecode.AnnotationHelper;
 import com.securboration.immortals.instantiation.annotationparser.bytecode.ArrayHelper;
-//import com.securboration.immortals.instantiation.annotationparser.bytecode.ArrayHelper;
 import com.securboration.immortals.instantiation.annotationparser.bytecode.BytecodeHelper;
 import com.securboration.immortals.instantiation.annotationparser.bytecode.Console;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
@@ -25,23 +28,57 @@ import com.securboration.immortals.ontology.dfu.instance.ArgToSemanticTypeBindin
 import com.securboration.immortals.ontology.dfu.instance.DfuInstance;
 import com.securboration.immortals.ontology.dfu.instance.FunctionalAspectInstance;
 import com.securboration.immortals.ontology.dfu.instance.ReturnValueToSemanticTypeBinding;
+import com.securboration.immortals.ontology.functionality.DesignPattern;
 import com.securboration.immortals.ontology.functionality.FunctionalAspect;
 import com.securboration.immortals.ontology.functionality.Functionality;
 import com.securboration.immortals.ontology.functionality.datatype.DataType;
+import com.securboration.immortals.ontology.java.testing.annotation.ProvidedFunctionalityValidationAnnotation;
+import com.securboration.immortals.ontology.java.testing.instance.ProvidedFunctionalityValidationInstance;
+import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.ontology.property.Property;
 
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.instance.Recipe;
 
-public class AnnotationParser implements BytecodeArtifactVisitor {
+public class AnnotationParser implements BytecodeArtifactVisitor, IntentValidatorVisitor {
     
     private final ObjectToTriplesConfiguration config;
     
+    private final ClassLoader classloader;
+    
+    /**
+     * 
+     * @param config
+     *            the configuration for the parser
+     * @param pathsToBytecodeArtifacts
+     *            zero or more paths to the bytecode artifacts on the
+     *            compilation classpath of the bytecode being parsed. Each path
+     *            must be either (1) a directory containing .class files, in
+     *            which case it ends with the / character; or (2) a path to a
+     *            .jar
+     */
     public AnnotationParser(
-            ObjectToTriplesConfiguration config
+            ObjectToTriplesConfiguration config,
+            String...pathsToBytecodeArtifacts
             ){
         this.config = config;
+        
+        try{
+            List<URL> urls = new ArrayList<>();
+            for(String s:pathsToBytecodeArtifacts){
+                File f = new File(s);
+                URL url = f.toURI().toURL();
+                urls.add(url);
+            }
+            
+            this.classloader = new URLClassLoader(
+                urls.toArray(new URL[]{}),
+                Resource.class.getClassLoader()
+                );
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     private Object instantiateFromAnnotation(
@@ -89,7 +126,45 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
         
         return properties.toArray(new Property[]{});
     }
-
+    
+    private static void registerIntentValidations(ObjectToTriplesConfiguration config, Collection<AnnotationNode> intentAnnotations, 
+                                                  String classHash, String methodName, String methodDesc) {
+        int i;
+        List<String> intents = new ArrayList<>();
+        for(AnnotationNode intentAnnotation : intentAnnotations) {
+            Map<String,Object> kvs =AnnotationHelper.getAnnotationKeyValues(intentAnnotation);
+            i = 0;
+            while (true) {
+                String intent = (String) kvs.get("@mil/darpa/immortals/annotation/dsl/ontology/java/testing/" +
+                        "annotation/ProvidedFunctionalityValidationAnnotation|intents|[" + i + "]");
+                if (intent == null) {
+                    
+                    intent = (String) kvs.get("@mil/darpa/immortals/annotation/dsl/ontology/java/testing/" +
+                    "annotation/ProvidedFunctionalityValidationAnnotation|intents");
+                    
+                    if (intent != null) {
+                        intents.add(intent);
+                    }
+                    break;
+                } else {
+                    intents.add(intent);
+                    i++;
+                }
+            }
+            
+            ProvidedFunctionalityValidationInstance validatorInstance = new ProvidedFunctionalityValidationInstance();
+            String[] result = new String[intents.size()];
+            for (int j = 0; j < result.length; j++) {
+                result[j] = intents.get(j);
+            }
+            
+            validatorInstance.setIntents(result);
+            validatorInstance.setMethodPointer(classHash + "/methods/" + methodName + methodDesc);
+            
+            config.getMapper().registerObjectToSerialize(validatorInstance);
+        }
+    }
+    
     @Override
     public void visitClass(
             String classHash, 
@@ -100,6 +175,29 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
         
         Collection<AnnotationNode> classAnnotations = 
                 AnnotationHelper.getAnnotations(cn);
+        
+        {
+            //instantiate anything that's a concept instance and didn't come 
+            // from ontology POJOs
+            List<AnnotationNode> conceptInstanceAnnotations = 
+                    AnnotationHelper.getAnnotationsOfType(
+                        classAnnotations, 
+                        ConceptInstance.class
+                        );
+            
+            if(conceptInstanceAnnotations.size() > 0){
+                Class<?> c = getClassFromAnnotationType(cn.name);
+                
+                if(c.getClassLoader() != Resource.class.getClassLoader()){
+                    try {
+                        Object instance = c.newInstance();
+                        config.getMapper().registerObjectToSerialize(instance);
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
         
         List<AnnotationNode> dfuAnnotations = 
                 AnnotationHelper.getAnnotationsOfType(
@@ -154,6 +252,21 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
                     new Class[]{}//abstractFunctionalityInstance.getResourceDependencies()
                     )
                 );
+            
+            {//handle concrete resources, which are passed via URIs
+                
+                List<Resource> resources = new ArrayList<>();
+                for(String r:getConcreteResourcesFromDfu(kvs)){
+                    //create a dummy placeholder to which a URI binds
+                    Resource resource = new Resource();
+                    resources.add(resource);
+                    config.getNamingContext().bindUri(resource, r);
+                }
+                
+                dfu.setConcreteResourceDependencies(
+                    resources.toArray(new Resource[]{})
+                    );
+            }
             
             dfu.setFunctionalAspects(
                 getAspectInstances(
@@ -368,6 +481,12 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
                     AnnotationHelper.getAnnotationKeyValues(aspectAnnotation);
             
             FunctionalAspectInstance aspect = new FunctionalAspectInstance();
+
+            String designPattern = (String) kvs.get("@mil/darpa/immortals/annotation/dsl/ontology/dfu/annotation/FunctionalAspectAnnotation|designPattern");
+            if (designPattern != null) {
+                aspect.setDesignPattern(DesignPattern.valueOf(designPattern));
+            }
+            
             
             {//add the recipe value
                 AnnotationNode a = getRecipeAnnotation(mn);
@@ -419,13 +538,28 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
                     )
                 );
             
+            {//handle concrete resources, which are passed via URIs
+                
+                List<Resource> resources = new ArrayList<>();
+                for(String r:getConcreteResourcesFromAspect(kvs)){
+                    //create a dummy placeholder to which a URI binds
+                    Resource resource = new Resource();
+                    resources.add(resource);
+                    config.getNamingContext().bindUri(resource, r);
+                }
+                
+                aspect.setConcreteResourceDependencies(
+                    resources.toArray(new Resource[]{})
+                    );
+            }
+            
             aspects.add(aspect);
         }
         
         return aspects.toArray(new FunctionalAspectInstance[]{});
     }
     
-    private static Map<MethodNode,Class<? extends FunctionalAspect>> getFunctionalAspectMap(
+    private Map<MethodNode,Class<? extends FunctionalAspect>> getFunctionalAspectMap(
             Map<MethodNode,List<AnnotationNode>> annotatedMethods
             ){
         Map<MethodNode,Class<? extends FunctionalAspect>> map = 
@@ -459,6 +593,22 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
         return map;
     }
     
+    @Override
+    public void visitMethods(String classHash, byte[] bytes) {
+        ClassNode cn = BytecodeHelper.getClassNode(bytes);
+
+        List<AnnotationNode> nodes;
+        for (MethodNode mn : cn.methods) {
+            
+            nodes = AnnotationHelper.getAnnotations(mn);
+            nodes = AnnotationHelper.getAnnotationsOfType(nodes, ProvidedFunctionalityValidationAnnotation.class);
+            
+            if (!nodes.isEmpty()) {
+                registerIntentValidations(config, nodes, classHash, mn.name, mn.desc);
+            }
+        }
+    }
+
     private static class Keys{
         
         private static final String functionalityBeingPerformed = 
@@ -470,6 +620,12 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
         private static final String resourceDependenciesAspect = 
                 "@mil/darpa/immortals/annotation/dsl/ontology/dfu/annotation/FunctionalAspectAnnotation|aspectSpecificResourceDependencies|";
         
+        private static final String concreteResourceDependenciesDfu = 
+                "@mil/darpa/immortals/annotation/dsl/ontology/dfu/annotation/DfuAnnotation|resourceDependencyUris|";
+        
+        private static final String concreteResourceDependenciesAspect = 
+                "@mil/darpa/immortals/annotation/dsl/ontology/dfu/annotation/FunctionalAspectAnnotation|resourceDependencyUris|";
+        
         private static final String functionalAspect = 
                 "@mil/darpa/immortals/annotation/dsl/ontology/dfu/annotation/FunctionalAspectAnnotation|aspect";
         
@@ -480,13 +636,13 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
                 "@mil/darpa/immortals/annotation/dsl/ontology/dfu/instance/Recipe|recipe";
     }
     
-    private static Class<?> getClassFromAnnotationType(final String value){
+    private Class<?> getClassFromAnnotationType(final String value){
         
         final String className = 
                 value.replace("/", ".").replace("TYPE(", "").replace(")","");
         
         try {
-            Class<?> c = Class.forName(className);
+            Class<?> c = classloader.loadClass(className);
             
             return c;
         } catch (ClassNotFoundException e) {
@@ -495,7 +651,7 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
         
     }
     
-    private static Class<? extends Resource>[] getResourcesFromAspect(
+    private Class<? extends Resource>[] getResourcesFromAspect(
             Map<String,Object> kvs
             ){
         List<String> resourceClassNames = 
@@ -514,7 +670,7 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
         return (Class<? extends Resource>[]) classes;
     }
     
-    private static Class<? extends Resource>[] getResourcesFromDfu(
+    private Class<? extends Resource>[] getResourcesFromDfu(
             Map<String,Object> kvs
             ){
         List<String> resourceClassNames = 
@@ -533,7 +689,25 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
         return (Class<? extends Resource>[]) classes;
     }
     
-    private static Class<? extends Functionality> getFunctionality(
+    private static String[] getConcreteResourcesFromDfu(
+            Map<String,Object> kvs
+            ){
+        return getArrayValues(
+            kvs,
+            Keys.concreteResourceDependenciesDfu
+            ).toArray(new String[]{});
+    }
+    
+    private static String[] getConcreteResourcesFromAspect(
+            Map<String,Object> kvs
+            ){
+        return getArrayValues(
+            kvs,
+            Keys.concreteResourceDependenciesAspect
+            ).toArray(new String[]{});
+    }
+    
+    private Class<? extends Functionality> getFunctionality(
             Map<String,Object> kvs
             ){
         final String value = (String)kvs.get(Keys.functionalityBeingPerformed);

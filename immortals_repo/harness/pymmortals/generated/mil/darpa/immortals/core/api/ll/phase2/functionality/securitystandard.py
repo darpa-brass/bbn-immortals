@@ -5,7 +5,7 @@ from typing import FrozenSet
 # noinspection PyPep8Naming
 class SecurityStandard(Enum):
     def __init__(self, description: str):
-        self.description: str = description
+        self.description = description  # type: str
 
     Nothing = (
         "No security required")
@@ -18,12 +18,6 @@ class SecurityStandard(Enum):
 
     NIST800Dash171 = (
         "Recent governemnt contractor security standard")
-
-    Secret = (
-        "Classified information lower security standard")
-
-    TopSceret = (
-        "Classified information highest security standard")
 
     @classmethod
     def all_description(cls) -> FrozenSet[str]:

@@ -1,6 +1,7 @@
 package com.securboration.immortals.ontology.dfu.instance;
 
 import com.securboration.immortals.ontology.core.Resource;
+import com.securboration.immortals.ontology.functionality.DesignPattern;
 import com.securboration.immortals.ontology.functionality.FunctionalAspect;
 import com.securboration.immortals.ontology.property.Property;
 
@@ -29,11 +30,18 @@ public class FunctionalAspectInstance {
     private Property[] properties;
     
     /**
-     * The resources upon which the aspect depends, if any
+     * The abstract resources upon which the aspect depends, if any
      */
     @com.securboration.immortals.ontology.annotations.RdfsComment(
-        "The resources upon which the aspect depends, if any")
+        "The abstract resources upon which the aspect depends, if any")
     private Class<? extends Resource>[] resourceDependencies;
+    
+    /**
+     * The concrete resources upon which the DFU depends, if any
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+        "The concrete resources upon which the DFU depends, if any")
+    private Resource[] concreteResourceDependencies;
     
     /**
      * The abstract functional aspect implemented
@@ -62,6 +70,14 @@ public class FunctionalAspectInstance {
     @com.securboration.immortals.ontology.annotations.RdfsComment(
         "A recipe for using the aspect")
     private String recipe;
+
+    /**
+     * What design pattern does this implementation follow, e.g. Streaming, block
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+            "What design pattern does this implementation follow, e.g. Streaming, block"
+    )
+    private DesignPattern designPattern;
 
     
     public String getMethodPointer() {
@@ -138,6 +154,25 @@ public class FunctionalAspectInstance {
     public void setRecipe(String recipe) {
         this.recipe = recipe;
     }
+
+
     
+    public Resource[] getConcreteResourceDependencies() {
+        return concreteResourceDependencies;
+    }
+
+
     
+    public void setConcreteResourceDependencies(
+            Resource[] concreteResourceDependencies) {
+        this.concreteResourceDependencies = concreteResourceDependencies;
+    }
+
+    public DesignPattern getDesignPattern() {
+        return designPattern;
+    }
+
+    public void setDesignPattern(DesignPattern designPattern) {
+        this.designPattern = designPattern;
+    }
 }

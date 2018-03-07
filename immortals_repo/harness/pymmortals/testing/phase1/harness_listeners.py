@@ -354,7 +354,7 @@ class TABehaviorValidator(AbstractHarnessListener):
 
         self._done_listener: Callable = done_listener
 
-        test_scenarios_d = resourcemanager.get_test_suite(test_suite_identifier)
+        test_scenarios_d = resourcemanager.get_p1_test_suite(test_suite_identifier)
 
         self._scenario_executions: List[ScenarioExecution] = []
 

@@ -1,0 +1,94 @@
+@prefix IMMoRTALS_resources_logical: <http://darpa.mil/immortals/ontology/r2.0.0/resources/logical#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_resource_containment: <http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#> .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-1e8345f6-f8f5-4fd7-80ad-81aef1de2c78
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-072c697b-5b63-4594-9787-5b8fba67673d ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #3. Also contains a software library resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 .
+
+IMMoRTALS_resources:ResourceMigrationTarget-53fbef0d-7e2a-4637-8b71-918c5fba6821
+        a                            IMMoRTALS_resources:ResourceMigrationTarget ;
+        IMMoRTALS:hasRationale       "Need to upgrade library version to avoid discovered exploit" ;
+        IMMoRTALS:hasTargetResource  IMMoRTALS_resources:SoftwareLibrary-75310dfa-e0fb-4b5b-b1b4-d374d8a15b60 .
+
+IMMoRTALS_resources_logical:Version-42108552-3c51-4bec-9404-77c0a81eb95c
+        a                   IMMoRTALS_resources_logical:Version ;
+        IMMoRTALS:hasMajor  "1"^^xsd:int ;
+        IMMoRTALS:hasMinor  "4"^^xsd:int ;
+        IMMoRTALS:hasPatch  "9"^^xsd:int .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-4e2abcc8-6595-4ce9-a9f9-8b0205510832
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-8690a824-f9f8-4b41-a13d-d577d3174ebd ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #1. Also contains a software library resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3
+        a                            IMMoRTALS_resources:MobileAndroidDevice ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice3" .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-8690a824-f9f8-4b41-a13d-d577d3174ebd
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the good library instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources:SoftwareLibrary-75310dfa-e0fb-4b5b-b1b4-d374d8a15b60 .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1
+        a                            IMMoRTALS_resources:MobileAndroidDevice ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice1" .
+
+IMMoRTALS_resource_containment:ResourceContainmentModel-4087551f-20f5-4c5d-a0e2-ffcf8e87fac5
+        a                           IMMoRTALS_resource_containment:ResourceContainmentModel ;
+        IMMoRTALS:hasResourceModel  IMMoRTALS_resource_containment:ConcreteResourceNode-4e2abcc8-6595-4ce9-a9f9-8b0205510832 , IMMoRTALS_resource_containment:ConcreteResourceNode-048ccaa4-1a21-41c7-89a6-aeb1e1ac239d , IMMoRTALS_resource_containment:ConcreteResourceNode-1e8345f6-f8f5-4fd7-80ad-81aef1de2c78 .
+
+IMMoRTALS_resources:SoftwareLibrary-c9dc91c2-13e7-41a3-9ace-9488736b4534
+        a                             IMMoRTALS_resources:SoftwareLibrary ;
+        IMMoRTALS:hasApplicationName  "oldCommonsIO" ;
+        IMMoRTALS:hasVersion          IMMoRTALS_resources_logical:Version-42108552-3c51-4bec-9404-77c0a81eb95c .
+
+IMMoRTALS_gmei:DeploymentModelCP3
+        a                               IMMoRTALS_gmei:DeploymentModel ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 , IMMoRTALS_resources:SoftwareLibrary-c9dc91c2-13e7-41a3-9ace-9488736b4534 , IMMoRTALS_resources:SoftwareLibrary-75310dfa-e0fb-4b5b-b1b4-d374d8a15b60 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Describes ATAK mobile devices utilizing various versions of a library, and a target version that should upgraded to." ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.DeploymentModelCP3" ;
+        IMMoRTALS:hasResourceContainmentModel
+                IMMoRTALS_resource_containment:ResourceContainmentModel-4087551f-20f5-4c5d-a0e2-ffcf8e87fac5 ;
+        IMMoRTALS:hasResourceMigrationTargets
+                IMMoRTALS_resources:ResourceMigrationTarget-53fbef0d-7e2a-4637-8b71-918c5fba6821 ;
+        IMMoRTALS:hasSessionIdentifier  "CP3ATAKDevicesLibraries" .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-072c697b-5b63-4594-9787-5b8fba67673d
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the bad library instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources:SoftwareLibrary-c9dc91c2-13e7-41a3-9ace-9488736b4534 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-048ccaa4-1a21-41c7-89a6-aeb1e1ac239d
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-8690a824-f9f8-4b41-a13d-d577d3174ebd ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #2. Also contains a software library resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 .
+
+IMMoRTALS_resources_logical:Version-8957d799-c105-4cf3-ad6f-38badc3c774d
+        a                   IMMoRTALS_resources_logical:Version ;
+        IMMoRTALS:hasMajor  "2"^^xsd:int ;
+        IMMoRTALS:hasMinor  "0"^^xsd:int ;
+        IMMoRTALS:hasPatch  "0"^^xsd:int .
+
+IMMoRTALS_resources:SoftwareLibrary-75310dfa-e0fb-4b5b-b1b4-d374d8a15b60
+        a                             IMMoRTALS_resources:SoftwareLibrary ;
+        IMMoRTALS:hasApplicationName  "currentCommonsIO" ;
+        IMMoRTALS:hasVersion          IMMoRTALS_resources_logical:Version-8957d799-c105-4cf3-ad6f-38badc3c774d .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2
+        a                            IMMoRTALS_resources:MobileAndroidDevice ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice2" .

@@ -9,7 +9,12 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,18 +22,15 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import com.securboration.immortals.o2t.UniqueMethodCall;
-import com.securboration.immortals.ontology.bytecode.*;
-import com.securboration.immortals.ontology.bytecode.analysis.FieldAccess;
-import com.securboration.immortals.ontology.bytecode.analysis.Instruction;
-import com.securboration.immortals.ontology.bytecode.analysis.MethodCall;
 import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.jar.JarArchiveInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.objectweb.asm.*;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -36,12 +38,32 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.ParameterNode;
 import org.w3c.dom.Document;
 
 import com.securboration.immortals.instantiation.bytecode.SourceFinder.SourceInfo;
 import com.securboration.immortals.instantiation.bytecode.printing.MethodPrinter;
+import com.securboration.immortals.o2t.UniqueMethodCall;
 import com.securboration.immortals.o2t.etc.ArrayHelper;
 import com.securboration.immortals.o2t.etc.ExceptionWrapper;
+import com.securboration.immortals.ontology.bytecode.AClass;
+import com.securboration.immortals.ontology.bytecode.AField;
+import com.securboration.immortals.ontology.bytecode.AMethod;
+import com.securboration.immortals.ontology.bytecode.AnAnnotation;
+import com.securboration.immortals.ontology.bytecode.AnnotationKeyValuePair;
+import com.securboration.immortals.ontology.bytecode.BytecodeArtifactCoordinate;
+import com.securboration.immortals.ontology.bytecode.BytecodeVersion;
+import com.securboration.immortals.ontology.bytecode.ClassArtifact;
+import com.securboration.immortals.ontology.bytecode.ClassStructure;
+import com.securboration.immortals.ontology.bytecode.ClasspathElement;
+import com.securboration.immortals.ontology.bytecode.ClasspathResource;
+import com.securboration.immortals.ontology.bytecode.InvocationType;
+import com.securboration.immortals.ontology.bytecode.JarArtifact;
+import com.securboration.immortals.ontology.bytecode.MethodArg;
+import com.securboration.immortals.ontology.bytecode.Modifier;
+import com.securboration.immortals.ontology.bytecode.analysis.FieldAccess;
+import com.securboration.immortals.ontology.bytecode.analysis.Instruction;
+import com.securboration.immortals.ontology.bytecode.analysis.MethodCall;
 import com.securboration.immortals.ontology.bytecode.application.Classpath;
 
 /**
@@ -54,6 +76,12 @@ public class JarIngestor {
     
     private static final Logger logger = 
             LogManager.getLogger(JarIngestor.class);
+    
+    static{
+        logger.error(
+            "This class will soon be deprecated in favor of " +
+            "StaticBytecodeAnalyzer in the immortals-bytecode-analysis module");
+    }
     
     private static final boolean SKIP_ANNOTATIONS = false;//TODO
     private static final boolean INCLUDE_BYTECODE = false;//TODO
@@ -122,8 +150,7 @@ public class JarIngestor {
     // Ingest single, naked class file
     public static ClasspathElement ingest(
             File classFile,
-            SourceFinder sourceFinder,
-            HashMap<String, UniqueMethodCall> pointers
+            SourceFinder sourceFinder
     ) throws IOException {
 
         JarIngestor ingestor = new JarIngestor(sourceFinder);
@@ -135,7 +162,7 @@ public class JarIngestor {
         AClass aClass =
                 ingestor.processClass(
                         hash(binary),
-                        getClassNode(binary), pointers);
+                        getClassNode(binary));
 
         setVersionInfo(
                 binary,
@@ -231,7 +258,7 @@ public class JarIngestor {
             String artifactId,
             String version,
             SourceFinder sourceFinder,
-            HashMap<String, UniqueMethodCall> pointers
+            boolean fullAnalysis
             
     ) throws IOException{
 
@@ -248,14 +275,16 @@ public class JarIngestor {
         artifact.getCoordinate().setGroupId(groupId);
         artifact.getCoordinate().setArtifactId(artifactId);
         artifact.getCoordinate().setVersion(version);
+        
+        if (fullAnalysis) {
+            JarIngestor ingestor =
+                    new JarIngestor(sourceFinder);
 
-        JarIngestor ingestor =
-                new JarIngestor(sourceFinder);
-
-        ingestor.openJar(
-                new ByteArrayInputStream(jar),
-                artifact, pointers
-        );
+            ingestor.openJar(
+                    new ByteArrayInputStream(jar),
+                    artifact
+            );
+        }
         return artifact;
     }
     
@@ -534,6 +563,55 @@ public class JarIngestor {
         c.setAnnotations(annotationList.toArray(new AnAnnotation[]{}));
     }
     
+    private static void addLocalAnalysis(
+            AMethod methodModel, 
+            ClassNode owner,
+            MethodNode methodToAnalyze
+            ){
+        final List<ParameterNode> params = methodToAnalyze.parameters;
+        final Type[] types = Type.getArgumentTypes(methodToAnalyze.desc);
+        
+        List<MethodArg> args = new ArrayList<>();
+        
+        int localIndex = 0;
+        if((methodToAnalyze.access & Opcodes.ACC_STATIC) > 0){
+            //it's a static method so there's no implicit "this" param
+        } else {
+            //it's an instance method, so there is an implicit "this" param
+            MethodArg arg = new MethodArg();
+            arg.setArgNumber(0);
+            arg.setDeclaredTypeDescriptor(Type.getType(owner.name).getDescriptor());
+            arg.setLocalIndex(localIndex);
+            arg.setName("this");
+            arg.setOwner(methodModel);
+            
+            args.add(arg);
+            localIndex++;
+        }
+        
+        int argNum = 1;
+        for(Type type:types){
+            MethodArg arg = new MethodArg();
+            arg.setArgNumber(argNum);
+            arg.setDeclaredTypeDescriptor(type.getDescriptor());
+            arg.setLocalIndex(localIndex);
+            arg.setName("incomplete parameter info in bytecode");
+            if(params != null && argNum <= params.size()){
+                ParameterNode p = params.get(argNum-1);
+                if(p != null){
+                    arg.setName(p.name);
+                }
+            }
+            arg.setOwner(methodModel);
+            
+            args.add(arg);
+            argNum++;
+            localIndex+=type.getSize();
+        }
+        
+        methodModel.setMethodArgs(args.toArray(new MethodArg[]{}));
+    }
+    
     private static void analyze(ClassNode cn,AClass classModel){
         
         List<AField> fields = new ArrayList<>();
@@ -603,6 +681,7 @@ public class JarIngestor {
             
             addAnnotationModel(method,mn.visibleAnnotations);
             addAnnotationModel(method,mn.invisibleAnnotations);
+            addLocalAnalysis(method,cn,mn);
         }
         
         classModel.setFields(fields.toArray(new AField[]{}));
@@ -700,6 +779,7 @@ public class JarIngestor {
             
             addAnnotationModel(method,mn.visibleAnnotations);
             addAnnotationModel(method,mn.invisibleAnnotations);
+            addLocalAnalysis(method,cn,mn);
         }
         
         classModel.setFields(fields.toArray(new AField[]{}));

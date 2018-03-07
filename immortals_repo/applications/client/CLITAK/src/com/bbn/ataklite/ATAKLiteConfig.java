@@ -13,8 +13,7 @@ import java.io.IOException;
  */
 public class ATAKLiteConfig {
 
-    public static transient final String CONFIG_DIRECTORY = "clitak/";
-    public static transient final String CONFIG_FILE_NAME = CONFIG_DIRECTORY + "ATAKLite-Config.json";
+    public static transient final String CONFIG_FILE_NAME = "clitak/ATAKLite-Config.json";
     
     private static Logger logger = LoggerFactory.getLogger(ATAKLiteConfig.class);
 
@@ -77,6 +76,8 @@ public class ATAKLiteConfig {
     public String callsign;
 
     public ServerConfig serverConfig;
+    
+    public String storageDirectory;
 
     public AnalyticsConfig analyticsConfig = new AnalyticsConfig();
 
@@ -84,7 +85,6 @@ public class ATAKLiteConfig {
     public boolean logOwnLocationUpdates;
     public boolean loadReceivedLocationUpdatesFromLog;
     public boolean loadOwnLocationUpdatesFromLog;
-    public String locationLogExternalStoragePath = CONFIG_DIRECTORY + "LocationLog.json";
 
 
     /**

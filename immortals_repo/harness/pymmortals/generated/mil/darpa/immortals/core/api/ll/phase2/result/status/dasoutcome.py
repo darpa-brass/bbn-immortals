@@ -5,13 +5,13 @@ from typing import FrozenSet
 # noinspection PyPep8Naming
 class DasOutcome(Enum):
     def __init__(self, description: str):
-        self.description: str = description
+        self.description = description  # type: str
 
     PENDING = (
         "DAS execution is pending (non-terminal)")
 
     RUNNING = (
-        "DAS is executing analysis and augmentation (non-terminal)")
+        "DAS is executing analysis and adaptation (non-terminal)")
 
     NOT_APPLICABLE = (
         "Baseline Submission - No DAS needed")
@@ -20,10 +20,13 @@ class DasOutcome(Enum):
         "An invalid perturbation has been submitted")
 
     SUCCESS = (
-        "Augmentation Successful")
+        "Adaptation Successful")
+
+    FAIL = (
+        "Adaptation attempted but failed adaptation module validation")
 
     ERROR = (
-        "An error has occured")
+        "An unexpected error has occured")
 
     @classmethod
     def all_description(cls) -> FrozenSet[str]:

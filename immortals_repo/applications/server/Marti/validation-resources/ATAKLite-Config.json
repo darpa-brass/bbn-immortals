@@ -35,7 +35,7 @@
     // The URL of the server to connect to
     "url" : "127.0.0.1",
     // The port to connect to
-    "port" : 8088
+    "port" : 48088
   },
   // The configuration settings for analytics.
   "analyticsConfig" : {

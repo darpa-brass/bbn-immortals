@@ -1,0 +1,12 @@
+import mil.darpa.immortals.config.ImmortalsConfig
+
+apply plugin: mil.darpa.immortals.DasJavaComponent
+
+dependencies {
+    compile 'mil.darpa.immortals:ImmortalsConfig:+'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile "org.slf4j:slf4j-api:${ImmortalsConfig.instance.build.das.slf4jVersion}"
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+    compile 'ch.qos.logback:logback-core:1.1.7'
+}

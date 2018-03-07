@@ -14,11 +14,12 @@ public class SessionIdentifier extends SparqlQuery {
 				"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>  " +
 				"PREFIX cp: <http://darpa.mil/immortals/ontology/r2.0.0/cp#> " +
+				"PREFIX gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#> " +
 
 				"SELECT ?sessionIdentifier " +
 				"WHERE { " +
-				"	GRAPH " + deploymentGraphUri + " {" +
-				"  		?gme a cp:GmeInterchangeFormat . " +
+				"	GRAPH <" + deploymentGraphUri + "> {" +
+				"  		?gme a gmei:DeploymentModel . " +
 				"   	?gme im:hasSessionIdentifier ?sessionIdentifier . " +
 				"	}" +
 				"}";

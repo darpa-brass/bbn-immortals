@@ -84,10 +84,8 @@
         "websocketPort": 9782
     },
     "validationProgram": {
-        //        "root": "{immortalsRoot}/shared/modules/components/analytics-log4j-server",
-        //        "executableFile": "{immortalsRoot}/shared/modules/components/analytics-log4j-server/analytics-log4j-server-1.0-LOCAL.jar",
-        "root": "{repositoryRoot}/mil/darpa/immortals/components/analytics-log4j-server/1.0-LOCAL",
-        "executableFile": "{repositoryRoot}/mil/darpa/immortals/components/analytics-log4j-server/1.0-LOCAL/analytics-log4j-server-1.0-LOCAL.jar",
+        "root": "{repositoryRoot}/mil/darpa/immortals/components/analytics-log4j-server/2.0-LOCAL",
+        "executableFile": "{repositoryRoot}/mil/darpa/immortals/components/analytics-log4j-server/2.0-LOCAL/analytics-log4j-server-2.0-LOCAL.jar",
         "baseParameters": [
             "-c",
             "validate"
@@ -105,7 +103,7 @@
         "url": "brass-ta",
         "port": 80,
         "reportRawData": true,
-        "executableFile": "{repositoryRoot}/mil/darpa/immortals/components/das-testharness-coordinator/1.0-LOCAL/das-testharness-coordinator-1.0-LOCAL.jar"
+        "executableFile": "{repositoryRoot}/mil/darpa/immortals/components/das-testharness-coordinator/2.0-LOCAL/das-testharness-coordinator-2.0-LOCAL.jar"
     },
     "validation": {
         "minimumTestDurationMS": -1,

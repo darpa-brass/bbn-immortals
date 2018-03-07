@@ -8,10 +8,10 @@ from typing import Type
 # noinspection PyPep8Naming
 class TestHarnessEndpoint(Enum):
     def __init__(self, ackDatatype: Type, path: str, restType: RestType, submitDatatype: Type):
-        self.ackDatatype: Type = ackDatatype
-        self.path: str = path
-        self.restType: RestType = restType
-        self.submitDatatype: Type = submitDatatype
+        self.ackDatatype = ackDatatype  # type: Type
+        self.path = path  # type: str
+        self.restType = restType  # type: RestType
+        self.submitDatatype = submitDatatype  # type: Type
 
     READY = (
         None,

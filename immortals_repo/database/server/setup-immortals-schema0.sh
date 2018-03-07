@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 immortals_db="immortals"
 immortals_user="immortals"
 immortals_user_pwd="immortals"
@@ -23,4 +25,7 @@ command="COPY $schema.cot_event FROM '$source_path/cot_event.csv' DELIMITER ',' 
 psql -a -d $immortals_db -c "$command"
 
 command="COPY $schema.cot_event_position FROM '$source_path/cot_event_position.csv' DELIMITER ',' CSV HEADER;"
+psql -a -d $immortals_db -c "$command"
+
+command="COPY $schema.master_cot_event FROM '$source_path/master_cot_event.csv' DELIMITER ',' CSV HEADER;"
 psql -a -d $immortals_db -c "$command"

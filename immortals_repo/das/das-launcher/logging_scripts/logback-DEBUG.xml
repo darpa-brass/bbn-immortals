@@ -1,0 +1,18 @@
+<configuration debug="false"> 
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="NETWORK" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} NetworkLogger - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <logger name="mil.darpa.immortals.ImmortalsUtils$NetworkLogger"  additivity="false">
+    <appender-ref ref="NETWORK" />
+  </logger>
+  <root level="debug">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>

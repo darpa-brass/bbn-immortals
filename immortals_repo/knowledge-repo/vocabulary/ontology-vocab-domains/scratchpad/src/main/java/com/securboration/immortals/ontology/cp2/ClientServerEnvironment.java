@@ -2,15 +2,19 @@ package com.securboration.immortals.ontology.cp2;
 
 import com.securboration.immortals.ontology.analysis.*;
 import com.securboration.immortals.ontology.constraint.*;
-import com.securboration.immortals.ontology.core.Resource;
-import com.securboration.immortals.ontology.cp.RevisedGmeInterchangeFormat;
+import com.securboration.immortals.ontology.cp.FunctionalitySpec;
 import com.securboration.immortals.ontology.functionality.ConfidentialProperty;
 import com.securboration.immortals.ontology.functionality.alg.encryption.aes.AES_128;
+import com.securboration.immortals.ontology.functionality.compression.AspectDeflate;
+import com.securboration.immortals.ontology.functionality.compression.AspectInflate;
+import com.securboration.immortals.ontology.functionality.compression.Compressor;
 import com.securboration.immortals.ontology.functionality.dataproperties.Compressed;
 import com.securboration.immortals.ontology.functionality.dataproperties.CompressedLossless;
 import com.securboration.immortals.ontology.functionality.dataproperties.Encrypted;
 import com.securboration.immortals.ontology.functionality.datatype.BinaryData;
 import com.securboration.immortals.ontology.functionality.datatype.DataType;
+import com.securboration.immortals.ontology.functionality.imagecapture.AspectWriteImage;
+import com.securboration.immortals.ontology.functionality.imagecapture.ImageFileIO;
 import com.securboration.immortals.ontology.functionality.imagescaling.NumberOfPixels;
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.ontology.pojos.markup.Ignore;
@@ -38,53 +42,6 @@ public class ClientServerEnvironment {
     public static FileSystem2 fileSystem2 = new FileSystem2();
     public static DataflowNode4 serverNode = new DataflowNode4();
     
-   /* @ConceptInstance(name = "HighestConfidentialityConstraint")
-    public static class HighestConfidentialityConstraint extends ProscriptiveCauseEffectAssertion {
-        public HighestConfidentialityConstraint() {
-            AbstractPropertyStandardCriterion criterion = new AbstractPropertyStandardCriterion();{
-                criterion.setStandardCriterionType(PropertyStandardCriterionType.STANDARD_CURRENT_BEST);
-                criterion.setCriterion(PropertyCriterionType.PROPERTY_ABSENT);
-                criterion.setProperty(ConfidentialProperty.class);
-                criterion.setHumanReadableDescription("This criterion specifies a situation where a standardized confidential property is absent," +
-                        "specifically the current best standard.");
-            }
-
-            ConstraintViolationImpact impact = new ConstraintViolationImpact();{
-                impact.setConstraintViolationType(ConstraintImpactType.HARD_CONSTRAINT_VIOLATION);
-            }
-
-            AbstractDataflowBindingSite abstractDataflowBindingSite = new AbstractDataflowBindingSite();{
-                abstractDataflowBindingSite.setSrc(MobileAndroidDevice.class);
-                abstractDataflowBindingSite.setDest(Server.class);
-                abstractDataflowBindingSite.setHumanReadableDescription("Any data between an android mobile device and server");
-            }
-
-            this.setCriterion(criterion);
-            this.setAssertionBindingSite(abstractDataflowBindingSite);
-            this.setImpact(new ImpactStatement[] {impact});
-            this.setApplicableDataType(DataType.class);
-            this.setHumanReadableDescription("All data being transmitted between MobileAndroidDevices and Servers must be confidential;" +
-                    "additionally, the algorithm being used must be the current best standard.");
-        }
-    }
-
-    @ConceptInstance(name = "ConfidentialDataImplementationStrategy")
-    public static class HighestConfidentialDataImplementationStrategy extends PrescriptiveCauseEffectAssertion {
-        public HighestConfidentialDataImplementationStrategy() {
-            ConstraintViolationCriterion criterion = new ConstraintViolationCriterion();{
-                criterion.setConstraint(new ClientServerEnvironment.HighestConfidentialityConstraint());
-                criterion.setTriggeringConstraintCriterion(ConstraintCriterionType.WHEN_HARD_VIOLATED);
-            }
-            this.setCriterion(criterion);
-
-            RemediationImpact impact = new RemediationImpact();{
-                impact.setRemediationStrategy(new ClientServerEnvironment.ImpactOfEncryptingData());
-            }
-            this.setImpact(new ImpactStatement[] {impact});
-            this.setHumanReadableDescription("When the HighestConfidentialityConstraint is \"hard\" violated, this strategy can" +
-                    "mitigate the violation, while at the same time introducing ImpactOfEncryptingData.");
-        }
-    } */
     
     @ConceptInstance(name = "DataSafetyConstraint")
     public static class DataSafetyConstraint extends ProscriptiveCauseEffectAssertion {
@@ -103,7 +60,7 @@ public class ClientServerEnvironment {
 
             AbstractDataflowBindingSite abstractDataflowBindingSite = new AbstractDataflowBindingSite();{
                 abstractDataflowBindingSite.setSrc(MobileAndroidDevice.class);
-                abstractDataflowBindingSite.setDest(FileSystemResource.class);
+                abstractDataflowBindingSite.setDest(Server.class);
                 abstractDataflowBindingSite.setHumanReadableDescription("Any data between an android mobile device and server");
             }
 
@@ -148,6 +105,44 @@ public class ClientServerEnvironment {
                 impact.setImpactOnProperty(PropertyImpactType.ADDS);
             }
             this.setImpact(new ImpactStatement[] {impact});
+        }
+    }
+
+    @ConceptInstance
+    public static class ATAKMartiFunctionalitySpecDeflate extends FunctionalitySpec {
+        public ATAKMartiFunctionalitySpecDeflate() {
+            this.setFunctionalityPerformed(Compressor.class);
+            this.setFunctionalityProvided(AspectDeflate.class);
+        }
+    }
+
+    @ConceptInstance
+    public static class ATAKMartiFunctionalitySpecInflate extends FunctionalitySpec {
+        public ATAKMartiFunctionalitySpecInflate() {
+            this.setFunctionalityPerformed(Compressor.class);
+            this.setFunctionalityProvided(AspectInflate.class);
+        }
+    }
+
+    @ConceptInstance
+    public static class ATAKMartiFunctionalitySpecWriteImage extends FunctionalitySpec {
+        public ATAKMartiFunctionalitySpecWriteImage() {
+            this.setFunctionalityPerformed(ImageFileIO.class);
+            this.setFunctionalityProvided(AspectWriteImage.class);
+        }
+    }
+    
+    @ConceptInstance
+    public static class ATAKSoftware extends Analysis.Atak.AtakSoftware {
+        public ATAKSoftware() {
+            
+        }
+    }
+    
+    @ConceptInstance
+    public static class MartiSoftware extends Analysis.Marti.MartiSoftware {
+        public MartiSoftware() {
+            
         }
     }
     
@@ -344,16 +339,6 @@ public class ClientServerEnvironment {
 
             this.setConsumer(new DataflowNode6());
             this.setProducer(new DataflowNode3());
-        }
-    }
-    
-    @ConceptInstance
-    public static class ClientServerGme extends RevisedGmeInterchangeFormat {
-        public ClientServerGme() {
-            ProscriptiveCauseEffectAssertion[] constraints = new ProscriptiveCauseEffectAssertion[] {new DataSafetyConstraint()};
-            this.setConstraints(constraints);
-            Resource[] resources = new Resource[] {clientDevice1, clientDevice2, clientDevice3, martiServer};
-            this.setAvailableResources(resources);
         }
     }
 }

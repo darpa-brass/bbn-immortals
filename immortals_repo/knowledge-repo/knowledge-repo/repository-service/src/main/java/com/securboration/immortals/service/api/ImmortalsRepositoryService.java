@@ -4,15 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.securboration.immortals.o2t.analysis.ObjectToTriples;
-import com.securboration.immortals.ontology.cp.context.ImmortalsContext;
-import com.securboration.immortals.ontology.cp.context.MetaData;
-import com.securboration.immortals.repo.ontology.FusekiClient;
 import org.apache.commons.io.IOUtils;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Model;
@@ -23,13 +18,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
+import com.securboration.immortals.o2t.analysis.ObjectToTriples;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
+import com.securboration.immortals.ontology.cp.context.ImmortalsContext;
+import com.securboration.immortals.ontology.cp.context.MetaData;
 import com.securboration.immortals.repo.api.RepositoryUnsafe;
 import com.securboration.immortals.repo.etc.ExceptionWrapper;
 import com.securboration.immortals.repo.model.build.JarIngestor;
+import com.securboration.immortals.repo.ontology.FusekiClient;
 import com.securboration.immortals.service.config.ImmortalsServiceProperties;
 
 /**

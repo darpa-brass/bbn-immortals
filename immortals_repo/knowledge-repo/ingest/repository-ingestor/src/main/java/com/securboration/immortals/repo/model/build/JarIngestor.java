@@ -92,7 +92,7 @@ public class JarIngestor {
         
         log("about to push an aggregate model derived from [%d] sub models into graph [%s]\n",models.size(),graphName);
         
-        client.pushGraph(aggregateModel,graphName);
+        client.appendToGraph(aggregateModel,graphName);
         
         log("done with push");
         

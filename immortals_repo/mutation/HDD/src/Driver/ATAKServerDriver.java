@@ -74,7 +74,7 @@ public class ATAKServerDriver {
        prepareClassBasedOnLabeling.processAsPerLabeling(testOrganizer.requiredTests, testOrganizer.optionalTests);
 
        BuildAndRunAbstract buildAndRun;
-       buildAndRun = new BuildAnRunImmortals(buildCommand,testSuiteName,runCommand,buildSuccessString,runSuccessString,testResultXmlFile);
+       buildAndRun = new BuildAnRunImmortals(buildCommand,testSuiteName,runCommand,buildSuccessString,runSuccessString,testResultXmlFile,"*Tests.*xml.*");
        HierarchicalClassReducer classReducer = new HierarchicalClassReducer(rootFolder,relativeFilePath,jarFile,packageName,
                testJarFile,testClasses,buildCommand,className, false, buildAndRun);
        classReducer.testSuiteName = commandLineParser.getTestSuiteName();

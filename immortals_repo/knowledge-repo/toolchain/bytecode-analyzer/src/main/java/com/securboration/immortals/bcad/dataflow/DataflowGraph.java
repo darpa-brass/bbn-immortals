@@ -6,7 +6,7 @@ import java.util.Map;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import com.securboration.immortals.bcas.printer.MethodPrinter;
+import com.securboration.immortals.bca.tools.MethodPrinter;
 
 public class DataflowGraph {
     

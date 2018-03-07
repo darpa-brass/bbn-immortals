@@ -1,0 +1,250 @@
+2018-01-19 00:00:43,589   INFO  [Periodic Work] HOST: Host id of this node is: 0
+2018-01-19 00:00:43,590   INFO  [Periodic Work] HOST: URL of deployment info: voltdbroot/config/deployment.xml
+2018-01-19 00:00:43,590   INFO  [Periodic Work] HOST: Cluster uptime: 0 days 00:46:13.353
+2018-01-19 00:00:43,590   INFO  [Periodic Work] HOST: Database start action is Create.
+2018-01-19 00:00:43,590   INFO  [Periodic Work] HOST: Listening for native wire protocol clients on port 21212.
+2018-01-19 00:00:43,590   INFO  [Periodic Work] HOST: Listening for admin wire protocol clients on port 21211.
+2018-01-19 00:00:43,590   INFO  [Periodic Work] HOST: Local machine HTTP monitoring is disabled.
+2018-01-19 00:00:43,590   INFO  [Periodic Work] HOST: Json API disabled.
+2018-01-19 00:00:43,590   INFO  [Periodic Work] HOST: Maximum usable Java heap set to 24983 mb.
+2018-01-19 00:00:43,590   INFO  [Periodic Work] HOST: Minimum required Java heap for catalog and server config is 424 MB.
+2018-01-19 00:00:43,593   INFO  [Periodic Work] HOST: Cluster has 1 hosts with leader hostname: "localhost". 8 local sites count. K = 0.
+2018-01-19 00:00:43,593   INFO  [Periodic Work] HOST: The entire cluster has 1 copy of each of the 8 logical partitions.
+2018-01-19 00:00:43,593   INFO  [Periodic Work] HOST: Detection of network partitions in the cluster is not enabled.
+2018-01-19 00:00:43,593   INFO  [Periodic Work] HOST: Client authentication is not enabled. Anonymous clients accepted.
+2018-01-19 00:00:43,593   INFO  [Periodic Work] HOST: No schedule set for automated snapshots.
+2018-01-19 00:00:43,593   INFO  [Periodic Work] HOST: Using "/home/peter/Immortals/trunk/castor/voltdb7/voltdbroot" for voltdbroot directory.
+2018-01-19 00:00:43,593   INFO  [Periodic Work] HOST: CPU INFO:         2 Cores, 1 Sockets, 2 Hardware Threads
+2018-01-19 00:00:43,593   INFO  [Periodic Work] HOST: CPU DESC:         Intel(R) Core(TM) i7-4650U CPU @ 1.70GHz 4096 KB cache
+2018-01-19 00:00:43,594   INFO  [Periodic Work] HOST: HOST MEMORY (MB): 5397
+2018-01-19 00:00:43,594   INFO  [Periodic Work] HOST: OS PROFILE:       Linux 4.13.0-26-generic amd64 en_US
+2018-01-19 00:00:43,594   INFO  [Periodic Work] HOST: DB VERSION:       7.9
+2018-01-19 00:00:43,594   INFO  [Periodic Work] HOST: JAVA VERSION:     1.8.0_151
+2018-01-19 00:00:43,594   INFO  [Periodic Work] HOST: JAVA RUNTIME:     Java(TM) SE Runtime Environment (1.8.0_151-b12)
+2018-01-19 00:00:43,594   INFO  [Periodic Work] HOST: JAVA VM:          Java HotSpot(TM) 64-Bit Server VM (25.151-b12, mixed mode)
+2018-01-19 00:00:43,595   INFO  [Periodic Work] HOST: About to list cluster interfaces for all nodes with format [ip1 ip2 ... ipN] client-port,admin-port,http-port
+2018-01-19 00:00:43,595   INFO  [Periodic Work] HOST:   Host id: 0 with interfaces: 10.0.2.15 21212,21211,-1 [SELF]
+2018-01-19 00:00:43,596   INFO  [Periodic Work] HOST: Elastic duration set to 50 milliseconds
+2018-01-19 00:00:43,598   INFO  [Periodic Work] HOST: Elastic throughput set to 2 mb/s
+2018-01-19 00:00:43,598   INFO  [Periodic Work] HOST: Max temptable size set to 10240 mb
+2018-01-19 00:00:43,598   INFO  [Periodic Work] HOST: Snapshot priority set to 6 [0 - 10]
+2018-01-19 00:00:43,598   INFO  [Periodic Work] HOST: Query timeout set to 3000000 milliseconds
+2018-01-19 00:10:07,664   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2018-01-19 00:10:07,664   INFO  [NTPServiceThread-0] COMPILER: 	drop table MASTER_COT_EVENT
+2018-01-19 00:10:07,741   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+TABLE CHANGES:
+  Table MASTER_COT_EVENT dropped.
+
+2018-01-19 00:10:07,741   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 00:10:07,744   INFO  [NTPServiceThread-Priority-1] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 00:10:07,851   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash FD3D399250, deployment hash BD666CBF80, version 4
+2018-01-19 00:10:07,851   INFO  [MP Site - 0:8] HOST: To: catalog hash: 10599473F8, deployment hash: BD666CBF80
+2018-01-19 00:10:07,852   INFO  [SP 5 Site - 0:5] HOST: Site 0:5 acknowledged data and catalog prechecks.
+2018-01-19 00:10:07,891   INFO  [SP 2 Site - 0:2] IMPORT: Final importer count:0
+2018-01-19 00:10:07,891   INFO  [SP 2 Site - 0:2] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 00:10:07,891   INFO  [SP 2 Site - 0:2] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 00:10:08,723   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 871.6003830000001
+2018-01-19 00:10:08,723   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 10599473F8, BD666CBF80).
+2018-01-19 00:33:49,898   WARN  [Volt Server Network - 1] AUTH: Procedure CastorProcedure_query1_allGround was not found. This message is rate limited to once every 60 seconds.
+2018-01-19 00:40:27,459   INFO  [NTPServiceThread-1] COMPILER: @UpdateClasses is invoked, modifying catalog classes.
+2018-01-19 00:40:27,460   INFO  [NTPServiceThread-1] COMPILER: Updating java classes available to stored procedures
+2018-01-19 00:40:27,521   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+  Changes have been made to user code (procedures, supporting classes, etc).
+2018-01-19 00:40:27,526   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 00:40:27,526   INFO  [NTPServiceThread-Priority-2] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 00:40:27,633   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 10599473F8, deployment hash BD666CBF80, version 5
+2018-01-19 00:40:27,633   INFO  [MP Site - 0:8] HOST: To: catalog hash: CFAE377D85, deployment hash: BD666CBF80
+2018-01-19 00:40:27,634   INFO  [SP 6 Site - 0:6] HOST: Site 0:6 acknowledged data and catalog prechecks.
+2018-01-19 00:40:27,661   INFO  [SP 5 Site - 0:5] IMPORT: Final importer count:0
+2018-01-19 00:40:27,663   INFO  [SP 5 Site - 0:5] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 00:40:27,663   INFO  [SP 5 Site - 0:5] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 00:40:27,676   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 42.91201
+2018-01-19 00:40:27,676   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes CFAE377D85, BD666CBF80).
+2018-01-19 00:40:27,718   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2018-01-19 00:40:27,719   INFO  [NTPServiceThread-0] COMPILER: 	drop procedure auto.sp.CastorProcedure_query1_all if exists
+2018-01-19 00:40:27,784   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+  No changes detected.
+2018-01-19 00:40:27,785   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 00:40:27,785   INFO  [NTPServiceThread-Priority-2] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 00:40:27,893   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash CFAE377D85, deployment hash BD666CBF80, version 6
+2018-01-19 00:40:27,893   INFO  [MP Site - 0:8] HOST: To: catalog hash: 18694245A0, deployment hash: BD666CBF80
+2018-01-19 00:40:27,893   INFO  [SP 7 Site - 0:7] HOST: Site 0:7 acknowledged data and catalog prechecks.
+2018-01-19 00:40:27,915   INFO  [SP 4 Site - 0:4] IMPORT: Final importer count:0
+2018-01-19 00:40:27,916   INFO  [SP 4 Site - 0:4] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 00:40:27,916   INFO  [SP 4 Site - 0:4] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 00:40:27,927   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 34.55015
+2018-01-19 00:40:27,927   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 18694245A0, BD666CBF80).
+2018-01-19 00:40:27,960   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2018-01-19 00:40:27,960   INFO  [NTPServiceThread-1] COMPILER: 	create procedure from class auto.sp.CastorProcedure_query1_all
+2018-01-19 00:40:28,071   WARN  [NTPServiceThread-1] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 00:40:28,072   WARN  [NTPServiceThread-1] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 00:40:28,153   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+PROCEDURE CHANGES:
+  Procedure CastorProcedure_query1_all added.
+
+2018-01-19 00:40:28,153   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 00:40:28,158   INFO  [NTPServiceThread-Priority-2] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 00:40:28,264   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 18694245A0, deployment hash BD666CBF80, version 7
+2018-01-19 00:40:28,264   INFO  [MP Site - 0:8] HOST: To: catalog hash: AEE4E392B8, deployment hash: BD666CBF80
+2018-01-19 00:40:28,265   INFO  [SP 0 Site - 0:0] HOST: Site 0:0 acknowledged data and catalog prechecks.
+2018-01-19 00:40:28,307   INFO  [SP 5 Site - 0:5] IMPORT: Final importer count:0
+2018-01-19 00:40:28,307   INFO  [SP 5 Site - 0:5] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 00:40:28,308   INFO  [SP 5 Site - 0:5] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 00:40:28,320   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 56.352716
+2018-01-19 00:40:28,321   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes AEE4E392B8, BD666CBF80).
+2018-01-19 00:40:28,354   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2018-01-19 00:40:28,354   INFO  [NTPServiceThread-0] COMPILER: 	drop procedure auto.sp.CastorProcedure_query1_allGround if exists
+2018-01-19 00:40:28,371   WARN  [NTPServiceThread-0] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 00:40:28,371   WARN  [NTPServiceThread-0] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 00:40:28,430   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+  No changes detected.
+2018-01-19 00:40:28,430   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 00:40:28,435   INFO  [NTPServiceThread-Priority-2] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 00:40:28,537   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash AEE4E392B8, deployment hash BD666CBF80, version 8
+2018-01-19 00:40:28,537   INFO  [MP Site - 0:8] HOST: To: catalog hash: AEE4E392B8, deployment hash: BD666CBF80
+2018-01-19 00:40:28,538   INFO  [SP 1 Site - 0:1] HOST: Site 0:1 acknowledged data and catalog prechecks.
+2018-01-19 00:40:28,558   INFO  [SP 7 Site - 0:7] IMPORT: Final importer count:0
+2018-01-19 00:40:28,558   INFO  [SP 7 Site - 0:7] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 00:40:28,558   INFO  [SP 7 Site - 0:7] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 00:40:28,568   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 30.932488000000003
+2018-01-19 00:40:28,568   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes AEE4E392B8, BD666CBF80).
+2018-01-19 00:40:28,603   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2018-01-19 00:40:28,603   INFO  [NTPServiceThread-1] COMPILER: 	create procedure from class auto.sp.CastorProcedure_query1_allGround
+2018-01-19 00:40:28,617   WARN  [NTPServiceThread-1] COMPILER: [CastorProcedure_query1_allGround.class]: Procedure CastorProcedure_query1_allGround has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 00:40:28,617   WARN  [NTPServiceThread-1] COMPILER: [CastorProcedure_query1_allGround.class]: Procedure CastorProcedure_query1_allGround has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 00:40:28,617   WARN  [NTPServiceThread-1] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 00:40:28,617   WARN  [NTPServiceThread-1] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 00:40:28,682   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+PROCEDURE CHANGES:
+  Procedure CastorProcedure_query1_allGround added.
+
+2018-01-19 00:40:28,686   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 00:40:28,686   INFO  [NTPServiceThread-Priority-2] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 00:40:28,790   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash AEE4E392B8, deployment hash BD666CBF80, version 9
+2018-01-19 00:40:28,790   INFO  [MP Site - 0:8] HOST: To: catalog hash: C7CAD22089, deployment hash: BD666CBF80
+2018-01-19 00:40:28,792   INFO  [SP 2 Site - 0:2] HOST: Site 0:2 acknowledged data and catalog prechecks.
+2018-01-19 00:40:28,817   INFO  [SP 7 Site - 0:7] IMPORT: Final importer count:0
+2018-01-19 00:40:28,818   INFO  [SP 7 Site - 0:7] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 00:40:28,818   INFO  [SP 7 Site - 0:7] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 00:40:28,832   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 42.663739
+2018-01-19 00:40:28,833   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes C7CAD22089, BD666CBF80).
+2018-01-19 01:05:43,082   INFO  [NTPServiceThread-0] COMPILER: @UpdateClasses is invoked, modifying catalog classes.
+2018-01-19 01:05:43,084   INFO  [NTPServiceThread-0] COMPILER: Updating java classes available to stored procedures
+2018-01-19 01:05:43,086   WARN  [NTPServiceThread-0] COMPILER: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 01:05:43,086   WARN  [NTPServiceThread-0] COMPILER: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 01:05:43,087   WARN  [NTPServiceThread-0] COMPILER: Procedure CastorProcedure_query1_allGround has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 01:05:43,087   WARN  [NTPServiceThread-0] COMPILER: Procedure CastorProcedure_query1_allGround has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 01:05:43,142   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+  Changes have been made to user code (procedures, supporting classes, etc).
+2018-01-19 01:05:43,148   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 01:05:43,148   INFO  [NTPServiceThread-Priority-3] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 01:05:43,261   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash C7CAD22089, deployment hash BD666CBF80, version 10
+2018-01-19 01:05:43,261   INFO  [MP Site - 0:8] HOST: To: catalog hash: B17F807846, deployment hash: BD666CBF80
+2018-01-19 01:05:43,262   INFO  [SP 5 Site - 0:5] HOST: Site 0:5 acknowledged data and catalog prechecks.
+2018-01-19 01:05:43,268   INFO  [SP 2 Site - 0:2] IMPORT: Final importer count:0
+2018-01-19 01:05:43,272   INFO  [SP 2 Site - 0:2] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 01:05:43,272   INFO  [SP 2 Site - 0:2] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 01:05:43,284   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 22.72325
+2018-01-19 01:05:43,284   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes B17F807846, BD666CBF80).
+2018-01-19 01:05:43,320   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2018-01-19 01:05:43,321   INFO  [NTPServiceThread-1] COMPILER: 	drop procedure auto.sp.CastorProcedure_query1_all if exists
+2018-01-19 01:05:43,347   WARN  [NTPServiceThread-1] COMPILER: [CastorProcedure_query1_allGround.class]: Procedure CastorProcedure_query1_allGround has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 01:05:43,347   WARN  [NTPServiceThread-1] COMPILER: [CastorProcedure_query1_allGround.class]: Procedure CastorProcedure_query1_allGround has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 01:05:43,401   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+PROCEDURE CHANGES:
+  Procedure CastorProcedure_query1_all dropped.
+
+2018-01-19 01:05:43,401   INFO  [NTPServiceThread-Priority-3] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 01:05:43,414   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 01:05:43,522   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash B17F807846, deployment hash BD666CBF80, version 11
+2018-01-19 01:05:43,522   INFO  [MP Site - 0:8] HOST: To: catalog hash: 3696E1342F, deployment hash: BD666CBF80
+2018-01-19 01:05:43,523   INFO  [SP 6 Site - 0:6] HOST: Site 0:6 acknowledged data and catalog prechecks.
+2018-01-19 01:05:43,554   INFO  [SP 2 Site - 0:2] IMPORT: Final importer count:0
+2018-01-19 01:05:43,558   INFO  [SP 2 Site - 0:2] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 01:05:43,558   INFO  [SP 2 Site - 0:2] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 01:05:43,567   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 45.617739
+2018-01-19 01:05:43,567   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes 3696E1342F, BD666CBF80).
+2018-01-19 01:05:43,609   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2018-01-19 01:05:43,609   INFO  [NTPServiceThread-0] COMPILER: 	create procedure from class auto.sp.CastorProcedure_query1_all
+2018-01-19 01:05:43,624   WARN  [NTPServiceThread-0] COMPILER: [CastorProcedure_query1_allGround.class]: Procedure CastorProcedure_query1_allGround has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 01:05:43,624   WARN  [NTPServiceThread-0] COMPILER: [CastorProcedure_query1_allGround.class]: Procedure CastorProcedure_query1_allGround has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 01:05:43,624   WARN  [NTPServiceThread-0] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 01:05:43,624   WARN  [NTPServiceThread-0] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 01:05:43,671   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+PROCEDURE CHANGES:
+  Procedure CastorProcedure_query1_all added.
+
+2018-01-19 01:05:43,674   INFO  [NTPServiceThread-Priority-3] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 01:05:43,681   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 01:05:43,788   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash 3696E1342F, deployment hash BD666CBF80, version 12
+2018-01-19 01:05:43,788   INFO  [MP Site - 0:8] HOST: To: catalog hash: C7CAD22089, deployment hash: BD666CBF80
+2018-01-19 01:05:43,791   INFO  [SP 7 Site - 0:7] HOST: Site 0:7 acknowledged data and catalog prechecks.
+2018-01-19 01:05:43,837   INFO  [SP 3 Site - 0:3] IMPORT: Final importer count:0
+2018-01-19 01:05:43,838   INFO  [SP 3 Site - 0:3] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 01:05:43,838   INFO  [SP 3 Site - 0:3] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 01:05:43,853   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 64.74679
+2018-01-19 01:05:43,853   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes C7CAD22089, BD666CBF80).
+2018-01-19 01:05:43,884   INFO  [NTPServiceThread-1] COMPILER: Applying the following DDL to cluster:
+2018-01-19 01:05:43,884   INFO  [NTPServiceThread-1] COMPILER: 	drop procedure auto.sp.CastorProcedure_query1_allGround if exists
+2018-01-19 01:05:43,896   WARN  [NTPServiceThread-1] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 01:05:43,896   WARN  [NTPServiceThread-1] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 01:05:43,937   INFO  [NTPServiceThread-1] COMPILER: Catalog Difference Report
+=========================
+PROCEDURE CHANGES:
+  Procedure CastorProcedure_query1_allGround dropped.
+
+2018-01-19 01:05:43,937   INFO  [NTPServiceThread-1] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 01:05:43,937   INFO  [NTPServiceThread-Priority-3] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 01:05:44,041   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash C7CAD22089, deployment hash BD666CBF80, version 13
+2018-01-19 01:05:44,041   INFO  [MP Site - 0:8] HOST: To: catalog hash: AEE4E392B8, deployment hash: BD666CBF80
+2018-01-19 01:05:44,046   INFO  [SP 0 Site - 0:0] HOST: Site 0:0 acknowledged data and catalog prechecks.
+2018-01-19 01:05:44,061   INFO  [SP 5 Site - 0:5] IMPORT: Final importer count:0
+2018-01-19 01:05:44,089   INFO  [SP 5 Site - 0:5] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 01:05:44,089   INFO  [SP 5 Site - 0:5] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 01:05:44,092   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 50.736793
+2018-01-19 01:05:44,092   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes AEE4E392B8, BD666CBF80).
+2018-01-19 01:05:44,133   INFO  [NTPServiceThread-0] COMPILER: Applying the following DDL to cluster:
+2018-01-19 01:05:44,133   INFO  [NTPServiceThread-0] COMPILER: 	create procedure from class auto.sp.CastorProcedure_query1_allGround
+2018-01-19 01:05:44,156   WARN  [NTPServiceThread-0] COMPILER: [CastorProcedure_query1_allGround.class]: Procedure CastorProcedure_query1_allGround has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 01:05:44,156   WARN  [NTPServiceThread-0] COMPILER: [CastorProcedure_query1_allGround.class]: Procedure CastorProcedure_query1_allGround has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 01:05:44,158   WARN  [NTPServiceThread-0] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM ab719faf5d4eb4a09b78392678ac91fdd WHERE SOURCE_ID IN ?;", reason: index scan may provide insufficient ordering
+2018-01-19 01:05:44,158   WARN  [NTPServiceThread-0] COMPILER: [CastorProcedure_query1_all.class]: Procedure CastorProcedure_query1_all has a statement with a non-deterministic result - statement: "SELECT * FROM source WHERE NAME IN ?;", reason: the query result does not guarantee a consistent ordering
+2018-01-19 01:05:44,209   INFO  [NTPServiceThread-0] COMPILER: Catalog Difference Report
+=========================
+PROCEDURE CHANGES:
+  Procedure CastorProcedure_query1_allGround added.
+
+2018-01-19 01:05:44,210   INFO  [NTPServiceThread-0] HOST: Max timeout setting for VerifyCatalogAndWriteJar is 60 seconds
+2018-01-19 01:05:44,213   INFO  [NTPServiceThread-Priority-3] HOST: Verify user procedure classes and write catalog jar
+2018-01-19 01:05:44,318   INFO  [MP Site - 0:8] HOST: New catalog update from: Catalog: catalog hash AEE4E392B8, deployment hash BD666CBF80, version 14
+2018-01-19 01:05:44,318   INFO  [MP Site - 0:8] HOST: To: catalog hash: C7CAD22089, deployment hash: BD666CBF80
+2018-01-19 01:05:44,320   INFO  [SP 1 Site - 0:1] HOST: Site 0:1 acknowledged data and catalog prechecks.
+2018-01-19 01:05:44,342   INFO  [SP 3 Site - 0:3] IMPORT: Final importer count:0
+2018-01-19 01:05:44,342   INFO  [SP 3 Site - 0:3] HOST: Resource limit monitoring configured to run every 60 seconds
+2018-01-19 01:05:44,342   INFO  [SP 3 Site - 0:3] HOST: RSS limit: 80% (4.22 GB)
+2018-01-19 01:05:44,372   INFO  [MP Site - 0:8] HOST: Catalog update block time (milliseconds): 54.161733999999996
+2018-01-19 01:05:44,372   INFO  [MP Site - 0:8] HOST: Globally updating the current application catalog and deployment (new hashes C7CAD22089, BD666CBF80).
+2018-01-19 01:11:23,953   INFO  [Periodic Priority Work] GC: GC for ParNew: 678 ms for 1 collections, 33384920 used; max is 26196967424
+2018-01-19 01:24:34,649   INFO  [Volt Server Network - 0] HOST: ********************************************************************************
+2018-01-19 01:24:34,650   INFO  [Volt Server Network - 0] HOST: * User null from localhost/127.0.0.1:33790 issued a @PrepareShutdown *
+2018-01-19 01:24:34,650   INFO  [Volt Server Network - 0] HOST: ********************************************************************************
+2018-01-19 01:24:34,761   INFO  [SP 0 Site - 0:0] HOST: Server is entering admin mode and pausing.
+2018-01-19 01:24:35,871   INFO  [SP 2 Site - 0:2] HOST: ********************************************************************************
+2018-01-19 01:24:35,871   INFO  [SP 2 Site - 0:2] HOST: * VoltDB shutdown operation requested and in progress. Cluster will terminate shortly. *
+2018-01-19 01:24:35,875   INFO  [SP 2 Site - 0:2] HOST: ********************************************************************************
+2018-01-19 01:24:37,808   INFO  [ZooKeeperServer] ZK-SERVER: Processed session termination for sessionid: 0x24ec73ce4d000000
+2018-01-19 01:24:44,873   INFO  [Thread-51] HOST: ********************************************************************************
+2018-01-19 01:24:44,873   INFO  [Thread-51] HOST: * VoltDB shutting down as requested by @Shutdown command. *
+2018-01-19 01:24:44,873   INFO  [Thread-51] HOST: ********************************************************************************
+2018-01-19 01:24:44,875   INFO  [Thread-2] CONSOLE: ********************************************************************************
+2018-01-19 01:24:44,876   INFO  [Thread-2] CONSOLE: * The VoltDB server will shut down due to a control-C or other JVM exit. *
+2018-01-19 01:24:44,876   INFO  [Thread-2] CONSOLE: ********************************************************************************

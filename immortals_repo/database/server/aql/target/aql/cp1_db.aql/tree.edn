@@ -1,0 +1,1656 @@
+[:file
+ [:program
+  [:optionsDeclarationSection
+   "options"
+   [:optionsDeclaration [:timeoutOption "timeout" "=" "30"]]
+   [:optionsDeclaration [:guiOptions "gui_max_table_size" "=" "1600"]]]
+  [:commentDeclarationSection
+   [:htmlCommentDeclaration
+    "html { (* "
+    "\"\n<!DOCTYPE html PUBLIC \\\"-//W3C//DTD XHTML 1.0 Transitional//EN\\\" \\\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\\\">\n <html xmlns=\\\"http://www.w3.org/1999/xhtml\\\" xml:lang=\\\"en\\\">\n <head>\n <link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"https://categoricaldata.net/css/simple.css\\\" />\n <script src=\\\"https://categoricaldata.net/js/simple.js\\\"></script>\n </head>\n <body>\n\""
+    " *) }"]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n\n# AQL BRASS/IMMoRTALS example\n**Sources <-| CotEvents |-| CotEventPosition**\n\n---\n\n\""
+    " *) }"]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## PREFACE - AQL and SQL\n\nThis AQL tutorial is a literate AQL file:\nby running it and then selecting 'emit HTML' you get the document.\n\n * immortals/svn/database/server/baseline_schema_ddl.sql\n * immortals/svn/castor/takserver/castor_query_overview.xlsx\n\""
+    " *) }"]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\nAs information is being loaded from the file system\nwe need to know where we are.\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:pragmaKindAssignment
+    "pragma"
+    [:pragmaId [:symbol "p0"]]
+    "="
+    [:pragmaDef
+     "exec_cmdline"
+     "{"
+     [:pragmaCmdLineSection "\"pwd\"" "\"ls\"" "allOptions"]
+     "}"]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n\n# AQL IMMoRTALS sample</h1>\n\nJump to section:\n[Typesides](#typesides)\n[schemas](Schemas),\n[instances](Instances),\n[mappings](Mappings),\n[fdm](Delta and Sigma),\n[uberflowers](Uber-flowers),\n[conclusion](Conclusion).\n\n------------\n\""
+    " *) }"]]
+  [:commentDeclarationSection
+   [:htmlCommentDeclaration
+    "html { (* "
+    "\"\n  <svg width='300px' height='300px'\n    xmlns='http://www.w3.org/2000/svg'>\n    <text x='10' y='50' font-size='30'>My SVG</text>\n  </svg>\n\""
+    " *)\n}"]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n[Typesides]:\n## Typesides\n\n<div id='typesides'/>\n\nEvery AQL file begins with a __typeside__.\nThe typeside for this tutorial contains two __java_types__:\n*String*, which is bound to *java.lang.String*; and\n<i>Integer</i>, which is bound to <i>java.lang.Integer</i>.\nThe <b>java_constants</b> section defines, for each java_type, javascript code that\ncreates a value of that type from a string.\nFor example, when the string 100 is encountered in an\nAQL program and needs to be interpreted as an <i>Integer</i>,\nAQL will execute the <i>parseInt</i> function on the string 100,\nyielding a <i>java.lang.Integer</i>.\nSimilarly, the <b>java_functions</b> section defines the <i>plus</i> function.\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:typesideKindAssignment
+    "typeside"
+    [:typesideId [:symbol "ts0"]]
+    "="
+    [:typesideDef
+     "literal"
+     "{"
+     [:typesideLiteralSection
+      "java_types"
+      [:typesideJavaTypeSig
+       [:typesideTypeId [:symbol "TEXT"]]
+       "="
+       "\"java.lang.String\""]
+      [:typesideJavaTypeSig
+       [:typesideTypeId [:symbol "VARCHAR"]]
+       "="
+       "\"java.lang.String\""]
+      [:typesideJavaTypeSig
+       [:typesideTypeId [:symbol "DATETIME"]]
+       "="
+       "\"java.util.Date\""]
+      [:typesideJavaTypeSig
+       [:typesideTypeId [:symbol "INTEGER"]]
+       "="
+       "\"java.lang.Long\""]
+      [:typesideJavaTypeSig
+       [:typesideTypeId [:symbol "REAL"]]
+       "="
+       "\"java.lang.Double\""]
+      [:typesideJavaTypeSig
+       [:typesideTypeId [:symbol "BLOB"]]
+       "="
+       "\"java.util.ArrayList\""]
+      [:typesideJavaTypeSig
+       [:typesideTypeId [:symbol "GEO"]]
+       "="
+       "\"java.lang.Long\""]
+      [:typesideJavaTypeSig
+       [:typesideTypeId [:symbol "BOOLEAN"]]
+       "="
+       "\"java.lang.Boolean\""]
+      [:typesideJavaTypeSig "true" "=" "\"java.lang.Boolean\""]
+      "java_constants"
+      [:typesideJavaConstantSig
+       [:typesideConstantLiteral "TEXT"]
+       "="
+       "\"return input[0]\""]
+      [:typesideJavaConstantSig
+       [:typesideConstantLiteral "VARCHAR"]
+       "="
+       "\"return input[0]\""]
+      [:typesideJavaConstantSig
+       [:typesideConstantLiteral "DATETIME"]
+       "="
+       "\"return new java.util.Date(java.lang.Long.decode(input[0]))\""]
+      [:typesideJavaConstantSig
+       [:typesideConstantLiteral "INTEGER"]
+       "="
+       "\"return java.lang.Long.decode(input[0])\""]
+      [:typesideJavaConstantSig
+       [:typesideConstantLiteral "REAL"]
+       "="
+       "\"return java.lang.Double.parseDouble(input[0])\""]
+      [:typesideJavaConstantSig
+       [:typesideConstantLiteral "BLOB"]
+       "="
+       "\"return []\""]
+      [:typesideJavaConstantSig
+       [:typesideConstantLiteral "GEO"]
+       "="
+       "\"return java.lang.Long.decode(input[0])\""]
+      [:typesideJavaConstantSig
+       [:typesideConstantLiteral "BOOLEAN"]
+       "="
+       "\"return new java.lang.Boolean(input[0])\""]
+      [:typesideJavaConstantSig
+       [:truthy "true"]
+       "="
+       "\"return true;\""]
+      [:typesideJavaConstantSig
+       [:typesideConstantLiteral "Now"]
+       "="
+       "\"return java.util.Date.from(java.time.Instant.now())\""]
+      "java_functions"
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "int_to_real"]]
+       ":"
+       [:typesideFnLocal [:symbol "INTEGER"]]
+       "->"
+       [:typesideFnLocal [:symbol "REAL"]]
+       "="
+       "\"return 0.0 + input[0]\""]
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "real_to_int"]]
+       ":"
+       [:typesideFnLocal [:symbol "REAL"]]
+       "->"
+       [:typesideFnLocal [:symbol "INTEGER"]]
+       "="
+       "\"return Math.round(input[0]).longValue()\""]
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "date_to_int"]]
+       ":"
+       [:typesideFnLocal [:symbol "DATETIME"]]
+       "->"
+       [:typesideFnLocal [:symbol "INTEGER"]]
+       "="
+       "\"return input[0].getTime()\""]
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "int_to_date"]]
+       ":"
+       [:typesideFnLocal [:symbol "INTEGER"]]
+       "->"
+       [:typesideFnLocal [:symbol "DATETIME"]]
+       "="
+       "\"return new java.util.Date(input[0])\""]
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "txt_to_vc"]]
+       ":"
+       [:typesideFnLocal [:symbol "TEXT"]]
+       "->"
+       [:typesideFnLocal [:symbol "VARCHAR"]]
+       "="
+       "\"return input[0]\""]
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "vc_to_txt"]]
+       ":"
+       [:typesideFnLocal [:symbol "VARCHAR"]]
+       "->"
+       [:typesideFnLocal [:symbol "TEXT"]]
+       "="
+       "\"return input[0]\""]
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "real_to_geo"]]
+       ":"
+       [:typesideFnLocal [:symbol "REAL"]]
+       "->"
+       [:typesideFnLocal [:symbol "GEO"]]
+       "="
+       "\"return Math.round(input[0] * 1E6).longValue()\""]
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "geo_to_real"]]
+       ":"
+       [:typesideFnLocal [:symbol "GEO"]]
+       "->"
+       [:typesideFnLocal [:symbol "REAL"]]
+       "="
+       "\"return input[0] / 1E6\""]
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "eqVc"]]
+       ":"
+       [:typesideFnLocal [:symbol "VARCHAR"]]
+       ","
+       [:typesideFnLocal [:symbol "VARCHAR"]]
+       "->"
+       [:typesideFnLocal [:symbol "BOOLEAN"]]
+       "="
+       "\"return input[0].equals(input[1])\""]
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "eqInt"]]
+       ":"
+       [:typesideFnLocal [:symbol "INTEGER"]]
+       ","
+       [:typesideFnLocal [:symbol "INTEGER"]]
+       "->"
+       [:typesideFnLocal [:symbol "BOOLEAN"]]
+       "="
+       "\"return input[0] == input[1]\""]
+      [:typesideJavaFunctionSig
+       [:typesideFnName [:symbol "or"]]
+       ":"
+       [:typesideFnLocal [:symbol "BOOLEAN"]]
+       ","
+       [:typesideFnLocal [:symbol "BOOLEAN"]]
+       "->"
+       [:typesideFnLocal [:symbol "BOOLEAN"]]
+       "="
+       "\"return input[0] || input[1]\""]
+      "allOptions"]
+     "}"]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n---------\n\t<div id=\\\"schemas\\\">\n\t<h2>Schemas</h2>\n\n\t<p>A <b>schema</b> on a typeside <i>ts0</i> contains\n\t    a set of <b>entities</b>,\n\t    a set of <b>attributes</b> taking entities to types,\n\t    a set of <b>foreign_keys</b> taking entities to entities,\n\t    a set of <b>path_equations</b> between paths of foreign_keys, and\n\t\ta set of <b>observation_equations</b> between attributes and foreign_keys.\n\t</p>\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:schemaKindAssignment
+    "schema"
+    [:schemaId [:symbol "s0"]]
+    "="
+    [:schemaDef
+     "literal"
+     ":"
+     [:typesideKind [:typesideId [:symbol "ts0"]]]
+     "{"
+     [:schemaLiteralSection
+      "entities"
+      [:schemaEntityId [:symbol "Source"]]
+      [:schemaEntityId [:symbol "CotEvent"]]
+      [:schemaEntityId [:symbol "CotEventPosition"]]
+      "foreign_keys"
+      [:schemaForeignSig
+       [:schemaForeignId [:symbol "source_id"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:schemaEntityId [:symbol "Source"]]]
+      [:schemaForeignSig
+       [:schemaForeignId [:symbol "cot_event_id"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:schemaEntityId [:symbol "CotEvent"]]]
+      "path_equations"
+      "attributes"
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "name"]]
+       ":"
+       [:schemaEntityId [:symbol "Source"]]
+       "->"
+       [:typesideTypeId [:symbol "VARCHAR"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "channel"]]
+       ":"
+       [:schemaEntityId [:symbol "Source"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "cot_type"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:typesideTypeId [:symbol "VARCHAR"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "how"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:typesideTypeId [:symbol "VARCHAR"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "detail"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:typesideTypeId [:symbol "TEXT"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "servertime"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "point_hae"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "point_ce"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "point_le"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "tilex"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "GEO"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "tiley"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "GEO"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "longitude"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "REAL"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "latitude"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "REAL"]]]
+      "observation_equations"
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "s0_inst"]]
+    "="
+    [:instanceDef
+     "import_csv"
+     [:instanceFile "\"./data/sample_small/\""]
+     ":"
+     [:schemaId [:symbol "s0"]]
+     "{"
+     [:instanceImportCsvSection
+      [:schemaEntityId [:symbol "Source"]]
+      "->"
+      [:instanceCsvId [:symbol "source"]]
+      [:schemaEntityId [:symbol "CotEvent"]]
+      "->"
+      [:instanceCsvId [:symbol "cot_event"]]
+      [:schemaEntityId [:symbol "CotEventPosition"]]
+      "->"
+      [:instanceCsvId [:symbol "cot_event_position"]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:schemaKindAssignment
+    "schema"
+    [:schemaId [:symbol "s2"]]
+    "="
+    [:schemaDef
+     "literal"
+     ":"
+     [:typesideKind [:typesideId [:symbol "ts0"]]]
+     "{"
+     [:schemaLiteralSection
+      "entities"
+      [:schemaEntityId [:symbol "Source"]]
+      [:schemaEntityId [:symbol "CotEvent"]]
+      [:schemaEntityId [:symbol "CotEventPosition"]]
+      "foreign_keys"
+      [:schemaForeignSig
+       [:schemaForeignId [:symbol "source_id"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:schemaEntityId [:symbol "Source"]]]
+      [:schemaForeignSig
+       [:schemaForeignId [:symbol "cot_event_id"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:schemaEntityId [:symbol "CotEvent"]]]
+      "path_equations"
+      "attributes"
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "name"]]
+       ":"
+       [:schemaEntityId [:symbol "Source"]]
+       "->"
+       [:typesideTypeId [:symbol "VARCHAR"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "channel"]]
+       ":"
+       [:schemaEntityId [:symbol "Source"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "cot_type"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:typesideTypeId [:symbol "VARCHAR"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "how"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:typesideTypeId [:symbol "VARCHAR"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "detail"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:typesideTypeId [:symbol "TEXT"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "server_time"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "point_hae"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "point_ce"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "point_le"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "tile_x"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "GEO"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "tile_y"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:typesideTypeId [:symbol "GEO"]]]
+      "observation_equations"
+      "allOptions"]
+     "}"]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## f0: s1 -> s0\nThe functor which makes (potentially) lossy adjustments to the schema.\n\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:mappingKindAssignment
+    "mapping"
+    [:mappingId [:symbol "f0"]]
+    "="
+    [:mappingKindAssignment
+     "literal"
+     ":"
+     [:schemaId [:symbol "s2"]]
+     "->"
+     [:schemaId [:symbol "s0"]]
+     "{"
+     [:mappingLiteralSection
+      "entities"
+      [:mappingEntitySig
+       [:schemaEntityId [:symbol "Source"]]
+       "->"
+       [:schemaEntityId [:symbol "Source"]]]
+      [:mappingEntitySig
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "->"
+       [:schemaEntityId [:symbol "CotEvent"]]]
+      [:mappingEntitySig
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       "->"
+       [:schemaEntityId [:symbol "CotEventPosition"]]]
+      "foreign_keys"
+      [:mappingForeignSig
+       [:schemaForeignId [:symbol "source_id"]]
+       "->"
+       [:mappingForeignPath
+        [:mappingArrowId [:schemaEntityId [:symbol "source_id"]]]]]
+      [:mappingForeignSig
+       [:schemaForeignId [:symbol "cot_event_id"]]
+       "->"
+       [:mappingForeignPath
+        [:mappingArrowId [:schemaEntityId [:symbol "cot_event_id"]]]]]
+      "attributes"
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "name"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]]
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "channel"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "channel"]]]]]
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "detail"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "detail"]]]]]
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "how"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "how"]]]]]
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "server_time"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "servertime"]]]]]
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "cot_type"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]]
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "point_hae"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "point_hae"]]]]]
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "point_ce"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "point_ce"]]]]]
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "point_le"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "point_le"]]]]]
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "tile_x"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "tilex"]]]]]
+      [:mappingAttributeSig
+       [:schemaAttributeId [:symbol "tile_y"]]
+       "->"
+       [:schemaPath
+        [:schemaArrowId [:schemaEntityId [:symbol "tiley"]]]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "s2_inst"]]
+    "="
+    [:instanceDef
+     "delta"
+     [:mappingKind [:mappingId [:symbol "f0"]]]
+     [:instanceKind [:instanceId [:symbol "s0_inst"]]]]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n### Queries\n\nIn each of the following cases both a positive and\nnegative sample are generated\nby selecting a random ordering of some quantity.\nThe negative query is generated by **negating the where clause**.\ne.g.\n\n  \tselect ce.id, ce.source_id, ce.cot_type\n\tfrom cot_event as ce\n\twhere not(ce.cot_type = 'a-n-A-C-F-s')\n\torder by random()\n\tlimit 1000\n\n\""
+    " *) }"]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## Query 1 : cotEventsForConstantCotType\nBasic test against single table with a simple filter on a projected column.\nIn the original query the source_id was extracted by the query.\nIn AQL foreign-key values are meaningless so extracting them is meaningless.\nIf what is intended is some meaningful key indicating a row in the source entity;\nthen a uuid on the source entity is probably what is meant.\n\n\tselect ce.id, ce.source_id, ce.cot_type\n\tfrom cot_event as ce\n\twhere ce.cot_type = 'a-n-A-C-F-s'\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q1"]]
+    "="
+    [:queryDef
+     "simple"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s2"]]]
+     "{"
+     [:querySimpleSection
+      [:queryClauseExpr
+       "from"
+       [:queryGen [:symbol "ce"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "where"
+       [:queryPath
+        [:queryGen [:symbol "ce"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]
+       "="
+       [:queryLiteralValue "\"a-n-A-C-F-m\""]
+       "attributes"
+       [:queryAttributeSig
+        [:schemaAttributeId [:symbol "cot_type"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q1_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q1"]]]
+     [:instanceKind [:instanceId [:symbol "s2_inst"]]]]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## Query 2 : cotEventsForConstantTimeInterval\nLike query 1 except filter on non-projected column.\n\n\tselect ce.id, ce.source_id, ce.cot_type, ce.how\n\tfrom cot_event as ce\n\twhere ce.servertime = 201705071635\n\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q2"]]
+    "="
+    [:queryDef
+     "simple"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s2"]]]
+     "{"
+     [:querySimpleSection
+      [:queryClauseExpr
+       "from"
+       [:queryGen [:symbol "ce"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "where"
+       [:queryPath
+        [:queryGen [:symbol "ce"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "server_time"]]]]
+       "="
+       [:queryLiteralValue "201705071635"]
+       "attributes"
+       [:queryAttributeSig
+        [:schemaAttributeId [:symbol "cot_type"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]
+        [:schemaAttributeId [:symbol "how"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "how"]]]]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q2_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q2"]]]
+     [:instanceKind [:instanceId [:symbol "s2_inst"]]]]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## Query 3 : cotEventsForConstantCompoundFilter\nQuery with a simple compound filter\n\n\tselect ce.id, ce.source_id, ce.cot_type, ce.how\n\tfrom cot_event as ce\n\twhere ce.servertime = 201705071635\n\tand ce.cot_type = 'a-n-A-C-F-m'\n\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q3"]]
+    "="
+    [:queryDef
+     "simple"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s2"]]]
+     "{"
+     [:querySimpleSection
+      [:queryClauseExpr
+       "from"
+       [:queryGen [:symbol "ce"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       "where"
+       [:queryPath
+        [:queryGen [:symbol "ce"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "server_time"]]]]
+       "="
+       [:queryLiteralValue "201705071635"]
+       [:queryPath
+        [:queryGen [:symbol "ce"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]
+       "="
+       [:queryLiteralValue "\"a-n-A-C-F-m\""]
+       "attributes"
+       [:queryAttributeSig
+        [:schemaAttributeId [:symbol "cot_type"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]
+        [:schemaAttributeId [:symbol "how"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "how"]]]]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q3_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q3"]]]
+     [:instanceKind [:instanceId [:symbol "s2_inst"]]]]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## Query 4 : cotEventsForConstantChannelJoin\nSimple join with filter\n\n\tselect s.name, ce.id, ce.cot_type, ce.servertime\n\tfrom source as s\n\tjoin cot_event as ce on s.id = ce.source_id\n\twhere s.channel = 7\n\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q4"]]
+    "="
+    [:queryDef
+     "simple"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s2"]]]
+     "{"
+     [:querySimpleSection
+      [:queryClauseExpr
+       "from"
+       [:queryGen [:symbol "ce"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       [:queryGen [:symbol "s"]]
+       ":"
+       [:schemaEntityId [:symbol "Source"]]
+       "where"
+       [:queryPath [:typesideConstantLiteral "s"]]
+       "="
+       [:queryPath
+        [:queryGen [:symbol "ce"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "source_id"]]]]
+       [:queryPath
+        [:queryGen [:symbol "s"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "channel"]]]]
+       "="
+       [:queryLiteralValue "7"]
+       "attributes"
+       [:queryAttributeSig
+        [:schemaAttributeId [:symbol "name"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "s"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+        [:schemaAttributeId [:symbol "cot_type"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]
+        [:schemaAttributeId [:symbol "time"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "server_time"]]]]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q4_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q4"]]]
+     [:instanceKind [:instanceId [:symbol "s2_inst"]]]]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## Query 5 : cotEventsForConstantChannelJoin2\nSame as query4 but no projection of column from joined table.\n\n\tselect s.name, ce.cot_type, ce.servertime\n\tfrom source as s\n\tjoin cot_event as ce on s.id = ce.source_id\n\twhere s.channel = 5 or ce.cot_type = 'a-n-A-C-F-s'\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q5s"]]
+    "="
+    [:queryDef
+     "simple"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s2"]]]
+     "{"
+     [:querySimpleSection
+      [:queryClauseExpr
+       "from"
+       [:queryGen [:symbol "ce"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       [:queryGen [:symbol "s"]]
+       ":"
+       [:schemaEntityId [:symbol "Source"]]
+       "where"
+       [:queryPath [:typesideConstantLiteral "s"]]
+       "="
+       [:queryPath
+        [:queryGen [:symbol "ce"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "source_id"]]]]
+       [:queryPath
+        [:queryGen [:symbol "eqInt"]]
+        "("
+        [:queryPath
+         [:queryGen [:symbol "s"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "channel"]]]]
+        ","
+        [:queryPath [:queryLiteralValue "3"]]
+        ")"]
+       "="
+       [:queryLiteralValue "true"]
+       "attributes"
+       [:queryAttributeSig
+        [:schemaAttributeId [:symbol "name"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "s"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+        [:schemaAttributeId [:symbol "cot_type"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]
+        [:schemaAttributeId [:symbol "time"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "server_time"]]]]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q5s_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q5s"]]]
+     [:instanceKind [:instanceId [:symbol "s2_inst"]]]]]]
+  [:kindDeclaration
+   [:schemaKindAssignment
+    "schema"
+    [:schemaId [:symbol "s5"]]
+    "="
+    [:schemaDef
+     "literal"
+     ":"
+     [:typesideKind [:typesideId [:symbol "ts0"]]]
+     "{"
+     [:schemaLiteralSection
+      "entities"
+      [:schemaEntityId [:symbol "Q"]]
+      "attributes"
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "name"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "VARCHAR"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "time"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "type"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "VARCHAR"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "channel"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q5c"]]
+    "="
+    [:queryDef
+     "literal"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s2"]]]
+     "->"
+     [:schemaId [:symbol "s5"]]
+     "{"
+     [:queryLiteralSection
+      "entities"
+      [:queryEntityExpr
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       "{"
+       [:queryClauseExpr
+        "from"
+        [:queryGen [:symbol "ce"]]
+        ":"
+        [:schemaEntityId [:symbol "CotEvent"]]
+        [:queryGen [:symbol "s"]]
+        ":"
+        [:schemaEntityId [:symbol "Source"]]
+        "where"
+        [:queryPath [:typesideConstantLiteral "s"]]
+        "="
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "source_id"]]]]
+        "attributes"
+        [:queryAttributeSig
+         [:schemaAttributeId [:symbol "name"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "s"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+         [:schemaAttributeId [:symbol "type"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "ce"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]
+         [:schemaAttributeId [:symbol "channel"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "s"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "channel"]]]]
+         [:schemaAttributeId [:symbol "time"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "ce"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "server_time"]]]]]]
+       "}"]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "s5_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q5c"]]]
+     [:instanceKind [:instanceId [:symbol "s2_inst"]]]]]]
+  [:kindDeclaration
+   [:schemaKindAssignment
+    "schema"
+    [:schemaId [:symbol "s5simple"]]
+    "="
+    [:schemaDef "dst" [:queryId [:symbol "q5c"]]]]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q5a"]]
+    "="
+    [:queryDef
+     "literal"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s5"]]]
+     "->"
+     [:schemaId [:symbol "s5"]]
+     "{"
+     [:queryLiteralSection
+      "entities"
+      [:queryEntityExpr
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       "{"
+       [:queryClauseExpr
+        "from"
+        [:queryGen [:symbol "q"]]
+        ":"
+        [:schemaEntityId [:symbol "Q"]]
+        "where"
+        [:queryPath
+         [:queryGen [:symbol "eqInt"]]
+         "("
+         [:queryPath
+          [:queryGen [:symbol "q"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "channel"]]]]
+         ","
+         [:queryPath [:queryLiteralValue "3"]]
+         ")"]
+        "="
+        [:queryLiteralValue "true"]
+        "attributes"
+        [:queryAttributeSig
+         [:schemaAttributeId [:symbol "name"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "q"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+         [:schemaAttributeId [:symbol "type"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "q"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "type"]]]]
+         [:schemaAttributeId [:symbol "channel"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "q"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "channel"]]]]
+         [:schemaAttributeId [:symbol "time"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "q"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "time"]]]]]]
+       "}"]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q5a_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q5a"]]]
+     [:instanceKind [:instanceId [:symbol "s5_inst"]]]]]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q5b"]]
+    "="
+    [:queryDef
+     "literal"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s5"]]]
+     "->"
+     [:schemaId [:symbol "s5"]]
+     "{"
+     [:queryLiteralSection
+      "entities"
+      [:queryEntityExpr
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       "{"
+       [:queryClauseExpr
+        "from"
+        [:queryGen [:symbol "q"]]
+        ":"
+        [:schemaEntityId [:symbol "Q"]]
+        "where"
+        [:queryPath
+         [:queryGen [:symbol "q"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "type"]]]]
+        "="
+        [:queryLiteralValue "\"a-n-A-C-F-m\""]
+        [:queryPath
+         [:queryGen [:symbol "eqInt"]]
+         "("
+         [:queryPath
+          [:queryGen [:symbol "q"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "channel"]]]]
+         ","
+         [:queryPath [:queryLiteralValue "3"]]
+         ")"]
+        "="
+        [:queryLiteralValue "false"]
+        "attributes"
+        [:queryAttributeSig
+         [:schemaAttributeId [:symbol "name"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "q"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+         [:schemaAttributeId [:symbol "type"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "q"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "type"]]]]
+         [:schemaAttributeId [:symbol "channel"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "q"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "channel"]]]]
+         [:schemaAttributeId [:symbol "time"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "q"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "time"]]]]]]
+       "}"]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q5b_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q5b"]]]
+     [:instanceKind [:instanceId [:symbol "s5_inst"]]]]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q5c_inst"]]
+    "="
+    [:instanceDef
+     "coproduct"
+     [:instanceKind [:instanceId [:symbol "q5a_inst"]]]
+     "+"
+     [:instanceKind [:instanceId [:symbol "q5b_inst"]]]
+     ":"
+     [:schemaKind [:schemaId [:symbol "s5"]]]]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## Query 6 : cotEventsForConstantMixedJoin\nSame as query5 except join across tables.\n\n\tselect s.name, ce.cot_type, ce.servertime\n\tfrom source as s\n\tjoin cot_event as ce on s.id = ce.source_id\n\twhere  s.channel = 5\n\t\tor ce.cot_type = 'a-n-A-C-F-m'\n\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q6"]]
+    "="
+    [:queryDef
+     "simple"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s2"]]]
+     "{"
+     [:querySimpleSection
+      [:queryClauseExpr
+       "from"
+       [:queryGen [:symbol "ce"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       [:queryGen [:symbol "s"]]
+       ":"
+       [:schemaEntityId [:symbol "Source"]]
+       "where"
+       [:queryPath [:typesideConstantLiteral "s"]]
+       "="
+       [:queryPath
+        [:queryGen [:symbol "ce"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "source_id"]]]]
+       [:queryPath
+        [:queryGen [:symbol "or"]]
+        "("
+        [:queryPath
+         [:queryGen [:symbol "eqInt"]]
+         "("
+         [:queryPath
+          [:queryGen [:symbol "s"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "channel"]]]]
+         ","
+         [:queryPath [:queryLiteralValue "5"]]
+         ")"]
+        ","
+        [:queryPath
+         [:queryGen [:symbol "eqVc"]]
+         "("
+         [:queryPath
+          [:queryGen [:symbol "ce"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]
+         ","
+         [:queryPath [:queryLiteralValue "\"a-n-A-C-F-m\""]]
+         ")"]
+        ")"]
+       "="
+       [:queryLiteralValue "true"]
+       "attributes"
+       [:queryAttributeSig
+        [:schemaAttributeId [:symbol "name"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "s"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+        [:schemaAttributeId [:symbol "cot_type"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]
+        [:schemaAttributeId [:symbol "time"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "server_time"]]]]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q6_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q6"]]]
+     [:instanceKind [:instanceId [:symbol "s2_inst"]]]]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## Query 7 : cotEventsOnChannelInRegion\nMore complex join and filter\n\n\tselect s.name, ce.id, ce.cot_type, ce.servertime\n\tfrom source as s\n\tjoin cot_event as ce on s.id = ce.source_id\n\tjoin cot_event_position cep on ce.id = cep.cot_event_id\n\twhere  s.channel = 3 and cep.tilex = 18830 and cep.tiley = 25704\n\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q7"]]
+    "="
+    [:queryDef
+     "simple"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s2"]]]
+     "{"
+     [:querySimpleSection
+      [:queryClauseExpr
+       "from"
+       [:queryGen [:symbol "ce"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEvent"]]
+       [:queryGen [:symbol "cep"]]
+       ":"
+       [:schemaEntityId [:symbol "CotEventPosition"]]
+       [:queryGen [:symbol "s"]]
+       ":"
+       [:schemaEntityId [:symbol "Source"]]
+       "where"
+       [:queryPath [:typesideConstantLiteral "s"]]
+       "="
+       [:queryPath
+        [:queryGen [:symbol "ce"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "source_id"]]]]
+       [:queryPath [:typesideConstantLiteral "ce"]]
+       "="
+       [:queryPath
+        [:queryGen [:symbol "cep"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "cot_event_id"]]]]
+       [:queryPath
+        [:queryGen [:symbol "s"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "channel"]]]]
+       "="
+       [:queryLiteralValue "3"]
+       "attributes"
+       [:queryAttributeSig
+        [:schemaAttributeId [:symbol "name"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "s"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+        [:schemaAttributeId [:symbol "cot_type"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "cot_type"]]]]
+        [:schemaAttributeId [:symbol "time"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "server_time"]]]]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q7_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q7"]]]
+     [:instanceKind [:instanceId [:symbol "s2_inst"]]]]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## Query 8 : cotEventsForUidAndInterval\nSimple parameterized query.\n\n\tselect s.id, s.name, ce.servertime, cep.tilex, cep.tiley\n\tfrom source as s\n\tjoin cot_event as ce on s.id = ce.source_id\n\twhere s.name = ? and ce.server_time = ?\n\""
+    " *)}"]]
+  [:kindDeclaration
+   [:schemaKindAssignment
+    "schema"
+    [:schemaId [:symbol "S8"]]
+    "="
+    [:schemaDef
+     "literal"
+     ":"
+     [:typesideKind [:typesideId [:symbol "ts0"]]]
+     "{"
+     [:schemaLiteralSection
+      "entities"
+      [:schemaEntityId [:symbol "Q"]]
+      "attributes"
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "name"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "VARCHAR"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "time"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "tileX"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "GEO"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "tileY"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "GEO"]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q8"]]
+    "="
+    [:queryDef
+     "literal"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s2"]]]
+     "->"
+     [:schemaId [:symbol "S8"]]
+     "{"
+     [:queryLiteralSection
+      "entities"
+      [:queryEntityExpr
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       "{"
+       [:queryClauseExpr
+        "from"
+        [:queryGen [:symbol "s"]]
+        ":"
+        [:schemaEntityId [:symbol "Source"]]
+        [:queryGen [:symbol "ce"]]
+        ":"
+        [:schemaEntityId [:symbol "CotEvent"]]
+        [:queryGen [:symbol "cep"]]
+        ":"
+        [:schemaEntityId [:symbol "CotEventPosition"]]
+        "where"
+        [:queryPath [:typesideConstantLiteral "s"]]
+        "="
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "source_id"]]]]
+        [:queryPath [:typesideConstantLiteral "ce"]]
+        "="
+        [:queryPath
+         [:queryGen [:symbol "cep"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "cot_event_id"]]]]
+        "attributes"
+        [:queryAttributeSig
+         [:schemaAttributeId [:symbol "name"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "s"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+         [:schemaAttributeId [:symbol "time"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "ce"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "server_time"]]]]
+         [:schemaAttributeId [:symbol "tileX"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "cep"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "tile_x"]]]]
+         [:schemaAttributeId [:symbol "tileY"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "cep"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "tile_y"]]]]]]
+       "}"]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q8_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q8"]]]
+     [:instanceKind [:instanceId [:symbol "s2_inst"]]]]]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q8a"]]
+    "="
+    [:queryDef
+     "simple"
+     ":"
+     [:schemaKind [:schemaId [:symbol "S8"]]]
+     "{"
+     [:querySimpleSection
+      [:queryClauseExpr
+       "from"
+       [:queryGen [:symbol "q"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "where"
+       [:queryPath
+        [:queryGen [:symbol "q"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+       "="
+       [:queryLiteralValue "\"A6A7DC\""]
+       [:queryPath
+        [:queryGen [:symbol "q"]]
+        "."
+        [:schemaArrowId [:schemaEntityId [:symbol "time"]]]]
+       "="
+       [:queryLiteralValue "201705071635"]
+       "attributes"
+       [:queryAttributeSig
+        [:schemaAttributeId [:symbol "name"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "q"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+        [:schemaAttributeId [:symbol "time"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "q"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "time"]]]]
+        [:schemaAttributeId [:symbol "tileX"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "q"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "tileX"]]]]
+        [:schemaAttributeId [:symbol "tileY"]]
+        "->"
+        [:queryPath
+         [:queryGen [:symbol "q"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "tileY"]]]]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q8a_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q8a"]]]
+     [:instanceKind [:instanceId [:symbol "q8_inst"]]]]]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n\nSince this is a parameterized query, we reproduce the sampling\nthat would be created with baseline application testing.\nFor a subset of source name and servertime parameters,\nwe take a representative sample of the query results for that value.\nIf we just sample over the whole population of records, we\nmight get just a few results for a set of parameters.\n\n\twith sampleSizes as\n\t(\n\tselect source_id, servertime, min(sample_size) as sample_size\n\tfrom\n\t\t(select s.id source_id, ce.servertime,\n\t\tround((cast(count() over(partition by s.id, ce.servertime) as float) / cast( count() over() as float)) * 1000) as sample_size\n\t\tfrom source s join cot_event ce on s.id = ce.source_id) as t1\n\t\tgroup by t1.source_id, t1.servertime\n\t\t),\n\n\tsamples as\n\t(\n\tselect source_id, source_name, servertime, row_number() over(partition by source_id, servertime) as rownum, tilex, tiley\n\tfrom\n\t\t(select s.id as source_id, s.name as source_name, ce.servertime, cep.tilex, cep.tiley,\n\t\trow_number() over(order by s.id, ce.servertime, random()) as rownum\n\t\tfrom source s join cot_event ce on s.id = ce.source_id\n\t\tjoin cot_event_position cep on ce.id = cep.cot_event_id\n\t\tjoin (\tselect t1.id, t1.servertime\n\t\t\t\tfrom (select distinct s2.id, ce2.servertime\n\t\t\t\t      from source s2 join cot_event ce2 on s2.id = ce2.source_id\n\t\t\t\t     ) t1\n\t\t\t\torder by random()\n\t\t\t\tlimit 50) as t2 on s.id = t2.id and ce.servertime = t2.servertime\n\t\t) as t3\n\t)\n\n\tselect samples.source_id as id, samples.source_name as name, samples.servertime, samples.tilex, samples.tiley\n\tfrom samples join sampleSizes on samples.source_id = sampleSizes.source_id and samples.servertime = sampleSizes.servertime\n\twhere samples.rownum <= sampleSizes.sample_size\n\n\""
+    " *) }"]]
+  [:commentDeclarationSection
+   [:mdCommentDeclaration
+    "md { (* "
+    "\"\n## Query 9 : cotEventsForUidAndIntervalBound\nCompare to query 8 except trained using bound parameters.\nEffectively treating it as a canned query but\nreturning all results from sample parameter binding.\n\n\tselect s.id, s.name, ce.servertime, cep.tilex, cep.tiley\n\tfrom source as s\n\tjoin cot_event as ce on s.id = ce.source_id\n\tjoin cot_event_position cep on ce.id = cep.cot_event_id\n\twhere s.name = ? and ce.server_time = ?\n\nSamples:\n\n\twhere s.name = 'ABD19E' and servertime = 201705071645\n\n\""
+    " *) }"]]
+  [:kindDeclaration
+   [:schemaKindAssignment
+    "schema"
+    [:schemaId [:symbol "s9"]]
+    "="
+    [:schemaDef
+     "literal"
+     ":"
+     [:typesideKind [:typesideId [:symbol "ts0"]]]
+     "{"
+     [:schemaLiteralSection
+      "entities"
+      [:schemaEntityId [:symbol "Q"]]
+      "attributes"
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "name"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "VARCHAR"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "time"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "INTEGER"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "tileX"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "GEO"]]]
+      [:schemaAttributeSig
+       [:schemaAttributeId [:symbol "tileY"]]
+       ":"
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       [:typesideTypeId [:symbol "GEO"]]]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:queryKindAssignment
+    "query"
+    [:queryId [:symbol "q9"]]
+    "="
+    [:queryDef
+     "literal"
+     ":"
+     [:schemaKind [:schemaId [:symbol "s2"]]]
+     "->"
+     [:schemaId [:symbol "s9"]]
+     "{"
+     [:queryLiteralSection
+      "entities"
+      [:queryEntityExpr
+       [:schemaEntityId [:symbol "Q"]]
+       "->"
+       "{"
+       [:queryClauseExpr
+        "from"
+        [:queryGen [:symbol "s"]]
+        ":"
+        [:schemaEntityId [:symbol "Source"]]
+        [:queryGen [:symbol "ce"]]
+        ":"
+        [:schemaEntityId [:symbol "CotEvent"]]
+        [:queryGen [:symbol "cep"]]
+        ":"
+        [:schemaEntityId [:symbol "CotEventPosition"]]
+        "where"
+        [:queryPath [:typesideConstantLiteral "s"]]
+        "="
+        [:queryPath
+         [:queryGen [:symbol "ce"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "source_id"]]]]
+        [:queryPath [:typesideConstantLiteral "ce"]]
+        "="
+        [:queryPath
+         [:queryGen [:symbol "cep"]]
+         "."
+         [:schemaArrowId [:schemaEntityId [:symbol "cot_event_id"]]]]
+        "attributes"
+        [:queryAttributeSig
+         [:schemaAttributeId [:symbol "name"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "s"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "name"]]]]
+         [:schemaAttributeId [:symbol "time"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "ce"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "server_time"]]]]
+         [:schemaAttributeId [:symbol "tileX"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "cep"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "tile_x"]]]]
+         [:schemaAttributeId [:symbol "tileY"]]
+         "->"
+         [:queryPath
+          [:queryGen [:symbol "cep"]]
+          "."
+          [:schemaArrowId [:schemaEntityId [:symbol "tile_y"]]]]]]
+       "}"]
+      "allOptions"]
+     "}"]]]
+  [:kindDeclaration
+   [:instanceKindAssignment
+    "instance"
+    [:instanceId [:symbol "q9_inst"]]
+    "="
+    [:instanceDef
+     "eval"
+     [:queryKind [:queryId [:symbol "q9"]]]
+     [:instanceKind [:instanceId [:symbol "s2_inst"]]]]]]]
+ "<EOF>"]

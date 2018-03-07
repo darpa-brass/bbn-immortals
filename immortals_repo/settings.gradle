@@ -1,11 +1,81 @@
-include 'buildSrc'
-includeBuild 'shared/modules'
-includeBuild 'applications/client/ATAKLite'
-includeBuild 'applications/client/CLITAK'
-includeBuild 'applications/client/ConsumingPipeRunner'
-includeBuild 'applications/client/SubstitutionRunner'
-includeBuild 'applications/client/CotDbApp'
-includeBuild 'applications/server/Marti'
-includeBuild 'das/das-service'
-//include 'das:das-analysis:modulerunner-android' // TODO: Remove once refactored into finalized composition module
-//include 'das:das-analysis:modulerunner-java' // TODO: Remove once refactored into finalized composition module
+// Import root configuration
+import mil.darpa.immortals.config.ImmortalsConfig
+
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+
+buildscript {
+
+    // Set the root directory and repo based on this file location
+    def IMMORTALS_ROOT = Paths.get(buildscript.getSourceFile().parent).toAbsolutePath()
+    def IMMORTALS_REPO = IMMORTALS_ROOT.resolve('shared/IMMORTALS_REPO').toAbsolutePath()
+
+    repositories {
+        mavenCentral()
+        maven {
+            url IMMORTALS_REPO.toString()
+        }
+    }
+    dependencies {
+        classpath 'mil.darpa.immortals:ImmortalsConfig:+'
+    }
+}
+
+def IMMORTALS_ROOT = Paths.get(buildscript.getSourceFile().parent).toAbsolutePath()
+
+// declare where configuration files have to be placed
+def immortalsConfigTargets = [
+        IMMORTALS_ROOT,
+        IMMORTALS_ROOT.resolve('applications/client/CLITAK/'),
+        IMMORTALS_ROOT.resolve('applications/server/Marti/'),
+        IMMORTALS_ROOT.resolve('applications/client/ATAKLite/'),
+        IMMORTALS_ROOT.resolve('harness/pymmortals/resources/')
+]
+
+// If clean was called, remove the old configuration files
+def DO_CLEAN = getStartParameter().taskRequests.size() > 0 &&
+        getStartParameter().taskRequests.get(0).args.size() > 0 &&
+        getStartParameter().taskRequests.get(0).args[0] == "clean"
+
+if (DO_CLEAN) {
+    for (def ru : immortalsConfigTargets) {
+        def p = ru.resolve('immortals_config.json')
+        if (Files.exists(p)) {
+            Files.delete(p)
+        }
+    }
+}
+
+// Put a pointer to the repo in the applications
+// Using the whole config file for simplicity of deployment
+// The other fields from this file will not be used unless
+// "IMMORTALS_FILE_OVERRIDE" is set to the file location in the environment.
+// This is more reliable than using an environment variable IMO.
+for (def ru : immortalsConfigTargets) {
+    def p = ru.resolve('immortals_config.json')
+
+    if (!Files.exists(p)) {
+        Files.write(p,
+                ImmortalsConfig.instanceAsJsonString.getBytes(),
+                StandardOpenOption.CREATE)
+    }
+}
+
+// Include the DAS components
+include ':das:das-context'
+include ':das:temp'
+include ':das:staging'
+include ':das:das-testharness-coordinator'
+include ':das:das-service'
+include ':das:das-launcher'
+
+// Include the modules
+include ':shared:modules:core'
+include ':shared:modules:datatypes:Coordinates'
+include ':shared:modules:datatypes:CotData'
+include ':shared:modules:datatypes:Dom4jCot'
+include ':shared:modules:datatypes:Dom4jCot-2'
+include ':shared:modules:dfus:TakServerDataManager'
+include ':shared:modules:dfus:ElevationApi-1'
+include ':shared:modules:dfus:ElevationApi-2'

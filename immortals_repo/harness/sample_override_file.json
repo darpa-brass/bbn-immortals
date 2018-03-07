@@ -1,10 +1,35 @@
 {
-  "testHarness": {
-    "port": 44444,
-    "url": "127.0.0.1"
-  },
-  "testAdapter": {
-    "port": 55555,
-    "url": "127.0.0.1"
-  }
+    "testHarness": {
+        "port": 44444,
+        "url": "127.0.0.1"
+    },
+    "testAdapter": {
+        "port": 55555,
+        "url": "127.0.0.1"
+    },
+    "debug": {
+        "useMockApplicationDeployment": true,
+        "useMockDas": true,
+        "useMockFuseki": true,
+        "useMockKnowledgeRepository": true,
+        "useMockAqlBrass": true
+    },
+    "deploymentEnvironment": {
+        "martiAddress": "10.0.2.2",
+        "androidEnvironments" : [
+            {
+                "adbPort" : 5580,
+                "adbUrl" : "127.0.0.1",
+                "adbIdentifier": "emulator-5580",
+                "androidVersion": 21
+            },
+            {
+                "adbPort" : 5578,
+                "adbUrl" : "127.0.0.1",
+                "adbIdentifier": "emulator-5578",
+                "androidVersion": 21
+            }
+ 
+        ]
+    }
 }

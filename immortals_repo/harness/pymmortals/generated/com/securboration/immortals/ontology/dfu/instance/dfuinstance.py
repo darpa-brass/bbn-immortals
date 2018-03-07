@@ -15,6 +15,7 @@ class DfuInstance(Serializable):
 
     def __init__(self,
                  classPointer: str = None,
+                 concreteResourceDependencies: List[Resource] = None,
                  dfuProperties: List[Property] = None,
                  functionalAspects: List[FunctionalAspectInstance] = None,
                  functionalityAbstraction: Type[Functionality] = None,
@@ -22,6 +23,7 @@ class DfuInstance(Serializable):
                  tag: str = None):
         super().__init__()
         self.classPointer = classPointer
+        self.concreteResourceDependencies = concreteResourceDependencies
         self.dfuProperties = dfuProperties
         self.functionalAspects = functionalAspects
         self.functionalityAbstraction = functionalityAbstraction

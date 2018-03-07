@@ -28,28 +28,23 @@ public class CompiledJavaSourceFile extends ClasspathElement {
      */
     private VcsCoordinate vcsInfo;
     
+    private String absoluteFilePath;
+    
     public String getSourceEncoding() {
         return sourceEncoding;
     }
-
     
     public void setSourceEncoding(String sourceEncoding) {
         this.sourceEncoding = sourceEncoding;
     }
-
-
     
     public VcsCoordinate getVcsInfo() {
         return vcsInfo;
     }
-
-
     
     public void setVcsInfo(VcsCoordinate vcsInfo) {
         this.vcsInfo = vcsInfo;
     }
-
-
     
     public ClassArtifact[] getCorrespondingClass() {
         return correspondingClass;
@@ -61,4 +56,11 @@ public class CompiledJavaSourceFile extends ClasspathElement {
         this.correspondingClass = correspondingClass;
     }
 
+    public String getAbsoluteFilePath() {
+        return absoluteFilePath;
+    }
+
+    public void setAbsoluteFilePath(String absoluteFilePath) {
+        this.absoluteFilePath = absoluteFilePath;
+    }
 }

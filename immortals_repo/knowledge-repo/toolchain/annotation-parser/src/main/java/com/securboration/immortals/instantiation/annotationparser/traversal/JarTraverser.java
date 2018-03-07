@@ -48,6 +48,20 @@ public class JarTraverser {
                 visitor
                 );
     }
+
+    public static void traverseJar(
+            File jar,
+            BytecodeArtifactVisitor visitor,
+            IntentValidatorVisitor intentValidatorVisitor
+    ) throws IOException {
+        JarTraverser ingestor = new JarTraverser();
+
+        ingestor.openJar(
+                new ByteArrayInputStream(FileUtils.readFileToByteArray(jar)),
+                visitor, intentValidatorVisitor
+        );
+        
+    }
     
     public static void traverseJar(
             byte[] jar,
@@ -86,6 +100,64 @@ public class JarTraverser {
                 bytecode
                 );
         }
+    }
+
+    private void openJar(
+            InputStream jarWithDependenciesPath,
+            BytecodeArtifactVisitor visitor,
+            IntentValidatorVisitor intentValidatorVisitor
+    ) throws IOException{
+
+        try(JarArchiveInputStream inJar = new JarArchiveInputStream(jarWithDependenciesPath);)
+        {
+            final int MAX_SIZE =
+                    1024*1024//1MB
+                            *64;
+
+            byte[] buffer = new byte[MAX_SIZE];
+
+            // extract everything from the jar
+            boolean stop = false;
+            while (!stop) {
+                JarArchiveEntry jarEntry = inJar.getNextJarEntry();
+
+                if (jarEntry == null) {
+                    stop = true;
+                } else {
+                    if (jarEntry.getSize() > MAX_SIZE) {
+                        throw new RuntimeException("jar entry too large, > " + MAX_SIZE);
+                    } else if (jarEntry.getSize() == 0) {
+                        // do nothing, the entry is not a file
+                    } else {
+                        final int length = IOUtils.read(inJar, buffer);
+                        byte[] jarContent = new byte[length];
+
+                        System.arraycopy(buffer, 0, jarContent, 0, length);
+
+                        if(jarEntry.getName().endsWith(".jar")) {
+                            Console.log("found a nested jar: " + jarEntry.getName());
+
+                            //it's a nested jar, recurse
+                            openJar(
+                                    new ByteArrayInputStream(jarContent),
+                                    visitor
+                            );
+                        } else if (jarEntry.getName().endsWith(".class")) {
+
+                            final byte[] bytecode =
+                                    jarContent;
+
+                            final String hash =
+                                    BytecodeHelper.hash(bytecode);
+
+                            visitor.visitClass(hash, bytecode);
+                            intentValidatorVisitor.visitMethods(hash, bytecode);
+                        }
+                    }
+                }
+            }
+        }
+        
     }
 
     private void openJar(

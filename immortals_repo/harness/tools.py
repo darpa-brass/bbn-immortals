@@ -6,13 +6,14 @@ import os
 import shutil
 import time
 
-from pymmortals.datatypes.root_configuration import get_configuration
+from pymmortals.immortalsglobals import get_configuration
 from pymmortals.immortalsglobals import main_thread_cleanup_hookup
 from pymmortals.resources import resourcemanager
 from pymmortals.testing.systemvalidator import SystemValidator
 from pymmortals.utils import parse_json_file
 
-_parser = argparse.ArgumentParser(prog='./testing', description='IMMoRTALS Testing Utility')
+_parser = argparse.ArgumentParser(prog='./tools.sh', description='IMMoRTALS Testing Utility')
+_parser.add_argument('-d', '--debug', action='store_true', help="Enable Debug Logging")
 _sub_parsers = _parser.add_subparsers(help='Available Commands')
 
 
@@ -21,40 +22,19 @@ def _add_llds_parser(subparsers):
         if zargs is None:
             zargs = _parser.parse_args()
 
-        from pymmortals.testing.phase1 import ll_dummy_server
-        ll_dummy_server.main(zargs)
+        from pymmortals.testing import ll_dummy_server
+        ll_dummy_server.run_test_scenario(test_suite_identifier=zargs.test_suite,
+                                          test_identifier=zargs.test)
 
-    epilog = """
-    FLOW Options:
-    baseline            Executes the baseline validation scenario with the
-                            provided deployment model
-    challenge           Executes augmentation and validation against the
-                            provided deployment model
-    all                 Executes the baseline and challenge scenarios with
-                            the provided deployment model sequentially
+    llds_parser = subparsers.add_parser('llds',help='Immortals Mock LL TH')
+    suite_parsers = llds_parser.add_subparsers(help='Avaiable Test Suites')
+    suite_identifiers = resourcemanager.get_p2_test_suite_list()
 
-    DEPLOYMENT_MODEL Options:
-    baseline            Baseline deployment model
-    fail-all            Deployment model where GPS and bandwidth both fail
-    fail-gps            Deployment model where GPS fails but bandwidth succeeds
-    fail-bandwidth      Deployment model where bandwidth fails but GPS succeeds
-    fail-gpstrusted     Deployment model where trusted requirement fails but
-                            otherwise succeeds
-    custom              Use a custom deployment model
-    """
-
-    parser = subparsers.add_parser('llds',
-                                   help='IMMORTALS Mock LL TH',
-                                   epilog=epilog,
-                                   formatter_class=argparse.RawTextHelpFormatter)
-
-    parser.add_argument('flow', metavar='FLOW', choices=['baseline', 'challenge', 'all'])
-    parser.add_argument('deployment_model',
-                        metavar='DEPLOYMENT_MODEL',
-                        choices=['baseline', 'fail-all', 'fail-gps', 'fail-bandwidth', 'fail-gpstrusted', 'custom'])
-    parser.add_argument('-f', '--scenario-file', type=str)
-    parser.add_argument('-s', '--scenario-string', type=str)
-    parser.set_defaults(func=llds_main)
+    for si in suite_identifiers:
+        test_identifiers = resourcemanager.get_p2_test_suite_test_list(si)
+        suite_parser = suite_parsers.add_parser(si)
+        suite_parser.add_argument('test', metavar='TEST', choices=test_identifiers)
+        suite_parser.set_defaults(func=llds_main, test_suite=si)
 
 
 def _add_olympus_parser(subparsers):
@@ -102,10 +82,10 @@ def _add_vacuum_parser(subparsers):
             if os.path.exists('/test/log'):
                 shutil.move('/test/log', '/test/log-' + timestamp)
 
-            lldsl = os.path.join(get_configuration().immortalsRoot, 'harness/ll_dummy_server.log')
+            lldsl = os.path.join(get_configuration().globals.immortalsRoot, 'harness/ll_dummy_server.log')
             if os.path.exists(lldsl):
                 shutil.move(lldsl,
-                            os.path.join(get_configuration().immortalsRoot,
+                            os.path.join(get_configuration().globals.immortalsRoot,
                                          'harness/ll_dummy_server' + timestamp + '.log'))
 
         if zargs.operation == 'emulators' or zargs.operation == 'all':
@@ -131,14 +111,13 @@ def _add_emulator_setup_parser(subparsers):
 
 def _add_orchestrate_parser(subparsers):
     def orchestrate_main(zargs=None):
-        sv = SystemValidator(test_identifier=zargs.mode, immortals_root=zargs.immortalsRoot)
-        sv.start()
-        # systemvalidator.smoke_test(zargs)
+        sv = SystemValidator(immortals_root=zargs.immortalsRoot)
+        sv.start(test_suite_identifier=zargs.test_suite, test_identifier=None)
 
     o_parser = subparsers.add_parser('orchestrate', help='Orchestrate an end-to-end scenario')
-    o_parser.add_argument('mode',
-                          metavar='MODE',
-                          choices=resourcemanager.get_test_list())
+    o_parser.add_argument('test_suite',
+                          metavar='TEST_SUITE',
+                          choices=resourcemanager.get_p2_test_suite_list())
     o_parser.add_argument('-r', '--immortalsRoot', type=str)
     o_parser.set_defaults(func=orchestrate_main)
 
@@ -153,9 +132,8 @@ _add_emulator_setup_parser(_sub_parsers)
 network_logger = logging.getLogger
 
 if __name__ == '__main__':
-    logging.Logger.setLevel(logging.getLogger(), logging.DEBUG if get_configuration().debugMode else logging.INFO)
-
     args = _parser.parse_args()
+    logging.Logger.setLevel(logging.getLogger(), logging.DEBUG if args.debug else logging.INFO)
 
     if args.__contains__('func'):
         main_thread_cleanup_hookup()
