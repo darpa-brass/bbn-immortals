@@ -37,6 +37,13 @@ public class SourceFile extends CodeUnit {
     @com.securboration.immortals.ontology.annotations.RdfsComment(
         "A language model for the source file")
     private ProgrammingLanguage languageModel;
+
+    /**
+     * The name of the source file
+     */
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+            "The name of the source file")
+    private String fileName;
     
 
     public String getFileSystemPath() {
@@ -70,5 +77,12 @@ public class SourceFile extends CodeUnit {
     public void setLanguageModel(ProgrammingLanguage languageModel) {
         this.languageModel = languageModel;
     }
-    
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 }

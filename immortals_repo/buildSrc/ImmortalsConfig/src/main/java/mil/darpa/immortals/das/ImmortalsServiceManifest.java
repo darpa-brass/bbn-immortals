@@ -15,11 +15,12 @@ import java.util.concurrent.TimeUnit;
 public enum ImmortalsServiceManifest {
     fuseki,
     knowledgerepo,
+    voltdb,
+    aqlbrass,
     dasservice,
-    testadapter,
-    aqlbrass;
+    testadapter;
 
-    public static final String displayString = "[fuseki|knowledgerepo|dasservice|testadapter|aqlbrass]";
+    public static final String displayString = "[fuseki|knowledgerepo|voltdb|aqlbrass|dasservice|testadapter]";
 
     public AppConfigInterface getConfig() {
         ImmortalsConfig ic = ImmortalsConfig.getInstance();
@@ -32,6 +33,8 @@ public enum ImmortalsServiceManifest {
                 return ic.knowledgeRepoService;
             case testadapter:
                 return ic.testAdapter;
+            case voltdb:
+                return ic.extensions.voltdb;
             case aqlbrass:
                 return ic.extensions.aqlbrass;
         }
@@ -49,6 +52,8 @@ public enum ImmortalsServiceManifest {
                 return ic.debug.isUseMockKnowledgeRepository();
             case testadapter:
                 return ic.debug.isUseMockTestAdapter();
+            case voltdb:
+                return false;
             case aqlbrass:
                 return ic.debug.isUseMockAqlBrass();
         }

@@ -1,13 +1,21 @@
 package mil.darpa.immortals.core.das.ll;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.api.ll.phase2.EnableDas;
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
-import mil.darpa.immortals.core.api.ll.phase2.result.*;
+import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestStateObject;
 import mil.darpa.immortals.core.api.ll.phase2.result.status.DasOutcome;
 import mil.darpa.immortals.core.api.ll.phase2.result.status.TestOutcome;
 import mil.darpa.immortals.core.api.ll.phase2.result.status.VerdictOutcome;
 import mil.darpa.immortals.core.das.AdaptedApplicationDeployer;
+import mil.darpa.immortals.core.das.Mock;
+import mil.darpa.immortals.das.TestCoordinatorExecutionInterface;
 import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
+import mil.darpa.immortals.das.testcoordinators.DummyTestCoordinator;
 import mil.darpa.immortals.das.testcoordinators.P2CP1TestCoordinator;
 import mil.darpa.immortals.das.testcoordinators.P2CP2TestCoordinator;
 import mil.darpa.immortals.das.testcoordinators.P2CP3TestCoordinator;
@@ -15,9 +23,10 @@ import mil.darpa.immortals.testadapter.SubmissionServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,29 +34,19 @@ import java.util.List;
  */
 public class TestHarnessAdapterMediator {
 
+
+    public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
     public enum ChallengeProblem {
         P2CP1,
         P2CP2,
         P2CP3
     }
 
-    private static class TestHarnessAdapterStateContainer {
-
-        final SubmissionModel submissionModel;
-        final TestAdapterState testAdapterState;
-        final ChallengeProblem challengeProblem;
-
-        TestHarnessAdapterStateContainer(SubmissionModel submissionModel, TestAdapterState testAdapterState,
-                                         ChallengeProblem challengeProblem) {
-            this.submissionModel = submissionModel;
-            this.testAdapterState = testAdapterState;
-            this.challengeProblem = challengeProblem;
-        }
-    }
-
 
     private final TestHarnessSubmissionInterface submissionInterface;
 
+    @Nullable
     private TestHarnessAdapterStateContainer state;
 
     private final Logger logger = LoggerFactory.getLogger(TestHarnessAdapterMediator.class);
@@ -64,21 +63,33 @@ public class TestHarnessAdapterMediator {
         }
     }
 
-    public synchronized Response updateAdaptationStatus(AdaptationDetails adaptationDetails) {
+    public synchronized Response updateAdaptationStatus(@Nonnull AdaptationDetails adaptationDetails) {
+        logger.info("Received AD: " + adaptationDetails.dasOutcome.name());
         innerUpdateDasStatus(adaptationDetails, true);
         // TODO: This should probably be more verbose...
         return Response.ok().build();
     }
 
 
-    private synchronized void innerUpdateDasStatus(AdaptationDetails adaptationDetails, boolean sendUpdate) {
+    private synchronized void innerUpdateDasStatus(@Nonnull AdaptationDetails adaptationDetails, boolean sendUpdate) {
         state.testAdapterState.adaptation.details = adaptationDetails;
         DasOutcome previousOutcome = state.testAdapterState.adaptation.adaptationStatus;
         state.testAdapterState.adaptation.adaptationStatus = adaptationDetails.dasOutcome;
 
+        logger.debug("Received AdaptationDetails with dasOutcome of '" + adaptationDetails.dasOutcome.name());
+
         switch (adaptationDetails.dasOutcome) {
             case PENDING:
-                ImmortalsErrorHandler.reportFatalError("Initial state of the DAS should not be PENDING!");
+                if (previousOutcome != DasOutcome.PENDING) {
+                    ImmortalsErrorHandler.reportFatalError("Initial state of the DAS should not be PENDING!");
+                }
+                if (sendUpdate) {
+                    try {
+                        submissionInterface.status(state.testAdapterState).execute();
+                    } catch (Exception e) {
+                        ImmortalsErrorHandler.reportFatalException(e);
+                    }
+                }
                 break;
 
             case RUNNING:
@@ -117,24 +128,7 @@ public class TestHarnessAdapterMediator {
                     ImmortalsErrorHandler.reportFatalError("Unexpected DAS state transition from terminal state '" + previousOutcome.name() +
                             " to another terminal state '" + adaptationDetails.dasOutcome.name() + "'!");
                 }
-                List<TestDetails> initialTestDetails = null;
 
-                switch (state.challengeProblem) {
-
-                    case P2CP1:
-                        initialTestDetails = applicationDeployer.startP2CP1(state.submissionModel);
-                        break;
-                    case P2CP2:
-                        initialTestDetails = applicationDeployer.startP2CP2(state.submissionModel);
-                        break;
-                    case P2CP3:
-                        initialTestDetails = applicationDeployer.startP2CP3(state.submissionModel);
-                        break;
-                }
-                innerUpdateValidatorStatus(initialTestDetails, false);
-
-
-                state.testAdapterState.validation.verdictOutcome = VerdictOutcome.RUNNING;
                 if (sendUpdate) {
                     try {
                         submissionInterface.status(state.testAdapterState).execute();
@@ -157,7 +151,21 @@ public class TestHarnessAdapterMediator {
         return Response.ok().build();
     }
 
-    private void innerUpdateValidatorStatus(List<TestDetails> testDetails, boolean sendUpdate) {
+    private synchronized void innerUpdateValidatorStatus(List<TestDetails> testDetails, boolean sendUpdate) {
+        if (logger.isTraceEnabled()) {
+            // TODO: Update to handle multiple test details
+            String td;
+            try {
+                td = gson.toJson(testDetails.get(0));
+            } catch (Exception e) {
+                td = "PARSE ERROR!";
+            }
+            String val = "innerUpdateValidatorStatus:state: \n" +
+                    (state == null ? "NULL" : state.getDisplayableState()) +
+                    "testDetails: " + td;
+            logger.trace(val);
+        }
+
         for (TestDetails newDetails : testDetails) {
             TestStateObject currentDetails = null;
             for (TestStateObject candidateDetails : state.testAdapterState.validation.executedTests) {
@@ -171,8 +179,9 @@ public class TestHarnessAdapterMediator {
                 state.testAdapterState.validation.executedTests.add(
                         new TestStateObject(
                                 newDetails.testIdentifier,
-                                "DummyIntent",
-                                TestOutcome.INVALID,
+                                // TODO: This should not be hard-coded
+                                "DatabaseUsage",
+                                TestOutcome.COMPLETE_PASS,
                                 newDetails.currentState,
                                 newDetails
                         )
@@ -199,16 +208,19 @@ public class TestHarnessAdapterMediator {
         }
 
         VerdictOutcome previousVO = state.testAdapterState.validation.verdictOutcome;
-        VerdictOutcome vo = VerdictOutcome.RUNNING;
-//        boolean terminalState = true;
+        VerdictOutcome vo = VerdictOutcome.PENDING;
         testIter:
         for (TestStateObject tso : state.testAdapterState.validation.executedTests) {
             // TODO: Sort out which means which in terms of the final representative state with mixed test outcomes
             switch (tso.actualStatus) {
                 case PENDING:
-                    vo = VerdictOutcome.ERROR;
-                    ImmortalsErrorHandler.reportFatalError("Initial state of the Validation should not be PENDING!");
-                    break testIter;
+                    vo = VerdictOutcome.PENDING;
+                    if (previousVO != VerdictOutcome.PENDING) {
+                        vo = VerdictOutcome.ERROR;
+                        ImmortalsErrorHandler.reportFatalError("Invalid validatation state transition for validator '" + tso.testIdentifier + "' from " + previousVO.name() + "to " + tso.actualStatus + "!");
+                        break testIter;
+                    }
+                    break;
 
                 case NOT_APPLICABLE:
                     vo = VerdictOutcome.ERROR;
@@ -227,7 +239,6 @@ public class TestHarnessAdapterMediator {
                     }
 
                     vo = VerdictOutcome.RUNNING;
-//                    terminalState = false;
                     break testIter;
 
                 case ERROR:
@@ -259,9 +270,6 @@ public class TestHarnessAdapterMediator {
         // Switch verdict outcome
         switch (vo) {
             case PENDING:
-                ImmortalsErrorHandler.reportFatalError("VerdictOutcome should never be PENDING!");
-                break;
-
             case RUNNING:
                 if (sendUpdate) {
                     try {
@@ -303,7 +311,7 @@ public class TestHarnessAdapterMediator {
         }
     }
 
-    public synchronized Response thPostEnabled(EnableDas enableDas) {
+    public synchronized Response thPostEnabled(@Nonnull EnableDas enableDas) {
         if (dasDisabledByTestharness != enableDas.dasEnabled) {
             return Response.ok().build();
         } else if (state == null) {
@@ -324,84 +332,84 @@ public class TestHarnessAdapterMediator {
         this.applicationDeployer = new AdaptedApplicationDeployer();
         submissionInterface = SubmissionServices.getTestHarnessSubmitter();
     }
+    
+    @Nullable
+    private TestCoordinatorExecutionInterface getCoordinator(@Nonnull ChallengeProblem challengeProblem) {
+        switch (challengeProblem) {
+            case P2CP1:
+                return new P2CP1TestCoordinator();
 
-    public Response submitSubmissionModel(SubmissionModel submissionModel, ChallengeProblem challengeProblem) {
+            case P2CP2:
+                return new P2CP2TestCoordinator();
+
+            case P2CP3:
+                return new P2CP3TestCoordinator();
+
+            default:
+                return null;
+//                Response.serverError().entity("Unexpected challenge problem identifier '" + challengeProblem.name() + "'!").build();
+        }
+    }
+
+    public synchronized Response submitSubmissionModel(@Nullable SubmissionModel submissionModel, @Nonnull ChallengeProblem challengeProblem) {
         // If something is currently running, submit a 503
         if (state != null) {
             return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
         }
 
-        if (submissionModel.sessionIdentifier == null) {
+        if (submissionModel == null) {
+            // If null, assume baseline scenario with no adaptation
+            submissionModel = new SubmissionModel();
             submissionModel.sessionIdentifier = "I" + System.currentTimeMillis();
-        }
-
-        state = new TestHarnessAdapterStateContainer(
-                // TODO: Set baseline
-                submissionModel,
-                new TestAdapterState(
-                        System.currentTimeMillis(),
-                        submissionModel.sessionIdentifier,
-                        new AdaptationStateObject(DasOutcome.PENDING, null),
-                        new ValidationStateObject(VerdictOutcome.PENDING, new LinkedList<>())
-                ),
-                challengeProblem
-        );
-
-        if (!dasDisabledByTestharness) {
-            AdaptationDetails initialDetails = null;
-
-            switch (challengeProblem) {
-                case P2CP1:
-                    P2CP1TestCoordinator p2cp1testCoordinator = new P2CP1TestCoordinator();
-                    initialDetails = p2cp1testCoordinator.execute(submissionModel);
-                    break;
-
-                case P2CP2:
-                    P2CP2TestCoordinator p2cp2testCoordinator = new P2CP2TestCoordinator();
-                    initialDetails = p2cp2testCoordinator.execute(submissionModel);
-                    break;
-
-                case P2CP3:
-                    P2CP3TestCoordinator p2cp3TestCoordinator = new P2CP3TestCoordinator();
-                    initialDetails = p2cp3TestCoordinator.execute(submissionModel);
-                    break;
-            }
-            innerUpdateDasStatus(initialDetails, false);
-
-            switch (state.testAdapterState.adaptation.details.dasOutcome) {
-                case PENDING:
-                    ImmortalsErrorHandler.reportFatalError("Initial state of the DAS should not be PENDING!");
-                    break;
-
-                case RUNNING:
-                    return Response.ok(state.testAdapterState).build();
-
-                case NOT_APPLICABLE:
-                case NOT_POSSIBLE:
-                case ERROR:
-                    return Response.ok(state.testAdapterState).build();
-
-                case SUCCESS:
-                    state.testAdapterState.validation = new ValidationStateObject(VerdictOutcome.RUNNING, new LinkedList<>());
-                    break;
-            }
-
-        } else {
+            state = new TestHarnessAdapterStateContainer(submissionModel, challengeProblem);
             state.testAdapterState.adaptation.adaptationStatus = DasOutcome.NOT_APPLICABLE;
-            switch (challengeProblem) {
+        } else {
+            if (submissionModel.sessionIdentifier == null) {
+                submissionModel.sessionIdentifier = "I" + System.currentTimeMillis();
+            }
+            state = new TestHarnessAdapterStateContainer(submissionModel, challengeProblem);
 
-                case P2CP1:
-                    innerUpdateValidatorStatus(applicationDeployer.startP2CP1(submissionModel), false);
-                    break;
-                case P2CP2:
-                    innerUpdateValidatorStatus(applicationDeployer.startP2CP2(submissionModel), false);
-                    break;
-                case P2CP3:
-                    innerUpdateValidatorStatus(applicationDeployer.startP2CP3(submissionModel), false);
-                    break;
+            if (dasDisabledByTestharness) {
+                state.testAdapterState.adaptation.adaptationStatus = DasOutcome.NOT_APPLICABLE;
             }
         }
-        return Response.ok(state.testAdapterState).build();
+
+        logger.debug("STATE HAS BEEN SET WITH VALUE: \n" + state.getDisplayableState());
+
+        Response initialResponse;
+
+        if ((submissionModel.martiServerModel == null && submissionModel.globalModel == null && submissionModel.atakLiteClientModel == null) || dasDisabledByTestharness) {
+            // TODO: Using the mockDas flag here isn't ideal, but it works for now
+            if (ImmortalsConfig.getInstance().debug.isUseMockDas()) {
+                if (submissionModel.martiServerModel != null || submissionModel.globalModel != null || submissionModel.atakLiteClientModel != null) {
+                    Mock.desiredTestOutcome = TestOutcome.COMPLETE_FAIL;
+                }
+                initialResponse = new DummyTestCoordinator().execute(submissionModel, !dasDisabledByTestharness);
+            } else {
+                TestCoordinatorExecutionInterface testCoordinator = getCoordinator(challengeProblem);
+                if (testCoordinator == null) {
+                        return Response.serverError().entity("Unexpected challenge problem identifier '" + challengeProblem.name() + "'!").build();
+                }
+
+                initialResponse = testCoordinator.execute(submissionModel, !dasDisabledByTestharness);
+            }
+        } else {
+            if (ImmortalsConfig.getInstance().debug.isUseMockDas()) {
+                initialResponse = new DummyTestCoordinator().execute(submissionModel);
+            } else {
+                TestCoordinatorExecutionInterface testCoordinator = getCoordinator(challengeProblem);
+                if (testCoordinator == null) {
+                    return Response.serverError().entity("Unexpected challenge problem identifier '" + challengeProblem.name() + "'!").build();
+                }
+                initialResponse = testCoordinator.execute(submissionModel);
+            }
+        }
+
+        if (initialResponse.getStatus() > 399) {
+            return initialResponse;
+        } else {
+            return Response.ok().entity(state.testAdapterState).build();
+        }
     }
 }
 

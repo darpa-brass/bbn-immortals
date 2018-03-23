@@ -14,7 +14,8 @@ class TestDetails(AbstractTestDetails):
                  currentState: TestOutcome = None,
                  detailMessages: List[str] = None,
                  errorMessages: List[str] = None,
-                 testIdentifier: str = None):
-        super().__init__(adaptationIdentifier=adaptationIdentifier, currentState=currentState, testIdentifier=testIdentifier)
+                 testIdentifier: str = None,
+                 timestamp: int = None):
+        super().__init__(adaptationIdentifier=adaptationIdentifier, currentState=currentState, testIdentifier=testIdentifier, timestamp=timestamp)
         self.detailMessages = detailMessages
         self.errorMessages = errorMessages

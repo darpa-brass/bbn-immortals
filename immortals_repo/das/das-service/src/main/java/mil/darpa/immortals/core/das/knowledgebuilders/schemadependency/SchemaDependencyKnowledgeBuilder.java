@@ -1,7 +1,6 @@
 package mil.darpa.immortals.core.das.knowledgebuilders.schemadependency;
 
 import java.io.File;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -29,15 +28,12 @@ import com.github.javaparser.utils.SourceRoot;
 import mil.darpa.immortals.core.das.exceptions.InvalidOrMissingParametersException;
 import mil.darpa.immortals.core.das.knowledgebuilders.AbstractKnowledgeBuilder;
 import mil.darpa.immortals.core.das.knowledgebuilders.generic.CodePatternResolver;
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserManager;
-import net.sf.jsqlparser.statement.select.Select;
 
 public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 
 	private static final String DAS_DB_USER = "immortals";
 	private static final String DAS_DB_PWD = "immortals";
-	private static final String DAS_DB_CURRENT_SCHEMA = "baseline";
+	private static final String DAS_DB_CURRENT_SCHEMA = "takrptbase";
 	private static final String DAS_DB_URL = "jdbc:postgresql://localhost/immortals";	
 
 	@Override
@@ -95,7 +91,7 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 				
 				dataLinkage.addLiteral(HAS_SQL_VARIABLE_NAME, dataLinkageMetadata.getSqlVariableName());
 
-				dataLinkageMetadata.setSqlMetadata(buildSqlMetadata(dataLinkageMetadata.getOriginalSql()));
+				dataLinkageMetadata.setSqlMetadata(SQLMetadata.buildSqlMetadata(dataLinkageMetadata.getOriginalSql()));
 				dataLinkage.addLiteral(CONTAINS_DISJUNCTIVE_FILTER, 
 							dataLinkageMetadata.getSqlMetadata().isDisjunctiveFilter());
 				
@@ -107,14 +103,13 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 					SQLTransformer sqlT = new SQLTransformer();
 
 					ResolvedQuery resolvedQuery = sqlT.getBoundQuery(dataLinkageMetadata, conn);
-					String sampleSql = sqlT.getStableSampleSQL(dataLinkageMetadata, resolvedQuery.getResolvedQuery(), 
+					String sampleSql = sqlT.getStableSampleSQL(resolvedQuery.getResolvedQuery(), 
 							POSITIVE_DATA_LIMIT);
 					String positiveTrainingTable = sqlT.createTableForSQL(sampleSql, conn);
 					dataLinkage.addLiteral(TRAINING_DATA_TABLE, positiveTrainingTable);
 					
 					String complementSql = sqlT.getComplementQuery(resolvedQuery.getResolvedQuery());
-					String negativeSampleSql = sqlT.getStableSampleSQL(dataLinkageMetadata, 
-							complementSql, NEGATIVE_DATA_LIMIT);
+					String negativeSampleSql = sqlT.getStableSampleSQL(complementSql, NEGATIVE_DATA_LIMIT);
 					String negativeTrainingTable = sqlT.createTableForSQL(negativeSampleSql, conn);
 					dataLinkage.addLiteral(NEGATIVE_DATA_TABLE, negativeTrainingTable);
 					
@@ -181,30 +176,8 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
         }
 	}
 	
-	private SQLMetadata buildSqlMetadata(String sql) throws JSQLParserException {
-		
-		SQLMetadata metadata = new SQLMetadata();
+	public static final String DATA_DFU_SOURCE = "shared/modules/dfus/TakServerDataManager/src/main/java/mil/darpa/immortals/dfus/TakServerDataManager/DFU";
 
-		CCJSqlParserManager pm = new CCJSqlParserManager();
-		
-		net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
-		
-		GenericSQLVisitor visitor = null;
-		
-		if (statement instanceof Select) {
-			Select selectStatement = (Select) statement;
-			visitor = new GenericSQLVisitor();
-
-			selectStatement.getSelectBody().accept(visitor);
-		}
-		
-		metadata.setDisjunctiveFilter(visitor.isDisjunctiveFilter());
-		metadata.setParameters(visitor.getParameters());
-		metadata.setProjectedIdentifiers(visitor.getProjection());
-		
-		return metadata;
-	}
-	
 	public static final String PARAM_DATA_DFU_ROOT = "PARAM_DATA_DFU_ROOT";
 	public static final int NEGATIVE_DATA_LIMIT = 5000;
 	public static final int POSITIVE_DATA_LIMIT = 100_000;

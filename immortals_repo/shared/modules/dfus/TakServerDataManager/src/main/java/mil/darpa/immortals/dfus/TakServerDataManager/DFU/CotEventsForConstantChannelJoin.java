@@ -37,7 +37,7 @@ public class CotEventsForConstantChannelJoin {
 
 		String query = "select s.name, ce.id, ce.cot_type, ce.servertime " + 
 				"from source s join cot_event ce on s.source_id = ce.source_id " + 
-				"where channel = 7";
+				"where channel = '7'";
 	
 		CachedRowSet rowset = null;
 		

@@ -35,6 +35,7 @@ else
     source "$IMMORTALSRC_PATH"
 fi
 
-export IMMORTALS_OVERRIDE_FILE="`pwd`/sample_override_file.json"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export IMMORTALS_OVERRIDE_FILE="${DIR}/smoke_override_file.json"
 
 python3.5 tools.py orchestrate smoke

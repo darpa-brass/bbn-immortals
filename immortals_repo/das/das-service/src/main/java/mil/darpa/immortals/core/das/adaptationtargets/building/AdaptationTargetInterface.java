@@ -80,12 +80,17 @@ public interface AdaptationTargetInterface {
     /**
      * @return The parameters that must be supplied to the build tool to perform a build.
      */
-    String getBuildToolBuildParameters();
+    String[] getBuildToolBuildParameters();
 
     /**
      * @return The parameters that must be supplied to the build tool to perform validation, if applicable.
      */
-    String getBuildToolValidationParameters();
+    String[] getBuildToolValidationParameters();
+
+    /**
+     * @return the parameters that must be supplied to the build tool to perform a validation, if applicable.
+     */
+    String[] getBuildToolPublishParameters();
 
     /**
      * @return The path to the file used by the build system to perform a build

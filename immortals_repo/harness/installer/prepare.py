@@ -4,7 +4,6 @@ import argparse
 import json
 import os
 import stat
-import sys
 
 from installer import datatypes
 from installer.datatypes import EnvironmentTag, TargetInstallationPlatform
@@ -12,9 +11,8 @@ from installer.installation import Installer
 from installer.utils import resolve_platform
 
 _parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
-_parser.add_argument('--unattended-setup', action='store_true')
-
-_parser.add_argument('--environment', '-e', action='append', choices=[e.name for e in EnvironmentTag])
+_parser.add_argument('--installation-dir', action='store',
+                     help="Specifies the directory to install dependencies to and runs in unattended mode.")
 
 
 def construct_epilog():
@@ -42,27 +40,15 @@ def construct_epilog():
 _parser.epilog = construct_epilog()
 
 
-def install(environment_tags, unattended):
+def install(environment_tags, install_dir):
     """
-    :type environment_tags: list[str]
-    :type unattended: bool
+    :type environment_tags: List[str]
+    :type install_dir: str
     """
-    install_dir = os.getenv('HOME') + '/.immortals/'
 
     all_environment_tags = set()
     for et in environment_tags:
         all_environment_tags = all_environment_tags.union(EnvironmentTag[et].included_tags)
-
-    if not unattended:
-        try:
-            val = input('Please enter a path for installing dependencies [' + install_dir + ']:')
-        except SyntaxError or EOFError:
-            val = install_dir
-
-        if val is not "":
-            if not val.endswith('/'):
-                val += '/'
-            install_dir = val
 
     parent_installation_root = install_dir
 
@@ -80,24 +66,24 @@ def install(environment_tags, unattended):
 
     platform = config.targetInstallationPlatforms[resolve_platform()]  # type: TargetInstallationPlatform
 
-    setup_lines = list()
-    setup_lines.append('#!/usr/bin/env bash')
-    setup_lines.append('')
-    setup_lines.append('set -e')
+    master_setup_lines = list()
+    master_setup_lines.append('#!/usr/bin/env bash')
+    master_setup_lines.append('')
+    master_setup_lines.append('set -e')
     init_lines = list()
     init_lines.append('#!/usr/bin/env bash')
     init_lines.append('')
 
     if not os.path.exists(install_dir):
-        setup_lines.append('mkdir ' + install_dir)
+        master_setup_lines.append('mkdir ' + install_dir)
 
     bin_path = os.path.join(install_dir, 'bin')
     if not os.path.exists(bin_path):
-        setup_lines.append('mkdir ' + bin_path)
+        master_setup_lines.append('mkdir ' + bin_path)
 
     env_path = os.getenv('PATH')
     if bin_path not in env_path:
-        setup_lines.append('PATH=' + bin_path + ':' + env_path)
+        master_setup_lines.append('PATH=' + bin_path + ':' + env_path)
 
     parent_temp_dir = config.tempDirectory
     if parent_temp_dir.endswith('/'):
@@ -115,9 +101,9 @@ def install(environment_tags, unattended):
             + install_dir + '" does not exist! Exiting setup!')
 
     if not os.path.exists(config.tempDirectory):
-        setup_lines.append('mkdir ' + config.tempDirectory)
+        master_setup_lines.append('mkdir ' + config.tempDirectory)
 
-    setup_lines.append('')
+    master_setup_lines.append('')
 
     immortals_environment_config = {
         "dataRoot": "{immortalsRoot}/INPUT_DATA",
@@ -138,28 +124,67 @@ def install(environment_tags, unattended):
     }
     immortals_environment_config_str = json.dumps(immortals_environment_config, indent=4, separators=(',', ': '))
 
-    setup_lines.append("if [ ! -e '" + os.path.join(install_dir, 'environment.json') + "' ];then")
-    setup_lines.append(
+    master_setup_lines.append("if [ ! -e '" + os.path.join(install_dir, 'environment.json') + "' ];then")
+    master_setup_lines.append(
         "  echo '" + immortals_environment_config_str + "' > " + os.path.join(install_dir, 'environment.json'))
-    setup_lines.append("fi")
-    setup_lines.append('\n')
+    master_setup_lines.append("fi")
+    master_setup_lines.append('\n')
 
     packages = platform.requiredPlatformPackages
     if packages is not None and len(packages) > 0:
-        setup_lines.append("# Global System Requirements")
-        setup_lines += platform.packageManagerInitCommands
-        setup_lines.append(
+        master_setup_lines.append("# Global System Requirements")
+        master_setup_lines += platform.packageManagerInitCommands
+        master_setup_lines.append(
             platform.packageManagerInstallationCommand + ' ' + ' '.join(platform.requiredPlatformPackages)
         )
+
+    boot_lines = None
+    all_app_boot_lines = list()
+
+    all_app_setup_lines = list()
+
+    if platform is not None and platform.sudoFileLocation is not None:
+        boot_lines = list()
+        boot_lines.append('')
+        boot_lines.append('# Add flags that must be set at boot and enable them to load')
+        boot_lines.append('if [ ! -f "' + platform.sudoFileLocation + '" ];then')
+        boot_lines.append("    sudo bash -c 'echo \"#!/usr/bin/env bash\" > \"" + platform.sudoFileLocation + "\"'")
+        boot_lines.append("    sudo bash -c 'echo \"\" > \"" + platform.sudoFileLocation + "\"'")
+        boot_lines.append('fi')
+        boot_lines.append('')
 
     for app in applications:
         if app.environmentTag.name in all_environment_tags:
             app = Installer(configuration=app)
-            setup_lines += app.get_installation_commands()
-            setup_lines.append('')
+
+            all_app_setup_lines.append("cd ${HOME}")
+
+            all_app_setup_lines += app.get_installation_commands()
+            all_app_setup_lines.append('')
 
             init_lines += app.get_initialization_commands()
             init_lines.append('')
+
+            all_app_boot_lines += app.get_superuser_boot_commands()
+            if len(all_app_boot_lines) > 0 and boot_lines is None:
+                raise Exception("Boot lines specified even though no boot file is set for the system!")
+
+    master_setup_lines.append('')
+
+    # Add boot lines earlier since they need sudo
+    for boot_line in all_app_boot_lines:  # type: str
+        boot_lines.append("sudo bash -c 'echo \"" + boot_line + "\" >> \"" + platform.sudoFileLocation + "\"'")
+
+    boot_lines.append('')
+    if platform.sudoFileEnableCommands is not None:
+        for boot_line in platform.sudoFileEnableCommands:
+            boot_lines.append(boot_line)
+
+        boot_lines.append('')
+
+    master_setup_lines += boot_lines
+    master_setup_lines.append("")
+    master_setup_lines += all_app_setup_lines
 
     init_lines.append('export IMMORTALS_PATH=' + install_dir + 'bin:${IMMORTALS_PATH}')
     init_lines.append('export IMMORTALS_OVERRIDES=' + os.path.join(install_dir, 'environment.json'))
@@ -175,17 +200,13 @@ Within the same directory where the "setup.sh" script was produced is an
  in the immortals components installation directory along with any previous
  versions of needed components with the timestamp appended to them.'"""
 
-    setup_lines.append(finish_line)
+    master_setup_lines.append(finish_line)
     init_lines.append('if shopt -q login_shell; then')
-    if sys.platform == 'linux' or sys.platform == 'linux2':
-        init_lines.append('  echo "IMMoRTALS dependencies loaded. Python granted raw network access."')
-        pass
-    else:
-        init_lines.append('  echo "IMMoRTALS dependencies loaded."')
+    init_lines.append('  echo "IMMoRTALS dependencies loaded."')
     init_lines.append('fi')
 
     with open('setup.sh', 'w') as setup_file:
-        for l in setup_lines:
+        for l in master_setup_lines:
             setup_file.write(l + '\n')
 
     st = os.stat('setup.sh')
@@ -201,13 +222,26 @@ Within the same directory where the "setup.sh" script was produced is an
 
 def main():
     args = _parser.parse_args()
+    environment_tags = [et.name for et in EnvironmentTag]
 
-    if args.environment is None:
-        environment_tags = [et.name for et in EnvironmentTag]
+    if args.installation_dir is not None:
+        install_dir = args.installation_dir
+        if not install_dir.endswith('/'):
+            install_dir += '/'
+
     else:
-        environment_tags = args.environment
+        install_dir = os.getenv('HOME') + '/.immortals/'
+        try:
+            val = input('Please enter a path for installing dependencies [' + install_dir + ']:')
+        except SyntaxError or EOFError:
+            val = install_dir
 
-    install(unattended=args.unattended_setup, environment_tags=environment_tags)
+        if val is not "":
+            if not val.endswith('/'):
+                val += '/'
+            install_dir = val
+
+    install(environment_tags=environment_tags, install_dir=install_dir)
 
 
 if __name__ == '__main__':

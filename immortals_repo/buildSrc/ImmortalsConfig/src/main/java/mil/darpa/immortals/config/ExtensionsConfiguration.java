@@ -1,9 +1,6 @@
 package mil.darpa.immortals.config;
 
-import mil.darpa.immortals.config.extensions.AqlBrassConfiguration;
-import mil.darpa.immortals.config.extensions.CastorConfiguration;
-import mil.darpa.immortals.config.extensions.HddRassConfiguration;
-import mil.darpa.immortals.config.extensions.KnowledgeRepoGradlePluginConfiguration;
+import mil.darpa.immortals.config.extensions.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +17,7 @@ public class ExtensionsConfiguration {
     public final CastorConfiguration castor = new CastorConfiguration();
     public final KnowledgeRepoGradlePluginConfiguration krgp = new KnowledgeRepoGradlePluginConfiguration();
     public final HddRassConfiguration hddrass = new HddRassConfiguration();
+    public final VoltDBConfiguration voltdb = new VoltDBConfiguration();
     public final AqlBrassConfiguration aqlbrass = new AqlBrassConfiguration();
 
     private String producedTtlOutputDirectory = staticProducedTtlOutputDirectory.toString();

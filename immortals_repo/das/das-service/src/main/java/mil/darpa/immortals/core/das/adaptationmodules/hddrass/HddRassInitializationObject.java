@@ -36,8 +36,8 @@ public class HddRassInitializationObject {
         this.requiredValidators = new LinkedList<>(requiredValidators);
         this.buildTool = buildInstance.getBuildPlatform().command;
         this.buildToolPath = buildInstance.getBuildToolPath().toString();
-        this.buildToolBuildParameter = buildInstance.getBuildToolBuildParameters();
-        this.buildToolValidationParameters = buildInstance.getBuildToolValidationParameters();
+        this.buildToolBuildParameter = String.join(" ", buildInstance.getBuildToolBuildParameters());
+        this.buildToolValidationParameters = String.join(" ", buildInstance.getBuildToolValidationParameters());
         this.applicationPath = buildRoot.toString() + "/";
         this.sourceSubpath = buildInstance.getProjectSourceSubdirectory();
         this.buildFilePath = buildRoot.relativize(buildInstance.getBuildFilePath()).toString();

@@ -23,7 +23,7 @@ public class ImmortalsGradleTask extends DefaultTask {
     protected FusekiClient client = new FusekiClient("http://localhost:3030/ds");
     private String graphName;
     private final String KRGP_DIR = "/krgp/";
-    ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration(String.valueOf(getProject().getVersion()));
+    ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration("r2.0.0");
     String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
     
     private GradleTaskHelper taskHelper;

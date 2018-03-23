@@ -1,35 +1,33 @@
 package com.securboration.immortals.wrapper;
 
 import soot.*;
-import soot.dava.internal.javaRep.DIntConstant;
-import soot.javaToJimple.LocalGenerator;
 import soot.jimple.*;
-import soot.jimple.internal.JCaughtExceptionRef;
-import soot.jimple.spark.ondemand.pautil.SootUtil;
-import soot.util.Chain;
-import sun.security.pkcs.SigningCertificateInfo;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import soot.util.Chain;
+
+import java.util.*;
 
 public class Wrapper {
     
     private SootClass wrappedClass;
     private SootClass wrapperClass;
+    private String streamType;
     
     protected Wrapper(SootClass _wrappedClass) {
         wrappedClass = _wrappedClass;
     }
     
-    protected void createCipherWrapperConstructor(SootClass newClass, SootField newField, SootClass cipherImplClass,
-                                                  SootMethod oldClassConstructor, SootMethod initMethod) {
+    protected SootMethod createCipherWrapperConstructor(SootClass newClass, SootField oldClassField, SootClass cipherImplClass,
+                                                  SootMethod oldClassConstructor, SootMethod initMethod,
+                                                  SootMethod wrapMethod, SootMethod getStreamImplMethod,
+                                                  SootField streamImplField) {
         
         List<Type> parameterTypes = new ArrayList<>();
         parameterTypes.add(wrappedClass.getType());
         SootMethod newConstructor = new SootMethod("<init>", parameterTypes, VoidType.v(), Modifier.PUBLIC);
         newClass.addMethod(newConstructor);
+        
+        SootClass streamType = Scene.v().getSootClass(this.streamType);
 
         JimpleBody constructorBody = Jimple.v().newBody(newConstructor);
         constructorBody.insertIdentityStmts();
@@ -40,35 +38,143 @@ public class Wrapper {
         
         units.add(getSuperCall(oldClassConstructor, thisLocal, newClass));
         
-        AssignStmt assignConstructor = Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(thisLocal, newField.makeRef()),
+        AssignStmt assignConstructor = Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(thisLocal, oldClassField.makeRef()),
                 constructorBody.getParameterLocal(0));
         units.add(assignConstructor);
         Local cipherImplLocal = Jimple.v().newLocal("cipherImpl", cipherImplClass.getType());
         constructorBody.getLocals().add(cipherImplLocal);
-        
-        AssignStmt cipherImplAssign = Jimple.v().newAssignStmt(cipherImplLocal, Jimple.v().newStaticInvokeExpr(initMethod.makeRef(), NullConstant.v()));
+        AssignStmt cipherImplAssign = Jimple.v().newAssignStmt(cipherImplLocal, Jimple.v().newStaticInvokeExpr(initMethod.makeRef()));
         units.add(cipherImplAssign);
         
-        units.add(Jimple.v().newReturnVoidStmt());
+        Local streamImplLocal = Jimple.v().newLocal("streamImpl", streamType.getType());
+        constructorBody.getLocals().add(streamImplLocal);
+
+        AssignStmt streamImplAssign = Jimple.v().newAssignStmt(streamImplLocal, Jimple.v().newStaticInvokeExpr(getStreamImplMethod.makeRef()));
+        units.add(streamImplAssign);
+        
+        StaticInvokeExpr wrapExpression = Jimple.v().newStaticInvokeExpr(wrapMethod.makeRef(), streamImplLocal, cipherImplLocal);
+        
+        AssignStmt wrappedStreamAssign = Jimple.v().newAssignStmt(streamImplLocal, wrapExpression);
+        units.add(wrappedStreamAssign);
+        
+        AssignStmt wrappedStreamToFieldAssign = Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(thisLocal, streamImplField.makeRef()), streamImplLocal);
+        units.add(wrappedStreamToFieldAssign);
+        
+        ReturnVoidStmt retStmt = Jimple.v().newReturnVoidStmt();
+        GotoStmt gotoStmt = Jimple.v().newGotoStmt(retStmt);
+        units.add(gotoStmt);
+        
+        Local l_r1 = Jimple.v().newLocal("r1", RefType.v("java.lang.Exception"));
+        Local l_r3 = Jimple.v().newLocal("$r3", RefType.v("java.lang.Exception"));
+        
+        constructorBody.getLocals().add(l_r1);
+        constructorBody.getLocals().add(l_r3);
+        
+        IdentityStmt exceptionIdStmt = Jimple.v().newIdentityStmt(l_r3, Jimple.v().newCaughtExceptionRef());
+        units.add(exceptionIdStmt);
+        units.add(Jimple.v().newAssignStmt(l_r1, l_r3));
+        units.add(Jimple.v().newNopStmt());
+        
+        constructorBody.getTraps().add(Jimple.v().newTrap(Scene.v().getSootClass("java.lang.Exception"), cipherImplAssign, gotoStmt, exceptionIdStmt));
+        
+        units.add(retStmt);
+        
+        return newConstructor;
     }
     
+    protected SootMethod createGetStreamImplMethod(SootClass wrapperClass) {
+
+        List<Type> parameterTypes = new ArrayList<>();
+        SootClass streamClass = Scene.v().getSootClass(this.streamType);
+
+        List<SootClass> exceptionClasses = new ArrayList<>();
+        SootClass exceptionClass = Scene.v().getSootClass("java.lang.Exception");
+        exceptionClasses.add(exceptionClass);
+
+        SootMethod getStreamImplMethod = new SootMethod("getStreamImpl", parameterTypes, streamClass.getType(),
+                Modifier.PUBLIC, exceptionClasses);
+
+        wrapperClass.addMethod(getStreamImplMethod);
+        JimpleBody wrapBody = Jimple.v().newBody(getStreamImplMethod);
+        wrapBody.insertIdentityStmts();
+        getStreamImplMethod.setActiveBody(wrapBody);
+
+        SootClass runtimeExceptionClass = Scene.v().getSootClass(
+                "java.lang.RuntimeException");
+        RefType exceptionType = RefType.v(runtimeExceptionClass);
+        SootMethod exceptionInitMethod = runtimeExceptionClass.getMethod("void <init>(java.lang.String)");
+
+        Local exceptionLocal = Jimple.v().newLocal("exceptionLocal", exceptionType);
+        wrapBody.getLocals().add(exceptionLocal);
+
+        wrapBody.getUnits().add(Jimple.v().newAssignStmt(exceptionLocal, Jimple.v().newNewExpr(exceptionType)));
+        wrapBody.getUnits().add(Jimple.v().newInvokeStmt(Jimple.v().newSpecialInvokeExpr(exceptionLocal,
+                exceptionInitMethod.makeRef(), StringConstant.v("This method needs to be written by the user with " +
+                        "configurations of their choosing."))));
+        wrapBody.getUnits().add(Jimple.v().newThrowStmt(exceptionLocal));
+
+        return getStreamImplMethod;
+    }
+
+
+    protected SootMethod createStreamAugmentationMethod(SootClass streamAugmentationClass, SootClass wrapperClass) {
+        
+        SootClass streamClass = Scene.v().getSootClass(this.streamType);
+        
+        List<Type> parameterTypes = new ArrayList<>();
+        parameterTypes.add(streamClass.getType());
+        parameterTypes.add(streamAugmentationClass.getType());
+
+        List<SootClass> exceptionClasses = new ArrayList<>();
+        SootClass exceptionClass = Scene.v().getSootClass("java.lang.Exception");
+        exceptionClasses.add(exceptionClass);
+
+        SootMethod streamAugmentationMethod = new SootMethod("wrap", parameterTypes, streamClass.getType(),
+                Modifier.PUBLIC | Modifier.STATIC, exceptionClasses);
+        
+        wrapperClass.addMethod(streamAugmentationMethod);
+        JimpleBody wrapBody = Jimple.v().newBody(streamAugmentationMethod);
+        wrapBody.insertIdentityStmts();
+        streamAugmentationMethod.setActiveBody(wrapBody);
+        
+        SootClass runtimeExceptionClass = Scene.v().getSootClass("java.lang.Exception");
+        
+        RefType exceptionType = RefType.v(runtimeExceptionClass);
+        SootMethod exceptionInitMethod = runtimeExceptionClass.getMethod("void <init>(java.lang.String)");
+
+        Local exceptionLocal = Jimple.v().newLocal("exceptionLocal", exceptionType);
+        wrapBody.getLocals().add(exceptionLocal);
+        wrapBody.getUnits().add(Jimple.v().newAssignStmt(exceptionLocal, Jimple.v().newNewExpr(exceptionType)));
+        wrapBody.getUnits().add(Jimple.v().newInvokeStmt(Jimple.v().newSpecialInvokeExpr(exceptionLocal,
+                exceptionInitMethod.makeRef(), StringConstant.v("This method needs to be written by the user with " +
+                        "configurations of their choosing."))));
+        wrapBody.getUnits().add(Jimple.v().newThrowStmt(exceptionLocal));
+
+        return streamAugmentationMethod;
+    }
+
+
     protected SootMethod createCipherInitializationMethod(SootClass newClass, SootClass cipherImplClass) {
         
         List<Type> parameterTypes = new ArrayList<>();
-        parameterTypes.add(cipherImplClass.getType());
+
+        SootClass exceptionClass = Scene.v().getSootClass(
+                "java.lang.Exception");
+        List<SootClass> exceptionClasses = new ArrayList<>();
+        exceptionClasses.add(exceptionClass);
         
         SootMethod initMethod = new SootMethod("initCipherImpl", parameterTypes, cipherImplClass.getType(),
-                Modifier.PUBLIC | Modifier.STATIC);
+                Modifier.PUBLIC | Modifier.STATIC, exceptionClasses);
         newClass.addMethod(initMethod);
         JimpleBody initBody = Jimple.v().newBody(initMethod);
         initBody.insertIdentityStmts();
         initMethod.setActiveBody(initBody);
-        
-        SootClass exceptionClass = Scene.v().getSootClass(
+
+        SootClass runtimeExceptionClass = Scene.v().getSootClass(
                 "java.lang.RuntimeException");
         
-        RefType exceptionType = RefType.v(exceptionClass);
-        SootMethod exceptionInitMethod = exceptionClass.getMethod("void <init>(java.lang.String)");
+        RefType exceptionType = RefType.v(runtimeExceptionClass);
+        SootMethod exceptionInitMethod = runtimeExceptionClass.getMethod("void <init>(java.lang.String)");
 
         Local exceptionLocal = Jimple.v().newLocal("exceptionLocal", exceptionType);
         initBody.getLocals().add(exceptionLocal);
@@ -204,5 +310,13 @@ public class Wrapper {
     
     protected SootClass getWrapperClass() {
         return wrapperClass;
+    }
+
+    public String getStreamType() {
+        return streamType;
+    }
+
+    public void setStreamType(String streamType) {
+        this.streamType = streamType;
     }
 }

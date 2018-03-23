@@ -56,7 +56,7 @@ public class CotEventsForUidAndInterval {
 				PreparedStatement stmt = conn.prepareStatement(query)) {
 
 			stmt.setString(1, sourceName);
-			stmt.setLong(2, timeInterval);
+			stmt.setString(2, String.valueOf(timeInterval));
 
 			rs = stmt.executeQuery();
 

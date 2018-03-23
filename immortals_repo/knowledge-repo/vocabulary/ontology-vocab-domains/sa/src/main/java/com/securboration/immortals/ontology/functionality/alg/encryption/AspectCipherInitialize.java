@@ -8,7 +8,7 @@ import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 @ConceptInstance
 public class AspectCipherInitialize extends DefaultAspectBase {
     public AspectCipherInitialize(){
-        super("cipherInitialize");
+        super("cipher-init");
         super.setInputs(new Input[]{
                 Input.getInput(EncryptionKey.class)
                 });

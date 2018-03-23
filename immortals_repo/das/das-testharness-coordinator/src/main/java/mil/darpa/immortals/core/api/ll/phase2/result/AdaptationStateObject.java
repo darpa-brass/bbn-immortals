@@ -5,6 +5,8 @@ import mil.darpa.immortals.core.api.annotations.Result;
 import mil.darpa.immortals.core.api.annotations.Unstable;
 import mil.darpa.immortals.core.api.ll.phase2.result.status.DasOutcome;
 
+import javax.annotation.Nullable;
+
 /**
  * Created by awellman@bbn.com on 9/11/17.
  */
@@ -14,17 +16,14 @@ public class AdaptationStateObject {
 
     @Result
     @Description("Indicates the current state of the DAS")
-    public DasOutcome adaptationStatus;
+    public DasOutcome adaptationStatus = DasOutcome.PENDING;
+    
     @Result
     @Description("A POJO object detailing the behavior of the DAS")
     @Unstable
+    @Nullable
     public AdaptationDetails details;
 
     public AdaptationStateObject() {
-    }
-
-    public AdaptationStateObject(DasOutcome adaptationStatus, AdaptationDetails details) {
-        this.adaptationStatus = adaptationStatus;
-        this.details = details;
     }
 }

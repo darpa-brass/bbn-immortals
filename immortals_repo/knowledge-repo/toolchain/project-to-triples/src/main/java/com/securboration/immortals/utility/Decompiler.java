@@ -15,7 +15,6 @@ public class Decompiler {
     
     public Decompiler() {
         options.put(IFernflowerPreferences.LOG_LEVEL, "warn");
-        //options.put(IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1");
         options.put(IFernflowerPreferences.REMOVE_SYNTHETIC, "1");
         options.put(IFernflowerPreferences.LITERALS_AS_IS, "1"); 
         options.put(IFernflowerPreferences.RENAME_ENTITIES, "1");
@@ -23,7 +22,7 @@ public class Decompiler {
         options.put(IFernflowerPreferences.ASCII_STRING_CHARACTERS, "1");
     }
     
-    public File decompileClassFile(String classFilePath, String javaSourcePath) throws IOException {
+    public File decompileClassFile(String classFilePath, String javaSourcePath, boolean plugin) throws IOException {
         
         File classFile = new File(classFilePath);
         File sourceFile = new File(javaSourcePath);
@@ -32,9 +31,10 @@ public class Decompiler {
         decompiler.addSpace(classFile, true);
         decompiler.decompileContext();
         
-        classFile = new File(classFile.getAbsolutePath().substring(0, classFile.getAbsolutePath().length() - 5) + "java");
-
-        FileUtils.copyFile(classFile, sourceFile);
+        if (plugin) {
+            classFile = new File(classFile.getAbsolutePath().substring(0, classFile.getAbsolutePath().length() - 5) + "java");
+            FileUtils.copyFile(classFile, sourceFile);
+        }
         
         return sourceFile;
     }

@@ -22,6 +22,13 @@ def immortals_assert(assertion: bool, msg: Optional[str] = None):
         assert assertion, msg
 
 
+def immortals_assert_isinstance(obj, clazz):
+    global keep_going
+    if not isinstance(obj, clazz):
+        keep_going = False
+        assert False, 'Object ' + obj.__class__.__name__ + ' is not an instance of ' + clazz.__name__
+
+
 def _get_activity_msg(endpoint: Union[TestAdapterEndpoint, TestHarnessEndpoint],
                       body_val: Union[Dict, str, None] = None, status_code: int = None):
     msg = ''
@@ -167,14 +174,13 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
             ),
         )
 
-    if flow == Phase2SubmissionFlow.BaselineA:
         validators.append(
             NetworkExpectationValidator(
                 endpoint=test_scenario.perturbationScenario.endpoint,
-                submission_values=None,
+                submission_values = None if flow == Phase2SubmissionFlow.BaselineA else {},
                 ack_values={
                     "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
-                    "validation.verdictOutcome": "RUNNING"
+                    "validation.verdictOutcome": "PENDING"
                 },
                 ack_code=200
             )
@@ -182,25 +188,24 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
 
         validators.append(
             NetworkExpectationValidator(
-                endpoint=TestHarnessEndpoint.DONE,
+                endpoint=TestHarnessEndpoint.STATUS,
                 submission_values={
                     "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
-                    "validation.verdictOutcome": test_scenario.expectedVerdictOutcome.name
+                    "validation.verdictOutcome": "PENDING"
                 },
                 ack_values=None,
                 ack_code=200
             )
         )
 
-    elif flow == Phase2SubmissionFlow.BaselineB:
         validators.append(
             NetworkExpectationValidator(
-                endpoint=test_scenario.perturbationScenario.endpoint,
-                submission_values={},
-                ack_values={
+                endpoint=TestHarnessEndpoint.STATUS,
+                submission_values={
                     "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
                     "validation.verdictOutcome": "RUNNING"
                 },
+                ack_values=None,
                 ack_code=200
             )
         )
@@ -223,13 +228,60 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
                 endpoint=test_scenario.perturbationScenario.endpoint,
                 submission_values={},
                 ack_values={
-                    "adaptation.adaptationStatus": "RUNNING",
+                    "adaptation.adaptationStatus": "PENDING",
                     "validation.verdictOutcome": "PENDING"
                 },
                 ack_code=200
             )
         )
 
+        validators.append(
+            NetworkExpectationValidator(
+                endpoint=TestHarnessEndpoint.STATUS,
+                submission_values={
+                    "adaptation.adaptationStatus": "PENDING",
+                    "validation.verdictOutcome": "PENDING"
+                },
+                ack_values=None,
+                ack_code=200
+            )
+        )
+
+        validators.append(
+            NetworkExpectationValidator(
+                endpoint=TestHarnessEndpoint.STATUS,
+                submission_values={
+                    "adaptation.adaptationStatus": "PENDING",
+                    "validation.verdictOutcome": "PENDING"
+                },
+                ack_values=None,
+                ack_code=200
+            )
+        )
+
+        validators.append(
+            NetworkExpectationValidator(
+                endpoint=TestHarnessEndpoint.STATUS,
+                submission_values={
+                    "adaptation.adaptationStatus": "RUNNING",
+                    "validation.verdictOutcome": "PENDING"
+                },
+                ack_values=None,
+                ack_code=200
+            )
+        )
+
+        validators.append(
+            NetworkExpectationValidator(
+                endpoint=TestHarnessEndpoint.STATUS,
+                submission_values={
+                    "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
+                    "validation.verdictOutcome": "PENDING"
+                },
+                ack_values=None,
+                ack_code=200
+            )
+        )
         validators.append(
             NetworkExpectationValidator(
                 endpoint=TestHarnessEndpoint.STATUS,
@@ -267,8 +319,8 @@ class ScenarioExecution(Phase2TestHarnessListenerInterface):
     """
 
     def sending_post_listener(self, endpoint: TestAdapterEndpoint, body_dict: Dict):
-        immortals_assert(isinstance(endpoint, TestAdapterEndpoint))
-        immortals_assert(isinstance(self._expected_activity[0].endpoint, TestAdapterEndpoint))
+        immortals_assert_isinstance(endpoint, TestAdapterEndpoint)
+        immortals_assert_isinstance(self._expected_activity[0].endpoint, TestAdapterEndpoint)
 
         validator = self._expected_activity.pop(0)
         # validator = self._expected_activity.pop(0)
@@ -280,9 +332,9 @@ class ScenarioExecution(Phase2TestHarnessListenerInterface):
             self.finished = True
 
     def received_post_ack_listener(self, endpoint: TestHarnessEndpoint, response_code: int, body_str: str):
-        immortals_assert(isinstance(endpoint, TestHarnessEndpoint))
+        immortals_assert_isinstance(endpoint, TestHarnessEndpoint)
         validator = self._pending_acks.pop(0)
-        immortals_assert(isinstance(validator.endpoint, TestHarnessEndpoint))
+        immortals_assert_isinstance(validator.endpoint, TestHarnessEndpoint)
 
         # validator = self._expected_activity.pop(0)
         self._log_expected_and_actual(validator=validator, endpoint=endpoint,
@@ -304,9 +356,9 @@ class ScenarioExecution(Phase2TestHarnessListenerInterface):
             self.finished = True
 
     def sent_post_ack_listener(self, endpoint: TestAdapterEndpoint, response_code: int, body_str: str):
-        immortals_assert(isinstance(endpoint, TestAdapterEndpoint))
+        immortals_assert_isinstance(endpoint, TestAdapterEndpoint)
         validator = self._pending_acks.pop(0)
-        immortals_assert(isinstance(validator.endpoint, TestAdapterEndpoint))
+        immortals_assert_isinstance(validator.endpoint, TestAdapterEndpoint)\
 
         self._log_expected_and_actual(validator=validator, endpoint=endpoint,
                                       body_val=body_str, status_code=response_code)
@@ -320,8 +372,8 @@ class ScenarioExecution(Phase2TestHarnessListenerInterface):
             self.finished = True
 
     def receiving_post_listener(self, endpoint: TestHarnessEndpoint, body_str: str):
-        immortals_assert(isinstance(endpoint, TestHarnessEndpoint))
-        immortals_assert(isinstance(self._expected_activity[0].endpoint, TestHarnessEndpoint))
+        immortals_assert_isinstance(endpoint, TestHarnessEndpoint)
+        immortals_assert_isinstance(self._expected_activity[0].endpoint, TestHarnessEndpoint)
         validator = self._expected_activity.pop(0)
         self._pending_acks.append(validator)
 

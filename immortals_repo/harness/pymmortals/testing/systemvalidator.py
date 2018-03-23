@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 from subprocess import Popen, PIPE
 from typing import Optional, Dict
 
@@ -40,7 +41,7 @@ class SystemValidator:
         try:
             self.das_process = Popen([
                 'bash',
-                os.path.join(root_configuration.get_configuration().immortalsRoot, 'das/start.sh'), "-v", "DEBUG"],
+                os.path.join(root_configuration.get_configuration().immortalsRoot, 'das/start.sh'), "-v", "ALL"],
                 cwd=os.path.abspath(os.path.join(immortals_root, 'harness')),
                 stdin=PIPE,
                 stderr=self.das_stderr,
@@ -53,6 +54,19 @@ class SystemValidator:
         self.das_process.terminate()
         self.das_process.wait(timeout=10)
         self.das_process.kill()
+
+        if not get_configuration().debug.useMockDas:
+            ir = get_configuration().globals.immortalsRoot
+            results = subprocess.run(['bash', 'setup.sh', '--unattended'],
+                           cwd=os.path.join(ir, 'database/server'),
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            results.check_returncode()
+
+            cwd = os.path.join(ir, 'das/das-service')
+            results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar')],
+                           cwd=cwd,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            results.check_returncode()
+
         if not self.das_stdout.closed:
             self.das_stdout.flush()
             self.das_stdout.close()

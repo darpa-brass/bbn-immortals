@@ -171,7 +171,7 @@ def immortalize = task('immortalize') {
 }
 
 // TODO: This should probably be part of the ImmortalsServiceManifest "deploy" method and "setupExtensions"...
-def setupdb = task('setupdb') {
+def setupdb = task('setupdb', type: Exec) {
     group = "IMMoRTALS Deploy"
     description = "Sets up the files for the database and then installs the immortals schema"
 
@@ -180,23 +180,17 @@ def setupdb = task('setupdb') {
             exceptionOnNotExistsInPath('psql', 'databases', 'https://www.postgresql.org/')
         }
     }
+    workingDir = IMMORTALS_ROOT.resolve('database/server/').toString()
+    commandLine = ['bash', 'setup.sh', '--unattended']
+}
 
-    doLast {
-        def commands = [
-                ['unzip', '-n', IMMORTALS_ROOT.resolve('castor/takserver/large_data_set.zip').toString(), '-d', IMMORTALS_ROOT.resolve('castor/takserver').toString()],
-                ['unzip', '-n', IMMORTALS_ROOT.resolve('castor/takserver/master_cot_event.zip').toString(), '-d', IMMORTALS_ROOT.resolve('castor/takserver').toString()],
-                ['unzip', '-n', IMMORTALS_ROOT.resolve('castor/takserver/large_data_set.zip').toString(), '-d', IMMORTALS_ROOT.resolve('database/server').toString()],
-                ['unzip', '-n', IMMORTALS_ROOT.resolve('castor/takserver/master_cot_event.zip').toString(), '-d', IMMORTALS_ROOT.resolve('database/server').toString()],
-                ['bash', IMMORTALS_ROOT.resolve('database/server/setup-postgres-db.sh').toString(), '--unattended'],
-                ['bash', IMMORTALS_ROOT.resolve('database/server/setup-immortals-schema0.sh').toString()]
-        ]
+def buildknowledge = task('buildknowledge', type: Exec) {
+    group = "IMMoRTALS Deploy"
+    description = "Executes the DAS analysis task to perform analysis that can be done prior to execution"
+    workingDir = IMMORTALS_ROOT.resolve('das/das-service/').toString()
+    commandLine = ['java', '-jar', 'das.jar', '--analyze']
 
-        for (String[] cmd : commands) {
-            exec {
-                commandLine = cmd
-            }
-        }
-    }
+    dependsOn(setupdb)
 }
 
 // TODO: Make this a task definition once you remove applying java
@@ -259,7 +253,7 @@ def deploy = task('deploy') {
     }
 
     dependsOn(build)
-    finalizedBy(buildKnowledgeRepo, setupdb, immortalize, setupExtensions)
+    finalizedBy(buildKnowledgeRepo, setupdb, immortalize, setupExtensions, buildknowledge)
 }
 
 def redeploy = task('redeploy') {

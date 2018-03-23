@@ -39,6 +39,8 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
     };
     private HashMap<String, String> environmentVariables = new HashMap<>();
 
+    private String readyStdoutLineRegexPattern = "^STATE:\\[RUNNING\\]$";
+
     public AqlBrassConfiguration() {
 
     }
@@ -129,7 +131,7 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
 
     @Override
     public String getReadyStdoutLineRegexPattern() {
-        return null;
+        return readyStdoutLineRegexPattern;
     }
     
     @Override

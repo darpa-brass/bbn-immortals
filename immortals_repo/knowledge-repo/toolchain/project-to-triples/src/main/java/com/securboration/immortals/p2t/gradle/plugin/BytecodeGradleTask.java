@@ -98,12 +98,14 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
     }
     
     @TaskAction
-    public void analysis() throws FileNotFoundException {
+    public void analysis() {
         Project p = getProject();
         String pluginOutput = null;
         ArrayList<String> includedLibs = null;
+        boolean completeAnalysis= false;
         try {
             ImmortalsGradlePlugin.ImmortalsPluginExtension extension = (ImmortalsGradlePlugin.ImmortalsPluginExtension) p.getExtensions().getByName("krgp");
+            completeAnalysis = extension.isCompleteAnalysis();
             pluginOutput = extension.getTargetDir();
             includedLibs = new ArrayList<>();
             includedLibs.addAll(Arrays.asList(extension.getIncludedLibs()));
@@ -114,10 +116,11 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
         }
         ProjectToTriplesMain p2tm = new ProjectToTriplesMain();
         GradleTaskHelper taskHelper = new GradleTaskHelper(client, null, pluginOutput, p.getName());
-        //initializeReportsDirectory(pluginOutput + "/" + p.getName());
-       // this.getTaskHelper().setPw(new PrintWriter(new FileOutputStream(getLogPath(pluginOutput + "/" + p.getName(),
-                //GradleTaskHelper.TaskType.BYTECODE), true)));
+       
         GradleData data = new GradleData();
+        data.setGroup(p.getGroup().toString());
+        data.setArtifact(p.getName());
+        data.setVersion(p.getVersion().toString());
         
         String version = p.getVersion().toString();
         if (version != null && !version.equals("")){
@@ -202,7 +205,7 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
             initializeReportsDirectory(pluginOutput + "/" + p.getName());
             taskHelper.setPw(new PrintWriter(new FileOutputStream(getLogPath(pluginOutput + "/" + p.getName(),
                     GradleTaskHelper.TaskType.BYTECODE), true)));
-            result = p2tm.gradleDataToTriples(data, taskHelper, includedLibs);
+            result = p2tm.gradleDataToTriples(data, taskHelper, includedLibs, completeAnalysis);
             GradleTaskHelper.recordCPElement(result, taskHelper.getResultsDir() + p.getName() + "/structures/" + p.getName()
             + "-projectOutput.ttl");
             

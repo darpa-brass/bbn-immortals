@@ -44,7 +44,6 @@ public class PlaceHolderDataflows {
             }
 
             this.setCriterion(criterion);
-            this.setAssertionBindingSite(abstractDataflowBindingSite);
             this.setImpact(new ImpactStatement[] {impact});
             this.setApplicableDataType(Image.class);
 
@@ -108,7 +107,6 @@ public class PlaceHolderDataflows {
             }
 
             this.setCriterion(criterion);
-            this.setAssertionBindingSite(abstractDataflowBindingSite);
             this.setImpact(new ImpactStatement[] {impact});
             this.setApplicableDataType(BinaryData.class);
             this.setHumanReadableDescription("All data being transmitted between MobileAndroidDevices and Servers " +

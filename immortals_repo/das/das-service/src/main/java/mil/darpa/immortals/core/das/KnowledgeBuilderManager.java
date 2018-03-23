@@ -27,7 +27,7 @@ public class KnowledgeBuilderManager {
 			//####Initialize SchemaDependencyKnowledgeBuilder#####
 			//Get root folder of data DFUs
 			String dataDFURoot = ImmortalsConfig.getInstance().globals.getImmortalsRoot()
-					.resolve(DATA_DFU_SOURCE).toString();
+					.resolve(SchemaDependencyKnowledgeBuilder.DATA_DFU_SOURCE).toString();
 			Map<String, Object> schemaParams = new HashMap<String, Object>();
 			schemaParams.put(SchemaDependencyKnowledgeBuilder.PARAM_DATA_DFU_ROOT, dataDFURoot);
 			
@@ -59,7 +59,5 @@ public class KnowledgeBuilderManager {
 			}
 		}
 	}
-	
-	private static final String DATA_DFU_SOURCE = "shared/modules/dfus/TakServerDataManager/src/main/java/mil/darpa/immortals/dfus/TakServerDataManager/DFU";
 
 }

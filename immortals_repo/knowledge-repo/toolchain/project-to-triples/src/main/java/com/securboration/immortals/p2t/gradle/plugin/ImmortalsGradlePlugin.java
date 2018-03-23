@@ -34,6 +34,8 @@ public class ImmortalsGradlePlugin implements Plugin<Project>{
         private String targetDir = null;
         
         private String[] includedLibs;
+        
+        private boolean completeAnalysis;
 
         public boolean isStaticAnalysisEnabled() {
             return staticAnalysisEnabled;
@@ -53,6 +55,14 @@ public class ImmortalsGradlePlugin implements Plugin<Project>{
 
         public void setIncludedLibs(String[] includedLibs) {
             this.includedLibs = includedLibs;
+        }
+
+        public boolean isCompleteAnalysis() {
+            return completeAnalysis;
+        }
+
+        public void setCompleteAnalysis(boolean completeAnalysis) {
+            this.completeAnalysis = completeAnalysis;
         }
     }
     

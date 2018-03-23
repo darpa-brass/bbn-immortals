@@ -80,6 +80,21 @@ public class GradleData {
 	 */
 	private Map<String, ?> properties;
 
+    /**
+     * This project's group id
+     */
+	private String group;
+
+    /**
+     * This project's artifact id
+     */
+	private String artifact;
+
+    /**
+     * This project's version
+     */
+	private String version;
+
 	public String getCompiledProjectJarPath() {
 		return compiledProjectJarPath;
 	}
@@ -182,4 +197,27 @@ public class GradleData {
 		return properties.get(propName);
 	}
 
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getArtifact() {
+        return artifact;
+    }
+
+    public void setArtifact(String artifact) {
+        this.artifact = artifact;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 }

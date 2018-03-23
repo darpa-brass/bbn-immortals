@@ -1,11 +1,10 @@
 package mil.darpa.immortals.das.context;
 
-import ch.qos.logback.classic.Logger;
 import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.config.TestAdapterConfiguration;
 import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
-import org.slf4j.LoggerFactory;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,18 +24,19 @@ public class TestAdapterSubmitter {
     public interface TestAdapterSubmissionInterface {
         @POST("/dasListener/updateAdaptationStatus")
         @Headers("Content-Type: application/json")
-        Call<Void> updateAdaptationStatus(@Body AdaptationDetails testAdapterState);
+        Call<Void> updateAdaptationStatus(@Body AdaptationDetails adaptationState);
 
-//        @POST("/updateDeploymentTestStatus")
-//        @Headers("Content-Type: application/json")
-//        public Call<Void> updateDeploymentTestStatus(@Body LinkedList<TestDetails> testDetails)
+
+        @POST("/dasListener/updateValidationStatus")
+        @Headers("Content-Type: application/json")
+        Call<Void> updateValidationStatus(@Body TestDetails validatorState);
     }
 
     private static TestAdapterSubmitter instance;
 
-//    private static final Logger logger = (Logger) LoggerFactory.getLogger(TestAdapterSubmitter.class);
-    private static final ImmortalsUtils.NetworkLogger networkLogger = 
-        new ImmortalsUtils.NetworkLogger("DAS", "TA");
+    //    private static final Logger logger = (Logger) LoggerFactory.getLogger(TestAdapterSubmitter.class);
+    private static final ImmortalsUtils.NetworkLogger networkLogger =
+            ImmortalsUtils.getNetworkLogger("DAS", "TA");
 
     private TestAdapterSubmissionInterface submissionInterface;
 
@@ -66,12 +66,27 @@ public class TestAdapterSubmitter {
         return instance;
     }
 
-    public static void updateAdaptationStatus(AdaptationDetails adaptationDetails) {
+    public static void updateAdaptationStatus(@Nonnull AdaptationDetails adaptationDetails) {
         networkLogger.logPostSending("/dasListener/updateAdaptationStatus", adaptationDetails);
         getInstance().submissionInterface.updateAdaptationStatus(adaptationDetails).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@Nonnull Call<Void> call, @Nonnull Response<Void> response) {
-                networkLogger.logPostSendingAckReceived("/dasListener/updateAdaptationStatus", null);
+                networkLogger.logPostSendingAckReceived("/dasListener/updateAdaptationStatus", response.code(), null);
+            }
+
+            @Override
+            public void onFailure(@Nonnull Call<Void> call, @Nonnull Throwable t) {
+                ImmortalsErrorHandler.reportFatalException(t);
+            }
+        });
+    }
+
+    public static void updateValidationStatus(@Nonnull TestDetails testDetails) {
+        networkLogger.logPostSending("/dasListener/updateValidationStatus", testDetails);
+        getInstance().submissionInterface.updateValidationStatus(testDetails).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@Nonnull Call<Void> call, @Nonnull Response<Void> response) {
+                networkLogger.logPostSendingAckReceived("/dasListener/updateValidationStatus", response.code(), null);
             }
 
             @Override

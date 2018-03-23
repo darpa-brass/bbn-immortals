@@ -50,7 +50,6 @@ public class ImmortalsSystemLibraryEnv {
             }
 
             this.setCriterion(criterion);
-            this.setAssertionBindingSite(abstractResourceBindingSite);
             this.setImpact(new ImpactStatement[] {impact});
             this.setApplicableDataType(VersioningInfo.class);
             this.setHumanReadableDescription("All commons-IO libraries must reach version 2.0.0");

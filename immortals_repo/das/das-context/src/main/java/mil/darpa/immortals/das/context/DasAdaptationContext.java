@@ -2,9 +2,11 @@ package mil.darpa.immortals.das.context;
 
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Created by awellman@bbn.com on 10/25/17.
@@ -57,9 +59,9 @@ public class DasAdaptationContext {
         TestAdapterSubmitter.updateAdaptationStatus(adaptationDetails);
     }
 
-    // TODO: Add this
-//    public void updateValidationStatus(List<TestDetails> testDetailsList) {
-//    }
+    public void submitValidationStatus(TestDetails testDetails) {
+        TestAdapterSubmitter.updateValidationStatus(testDetails);
+    }
 
     /**
      * Submits an error to the TestHarness asynchronously which is expected to Ctrl-C the DAS.

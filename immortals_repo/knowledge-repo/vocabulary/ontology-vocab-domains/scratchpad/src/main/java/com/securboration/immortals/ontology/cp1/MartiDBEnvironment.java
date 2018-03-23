@@ -42,7 +42,6 @@ public class MartiDBEnvironment {
             }
 
             this.setCriterion(criterion);
-            this.setAssertionBindingSite(abstractResourceBindingSite);
             this.setImpact(new ImpactStatement[] {impact});
             this.setHumanReadableDescription("All database schemas most be the must current version");
         }

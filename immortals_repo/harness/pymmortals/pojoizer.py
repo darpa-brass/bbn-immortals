@@ -1285,7 +1285,7 @@ class Pojoizer:
             get_all_lines = list()
 
             if config.instance_parameter_fields is not None and len(config.instance_parameter_fields) > 0:
-                parameters = ''
+                parameters = 'key_idx_value: str, '
 
                 for idx in range(0, len(config.fields)):
                     field = config.fields[idx]
@@ -1293,6 +1293,7 @@ class Pojoizer:
 
                     parameters = parameters + (field.name + ': ' + field.raw_type + (', ' if has_next else ''))
 
+                    lappend('self._key_idx_value = key_idx_value', 2, instantiation_lines)
                     lappend('self.' + field.name + ' = ' + field.name + '  # type: ' + field.raw_type, 2,
                             instantiation_lines)
 
@@ -1317,7 +1318,7 @@ class Pojoizer:
                 for label in config.instance_labels:
                     parameter_values = [k.value for k in config.instance_parameter_fields[label]]
 
-                    lappend(label + ' = (', 1, instance_lines)
+                    lappend(label + ' = ("' + label + '",', 1, instance_lines)
 
                     for idx in range(0, len(parameter_values)):
                         pv = parameter_values[idx]
@@ -1478,7 +1479,8 @@ def pojoize_ll_api_p2():
     p = Pojoizer(conversion_method=ConversionMethod.VARS,
                  target_directory=_target_module_directory,
                  target_package=_target_package,
-                 do_generate_markdown=False
+                 do_generate_markdown=False,
+                 ignore_default_param_values=True
                  )
     packages_root = 'mil/darpa/immortals/core/api'
 

@@ -37,7 +37,7 @@ public class CotEventsForConstantMixedJoin {
 
 		String query = "select s.name, ce.id, ce.cot_type, ce.servertime " + 
 				"from source s join cot_event ce on s.source_id = ce.source_id " + 
-				"where  s.channel = 5 or ce.cot_type = 'a-n-A-C-F-s'";
+				"where  s.channel = '5' or ce.cot_type = 'a-n-A-C-F-s'";
 	
 		CachedRowSet rowset = null;
 		

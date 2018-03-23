@@ -1,13 +1,14 @@
 package mil.darpa.immortals.core.das;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicReference;
 
 import mil.darpa.immortals.config.DasServiceConfiguration;
 import mil.darpa.immortals.config.ImmortalsConfig;
+import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
 import mil.darpa.immortals.das.ImmortalsProcessBuilder;
 
+import org.apache.jena.query.ARQ;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -21,7 +22,9 @@ public class DAS {
 
 	private DAS() {}
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
+	    // Necessary for jena to work..
+        ARQ.init();
     	
     	if (args.length == 1) {
     		String argument = args[0].trim();
@@ -49,7 +52,11 @@ public class DAS {
 
     }
 
-    public static synchronized void start() throws IOException {
+    public static synchronized void start() throws Exception {
+    	
+        GradleKnowledgeBuilder gkb = new GradleKnowledgeBuilder();
+        gkb.buildKnowledge(null);
+
 
         if (dasStatus.compareAndSet(DASStatusValue.STOPPED, DASStatusValue.STARTING)) {
 

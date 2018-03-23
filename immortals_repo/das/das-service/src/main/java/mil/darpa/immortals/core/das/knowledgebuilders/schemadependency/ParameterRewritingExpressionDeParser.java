@@ -20,7 +20,7 @@ import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
 public class ParameterRewritingExpressionDeParser extends ExpressionDeParser {
 
 	private List<String> parameterColumns = new ArrayList<String>();
-	private static final String NOT = "NOT ";
+	private static final String NOT = " NOT ";
 	private boolean parameterParsed = false;
 
 	@Override

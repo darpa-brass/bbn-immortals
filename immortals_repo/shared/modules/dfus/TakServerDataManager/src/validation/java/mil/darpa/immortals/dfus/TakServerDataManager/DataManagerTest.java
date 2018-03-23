@@ -30,6 +30,7 @@ public class DataManagerTest {
 			CachedRowSet data = dm.cotEventsForConstantChannelJoin();
 			assertTrue(data.size() > 0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Unexpected error: " + e);
 		}
 	}
@@ -41,6 +42,7 @@ public class DataManagerTest {
 			CachedRowSet data = dm.cotEventsForConstantChannelJoin2();
 			assertTrue(data.size() > 0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Unexpected error: " + e);
 		}
 	}
@@ -52,6 +54,7 @@ public class DataManagerTest {
 			CachedRowSet data = dm.cotEventsForConstantCompoundFilter();
 			assertTrue(data.size() > 0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Unexpected error: " + e);
 		}
 	}
@@ -63,6 +66,7 @@ public class DataManagerTest {
 			CachedRowSet data = dm.cotEventsForConstantMixedJoin();
 			assertTrue(data.size() > 0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Unexpected error: " + e);
 		}
 	}
@@ -74,11 +78,13 @@ public class DataManagerTest {
 			CachedRowSet data = dm.cotEventsForConstantTimeInterval();
 			assertTrue(data.size() > 0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Unexpected error: " + e);
 		}
 	}
 
-	@Test
+	// TODO: Re-enable once more granular test reporting is supported!
+//	@Test
 	public void testCotEventsForUidAndInterval() {
 
 		String sourceName = "ICAO-ACEA99";
@@ -88,6 +94,7 @@ public class DataManagerTest {
 			CachedRowSet data = dm.cotEventsForUidAndInterval(sourceName, timeInterval);
 			assertTrue(data.size() > 0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Unexpected error: " + e);
 		}
 	}
@@ -99,6 +106,7 @@ public class DataManagerTest {
 			CachedRowSet data = dm.cotEventsOnChannelInRegion();
 			assertTrue(data.size() > 0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Unexpected error: " + e);
 		}
 	}
@@ -110,6 +118,7 @@ public class DataManagerTest {
 			CachedRowSet data = dm.cotEventsForConstantCotType();
 			assertTrue(data.size() > 0);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Unexpected error: " + e);
 		}
 	}

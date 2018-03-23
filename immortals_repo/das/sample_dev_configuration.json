@@ -31,7 +31,8 @@
     },
     "knowledgeRepoService": {
         "userManaged": false,
-        "port": 9999
+        "port": 9999,
+        "url": "127.0.0.1"
     },
     "dasService": {
         // If true, it will not be started by the launcher and you will be given a chance to start it manually.
@@ -56,7 +57,9 @@
         // If true, a mock application deployment will be used by the Test Adapter to interact with the LL Test Harness
         "useMockApplicationDeployment": true,
         // If true, calls to the test harness submitter are replaced with logging statments. The mock test harness never sends anything.
-        "useMockTestHarness": true
+        "useMockTestHarness": true,
+        "logNetworkActivityToSeparateFile": true,
+        "useMockExtensionSchemaEvolution": false
     },
     "globals": {
         "headless": false

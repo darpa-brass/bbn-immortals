@@ -1,6 +1,7 @@
 package com.securboration.immortals.ontology.java.project;
 
 import com.securboration.immortals.ontology.bytecode.BytecodeArtifact;
+import com.securboration.immortals.ontology.bytecode.BytecodeArtifactCoordinate;
 import com.securboration.immortals.ontology.identifier.HasUuid;
 import com.securboration.immortals.ontology.java.build.BuildScript;
 import com.securboration.immortals.ontology.java.compiler.*;
@@ -13,7 +14,7 @@ import com.securboration.immortals.ontology.java.source.CompiledJavaSourceFile;
  * @author jstaples
  *
  */
-public class JavaProject implements HasUuid{
+public class JavaProject implements HasUuid {
     
     /**
      * Uniquely identifies the project
@@ -43,6 +44,11 @@ public class JavaProject implements HasUuid{
      * naked classes (unpackaged), etc.
      */
     private BytecodeArtifact compiledSoftware;
+    
+    /**
+     * This project's coordinate, e.g. group:artifact:version
+     */
+    private BytecodeArtifactCoordinate coordinate;
 
     public String[] getCompiledSourceHash() {
         return compiledSourceHash;
@@ -98,5 +104,12 @@ public class JavaProject implements HasUuid{
 		this.classpaths = classpaths;
 	}
 
-    
+
+    public BytecodeArtifactCoordinate getCoordinate() {
+        return coordinate;
+    }
+
+    public void setCoordinate(BytecodeArtifactCoordinate coordinate) {
+        this.coordinate = coordinate;
+    }
 }

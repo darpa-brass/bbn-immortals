@@ -65,7 +65,6 @@ public class ClientServerEnvironment {
             }
 
             this.setCriterion(criterion);
-            this.setAssertionBindingSite(abstractDataflowBindingSite);
             this.setImpact(new ImpactStatement[] {impact});
             this.setApplicableDataType(DataType.class);
             this.setHumanReadableDescription("All data being transmitted between MobileAndroidDevices and FileSystemResources " +

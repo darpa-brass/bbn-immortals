@@ -7,10 +7,12 @@ public class DebugConfiguration {
     private Boolean useMockFuseki = false;
     private Boolean useMockKnowledgeRepository = false;
     private Boolean useMockDas = false;
-    private Boolean useMockApplicationDeployment = false;
+    private Boolean useMockApplicationDeployment = true;
     private Boolean useMockTestHarness = false;
     private Boolean useMockTestAdapter = false;
     private Boolean useMockAqlBrass = true;
+    private boolean useMockExtensionSchemaEvolution = false;
+    private Boolean logNetworkActivityToSeparateFile = true;
     private int shutdownGracePeriodMS = 10000;
     public String loggingConfigDirectory = GlobalsConfig.staticImmortalsRoot.resolve("das/das-launcher/logging_scripts").toAbsolutePath().toString() + "/";
     
@@ -47,10 +49,18 @@ public class DebugConfiguration {
         return useMockAqlBrass;
     }
 
+    public boolean isUseMockExtensionSchemaEvolution() {
+        return useMockExtensionSchemaEvolution;
+    }
+    
     public int getShutdownGracePeriodMS() {
         return shutdownGracePeriodMS;
     }
 
+    public boolean isLogNetworkActivityToSeparateFile() {
+        return logNetworkActivityToSeparateFile;
+    }
+    
     /**
      * Gets the directory that contains logging configuration files (logging.properties, logback.xml, etc)
      * This is used by the DasLauncher to enable logging through the CLI.

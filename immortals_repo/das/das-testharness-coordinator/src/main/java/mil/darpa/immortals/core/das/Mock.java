@@ -1,7 +1,6 @@
 package mil.darpa.immortals.core.das;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
 import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
 import mil.darpa.immortals.core.api.ll.phase2.result.TestAdapterState;
@@ -14,9 +13,9 @@ import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
 import mil.darpa.immortals.das.context.MockServices;
 import mil.darpa.immortals.das.context.TestAdapterSubmitter;
 import mil.darpa.immortals.testadapter.restendpoints.DasSubmissionInterface;
-import org.slf4j.Logger;
 import retrofit2.Call;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,19 +23,21 @@ import java.util.List;
  * Created by awellman@bbn.com on 12/20/17.
  */
 public class Mock {
+    
+    public static TestOutcome desiredTestOutcome = TestOutcome.COMPLETE_PASS;
+    
     public static AdaptationDetails dasSubmission(SubmissionModel submissionModel, String cpIdentifier) {
 
         final AdaptationDetails ad = new AdaptationDetails(
+                "DummyAdapter",
                 DasOutcome.RUNNING,
-                submissionModel.sessionIdentifier,
-                "Phase1DetailsObjectToBeUpdatedToPhase2"
+                submissionModel.sessionIdentifier
         );
 
         Thread t = new Thread(() -> {
             try {
                 Thread.sleep(300);
-                AdaptationDetails ad2 = ad.clone();
-                ad2.details = "Did a little more stuff for " + cpIdentifier;
+                AdaptationDetails ad2 = ad.produceUpdate(DasOutcome.SUCCESS, new LinkedList<>(), Arrays.asList("Did a little more stuff for " + cpIdentifier));
                 ad2.dasOutcome = DasOutcome.SUCCESS;
                 TestHarnessAdapterMediator.getInstance().updateAdaptationStatus(ad2);
 
@@ -58,25 +59,19 @@ public class Mock {
         currentTests.add(new TestDetails(
                 cpIdentifier + "TestZero",
                 TestOutcome.RUNNING,
-                submissionModel.sessionIdentifier,
-                null,
-                null
+                submissionModel.sessionIdentifier
         ));
 
         currentTests.add(new TestDetails(
                 cpIdentifier + "TestOne",
                 TestOutcome.RUNNING,
-                submissionModel.sessionIdentifier,
-                null,
-                null
+                submissionModel.sessionIdentifier
         ));
 
         currentTests.add(new TestDetails(
                 cpIdentifier + "TestTwo",
                 TestOutcome.RUNNING,
-                submissionModel.sessionIdentifier,
-                null,
-                null
+                submissionModel.sessionIdentifier
         ));
 
         Thread t = new Thread(() -> {
@@ -103,61 +98,75 @@ public class Mock {
 
     public static class MockTestHarness implements TestHarnessSubmissionInterface {
 
-        private Logger logger;
-        private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        private final ImmortalsUtils.NetworkLogger mockNetworkLogger = new ImmortalsUtils.NetworkLogger("MOCKTH", "TA");
+
 
         public MockTestHarness() {
-            logger = MockServices.getLogger(MockTestHarness.class);
         }
 
         @Override
         public Call<Void> ready() {
-            return new MockServices.MockRetrofitAction<Void>(logger, "Mock TH received POST to endpoint /ready", null);
+            return new MockServices.MockRetrofitAction<Void>("/ready", mockNetworkLogger, null, null);
         }
 
         @Override
         public Call<Void> error(String value) {
-            return new MockServices.MockRetrofitAction<Void>(logger, "Mock TH received POST to endpoint /error with body:\n" + value, null);
+            return new MockServices.MockRetrofitAction<Void>("/error", mockNetworkLogger, value, null);
         }
 
         @Override
         public Call<Void> status(TestAdapterState testAdapterState) {
-            return new MockServices.MockRetrofitAction<Void>(logger, "Mock TH received POST to /status with body:\n" + gson.toJson(testAdapterState), null);
+            return new MockServices.MockRetrofitAction<Void>("/status", mockNetworkLogger, testAdapterState, null);
         }
 
         @Override
         public Call<Void> done(TestAdapterState testAdapterState) {
-            return new MockServices.MockRetrofitAction<Void>(logger, "Mock TH received POST to /done with body:\n" + gson.toJson(testAdapterState), null);
+            return new MockServices.MockRetrofitAction<Void>("/done", mockNetworkLogger, testAdapterState, null);
         }
     }
 
     public static class MockDas implements DasSubmissionInterface {
 
-        private Logger logger;
-        private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        private final ImmortalsUtils.NetworkLogger mockLogger = new ImmortalsUtils.NetworkLogger("MOCKDAS", "TA");
 
         public MockDas() {
-            logger = MockServices.getLogger(MockDas.class);
         }
 
         @Override
-        public Call<AdaptationDetails> submitAdaptationRequest(String rdf) {
-            logger.info("Mock DAS received POST to /deployment-model with body:\n" + rdf);
-
-            final AdaptationDetails ad = new AdaptationDetails(
-                    DasOutcome.RUNNING,
-                    rdf, // Not normally an adaptationIdentifier, but useful for mock adaptations until proper extraction is added
-                    "Phase1DetailsObjectToBeUpdatedToPhase2"
-            );
-
+        public Call<String> submitAdaptationRequest(String rdf) {
             Thread t = new Thread(() -> {
                 try {
                     Thread.sleep(300);
-                    AdaptationDetails ad2 = ad.clone();
-                    ad2.details = "Did a little more stuff for " + rdf;
-                    ad2.dasOutcome = DasOutcome.SUCCESS;
-                    TestAdapterSubmitter.updateAdaptationStatus(ad2);
-//                    TestHarnessAdapterMediator.getInstance().updateAdaptationStatus(ad);
+                    
+                    AdaptationDetails ad = new AdaptationDetails(
+                            "DummyAdapter",
+                            DasOutcome.PENDING,
+                            "DummyAdaptationIdentifier");
+                    TestAdapterSubmitter.updateAdaptationStatus(ad);
+                    
+                    Thread.sleep(300);
+
+                    TestDetails td = new TestDetails(
+                            "DummyTest",
+                            TestOutcome.PENDING,
+                            "DummyAdaptationIdentifier"
+                    );
+                    TestAdapterSubmitter.updateValidationStatus(td);
+                    
+                    Thread.sleep(300);
+                    
+                    ad = ad.produceUpdate(DasOutcome.RUNNING, null, null);
+                    TestAdapterSubmitter.updateAdaptationStatus(ad);
+                    Thread.sleep(300);
+                    ad = ad.produceUpdate(DasOutcome.SUCCESS, null, null);
+                    TestAdapterSubmitter.updateAdaptationStatus(ad);
+                    
+                    
+                    td = td.produceUpdate(TestOutcome.RUNNING);
+                    TestAdapterSubmitter.updateValidationStatus(td);
+                    Thread.sleep(300);
+                    td = td.produceUpdate(TestOutcome.COMPLETE_PASS);
+                    TestAdapterSubmitter.updateValidationStatus(td);
 
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -165,7 +174,36 @@ public class Mock {
             });
             t.start();
 
-            return new MockServices.MockRetrofitAction<AdaptationDetails>(logger, "Mock DAS received POST to /deployment-model with body:\n" + rdf, ad);
+            
+            
+            return new MockServices.MockRetrofitAction<String>("/bbn/das/submitAdaptationRequest", mockLogger, rdf, "DummyAdaptationRequest");
+        }
+
+        @Override
+        public Call<String> submitValidationRequest(String rdf) {
+            Thread t = new Thread(() -> {
+                try {
+                    TestDetails td = new TestDetails(
+                            "DummyTest",
+                            TestOutcome.PENDING,
+                            "DummyValidationIdentifier"
+                    );
+                    TestAdapterSubmitter.updateValidationStatus(td);
+                    Thread.sleep(300);
+                    
+                    td = td.produceUpdate(TestOutcome.RUNNING);
+                    TestAdapterSubmitter.updateValidationStatus(td);
+                    Thread.sleep(300);
+                    
+                    td = td.produceUpdate(desiredTestOutcome);
+                    TestAdapterSubmitter.updateValidationStatus(td);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            t.start();
+
+            return new MockServices.MockRetrofitAction<String>("/bbn/das/submitValidationRequest", mockLogger, rdf,"DummyValidationRequest");
         }
     }
 

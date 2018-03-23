@@ -2,12 +2,8 @@ package mil.darpa.immortals.core.das.restendpoints;
 
 import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.config.ImmortalsConfig;
-import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
-import mil.darpa.immortals.core.api.ll.phase2.result.status.DasOutcome;
-import mil.darpa.immortals.core.das.AdaptationManager;
-import mil.darpa.immortals.core.das.DAS;
-import mil.darpa.immortals.core.das.DASStatusValue;
-import mil.darpa.immortals.core.das.SUTInformation;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
+import mil.darpa.immortals.core.das.*;
 import mil.darpa.immortals.core.das.sparql.SessionIdentifier;
 import mil.darpa.immortals.das.context.ContextManager;
 import mil.darpa.immortals.das.context.DasAdaptationContext;
@@ -19,14 +15,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.nio.file.Files;
-import java.util.LinkedList;
 
 @Path("das")
 public class DASEndpoint {
 
     static final Logger logger = LoggerFactory.getLogger(DASEndpoint.class);
 
-    static final ImmortalsUtils.NetworkLogger networkLogger = new ImmortalsUtils.NetworkLogger("DAS", null);
+    static final ImmortalsUtils.NetworkLogger networkLogger = ImmortalsUtils.getNetworkLogger("DAS", "TA");
 
     @GET
     @Path("/test")
@@ -61,7 +56,7 @@ public class DASEndpoint {
     @POST
     @Path("/submitAdaptationRequest")
     @Consumes(MediaType.TEXT_PLAIN)
-    @Produces(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
     public Response submitAdaptationRequest(String rdf) {
         // Helper class for network logging. Controls information display level based on logging level and
         // standardizes send/receive/ack message formats and logging endpoint
@@ -77,21 +72,14 @@ public class DASEndpoint {
             String knowledgeRepoGraphUri = am.initializeKnowledgeRepo();
 
             String adaptationIdentifier = SessionIdentifier.select(knowledgeRepoGraphUri);
-            DasAdaptationContext dac = ContextManager.getContext(adaptationIdentifier, 
-            		knowledgeRepoGraphUri, knowledgeRepoGraphUri);
+            DasAdaptationContext dac = ContextManager.getContext(adaptationIdentifier,
+                    knowledgeRepoGraphUri, knowledgeRepoGraphUri);
 
 
-            // Set the initial adaptation details for the ACK
-            AdaptationDetails initialDetails = new AdaptationDetails(
-                    DasOutcome.RUNNING,
-                    dac.getAdaptationIdentifer(),
-                    "Phase1DetailsObjectToBeUpdatedToPhase2"
-            );
-
-			Runnable adaptationTask = () -> {
-				am.triggerAdaptation(dac);
-				};
-			Thread t = new Thread(adaptationTask);
+            Runnable adaptationTask = () -> {
+                am.triggerAdaptation(dac);
+            };
+            Thread t = new Thread(adaptationTask);
 
             // A fatal exception handler also exists in the error handler to bubble problems up as necessary
             t.setUncaughtExceptionHandler(ImmortalsErrorHandler.fatalExceptionHandler);
@@ -99,8 +87,54 @@ public class DASEndpoint {
 
             // Helper class for network logging. Controls information validity based on logging level and
             // standardizes send/receive/ack message formats and logging endpoint
-            networkLogger.logPostReceivedAckSending("/bbn/das/submitAdaptationRequest", initialDetails);
-            return Response.ok(initialDetails).build();
+            networkLogger.logPostReceivedAckSending("/bbn/das/submitAdaptationRequest", adaptationIdentifier);
+            return Response.ok().build();
+        } catch (Exception e) {
+            ImmortalsErrorHandler.reportFatalException(e);
+            return Response.serverError().entity(e.toString()).build();
+        }
+    }
+
+    @POST
+    @Path("/submitValidationRequest")
+    @Consumes(MediaType.TEXT_PLAIN)
+//    @Produces(MediaType.APPLICATION_JSON)
+    public Response submitValidationRequest(String rdf) {
+        // Helper class for network logging. Controls information display level based on logging level and
+        // standardizes send/receive/ack message formats and logging endpoint
+        networkLogger.logPostReceived("/bbn/das/submitValidationRequest", rdf);
+
+        try {
+            // Create the file
+            java.nio.file.Path rdfPath =
+                    ImmortalsConfig.getInstance().extensions.getProducedTtlOutputDirectory().resolve("deploymentModel.ttl");
+            Files.write(rdfPath, rdf.getBytes());
+
+            AdaptationManager am = AdaptationManager.getInstance();
+            String knowledgeRepoGraphUri = am.initializeKnowledgeRepo();
+
+            String adaptationIdentifier = SessionIdentifier.select(knowledgeRepoGraphUri);
+            DasAdaptationContext dac = ContextManager.getContext(adaptationIdentifier,
+                    knowledgeRepoGraphUri, knowledgeRepoGraphUri);
+
+            ValidationManager vm = new ValidationManager(dac);
+            vm.queryAndReportValidatiors().get(0);
+            
+            Runnable validationTask = () -> {
+                vm.triggerAndReportValidation();
+            };
+
+
+            Thread t = new Thread(validationTask);
+
+            // A fatal exception handler also exists in the error handler to bubble problems up as necessary
+            t.setUncaughtExceptionHandler(ImmortalsErrorHandler.fatalExceptionHandler);
+            t.start();
+
+            // Helper class for network logging. Controls information validity based on logging level and
+            // standardizes send/receive/ack message formats and logging endpoint
+            networkLogger.logPostReceivedAckSending("/bbn/das/submitValidationRequest", adaptationIdentifier);
+            return Response.ok().build();
         } catch (Exception e) {
             ImmortalsErrorHandler.reportFatalException(e);
             return Response.serverError().entity(e.toString()).build();

@@ -72,7 +72,7 @@ public class ImmortalsProcessBuilder {
 
     private final ProcessBuilder pb;
 
-    private final File workingDirectory;
+    private File workingDirectory;
 
 
     public ImmortalsProcessBuilder(@Nonnull String adaptationIdentifier,
@@ -100,6 +100,11 @@ public class ImmortalsProcessBuilder {
         return workingDirectory;
     }
 
+    public synchronized ImmortalsProcessBuilder directory(File directory) {
+        this.workingDirectory = directory;
+        return this;
+    }
+    
     public synchronized Process start() throws IOException {
         if (logger.isDebugEnabled()) {
             logger.debug("EXEC: `" + pb.command().stream().collect(Collectors.joining(" ")) + "`");
