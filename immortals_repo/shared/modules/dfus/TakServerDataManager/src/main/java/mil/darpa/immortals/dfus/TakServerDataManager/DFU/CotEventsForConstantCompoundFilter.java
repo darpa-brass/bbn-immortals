@@ -37,7 +37,7 @@ public class CotEventsForConstantCompoundFilter {
 
 		String query = "select id, source_id, cot_type, how " + 
 				"from cot_event " + 
-				"where servertime = 201705071635 " + 
+				"where servertime = '201705071635' " + 
 				"and cot_type = 'a-n-A-C-F-m'";
 	
 		CachedRowSet rowset = null;

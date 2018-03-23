@@ -507,7 +507,7 @@ __Description__: The main submission model
 
 | Field       | Type                  | Description             |  
 | ----------- | --------------------- | ----------------------- |  
-| globalModel | GlobalSubmissionModel | Global submission model |  
+| globalModel | GlobalSubmissionModel | Global deployment model |  
 
 #### GlobalSubmissionModel  
 __Type__: JSON Object  
@@ -543,5 +543,4 @@ __Description__: Common security standards
 | FIPS140Dash1   | Obsolete less secure NIST government security standard |  
 | FIPS140Dash2   | Current secure NIST government security standard       |  
 | NIST800Dash171 | Recent governemnt contractor security standard         |  
-| Secret         | Classified information lower security standard         |  
-| TopSceret      | Classified information highest security standard       |  
+ 

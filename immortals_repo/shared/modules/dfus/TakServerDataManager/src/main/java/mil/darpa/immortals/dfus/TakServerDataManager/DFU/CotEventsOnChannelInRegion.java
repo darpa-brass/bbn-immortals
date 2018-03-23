@@ -38,7 +38,7 @@ public class CotEventsOnChannelInRegion {
 		String query = "select s.name, ce.id, ce.cot_type, ce.servertime " + 
 				"from source s join cot_event ce on s.source_id = ce.source_id " + 
 				"join cot_event_position cep on ce.id = cep.cot_event_id " + 
-				"where  s.channel = 6 and tilex = 18830 and tiley = 25704";
+				"where  s.channel = '6' and tilex = '18830' and tiley = '25704'";
 	
 		CachedRowSet rowset = null;
 		

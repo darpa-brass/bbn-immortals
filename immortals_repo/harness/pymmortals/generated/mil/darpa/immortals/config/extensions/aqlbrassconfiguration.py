@@ -22,6 +22,7 @@ class AqlBrassConfiguration(MavenArtifactInterface, RestfulAppConfigInterface):
                  parameters: List[str] = None,
                  port: int = None,
                  protocol: str = None,
+                 readyStdoutLineRegexPattern: str = None,
                  startupTimeMS: int = None,
                  url: str = None,
                  userManaged: bool = None,
@@ -38,6 +39,7 @@ class AqlBrassConfiguration(MavenArtifactInterface, RestfulAppConfigInterface):
         self.parameters = parameters
         self.port = port
         self.protocol = protocol
+        self.readyStdoutLineRegexPattern = readyStdoutLineRegexPattern
         self.startupTimeMS = startupTimeMS
         self.url = url
         self.userManaged = userManaged

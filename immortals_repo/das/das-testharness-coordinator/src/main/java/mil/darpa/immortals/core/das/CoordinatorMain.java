@@ -6,6 +6,7 @@ import mil.darpa.immortals.core.das.ll.TestHarnessAdapterMediator;
 import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
 import mil.darpa.immortals.testadapter.restendpoints.DasRequestListener;
 import mil.darpa.immortals.testadapter.restendpoints.TestHarnessRequestListener;
+import org.apache.jena.query.ARQ;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -60,9 +61,10 @@ public class CoordinatorMain {
 
             } catch (InterruptedException e) {
                 ImmortalsErrorHandler.reportFatalException(e);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
-
     }
 
     private synchronized void shutdown() {
@@ -76,6 +78,9 @@ public class CoordinatorMain {
     }
 
     public static void main(String[] args) {
+        // Required to be able to parse deployment models.
+        ARQ.init();
+
         final CoordinatorMain cm = new CoordinatorMain();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

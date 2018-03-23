@@ -39,6 +39,8 @@ public class MethodCall extends Instruction {
      * The order in which a method is called, e.g. if "println" is the first method called, its order will be 1.
      */
     private int order;
+    
+    private int lineNumber;
 
     public boolean isOwnerAssurance() {
         return ownerAssurance;
@@ -89,5 +91,13 @@ public class MethodCall extends Instruction {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
     }
 }

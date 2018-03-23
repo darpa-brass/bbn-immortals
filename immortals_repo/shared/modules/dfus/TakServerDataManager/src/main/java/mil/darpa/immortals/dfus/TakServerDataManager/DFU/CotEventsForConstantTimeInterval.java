@@ -37,7 +37,7 @@ public class CotEventsForConstantTimeInterval {
 
 		String query = "select id, source_id, cot_type, how " + 
 				"from cot_event " + 
-				"where servertime = 201705071635";
+				"where servertime = '201705071635'";
 	
 		CachedRowSet rowset = null;
 		

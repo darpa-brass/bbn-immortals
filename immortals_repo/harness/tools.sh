@@ -2,6 +2,8 @@
 
 IMMORTALSRC_PATH=""
 
+
+
 if [ "$IMMORTALSRC" != "" ];then
     if [ -f "$IMMORTALSRC" ];then
         echo "Environment variable IMMORTALSRC points to a valid file. Sourcing..."
@@ -33,4 +35,22 @@ else
     source "$IMMORTALSRC_PATH"
 fi
 
-python3.6 tools.py "$@"
+
+
+# Set the override file if provided as input
+if [ "$1" == "--set-override-file-data" ];then
+  if [ "$2" != "" ];then
+    OVERRIDE_TARGET_FILE="${HOME}/IMMORTALS_OVERRIDE_FILE.json"
+
+    echo "$2" > "${OVERRIDE_TARGET_FILE}"
+    export IMMORTALS_OVERRIDE_FILE="${OVERRIDE_TARGET_FILE}"
+    python3.5 tools.py "${@:3}"
+
+  else
+    echo "Override file data flag provided with no override file data!"
+    exit 1
+  fi
+
+else
+  python3.5 tools.py "$@"
+fi

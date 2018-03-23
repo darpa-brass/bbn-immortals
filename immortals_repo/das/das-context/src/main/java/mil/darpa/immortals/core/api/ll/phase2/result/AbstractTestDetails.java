@@ -13,6 +13,8 @@ import javax.annotation.Nonnull;
 @Description("The current state of a test execution")
 public abstract class AbstractTestDetails {
 
+    @Description("A timestamp for the status update")
+    public long timestamp;
 
     @Description("The current state for the test")
     public TestOutcome currentState;
@@ -20,12 +22,14 @@ public abstract class AbstractTestDetails {
     @Description("An identifier for the test")
     public String testIdentifier;
 
+    @Description("The identifier for the adaptation instance")
     public String adaptationIdentifier;
 
     public AbstractTestDetails() {
     }
 
     public AbstractTestDetails(@Nonnull String testIdentifier, @Nonnull TestOutcome currentState, @Nonnull String adaptationIdentifier) {
+        this.timestamp = System.currentTimeMillis();
         this.testIdentifier = testIdentifier;
         this.currentState = currentState;
         this.adaptationIdentifier = adaptationIdentifier;

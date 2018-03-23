@@ -32,4 +32,5 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.7'
     compile 'ch.qos.logback:logback-core:1.1.7'
     compile 'info.picocli:picocli:2.2.1'
+    compile 'commons-io:commons-io:2.6'
 }

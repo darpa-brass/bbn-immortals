@@ -35,4 +35,21 @@ fi
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-exec ${JAVA_HOME}/bin/java -jar ${SCRIPT_DIR}/das-launcher-2.0-LOCAL.jar "$@"
+# Set the override file if provided as input
+if [ "$1" == "--set-override-file-data" ];then
+  if [ "$2" != "" ];then
+    OVERRIDE_TARGET_FILE="${HOME}/IMMORTALS_OVERRIDE_FILE.json"
+
+    echo "$2" > "${OVERRIDE_TARGET_FILE}"
+    export IMMORTALS_OVERRIDE_FILE="${OVERRIDE_TARGET_FILE}"
+    exec ${JAVA_HOME}/bin/java -jar ${SCRIPT_DIR}/das-launcher-2.0-LOCAL.jar "${@:3}"
+    python3.5 tools.py "${@:3}"
+
+  else
+    echo "Override file data flag provided with no override file data!"
+    exit 1
+  fi
+
+else
+  exec ${JAVA_HOME}/bin/java -jar ${SCRIPT_DIR}/das-launcher-2.0-LOCAL.jar "$@"
+fi

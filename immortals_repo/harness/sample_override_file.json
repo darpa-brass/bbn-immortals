@@ -9,10 +9,11 @@
     },
     "debug": {
         "useMockApplicationDeployment": true,
-        "useMockDas": true,
-        "useMockFuseki": true,
-        "useMockKnowledgeRepository": true,
-        "useMockAqlBrass": true
+        "useMockDas": false,
+        "useMockFuseki": false,
+        "useMockKnowledgeRepository": false,
+        "useMockAqlBrass": true,
+        "logNetworkActivityToSeparateFile": true
     },
     "deploymentEnvironment": {
         "martiAddress": "10.0.2.2",

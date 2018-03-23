@@ -510,3 +510,10 @@ class Installer:
             self._generate_all_commands()
 
         return copy.deepcopy(self._generated_initialization_commands)
+
+    def get_superuser_boot_commands(self):
+        """
+        :rtype: list[str]
+        """
+        if self.configuration.bootCommands is not None:
+            return copy.copy(self.configuration.bootCommands)

@@ -6,13 +6,18 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
 import okhttp3.Request;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Body;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -24,15 +29,17 @@ public class MockServices {
 
     public static class MockRetrofitAction<T> implements Call<T> {
 
-        private final org.slf4j.Logger logger;
-        private final String message;
+        private final ImmortalsUtils.NetworkLogger logger;
+        private final String path;
+        private final Object body;
         private boolean isCancelled = false;
         private boolean isExecuted = false;
         private T returnData;
 
-        public MockRetrofitAction(@Nonnull org.slf4j.Logger logger, @Nonnull String message, T returnData) {
+        public MockRetrofitAction(@Nonnull String path, @Nonnull ImmortalsUtils.NetworkLogger logger, @Nonnull Object body, T returnData) {
+            this.path = path;
             this.logger = logger;
-            this.message = message;
+            this.body = body;
             this.returnData = returnData;
         }
 //        
@@ -43,14 +50,14 @@ public class MockServices {
 
         @Override
         public synchronized Response<T> execute() throws IOException {
-            logger.info(message);
+            logger.logPostReceived(path, body);
             isExecuted = true;
             return Response.success(returnData);
         }
 
         @Override
         public void enqueue(@Nonnull Callback<T> callback) {
-            logger.info(message);
+            logger.logPostReceived(path, body);
             isExecuted = true;
             callback.onResponse(this, Response.success(returnData));
         }
@@ -72,7 +79,7 @@ public class MockServices {
 
         @Override
         public Call<T> clone() {
-            return new MockRetrofitAction<T>(logger, message, returnData);
+            return new MockRetrofitAction<T>(path, logger, body, returnData);
         }
 
         @Override
@@ -101,18 +108,20 @@ public class MockServices {
 
     public static class MockTestAdapter implements TestAdapterSubmitter.TestAdapterSubmissionInterface {
 
-        private Logger logger;
-        private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        private ImmortalsUtils.NetworkLogger logger = new ImmortalsUtils.NetworkLogger("MOCKTA", null);
 
         public MockTestAdapter() {
-            logger = getLogger(MockTestAdapter.class);
         }
-
 
         @Override
         public Call<Void> updateAdaptationStatus(AdaptationDetails testAdapterState) {
-            logger.info(gson.toJson(testAdapterState));
-            return null;
+            logger.logPostReceived("/dasListener/updateAdaptationStatus", testAdapterState);
+            return new MockRetrofitAction<>("/dasListener/updateAdaptationStatus", logger, testAdapterState, null);
+        }
+
+        @Override
+        public Call<Void> updateValidationStatus(TestDetails validatorState) {
+            return new MockRetrofitAction<>("/dasListener/updateValidationStatus", logger, validatorState, null);
         }
     }
 

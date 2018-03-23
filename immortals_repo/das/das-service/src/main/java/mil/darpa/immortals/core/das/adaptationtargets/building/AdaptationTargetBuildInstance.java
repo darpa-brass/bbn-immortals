@@ -2,6 +2,7 @@ package mil.darpa.immortals.core.das.adaptationtargets.building;
 
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
+import mil.darpa.immortals.das.ImmortalsProcessBuilder;
 import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -132,13 +133,19 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
     }
 
     @Override
-    public String getBuildToolBuildParameters() {
+    public String[] getBuildToolBuildParameters() {
         return buildEnvironment.getBuildToolBuildParameters();
     }
 
     @Override
-    public String getBuildToolValidationParameters() {
+    public String[] getBuildToolValidationParameters() {
         return buildEnvironment.getBuildToolValidationParameters();
+    }
+
+
+    @Override
+    public String[] getBuildToolPublishParameters() {
+        return buildEnvironment.getBuildToolPublishParameters();
     }
 
     /**
@@ -222,7 +229,6 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
      */
     public boolean executeCleanAndTest() throws IOException, InterruptedException {
         return gradleHelper.executeCleanAndTest();
-        
     }
 
     /**
@@ -289,9 +295,9 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
 
             boolean success = takServerDataManagerInstance.executeCleanBuildAndPublish();
             if (success) {
-                System.out.println("The TakServerDataManager build finished successfully!");
+                System.out.println("The TakServerDataManager publish successfully!");
             } else {
-                System.out.println("The TakServerDataManager build FAILED!");
+                System.out.println("The TakServerDataManager publish FAILED!");
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -312,6 +318,17 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
                 System.out.println("The Marti build finished successfully!");
             } else {
                 System.out.println("The Marti build FAILED!");
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            boolean success = takServerDataManagerInstance.executeCleanAndTest();
+            if (success) {
+                System.out.println("The TakServerDataManager validation finished successfully!");
+            } else {
+                System.out.println("The TakServerDataManager validation FAILED!");
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

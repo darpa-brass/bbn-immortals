@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import mil.darpa.immortals.config.AppConfigInterface;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.config.RestfulAppConfigInterface;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -14,14 +15,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -83,11 +82,73 @@ public class DasLauncher {
 
     private static final AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
+    private static void mergeNetworkLogs() throws IOException {
+        String regexPattern = "^\\[\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d,\\d\\d\\d\\].*$";
+
+        File logdir = ImmortalsConfig.getInstance().globals.getGlobalLogDirectory().toFile();
+
+        Map<String, List<String>> outputLines = new TreeMap<>();
+
+        for (File file : FileUtils.listFiles(logdir, null, false)) {
+            String fileString = file.getName();
+
+            if (fileString.startsWith("network_")) {
+                List<String> fileLines = FileUtils.readLines(file, Charset.defaultCharset());
+
+                String keyLine = null;
+                List<String> statementLines = new LinkedList<>();
+
+                for (int i = 0; i < fileLines.size(); i++) {
+                    String currentLine = fileLines.get(i);
+                    boolean currentLineMatches = currentLine.matches(regexPattern);
+
+                    String nextLineValue = (i + 1) == fileLines.size() ? null : fileLines.get(i + 1);
+
+                    // The current data should be flushed if there is no next value or the next line does not match the new line regex
+                    boolean flushCurrentLines = nextLineValue == null || nextLineValue.matches(regexPattern);
+
+                    if (keyLine == null) {
+                        // If the keyLine is unset, double check it is a properly formatted key line, set it, and add it
+                        if (!currentLineMatches) {
+                            throw new RuntimeException("Network Log Merge Error: The statement lines are empty but the new line does not start with a timestamp!");
+                        }
+                        keyLine = currentLine;
+                        statementLines.add(currentLine);
+                        
+                    } else {
+                        // Otherwise, check that it is not a properly formatted key line and add it
+                        if (currentLineMatches) {
+                            throw new RuntimeException("Network Log Merge Error: A new statement line is being added to an existing statement line set!");
+                        }
+                        statementLines.add(currentLine);
+                    }
+
+                    // If it is time to flush a complete statement to the output list, flush it
+                    if (flushCurrentLines) {
+                        outputLines.put(keyLine, statementLines);
+                        keyLine = null;
+                        statementLines = new LinkedList<>();
+                    }
+                }
+            }
+        }
+
+        List<String> outputList = new LinkedList<>();
+
+        for (List<String> lines : outputLines.values()) {
+            outputList.addAll(lines);
+        }
+
+        File outputFile = ImmortalsConfig.getInstance().globals.getGlobalLogDirectory().resolve("network_combined.log").toFile();
+        FileUtils.writeLines(outputFile, outputList);
+        System.out.println("Combined network logs written to the file '" + outputFile.toString() + "'.");
+    }
+
     private static void shutdown() {
         shuttingDown.set(true);
 
         synchronized (shuttingDown) {
-            System.out.print("Shutting down.");
+            System.out.println("Shutting down.");
 
             for (Process p : runningProcesses.values()) {
                 p.destroy();
@@ -118,6 +179,14 @@ public class DasLauncher {
             for (Map.Entry<String, Process> p : runningProcesses.entrySet()) {
                 System.err.println("Forcing shutdown of '" + p.getKey() + "'!");
                 p.getValue().destroyForcibly();
+            }
+
+            try {
+                if (ImmortalsConfig.getInstance().debug.isLogNetworkActivityToSeparateFile()) {
+                    mergeNetworkLogs();
+                }
+            } catch (Exception e) {
+                System.err.println("Could not merge network logs into a single unified file!");
             }
         }
     }
@@ -247,6 +316,16 @@ public class DasLauncher {
             commandList.add(appConfig.getExePath());
             commandList.addAll(Arrays.asList(appConfig.getParameters()));
             command = commandList.toArray(new String[len]);
+
+        } else if (appConfig.getExePath().endsWith("build.xml")) {
+            int len = appConfig.getInterpreterParameters().length + appConfig.getParameters().length + 2;
+            ArrayList<String> commandList = new ArrayList<>(len);
+            commandList.add("ant");
+            commandList.addAll(Arrays.asList(appConfig.getInterpreterParameters()));
+            commandList.add(appConfig.getExePath());
+            commandList.addAll(Arrays.asList(appConfig.getParameters()));
+            command = commandList.toArray(new String[len]);
+
 
         } else {
             command = Stream.concat(

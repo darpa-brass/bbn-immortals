@@ -8,10 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by awellman@bbn.com on 2/13/18.
@@ -24,7 +21,6 @@ public class GradleBuildFileHelper {
 
     private final AdaptationTargetBuildInstance buildInstance;
 
-    private boolean addedToSettings = false;
     private boolean hasBeenSaved = false;
 
     public GradleBuildFileHelper(@Nonnull AdaptationTargetBuildInstance buildInstance) {
@@ -91,11 +87,12 @@ public class GradleBuildFileHelper {
             save();
         }
 
-        if (!addedToSettings) {
-            Path settingsFile = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("settings.gradle");
+        Path settingsFile = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("settings.gradle");
 
-            Path originalFile = settingsFile.getParent().resolve(settingsFile.getFileName() + ".original");
+        Path originalFile = settingsFile.getParent().resolve(settingsFile.getFileName() + ".original");
 
+
+        if (!Files.exists(buildInstance.getBuildRoot().resolve("settings.gradle"))) {
             if (!Files.exists(originalFile)) {
                 Files.copy(settingsFile, originalFile);
             }
@@ -106,14 +103,17 @@ public class GradleBuildFileHelper {
             String includePath = ImmortalsConfig.getInstance().globals.getImmortalsRoot().relativize(buildInstance.getBuildRoot()).toString().replaceAll("/", ":");
             lines.add("include ':" + includePath + "'");
             Files.write(settingsFile, lines, StandardOpenOption.TRUNCATE_EXISTING);
-
-
-            addedToSettings = true;
         }
 
         ImmortalsProcessBuilder pb = new ImmortalsProcessBuilder(buildInstance.getAdaptationIdentifier(), "gradle");
         Process p = pb.command(cmd).start();
         p.waitFor();
+
+//        if (!Files.exists(buildInstance.getBuildRoot().resolve("settings.gradle"))) {
+//            Files.delete(settingsFile);
+//            Files.copy(originalFile, settingsFile);
+//        }
+
         return p.exitValue() == 0;
     }
 
@@ -123,13 +123,12 @@ public class GradleBuildFileHelper {
      * @return Whether or not it was built successfully
      */
     public synchronized boolean executeCleanAndBuild() throws IOException, InterruptedException {
-        return executeCommand(new String[]{
-                buildInstance.getBuildToolPath().toString(),
-                "--build-file",
-                buildInstance.getBuildFilePath().toString(),
-                "clean",
-                "build"
-        });
+        LinkedList<String> cmdList = new LinkedList<>();
+        cmdList.add(buildInstance.getBuildToolPath().toString());
+        cmdList.add("--build-file");
+        cmdList.add(buildInstance.getBuildFilePath().toString());
+        cmdList.addAll(Arrays.asList(buildInstance.getBuildToolBuildParameters()));
+        return executeCommand( cmdList.toArray(new String[0]));
     }
 
     /**
@@ -138,24 +137,21 @@ public class GradleBuildFileHelper {
      * @return Whether or not it was successful.
      */
     public synchronized boolean executeCleanBuildAndPublish() throws IOException, InterruptedException {
-        return executeCommand(new String[]{
-                buildInstance.getBuildToolPath().toString(),
-                "--build-file",
-                buildInstance.getBuildFilePath().toString(),
-                "clean",
-                "build",
-                "publish"
-        });
+        LinkedList<String> cmdList = new LinkedList<>();
+        cmdList.add(buildInstance.getBuildToolPath().toString());
+        cmdList.add("--build-file");
+        cmdList.add(buildInstance.getBuildFilePath().toString());
+        cmdList.addAll(Arrays.asList(buildInstance.getBuildToolPublishParameters()));
+        return executeCommand( cmdList.toArray(new String[0]));
     }
 
     public synchronized boolean executeCleanAndTest() throws IOException, InterruptedException {
-        return executeCommand(new String[]{
-                buildInstance.getBuildToolPath().toString(),
-                "--build-file",
-                buildInstance.getBuildFilePath().toString(),
-                "clean",
-                "test"
-        });
+        LinkedList<String> cmdList = new LinkedList<>();
+        cmdList.add(buildInstance.getBuildToolPath().toString());
+        cmdList.add("--build-file");
+        cmdList.add(buildInstance.getBuildFilePath().toString());
+        cmdList.addAll(Arrays.asList(buildInstance.getBuildToolValidationParameters()));
+        return executeCommand( cmdList.toArray(new String[0]));
     }
 
 }

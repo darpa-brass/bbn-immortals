@@ -3,12 +3,20 @@ package mil.darpa.immortals.core.das.knowledgebuilders.schemadependency;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
+
+import org.apache.commons.collections4.iterators.PermutationIterator;
+import org.apache.commons.math3.util.Combinations;
 
 import mil.darpa.immortals.core.das.exceptions.InvalidOrMissingParametersException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -155,7 +163,7 @@ public class SQLTransformer {
 		return newTableName;
 	}
 	
-	public String getStableSampleSQL(DataLinkageMetadata dataLinkageMetadata, String sql, int sampleSize) {
+	public String getStableSampleSQL(String sql, int sampleSize) {
 		
 		String result = null;
 		
@@ -165,6 +173,149 @@ public class SQLTransformer {
 		//		.collect(Collectors.joining(","));
 		
 		result = "select * from (" + sql + ") as _t1 order by random() limit " + sampleSize;
+		
+		return result;
+	}
+	
+	public String parameterizeSql(String sql, int parameterMask) throws Exception {
+		
+		String result = null;
+		
+		Statement stmt = CCJSqlParserUtil.parse(sql);
+
+		if (stmt instanceof Select) {
+			Select selectStatement = (Select) stmt;
+
+			StringBuilder buffer = new StringBuilder();
+
+			ParameterizingExpressionDeParser expressionDeParser = new ParameterizingExpressionDeParser();
+			expressionDeParser.setParameterMask(parameterMask);
+			ParameterizingSelectDeParser selectDeParser = new ParameterizingSelectDeParser(expressionDeParser, buffer);
+			
+			expressionDeParser.setBuffer(buffer);
+			expressionDeParser.setSelectVisitor(selectDeParser);
+			
+			selectStatement.getSelectBody().accept(selectDeParser);
+			
+			result = buffer.toString();
+		} else {
+			throw new Exception("SQL statement is not a SELECT statement.");
+		}
+		
+		return result;
+	}
+
+	public List<String> generateParameterizedCombinations(int numberParameters,
+			String sql, int numberLiterals) throws Exception {
+		
+		if (numberLiterals < numberParameters) {
+			throw new Exception("Number of literals must be greater than or equal to number of parameters.");
+		}
+		
+		List<String> results = new ArrayList<>();
+		
+		Combinations c = new Combinations(numberLiterals, numberParameters);
+		SQLTransformer st = new SQLTransformer();
+		
+		Iterator<int[]> i = c.iterator();
+		while (i.hasNext()) {
+			int[] selectedLiterals = i.next();
+			int pmask = 0;
+			for (int x = 0; x < selectedLiterals.length; x++) {
+				pmask = pmask | (1 << selectedLiterals[x]);
+			}
+			results.add(st.parameterizeSql(sql, pmask));
+		}
+		
+		return results;
+	}
+	
+	public Set<List<Integer>> generatePermutations(int n) {
+		
+		Set<List<Integer>> results = new HashSet<>();
+		
+		List<Integer> elements = IntStream.rangeClosed(1, n)
+					.mapToObj(i -> Integer.valueOf(i))
+					.collect(Collectors.toList());
+
+		PermutationIterator<Integer> pelements = new PermutationIterator<>(elements);
+		
+		pelements.forEachRemaining(t -> results.add(t));
+		
+		return results;
+	}
+	
+	public String resolveParameters(DataLinkageMetadata originalQuery, List<Integer> order) 
+			throws Exception {
+		
+		if (originalQuery == null || order == null) {
+			throw new InvalidOrMissingParametersException();
+		}
+		
+		if (originalQuery.getSqlMetadata().getParameters().size() != order.size()) {
+			throw new Exception("Number of query parameters does not match size of permutation.");
+		}
+		
+		String result = null;
+		
+		String sql = originalQuery.getOriginalSql();
+		
+		for (Integer i : order) {
+			sql = sql.replaceFirst("\\?", 
+					Parameter.formatToString(originalQuery.getSqlMetadata().getParameters().get(i.intValue())));
+		}
+		
+		result = sql;
+		
+		return result;
+		
+	}
+	
+	public String resolveParameters(String perturbedSql, DataLinkageMetadata originalQuery, 
+			List<Integer> parameterOrder) throws Exception {
+		
+		if (originalQuery == null || parameterOrder == null || perturbedSql == null || 
+				perturbedSql.trim().length() == 0) {
+			throw new InvalidOrMissingParametersException();
+		}
+		
+		if (originalQuery.getSqlMetadata().getParameters().size() != parameterOrder.size()) {
+			throw new Exception("Number of query parameters does not match size of permutation.");
+		}
+		
+		String result = null;
+		
+		String sql = perturbedSql;
+		
+		for (Integer i : parameterOrder) {
+			sql = sql.replaceFirst("\\?", 
+					Parameter.formatToString(originalQuery.getSqlMetadata().getParameters().get(i.intValue()-1)));
+		}
+		
+		result = sql;
+		
+		return result;
+
+	}
+	
+	@SuppressWarnings("unused")
+	private String replaceOccurrence(String stringToSearch, String stringToSearchFor, int occurrence, String replacement) {
+
+		String result = null;
+		int position = -1;
+		
+		int x = 0;
+		for (; x <= occurrence; x++) {
+			position = stringToSearch.indexOf(stringToSearchFor, position+1);
+			if (position == -1) {
+				break;
+			}
+		}
+		
+		if (x == occurrence + 1 && position > -1) {
+			StringBuilder sb = new StringBuilder(stringToSearch);
+			result = sb.replace(position, position+1, replacement).toString();
+		}
 		
 		return result;
 	}

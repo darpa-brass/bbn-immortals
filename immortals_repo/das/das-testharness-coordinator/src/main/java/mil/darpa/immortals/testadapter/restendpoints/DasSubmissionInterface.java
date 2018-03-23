@@ -1,7 +1,5 @@
 package mil.darpa.immortals.testadapter.restendpoints;
 
-import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
-import mil.darpa.immortals.das.context.DasAdaptationContext;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
@@ -13,7 +11,10 @@ import retrofit2.http.POST;
 public interface DasSubmissionInterface {
     @POST("bbn/das/submitAdaptationRequest")
     @Headers("Content-Type: text/plain")
-    public Call<AdaptationDetails> submitAdaptationRequest(@Body String rdf);
-    
-    
+    public Call<String> submitAdaptationRequest(@Body String rdf);
+
+    @POST("bbn/das/submitValidationRequest")
+    @Headers("Content-Type: text/plain")
+    public Call<String> submitValidationRequest(@Body String rdf);
+
 }

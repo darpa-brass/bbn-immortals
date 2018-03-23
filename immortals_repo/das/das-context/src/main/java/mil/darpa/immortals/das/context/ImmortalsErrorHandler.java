@@ -43,7 +43,7 @@ public class ImmortalsErrorHandler {
         if (!ImmortalsConfig.getInstance().debug.isUseMockTestHarness()) {
             TestHarnessConfiguration thc = ImmortalsConfig.getInstance().testHarness;
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(thc.getProtocol() + "://" + thc.getUrl() + thc.getPort())
+                    .baseUrl(thc.getProtocol() + "://" + thc.getUrl() + ":" + thc.getPort())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 

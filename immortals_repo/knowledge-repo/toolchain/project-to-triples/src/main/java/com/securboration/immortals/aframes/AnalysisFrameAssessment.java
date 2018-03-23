@@ -6,7 +6,7 @@ import com.securboration.immortals.ontology.dfu.instance.FunctionalAspectInstanc
 
 import com.securboration.immortals.ontology.functionality.DesignPattern;
 import com.securboration.immortals.ontology.lang.ProgrammingLanguage;
-import com.securboration.immortals.ontology.lang.SourceFile;
+import com.securboration.immortals.ontology.lang.WrapperSourceFile;
 import com.securboration.immortals.utility.Decompiler;
 import com.securboration.immortals.utility.GradleTaskHelper;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
@@ -28,9 +28,10 @@ import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -796,7 +797,7 @@ public class AnalysisFrameAssessment {
                     "\t}\n" +
                     "}";
             getInformationAboutInitMethodCall = getInformationAboutInitMethodCall.replace("???GRAPH_NAME???", taskHelper.getGraphName())
-                    .replace("???SEMANTIC_LINK???",config.getNamingContext().getNameForObject(streamInitializationNode));
+                    .replace("???SEMANTIC_LINK???", config.getNamingContext().getNameForObject(streamInitializationNode));
             taskHelper.getPw().println("Getting surrounding semantic information of method call node using query:\n\n" 
                     + getInformationAboutInitMethodCall + "\n\n");
             AssertableSolutionSet initCallInfoSolution = new AssertableSolutionSet();
@@ -818,13 +819,20 @@ public class AnalysisFrameAssessment {
             for (File dependency : dependencies) {
                 dependencyPaths.add(dependency.getAbsolutePath());
             }
-            
-            WrapperFactory wrapperFactory = new WrapperFactory();
-            Wrapper wrapper = wrapperFactory.createWrapper(streamInitializationNode.getJavaClassName().replace("/", "."), dependencyPaths);
-            
+
+            WrapperFactory wrapperFactory = null;
+            Wrapper wrapper = null;
+            String aspectUUID = null;
+            String cipherImpl = null;
+            List<String> augmentedMethods = new ArrayList<>();
+            boolean alreadyExistingWrapper = false;
+
             switch (functionalAspect.getAspectId()) {
                 
-                case "cipherEncrypt":
+                case "cipherEncrypt": {
+                    wrapperFactory = new WrapperFactory();
+                    wrapper = wrapperFactory.createWrapper(streamInitializationNode.getJavaClassName().replace("/", "."), dependencyPaths);
+                    wrapper.setStreamType("java.io.OutputStream");
                     
                     String getCipherImpl = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
                             "select ?cipherImpl where {\n" +
@@ -838,20 +846,29 @@ public class AnalysisFrameAssessment {
                             "\t}\n" +
                             "}";
                     getCipherImpl = getCipherImpl.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???ASPECT_INSTANCE???"
-                    ,config.getNamingContext().getNameForObject(aspectInstance));
+                            , config.getNamingContext().getNameForObject(aspectInstance));
                     AssertableSolutionSet cipherImplSoln = new AssertableSolutionSet();
-                    
+
                     taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSoln);
-                    String cipherImpl = cipherImplSoln.getSolutions().get(0).get("cipherImpl");
+                    cipherImpl = cipherImplSoln.getSolutions().get(0).get("cipherImpl");
                     cipherImpl = cipherImpl.replace("/", ".").replace(".class", "");
+
+                    augmentedMethods.addAll(wrapperFactory.wrapWithCipher(wrapper, cipherImpl, taskHelper));
                     
-                    wrapperFactory.wrapWithCipher(wrapper, cipherImpl);
+                    if (augmentedMethods.isEmpty()) {
+                        alreadyExistingWrapper = true;
+                    }
                     
+                    aspectUUID = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#AspectCipherEncrypt";
                     break;
-                    
+                }                  
                 case "cipherDecrypt":
 
-                    getCipherImpl = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
+                    wrapperFactory = new WrapperFactory();
+                    wrapper = wrapperFactory.createWrapper(streamInitializationNode.getJavaClassName().replace("/", "."), dependencyPaths);
+                    wrapper.setStreamType("java.io.InputStream");
+                    
+                    String getCipherImpl = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
                             "select ?cipherImpl where {\n" +
                             "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
                             "\t\t\n" +
@@ -864,17 +881,79 @@ public class AnalysisFrameAssessment {
                             "}";
                     getCipherImpl = getCipherImpl.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???ASPECT_INSTANCE???"
                             ,config.getNamingContext().getNameForObject(aspectInstance));
-                    cipherImplSoln = new AssertableSolutionSet();
+                    AssertableSolutionSet cipherImplSoln = new AssertableSolutionSet();
 
                     taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSoln);
                     cipherImpl = cipherImplSoln.getSolutions().get(0).get("cipherImpl");
                     cipherImpl = cipherImpl.replace("/", ".").replace(".class", "");
 
-                    wrapperFactory.wrapWithCipher(wrapper, cipherImpl);
+                    augmentedMethods.addAll(wrapperFactory.wrapWithCipher(wrapper, cipherImpl, taskHelper));
 
+                    if (augmentedMethods.isEmpty()) {
+                        alreadyExistingWrapper = true;
+                    }
+                    
+                    aspectUUID = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#AspectCipherDecrypt";
                     break;
-                
             }
+            
+            if (alreadyExistingWrapper) {
+                
+                String getPreviouslyAugmentedSource = "prefix IMMoRTALS_constraint: <http://darpa.mil/immortals/ontology/r2.0.0/constraint#> \n" +
+                        "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
+                        "\n" +
+                        "select ?sourceFile ?sourceCode where {\n" +
+                        "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                        "\t\t\n" +
+                        "\t\t?impacts IMMoRTALS:hasProducedSourceFile ?sourceFile .\n" +
+                        "\t\t\n" +
+                        "\t\t?sourceFile IMMoRTALS:hasFileName \"???FILE_NAME???\"\n" +
+                        "\t\t; IMMoRTALS:hasSource ?sourceCode .\n" +
+                        "\t}\n" +
+                        "}";
+                getPreviouslyAugmentedSource = getPreviouslyAugmentedSource.replace("???FILE_NAME???",
+                        "Wrapper" + wrapper.getWrappedClass().getShortName() + ".java")
+                                    .replace("???GRAPH_NAME???", taskHelper.getGraphName());
+                AssertableSolutionSet sourceSolutions = new AssertableSolutionSet();
+                
+                taskHelper.getClient().executeSelectQuery(getPreviouslyAugmentedSource, sourceSolutions);
+                
+                Solution sourceSolution = sourceSolutions.getSolutions().get(0);
+                String source = sourceSolution.get("sourceCode"); // retrieve source from ontology
+                
+
+                TriplesToPojo.SparqlPojoContext sourceFileResults = taskHelper.getObjectRepresentation(sourceSolution.get("sourceFile"),
+                        WRAPPER_SOURCE_FILE_TYPE, config);
+                
+                WrapperSourceFile sourceFile = null;
+                for (Map<String, Object> sourceFileResult : sourceFileResults) {
+                    sourceFile = (WrapperSourceFile) sourceFileResult.get("obj");
+                }
+                
+                String[] existingAugmentedMethods = sourceFile.getAugmentedMethods();
+                ArrayList<String> augmentedMethodsList = new ArrayList<>(Arrays.asList(existingAugmentedMethods));
+                
+                source = taskHelper.parseRawCode(source, wrapper.getWrappedClass().getName().replace(".", "/"),
+                        augmentedMethodsList, wrapper.getStreamType(), aspectUUID, cipherImpl);
+                sourceFile.setSource(source);
+                String[] newAugmentedMethods = new String[existingAugmentedMethods.length + augmentedMethodsList.size()];
+                
+                for (int i = 0; i < existingAugmentedMethods.length; i++) {
+                    newAugmentedMethods[i] = existingAugmentedMethods[i];
+                }
+                
+                Iterator<String> augmentedMethodsIter = augmentedMethodsList.iterator();
+                for (int i = existingAugmentedMethods.length; i < newAugmentedMethods.length; i++) {
+                    newAugmentedMethods[i] = augmentedMethodsIter.next();
+                }
+                
+                sourceFile.setAugmentedMethods(newAugmentedMethods);
+                taskHelper.getClient().addToModel(ObjectToTriples.convert(config, sourceFile), taskHelper.getGraphName());
+
+                Files.write(Paths.get(sourceFile.getFileSystemPath()), Collections.singleton(source), StandardCharsets.UTF_8);
+                return null;
+            }
+            
             
             taskHelper.getPw().println("Wrapper class created: Wrapper" + wrapper.getWrappedClass().getShortName() +
                 ". It will be placed in the specified plugin directory. Replace your stream implementation in " + initCallOwnerOwner 
@@ -884,21 +963,41 @@ public class AnalysisFrameAssessment {
             String classFileLocation = wrapperFactory.produceWrapperClassFile(wrapper);
 
             Decompiler decompiler = new Decompiler();
-            File javaSource = decompiler.decompileClassFile(classFileLocation, taskHelper.getResultsDir() 
-                    + "/Wrapper" + wrapper.getWrappedClass().getShortName() + ".java");
-            taskHelper.parseWrapperClasses(javaSource);
+            File javaSource = null;
+            String source = null;
+            //TODO check make sure this works
+            if (taskHelper.getResultsDir() == null) {
+                javaSource = decompiler.decompileClassFile(classFileLocation, 
+                        classFileLocation.substring(0, classFileLocation.lastIndexOf("/"))
+                        + "/Wrapper" + wrapper.getWrappedClass().getShortName() + ".java", false);
+                source = taskHelper.parseWrapperClasses(javaSource, aspectUUID,
+                        wrapper.getWrappedClass().getName().replace(".", "/"), augmentedMethods);
+            } else {
+                javaSource = decompiler.decompileClassFile(classFileLocation, taskHelper.getResultsDir()
+                        + "/Wrapper" + wrapper.getWrappedClass().getShortName() + ".java", true);
+                source = taskHelper.parseWrapperClasses(javaSource, aspectUUID,
+                        wrapper.getWrappedClass().getName().replace(".", "/"), augmentedMethods);
+            }
+            String[] augmentedMethodsArray = new String[augmentedMethods.size()];
+            
+            for (int i = 0; i < augmentedMethodsArray.length; i++) {
+                augmentedMethodsArray[i] = augmentedMethods.get(i);
+            }
             
             wrapperImpact.setAspectImplemented(functionalAspect.getClass());
             wrapperImpact.setInitializationNode(streamInitializationNode);
-            SourceFile producedFile = new SourceFile();
+            WrapperSourceFile producedFile = new WrapperSourceFile();
+            producedFile.setSource(source);
+            producedFile.setAugmentedMethods(augmentedMethodsArray);
             producedFile.setFileSystemPath(javaSource.getAbsolutePath().replace("\\", "/"));
-            producedFile.setRepositoryPath(javaSource.getAbsolutePath().replace("\\", "/")
-                    .replace(taskHelper.getResultsDir().replace("\\", "/"), ""));
+            
+            producedFile.setFileName(javaSource.getName());
             ProgrammingLanguage sourceLanguage = new ProgrammingLanguage();
             sourceLanguage.setLanguageName("java");
             sourceLanguage.setVersionTag("8");
             producedFile.setLanguageModel(sourceLanguage);
             wrapperImpact.setProducedSourceFile(producedFile);
+            taskHelper.getClient().addToModel(ObjectToTriples.convert(config, wrapperImpact), taskHelper.getGraphName());
         }
         return wrapperImpact;
     }

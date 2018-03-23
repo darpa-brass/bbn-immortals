@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 public class GlobalsConfig {
 
     //////// Define the static properties that other configuration files can derive their own default values from
-    static final Path staticImmortalsRoot = StaticHelper.resolveExistingDirectoryValue(
+    public static final Path staticImmortalsRoot = StaticHelper.resolveExistingDirectoryValue(
             "globals.immortalsRoot",
             StaticHelper.readResourceValue("/IMMORTALS_ROOT_PATH"));
 

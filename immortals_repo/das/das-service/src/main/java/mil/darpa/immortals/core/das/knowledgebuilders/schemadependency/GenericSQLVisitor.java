@@ -92,6 +92,7 @@ public class GenericSQLVisitor implements SelectItemVisitor, SelectVisitor, Expr
 	List<String> tables = new ArrayList<String>();
 	List<String> projection = new ArrayList<String>();
 	List<Parameter> parameters = new ArrayList<Parameter>();
+	List<LiteralReference> literalsInFilter = new ArrayList<>();
 	
 	@Override
 	public void visit(ExpressionList expressionList) {
@@ -172,6 +173,7 @@ public class GenericSQLVisitor implements SelectItemVisitor, SelectVisitor, Expr
 
 	@Override
 	public void visit(Parenthesis parenthesis) {
+		parenthesis.getExpression().accept(this);
 	}
 
 	@Override
@@ -401,8 +403,10 @@ public class GenericSQLVisitor implements SelectItemVisitor, SelectVisitor, Expr
 			}
 		}
 		
-		if (plainSelect.getWhere() != null)
+		if (plainSelect.getWhere() != null) {
+			this.literalsInFilter = new ArrayList<LiteralReference>();
 			plainSelect.getWhere().accept(this);
+		}
 	}
 
 	@Override
@@ -436,17 +440,28 @@ public class GenericSQLVisitor implements SelectItemVisitor, SelectVisitor, Expr
 	}
 	
 	public void visitBinaryExpression(BinaryExpression binaryExpression) {
+		
 		binaryExpression.getLeftExpression().accept(this);
 		binaryExpression.getRightExpression().accept(this);
 		
-		if (binaryExpression.getRightExpression().getClass().equals(JdbcParameter.class)
-				&& binaryExpression.getLeftExpression().getClass().equals(Column.class)) {
-			parameters.add(new Parameter(binaryExpression.getLeftExpression().toString(), parameters.size() + 1));
-		} else if (binaryExpression.getRightExpression().getClass().equals(Column.class)
-				&& binaryExpression.getLeftExpression().getClass().equals(JdbcParameter.class)) {
-			parameters.add(new Parameter(binaryExpression.getRightExpression().toString(), parameters.size() + 1));
+		Expression lhs = binaryExpression.getLeftExpression();
+		Expression rhs = binaryExpression.getRightExpression();
+		
+		if (rhs.getClass().equals(JdbcParameter.class)
+				&& lhs.getClass().equals(Column.class)) {
+			parameters.add(new Parameter(lhs.toString(), parameters.size() + 1));
+		} else if (rhs.getClass().equals(Column.class)
+				&& lhs.getClass().equals(JdbcParameter.class)) {
+			parameters.add(new Parameter(rhs.toString(), parameters.size() + 1));
+		}
+		
+		if (SQLParserUtilities.isLiteral(rhs) && SQLParserUtilities.isColumn(lhs)) {
+			this.literalsInFilter.add(new LiteralReference(lhs.toString(), rhs, this.literalsInFilter.size() + 1));
+		} else if (SQLParserUtilities.isColumn(rhs) && SQLParserUtilities.isLiteral(lhs)) {
+			this.literalsInFilter.add(new LiteralReference(rhs.toString(), lhs, this.literalsInFilter.size() + 1));
 		}
 	}
+	
 	
 	public List<Parameter> getParameters() {
 		
@@ -455,6 +470,10 @@ public class GenericSQLVisitor implements SelectItemVisitor, SelectVisitor, Expr
 	
 	public List<String> getProjection() {
 		return projection;
+	}
+	
+	public List<LiteralReference> getLiteralsInFilter() {
+		return literalsInFilter;
 	}
 	
 }

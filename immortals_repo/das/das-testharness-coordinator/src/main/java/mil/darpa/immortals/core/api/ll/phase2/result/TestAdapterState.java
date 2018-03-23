@@ -3,6 +3,8 @@ package mil.darpa.immortals.core.api.ll.phase2.result;
 import mil.darpa.immortals.core.api.annotations.Description;
 import mil.darpa.immortals.core.api.annotations.Result;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by awellman@bbn.com on 9/11/17.
  */
@@ -12,14 +14,16 @@ public class TestAdapterState {
 
     @Result
     @Description("Last Updated time (equivalent to Java 'System.currentTimeMillis()')")
-    public long timestamp;
-    
+    public Long timestamp;
+
     @Result
     @Description("The internal identifier used to bind this perturbation to any artifacts produced")
     public String identifier;
+
     @Result
     @Description("The state of the DAS adaptation")
     public AdaptationStateObject adaptation;
+
     @Result
     @Description("The state of the validation")
     public ValidationStateObject validation;
@@ -27,10 +31,10 @@ public class TestAdapterState {
     public TestAdapterState() {
     }
 
-    public TestAdapterState(long timestamp, String identifier, AdaptationStateObject adaptation, ValidationStateObject validation) {
+    public TestAdapterState(long timestamp, @Nonnull String identifier) {
         this.timestamp = timestamp;
         this.identifier = identifier;
-        this.adaptation = adaptation;
-        this.validation = validation;
+        this.adaptation = new AdaptationStateObject();
+        this.validation = new ValidationStateObject();
     }
 }

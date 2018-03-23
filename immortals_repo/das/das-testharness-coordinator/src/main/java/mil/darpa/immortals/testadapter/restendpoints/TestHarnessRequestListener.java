@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 @Path("")
 public class TestHarnessRequestListener {
 
-    private ImmortalsUtils.NetworkLogger logger = new ImmortalsUtils.NetworkLogger("TA", "DAS");
+    private ImmortalsUtils.NetworkLogger logger = ImmortalsUtils.getNetworkLogger("TA", "TH");
     private final TestHarnessAdapterMediator thm = TestHarnessAdapterMediator.getInstance();
 
     @POST
@@ -24,13 +24,8 @@ public class TestHarnessRequestListener {
     @Produces(MediaType.APPLICATION_JSON)
     public synchronized Response cp1(SubmissionModel submissionModel) {
         logger.logPostReceived("/action/databaseSchemaPerturbation", submissionModel);
-        // TODO: Validation
-        // TODO: Insert baseline submission model
-        if (submissionModel == null) {
-            submissionModel = new SubmissionModel();
-        }
         Response response = thm.submitSubmissionModel(submissionModel, TestHarnessAdapterMediator.ChallengeProblem.P2CP1);
-        logger.logPostReceivedAckSending("/action/databaseSchemaPerturbation", response);
+        logger.logPostReceivedAckSending("/action/databaseSchemaPerturbation", response.hasEntity() ? response.getEntity() : null);
         return response;
 
     }
@@ -43,11 +38,8 @@ public class TestHarnessRequestListener {
         logger.logPostReceived("/action/crossApplicationDependencies", submissionModel);
         // TODO: Validation
         // TODO: Insert baseline submission model
-        if (submissionModel == null) {
-            submissionModel = new SubmissionModel();
-        }
         Response response = thm.submitSubmissionModel(submissionModel, TestHarnessAdapterMediator.ChallengeProblem.P2CP2);
-        logger.logPostReceivedAckSending("/action/crossApplicationDependencies", response);
+        logger.logPostReceivedAckSending("/action/crossApplicationDependencies", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
 
@@ -59,11 +51,8 @@ public class TestHarnessRequestListener {
         logger.logPostReceived("/action/libraryEvolution", submissionModel);
         // TODO: Validation
         // TODO: Insert baseline submission model
-        if (submissionModel == null) {
-            submissionModel = new SubmissionModel();
-        }
         Response response = thm.submitSubmissionModel(submissionModel, TestHarnessAdapterMediator.ChallengeProblem.P2CP3);
-        logger.logPostReceivedAckSending("/query", response.getEntity());
+        logger.logPostReceivedAckSending("/query", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
     
@@ -73,7 +62,7 @@ public class TestHarnessRequestListener {
     public Response alive() {
         logger.logGetReceived("/alive", null);
         Response response = thm.thGetAlive();
-        logger.logGetReceivedAckSending("/alive", response.getEntity());
+        logger.logGetReceivedAckSending("/alive", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
 
@@ -83,7 +72,7 @@ public class TestHarnessRequestListener {
     public synchronized Response query() {
         logger.logGetReceived("/query", null);
         Response response = thm.thGetQuery();
-        logger.logGetReceivedAckSending("/query", response.getEntity());
+        logger.logGetReceivedAckSending("/query", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
 
@@ -94,7 +83,7 @@ public class TestHarnessRequestListener {
         // TODO: Validation
         logger.logPostReceived("/enabled", enableDas);
         Response response = thm.thPostEnabled(enableDas);
-        logger.logPostReceivedAckSending("/enabled", response.getEntity());
+        logger.logPostReceivedAckSending("/enabled", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
 }

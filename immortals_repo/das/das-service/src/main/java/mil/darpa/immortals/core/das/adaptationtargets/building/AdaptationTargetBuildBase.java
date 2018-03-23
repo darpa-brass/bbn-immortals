@@ -26,9 +26,10 @@ public class AdaptationTargetBuildBase implements AdaptationTargetInterface {
     private String executionMainMethod;
     private String buildToolPath;
     private BuildPlatform buildPlatform;
-    private String buildToolBuildParameters;
-    private String buildToolValidationParameters;
+    private String[] buildToolBuildParameters;
+    private String[] buildToolValidationParameters;
     private String buildToolTestResultsSubdirectory;
+    private String[] buildToolPublishParameters;
     private String publishGroupId;
     private String publishArtifactId;
     private String publishVersion;
@@ -40,9 +41,10 @@ public class AdaptationTargetBuildBase implements AdaptationTargetInterface {
                                      String deploymentTargetVersion, String repoLocation, String projectRepoPath,
                                      String executableFile, String buildFile, Map<String, String> deploymentFileMap,
                                      String sourceSubdirectory, String executionPackageIdentifier, String executionMainMethod,
-                                     String buildToolPath, BuildPlatform buildPlatform, String buildToolBuildParameters,
-                                     String buildToolValidationParameters, String buildToolTestResultsSubdirectory,
-                                     String publishGroupId, String publishArtifactId, String publishVersion) {
+                                     String buildToolPath, BuildPlatform buildPlatform, String[] buildToolBuildParameters,
+                                     String[] buildToolValidationParameters, String buildToolTestResultsSubdirectory,
+                                     String[] buildToolPublishParameters, String publishGroupId, String publishArtifactId,
+                                     String publishVersion) {
         this.targetIdentifier = targetIdentifier;
         this.settleTimeMS = settleTimeMS;
         this.deploymentTarget = deploymentTarget;
@@ -60,6 +62,7 @@ public class AdaptationTargetBuildBase implements AdaptationTargetInterface {
         this.buildToolBuildParameters = buildToolBuildParameters;
         this.buildToolValidationParameters = buildToolValidationParameters;
         this.buildToolTestResultsSubdirectory = buildToolTestResultsSubdirectory;
+        this.buildToolPublishParameters = buildToolPublishParameters;
         this.publishGroupId = publishGroupId;
         this.publishArtifactId = publishArtifactId;
         this.publishVersion = publishVersion;
@@ -161,16 +164,21 @@ public class AdaptationTargetBuildBase implements AdaptationTargetInterface {
     }
 
     @Override
-    public String getBuildToolBuildParameters() {
+    public String[] getBuildToolBuildParameters() {
         return buildToolBuildParameters;
     }
 
     @Override
-    public String getBuildToolValidationParameters() {
+    public String[] getBuildToolValidationParameters() {
         return buildToolValidationParameters;
     }
 
     String getBuildToolTestResultsSubdirectory() {
         return buildToolTestResultsSubdirectory;
+    }
+    
+    @Override
+    public String[] getBuildToolPublishParameters() {
+        return buildToolPublishParameters;
     }
 }

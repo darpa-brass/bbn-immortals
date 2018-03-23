@@ -10,7 +10,11 @@ class AbstractAdaptationDetails(Serializable):
 
     def __init__(self,
                  adaptationIdentifier: str = None,
-                 dasOutcome: DasOutcome = None):
+                 adaptorIdentifier: str = None,
+                 dasOutcome: DasOutcome = None,
+                 timestamp: int = None):
         super().__init__()
         self.adaptationIdentifier = adaptationIdentifier
+        self.adaptorIdentifier = adaptorIdentifier
         self.dasOutcome = dasOutcome
+        self.timestamp = timestamp

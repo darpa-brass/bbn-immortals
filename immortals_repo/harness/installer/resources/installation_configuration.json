@@ -8,7 +8,9 @@
                 "brew update"
             ],
             "packageManagerInstallationCommand": "brew install",
-            "requiredPlatformPackages": []
+            "requiredPlatformPackages": [],
+            "sudoFileLocation": null,
+            "sudoFileEnableCommands": []
         },
         "ubuntu": {
             "identifier": "ubuntu",
@@ -31,6 +33,14 @@
                 "python3-bottle",
                 "python3-cherrypy3",
                 "python3-requests"
+            ],
+            "sudoFileLocation": "/etc/init.d/immortals",
+            "sudoFileEnableCommands": [
+                "sudo chown root:root /etc/init.d/immortals",
+                "sudo chmod +x /etc/init.d/immortals",
+                "sudo update-rc.d immortals defaults",
+                "sudo update-rc.d immortals start",
+                "sudo /etc/init.d/immortals start"
             ]
         }
     },
@@ -143,28 +153,28 @@
                 "mv {tempDirectory}/apache-jena-fuseki-{version} {home}"
             ]
         },
-        {
-            "identifier": "gradle",
-            "environmentTag": "FULL",
-            "version": "3.4.1",
-            "versionExtractionCommand": "gradle --version",
-            "versionExtractionRegex": "(?=\\-*)(?<=\nGradle\\s)[0-9.]+",
-            "home": "{installationRoot}gradle",
-            "pathExports": [
-                "bin"
-            ],
-            "requiredExecutables": [
-                "bin/gradle"
-            ],
-            "homeExportVariable": "GRADLE_HOME",
-            "homeExportRequired": true,
-            "packageDependencies": [],
-            "setupCommands": [
-                "wget https://services.gradle.org/distributions/gradle-{version}-bin.zip --directory-prefix {tempDirectory}",
-                "unzip {tempDirectory}/gradle-{version}-bin.zip -d {installationRoot}",
-                "mv {installationRoot}gradle-{version} {home}"
-            ]
-        },
+//        {
+//            "identifier": "gradle",
+//            "environmentTag": "FULL",
+//            "version": "3.4.1",
+//            "versionExtractionCommand": "gradle --version",
+//            "versionExtractionRegex": "(?=\\-*)(?<=\nGradle\\s)[0-9.]+",
+//            "home": "{installationRoot}gradle",
+//            "pathExports": [
+//                "bin"
+//            ],
+//            "requiredExecutables": [
+//                "bin/gradle"
+//            ],
+//            "homeExportVariable": "GRADLE_HOME",
+//            "homeExportRequired": true,
+//            "packageDependencies": [],
+//            "setupCommands": [
+//                "wget https://services.gradle.org/distributions/gradle-{version}-bin.zip --directory-prefix {tempDirectory}",
+//                "unzip {tempDirectory}/gradle-{version}-bin.zip -d {installationRoot}",
+//                "mv {installationRoot}gradle-{version} {home}"
+//            ]
+//        },
         {
             "identifier": "maven",
             "version": "3",
@@ -186,64 +196,64 @@
             ],
             "packageDependencies": []
         },
-        {
-            "identifier": "z3",
-            "environmentTag": "DSL",
-            "version": "4.4.1",
-            "home": "{installationRoot}z3",
-            "versionExtractionCommand": "z3 --version",
-            "versionExtractionRegex": "(?<=Z3 version )[0-9.]+(?=.*)",
-            "pathExports": [
-                "bin"
-            ],
-            "requiredExecutables": [
-                "bin/z3"
-            ],
-            "homeExportRequired": false,
-            "packageDependencies": [],
-            "setupCommands": [],
-            "osx": {
-                "setupCommands": [
-                    "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-osx-10.11.zip --directory-prefix {tempDirectory}",
-                    "unzip {tempDirectory}/z3-{version}-x64-osx-10.11.zip -d {installationRoot}",
-                    "mv {installationRoot}z3-{version}-x64-osx-10.11 {home}"
-                ]
-            },
-            "linux": {
-                "ubuntu": {
-                    "setupCommands": [
-                        "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-ubuntu-14.04.zip --directory-prefix {tempDirectory}",
-                        "unzip {tempDirectory}/z3-{version}-x64-ubuntu-14.04.zip -d {installationRoot}",
-                        "mv {installationRoot}z3-{version}-x64-ubuntu-14.04 {home}"
-                    ]
-                }
-            }
-        },
-        {
-            "identifier": "stack",
-            "environmentTag": "DSL",
-            "pathExports": [],
-            "requiredExecutables": [
-                "stack"
-            ],
-            "homeExportRequired": false,
-            "packageDependencies": [],
-            "setupCommands": [],
-            "osx": {
-                "setupCommands": [
-                    "brew update",
-                    "brew install haskell-stack"
-                ]
-            },
-            "linux": {
-                "packageDependencies": [
-                    "haskell-platform"
-                ],
-                "setupCommands": [
-                    "wget -qO- https://get.haskellstack.org/ | sh"
-                ]
-            }
-        },
+//        {
+//            "identifier": "z3",
+//            "environmentTag": "DSL",
+//            "version": "4.4.1",
+//            "home": "{installationRoot}z3",
+//            "versionExtractionCommand": "z3 --version",
+//            "versionExtractionRegex": "(?<=Z3 version )[0-9.]+(?=.*)",
+//            "pathExports": [
+//                "bin"
+//            ],
+//            "requiredExecutables": [
+//                "bin/z3"
+//            ],
+//            "homeExportRequired": false,
+//            "packageDependencies": [],
+//            "setupCommands": [],
+//            "osx": {
+//                "setupCommands": [
+//                    "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-osx-10.11.zip --directory-prefix {tempDirectory}",
+//                    "unzip {tempDirectory}/z3-{version}-x64-osx-10.11.zip -d {installationRoot}",
+//                    "mv {installationRoot}z3-{version}-x64-osx-10.11 {home}"
+//                ]
+//            },
+//            "linux": {
+//                "ubuntu": {
+//                    "setupCommands": [
+//                        "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-ubuntu-14.04.zip --directory-prefix {tempDirectory}",
+//                        "unzip {tempDirectory}/z3-{version}-x64-ubuntu-14.04.zip -d {installationRoot}",
+//                        "mv {installationRoot}z3-{version}-x64-ubuntu-14.04 {home}"
+//                    ]
+//                }
+//            }
+//        },
+//        {
+//            "identifier": "stack",
+//            "environmentTag": "DSL",
+//            "pathExports": [],
+//            "requiredExecutables": [
+//                "stack"
+//            ],
+//            "homeExportRequired": false,
+//            "packageDependencies": [],
+//            "setupCommands": [],
+//            "osx": {
+//                "setupCommands": [
+//                    "brew update",
+//                    "brew install haskell-stack"
+//                ]
+//            },
+//            "linux": {
+//                "packageDependencies": [
+//                    "haskell-platform"
+//                ],
+//                "setupCommands": [
+//                    "wget -qO- https://get.haskellstack.org/ | sh"
+//                ]
+//            }
+//        },
         //        "wget https://dl.google.com/android/repository/tools_r25.2.3-linux.zip --directory-prefix {tempDirectory}",
         //        "mkdir {home}",
         //        "unzip {tempDirectory}/tools_r25.2.3-linux.zip -d {home}",
@@ -295,6 +305,10 @@
                 "git clone https://github.com/VoltDB/voltdb {home}",
                 "cd {home}",
                 "ant"
+            ],
+            "bootCommands": [
+                "echo never > /sys/kernel/mm/transparent_hugepage/enabled",
+                "echo never > /sys/kernel/mm/transparent_hugepage/defrag"
             ]
         },
         {

@@ -4,32 +4,33 @@ from typing import FrozenSet
 
 # noinspection PyPep8Naming
 class VerdictOutcome(Enum):
-    def __init__(self, description: str):
+    def __init__(self, key_idx_value: str, description: str):
+        self.key_idx_value = key_idx_value
         self.description = description  # type: str
 
-    PENDING = (
-        "The verdict outcome is pending")
+    PENDING = ("PENDING",
+               "The verdict outcome is pending")
 
-    RUNNING = (
-        "The validation is running")
+    RUNNING = ("RUNNING",
+               "The validation is running")
 
-    PASS = (
-        "See LL Evaluation Methodology")
+    PASS = ("PASS",
+            "See LL Evaluation Methodology")
 
-    DEGRADED = (
-        "See LL Evaluation Methodology")
+    DEGRADED = ("DEGRADED",
+                "See LL Evaluation Methodology")
 
-    FAIL = (
-        "See LL Evaluation Methodology")
+    FAIL = ("FAIL",
+            "See LL Evaluation Methodology")
 
-    INCONCLUSIVE = (
-        "See LL Evaluation Methodology")
+    INCONCLUSIVE = ("INCONCLUSIVE",
+                    "See LL Evaluation Methodology")
 
-    INAPPLICABLE = (
-        "See LL Evaluation Methodology")
+    INAPPLICABLE = ("INAPPLICABLE",
+                    "See LL Evaluation Methodology")
 
-    ERROR = (
-        "See LL Evaluation Methodology")
+    ERROR = ("ERROR",
+             "See LL Evaluation Methodology")
 
     @classmethod
     def all_description(cls) -> FrozenSet[str]:

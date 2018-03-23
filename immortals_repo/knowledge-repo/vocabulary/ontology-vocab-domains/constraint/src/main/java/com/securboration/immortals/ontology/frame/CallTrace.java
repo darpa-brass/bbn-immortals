@@ -16,8 +16,6 @@ public class CallTrace {
         this.setCallStepUUIDs(new String[]{});
     }
     
-    private RepairedCallTrace repairedCallTrace;
-    
     private DataflowNode[] callSteps;
     
     private String[] callStepUUIDs;
@@ -37,12 +35,5 @@ public class CallTrace {
     public void setCallStepUUIDs(String[] callStepUUIDs) {
         this.callStepUUIDs = callStepUUIDs;
     }
-
-    public RepairedCallTrace getRepairedCallTrace() {
-        return repairedCallTrace;
-    }
-
-    public void setRepairedCallTrace(RepairedCallTrace repairedCallTrace) {
-        this.repairedCallTrace = repairedCallTrace;
-    }
+    
 }

@@ -4,83 +4,87 @@ from typing import FrozenSet
 
 # noinspection PyPep8Naming
 class DatabaseColumns(Enum):
-    def __init__(self, castorDefinition: str, columnName: str, description: str, takDefinition: str):
+    def __init__(self, key_idx_value: str, castorDefinition: str, columnName: str, description: str, takDefinition: str):
+        self.key_idx_value = key_idx_value
         self.castorDefinition = castorDefinition  # type: str
+        self.key_idx_value = key_idx_value
         self.columnName = columnName  # type: str
+        self.key_idx_value = key_idx_value
         self.description = description  # type: str
+        self.key_idx_value = key_idx_value
         self.takDefinition = takDefinition  # type: str
 
-    CotEvent_SourceId = (
-        "varchar(16) not null",
-        "source_id",
+    CotEvent_SourceId = ("CotEvent_SourceId",
         "The foreign key for the source the event is associated with",
-        "integer not null")
+        "source_id",
+        "integer not null",
+        "varchar(16) not null")
 
-    CotEvent_CotType = (
-        "varchar(16) not null",
-        "cot_type",
+    CotEvent_CotType = ("CotEvent_CotType",
         "The CoT event type",
-        "character varying not null")
+        "cot_type",
+        "character varying not null",
+        "varchar(16) not null")
 
-    CotEvent_How = (
-        "varchar(16) not null",
-        "how",
+    CotEvent_How = ("CotEvent_How",
         "The standardized source type of the message",
-        "character varying not null")
+        "how",
+        "character varying not null",
+        "varchar(16) not null")
 
-    CotEvent_Detail = (
-        "varchar(400) not null",
-        "detail",
+    CotEvent_Detail = ("CotEvent_Detail",
         "The detail field of the CoT event",
-        "text not null")
+        "detail",
+        "text not null",
+        "varchar(400) not null")
 
-    CotEvent_ServerTime = (
-        "varchar(16) not null",
-        "servertime",
+    CotEvent_ServerTime = ("CotEvent_ServerTime",
         "The timestamp for the event",
-        "bigint not null DEFAULT cast (to_char(chunk_time(current_timestamp, '5 minutes'), 'YYYYMMDDHH24MI') as bigint)")
+        "servertime",
+        "bigint not null",
+        "varchar(16) not null")
 
-    Position_PointHae = (
-        "varchar(16) not null",
-        "point_hae",
+    Position_PointHae = ("Position_PointHae",
         "Altitude",
-        "integer not null")
+        "point_hae",
+        "integer not null",
+        "varchar(16) not null")
 
-    Position_PointCE = (
-        "varchar(16) not null",
-        "point_ce",
+    Position_PointCE = ("Position_PointCE",
         "Circular Error",
-        "integer not null")
+        "point_ce",
+        "integer not null",
+        "varchar(16) not null")
 
-    Position_PointLE = (
-        "varchar(16) not null",
-        "point_le",
+    Position_PointLE = ("Position_PointLE",
         "Linear Error",
-        "integer not null")
+        "point_le",
+        "integer not null",
+        "varchar(16) not null")
 
-    Position_TileX = (
-        "varchar(16) not null",
-        "tileX",
+    Position_TileX = ("Position_TileX",
         "The X tile the position is within",
-        "integer not null")
+        "tileX",
+        "integer not null",
+        "varchar(16) not null")
 
-    Position_TileY = (
-        "varchar(16) not null",
-        "tileY",
+    Position_TileY = ("Position_TileY",
         "The Y tile the position is within",
-        "integer not null")
+        "tileY",
+        "integer not null",
+        "varchar(16) not null")
 
-    Position_Longitude = (
-        "varchar(24) not null",
-        "longitude",
+    Position_Longitude = ("Position_Longitude",
         "The longitude of the position",
-        "double precision not null")
+        "longitude",
+        "double precision not null",
+        "varchar(24) not null")
 
-    Position_Latitude = (
-        "varchar(24) not null",
-        "latitude",
+    Position_Latitude = ("Position_Latitude",
         "The latitude of the position",
-        "double precision not null")
+        "latitude",
+        "double precision not null",
+        "varchar(24) not null")
 
     @classmethod
     def all_castorDefinition(cls) -> FrozenSet[str]:

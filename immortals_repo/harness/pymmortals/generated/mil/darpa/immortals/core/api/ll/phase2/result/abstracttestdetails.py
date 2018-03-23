@@ -11,8 +11,10 @@ class AbstractTestDetails(Serializable):
     def __init__(self,
                  adaptationIdentifier: str = None,
                  currentState: TestOutcome = None,
-                 testIdentifier: str = None):
+                 testIdentifier: str = None,
+                 timestamp: int = None):
         super().__init__()
         self.adaptationIdentifier = adaptationIdentifier
         self.currentState = currentState
         self.testIdentifier = testIdentifier
+        self.timestamp = timestamp

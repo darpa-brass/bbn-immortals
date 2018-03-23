@@ -402,11 +402,8 @@ def resolve_platform():
             platform = 'osx'
 
     elif sys.platform == 'linux2' or sys.platform == 'linux':
-        if "Ubuntu" in subprocess.check_output(['uname', '-v']).decode():
-            if subprocess.call(['which', 'apt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) != 0:
-                raise Exception('Ubuntu detected, but could not find apt!')
-            else:
-                platform = 'ubuntu'
+        if subprocess.call(['which', 'apt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0:
+            platform = 'ubuntu'
 
     if platform is None:
         raise Exception('Could not determine distribution of platform  "' + sys.platform + '"!')

@@ -35,10 +35,11 @@ public class DataManager {
 	private static final String USER = "immortals";
 	private static final String PASSWORD = "immortals";
 	private static final int MAXIMUM_NUMBER_CONNECTIONS = 4;
+	private static final String REPORTING_SCHEMA = "takrpt";
 
-	private static final String insertCotEvent = "INSERT INTO BASELINE.COT_EVENT(source_id, cot_type, how, detail) " + 
-			"SELECT id, ?, ?, ? from baseline.source where name = ?";
-	private static final String insertCotEventPosition = "INSERT INTO BASELINE.COT_EVENT_POSITION (cot_event_id, point_hae, point_ce, point_le, longitude, latitude) VALUES (?,?,?,?,?,?)";
+	private static final String insertCotEvent = "INSERT INTO tak.COT_EVENT(source_id, cot_type, how, detail) " + 
+			"SELECT id, ?, ?, ? from tak.source where name = ?";
+	private static final String insertCotEventPosition = "INSERT INTO tak.COT_EVENT_POSITION (cot_event_id, point_hae, point_ce, point_le, longitude, latitude) VALUES (?,?,?,?,?,?)";
 	private static final String DEFAULT_DETAIL_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><detail/>";
 
 	static {
@@ -50,6 +51,7 @@ public class DataManager {
 		dataSource.setUser(USER);
 		dataSource.setPassword(PASSWORD);
 		dataSource.setMaxConnections(MAXIMUM_NUMBER_CONNECTIONS);
+		dataSource.setCurrentSchema(REPORTING_SCHEMA);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {

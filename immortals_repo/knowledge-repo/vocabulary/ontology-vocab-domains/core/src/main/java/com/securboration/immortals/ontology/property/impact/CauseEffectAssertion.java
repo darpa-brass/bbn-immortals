@@ -26,7 +26,7 @@ public class CauseEffectAssertion {
      */
     @com.securboration.immortals.ontology.annotations.RdfsComment(
         "The site to which the assertion binds")
-    private AssertionBindingSite assertionBindingSite;
+    private AssertionBindingSite[] assertionBindingSites;
     
     /**
      * The applicable data type to which the assertion binds
@@ -96,16 +96,11 @@ public class CauseEffectAssertion {
         this.applicableDataType = applicableDataType;
     }
 
-
-    
-    public AssertionBindingSite getAssertionBindingSite() {
-        return assertionBindingSite;
+    public AssertionBindingSite[] getAssertionBindingSites() {
+        return assertionBindingSites;
     }
 
-
-    
-    public void setAssertionBindingSite(AssertionBindingSite assertionBindingSite) {
-        this.assertionBindingSite = assertionBindingSite;
+    public void setAssertionBindingSites(AssertionBindingSite[] assertionBindingSites) {
+        this.assertionBindingSites = assertionBindingSites;
     }
-
 }

@@ -19,7 +19,7 @@ import java.util.LinkedList;
 @Path("/dasListener")
 public class DasRequestListener {
 
-    private ImmortalsUtils.NetworkLogger logger = new ImmortalsUtils.NetworkLogger("TA", "DAS");
+    private ImmortalsUtils.NetworkLogger logger = ImmortalsUtils.getNetworkLogger("TA", "DAS");
     private final TestHarnessAdapterMediator thm = TestHarnessAdapterMediator.getInstance();
 
     @POST
@@ -30,19 +30,21 @@ public class DasRequestListener {
         // TODO: Validation
         logger.logPostReceived("/dasListener/updateAdaptationStatus", adaptationDetails);
         Response response = thm.updateAdaptationStatus(adaptationDetails);
-        logger.logPostReceivedAckSending("/dasListener/updateAdaptationStatus", response);
+        logger.logPostReceivedAckSending("/dasListener/updateAdaptationStatus", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
 
     @POST
-    @Path("/updateDeploymentTestStatus")
+    @Path("/updateValidationStatus")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateDeploymentTestStatus(LinkedList<TestDetails> testDetails) {
+    public Response updateValidationStatus(TestDetails testDetails) {
         // TODO: Validation
-        logger.logPostReceived("/dasListener/updateDeploymentTestStatus", testDetails);
-        Response response = thm.updateDeploymentTestStatus(testDetails);
-        logger.logPostReceivedAckSending("/dasListener/updateDeploymentTestStatus", response);
+        logger.logPostReceived("/dasListener/updateValidationStatus", testDetails);
+        LinkedList<TestDetails> td = new LinkedList<>();
+        td.add(testDetails);
+        Response response = thm.updateDeploymentTestStatus(td);
+        logger.logPostReceivedAckSending("/dasListener/updateValidationStatus", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
 }

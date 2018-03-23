@@ -31,14 +31,7 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.AnnotationNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.ParameterNode;
+import org.objectweb.asm.tree.*;
 import org.w3c.dom.Document;
 
 import com.securboration.immortals.instantiation.bytecode.SourceFinder.SourceInfo;
@@ -477,26 +470,6 @@ public class JarIngestor {
         
         return aclass;
     }
-
-    public AClass processClass(String hash,ClassNode cn, HashMap<String, UniqueMethodCall> pointers){
-
-        AClass aclass = new AClass();
-        addAnnotationModel(aclass,cn.visibleAnnotations);
-        addAnnotationModel(aclass,cn.invisibleAnnotations);
-        aclass.setBytecodePointer(hash);
-        aclass.setClassName(cn.name);
-        aclass.setModifiers(Modifier.getModifiers(cn.access));
-
-        SourceInfo info = sourceFinder.getSourceInfo(cn.name);
-        if(info != null){
-            aclass.setClassUrl(info.getRepoUrl());
-        } else {
-
-            logger.info("no class info available for " + cn.name);
-        }
-        analyze(cn,aclass, pointers);
-        return aclass;
-    }
     
     private static void addAnnotationModel(
             ClassStructure c,
@@ -630,8 +603,10 @@ public class JarIngestor {
         }
         
         List<AMethod> methods = new ArrayList<>();
-        List<Instruction> interestingInstructions = new ArrayList<>();
+        
         for(MethodNode mn:cn.methods){
+            
+            List<Instruction> interestingInstructions = new ArrayList<>();
             int methodCallOrder = 1;
             AbstractInsnNode[] instructions = mn.instructions.toArray();
 
@@ -653,10 +628,13 @@ public class JarIngestor {
                 } else if (ain.getType() == AbstractInsnNode.METHOD_INSN) {
 
                     MethodInsnNode methodInsnNode = (MethodInsnNode) ain;
+                    int lineNumber = getLineNumber(methodInsnNode);
+                    
                     MethodCall methodCall = new MethodCall();
                     
                     methodCall.setCalledMethodDesc(methodInsnNode.desc);
                     methodCall.setCalledMethodName(methodInsnNode.name);
+                    methodCall.setLineNumber(lineNumber);
                     methodCall.setOrder(methodCallOrder);
                     methodCallOrder++;
 
@@ -688,6 +666,29 @@ public class JarIngestor {
         classModel.setMethods(methods.toArray(new AMethod[]{}));
         
 //        System.out.printf("\t[%d] fields and [%d] methods for [%s]\n", cn.fields.size(),cn.methods.size(),cn.name);
+    }
+
+    private static int getLineNumber(AbstractInsnNode node) {
+        AbstractInsnNode currentNode = node;
+
+        // First search backwards
+        while (currentNode != null) {
+            if (currentNode.getType() == AbstractInsnNode.LINE) {
+                return ((LineNumberNode) currentNode).line;
+            }
+            currentNode = currentNode.getPrevious();
+        }
+
+        // Then search forwards
+        currentNode = node;
+        while (currentNode != null) {
+            if (currentNode.getType() == AbstractInsnNode.LINE) {
+                return ((LineNumberNode) currentNode).line;
+            }
+            currentNode = currentNode.getNext();
+        }
+
+        return -1;
     }
 
     private static void analyze(ClassNode cn,AClass classModel, HashMap<String, UniqueMethodCall> pointers){
@@ -974,109 +975,6 @@ public class JarIngestor {
                             file.getParentFile().mkdirs();
                             file.createNewFile();
                             
-                            FileWriter fw = new FileWriter(file);
-                            fw.write(new String(jarContent));
-                            fw.flush();
-                            fw.close();
-                        } else {
-
-                            element.setName(jarEntry.getName());
-                            element.setHash(hash(jarContent));
-                            if (INCLUDE_BINARY) {
-                                element.setBinaryForm(jarContent);
-                            }
-
-                            resources.add(element);
-                        }
-                    }
-                }
-            }
-        }
-        
-        artifact.setJarContents(resources.toArray(new ClasspathElement[]{}));
-    }
-
-    private void openJar(
-            InputStream jarWithDependenciesPath,
-            JarArtifact artifact,
-            HashMap<String, UniqueMethodCall> pointers
-            
-    ) throws IOException{
-        log("indexing jar...\n", jarWithDependenciesPath);
-
-        List<ClasspathElement> resources = new ArrayList<>();
-
-        try(JarArchiveInputStream inJar = new JarArchiveInputStream(jarWithDependenciesPath))
-        {
-            final int MAX_SIZE =
-                    1024*1024//1MiB
-                            *64;
-
-            byte[] buffer = new byte[MAX_SIZE];
-
-            // extract everything from the jar
-            boolean stop = false;
-            while (!stop) {
-                JarArchiveEntry jarEntry = inJar.getNextJarEntry();
-
-                if (jarEntry == null) {
-                    stop = true;
-                } else {
-                    if (jarEntry.getSize() > MAX_SIZE) {
-                        throw new RuntimeException(
-                                "jar entry too large, > " + MAX_SIZE);
-                    } else if (jarEntry.isDirectory()) {
-                        // do nothing, the entry is not a file
-                    } else if (jarEntry.isUnixSymlink()) {
-                        // do nothing, the entry is not a file
-                    } else {
-
-                        final ClasspathElement element;
-
-                        final int length = IOUtils.read(inJar, buffer);
-                        byte[] jarContent = new byte[length];
-
-                        System.arraycopy(buffer, 0, jarContent, 0, length);
-
-                        if(jarEntry.getName().endsWith(".jar")) {
-                            log("found a nested jar: " + jarEntry.getName());
-
-                            JarArtifact j = createNestedJar(artifact);
-
-                            //it's a nested jar, recurse
-                            openJar(new ByteArrayInputStream(jarContent),j, pointers);
-
-                            element = j;
-                        } else if (jarEntry.getName().endsWith(".class")) {
-                            //it's a class
-
-                            AClass aClass =
-                                    processClass(
-                                            hash(jarContent),
-                                            getClassNode(jarContent), pointers);
-
-                            setVersionInfo(
-                                    jarContent,
-                                    aClass
-                            );//TODO
-
-                            ClassArtifact c = new ClassArtifact();
-                            c.setClassModel(aClass);
-
-                            element = c;
-                        } else {
-                            //it's a resource
-
-                            element = new ClasspathResource();
-                        }
-
-                        // Embedded model, print and continue processing
-                        if (jarEntry.getName().endsWith(".ttl")) {
-                            // TODO probably not safe to not check this...
-                            File file = new File(sourceFinder.getProjectRoot() + "/embeddedModels/" + jarEntry.getName());
-                            file.getParentFile().mkdirs();
-                            file.createNewFile();
-
                             FileWriter fw = new FileWriter(file);
                             fw.write(new String(jarContent));
                             fw.flush();

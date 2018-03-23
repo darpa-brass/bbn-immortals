@@ -4,28 +4,29 @@ from typing import FrozenSet
 
 # noinspection PyPep8Naming
 class DasOutcome(Enum):
-    def __init__(self, description: str):
+    def __init__(self, key_idx_value: str, description: str):
+        self.key_idx_value = key_idx_value
         self.description = description  # type: str
 
-    PENDING = (
+    PENDING = ("PENDING",
         "DAS execution is pending (non-terminal)")
 
-    RUNNING = (
+    RUNNING = ("RUNNING",
         "DAS is executing analysis and adaptation (non-terminal)")
 
-    NOT_APPLICABLE = (
+    NOT_APPLICABLE = ("NOT_APPLICABLE",
         "Baseline Submission - No DAS needed")
 
-    NOT_POSSIBLE = (
+    NOT_POSSIBLE = ("NOT_POSSIBLE",
         "An invalid perturbation has been submitted")
 
-    SUCCESS = (
+    SUCCESS = ("SUCCESS",
         "Adaptation Successful")
 
-    FAIL = (
+    FAIL = ("FAIL",
         "Adaptation attempted but failed adaptation module validation")
 
-    ERROR = (
+    ERROR = ("ERROR",
         "An unexpected error has occured")
 
     @classmethod

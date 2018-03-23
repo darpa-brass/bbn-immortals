@@ -9,6 +9,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
 import com.securboration.immortals.instantiation.annotationparser.bytecode.BytecodeHelper;
 import com.securboration.immortals.instantiation.annotationparser.traversal.AnnotationParser;
 import com.securboration.immortals.instantiation.annotationparser.traversal.JarTraverser;
@@ -70,7 +72,8 @@ public class ProjectToTriplesMain {
 		return "Hello, world!";
 	}
 	
-	public String gradleDataToTriples(GradleData gd, GradleTaskHelper taskHelper, ArrayList<String> includedLibs) throws Exception{
+	public String gradleDataToTriples(GradleData gd, GradleTaskHelper taskHelper, ArrayList<String> includedLibs,
+                                      boolean completeAnalysis) throws Exception{
 		String uuid = getUUID();
 		o2tc = new ObjectToTriplesConfiguration("r2.0.0");
 		JavaProject x = new JavaProject();
@@ -119,9 +122,8 @@ public class ProjectToTriplesMain {
 		NamedClasspath gpc;
 		
 		JarArtifact jal;
-        String completeAnalysis = String.valueOf(gd.getProperty("completeAnalysis"));
 		
-        if (!Boolean.parseBoolean(completeAnalysis)) {
+        if (!completeAnalysis) {
 
             HashSet<String> defaultClassPaths = new HashSet<>();
             defaultClassPaths.add(COMPILE_CLASSPATH_NAME);
@@ -153,7 +155,7 @@ public class ProjectToTriplesMain {
 			gpc = new NamedClasspath();
 			// Add all methods on this classpath to cache
 			for (String path : new HashSet<>(gd.getClassFilePaths())) {
-				ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration(gd.getImmortalsVersion());
+				ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration("r2.0.0");
 				AnnotationParser annotationParser = new AnnotationParser(config, neededClassPaths);
 				
 				CompiledJavaSourceFile sourceFile = processClassFileFromString(path, taskHelper, String.valueOf(gd.getProperty("vcsAnchor")), gd);
@@ -177,7 +179,7 @@ public class ProjectToTriplesMain {
 				}
 			}
 			for (String path : jarPath) {
-				ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration(gd.getImmortalsVersion());
+				ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration("r2.0.0");
 				AnnotationParser annotationParser = new AnnotationParser(config, neededClassPaths);
 				// Check if we have already processed this file
 				if (elementPathList.add(path)) {
@@ -283,6 +285,12 @@ public class ProjectToTriplesMain {
 		x.setCompiledSourceHash(compiledSourcesHash.toArray(new String[compiledSourcesHash.size()]));
 		x.setUuid(uuid);
 		x.setBuildScript(buildScript);
+		BytecodeArtifactCoordinate projectCoordinate= new BytecodeArtifactCoordinate();
+		projectCoordinate.setGroupId(gd.getGroup());
+		projectCoordinate.setArtifactId(gd.getArtifact());
+		projectCoordinate.setVersion(gd.getVersion());
+		
+		x.setCoordinate(projectCoordinate);
 		Model m = ObjectToTriples.convert(o2tc, x);
 		return OntologyHelper.serializeModel(m, "Turtle", false);
 	}

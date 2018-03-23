@@ -82,7 +82,7 @@ public class ConstraintAssessment {
                         "\t\n" +
                         "    graph <http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
                         " \n" +
-                        "\t\t  <???CONSTRAINT???> IMMoRTALS:hasAssertionBindingSite ?bindingSite .\n" +
+                        "\t\t  <???CONSTRAINT???> IMMoRTALS:hasAssertionBindingSites ?bindingSite .\n" +
                         "\t\t  \n" +
                         "\t\t  ?bindingSite IMMoRTALS:hasDest ?dest\n" +
                         "\t\t  ; IMMoRTALS:hasSrc ?src .\n" +

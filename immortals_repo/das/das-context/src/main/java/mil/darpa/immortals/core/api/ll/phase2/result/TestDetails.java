@@ -17,7 +17,7 @@ import java.util.LinkedList;
 public class TestDetails extends AbstractTestDetails {
 
     private static transient Gson gson = new Gson();
-    
+
     @Description("Messages indicating the reasons for failure")
     public LinkedList<String> errorMessages;
     @Description("Messages indicating the reasons for success")
@@ -26,10 +26,16 @@ public class TestDetails extends AbstractTestDetails {
     public TestDetails() {
     }
 
-    public TestDetails(@Nonnull String testIdentifier, @Nonnull TestOutcome currentState, @Nonnull String adaptationIdentifier, @Nullable LinkedList<String> errorMessages, @Nullable LinkedList<String> detailMessages) {
+    public TestDetails(@Nonnull String testIdentifier, @Nonnull TestOutcome currentState, @Nonnull String adaptationIdentifier) {
         super(testIdentifier, currentState, adaptationIdentifier);
-        this.errorMessages = (errorMessages == null ? new LinkedList<>() : new LinkedList<>(errorMessages));
-        this.detailMessages = (detailMessages == null ? new LinkedList<>() : new LinkedList<>(detailMessages));
+        this.errorMessages = new LinkedList<>();
+        this.detailMessages = new LinkedList<>();
+    }
+
+    public TestDetails(@Nonnull String testIdentifier, @Nonnull TestOutcome currentState, @Nonnull String adaptationIdentifier, @Nonnull LinkedList<String> errorMessages, @Nonnull LinkedList<String> detailMessages) {
+        super(testIdentifier, currentState, adaptationIdentifier);
+        this.errorMessages = new LinkedList<>(errorMessages);
+        this.detailMessages = new LinkedList<>(detailMessages);
     }
 
     public String toString() {
@@ -43,5 +49,66 @@ public class TestDetails extends AbstractTestDetails {
      */
     public TestDetails clone() {
         return new TestDetails(testIdentifier, currentState, adaptationIdentifier, errorMessages, detailMessages);
+    }
+
+    private TestDetails duplicate() {
+        return new TestDetails(testIdentifier, currentState, adaptationIdentifier, errorMessages, detailMessages);
+    }
+    
+    public  synchronized TestDetails produceUpdate(@Nonnull TestOutcome currentState) {
+        TestDetails td = duplicate();
+        td.currentState = currentState;
+        return td;
+    }
+
+    public synchronized TestDetails produceUpdate(@Nonnull TestOutcome currentState, @Nullable LinkedList<String> errorMessages, @Nullable LinkedList<String> detailMessages) {
+        TestDetails ad = duplicate();
+        ad.currentState = currentState;
+        if (errorMessages != null) {
+            ad.errorMessages.addAll(errorMessages);
+        }
+        if (detailMessages != null) {
+            ad.detailMessages.addAll(detailMessages);
+        }
+        return ad;
+    }
+
+
+    public synchronized TestDetails produceUpdate(@Nonnull TestOutcome currentState, @Nullable LinkedList<String> errorMessages, @Nullable String detailMessage) {
+        TestDetails ad = duplicate();
+        ad.currentState = currentState;
+        if (errorMessages != null) {
+            ad.errorMessages.addAll(errorMessages);
+        }
+        if (detailMessage != null) {
+            ad.detailMessages.add(detailMessage);
+        }
+        return ad;
+    }
+
+
+    public synchronized TestDetails produceUpdate(@Nonnull TestOutcome currentState, @Nullable String errorMessage, @Nullable LinkedList<String> detailMessages) {
+        TestDetails ad = duplicate();
+        ad.currentState = currentState;
+        if (errorMessage != null) {
+            ad.errorMessages.add(errorMessage);
+        }
+        if (detailMessages != null) {
+            ad.detailMessages.addAll(detailMessages);
+        }
+        return ad;
+    }
+
+
+    public synchronized TestDetails produceUpdate(@Nonnull TestOutcome currentState, @Nullable String errorMessage, @Nullable String detailMessage) {
+        TestDetails ad = duplicate();
+        ad.currentState = currentState;
+        if (errorMessage != null) {
+            ad.errorMessages.add(errorMessage);
+        }
+        if (detailMessage != null) {
+            ad.detailMessages.add(detailMessage);
+        }
+        return ad;
     }
 }

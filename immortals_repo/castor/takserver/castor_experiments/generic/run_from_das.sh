@@ -7,8 +7,9 @@ NEG_EXAMPLES="${CASTOR_FOLDER}/negative_data.csv"
 DDL="${CASTOR_FOLDER}/ddl.sql"
 PARAMETERS="${CASTOR_FOLDER}/parameters.json"
 
-#rm "${CASTOR_FOLDER}/definition.txt"
-#rm "${CASTOR_FOLDER}/out.txt"
+NEWEXT=`cat /dev/urandom | tr -cd 'a-f0-9' | head -c 8`
+[ -f "${CASTOR_FOLDER}/definition.txt" ] && mv "${CASTOR_FOLDER}/definition.txt" "${CASTOR_FOLDER}/definition.${NEWEXT}"
+[ -f "${CASTOR_FOLDER}/out.txt" ] && mv "${CASTOR_FOLDER}/out.txt" "${CASTOR_FOLDER}/out.${NEWEXT}"
 
 echo "Castor submission folder: ${CASTOR_FOLDER}"
 echo "VoltDB Home: ${VOLTDB_HOME}"

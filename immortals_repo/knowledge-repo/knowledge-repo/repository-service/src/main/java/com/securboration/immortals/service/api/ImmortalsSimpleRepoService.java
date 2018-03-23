@@ -130,7 +130,7 @@ public class ImmortalsSimpleRepoService {
         
         JarIngestor.ingest(repository, jarBytes.toByteArray(), properties.getImmortalsNs(), version, graphName, ".ttl");
         
-        {//trigger the inferencing engine (adds new triples to graph)
+        {
             FusekiClient client = repository.getFusekiClient();
             RatiocinationEngine engine = 
                     new RatiocinationEngine(client,graphName);
@@ -142,10 +142,8 @@ public class ImmortalsSimpleRepoService {
         
         {//trigger the krgp analysis (adds new triples to graph)
             ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration("r2.0.0");
-            GradleTaskHelper taskHelper = new GradleTaskHelper(repository.getFusekiClient(), graphName, path, null);
-            String constraintLogPath = Helper.getLogPath(path, GradleTaskHelper.TaskType.CONSTRAINT);
-            new File(constraintLogPath).createNewFile();
-            taskHelper.setPw((new PrintWriter(new FileOutputStream(constraintLogPath), true)));
+            GradleTaskHelper taskHelper = new GradleTaskHelper(repository.getFusekiClient(), graphName);
+            taskHelper.setPw(new PrintWriter(System.out));
             ConstraintAssessmentReport assessmentReport = ConstraintAssessment.constraintAnalysis(
                     taskHelper, config, Helper.getDependencies(taskHelper));
             
@@ -153,7 +151,6 @@ public class ImmortalsSimpleRepoService {
             m.add(ObjectToTriples.convert(config, assessmentReport));
             
             repository.appendToGraph(m , graphName);
-            
         }
         
         return graphName;
