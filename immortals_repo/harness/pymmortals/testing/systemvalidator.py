@@ -63,7 +63,7 @@ class SystemValidator:
             results.check_returncode()
 
             cwd = os.path.join(ir, 'das/das-service')
-            results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar')],
+            results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar'), '--analyze'],
                            cwd=cwd,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             results.check_returncode()
 

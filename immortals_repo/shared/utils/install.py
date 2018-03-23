@@ -314,6 +314,7 @@ class ImmortalsRootDeploymentTester:
 
 
 def main():
+    global _ll_mode
     args = parser.parse_args()
     tester = None
 
