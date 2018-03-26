@@ -138,20 +138,9 @@ def install(environment_tags, install_dir):
             platform.packageManagerInstallationCommand + ' ' + ' '.join(platform.requiredPlatformPackages)
         )
 
-    boot_lines = None
-    all_app_boot_lines = list()
+    boot_lines = list()
 
     all_app_setup_lines = list()
-
-    if platform is not None and platform.sudoFileLocation is not None:
-        boot_lines = list()
-        boot_lines.append('')
-        boot_lines.append('# Add flags that must be set at boot and enable them to load')
-        boot_lines.append('if [ ! -f "' + platform.sudoFileLocation + '" ];then')
-        boot_lines.append("    sudo bash -c 'echo \"#!/usr/bin/env bash\" > \"" + platform.sudoFileLocation + "\"'")
-        boot_lines.append("    sudo bash -c 'echo \"\" > \"" + platform.sudoFileLocation + "\"'")
-        boot_lines.append('fi')
-        boot_lines.append('')
 
     for app in applications:
         if app.environmentTag.name in all_environment_tags:
@@ -165,22 +154,9 @@ def install(environment_tags, install_dir):
             init_lines += app.get_initialization_commands()
             init_lines.append('')
 
-            all_app_boot_lines += app.get_superuser_boot_commands()
-            if len(all_app_boot_lines) > 0 and boot_lines is None:
-                raise Exception("Boot lines specified even though no boot file is set for the system!")
+            boot_lines += app.get_superuser_setup_commands()
 
     master_setup_lines.append('')
-
-    # Add boot lines earlier since they need sudo
-    for boot_line in all_app_boot_lines:  # type: str
-        boot_lines.append("sudo bash -c 'echo \"" + boot_line + "\" >> \"" + platform.sudoFileLocation + "\"'")
-
-    boot_lines.append('')
-    if platform.sudoFileEnableCommands is not None:
-        for boot_line in platform.sudoFileEnableCommands:
-            boot_lines.append(boot_line)
-
-        boot_lines.append('')
 
     master_setup_lines += boot_lines
     master_setup_lines.append("")

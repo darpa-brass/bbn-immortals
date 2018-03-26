@@ -8,9 +8,7 @@
                 "brew update"
             ],
             "packageManagerInstallationCommand": "brew install",
-            "requiredPlatformPackages": [],
-            "sudoFileLocation": null,
-            "sudoFileEnableCommands": []
+            "requiredPlatformPackages": []
         },
         "ubuntu": {
             "identifier": "ubuntu",
@@ -33,14 +31,6 @@
                 "python3-bottle",
                 "python3-cherrypy3",
                 "python3-requests"
-            ],
-            "sudoFileLocation": "/etc/init.d/immortals",
-            "sudoFileEnableCommands": [
-                "sudo chown root:root /etc/init.d/immortals",
-                "sudo chmod +x /etc/init.d/immortals",
-                "sudo update-rc.d immortals defaults",
-                "sudo update-rc.d immortals start",
-                "sudo /etc/init.d/immortals start"
             ]
         }
     },
@@ -306,9 +296,11 @@
                 "cd {home}",
                 "ant"
             ],
-            "bootCommands": [
-                "echo never > /sys/kernel/mm/transparent_hugepage/enabled",
-                "echo never > /sys/kernel/mm/transparent_hugepage/defrag"
+            "sudoSetupCommands": [
+                "sudo echo -e \"[Unit]\nDescription=Disable Transparent Huge Pages (THP)\n\n[Service]\nType=simple\nExecStart=/bin/sh -c \\\"echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled && echo 'never' > /sys/kernel/mm/transparent_hugepage/defrag\\\"\n\n[Install]\nWantedBy=multi-user.target\" | sudo tee /etc/systemd/system/disable-thp.service",
+                "sudo systemctl daemon-reload",
+                "sudo systemctl start disable-thp",
+                "sudo systemctl enable disable-thp"
             ]
         },
         {

@@ -59,8 +59,6 @@ class TargetInstallationPlatform:
     :type packageManagerInitCommands: list[str]
     :type packageManagerInstallationCommand: str
     :type requiredPlatformPackages: list[str]
-    :type sudoFileLocation: str
-    :type sudoFileEnableCommands: list[str]
     """
 
     @classmethod
@@ -68,21 +66,17 @@ class TargetInstallationPlatform:
         return cls(**d)
 
     def __init__(self, identifier, packageManagerInitCommands, packageManagerInstallationCommand,
-                 requiredPlatformPackages, sudoFileLocation, sudoFileEnableCommands):
+                 requiredPlatformPackages):
         """
         :type identifier: str
         :type packageManagerInitCommands: list[str]
         :type packageManagerInstallationCommand: str
         :type requiredPlatformPackages: list[str]
-        :type sudoFileLocation: str
-        :type sudoFileEnableCommands: list[str]
         """
         self.identifier = identifier
         self.packageManagerInitCommands = packageManagerInitCommands
         self.packageManagerInstallationCommand = packageManagerInstallationCommand
         self.requiredPlatformPackages = requiredPlatformPackages
-        self.sudoFileLocation = sudoFileLocation
-        self.sudoFileEnableCommands = sudoFileEnableCommands
 
 
 # noinspection PyPep8Naming
@@ -160,7 +154,7 @@ class InstallerConfiguration:
 
     def __init__(self, identifier, environmentTag, setupCommands, requiredExecutables, homeExportRequired, pathExports,
                  version, home, versionExtractionCommand, versionExtractionRegex, homeExportVariable,
-                 packageDependencies, subInstaller, bootCommands = None):
+                 packageDependencies, subInstaller, sudoSetupCommands=None):
         """
         :type identifier: str
         :type environmentTag:  EnvironmentTag
@@ -175,7 +169,7 @@ class InstallerConfiguration:
         :type homeExportVariable: str
         :type packageDependencies: list[str]
         :type subInstaller: SubInstallerConfiguration
-        :type bootCommands: list[str]
+        :type sudoSetupCommands: list[str]
         """
         self.environmentTag = environmentTag
         self.identifier = identifier
@@ -190,7 +184,7 @@ class InstallerConfiguration:
         self.homeExportRequired = homeExportRequired
         self.packageDependencies = [] if packageDependencies is None else packageDependencies
         self.subInstaller = subInstaller
-        self.bootCommands = [] if bootCommands is None else bootCommands
+        self.sudoSetupCommands = [] if sudoSetupCommands is None else sudoSetupCommands
 
 
 # noinspection PyPep8Naming

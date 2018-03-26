@@ -511,9 +511,9 @@ class Installer:
 
         return copy.deepcopy(self._generated_initialization_commands)
 
-    def get_superuser_boot_commands(self):
+    def get_superuser_setup_commands(self):
         """
         :rtype: list[str]
         """
-        if self.configuration.bootCommands is not None:
-            return copy.copy(self.configuration.bootCommands)
+        if self.configuration.sudoSetupCommands is not None:
+            return copy.copy(self.configuration.sudoSetupCommands)
