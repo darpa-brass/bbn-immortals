@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.securboration.immortals.instantiation.annotationparser.bytecode.BytecodeHelper;
 import com.securboration.immortals.instantiation.annotationparser.traversal.AnnotationParser;
 import com.securboration.immortals.instantiation.annotationparser.traversal.JarTraverser;
@@ -19,9 +20,14 @@ import com.securboration.immortals.ontology.bytecode.*;
 
 import com.securboration.immortals.ontology.java.compiler.NamedClasspath;
 
+import com.securboration.immortals.ontology.java.source.SourceCodeRepo;
+import com.securboration.immortals.ontology.lang.ProgrammingLanguage;
+import com.securboration.immortals.ontology.lang.SourceFile;
+
 import com.securboration.immortals.semanticweaver.ObjectMapper;
 
 import com.securboration.immortals.utility.GradleTaskHelper;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -63,10 +69,6 @@ public class ProjectToTriplesMain {
 		}
 		
 	}
-
-	public static void main(String[] args) {
-		System.out.println("testing");
-	}
 	
 	public String testFunction(){
 		return "Hello, world!";
@@ -79,7 +81,6 @@ public class ProjectToTriplesMain {
 		JavaProject x = new JavaProject();
 		//Set base directory
 		String basedir = gd.getBaseDir();
-		
 		//SourceFinder (the .java files)
 		String svnLocation = gd.getSvnLocation();
 		HashSet<String> dirSet = new HashSet<>();
@@ -148,7 +149,36 @@ public class ProjectToTriplesMain {
             i++;
         }
         
+        SourceCodeRepo sourceCodeRepo = new SourceCodeRepo();
+        gd.getSourceFilePaths().addAll(gd.getAdditionalSources());
+        SourceFile[] sourceFileArray = new SourceFile[gd.getSourceFilePaths().size()];
+        
+        int j = 0;
+        for (String javaSourceFile : gd.getSourceFilePaths()) {
+            SourceFile sourceFile = new SourceFile();
+            ProgrammingLanguage programmingLanguage = new ProgrammingLanguage();
+            programmingLanguage.setLanguageName("java");
+            sourceFile.setLanguageModel(programmingLanguage);
+            String source = FileUtils.readFileToString(new File(javaSourceFile));
+            CompilationUnit compilationUnit = JavaParser.parse(source);
+            Optional<PackageDeclaration> filePackageOption = compilationUnit.getPackageDeclaration();
+            String fileSimpleName = javaSourceFile.substring(javaSourceFile.lastIndexOf(File.separatorChar) + 1);
+            sourceFile.setFileName(fileSimpleName);
+            fileSimpleName = fileSimpleName.substring(0, fileSimpleName.lastIndexOf(".java"));
+            if (filePackageOption.isPresent()) {
+                PackageDeclaration filePackage = filePackageOption.get();
+                sourceFile.setFullyQualifiedName(filePackage.getNameAsString() + "." + fileSimpleName);
+            }
+            sourceFile.setSource(source);
+            
+            sourceFileArray[j] = sourceFile;
+            j++;
+        }
+        
+        sourceCodeRepo.setSourceFiles(sourceFileArray);
+        
 		// For each classpath...
+        gd.getClassFilePaths().addAll(gd.getTestClassFilePaths());
 		for (String key : gd.getClasspathNameToClasspathList().keySet()){
 			ArrayList<String> jarPath = gd.getClasspathNameToClasspathList().get(key);
 			// Debugging statement
@@ -169,7 +199,6 @@ public class ProjectToTriplesMain {
 
 					byte[] bytecode = FileUtils.readFileToByteArray(new File(path));
 					annotationParser.visitClass(BytecodeHelper.hash(bytecode), bytecode);
-					annotationParser.visitMethods(BytecodeHelper.hash(bytecode), bytecode);
 					//Serialize each dfu element for each class file
 					serialModel = serializeCPElement(config);
 					if (!serialModel.equals("")) {
@@ -200,7 +229,6 @@ public class ProjectToTriplesMain {
 							// Traverse class for dfu's
 							byte[] bytecode = FileUtils.readFileToByteArray(new File(path));
 							annotationParser.visitClass(BytecodeHelper.hash(bytecode), bytecode);
-							annotationParser.visitMethods(BytecodeHelper.hash(bytecode), bytecode);
 							//Serialize each dfu element for each class file
 							serialModel = serializeCPElement(config);
 							if (!serialModel.equals("")) {
@@ -236,7 +264,7 @@ public class ProjectToTriplesMain {
                                         + JARS_DIRECTORY + jal.getName() + RDFFormat.TURTLE.ext);
 
                                 // Traverse jar for DFU's
-                                JarTraverser.traverseJar(new File(path), annotationParser, annotationParser);
+                                JarTraverser.traverseJar(new File(path), annotationParser);
                                 // Serialize DFU elements and output for each jar
                                 serialModel = serializeCPElement(config);
                                 if (!serialModel.equals("")) {
@@ -285,6 +313,7 @@ public class ProjectToTriplesMain {
 		x.setCompiledSourceHash(compiledSourcesHash.toArray(new String[compiledSourcesHash.size()]));
 		x.setUuid(uuid);
 		x.setBuildScript(buildScript);
+		x.setSourceCodeRepo(sourceCodeRepo);
 		BytecodeArtifactCoordinate projectCoordinate= new BytecodeArtifactCoordinate();
 		projectCoordinate.setGroupId(gd.getGroup());
 		projectCoordinate.setArtifactId(gd.getArtifact());
@@ -526,7 +555,7 @@ public class ProjectToTriplesMain {
 
 		//processClass code
 		JarIngestor ji = new JarIngestor(sf);
-		return ji.processClass(hash, cn);
+		return ji.processClass(hash, cn, true);
 	}
 	
 	private JarArtifact analyzeJar(String jarFile, boolean fullAnalysis) throws IOException{

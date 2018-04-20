@@ -1,0 +1,13 @@
+[
+    {
+        "scenarioIdentifier": "p2cp3baselineA",
+        "submissionModel": null,
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "PASS",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "BaselineA",
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
+    }
+]

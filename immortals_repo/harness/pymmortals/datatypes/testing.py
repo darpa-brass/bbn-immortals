@@ -18,13 +18,13 @@ class Phase2SubmissionFlow(Enum):
 class PerturbationScenario(ValuedEnum):
     P2CP1DatabaseSchema = TestAdapterEndpoint.CP1
     P2CP2DataInTransit = TestAdapterEndpoint.CP2
-    P2CP3LibraryOrPlatformUpgrade = TestAdapterEndpoint.CP3
+    # P2CP3LibraryOrPlatformUpgrade = TestAdapterEndpoint.CP3
 
     # P2CP3AndroidPlatform = TestAdapterEndpoint.CP3
     # P2CP3AndroidLibraryUpgrade = TestAdapterEndpoint.CP3
     # P2CP3AndroidLibraryMutation = TestAdapterEndpoint.CP3
     # P2CP3JavaLibraryUpgrade = TestAdapterEndpoint.CP3
-    # P2CP3JavaLibraryMutation = TestAdapterEndpoint.CP3
+    P2CP3JavaLibraryMutation = TestAdapterEndpoint.CP3
 
     def __init__(self, endpoint: TestAdapterEndpoint):
         self.endpoint = endpoint

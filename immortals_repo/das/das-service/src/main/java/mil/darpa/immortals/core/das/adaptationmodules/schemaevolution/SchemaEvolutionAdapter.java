@@ -430,13 +430,6 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
             //The returned data is compared to the training data and if there are any differences (or exceptions during execution)
             //the data DFU is deemed to be impacted by the schema change
 
-            AdaptationDetails adaptationDetails = new AdaptationDetails(
-                    getClass().getName(),
-                    DasOutcome.RUNNING,
-                    context.getAdaptationIdentifer()
-            );
-            context.submitAdaptationStatus(adaptationDetails);
-
             List<DataLinkageMetadata> dataLinkages = DataDFU.select(context.getKnowldgeUri());
 
             if (dataLinkages != null && !dataLinkages.isEmpty()) {
@@ -476,8 +469,8 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
                 logger.error(error, e);
                 errorMessages.add(error + " Message: " + e.getMessage());
             }
-
-            context.submitAdaptationStatus(adaptationDetails.produceUpdate(outcome, errorMessages, detailMessages));
+            AdaptationDetails ad = new AdaptationDetails(getClass().getName(), outcome, context.getAdaptationIdentifer());
+            context.submitAdaptationStatus(ad);
         }
     }
 

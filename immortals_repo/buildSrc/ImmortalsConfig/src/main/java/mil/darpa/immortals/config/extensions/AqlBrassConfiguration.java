@@ -22,8 +22,8 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
     
     private final String mavenRepositoryUrl = "https://github.com/babeloff/mvn-repo/raw/master/releases";
     private final String mavenGroupId = "babeloff";
-    private final String mavenArtifactId = "brass-aql-server";
-    private final String mavenVersion = "2018.03.16";
+    private final String mavenArtifactId = "aql-brass-server";
+    private final String mavenVersion = "2018.03.20";
 
     private int port = 9090;
     private String protocol = "http";

@@ -10,6 +10,7 @@ import DSL.Value
 import DSL.V
 import DSL.Primitive
 import DSL.Environment
+import DSL.Pretty ()
 
 
 --
@@ -33,13 +34,13 @@ isArgTypeError _ = False
 evalExpr :: MonadEval m => Expr -> VM m PVal
 evalExpr (Ref x)      = VM (getVarEnv >>= (\env -> envLookupV
                                                      (ExprE . VarNotFound . NF)
-                                                     (\x y -> ExprE . VarNotFound $ VNF x y)
+                                                     (\k x y -> ExprE . VarNotFound $ VNF k x y)
                                                      x env))
 evalExpr (Res p)      = VM (do rID <- getResID p
                                env <- getResEnv
                                envLookupV
                                  (ExprE . ResNotFound . NF)
-                                 (\x y -> ExprE . ResNotFound $ VNF x y)
+                                 (\k x y -> ExprE . ResNotFound $ VNF k x y)
                                  rID env)
 evalExpr (Lit v)      = VM . return . toVMaybe $ v
 evalExpr (P1 o e)     = applyPrim1 o (evalExprV e)
@@ -82,3 +83,19 @@ withArgs xs args go = do
     withVarEnv (envUnion new) go
   where
     envBuilder p@(Param var _) v = checkArg p v >>= \v' -> return (var, v')
+
+selectExpr :: BExpr -> V Expr -> V Expr
+selectExpr d e = fmap (selectExpr' d) (select d e)
+
+selectExpr' :: BExpr -> Expr -> Expr
+selectExpr' d (Lit pv) = Lit (select d pv)
+selectExpr' d (P1 o e) = P1 o (selectExpr d e)
+selectExpr' d (P2 o e1 e2) = P2 o (selectExpr d e1) (selectExpr d e2)
+selectExpr' d (P3 o e1 e2 e3) = P3 o (selectExpr d e1) (selectExpr d e2) (selectExpr d e3)
+selectExpr' _ e = e
+
+selectFun :: BExpr -> Fun -> Fun
+selectFun d (Fun p e) = Fun (selectParam d p) (selectExpr d e)
+
+selectParam :: BExpr -> Param -> Param
+selectParam d (Param v t) = Param v (select d t)

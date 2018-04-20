@@ -291,9 +291,9 @@ __Description__: A client upgrade library that will cause a mutation
 __Type__: String Constant  
 __Description__: A client library upgrade that will cause a partial upgrade  
 
-| Values      | Description                                                    |  
-| ----------- | -------------------------------------------------------------- |  
-| Dropbox_X_X | Version of dropbox containing a resolution for a security flaw |  
+| Values             | Description                                                    |  
+| ------------------ | -------------------------------------------------------------- |  
+| ToBeDetermined_X_X | Version of dropbox containing a resolution for a security flaw |  
 
 #### MartiSubmissionModel  
 __Type__: JSON Object  
@@ -316,9 +316,9 @@ __Description__: A requirement specification for a Marti server
 __Type__: String Constant  
 __Description__: A server upgrade library that will cause a mutation  
 
-| Values              | Description               |  
-| ------------------- | ------------------------- |  
-| ImageSaverLibrary_2 | Newer image saver library |  
+| Values         | Description                                                                             |  
+| -------------- | --------------------------------------------------------------------------------------- |  
+| ElevationApi_2 | A library upgrade required that introduces external elevation calls that cannot be made |  
 
 #### ServerPartialUpgradeLibrary  
 __Type__: String Constant  

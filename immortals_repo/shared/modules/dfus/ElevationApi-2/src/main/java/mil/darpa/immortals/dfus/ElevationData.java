@@ -18,15 +18,15 @@ public class ElevationData {
         return hae;
     }
 
-    public long getLe() {
+    public double getLe() {
         return le;
     }
 
     private final double longitude;
     private final double hae;
-    private final long le;
+    private final double le;
 
-    public ElevationData(double latitude, double longitude, double hae, long le) {
+    public ElevationData(double latitude, double longitude, double hae, double le) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.hae = hae;

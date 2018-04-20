@@ -41,7 +41,7 @@ import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
 import mil.darpa.immortals.annotation.dsl.ontology.dfu.instance.Recipe;
 
-public class AnnotationParser implements BytecodeArtifactVisitor, IntentValidatorVisitor {
+public class AnnotationParser implements BytecodeArtifactVisitor {
     
     private final ObjectToTriplesConfiguration config;
     
@@ -127,7 +127,7 @@ public class AnnotationParser implements BytecodeArtifactVisitor, IntentValidato
         return properties.toArray(new Property[]{});
     }
     
-    private static void registerIntentValidations(ObjectToTriplesConfiguration config, Collection<AnnotationNode> intentAnnotations, 
+    private void registerIntentValidations(ObjectToTriplesConfiguration config, Collection<AnnotationNode> intentAnnotations, 
                                                   String classHash, String methodName, String methodDesc) {
         int i;
         List<String> intents = new ArrayList<>();
@@ -160,6 +160,16 @@ public class AnnotationParser implements BytecodeArtifactVisitor, IntentValidato
             
             validatorInstance.setIntents(result);
             validatorInstance.setMethodPointer(classHash + "/methods/" + methodName + methodDesc);
+            
+            {//set functional aspects
+                validatorInstance.setAspectsValidated(
+                    getFunctionalAspectsFromValidation(kvs)
+                    );
+                
+                validatorInstance.setFunctionalityValidated(
+                    getFunctionalityValidated(kvs)
+                    );
+            }
             
             config.getMapper().registerObjectToSerialize(validatorInstance);
         }
@@ -209,6 +219,7 @@ public class AnnotationParser implements BytecodeArtifactVisitor, IntentValidato
                 AnnotationHelper.getOneOrNull(dfuAnnotations);
         
         if(dfuAnnotation == null){
+            visitMethods(classHash,bytecode);
             return;
         }
         
@@ -293,6 +304,8 @@ public class AnnotationParser implements BytecodeArtifactVisitor, IntentValidato
             
             config.getMapper().registerObjectToSerialize(dfu);
         }
+        
+        visitMethods(classHash, bytecode);
     }
     
     private Functionality instantiateFunctionality(Class<? extends Functionality> c){
@@ -593,15 +606,14 @@ public class AnnotationParser implements BytecodeArtifactVisitor, IntentValidato
         return map;
     }
     
-    @Override
-    public void visitMethods(String classHash, byte[] bytes) {
+    private void visitMethods(String classHash, byte[] bytes) {
         ClassNode cn = BytecodeHelper.getClassNode(bytes);
-
+        
         List<AnnotationNode> nodes;
         for (MethodNode mn : cn.methods) {
             
             nodes = AnnotationHelper.getAnnotations(mn);
-            nodes = AnnotationHelper.getAnnotationsOfType(nodes, ProvidedFunctionalityValidationAnnotation.class);
+            nodes = AnnotationHelper.getAnnotationsDerivedFromType(nodes, ProvidedFunctionalityValidationAnnotation.class);
             
             if (!nodes.isEmpty()) {
                 registerIntentValidations(config, nodes, classHash, mn.name, mn.desc);
@@ -634,6 +646,12 @@ public class AnnotationParser implements BytecodeArtifactVisitor, IntentValidato
         
         private static final String recipe = 
                 "@mil/darpa/immortals/annotation/dsl/ontology/dfu/instance/Recipe|recipe";
+        
+        private static final String aspectsValidated = 
+                "@mil/darpa/immortals/annotation/dsl/ontology/java/testing/annotation/ProvidedFunctionalityValidationAnnotation|validatedAspects|";
+        
+        private static final String functionalityValidated = 
+                "@mil/darpa/immortals/annotation/dsl/ontology/java/testing/annotation/ProvidedFunctionalityValidationAnnotation|validatedFunctionality";
     }
     
     private Class<?> getClassFromAnnotationType(final String value){
@@ -668,6 +686,25 @@ public class AnnotationParser implements BytecodeArtifactVisitor, IntentValidato
         }
         
         return (Class<? extends Resource>[]) classes;
+    }
+    
+    private Class<? extends FunctionalAspect>[] getFunctionalAspectsFromValidation(
+            Map<String,Object> kvs
+            ){
+        List<String> aspectClassNames = 
+                getArrayValues(
+                    kvs,
+                    Keys.aspectsValidated
+                    );
+        
+        Class<?>[] classes = new Class[aspectClassNames.size()];
+        int i=0;
+        for(String resourceClassName:aspectClassNames){
+            classes[i] = getClassFromAnnotationType(resourceClassName);
+            i++;
+        }
+        
+        return (Class<? extends FunctionalAspect>[]) classes;
     }
     
     private Class<? extends Resource>[] getResourcesFromDfu(
@@ -711,6 +748,18 @@ public class AnnotationParser implements BytecodeArtifactVisitor, IntentValidato
             Map<String,Object> kvs
             ){
         final String value = (String)kvs.get(Keys.functionalityBeingPerformed);
+        
+        return (Class<? extends Functionality>) getClassFromAnnotationType(value);
+    }
+    
+    private Class<? extends Functionality> getFunctionalityValidated(
+            Map<String,Object> kvs
+            ){
+        final String value = (String)kvs.get(Keys.functionalityValidated);
+        
+        if(value == null){
+            return null;
+        }
         
         return (Class<? extends Functionality>) getClassFromAnnotationType(value);
     }

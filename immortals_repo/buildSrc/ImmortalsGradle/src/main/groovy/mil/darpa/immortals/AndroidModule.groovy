@@ -27,5 +27,6 @@ class AndroidModule implements Plugin<Project> {
             compile target.files(bc.augmentations.androidSdkJar.toString())
         }
         Helpers.applyPublish(target)
+        Helpers.applyJacocoCoverage(target)
     }
 }

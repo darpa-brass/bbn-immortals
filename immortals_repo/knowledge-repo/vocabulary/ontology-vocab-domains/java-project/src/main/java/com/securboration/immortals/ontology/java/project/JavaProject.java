@@ -6,6 +6,7 @@ import com.securboration.immortals.ontology.identifier.HasUuid;
 import com.securboration.immortals.ontology.java.build.BuildScript;
 import com.securboration.immortals.ontology.java.compiler.*;
 import com.securboration.immortals.ontology.java.source.CompiledJavaSourceFile;
+import com.securboration.immortals.ontology.java.source.SourceCodeRepo;
 
 /**
  * A Java Project includes the abstractions for building and executing a Java
@@ -49,6 +50,8 @@ public class JavaProject implements HasUuid {
      * This project's coordinate, e.g. group:artifact:version
      */
     private BytecodeArtifactCoordinate coordinate;
+    
+    private SourceCodeRepo sourceCodeRepo;
 
     public String[] getCompiledSourceHash() {
         return compiledSourceHash;
@@ -111,5 +114,13 @@ public class JavaProject implements HasUuid {
 
     public void setCoordinate(BytecodeArtifactCoordinate coordinate) {
         this.coordinate = coordinate;
+    }
+
+    public SourceCodeRepo getSourceCodeRepo() {
+        return sourceCodeRepo;
+    }
+
+    public void setSourceCodeRepo(SourceCodeRepo sourceCodeRepo) {
+        this.sourceCodeRepo = sourceCodeRepo;
     }
 }

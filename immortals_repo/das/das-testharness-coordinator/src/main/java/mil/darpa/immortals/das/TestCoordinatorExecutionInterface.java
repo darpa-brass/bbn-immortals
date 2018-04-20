@@ -2,6 +2,7 @@ package mil.darpa.immortals.das;
 
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
 
+import javax.annotation.Nonnull;
 import javax.ws.rs.core.Response;
 
 /**
@@ -14,12 +15,5 @@ public interface TestCoordinatorExecutionInterface {
      *
      * @param submissionModel
      */
-    Response execute(SubmissionModel submissionModel);
-
-    /**
-     * No reply will be returned to LL until this method returns!
-     *
-     * @param submissionModel
-     */
-    Response execute(SubmissionModel submissionModel, boolean attemptAdaptation);
+    Response execute(@Nonnull SubmissionModel submissionModel, boolean attemptAdaptation);
 }

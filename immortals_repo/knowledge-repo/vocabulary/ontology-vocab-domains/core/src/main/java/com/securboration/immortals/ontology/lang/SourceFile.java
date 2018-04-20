@@ -45,7 +45,8 @@ public class SourceFile extends CodeUnit {
             "The name of the source file")
     private String fileName;
     
-
+    private String fullyQualifiedName;
+    
     public String getFileSystemPath() {
         return fileSystemPath;
     }
@@ -84,5 +85,13 @@ public class SourceFile extends CodeUnit {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getFullyQualifiedName() {
+        return fullyQualifiedName;
+    }
+
+    public void setFullyQualifiedName(String fullQualifiedName) {
+        this.fullyQualifiedName = fullQualifiedName;
     }
 }

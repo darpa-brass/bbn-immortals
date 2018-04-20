@@ -1,15 +1,14 @@
 package mil.darpa.immortals.core.das.adaptationtargets.deploying;
 
+import mil.darpa.immortals.analysis.adaptationtargets.DeploymentTarget;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.das.adaptationtargets.building.AdaptationTargetBuildInstance;
-import mil.darpa.immortals.core.das.adaptationtargets.building.DeploymentTarget;
 import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
 import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -140,7 +139,7 @@ public class ApplicationDeployer {
         }
         applicationPhase = ApplicationPhase.HALTED;
     }
-    
+
     public static void main(String[] args) {
         try {
             AndroidEmuHelper.killEmulator("emulator-5580");
@@ -153,36 +152,34 @@ public class ApplicationDeployer {
             AndroidEmuHelper.startEmulatorAsynchronous("BRASS-21-80", 5580);
             AndroidEmuHelper.createEmulator(23, "BRASS-23-78");
             AndroidEmuHelper.startEmulatorAsynchronous("BRASS-23-78", 5578);
-            
+
             String time = Long.toString(System.currentTimeMillis());
-            String  adaptationIdentifier = "adaptation" + time.substring(0, time.length()-4);
-            GradleKnowledgeBuilder gkb = new GradleKnowledgeBuilder();
-            gkb.buildKnowledge(null);
-            
-            AdaptationTargetBuildInstance martiBuild = gkb.getBuildInstance("Marti", adaptationIdentifier);
-            AdaptationTargetBuildInstance atakBuild = gkb.getBuildInstance("ATAKLite", adaptationIdentifier);
-            
-            
+            String adaptationIdentifier = "adaptation" + time.substring(0, time.length() - 4);
+
+            AdaptationTargetBuildInstance martiBuild = GradleKnowledgeBuilder.getBuildInstance("Marti", adaptationIdentifier);
+            AdaptationTargetBuildInstance atakBuild = GradleKnowledgeBuilder.getBuildInstance("ATAKLite", adaptationIdentifier);
+
+
             ApplicationDeploymentInstance martiDeployment = new ApplicationDeploymentInstance(martiBuild, "MartiServer");
             ApplicationDeploymentInstance atakDeployment0 = new ApplicationDeploymentInstance(atakBuild, "Atak0");
             ApplicationDeploymentInstance atakDeployment1 = new ApplicationDeploymentInstance(atakBuild, "Atak1");
-            
+
             ApplicationDeployer martiDeployer = new ApplicationDeployer(martiDeployment);
             ApplicationDeployer atak0Deployer = new ApplicationDeployer(atakDeployment0);
             ApplicationDeployer atak1Deployer = new ApplicationDeployer(atakDeployment1);
-            
+
             martiDeployer.deploy();
             martiDeployer.start();
-            
+
             atak0Deployer.deploy();
             atak0Deployer.start();
-            
+
             atak1Deployer.deploy();
             atak1Deployer.start();
-            
+
             Thread.sleep(100000);
-            
-            
+
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

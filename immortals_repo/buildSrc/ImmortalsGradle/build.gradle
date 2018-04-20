@@ -8,6 +8,7 @@ repositories {
     maven {
         url IMMORTALS_REPO.toString()
     }
+    jcenter()
 }
 
 dependencies {
@@ -15,4 +16,5 @@ dependencies {
     compile localGroovy()
     compile project(':ImmortalsConfig')
     compile 'com.securboration:immortals-project-to-triples:r2.0.0'
+    compile 'com.android.tools.build:gradle:2.3.3'
 }

@@ -11,7 +11,9 @@ public class DebugConfiguration {
     private Boolean useMockTestHarness = false;
     private Boolean useMockTestAdapter = false;
     private Boolean useMockAqlBrass = true;
+    private boolean useMockExtensionHddRass = false;
     private boolean useMockExtensionSchemaEvolution = false;
+    private boolean useMockTestCoordinators = false;
     private Boolean logNetworkActivityToSeparateFile = true;
     private int shutdownGracePeriodMS = 10000;
     public String loggingConfigDirectory = GlobalsConfig.staticImmortalsRoot.resolve("das/das-launcher/logging_scripts").toAbsolutePath().toString() + "/";
@@ -51,6 +53,14 @@ public class DebugConfiguration {
 
     public boolean isUseMockExtensionSchemaEvolution() {
         return useMockExtensionSchemaEvolution;
+    }
+    
+    public boolean isUseMockExtensionHddRass() {
+        return useMockExtensionHddRass;
+    }
+    
+    public boolean isUseMockTestCoordinators() {
+        return useMockTestCoordinators;
     }
     
     public int getShutdownGracePeriodMS() {

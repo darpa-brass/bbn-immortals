@@ -35,10 +35,6 @@ public class PreparedStatementParameterReordererTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		
-        GradleKnowledgeBuilder gkb = new GradleKnowledgeBuilder();
-        gkb.buildKnowledge(null);
-
 	}
 
 	@AfterClass

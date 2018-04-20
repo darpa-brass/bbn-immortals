@@ -58,10 +58,24 @@
         "useMockApplicationDeployment": true,
         // If true, calls to the test harness submitter are replaced with logging statments. The mock test harness never sends anything.
         "useMockTestHarness": true,
-        "logNetworkActivityToSeparateFile": true,
-        "useMockExtensionSchemaEvolution": false
+        "useMockExtensionSchemaEvolution": false,
+        "useMockExtensionHddRass": false
     },
     "globals": {
         "headless": false
+    },
+    "extensions": {
+        "immortalizer": {
+            "performBuildFileAnalysis": true,
+            "performKrgpBytecodeAnalysis": true,
+            "performKrgpCompleteGradleTaskAnalysis": true,
+            "performTestCoverageAnalysis": true
+        },
+        "voltdb" : {
+            "userManaged": false
+        },
+        "aqlbrass" : {
+            "userManaged": false
+        }
     }
 }

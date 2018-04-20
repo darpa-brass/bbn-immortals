@@ -1,16 +1,11 @@
 package com.bbn.marti.immortals.pipelines;
 
-import com.bbn.cot.CotEventContainer;
 import com.bbn.marti.immortals.converters.SocketToTcpTransport;
 import com.bbn.marti.immortals.net.CotServerChannel;
 import com.bbn.marti.immortals.net.tcp.TcpSocketServer;
 import com.bbn.marti.immortals.pipes.CotByteBufferPipe;
-import com.bbn.marti.immortals.pipes.CotEventContainerToCotDataEvent;
-import com.bbn.marti.service.MartiMain;
 import mil.darpa.immortals.core.synthesis.AbstractFunctionConsumingPipe;
-import mil.darpa.immortals.core.synthesis.ConsumingDistributorPipe;
 import mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe;
-import mil.darpa.immortals.dfus.TakServerDataManager.CotDbConsumer;
 
 /**
  * Converts a SocketServer to a CotServerChannel to be used by TAKServer
@@ -48,26 +43,13 @@ public class TcpSocketServerToCotServerChannel extends AbstractFunctionConsuming
                 )
         );
 
-
-        ConsumingDistributorPipe<CotEventContainer> dp;
-
         // Send data to the submission service
         tss.setReceiveFromNetworkPipeListener(
                 // When the server receives data, send it into the StreamingCotProtocol
                 new CotByteBufferPipe(
-                        dp = new ConsumingDistributorPipe<>(false,
-                                // When the StreamingCotProtocol has data to send, send it out the CotServerChannel
-                                cotServerChannel.sendCotFromRemoteToLocal()
-                        )
+                        new CotDbInsertionPipe(cotServerChannel.sendCotFromRemoteToLocal())
                 )
         );
-
-        // If the database is enabled, add it as an endpoint
-        if (MartiMain.getConfig().postGreSqlConfig.enabled) {
-            dp.addNext(new CotEventContainerToCotDataEvent(
-                    new CotDbConsumer()
-            ));
-        }
 
         return cotServerChannel;
     }

@@ -14,11 +14,11 @@ import com.securboration.immortals.ontology.functionality.imagecapture.AspectRea
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.ontology.pojos.markup.Ignore;
 import com.securboration.immortals.ontology.resources.AndroidPhone;
+import com.securboration.immortals.ontology.resources.CompiledSoftware;
 import com.securboration.immortals.ontology.resources.FileSystemResource;
 import com.securboration.immortals.ontology.resources.NetworkResource;
 import com.securboration.immortals.ontology.resources.PlatformResource;
 import com.securboration.immortals.ontology.resources.Server;
-import com.securboration.immortals.ontology.resources.Software;
 
 @Ignore
 public class Analysis {
@@ -140,10 +140,13 @@ public class Analysis {
         }
         
         @ConceptInstance
-        public static class AtakSoftware extends Software{
+        public static class AtakSoftware extends CompiledSoftware{
             public AtakSoftware(){
                 this.setApplicationName("ATAK");
-                this.setHumanReadableDescription("an running ATAK software instance");
+                this.setSoftwareCoordinate("com.bbn.ataklite");
+                this.setVersionControlUrl("https://dsl-external.bbn.com/svn/immortals/trunk/applications/client/ATAKLite");
+                
+                this.setHumanReadableDescription("An instance of the ATAK project");
             }
         }
         
@@ -183,10 +186,14 @@ public class Analysis {
         }
         
         @ConceptInstance
-        public static class MartiSoftware extends Software{
+        public static class MartiSoftware extends CompiledSoftware{
             public MartiSoftware(){
                 this.setApplicationName("MARTI");
-                this.setHumanReadableDescription("a running MARTI software instance");
+                
+                this.setSoftwareCoordinate("mil.darpa.immortals:Marti-immortals:2.0-LOCAL");
+                this.setVersionControlUrl("https://dsl-external.bbn.com/svn/immortals/trunk/applications/server/Marti");
+                
+                this.setHumanReadableDescription("An instance of the MARTI project");
             }
         }
         

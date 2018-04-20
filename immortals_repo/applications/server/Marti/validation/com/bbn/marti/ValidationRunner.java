@@ -61,7 +61,6 @@ public class ValidationRunner {
 
         @Override
         public void onTestFailure(ITestResult tr) {
-            System.err.println("####HALTHALTHALT!");
             ValidationRunner.getInstance().terminate();
         }
 

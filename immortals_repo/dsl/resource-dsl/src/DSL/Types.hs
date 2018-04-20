@@ -10,11 +10,12 @@ import Control.Monad.State
 import Control.Monad.Except
 import Data.Typeable
 import Data.String (IsString(..))
-import Data.List.Split (splitOn)
+import Data.Text (pack, splitOn)
 import Data.Map.Strict (Map)
 import Data.SBV (Boolean(..),SBool,SInteger,SInt8,SInt16,SInt32,SInt64)
 import qualified Data.SBV as SBV
 import Data.Fixed (mod')
+import Data.Text
 
 import DSL.Name
 
@@ -66,13 +67,17 @@ data PathError
   deriving (Eq,Show)
 
 instance IsString Path where
-  fromString ('/':s) = Path Absolute (splitOn "/" s)
-  fromString s       = Path Relative (splitOn "/" s)
+  fromString ('/':s) = Path Absolute (splitOn "/" (pack s))
+  fromString s       = Path Relative (splitOn "/" (pack s))
 
 -- | Resource IDs are (absolute) paths from the root of the
 --   resource environment.
 newtype ResID = ResID [Name]
   deriving (Eq,Monoid,Ord,Show)
+
+instance IsString ResID where
+  fromString ('/':s) = ResID (splitOn "/" (pack s))
+  fromString s       = ResID (splitOn "/" (pack s))
 
 
 -- PRIMITIVES
@@ -107,6 +112,7 @@ data Op2
      = BB_B BB_B  -- ^ binary boolean operator
      | NN_N NN_N  -- ^ binary numeric operator
      | NN_B NN_B  -- ^ numeric comparison operator
+     | SS_B SS_B  -- ^ symbol comparison operator
   deriving (Eq,Show)
 
 -- | Primitive ternary operator.
@@ -135,6 +141,9 @@ data NN_B = LT | LTE | Equ | Neq | GTE | GT
 
 -- | Binary numeric arithmetic operators.
 data NN_N = Add | Sub | Mul | Div | Mod
+  deriving (Eq,Show)
+
+data SS_B = SEqu
   deriving (Eq,Show)
 
 -- | Type error applying primitive operator.
@@ -364,19 +373,22 @@ data Expr
      | P3  Op3 (V Expr) (V Expr) (V Expr)  -- ^ conditional expression
   deriving (Eq,Show)
 
+class Pretty a where
+  pretty :: a -> Text
+
 data VEnvErr = NF NotFound
-             | forall a. (Eq a, Show a, Typeable a) => VNF BExpr (VOpt a)
+             | forall a k. (Eq a, Show a, Typeable a, Pretty a, Eq k, Show k, Typeable k) => VNF k BExpr (VOpt a)
 
 instance Eq VEnvErr where
   (NF x) == (NF y) = x == y
-  (VNF b v) == (VNF b' v')
-    | b == b', Just u' <- cast v' = v == u'
+  (VNF k b v) == (VNF k' b' v')
+    | b == b', Just u' <- cast v', Just l' <- cast k' = v == u' && k == l'
     | otherwise = False
   _ == _ = False
 
 instance Show VEnvErr where
   show (NF x) = "NF (" ++ show x ++ ")"
-  show (VNF b v) = "VNF (" ++ show b ++ ") (" ++ show v ++ ")"
+  show (VNF k b v) = "VNF (" ++ show k ++ ") (" ++ show b ++ ") (" ++ show v ++ ")"
 
 -- | Type error caused by passing argument of the wrong type.
 data ExprError = ArgTypeError Param Value PType PVal
@@ -529,12 +541,7 @@ data Context = Ctx {
     vCtx        :: BExpr       -- ^ current variational context
 } deriving (Show)
 
--- | A class of monads for computations that affect a resource environment,
---   given an evaluation context, and which may throw/catch exceptions.
-class (MonadError Mask m, MonadReader Context m, MonadState StateCtx m)
-  => MonadEval m
-instance (MonadError Mask m, MonadReader Context m, MonadState StateCtx m)
-  => MonadEval m
+type MonadEval m = (MonadError Mask m, MonadReader Context m, MonadState StateCtx m)
 
 -- | A specific monad for running MonadEval computations.
 type EvalM a = ExceptT Mask (StateT StateCtx (Reader Context)) a

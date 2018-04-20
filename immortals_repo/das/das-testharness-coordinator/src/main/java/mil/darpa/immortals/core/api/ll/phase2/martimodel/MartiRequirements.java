@@ -3,6 +3,8 @@ package mil.darpa.immortals.core.api.ll.phase2.martimodel;
 import mil.darpa.immortals.core.api.annotations.Description;
 import mil.darpa.immortals.core.api.annotations.P2CP1;
 import mil.darpa.immortals.core.api.annotations.P2CP3;
+import mil.darpa.immortals.core.api.ll.phase2.RequirementsInterface;
+import mil.darpa.immortals.core.api.ll.phase2.UpgradableLibraryInterface;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.ServerPartialUpgradeLibrary;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.ServerUpgradeLibrary;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.storage.postgresql.DatabasePerturbation;
@@ -13,7 +15,7 @@ import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.storage.po
 @P2CP1
 @P2CP3
 @Description("A requirement specification for a Marti server")
-public class MartiRequirements {
+public class MartiRequirements implements RequirementsInterface {
 
     @P2CP3
     @Description("A library upgrade that will trigger a partial library upgrade")
@@ -36,5 +38,15 @@ public class MartiRequirements {
         this.partialLibraryUpgrade = partialLibraryUpgrade;
         this.libraryUpgrade = libraryUpgrade;
         this.postgresqlPerturbation = postgresqlPerturbation;
+    }
+
+    @Override
+    public UpgradableLibraryInterface getPartialLibraryUpgrade() {
+        return partialLibraryUpgrade;
+    }
+
+    @Override
+    public UpgradableLibraryInterface getUpgradeLibrary() {
+        return libraryUpgrade;
     }
 }

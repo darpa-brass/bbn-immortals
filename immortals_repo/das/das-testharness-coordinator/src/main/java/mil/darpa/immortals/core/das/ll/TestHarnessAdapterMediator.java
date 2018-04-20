@@ -5,9 +5,7 @@ import com.google.gson.GsonBuilder;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.api.ll.phase2.EnableDas;
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
-import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
-import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
-import mil.darpa.immortals.core.api.ll.phase2.result.TestStateObject;
+import mil.darpa.immortals.core.api.ll.phase2.result.*;
 import mil.darpa.immortals.core.api.ll.phase2.result.status.DasOutcome;
 import mil.darpa.immortals.core.api.ll.phase2.result.status.TestOutcome;
 import mil.darpa.immortals.core.api.ll.phase2.result.status.VerdictOutcome;
@@ -27,7 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by awellman@bbn.com on 9/29/17.
@@ -51,7 +48,7 @@ public class TestHarnessAdapterMediator {
 
     private final Logger logger = LoggerFactory.getLogger(TestHarnessAdapterMediator.class);
 
-    private boolean dasDisabledByTestharness = false;
+    private boolean performAdaptation = true;
 
     private AdaptedApplicationDeployer applicationDeployer;
 
@@ -63,9 +60,11 @@ public class TestHarnessAdapterMediator {
         }
     }
 
-    public synchronized Response updateAdaptationStatus(@Nonnull AdaptationDetails adaptationDetails) {
-        logger.info("Received AD: " + adaptationDetails.dasOutcome.name());
-        innerUpdateDasStatus(adaptationDetails, true);
+    public synchronized Response updateAdaptationStatus(@Nonnull AdaptationDetailsList adaptationDetailsList) {
+        // TODO: Handle multiple adaptations
+        AdaptationDetails ad = adaptationDetailsList.iterator().next();
+        logger.info("Received AD: " + ad.dasOutcome.name());
+        innerUpdateDasStatus(ad, true);
         // TODO: This should probably be more verbose...
         return Response.ok().build();
     }
@@ -142,21 +141,20 @@ public class TestHarnessAdapterMediator {
                 ImmortalsErrorHandler.reportFatalError("Unexpected DAS state '" + adaptationDetails.dasOutcome.name() + "'!");
                 break;
         }
-
     }
 
-    public synchronized Response updateDeploymentTestStatus(List<TestDetails> testDetails) {
+    public synchronized Response updateDeploymentTestStatus(TestDetailsList testDetails) {
         innerUpdateValidatorStatus(testDetails, true);
         // TODO: This should probably be more verbose...
         return Response.ok().build();
     }
 
-    private synchronized void innerUpdateValidatorStatus(List<TestDetails> testDetails, boolean sendUpdate) {
+    private synchronized void innerUpdateValidatorStatus(TestDetailsList testDetails, boolean sendUpdate) {
         if (logger.isTraceEnabled()) {
             // TODO: Update to handle multiple test details
             String td;
             try {
-                td = gson.toJson(testDetails.get(0));
+                td = gson.toJson(testDetails);
             } catch (Exception e) {
                 td = "PARSE ERROR!";
             }
@@ -166,103 +164,82 @@ public class TestHarnessAdapterMediator {
             logger.trace(val);
         }
 
+        // For each new test
         for (TestDetails newDetails : testDetails) {
-            TestStateObject currentDetails = null;
-            for (TestStateObject candidateDetails : state.testAdapterState.validation.executedTests) {
-                if (candidateDetails.testIdentifier.equals(newDetails.testIdentifier)) {
-                    currentDetails = candidateDetails;
-                    break;
-                }
-            }
+            // Attempt to fetch an existing instance
+            TestStateObject currentDetails = state.testAdapterState.validation.executedTests.stream()
+                    .filter(t -> t.testIdentifier.equals(newDetails.testIdentifier)).findAny().orElse(null);
 
             if (currentDetails == null) {
-                state.testAdapterState.validation.executedTests.add(
-                        new TestStateObject(
-                                newDetails.testIdentifier,
-                                // TODO: This should not be hard-coded
-                                "DatabaseUsage",
-                                TestOutcome.COMPLETE_PASS,
-                                newDetails.currentState,
-                                newDetails
-                        )
-                );
+                // And if it could not fetch an existing instance, add it as a new instance
+                state.testAdapterState.validation.executedTests.add(new TestStateObject(newDetails));
             } else {
-                TestOutcome previousTO = currentDetails.actualStatus;
-                TestOutcome currentTO = newDetails.currentState;
-
-                if (previousTO != TestOutcome.PENDING && previousTO != TestOutcome.RUNNING) {
-                    if (currentTO == TestOutcome.PENDING || currentTO == TestOutcome.RUNNING) {
-                        ImmortalsErrorHandler.reportFatalError("Unexpected transition of test '" + currentDetails.testIdentifier
-                                + "' state from terminal state '" + previousTO.name() +
-                                " to non-terminal state '" + currentTO.name() + "'!");
-                    } else {
-                        ImmortalsErrorHandler.reportFatalError("Unexpected transition of test '" + currentDetails.testIdentifier
-                                + "' state from terminal state '" + previousTO.name() +
-                                " to another terminal state '" + currentTO.name() + "'!");
-                    }
-                }
-
-                currentDetails.actualStatus = newDetails.currentState;
-                currentDetails.details = newDetails;
+                // Otherwise update the existing test
+                currentDetails.update(newDetails);
             }
         }
 
-        VerdictOutcome previousVO = state.testAdapterState.validation.verdictOutcome;
+        // Then, if it is not the initial state, determine the resultant state
         VerdictOutcome vo = VerdictOutcome.PENDING;
-        testIter:
-        for (TestStateObject tso : state.testAdapterState.validation.executedTests) {
-            // TODO: Sort out which means which in terms of the final representative state with mixed test outcomes
-            switch (tso.actualStatus) {
-                case PENDING:
-                    vo = VerdictOutcome.PENDING;
-                    if (previousVO != VerdictOutcome.PENDING) {
+
+        if (!state.initialValidationUpdate) {
+            VerdictOutcome previousVO = state.testAdapterState.validation.verdictOutcome;
+
+            testIter:
+            for (TestStateObject tso : state.testAdapterState.validation.executedTests) {
+                // TODO: Sort out which means which in terms of the final representative state with mixed test outcomes
+                switch (tso.actualStatus) {
+                    case PENDING:
+                        vo = VerdictOutcome.PENDING;
+//                        if (previousVO != VerdictOutcome.PENDING) {
+//                            vo = VerdictOutcome.ERROR;
+//                            ImmortalsErrorHandler.reportFatalError("Invalid validatation state transition for validator '" + tso.testIdentifier + "' from " + previousVO.name() + "to " + tso.actualStatus + "!");
+//                            break testIter;
+//                        }
+                        break;
+
+                    case NOT_APPLICABLE:
                         vo = VerdictOutcome.ERROR;
-                        ImmortalsErrorHandler.reportFatalError("Invalid validatation state transition for validator '" + tso.testIdentifier + "' from " + previousVO.name() + "to " + tso.actualStatus + "!");
+                        ImmortalsErrorHandler.reportFatalError("No validators should be NOT_APPLICABLE!");
                         break testIter;
-                    }
-                    break;
 
-                case NOT_APPLICABLE:
-                    vo = VerdictOutcome.ERROR;
-                    ImmortalsErrorHandler.reportFatalError("No validators should be NOT_APPLICABLE!");
-                    break testIter;
+                    case RUNNING:
+//                        if (previousVO != VerdictOutcome.PENDING && previousVO != VerdictOutcome.RUNNING) {
+//                            if (vo == VerdictOutcome.PENDING || vo == VerdictOutcome.RUNNING) {
+//                                ImmortalsErrorHandler.reportFatalError("Unexpected verdict outcome transition from terminal state '"
+//                                        + previousVO.name() + " to non-terminal state '" + vo.name() + "'!");
+//                            } else {
+//                                ImmortalsErrorHandler.reportFatalError("Unexpected verdict outcome transition from terminal state '"
+//                                        + previousVO.name() + " to terminal state '" + vo.name() + "'!");
+//                            }
+//                        }
 
-                case RUNNING:
-                    if (previousVO != VerdictOutcome.PENDING && previousVO != VerdictOutcome.RUNNING) {
-                        if (vo == VerdictOutcome.PENDING || vo == VerdictOutcome.RUNNING) {
-                            ImmortalsErrorHandler.reportFatalError("Unexpected verdict outcome transition from terminal state '"
-                                    + previousVO.name() + " to non-terminal state '" + vo.name() + "'!");
-                        } else {
-                            ImmortalsErrorHandler.reportFatalError("Unexpected verdict outcome transition from terminal state '"
-                                    + previousVO.name() + " to terminal state '" + vo.name() + "'!");
-                        }
-                    }
+                        vo = VerdictOutcome.RUNNING;
+                        break testIter;
 
-                    vo = VerdictOutcome.RUNNING;
-                    break testIter;
+                    case ERROR:
+                        vo = VerdictOutcome.ERROR;
+                        break testIter;
 
-                case ERROR:
-                    vo = VerdictOutcome.ERROR;
-                    break testIter;
+                    case INVALID:
+                        vo = VerdictOutcome.INCONCLUSIVE;
+                        break testIter;
 
-                case INVALID:
-                    vo = VerdictOutcome.INCONCLUSIVE;
-                    break testIter;
+                    case INCOMPLETE:
+                        break;
 
-                case INCOMPLETE:
-                    break;
+                    case COMPLETE_PASS:
+                        vo = VerdictOutcome.PASS;
+                        break;
 
-                case COMPLETE_PASS:
-                    vo = VerdictOutcome.PASS;
-                    break;
+                    case COMPLETE_DEGRADED:
+                        vo = VerdictOutcome.DEGRADED;
+                        break;
 
-                case COMPLETE_DEGRADED:
-                    vo = VerdictOutcome.DEGRADED;
-                    break;
-
-                case COMPLETE_FAIL:
-                    vo = VerdictOutcome.FAIL;
-                    break;
+                    case COMPLETE_FAIL:
+                        vo = VerdictOutcome.FAIL;
+                        break testIter;
+                }
             }
         }
 
@@ -296,6 +273,7 @@ public class TestHarnessAdapterMediator {
                 }
                 break;
         }
+        state.initialValidationUpdate = false;
     }
 
     public synchronized Response thGetAlive() {
@@ -312,10 +290,10 @@ public class TestHarnessAdapterMediator {
     }
 
     public synchronized Response thPostEnabled(@Nonnull EnableDas enableDas) {
-        if (dasDisabledByTestharness != enableDas.dasEnabled) {
+        if (performAdaptation == enableDas.dasEnabled) {
             return Response.ok().build();
         } else if (state == null) {
-            dasDisabledByTestharness = !enableDas.dasEnabled;
+            performAdaptation = enableDas.dasEnabled;
             return Response.ok().build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -332,7 +310,7 @@ public class TestHarnessAdapterMediator {
         this.applicationDeployer = new AdaptedApplicationDeployer();
         submissionInterface = SubmissionServices.getTestHarnessSubmitter();
     }
-    
+
     @Nullable
     private TestCoordinatorExecutionInterface getCoordinator(@Nonnull ChallengeProblem challengeProblem) {
         switch (challengeProblem) {
@@ -347,29 +325,34 @@ public class TestHarnessAdapterMediator {
 
             default:
                 return null;
-//                Response.serverError().entity("Unexpected challenge problem identifier '" + challengeProblem.name() + "'!").build();
         }
     }
 
     public synchronized Response submitSubmissionModel(@Nullable SubmissionModel submissionModel, @Nonnull ChallengeProblem challengeProblem) {
         // If something is currently running, submit a 503
         if (state != null) {
-            return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
+            String msg = "SubmissionModel submitted while a previous submission is currently running!";
+            logger.error(msg);
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(msg).build();
         }
 
         if (submissionModel == null) {
+            logger.info("Empty submission model submitted. Assuming baseline. where adaptation is NOT_APPLICABLE.");
             // If null, assume baseline scenario with no adaptation
             submissionModel = new SubmissionModel();
             submissionModel.sessionIdentifier = "I" + System.currentTimeMillis();
+            logger.info("Assigning adaptationIdentifier '" + submissionModel.sessionIdentifier + "' to baseline submission.");
             state = new TestHarnessAdapterStateContainer(submissionModel, challengeProblem);
             state.testAdapterState.adaptation.adaptationStatus = DasOutcome.NOT_APPLICABLE;
         } else {
             if (submissionModel.sessionIdentifier == null) {
                 submissionModel.sessionIdentifier = "I" + System.currentTimeMillis();
+                logger.info("Provided SubmissionModel has no identifier. Assigning adaptationIdentifier '" + submissionModel.sessionIdentifier + "'.");
             }
             state = new TestHarnessAdapterStateContainer(submissionModel, challengeProblem);
 
-            if (dasDisabledByTestharness) {
+            if (!performAdaptation) {
+                logger.info("Adaptation programatically disabled. Assuming adaptation is NOT_APPLICABLE.");
                 state.testAdapterState.adaptation.adaptationStatus = DasOutcome.NOT_APPLICABLE;
             }
         }
@@ -378,31 +361,27 @@ public class TestHarnessAdapterMediator {
 
         Response initialResponse;
 
-        if ((submissionModel.martiServerModel == null && submissionModel.globalModel == null && submissionModel.atakLiteClientModel == null) || dasDisabledByTestharness) {
-            // TODO: Using the mockDas flag here isn't ideal, but it works for now
-            if (ImmortalsConfig.getInstance().debug.isUseMockDas()) {
-                if (submissionModel.martiServerModel != null || submissionModel.globalModel != null || submissionModel.atakLiteClientModel != null) {
-                    Mock.desiredTestOutcome = TestOutcome.COMPLETE_FAIL;
-                }
-                initialResponse = new DummyTestCoordinator().execute(submissionModel, !dasDisabledByTestharness);
-            } else {
-                TestCoordinatorExecutionInterface testCoordinator = getCoordinator(challengeProblem);
-                if (testCoordinator == null) {
-                        return Response.serverError().entity("Unexpected challenge problem identifier '" + challengeProblem.name() + "'!").build();
-                }
+        boolean environmentPerturbed =
+                (submissionModel.martiServerModel != null &&
+                        submissionModel.martiServerModel.requirements != null &&
+                        (submissionModel.martiServerModel.requirements.libraryUpgrade != null ||
+                                submissionModel.martiServerModel.requirements.partialLibraryUpgrade != null ||
+                                submissionModel.martiServerModel.requirements.postgresqlPerturbation != null)
+                );
+                
+        logger.debug("Submission model has no perturbations.");
 
-                initialResponse = testCoordinator.execute(submissionModel, !dasDisabledByTestharness);
+        if (ImmortalsConfig.getInstance().debug.isUseMockTestCoordinators()) {
+            if (environmentPerturbed && !performAdaptation) {
+                Mock.desiredTestOutcome = TestOutcome.COMPLETE_FAIL;
             }
+            initialResponse = new DummyTestCoordinator().execute(submissionModel, performAdaptation);
         } else {
-            if (ImmortalsConfig.getInstance().debug.isUseMockDas()) {
-                initialResponse = new DummyTestCoordinator().execute(submissionModel);
-            } else {
-                TestCoordinatorExecutionInterface testCoordinator = getCoordinator(challengeProblem);
-                if (testCoordinator == null) {
-                    return Response.serverError().entity("Unexpected challenge problem identifier '" + challengeProblem.name() + "'!").build();
-                }
-                initialResponse = testCoordinator.execute(submissionModel);
+            TestCoordinatorExecutionInterface testCoordinator = getCoordinator(challengeProblem);
+            if (testCoordinator == null) {
+                return Response.serverError().entity("Unexpected challenge problem identifier '" + challengeProblem.name() + "'!").build();
             }
+            initialResponse = testCoordinator.execute(submissionModel, performAdaptation);
         }
 
         if (initialResponse.getStatus() > 399) {

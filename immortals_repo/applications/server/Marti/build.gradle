@@ -1,3 +1,5 @@
+import java.nio.file.Paths
+
 buildscript {
     repositories {
         mavenCentral()
@@ -25,9 +27,11 @@ repositories {
 apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'mil.darpa.immortals'
+apply plugin: 'jacoco'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+group = "mil.darpa.immortals"
 version = "2.0-LOCAL"
 
 sourceSets {
@@ -73,29 +77,18 @@ clean.doLast {
 
 test {
     useTestNG {
-        excludeGroups 'integrationTests'
     }
 
     doFirst {
-        new File("$buildDir/validation-temp").mkdir()
-        systemProperty 'java.io.tmpdir', "$buildDir/validation-temp"
-        systemProperty 'mil.darpa.immortals.envfile', "$buildDir/validation-temp/env.json"
+        new File("$buildDir/test-temp").mkdir()
+        systemProperty 'java.io.tmpdir', "$buildDir/test-temp"
+        systemProperty 'mil.darpa.immortals.envfile', "$buildDir/test-temp/env.json"
     }
-
 }
 
-task('validate', type: Test) {
-    group = 'Verification'
-    description = 'Executes all the validation tests'
-
-    useTestNG {
-        includeGroups 'integrationTests'
-    }
-
-    doFirst {
-        new File("$buildDir/validation-temp").mkdir()
-        systemProperty 'java.io.tmpdir', "$buildDir/validation-temp"
-        systemProperty 'mil.darpa.immortals.envfile', "$buildDir/validation-temp/env.json"
+jacocoTestReport {
+    reports {
+        xml.enabled true
     }
 }
 
@@ -109,16 +102,23 @@ dependencies {
     compile('org.glassfish:javax.json:1.0.4')
     compile('ch.qos.logback:logback-classic:1.2.3')
     compile('org.dom4j:dom4j:2.1.0')
-    // CP3-related class
     compile 'mil.darpa.immortals.datatypes:Dom4jCot:+'
-    // Needed to parse CoT in some scenarios
     compile 'jaxen:jaxen:1.1.6'
-    // Logging
     compile 'log4j:log4j:1.2.16'
-    compile 'mil.darpa.immortals.dfus:ElevationApi-1:+'
-    //compile 'mil.darpa.immortals.dfus:ElevationApi-2:+'
+    compile 'mil.darpa.immortals.dfus:ElevationApi-1:2.0-LOCAL'
     testCompile('org.testng:testng:6.13.1')
     testCompile('com.bbn.ataklite:CLITAK:+')
+    testCompile('org.jmockit:jmockit:1.39')
+}
+
+if (project.getGradle().startParameter.taskRequests.size() > 0) {
+    if (project.getGradle().startParameter.taskRequests.get(0).args.contains("build")) {
+        if (!project.getGradle().startParameter.taskRequests.get(0).args.contains("test")) {
+            test.doFirst {
+                systemProperty 'mil.darpa.immortals.mock', "true"
+            }
+        }
+    }
 }
 
 eclipse.classpath.plusConfigurations = configurations.findAll { it.name.endsWith("Compile") }

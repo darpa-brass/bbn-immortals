@@ -2,9 +2,11 @@ package mil.darpa.immortals.core.das.restendpoints;
 
 import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.config.ImmortalsConfig;
-import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
+import mil.darpa.immortals.core.api.TestCaseReportSet;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
 import mil.darpa.immortals.core.das.*;
 import mil.darpa.immortals.core.das.sparql.SessionIdentifier;
+import mil.darpa.immortals.core.das.upgrademodules.LibraryUpgradeModule;
 import mil.darpa.immortals.das.context.ContextManager;
 import mil.darpa.immortals.das.context.DasAdaptationContext;
 import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
@@ -116,14 +118,22 @@ public class DASEndpoint {
             String adaptationIdentifier = SessionIdentifier.select(knowledgeRepoGraphUri);
             DasAdaptationContext dac = ContextManager.getContext(adaptationIdentifier,
                     knowledgeRepoGraphUri, knowledgeRepoGraphUri);
+            
+            // TODO: This should probably match with the AdaptationManager...
+            LibraryUpgradeModule lum = new LibraryUpgradeModule();
+            if (lum.isApplicable(dac)) {
+                lum.apply(dac);
+            }
 
             ValidationManager vm = new ValidationManager(dac);
-            vm.queryAndReportValidatiors().get(0);
             
             Runnable validationTask = () -> {
-                vm.triggerAndReportValidation();
+                try {
+                    TestCaseReportSet tcrs = vm.executeValidation(true);
+                } catch (Exception e) {
+                    ImmortalsErrorHandler.reportFatalException(e);
+                }
             };
-
 
             Thread t = new Thread(validationTask);
 

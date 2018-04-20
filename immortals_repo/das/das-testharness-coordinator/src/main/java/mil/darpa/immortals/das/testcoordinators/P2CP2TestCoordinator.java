@@ -18,7 +18,7 @@ public class P2CP2TestCoordinator implements TestCoordinatorExecutionInterface {
     private Logger logger = LoggerFactory.getLogger(P2CP2TestCoordinator.class);
 
     @Override
-    public Response execute(SubmissionModel submissionModel) {
+    public Response execute(SubmissionModel submissionModel, boolean attemptAdaptation) {
         String adaptationIdentifier;
 //        AdaptationDetails adaptationDetails = null;
         // Do prepwork and produce the initial AdaptationDetails...
@@ -61,10 +61,5 @@ public class P2CP2TestCoordinator implements TestCoordinatorExecutionInterface {
         // Get an initial result for the response and return it
         // Return the previously obtained initial response
         return Response.ok().build();
-    }
-
-    @Override
-    public Response execute(SubmissionModel submissionModel, boolean attemptAdaptation) {
-        throw new RuntimeException("Not yet implemented!");
     }
 }

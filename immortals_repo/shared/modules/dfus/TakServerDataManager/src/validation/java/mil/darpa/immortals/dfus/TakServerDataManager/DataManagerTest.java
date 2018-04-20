@@ -4,6 +4,10 @@ import static org.junit.Assert.*;
 
 import javax.sql.rowset.CachedRowSet;
 
+import mil.darpa.immortals.annotation.dsl.ontology.java.testing.annotation.ProvidedFunctionalityValidationAnnotation;
+import mil.darpa.immortals.ontology.BaselineFunctionalAspect;
+import mil.darpa.immortals.ontology.BaselineFunctionalitySpec;
+import mil.darpa.immortals.ontology.DatabaseQueryFunctionalAspect;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +27,7 @@ public class DataManagerTest {
 	public void tearDown() throws Exception {
 	}
 
+	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
 	@Test
 	public void testCotEventsForConstantChannelJoin() {
 
@@ -35,6 +40,7 @@ public class DataManagerTest {
 		}
 	}
 
+	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
 	@Test
 	public void testCotEventsForConstantChannelJoin2() {
 
@@ -47,6 +53,7 @@ public class DataManagerTest {
 		}
 	}
 
+	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
 	@Test
 	public void testCotEventsForConstantCompoundFilter() {
 
@@ -59,6 +66,7 @@ public class DataManagerTest {
 		}
 	}
 
+	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
 	@Test
 	public void testCotEventsForConstantMixedJoin() {
 
@@ -71,6 +79,7 @@ public class DataManagerTest {
 		}
 	}
 
+	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
 	@Test
 	public void testCotEventsForConstantTimeInterval() {
 
@@ -83,6 +92,7 @@ public class DataManagerTest {
 		}
 	}
 
+	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
 	// TODO: Re-enable once more granular test reporting is supported!
 //	@Test
 	public void testCotEventsForUidAndInterval() {
@@ -99,6 +109,7 @@ public class DataManagerTest {
 		}
 	}
 
+	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
 	@Test
 	public void testCotEventsOnChannelInRegion() {
 
@@ -111,6 +122,7 @@ public class DataManagerTest {
 		}
 	}
 
+	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
 	@Test
 	public void testCotEventsForConstantCotType() {
 

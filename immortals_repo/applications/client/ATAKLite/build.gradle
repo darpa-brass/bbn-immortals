@@ -30,6 +30,9 @@ apply plugin: 'mil.darpa.immortals'
 
 def bc = ImmortalsConfig.instance.build
 
+group = 'mil.darpa.immortals'
+version = bc.augmentations.publishVersion
+
 android {
     compileSdkVersion bc.augmentations.androidCompileSdkVersion
     buildToolsVersion bc.augmentations.androidBuildToolsVersion

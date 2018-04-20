@@ -113,6 +113,12 @@
             <version>4.0.0.Final</version>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.bitbucket.mstrobel</groupId>
+            <artifactId>procyon-compilertools</artifactId>
+            <version>0.5.32</version>
+        </dependency>
 
 		<dependency>
 			<groupId>com.securboration</groupId>

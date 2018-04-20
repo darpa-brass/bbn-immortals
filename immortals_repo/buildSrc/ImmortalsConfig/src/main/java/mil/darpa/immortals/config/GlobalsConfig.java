@@ -55,8 +55,19 @@ public class GlobalsConfig {
     private String executionsDirectory = globalWorkingDirectory;
     private String executionsLogDirectory = globalLogDirectory;
 
+    private String immortalsOntologyUriRoot = "http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#";
+    private String immortalsOntologyUriPrefix = "IMMoRTALS_mil_darpa_immortals_ontology";
+
+    public String getImmortalsOntologyUriRoot() {
+        return immortalsOntologyUriRoot;
+    }
+
+    public String getImmortalsOntologyUriPrefix() {
+        return immortalsOntologyUriPrefix;
+    }
+
     private boolean headless = true;
-    
+
     public Path getImmortalsRoot() {
         return Paths.get(immortalsRoot);
     }
@@ -80,7 +91,7 @@ public class GlobalsConfig {
     public Path getAdaptationWorkingDirectory(String adaptationIdentifier) {
         return StaticHelper.mkdir(Paths.get(executionsDirectory).resolve(adaptationIdentifier));
     }
-    
+
     public Path getAdaptationComponentWorkingDirectory(String adaptationIdentifier, String componentIdentifier) {
         return StaticHelper.mkdir(getAdaptationWorkingDirectory(adaptationIdentifier).resolve(componentIdentifier));
     }
@@ -96,7 +107,7 @@ public class GlobalsConfig {
     public boolean isHeadless() {
         return headless;
     }
-    
+
     public GlobalsConfig() {
     }
 
@@ -111,7 +122,7 @@ public class GlobalsConfig {
         }
         return dirPath.toString();
     }
-    
+
     public static Path getExtensionsDownloadDir() {
         try {
             Path buildDir = staticImmortalsRoot.resolve("build");

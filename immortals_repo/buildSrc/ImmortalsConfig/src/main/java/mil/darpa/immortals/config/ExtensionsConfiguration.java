@@ -19,6 +19,7 @@ public class ExtensionsConfiguration {
     public final HddRassConfiguration hddrass = new HddRassConfiguration();
     public final VoltDBConfiguration voltdb = new VoltDBConfiguration();
     public final AqlBrassConfiguration aqlbrass = new AqlBrassConfiguration();
+    public final ImmortalizerConfiguration immortalizer = new ImmortalizerConfiguration();
 
     private String producedTtlOutputDirectory = staticProducedTtlOutputDirectory.toString();
 

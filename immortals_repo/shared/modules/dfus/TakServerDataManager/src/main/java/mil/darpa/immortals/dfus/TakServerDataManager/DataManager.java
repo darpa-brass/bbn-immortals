@@ -1,5 +1,6 @@
 package mil.darpa.immortals.dfus.TakServerDataManager;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import mil.darpa.immortals.datatypes.cot.CotHelper;
 import mil.darpa.immortals.datatypes.cot.Event;
+import mil.darpa.immortals.datatypes.cot.Point;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForConstantChannelJoin;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForConstantChannelJoin2;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForConstantCompoundFilter;
@@ -30,17 +32,21 @@ public class DataManager {
 	
 	//We can move these config items to a config management solution
 	private static final String COT_DATA_SOURCE = "TakDataSource";
+	private static final String OPERATIONAL_DATA_SOURCE = "TakOperational";
 	private static final String SERVER_NAME = "localhost";
 	private static final String DATABASE_NAME = "immortals";
 	private static final String USER = "immortals";
 	private static final String PASSWORD = "immortals";
 	private static final int MAXIMUM_NUMBER_CONNECTIONS = 4;
 	private static final String REPORTING_SCHEMA = "takrpt";
+	private static final String OPERATIONAL_SCHEMA = "tak";
 
 	private static final String insertCotEvent = "INSERT INTO tak.COT_EVENT(source_id, cot_type, how, detail) " + 
-			"SELECT id, ?, ?, ? from tak.source where name = ?";
+			"SELECT source_id, ?, ?, ? from tak.source where name = ?";
 	private static final String insertCotEventPosition = "INSERT INTO tak.COT_EVENT_POSITION (cot_event_id, point_hae, point_ce, point_le, longitude, latitude) VALUES (?,?,?,?,?,?)";
 	private static final String DEFAULT_DETAIL_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><detail/>";
+	
+	private static PGPoolingDataSource operationalDataSource;
 
 	static {
 		//Not the ideal pooling implementation, but should be fine for this project
@@ -52,11 +58,23 @@ public class DataManager {
 		dataSource.setPassword(PASSWORD);
 		dataSource.setMaxConnections(MAXIMUM_NUMBER_CONNECTIONS);
 		dataSource.setCurrentSchema(REPORTING_SCHEMA);
-		
+
+		operationalDataSource = new PGPoolingDataSource();
+		operationalDataSource.setDataSourceName(OPERATIONAL_DATA_SOURCE);
+		operationalDataSource.setServerName(SERVER_NAME);
+		operationalDataSource.setDatabaseName(DATABASE_NAME);
+		operationalDataSource.setUser(USER);
+		operationalDataSource.setPassword(PASSWORD);
+		operationalDataSource.setMaxConnections(MAXIMUM_NUMBER_CONNECTIONS);
+		operationalDataSource.setCurrentSchema(OPERATIONAL_SCHEMA);
+
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				if (dataSource != null) {
 					dataSource.close();
+				}
+				if (operationalDataSource != null) {
+					operationalDataSource.close();
 				}
 			}
 		});
@@ -65,6 +83,7 @@ public class DataManager {
 	public DataManager() {}
 
 	public void insertEvent(Event event) throws Exception {
+		Exception caughtException = null;
 
 		boolean success = false;
 		
@@ -87,7 +106,7 @@ public class DataManager {
 		}
 		
 		try {
-			conn = dataSource.getConnection();
+			conn = operationalDataSource.getConnection();
 			conn.setAutoCommit(false);
 
 			stmtCotEvent = conn.prepareStatement(insertCotEvent, Statement.RETURN_GENERATED_KEYS);
@@ -141,6 +160,7 @@ public class DataManager {
 				logger.error("Could not persist CotEvent to database.");
 			}
 		} catch (Exception e) {
+			caughtException = e;
 			if (conn != null) {
 				conn.rollback();
 			}
@@ -157,7 +177,9 @@ public class DataManager {
 				conn.close();
 			}
 		}
-
+		if (caughtException != null) {
+			throw new Exception(caughtException);
+		}
 	}
 
 	public CachedRowSet cotEventsForConstantCotType() throws SQLException {

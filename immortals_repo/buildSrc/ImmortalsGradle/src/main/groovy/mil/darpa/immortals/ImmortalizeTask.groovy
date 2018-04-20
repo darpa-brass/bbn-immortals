@@ -10,7 +10,13 @@ class ImmortalizeTask extends DefaultTask {
 
     public static final String TASK_IDENTIFIER = "immortalize"
 
+    private final String SECURBORATION_BYTECODE_TASK = "bytecode"
+
     @TaskAction
     immortalize() {
+        ImmortalizerPluginExtension ipe = project.getExtensions().findByType(ImmortalizerPluginExtension.class)
+        if (ipe.perfromGradleBuildAnalysis) {
+            AnalyzeGradleBuildTask.performBuildAnalysis(project)
+        }
     }
 }

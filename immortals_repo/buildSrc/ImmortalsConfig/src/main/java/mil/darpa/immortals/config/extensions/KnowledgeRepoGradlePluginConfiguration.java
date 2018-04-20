@@ -12,8 +12,6 @@ public class KnowledgeRepoGradlePluginConfiguration {
 
     private final String identifier = "krgp";
 
-    private boolean performBytecodeAnalysis = true;
-
     // NEVER AUTO-CREATE THIS DIRECTORY!!!
     private String ttlTargetDirectory = ExtensionsConfiguration.staticProducedTtlOutputDirectory.resolve("_" + identifier).toAbsolutePath().toString();
 
@@ -23,10 +21,6 @@ public class KnowledgeRepoGradlePluginConfiguration {
 
     public String getIdentifier() {
         return identifier;
-    }
-
-    public boolean isPerformBytecodeAnalysis() {
-        return performBytecodeAnalysis;
     }
 
     public Path getTtlTargetDirectory() {

@@ -80,6 +80,18 @@ following input file.
  
  * `inbox/configuration.json` -- arguments to application model
 
+A user can also provide a _selection_ to the `check` subcommand, via the
+`-s` or `--selection` options. A selection is a string representing a boolean
+formula determing which variants should be executed. For example, calling
+
+
+```bash
+> stack exec resource-dsl -- check -s A&&(!B)
+```
+
+Will run the check command with a configuration where variant `A` is assumed
+to be true and `B` is assumed to be false.
+
 Finally, the resulting resource environment can be checked against a set of
 mission requirements, which is itself just another resource profile, which is
 provided in the following input file.
@@ -93,22 +105,32 @@ mission requirements.
 
 ### Outputs
 
-There are two kinds of outputs from the `check` subcommand. The first is the
-resulting resource environment if the application model successfully loads,
-stored by default in the following file:
+When the `check` subcommand is run, there are a number of possible outcomes.
+In the case that there is an error in loading the input, such as a missing
+file or an error parsing the JSON input, execution terminates with an exit
+code of 1.
 
- * `outbox/resources.json` -- resulting resource environment
+Once the input is successfully loaded, the model is loaded into the given
+environment. If all variants produce an error, execution terminates with an
+exit code of 2. Otherwise, if at least one variant successfully loads, execution
+proceeds to the next step.
 
-Additionally the overall result of the check is indicated by the process exit
-code (and potentially some error messages).
+If provided with requirements, the resulting resource environment is then checked
+for whether those requirements are satisfied. If all variants fail to satisfy the
+given requirements, the application exits with exit code 3.
 
-The exit codes are defined as follows:
- 
- * 0: OK -- the model loads successfully and satisfies the mission requirements
- * 1: miscellaneous error -- see output for details (e.g. JSON error, bug)
- * 2: model cannot be loaded in the given environment
- * 3: model successfully loads but does not satisfy the requirements
+If at least one variant is successful, the application exits with exit code 0.
 
+There are three possible output files produced when the application is run:
+
+  * `outbox/error.json` -- A variational value containing either the error
+  message for a particular variant, or `null` if no error exists.
+  * `outbox/success.json` -- A boolean expression that indicating which variants,
+  if any, are in success states.
+  * `outbox/resources.json` -- The resulting resource environment.
+  
+Only the first two files are produced in the case that the application model
+fails to load, exiting with code 2.
 
 ## Generating example inputs
 
@@ -218,6 +240,54 @@ This configuration passes the mission requirements (exit code 0):
 ```bash
 > stack exec resource-dsl -- check
 ```
+
+## Cross Application Dependencies Example
+
+To see the inputs that can be generated for this example, pass `--help` to the
+`crossapp` example subcommand:
+
+```bash
+> stack exec resource-dsl -- example crossapp --help
+```
+
+First, generate some input files. The following command generates the cross app
+example dictionary, application model, the initial
+resource environment, and configures the
+application to variationally load all available DFUs for compression and encryption.
+
+```bash
+> stack exec resource-dsl -- example crossapp --dict --model --init --config
+```
+
+Next, generate the mission requirements. The requirements are that the encryption and
+compression algorithms match for both the server and client. In addition, the user specifies
+a minimum desired security (measured in bits, e.g. 126.1 for AES128), a maximum desired compression
+ratio (the expected size of the resulting message after compression as a percentage of the original),
+and a maximum desired efficiency (measured in s/mb, or processing time taken to process a single mb
+of the original message). For example, mission requirements that desire 128 bits or greater of security,
+a minimum of 75% reduction in message size, and a processing speed of at least 0.1 s/mb would use the
+following command:
+
+```bash
+> stack exec resource-dsl -- example crossapp --reqs \(128,0.75,0.1\)
+```
+
+Once the mission requirements are generated, check the example configuration against the requirements
+by running this command:
+
+```bash
+> stack exec resource-dsl -- check
+```
+
+If there are no choices of compression algorithm combined with encryption algorithm that satisfy the mission
+requirements, the application will return with exit code 3. Otherwise, if at least one variant successfully
+satsifies the mission requirements, it will return with exit code 0.
+
+The application will also output three report files into the outbox. `error.json` will contain a variational
+data structure containing any errors generated for a particular variant, such as failing to meet a particular
+mission requirement. `resources.json` will include the variational resource environment generated by running
+the example. Finally, `success.json` includes a boolean formula that denotes which variants, if any, did not
+encounter any errors and met all mission requirements.
 
 [Stack]: http://docs.haskellstack.org/en/stable/README/
 [Z3]: https://github.com/Z3Prover/z3/releases

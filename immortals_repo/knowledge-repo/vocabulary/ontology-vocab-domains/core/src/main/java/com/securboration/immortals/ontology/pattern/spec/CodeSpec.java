@@ -12,7 +12,7 @@ public class CodeSpec {
     
     private String className;
     
-    private String methodName;
+    private String methodSignature;
 
     public String getCode() {
         return code;
@@ -28,5 +28,13 @@ public class CodeSpec {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public String getMethodSignature() {
+        return methodSignature;
+    }
+
+    public void setMethodSignature(String methodSignature) {
+        this.methodSignature = methodSignature;
     }
 }

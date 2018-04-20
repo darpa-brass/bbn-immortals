@@ -3,6 +3,7 @@ package mil.darpa.immortals.internal
 import mil.darpa.immortals.config.ImmortalsConfig
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 
 import java.nio.file.Paths
@@ -28,15 +29,15 @@ class Helpers {
         def immortalsRepo = Paths.get(configuration.globals.immortalsRepo).toAbsolutePath().toString()
 
         target.apply plugin: 'maven-publish'
-        
+
         target.tasks.create("sourceJar", Jar.class) {
             classifier 'sources'
             from target.sourceSets.main.allJava
         }
-        
+
         if (shadowJar) {
             target.apply plugin: 'com.github.johnrengelman.shadow'
-            
+
             target.shadowJar {
                 classifier = ''
                 mergeServiceFiles()
@@ -55,7 +56,7 @@ class Helpers {
                     }
                 }
             }
-            
+
         } else {
             target.publishing {
                 publications {
@@ -72,37 +73,42 @@ class Helpers {
             }
         }
 
-        target.clean.doLast {
-            String rootPublishDir = immortalsRepo + '/' + ((String) target.group).replaceAll('\\.', '/') + '/'
-            String publishDir = rootPublishDir + target.getName().replace(':', '/') + '/'
+        target.tasks.create('deepclean') {
+            doLast {
+                String rootPublishDir = immortalsRepo + '/' + ((String) target.group).replaceAll('\\.', '/') + '/'
+                String publishDir = rootPublishDir + target.getName().replace(':', '/') + '/'
 
-            String[] artifacts = [
-                    'maven-metadata.xml',
-                    'maven-metadata.xml.md5',
-                    'maven-metadata.xml.sha1',
-                    target.version + '/' + target.name + '-' + bc.das.publishVersion + '.jar',
-                    target.version + '/' + target.name + '-' + bc.das.publishVersion + '.jar.md5',
-                    target.version + '/' + target.name + '-' + bc.das.publishVersion + '.jar.sha1',
-                    target.version + '/' + target.name + '-' + bc.das.publishVersion + '.pom',
-                    target.version + '/' + target.name + '-' + bc.das.publishVersion + '.pom.md5',
-                    target.version + '/' + target.name + '-' + bc.das.publishVersion + '.pom.sha1',
-            ]
+                String[] artifacts = [
+                        'maven-metadata.xml',
+                        'maven-metadata.xml.md5',
+                        'maven-metadata.xml.sha1',
+                        target.version + '/' + target.name + '-' + bc.das.publishVersion + '.jar',
+                        target.version + '/' + target.name + '-' + bc.das.publishVersion + '.jar.md5',
+                        target.version + '/' + target.name + '-' + bc.das.publishVersion + '.jar.sha1',
+                        target.version + '/' + target.name + '-' + bc.das.publishVersion + '-sources.jar',
+                        target.version + '/' + target.name + '-' + bc.das.publishVersion + '-sources.jar.md5',
+                        target.version + '/' + target.name + '-' + bc.das.publishVersion + '-sources.jar.sha1',
+                        target.version + '/' + target.name + '-' + bc.das.publishVersion + '.pom',
+                        target.version + '/' + target.name + '-' + bc.das.publishVersion + '.pom.md5',
+                        target.version + '/' + target.name + '-' + bc.das.publishVersion + '.pom.sha1',
+                ]
 
-            for (String artifact : artifacts) {
-                File f = new File(publishDir + artifact)
-                if (f.exists()) {
-                    f.delete()
+                for (String artifact : artifacts) {
+                    File f = new File(publishDir + artifact)
+                    if (f.exists()) {
+                        f.delete()
+                    }
                 }
-            }
 
-            String fp = publishDir + '/' + (String) target.version
+                String fp = publishDir + '/' + (String) target.version
 
-            while (fp.length() >= immortalsRepo.length()) {
-                File f = new File(fp)
-                if (f.isDirectory() && target.fileTree(dir: f.getAbsolutePath()).isEmpty()) {
-                    new File(f.getAbsolutePath()).deleteDir()
+                while (fp.length() >= immortalsRepo.length()) {
+                    File f = new File(fp)
+                    if (f.isDirectory() && target.fileTree(dir: f.getAbsolutePath()).isEmpty()) {
+                        new File(f.getAbsolutePath()).deleteDir()
+                    }
+                    fp = fp.substring(0, fp.lastIndexOf('/'))
                 }
-                fp = fp.substring(0, fp.lastIndexOf('/'))
             }
         }
 
@@ -117,11 +123,11 @@ class Helpers {
         def bc = ImmortalsConfig.getInstance().build
         target.sourceCompatibility = bc.das.javaVersionCompatibility
         target.version = bc.das.publishVersion
-        
+
         target.jar {
             manifest {
                 attributes "Implementation-Vendor": "BBN Technologies",
-                "Implementation-Version": ImmortalsConfig.instance.build.augmentations.publishVersion
+                        "Implementation-Version": ImmortalsConfig.instance.build.augmentations.publishVersion
             }
         }
 
@@ -151,6 +157,16 @@ class Helpers {
             compile 'com.google.code.gson:gson:2.7'
             compile "org.slf4j:slf4j-api:${ImmortalsConfig.instance.build.das.slf4jVersion}"
             testCompile group: 'junit', name: 'junit', version: '4.11'
+        }
+    }
+
+    static void applyJacocoCoverage(Project target) {
+        target.apply plugin: 'jacoco'
+
+        target.jacocoTestReport {
+            reports {
+                xml.enabled true
+            }
         }
     }
 }

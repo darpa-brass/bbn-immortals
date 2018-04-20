@@ -6,7 +6,9 @@ import com.securboration.immortals.ontology.lang.SourceFile;
 
 public class WrapperImplementationImpact extends AnalysisImpact {
     
-    private SourceFile producedSourceFile;
+    private SourceFile[] producedSourceFiles;
+    
+    private SourceFile augmentedUserFile;
     
     private DataflowNode initializationNode;
     
@@ -28,11 +30,19 @@ public class WrapperImplementationImpact extends AnalysisImpact {
         this.initializationNode = initializationNode;
     }
 
-    public SourceFile getProducedSourceFile() {
-        return producedSourceFile;
+    public SourceFile[] getProducedSourceFiles() {
+        return producedSourceFiles;
     }
 
-    public void setProducedSourceFile(SourceFile producedSourceFile) {
-        this.producedSourceFile = producedSourceFile;
+    public void setProducedSourceFiles(SourceFile[] producedSourceFiles) {
+        this.producedSourceFiles = producedSourceFiles;
+    }
+
+    public SourceFile getAugmentedUserFile() {
+        return augmentedUserFile;
+    }
+
+    public void setAugmentedUserFile(SourceFile augmentedUserFile) {
+        this.augmentedUserFile = augmentedUserFile;
     }
 }

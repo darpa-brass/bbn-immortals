@@ -7,14 +7,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -155,7 +151,7 @@ public class JarIngestor {
         AClass aClass =
                 ingestor.processClass(
                         hash(binary),
-                        getClassNode(binary));
+                        getClassNode(binary), false);
 
         setVersionInfo(
                 binary,
@@ -450,7 +446,7 @@ public class JarIngestor {
     }
 
 
-    public AClass processClass(String hash,ClassNode cn){
+    public AClass processClass(String hash,ClassNode cn, boolean userCode){
         
         AClass aclass = new AClass();
         addAnnotationModel(aclass,cn.visibleAnnotations);
@@ -466,7 +462,7 @@ public class JarIngestor {
             
             logger.info("no class info available for " + cn.name);
         }
-        analyze(cn,aclass);
+        analyze(cn,aclass, userCode);
         
         return aclass;
     }
@@ -585,9 +581,10 @@ public class JarIngestor {
         methodModel.setMethodArgs(args.toArray(new MethodArg[]{}));
     }
     
-    private static void analyze(ClassNode cn,AClass classModel){
+    private static void analyze(ClassNode cn,AClass classModel, boolean userCode) {
         
         List<AField> fields = new ArrayList<>();
+        Set<String> dependentFiles = new HashSet<>();
         for(FieldNode fn:cn.fields){
             
             AField field = new AField();
@@ -619,6 +616,16 @@ public class JarIngestor {
 
                     fieldAccess.setFieldDesc(fieldInsnNode.desc);
                     fieldAccess.setFieldName(fieldInsnNode.name);
+                    
+                    if (userCode) {
+                        try {
+                            Class clazz = Class.forName(fieldInsnNode.owner.replace('/', '.'));
+                            URL location = clazz.getResource(("/" + fieldInsnNode.owner) + ".class");
+                            dependentFiles.add(location.toString());
+                        } catch (Exception exc) {
+                        }
+                    }
+                    
                     fieldAccess.setFieldOwnerHash(hash(fieldInsnNode.owner.getBytes()));
 
                     if (INCLUDE_INTERESTING_INSTRUCTIONS)
@@ -634,6 +641,16 @@ public class JarIngestor {
                     
                     methodCall.setCalledMethodDesc(methodInsnNode.desc);
                     methodCall.setCalledMethodName(methodInsnNode.name);
+
+                    if (userCode) {
+                        try {
+                            Class clazz = Class.forName(methodInsnNode.owner.replace('/', '.'));
+                            URL location = clazz.getResource(("/" + methodInsnNode.owner) + ".class");
+                            dependentFiles.add(location.toString());
+                        } catch (Exception exc) {
+                        }
+                    }
+                    
                     methodCall.setLineNumber(lineNumber);
                     methodCall.setOrder(methodCallOrder);
                     methodCallOrder++;
@@ -665,6 +682,13 @@ public class JarIngestor {
         classModel.setFields(fields.toArray(new AField[]{}));
         classModel.setMethods(methods.toArray(new AMethod[]{}));
         
+        String[] dependentFilesArray = new String[dependentFiles.size()];
+        Iterator<String> fileIter = dependentFiles.iterator();
+        for (int i = 0; i < dependentFilesArray.length; i++) {
+            dependentFilesArray[i] = fileIter.next();
+        }
+        
+        classModel.setDependentFiles(dependentFilesArray);
 //        System.out.printf("\t[%d] fields and [%d] methods for [%s]\n", cn.fields.size(),cn.methods.size(),cn.name);
     }
 
@@ -853,7 +877,7 @@ public class JarIngestor {
                 AClass aClass = 
                         processClass(
                                 hash(binary),
-                                getClassNode(binary));
+                                getClassNode(binary), false);
                 
                 setVersionInfo(
                     binary,
@@ -951,7 +975,7 @@ public class JarIngestor {
                             AClass aClass = 
                                     processClass(
                                             hash(jarContent),
-                                            getClassNode(jarContent));
+                                            getClassNode(jarContent), false);
                             
                             setVersionInfo(
                                 jarContent,

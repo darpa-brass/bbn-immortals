@@ -14,6 +14,8 @@ class GlobalsConfig(Serializable):
                  globalLogDirectory: str = None,
                  globalWorkingDirectory: str = None,
                  headless: bool = None,
+                 immortalsOntologyUriPrefix: str = None,
+                 immortalsOntologyUriRoot: str = None,
                  immortalsRepo: str = None,
                  immortalsRoot: str = None,
                  ttlIngestionDirectory: str = None):
@@ -24,6 +26,8 @@ class GlobalsConfig(Serializable):
         self.globalLogDirectory = globalLogDirectory
         self.globalWorkingDirectory = globalWorkingDirectory
         self.headless = headless
+        self.immortalsOntologyUriPrefix = immortalsOntologyUriPrefix
+        self.immortalsOntologyUriRoot = immortalsOntologyUriRoot
         self.immortalsRepo = immortalsRepo
         self.immortalsRoot = immortalsRoot
         self.ttlIngestionDirectory = ttlIngestionDirectory

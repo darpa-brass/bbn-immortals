@@ -5,7 +5,7 @@ from typing import FrozenSet
 # noinspection PyPep8Naming
 class DasOutcome(Enum):
     def __init__(self, key_idx_value: str, description: str):
-        self.key_idx_value = key_idx_value
+        self._key_idx_value = key_idx_value
         self.description = description  # type: str
 
     PENDING = ("PENDING",

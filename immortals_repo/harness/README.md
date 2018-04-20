@@ -21,7 +21,8 @@ continue to add functionality it may be worth varying some of those values to se
  * Implementation in progress 
 
 ### CP3
- * Implementation in progress 
+ * Baseline A, Baseline B, and Challenge have been fully implemented for library mutation with one server mutation library (ElevationApi_2)
+ * Implementation of additional libraries and partial library upgrades are in progress 
  
 ## Initial Online Setup
 

@@ -1,6 +1,7 @@
 apply plugin: mil.darpa.immortals.JavaModule
 
 dependencies {
+    compile project(':shared:modules:core')
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 }

@@ -22,7 +22,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BytecodeGradleTask extends ImmortalsGradleTask {
 
@@ -100,6 +101,36 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
     @TaskAction
     public void analysis() {
         Project p = getProject();
+        List<String> srcDirs = new ArrayList<>();
+
+        try {
+            String buildScriptString = FileUtils.readFileToString(p.getBuildscript().getSourceFile());
+            Pattern captureAdditionalSourceSets = Pattern.compile("srcDirs = \\[(.+)\\]");
+            Matcher m = captureAdditionalSourceSets.matcher(buildScriptString);
+            
+            while (m.find()) {
+                srcDirs.add(m.group());
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        List<String> tempList = new ArrayList<>(srcDirs);
+        srcDirs.clear();
+        for (String additionalSource : tempList) {
+            
+            String[] multipleSources = additionalSource.split(",");
+            
+            for (String multipleSource : multipleSources) {
+                int begin = multipleSource.contains("\'") ? multipleSource.indexOf("\'") : multipleSource.indexOf("\"");
+                begin++;
+                int end = multipleSource.contains("\'") ? multipleSource.lastIndexOf("\'") : multipleSource.lastIndexOf("\"");
+                srcDirs.add(multipleSource.substring(begin, end));
+            }
+        }
+        srcDirs.remove("src");
+
         String pluginOutput = null;
         ArrayList<String> includedLibs = null;
         boolean completeAnalysis= false;
@@ -197,6 +228,23 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
             }
         }
         
+        tempList = new ArrayList<>(srcDirs);
+        srcDirs.clear();
+        for (String srcSet : tempList) {
+            
+            File srcDir = new File(p.getProjectDir() + "/" + srcSet);
+            
+            if (srcDir.exists()) {
+
+                Collection<File> files = (FileUtils.listFiles(new File(p.getProjectDir() + "/" + srcSet), new String[]{"java"}, true));
+
+                for (File srcFile : files) {
+                    srcDirs.add(srcFile.getAbsolutePath());
+                }
+            }
+        }
+        
+        data.setAdditionalSources(srcDirs);
         data.setSourceFilePaths(sourceFiles);
         data.setTestSourceFilePaths(testSourceFiles);
 

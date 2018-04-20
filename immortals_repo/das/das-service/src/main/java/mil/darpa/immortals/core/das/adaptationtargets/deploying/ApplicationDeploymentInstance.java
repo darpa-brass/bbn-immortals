@@ -2,10 +2,10 @@ package mil.darpa.immortals.core.das.adaptationtargets.deploying;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import mil.darpa.immortals.analysis.adaptationtargets.DeploymentTarget;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.das.adaptationtargets.ATAKLiteConfig;
 import mil.darpa.immortals.core.das.adaptationtargets.building.AdaptationTargetBuildInstance;
-import mil.darpa.immortals.core.das.adaptationtargets.building.DeploymentTarget;
 import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
 import org.apache.commons.io.FileUtils;
 
@@ -43,7 +43,7 @@ public class ApplicationDeploymentInstance {
 
     public Path getExecutableFile() {
         Path executable = deploymentPath.resolve(executablePath.getFileName());
-        
+
         if (!Files.exists(executable)) {
             try {
                 Files.copy(executablePath, executable);
@@ -74,14 +74,14 @@ public class ApplicationDeploymentInstance {
     public ApplicationDeploymentInstance(@Nonnull AdaptationTargetBuildInstance buildInstance, @Nonnull String deploymentInstanceIdentifier) {
         this.deploymentInstanceIdentifier = deploymentInstanceIdentifier;
         this.executablePath = buildInstance.getExecutablePath();
-        this.deploymentFileMap = new HashMap<>(buildInstance.getDeploymentFileMap());
+        this.deploymentFileMap = new HashMap<>(buildInstance.getExecutionDeploymentFileMap());
         this.deploymentTarget = buildInstance.getDeploymentTarget();
         this.packageIdentifier = buildInstance.getExecutionPackageIdentifier();
         this.mainMethod = buildInstance.getExecutionMainMethod();
-        this.settleTimeMS = buildInstance.getSettleTimeMS();
+        this.settleTimeMS = buildInstance.getExecutionStartSettleTimeMS();
         this.deploymentPath = ImmortalsConfig.getInstance().globals
                 .getApplicationsDeploymentDirectory(buildInstance.getAdaptationIdentifier())
-                .resolve(buildInstance.getTargetIdentifier() + "-" + deploymentInstanceIdentifier);
+                .resolve(buildInstance.getTargetName() + "-" + deploymentInstanceIdentifier);
 
         try {
             Files.createDirectory(this.deploymentPath);

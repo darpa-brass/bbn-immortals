@@ -4,7 +4,9 @@ import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.config.TestAdapterConfiguration;
 import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
+import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetailsList;
 import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -15,6 +17,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 import javax.annotation.Nonnull;
+import java.util.LinkedList;
 
 /**
  * Created by awellman@bbn.com on 1/5/18.
@@ -24,12 +27,12 @@ public class TestAdapterSubmitter {
     public interface TestAdapterSubmissionInterface {
         @POST("/dasListener/updateAdaptationStatus")
         @Headers("Content-Type: application/json")
-        Call<Void> updateAdaptationStatus(@Body AdaptationDetails adaptationState);
+        Call<Void> updateAdaptationStatus(@Body AdaptationDetailsList adaptationState);
 
 
         @POST("/dasListener/updateValidationStatus")
         @Headers("Content-Type: application/json")
-        Call<Void> updateValidationStatus(@Body TestDetails validatorState);
+        Call<Void> updateValidationStatus(@Body TestDetailsList validatorState);
     }
 
     private static TestAdapterSubmitter instance;
@@ -66,7 +69,7 @@ public class TestAdapterSubmitter {
         return instance;
     }
 
-    public static void updateAdaptationStatus(@Nonnull AdaptationDetails adaptationDetails) {
+    public static void updateAdaptationStatus(@Nonnull AdaptationDetailsList adaptationDetails) {
         networkLogger.logPostSending("/dasListener/updateAdaptationStatus", adaptationDetails);
         getInstance().submissionInterface.updateAdaptationStatus(adaptationDetails).enqueue(new Callback<Void>() {
             @Override
@@ -81,7 +84,7 @@ public class TestAdapterSubmitter {
         });
     }
 
-    public static void updateValidationStatus(@Nonnull TestDetails testDetails) {
+    public static void updateValidationStatus(@Nonnull TestDetailsList testDetails) {
         networkLogger.logPostSending("/dasListener/updateValidationStatus", testDetails);
         getInstance().submissionInterface.updateValidationStatus(testDetails).enqueue(new Callback<Void>() {
             @Override

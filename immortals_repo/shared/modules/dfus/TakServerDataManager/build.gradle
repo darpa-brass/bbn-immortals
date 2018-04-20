@@ -2,6 +2,8 @@ apply plugin: mil.darpa.immortals.JavaModule
 
 import mil.darpa.immortals.config.ImmortalsConfig
 
+import java.nio.file.Paths
+
 sourceSets {
     validation {
         java {
@@ -44,6 +46,7 @@ task('validate', type: Test) {
     description = 'Executes all the validation tests'
     testClassesDir = sourceSets.validation.output.classesDir
     classpath = sourceSets.validation.runtimeClasspath
+    reports.junitXml.setDestination(Paths.get(project.buildDir.absolutePath).resolve('test-results/test').toString())
 }
 
 dependencies {
@@ -61,3 +64,17 @@ dependencies {
 }
 
 
+
+//def publish_extension = project.getExtensions().getByName('publishing')
+//if (publish_extension != null) {
+//    def cont = publish_extension.getProperties().get('publications')
+//    if (cont != null && cont instanceof PublicationContainer) {
+//        cont.findAll {it ->
+//            if (it instanceof MavenPublication) {
+//                println(it.groupId)
+//                println(it.artifactId)
+//                println(it.version)
+//            }
+//        }
+//    }
+//}

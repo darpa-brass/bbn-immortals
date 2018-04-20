@@ -1,0 +1,23 @@
+from pymmortals.datatypes.serializable import Serializable
+
+
+# noinspection PyPep8Naming
+class ImmortalizerConfiguration(Serializable):
+    _validator_values = dict()
+
+    _types = dict()
+
+    def __init__(self,
+                 identifier: str = None,
+                 performBuildFileAnalysis: bool = None,
+                 performKrgpBytecodeAnalysis: bool = None,
+                 performKrgpCompleteGradleTaskAnalysis: bool = None,
+                 performTestCoverageAnalysis: bool = None,
+                 producedDataTargetFile: str = None):
+        super().__init__()
+        self.identifier = identifier
+        self.performBuildFileAnalysis = performBuildFileAnalysis
+        self.performKrgpBytecodeAnalysis = performKrgpBytecodeAnalysis
+        self.performKrgpCompleteGradleTaskAnalysis = performKrgpCompleteGradleTaskAnalysis
+        self.performTestCoverageAnalysis = performTestCoverageAnalysis
+        self.producedDataTargetFile = producedDataTargetFile

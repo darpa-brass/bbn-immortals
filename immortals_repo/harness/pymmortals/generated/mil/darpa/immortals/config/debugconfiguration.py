@@ -14,10 +14,12 @@ class DebugConfiguration(Serializable):
                  useMockApplicationDeployment: bool = None,
                  useMockAqlBrass: bool = None,
                  useMockDas: bool = None,
+                 useMockExtensionHddRass: bool = None,
                  useMockExtensionSchemaEvolution: bool = None,
                  useMockFuseki: bool = None,
                  useMockKnowledgeRepository: bool = None,
                  useMockTestAdapter: bool = None,
+                 useMockTestCoordinators: bool = None,
                  useMockTestHarness: bool = None):
         super().__init__()
         self.logNetworkActivityToSeparateFile = logNetworkActivityToSeparateFile
@@ -26,8 +28,10 @@ class DebugConfiguration(Serializable):
         self.useMockApplicationDeployment = useMockApplicationDeployment
         self.useMockAqlBrass = useMockAqlBrass
         self.useMockDas = useMockDas
+        self.useMockExtensionHddRass = useMockExtensionHddRass
         self.useMockExtensionSchemaEvolution = useMockExtensionSchemaEvolution
         self.useMockFuseki = useMockFuseki
         self.useMockKnowledgeRepository = useMockKnowledgeRepository
         self.useMockTestAdapter = useMockTestAdapter
+        self.useMockTestCoordinators = useMockTestCoordinators
         self.useMockTestHarness = useMockTestHarness

@@ -5,26 +5,6 @@ from pymmortals.datatypes.serializable import Serializable
 class BuildConfiguration(Serializable):
 
     # noinspection PyPep8Naming
-    class DasConfiguration(Serializable):
-        _validator_values = dict()
-
-        _types = dict()
-
-        def __init__(self,
-                     gradleVersion: str = None,
-                     javaVersionCompatibility: str = None,
-                     publishVersion: str = None,
-                     rootGroup: str = None,
-                     slf4jVersion: str = None):
-            super().__init__()
-            self.gradleVersion = gradleVersion
-            self.javaVersionCompatibility = javaVersionCompatibility
-            self.publishVersion = publishVersion
-            self.rootGroup = rootGroup
-            self.slf4jVersion = slf4jVersion
-
-
-    # noinspection PyPep8Naming
     class AdaptationsConfiguration(Serializable):
         _validator_values = dict()
 
@@ -52,6 +32,26 @@ class BuildConfiguration(Serializable):
             self.javaVersionCompatibility = javaVersionCompatibility
             self.mavenPublishRepo = mavenPublishRepo
             self.publishVersion = publishVersion
+
+
+    # noinspection PyPep8Naming
+    class DasConfiguration(Serializable):
+        _validator_values = dict()
+
+        _types = dict()
+
+        def __init__(self,
+                     gradleVersion: str = None,
+                     javaVersionCompatibility: str = None,
+                     publishVersion: str = None,
+                     rootGroup: str = None,
+                     slf4jVersion: str = None):
+            super().__init__()
+            self.gradleVersion = gradleVersion
+            self.javaVersionCompatibility = javaVersionCompatibility
+            self.publishVersion = publishVersion
+            self.rootGroup = rootGroup
+            self.slf4jVersion = slf4jVersion
 
     _validator_values = dict()
 

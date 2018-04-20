@@ -26,5 +26,9 @@ abstract class JavaModuleImpl implements Plugin<Project> {
             target.group = bc.das.rootGroup + (target.path.count(':') > 1 ? ('.' + target.path.split(':')[1]) : '')
         }
         Helpers.applyPublish(target, isShadow())
+        
+        target.afterEvaluate {
+            Helpers.applyJacocoCoverage(target)
+        }
     }
 }

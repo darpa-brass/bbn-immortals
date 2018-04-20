@@ -1,61 +1,101 @@
 package mil.darpa.immortals.das.testcoordinators;
 
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
-import mil.darpa.immortals.das.TestCoordinatorExecutionInterface;
-import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
-import mil.darpa.immortals.testadapter.SubmissionServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiRequirements;
+import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiSubmissionModel;
+import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.ServerUpgradeLibrary;
+import mil.darpa.immortals.das.DeploymentModelBuilder;
+import org.apache.jena.rdf.model.Model;
 
-import javax.ws.rs.core.Response;
+import javax.annotation.Nonnull;
+import java.io.ByteArrayOutputStream;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 /**
  * Created by awellman@bbn.com on 1/5/18.
  */
-public class P2CP3TestCoordinator implements TestCoordinatorExecutionInterface {
+public class P2CP3TestCoordinator extends AbstractTestCoordinator {
 
-    private Logger logger = LoggerFactory.getLogger(P2CP3TestCoordinator.class);
+    public P2CP3TestCoordinator() {
+        super();
+    }
 
+    @Nonnull
     @Override
-    public Response execute(SubmissionModel submissionModel) {
-//        AdaptationDetails adaptationDetails = null;
-        // Do prepwork and produce the initial AdaptationDetails...
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            ImmortalsErrorHandler.reportFatalException(e);
+    protected String getDeploymentModel(@Nonnull SubmissionModel submissionModel) throws Exception {
+        Model deploymentModel = new DeploymentModelBuilder(submissionModel).build();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        deploymentModel.write(out, "TURTLE");
+
+        String rval = new String(out.toByteArray());
+        System.out.println(rval);
+        return rval;
+    }
+
+    @Nonnull
+    @Override
+    synchronized List<String> validateSubmissionModel(SubmissionModel submissionModel) throws Exception {
+        List<String> rval = new LinkedList<>();
+
+        if (submissionModel.globalModel != null) {
+            rval.add("Global requirements are not supported for CP3!");
         }
 
-        // TODO: Make real RDF
-        String rdf = submissionModel.sessionIdentifier;
+        Set<Object> upgradeObjects = new HashSet<>();
 
-        // Submit TTL asynchronously
-//        SubmissionServices.getDasSubmitter().submitAdaptationRequest(dac).enqueue(new Callback<AdaptationDetails>() {
-//            @Override
-//            public void onResponse(@Nonnull Call<AdaptationDetails> call, @Nonnull Response<AdaptationDetails> response) {
-//                logger.trace("Received Successful callback from DAS");
-//            }
-//
-//            @Override
-//            public void onFailure(@Nonnull Call<AdaptationDetails> call, @Nonnull Throwable t) {
-//                logger.trace("Received Failure callback from DAS");
-//                CoordinatorMain.fatalExceptionHandler.uncaughtException(Thread.currentThread(), t);
-//            }
-//        });
+        if (submissionModel.martiServerModel != null && submissionModel.martiServerModel.requirements != null) {
+            upgradeObjects.add(submissionModel.martiServerModel.requirements.libraryUpgrade);
+            upgradeObjects.add(submissionModel.martiServerModel.requirements.partialLibraryUpgrade);
+        }
 
-//        // or Submit TTL synchronously
-        logger.trace("TH Submitting DasAdaptationContext to DAS");
+        if (submissionModel.atakLiteClientModel != null && submissionModel.atakLiteClientModel.requirements != null) {
+            upgradeObjects.add(submissionModel.atakLiteClientModel.requirements.libraryUpgrade);
+            upgradeObjects.add(submissionModel.atakLiteClientModel.requirements.partialLibraryUpgrade);
+        }
 
-        SubmissionServices.getDasSubmitter().submitAdaptationRequest(rdf);
-        logger.trace("TH Submitting DasAdaptationContext to DAS: ACK Received");
+        int upgradeObjectCount = upgradeObjects.stream().filter(Objects::nonNull).collect(Collectors.toSet()).size();
 
-        // Get an initial result for the response and return it
-        // Return the previously obtained initial response
-        return Response.ok().build();
+        if (upgradeObjectCount > 1) {
+            rval.add("At most a single library upgrade can be provided at once for CP3!");
+
+        } else if (upgradeObjectCount == 0) {
+            rval.add("At least one library upgrade must be provided if a submission model is provided for CP3!");
+        }
+        return rval;
     }
-    
+
     @Override
-    public Response execute(SubmissionModel submissionModel, boolean attemptAdaptation) {
-        throw new RuntimeException("Not yet implemented!");
+    synchronized void setupChallengeProblem(SubmissionModel submissionModel) throws Exception {
+        // The das performs the upgrade of libraries for CP3
     }
+
+    public static void main(String[] args) {
+        try {
+            P2CP3TestCoordinator tc = new P2CP3TestCoordinator();
+
+            SubmissionModel submissionModel = new SubmissionModel(
+                    "1337Model",
+                    new MartiSubmissionModel(
+                            new MartiRequirements(
+                                    null,
+                                    ServerUpgradeLibrary.ElevationApi_2,
+                                    null
+                            )
+                    ),
+                    null,
+                    null
+            );
+
+
+            tc.execute(submissionModel, false);
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

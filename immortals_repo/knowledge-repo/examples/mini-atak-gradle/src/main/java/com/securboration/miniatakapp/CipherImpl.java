@@ -1,5 +1,10 @@
 package com.securboration.miniatakapp;
 
+import com.securboration.immortals.ontology.functionality.alg.encryption.AspectCipherDecrypt;
+import com.securboration.immortals.ontology.functionality.alg.encryption.AspectCipherEncrypt;
+import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
+import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
@@ -20,7 +25,11 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * A simple Cipher implementation that internally uses javax.crypto
  */
+@DfuAnnotation(functionalityBeingPerformed = com.securboration.immortals.ontology.functionality.alg.encryption.Cipher.class)
 public class CipherImpl{
+
+    private Cipher encryptionCipher;
+    private Cipher decryptionCipher;
 
     private final String algorithm;
     private final String chainingMode;
@@ -29,7 +38,6 @@ public class CipherImpl{
     private final SecretKeySpec keySpec;
     private final IvParameterSpec initVectorSpec;
 
-    //e.g., AES,CBC,PKCS5PADDING
     public CipherImpl(
             final String algorithm,
             final int keyLengthBytes,
@@ -87,7 +95,7 @@ public class CipherImpl{
 
     //streaming cipher API
 
-    public OutputStream acquire(OutputStream o) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
+    public CipherOutputStream acquire(OutputStream o) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
 
         Cipher cipher = getCipher();
 
@@ -97,11 +105,11 @@ public class CipherImpl{
                 initVectorSpec
         );
 
-        return new CipherOutputStream(o, cipher);
+        return new CipherOutputStream(o,cipher);
     }
 
-    public InputStream acquire(InputStream i) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
-        
+    public CipherInputStream acquire(InputStream i) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException{
+
         Cipher cipher = getCipher();
 
         cipher.init(
@@ -109,10 +117,8 @@ public class CipherImpl{
                 keySpec,
                 initVectorSpec
         );
-        
-        return i;
 
-        //return new CipherInputStream(i,cipher);
+        return new CipherInputStream(i,cipher);
     }
 
     //monolithic cipher API
@@ -128,6 +134,70 @@ public class CipherImpl{
         return cipher.doFinal(data);
     }
 
+    @FunctionalAspectAnnotation(aspect = AspectCipherEncrypt.class)
+    public byte[] encryptChunk(byte[] data) throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException{
+        Cipher cipher;
+
+        if(this.encryptionCipher != null) {
+            cipher = this.encryptionCipher;
+        } else {
+            cipher = getCipher();
+            cipher.init(
+                    Cipher.ENCRYPT_MODE,
+                    keySpec,
+                    initVectorSpec
+            );
+
+            this.encryptionCipher = cipher;
+        }
+
+        return cipher.update(data);
+    }
+
+    @FunctionalAspectAnnotation(aspect = AspectCipherDecrypt.class)
+    public byte[] decryptChunk(byte[] data) throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException{
+        Cipher cipher;
+
+        if(this.decryptionCipher != null) {
+            cipher = this.decryptionCipher;
+        } else {
+            cipher = getCipher();
+            cipher.init(
+                    Cipher.DECRYPT_MODE,
+                    keySpec,
+                    initVectorSpec
+            );
+
+            this.decryptionCipher = cipher;
+        }
+
+        return cipher.update(data);
+    }
+
+    
+    public byte[] encryptFinish() throws IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException {
+        Cipher cipher;
+        
+        if(this.encryptionCipher != null) {
+            cipher = this.encryptionCipher;
+        } else {
+            cipher = getCipher();
+            cipher.init(
+                    Cipher.ENCRYPT_MODE,
+                    keySpec,
+                    initVectorSpec
+            );
+
+            this.encryptionCipher = cipher;
+        }
+        
+        return encryptionCipher.doFinal();
+    }
+
+    public byte[] decryptFinish() throws IllegalBlockSizeException, BadPaddingException {
+        return decryptionCipher.doFinal();
+    }
+
     public byte[] decrypt(byte[] data) throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException{
         Cipher cipher = getCipher();
         cipher.init(
@@ -136,7 +206,17 @@ public class CipherImpl{
                 initVectorSpec
         );
 
-        return cipher.doFinal(data);
+        byte[] result = cipher.doFinal(data);
+
+        {//TODO: this feels janky
+            byte[] trimmed = new byte[result.length - 16];
+            System.arraycopy(result, 0, trimmed, 0, trimmed.length);
+            result = trimmed;
+        }
+
+        return result;
     }
 
 }
+
+

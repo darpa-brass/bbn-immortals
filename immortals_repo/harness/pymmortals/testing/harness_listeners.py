@@ -282,6 +282,19 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
                 ack_code=200
             )
         )
+
+        validators.append(
+            NetworkExpectationValidator(
+                endpoint=TestHarnessEndpoint.STATUS,
+                submission_values={
+                    "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
+                    "validation.verdictOutcome": "PENDING"
+                },
+                ack_values=None,
+                ack_code=200
+            )
+        )
+       
         validators.append(
             NetworkExpectationValidator(
                 endpoint=TestHarnessEndpoint.STATUS,

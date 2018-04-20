@@ -1,6 +1,7 @@
 package mil.darpa.immortals.core.das;
 
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.concurrent.atomic.AtomicReference;
 
 import mil.darpa.immortals.config.DasServiceConfiguration;
@@ -54,14 +55,16 @@ public class DAS {
 
     public static synchronized void start() throws Exception {
     	
-        GradleKnowledgeBuilder gkb = new GradleKnowledgeBuilder();
-        gkb.buildKnowledge(null);
-
-
         if (dasStatus.compareAndSet(DASStatusValue.STOPPED, DASStatusValue.STARTING)) {
-
+             
             server = startServer();
 
+            // Create the file
+//            java.nio.file.Path rdfPath =
+//                    ImmortalsConfig.getInstance().extensions.getProducedTtlOutputDirectory().resolve("deploymentModel.ttl");
+//            Files.write(rdfPath, rdf.getBytes());
+
+           
             if (server != null && server.isStarted()) {
                 dasStatus.set(DASStatusValue.RUNNING);
                 System.out.println(String.format(DAS_STARTED, DAS.BASE_URI)); //keep system.out for cli use

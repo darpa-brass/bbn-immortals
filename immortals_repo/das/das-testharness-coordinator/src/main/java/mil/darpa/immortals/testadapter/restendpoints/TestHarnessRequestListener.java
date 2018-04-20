@@ -3,7 +3,11 @@ package mil.darpa.immortals.testadapter.restendpoints;
 import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.core.api.ll.phase2.EnableDas;
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
+import mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.ATAKLiteSubmissionModel;
+import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiSubmissionModel;
 import mil.darpa.immortals.core.das.ll.TestHarnessAdapterMediator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,7 +19,9 @@ import javax.ws.rs.core.Response;
 @Path("")
 public class TestHarnessRequestListener {
 
-    private ImmortalsUtils.NetworkLogger logger = ImmortalsUtils.getNetworkLogger("TA", "TH");
+    private Logger logger = LoggerFactory.getLogger(TestHarnessRequestListener.class);
+
+    private ImmortalsUtils.NetworkLogger networkLogger = ImmortalsUtils.getNetworkLogger("TA", "TH");
     private final TestHarnessAdapterMediator thm = TestHarnessAdapterMediator.getInstance();
 
     @POST
@@ -23,9 +29,21 @@ public class TestHarnessRequestListener {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public synchronized Response cp1(SubmissionModel submissionModel) {
-        logger.logPostReceived("/action/databaseSchemaPerturbation", submissionModel);
+        networkLogger.logPostReceived("/action/databaseSchemaPerturbation", submissionModel);
+
+        if (submissionModel == null) {
+            logger.info("Empty submission model submitted. Assuming baseline where adaptation is NOT_APPLICABLE.");
+            submissionModel = new SubmissionModel(
+                    "I" + System.currentTimeMillis(),
+                    new MartiSubmissionModel(),
+                    null,
+                    null
+            );
+            logger.info("Assigning adaptationIdentifier '" + submissionModel.sessionIdentifier + "' to baseline submission.");
+        }
+        
         Response response = thm.submitSubmissionModel(submissionModel, TestHarnessAdapterMediator.ChallengeProblem.P2CP1);
-        logger.logPostReceivedAckSending("/action/databaseSchemaPerturbation", response.hasEntity() ? response.getEntity() : null);
+        networkLogger.logPostReceivedAckSending("/action/databaseSchemaPerturbation", response.hasEntity() ? response.getEntity() : null);
         return response;
 
     }
@@ -35,11 +53,11 @@ public class TestHarnessRequestListener {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public synchronized Response cp2(SubmissionModel submissionModel) {
-        logger.logPostReceived("/action/crossApplicationDependencies", submissionModel);
+        networkLogger.logPostReceived("/action/crossApplicationDependencies", submissionModel);
         // TODO: Validation
         // TODO: Insert baseline submission model
         Response response = thm.submitSubmissionModel(submissionModel, TestHarnessAdapterMediator.ChallengeProblem.P2CP2);
-        logger.logPostReceivedAckSending("/action/crossApplicationDependencies", response.hasEntity() ? response.getEntity() : null);
+        networkLogger.logPostReceivedAckSending("/action/crossApplicationDependencies", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
 
@@ -48,21 +66,32 @@ public class TestHarnessRequestListener {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public synchronized Response cp3(SubmissionModel submissionModel) {
-        logger.logPostReceived("/action/libraryEvolution", submissionModel);
-        // TODO: Validation
-        // TODO: Insert baseline submission model
+        networkLogger.logPostReceived("/action/libraryEvolution", submissionModel);
+        // If null, assume baseline scenario with no adaptation
+        // TODO: Add ATAKLite once its lack of tests (which is an error IMO for a primary artifact) doesn't cause the DAS to get upset
+        if (submissionModel == null) {
+            logger.info("Empty submission model submitted. Assuming baseline where adaptation is NOT_APPLICABLE.");
+            submissionModel = new SubmissionModel(
+                    "I" + System.currentTimeMillis(),
+                    new MartiSubmissionModel(),
+                    null,
+                    null
+            );
+            logger.info("Assigning adaptationIdentifier '" + submissionModel.sessionIdentifier + "' to baseline submission.");
+        }
+
         Response response = thm.submitSubmissionModel(submissionModel, TestHarnessAdapterMediator.ChallengeProblem.P2CP3);
-        logger.logPostReceivedAckSending("/query", response.hasEntity() ? response.getEntity() : null);
+        networkLogger.logPostReceivedAckSending("/query", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
-    
+
 
     @GET
     @Path("/alive")
     public Response alive() {
-        logger.logGetReceived("/alive", null);
+        networkLogger.logGetReceived("/alive", null);
         Response response = thm.thGetAlive();
-        logger.logGetReceivedAckSending("/alive", response.hasEntity() ? response.getEntity() : null);
+        networkLogger.logGetReceivedAckSending("/alive", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
 
@@ -70,9 +99,9 @@ public class TestHarnessRequestListener {
     @Path("/query")
     @Produces(MediaType.APPLICATION_JSON)
     public synchronized Response query() {
-        logger.logGetReceived("/query", null);
+        networkLogger.logGetReceived("/query", null);
         Response response = thm.thGetQuery();
-        logger.logGetReceivedAckSending("/query", response.hasEntity() ? response.getEntity() : null);
+        networkLogger.logGetReceivedAckSending("/query", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
 
@@ -81,9 +110,9 @@ public class TestHarnessRequestListener {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response enabled(EnableDas enableDas) {
         // TODO: Validation
-        logger.logPostReceived("/enabled", enableDas);
+        networkLogger.logPostReceived("/enabled", enableDas);
         Response response = thm.thPostEnabled(enableDas);
-        logger.logPostReceivedAckSending("/enabled", response.hasEntity() ? response.getEntity() : null);
+        networkLogger.logPostReceivedAckSending("/enabled", response.hasEntity() ? response.getEntity() : null);
         return response;
     }
 }

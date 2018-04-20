@@ -78,6 +78,13 @@ def buildKnowledgeRepo = task('buildKnowledgeRepo', type: Exec) {
     args = ['-DskipTests', 'install']
 }
 
+def buildHddRass = task('buildHddRass', type: GradleBuild) {
+    group = 'IMMoRTALS Deploy'
+    description = 'Builds the hddRASS binary file'
+    buildFile = IMMORTALS_ROOT.resolve(ImmortalsConfig.instance.extensions.hddrass.gradleBuildFile).toString()
+    tasks = ['clean', 'jar']
+}
+
 def publish = task('publish') {
     subprojects.each {
         it.afterEvaluate {
@@ -190,7 +197,7 @@ def buildknowledge = task('buildknowledge', type: Exec) {
     workingDir = IMMORTALS_ROOT.resolve('das/das-service/').toString()
     commandLine = ['java', '-jar', 'das.jar', '--analyze']
 
-    dependsOn(setupdb)
+    dependsOn(setupdb, immortalize)
 }
 
 // TODO: Make this a task definition once you remove applying java
@@ -253,7 +260,7 @@ def deploy = task('deploy') {
     }
 
     dependsOn(build)
-    finalizedBy(buildKnowledgeRepo, setupdb, immortalize, setupExtensions, buildknowledge)
+    finalizedBy(buildKnowledgeRepo, setupdb, immortalize, setupExtensions, buildknowledge, buildHddRass)
 }
 
 def redeploy = task('redeploy') {
@@ -270,5 +277,5 @@ def redeploy = task('redeploy') {
     }
 
     dependsOn(build)
-    finalizedBy(buildKnowledgeRepo, immortalize, setupExtensions)
+    finalizedBy(buildKnowledgeRepo, immortalize, setupExtensions, buildknowledge, buildHddRass)
 }

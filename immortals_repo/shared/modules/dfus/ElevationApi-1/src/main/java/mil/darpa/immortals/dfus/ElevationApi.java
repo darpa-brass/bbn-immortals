@@ -1,5 +1,9 @@
 package mil.darpa.immortals.dfus;
 
+import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
+import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
+import mil.darpa.immortals.ontology.GetElevationFunctionalAspect;
+import mil.darpa.immortals.ontology.ElevationDfu;
 import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridGeometry2D;
@@ -13,6 +17,8 @@ import java.io.IOException;
 /**
  * Created by awellman@bbn.com on 12/4/17.
  */
+
+@DfuAnnotation(functionalityBeingPerformed = ElevationDfu.class, functionalAspects = GetElevationFunctionalAspect.class)
 public class ElevationApi {
 
     GridCoverage2D grid;
@@ -31,6 +37,7 @@ public class ElevationApi {
 
     }
 
+    @FunctionalAspectAnnotation(aspect = GetElevationFunctionalAspect.class)
     public ElevationData getElevation(double x, double y) {
         try {
             GridGeometry2D gg = grid.getGridGeometry();

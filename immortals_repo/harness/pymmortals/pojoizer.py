@@ -41,9 +41,20 @@ _java_value_map = {
     'String': 'str',
     'char': 'str',
     'byte': 'bytes'
+    # 'CopyOnWriteArraySet': 'Set',
+    # 'LinkedList': 'List'
 }
 
-_built_ins = frozenset(['Serializable', 'List', 'Enum', 'Set', 'FrozenSet', 'Type'])
+_inheritance_type_map = {
+    'HashSet': 'Set',
+    'CopyOnWriteArraySet': 'Set',
+    'LinkedList': 'List',
+    'TestCaseReportSet': 'Set',
+    'AdaptationDetailsList': 'List'
+}
+
+_built_ins = frozenset(
+    ['Serializable', 'List', 'Enum', 'Set', 'FrozenSet', 'Type'])
 
 import_type_omissions = frozenset(['bool', 'int', 'str', 'float', 'bytes', 'type', 'Description', 'P2CP1',
                                    'P2CP2', 'P2CP3'])
@@ -102,7 +113,7 @@ def _java_to_python_type(input_type: ReferenceType) -> str:
             return_type = inner_type_name
         is_list = True
 
-    elif type_name == 'HashSet' or type_name == 'Set':
+    elif type_name == 'HashSet' or type_name == 'Set' or type_name == 'CopyOnWriteArraySet':
         assert (len(input_type.arguments) == 1)
         assert (isinstance(input_type.arguments[0], TypeArgument))
         assert (isinstance(input_type.arguments[0].type, ReferenceType))
@@ -384,6 +395,9 @@ class AbstractPojoBuilderConfig:
         if t in import_type_omissions:
             return False
 
+        if t in _inheritance_type_map:
+            t = _inheritance_type_map[t]
+
         if t == 'Type' and 'Type' not in self.imports:
             self.imports['Type'] = 'typing'
             changed = True
@@ -501,6 +515,7 @@ class PojoClassBuilderConfig(AbstractPojoBuilderConfig):
 
     def swallow_superclass_typename(self, superclass_name: str, path_classnames: Dict[str, Set[str]],
                                     path_classes: Dict[str, Set[AbstractPojoBuilderConfig]]) -> bool:
+
         # Add the import for that class if necessary
         changed = self.add_imports_by_type_strings(t=[superclass_name], path_classnames=path_classnames)
 
@@ -638,14 +653,23 @@ class Pojoizer:
             if isinstance(t.extends, list):
                 assert len(t.extends) == 1
                 assert isinstance(t.extends[0], ReferenceType)
-                inheritance.append(t.extends[0].name)
+                val = t.extends[0].name
+                if val in _inheritance_type_map:
+                    val = _inheritance_type_map[val]
+                inheritance.append(val)
             else:
                 assert isinstance(t.extends, ReferenceType)
-                inheritance.append(t.extends.name)
+                val = t.extends.name
+                if val in _inheritance_type_map:
+                    val = _inheritance_type_map[val]
+                inheritance.append(val)
 
-        if 'implements' in t.attrs and t.implements is not None:
-            for i in t.implements:
-                inheritance.append(i.name)
+        # if 'implements' in t.attrs and t.implements is not None:
+        #     for i in t.implements:
+        #         val = i.name
+        #         if val in _java_value_map:
+        #             val = _java_value_map[val]
+        #         inheritance.append(val)
 
         class_name = t.name
         class_description = None
@@ -901,11 +925,17 @@ class Pojoizer:
             unstable = False
 
             if 'extends' in t.attrs and t.extends is not None:
-                inheritance.append(t.extends.name)
+                val = t.extends.name
+                if val in _java_value_map:
+                    val = _java_value_map[val]
+                inheritance.append(val)
 
-            if 'implements' in t.attrs and t.implements is not None:
-                for i in t.implements:
-                    inheritance.append(i.name)
+            # if 'implements' in t.attrs and t.implements is not None:
+            #     for i in t.implements:
+            #         val = i.name
+            #         if val in _java_value_map:
+            #             val = _java_value_map[val]
+            #         inheritance.append(val)
 
             class_name = t.name
             class_description = None
@@ -1273,7 +1303,13 @@ class Pojoizer:
         if len(config.inheritance) <= 0:
             lappend('class ' + config.class_name + ':')
         else:
-            lappend('class ' + config.class_name + '(' + ', '.join(config.inheritance) + '):')
+            inherited_list = config.inheritance.copy()
+            # Ordering matters wihen extending an Enum
+            if 'Enum' in inherited_list:
+                inherited_list.remove('Enum')
+                inherited_list.append('Enum')
+
+            lappend('class ' + config.class_name + '(' + ', '.join(inherited_list) + '):')
 
         for nested_class in config.nested_class_configs.values():
             lines.append('\n')
@@ -1514,6 +1550,48 @@ def pojoize_immortals_config():
                      ignore_files=[
                          'mil/darpa/immortals/config/StaticConfig.java'
                      ])
+
+    p.load_directory(root_directory=root_dir,
+                     packages_root='mil/darpa/immortals/core')
+
+    p.do_construction()
+
+
+def pojoize_all():
+    # Pojoize the shared POJOs
+    p = Pojoizer(conversion_method=ConversionMethod.VARS,
+                 target_directory=_target_module_directory,
+                 target_package=_target_package,
+                 do_generate_markdown=False,
+                 ignore_default_param_values=True
+                 )
+
+    packages_root = 'mil/darpa/immortals/core/api'
+
+    p.load_directory(
+        root_directory=os.path.join(_immortals_root,
+                                    'das/das-context/src/main/java/'),
+        packages_root=packages_root
+    )
+
+    p.load_directory(
+        root_directory=os.path.join(_immortals_root,
+                                    'das/das-testharness-coordinator/src/main/java/'),
+        packages_root=packages_root
+    )
+
+    root_dir = os.path.join(_immortals_root, 'buildSrc/ImmortalsConfig/src/main/java/')
+    # packages_root = 'mil/darpa/immortals/core/api/ll/phase2'
+    packages_root = 'mil/darpa/immortals/config'
+    p.load_directory(root_directory=root_dir,
+                     packages_root=packages_root,
+                     ignore_files=[
+                         'mil/darpa/immortals/config/StaticConfig.java'
+                     ])
+
+    p.load_directory(root_directory=root_dir,
+                     packages_root='mil/darpa/immortals/core')
+
     p.do_construction()
 
 

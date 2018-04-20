@@ -1,5 +1,9 @@
 package mil.darpa.immortals.dfus;
 
+import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.DfuAnnotation;
+import mil.darpa.immortals.annotation.dsl.ontology.dfu.annotation.FunctionalAspectAnnotation;
+import mil.darpa.immortals.ontology.GetElevationFunctionalAspect;
+import mil.darpa.immortals.ontology.ElevationDfu;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -13,6 +17,7 @@ import java.util.LinkedList;
 /**
  * Created by awellman@bbn.com on 12/6/17.
  */
+@DfuAnnotation(functionalityBeingPerformed = ElevationDfu.class, functionalAspects = GetElevationFunctionalAspect.class)
 public class ElevationApi {
 
     // Using dummy URL for initial scenario for ease of failure
@@ -57,6 +62,7 @@ public class ElevationApi {
         gas = retrotfit.create(GoogleApiService.class);
     }
 
+    @FunctionalAspectAnnotation(aspect = GetElevationFunctionalAspect.class)
     public ElevationData getElevation(double x, double y) {
         try {
             Call<Result> c = gas.getElevation((y + "," + x), apiKey);
@@ -64,7 +70,7 @@ public class ElevationApi {
             double value = r.body().results.get(0).elevation;
             return new ElevationData(x, y, value, 1000);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return new ElevationData(x, y, Double.MIN_VALUE, Double.MAX_VALUE);
         }
     }
 }

@@ -42,7 +42,7 @@
 		
 		<!-- gradle -->
 		<gradle.version>3.4.1</gradle.version>
-		<groovy.version>2.4.10</groovy.version>
+		<groovy.version>2.4.7</groovy.version>
 		
 		<!-- javaparser -->
 		<javaparser.version>2.5.1</javaparser.version>

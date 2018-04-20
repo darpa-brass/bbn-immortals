@@ -13,7 +13,7 @@
         "useMockFuseki": true,
         "useMockKnowledgeRepository": true,
         "useMockAqlBrass": true,
-        "logNetworkActivityToSeparateFile": true
+        "useMockTestCoordinators": true
     },
     "deploymentEnvironment": {
         "martiAddress": "10.0.2.2",

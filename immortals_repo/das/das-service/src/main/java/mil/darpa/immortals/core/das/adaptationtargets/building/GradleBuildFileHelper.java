@@ -4,6 +4,7 @@ import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.das.ImmortalsProcessBuilder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,7 +63,7 @@ public class GradleBuildFileHelper {
             lines.add("}");
         }
 
-        if (buildInstance.getOwnDependencyCoordinates() != null) {
+        if (buildInstance.getPublishDependencyCoordinates() != null) {
             // Rename the artifact
             lines.add("publishing.publications.getAsMap().values().stream().filter { x -> x instanceof MavenPublication }.forEach {");
             lines.add("    it.artifactId = it.artifactId + '-" + buildInstance.getAdaptationIdentifier() + "'");
@@ -108,7 +109,6 @@ public class GradleBuildFileHelper {
         ImmortalsProcessBuilder pb = new ImmortalsProcessBuilder(buildInstance.getAdaptationIdentifier(), "gradle");
         Process p = pb.command(cmd).start();
         p.waitFor();
-
 //        if (!Files.exists(buildInstance.getBuildRoot().resolve("settings.gradle"))) {
 //            Files.delete(settingsFile);
 //            Files.copy(originalFile, settingsFile);
@@ -128,7 +128,7 @@ public class GradleBuildFileHelper {
         cmdList.add("--build-file");
         cmdList.add(buildInstance.getBuildFilePath().toString());
         cmdList.addAll(Arrays.asList(buildInstance.getBuildToolBuildParameters()));
-        return executeCommand( cmdList.toArray(new String[0]));
+        return executeCommand(cmdList.toArray(new String[0]));
     }
 
     /**
@@ -136,22 +136,58 @@ public class GradleBuildFileHelper {
      *
      * @return Whether or not it was successful.
      */
-    public synchronized boolean executeCleanBuildAndPublish() throws IOException, InterruptedException {
+    public synchronized Boolean executeCleanBuildAndPublish() throws IOException, InterruptedException {
+        if (!buildInstance.canPublish()) {
+            return null;
+        }
         LinkedList<String> cmdList = new LinkedList<>();
         cmdList.add(buildInstance.getBuildToolPath().toString());
         cmdList.add("--build-file");
         cmdList.add(buildInstance.getBuildFilePath().toString());
-        cmdList.addAll(Arrays.asList(buildInstance.getBuildToolPublishParameters()));
-        return executeCommand( cmdList.toArray(new String[0]));
+        cmdList.addAll(Arrays.asList(buildInstance.getPublishBuildToolParameters()));
+        return executeCommand(cmdList.toArray(new String[0]));
     }
 
-    public synchronized boolean executeCleanAndTest() throws IOException, InterruptedException {
+    public synchronized Boolean executeCleanAndTest(@Nullable Collection<String> testIdentifiers) throws IOException, InterruptedException {
+        if (!buildInstance.canTest()) {
+            return null;
+        }
         LinkedList<String> cmdList = new LinkedList<>();
         cmdList.add(buildInstance.getBuildToolPath().toString());
         cmdList.add("--build-file");
         cmdList.add(buildInstance.getBuildFilePath().toString());
-        cmdList.addAll(Arrays.asList(buildInstance.getBuildToolValidationParameters()));
-        return executeCommand( cmdList.toArray(new String[0]));
+        cmdList.addAll(Arrays.asList(buildInstance.getTestBuildToolParameters()));
+
+        if (testIdentifiers != null) {
+            for (String testIdentifier : testIdentifiers) {
+                cmdList.add("--tests");
+                cmdList.add(testIdentifier);
+            }
+        }
+
+        return executeCommand(cmdList.toArray(new String[0]));
+    }
+    
+    public synchronized Boolean executeCleanTestAndGetCoverage(@Nullable Collection<String> testIdentifiers) throws IOException, InterruptedException {
+        if (!buildInstance.canTest()) {
+            return null;
+        }
+        LinkedList<String> cmdList = new LinkedList<>();
+        cmdList.add(buildInstance.getBuildToolPath().toString());
+        cmdList.add("--build-file");
+        cmdList.add(buildInstance.getBuildFilePath().toString());
+        cmdList.addAll(Arrays.asList(buildInstance.getTestBuildToolParameters()));
+
+        if (testIdentifiers != null) {
+            for (String testIdentifier : testIdentifiers) {
+                cmdList.add("--tests");
+                cmdList.add(testIdentifier);
+            }
+        }
+        
+        cmdList.add("jacocoTestReport");
+
+        return executeCommand(cmdList.toArray(new String[0]));
     }
 
 }

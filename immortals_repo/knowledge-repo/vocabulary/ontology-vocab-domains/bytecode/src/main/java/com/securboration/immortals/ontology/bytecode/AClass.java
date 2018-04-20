@@ -66,6 +66,16 @@ public class AClass extends ClassStructure {
      */
     private BytecodeVersion bytecodeVersion;
 
+    /**
+     * Files found that this class is dependent on
+     */
+    private String[] dependentFiles;
+
+    /**
+     * Source code of this class
+     */
+    private String source;
+
     public AClass[] getInnerClasses() {
         return innerClasses;
     }
@@ -130,4 +140,19 @@ public class AClass extends ClassStructure {
         this.bytecodeVersion = bytecodeVersion;
     }
 
+    public String[] getDependentFiles() {
+        return dependentFiles;
+    }
+
+    public void setDependentFiles(String[] dependentFiles) {
+        this.dependentFiles = dependentFiles;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 }

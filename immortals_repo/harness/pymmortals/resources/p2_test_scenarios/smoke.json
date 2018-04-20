@@ -148,22 +148,14 @@
             "validationEnvironment.lifecycle.haltEnvironment": "True"
         },
         "submissionFlow": "BaselineA",
-        "perturbationScenario": "P2CP3LibraryOrPlatformUpgrade"
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
     },
     {
         "scenarioIdentifier": "p2cp3baselineB",
         "submissionModel": {
-            "atakLiteClientModel": {
-                "requirements": {
-                    "deploymentPlatformVersion": "Android23",
-                    "libraryUpgrade": "ToBeDetermined_X_X",
-                    "partialLibraryUpgrade": "Dropbox_X_X"
-                }
-            },
             "martiServerModel": {
                 "requirements": {
-                    "libraryUpgrade": "ImageSaverLibrary_2",
-                    "partialLibraryUpgrade": "Dom4jCot_2"
+                    "libraryUpgrade": "ElevationApi_2"
                 }
             }
         },
@@ -173,22 +165,14 @@
             "validationEnvironment.lifecycle.haltEnvironment": "True"
         },
         "submissionFlow": "BaselineB",
-        "perturbationScenario": "P2CP3LibraryOrPlatformUpgrade"
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
     },
     {
         "scenarioIdentifier": "p2cp3challenge",
         "submissionModel": {
-            "atakLiteClientModel": {
-                "requirements": {
-                    "deploymentPlatformVersion": "Android23",
-                    "libraryUpgrade": "ToBeDetermined_X_X",
-                    "partialLibraryUpgrade": "Dropbox_X_X"
-                }
-            },
             "martiServerModel": {
                 "requirements": {
-                    "libraryUpgrade": "ImageSaverLibrary_2",
-                    "partialLibraryUpgrade": "Dom4jCot_2"
+                    "libraryUpgrade": "ElevationApi_2"
                 }
             }
         },
@@ -198,6 +182,6 @@
             "validationEnvironment.lifecycle.haltEnvironment": "True"
         },
         "submissionFlow": "Challenge",
-        "perturbationScenario": "P2CP3LibraryOrPlatformUpgrade"
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
     }
 ]

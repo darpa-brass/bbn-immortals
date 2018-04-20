@@ -14,6 +14,7 @@ public class TestHarnessAdapterStateContainer {
     public final SubmissionModel submissionModel;
     public final TestAdapterState testAdapterState;
     public final TestHarnessAdapterMediator.ChallengeProblem challengeProblem;
+    public boolean initialValidationUpdate = true;
 
     public TestHarnessAdapterStateContainer(@Nonnull SubmissionModel submissionModel,
                                             @Nonnull TestHarnessAdapterMediator.ChallengeProblem challengeProblem) {

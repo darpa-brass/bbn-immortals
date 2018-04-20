@@ -8,13 +8,13 @@ from typing import Type
 # noinspection PyPep8Naming
 class TestHarnessEndpoint(Enum):
     def __init__(self, key_idx_value: str, ackDatatype: Type, path: str, restType: RestType, submitDatatype: Type):
-        self.key_idx_value = key_idx_value
+        self._key_idx_value = key_idx_value
         self.ackDatatype = ackDatatype  # type: Type
-        self.key_idx_value = key_idx_value
+        self._key_idx_value = key_idx_value
         self.path = path  # type: str
-        self.key_idx_value = key_idx_value
+        self._key_idx_value = key_idx_value
         self.restType = restType  # type: RestType
-        self.key_idx_value = key_idx_value
+        self._key_idx_value = key_idx_value
         self.submitDatatype = submitDatatype  # type: Type
 
     READY = ("READY",

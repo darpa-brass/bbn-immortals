@@ -16,6 +16,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,9 +46,9 @@ public class SubmissionServices {
 
 
                 OkHttpClient client = new OkHttpClient.Builder()
-                        .connectTimeout(30, TimeUnit.SECONDS)
-                        .readTimeout(30, TimeUnit.SECONDS)
-                        .writeTimeout(30, TimeUnit.SECONDS)
+                        .connectTimeout(60, TimeUnit.SECONDS)
+                        .readTimeout(60, TimeUnit.SECONDS)
+                        .writeTimeout(60, TimeUnit.SECONDS)
                         .build();
 
                 Retrofit retrofit = new Retrofit.Builder()
@@ -64,13 +66,15 @@ public class SubmissionServices {
         @Override
         public Call<String> submitAdaptationRequest(String rdf) {
             networkLogger.logPostSending("bbn/das/submitAdaptationRequest", rdf);
-            return dasSubmitter.submitAdaptationRequest(rdf);
+            Call<String> call = dasSubmitter.submitAdaptationRequest(rdf);
+            return call;
         }
 
         @Override
         public Call<String> submitValidationRequest(String rdf) {
             networkLogger.logPostSending("/bbin/das/submitValidationRequest", rdf);
-            return dasSubmitter.submitValidationRequest(rdf);
+            Call<String> call = dasSubmitter.submitValidationRequest(rdf);
+            return call;
         }
     }
 
@@ -107,27 +111,31 @@ public class SubmissionServices {
         @Override
         public synchronized Call<Void> ready() {
             networkLogger.logPostSending("/ready", null);
-            return testHarnessSubmitter.ready();
+            Call<Void> call = testHarnessSubmitter.ready();
+            return call;
         }
 
         @Override
         public synchronized Call<Void> error(String value) {
             networkLogger.logPostSending("/error", value);
-            return testHarnessSubmitter.error(value);
+            Call<Void> call = testHarnessSubmitter.error(value);
+            return call;
         }
 
         @Override
         public synchronized Call<Void> status(TestAdapterState testAdapterState) {
             testAdapterState.timestamp = System.currentTimeMillis();
             networkLogger.logPostSending("/status", testAdapterState);
-            return testHarnessSubmitter.status(testAdapterState);
+            Call<Void> call = testHarnessSubmitter.status(testAdapterState);
+            return call;
         }
 
         @Override
         public synchronized Call<Void> done(TestAdapterState testAdapterState) {
             testAdapterState.timestamp = System.currentTimeMillis();
             networkLogger.logPostSending("/done", testAdapterState);
-            return testHarnessSubmitter.done(testAdapterState);
+            Call<Void> call = testHarnessSubmitter.done(testAdapterState);
+            return call;
         }
     }
 

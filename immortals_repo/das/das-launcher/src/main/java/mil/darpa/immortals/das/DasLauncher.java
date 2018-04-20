@@ -82,6 +82,8 @@ public class DasLauncher {
 
     private static final AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
+    private Thread stdListenThread = null;
+
     private static void mergeNetworkLogs() throws IOException {
         String regexPattern = "^\\[\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d,\\d\\d\\d\\].*$";
 
@@ -278,14 +280,14 @@ public class DasLauncher {
             archiveFile(stderrFile.toPath());
         }
 
-        if (service == stdTarget) {
-            pb.inheritIO();
+//        if (service == stdTarget) {
+//            pb.inheritIO();
+//
+//        } else {
+        pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutFile));
 
-        } else {
-            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(stdoutFile));
-
-            pb.redirectError(ProcessBuilder.Redirect.appendTo(stderrFile));
-        }
+        pb.redirectError(ProcessBuilder.Redirect.appendTo(stderrFile));
+//        }
 
         String[] command;
         if (appConfig.getExePath().endsWith(".jar") || appConfig.getExePath().endsWith(".war")) {
@@ -340,11 +342,10 @@ public class DasLauncher {
 
     private void startService(@Nonnull ImmortalsServiceManifest service) throws IOException {
         AppConfigInterface appConfig = service.getConfig();
-        Process p = null;
+        Process p;
+        BufferedReader reader = null;
 
         try {
-
-
             // Create a process builder instance all set up
             ProcessBuilder pb = prepareProcess(service);
 
@@ -371,7 +372,7 @@ public class DasLauncher {
             String regexMatch = appConfig.getReadyStdoutLineRegexPattern();
 
             // Wait until you see the ready signal in the log
-            BufferedReader reader = new BufferedReader(new FileReader(stdoutFile));
+            reader = new BufferedReader(new FileReader(stdoutFile));
             long durationMS = 0;
             boolean found = false;
             boolean isShuttingDown = false;
@@ -385,10 +386,15 @@ public class DasLauncher {
                         // Shouldn't be possible
                     }
                     durationMS += 200;
-                    if (durationMS % 1600 == 0) {
-                        System.out.print(".");
+                    if (service != stdTarget) {
+                        if (durationMS % 1600 == 0) {
+                            System.out.print(".");
+                        }
                     }
                 } else {
+                    if (service == stdTarget) {
+                        System.out.println(line);
+                    }
                     if (line.matches(regexMatch)) {
                         found = true;
                     }
@@ -416,8 +422,36 @@ public class DasLauncher {
                 shutdown();
             }
         } finally {
-            if (p != null && p.isAlive()) {
-                runningProcesses.put(appConfig.getIdentifier(), p);
+            if (service == stdTarget) {
+                BufferedReader r = reader;
+                stdListenThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String line;
+                        try {
+                            line = r.readLine();
+
+                            if (line == null) {
+                                System.err.println("WTFWTFWTF!!!");
+                            } else {
+                                System.out.println(line);
+                            }
+
+                        } catch (IOException e) {
+                            // TODO: Something else!
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+                
+                stdListenThread.setDaemon(true);
+                stdListenThread.start();
+
+            } else {
+                if (reader != null) {
+                    reader.close();
+                    reader = null;
+                }
             }
         }
     }

@@ -6,7 +6,7 @@ import logging
 import re
 import uuid
 from enum import Enum
-from typing import FrozenSet, Dict, List, Union, GenericMeta, Type
+from typing import FrozenSet, Set, Dict, List, Union, GenericMeta, Type
 
 from pymmortals.utils import fill_dict
 
@@ -160,7 +160,7 @@ def _deserializer(source_data, target_type: Union[GenericMeta, object], object_m
         return source_data
 
     elif isinstance(source_data, List):
-        assert (issubclass(target_type, List) or issubclass(target_type, FrozenSet))
+        assert (issubclass(target_type, List) or issubclass(target_type, FrozenSet) or issubclass(target_type, Set))
 
         # noinspection PyUnresolvedReferences
         list_tt = target_type.__args__[0]

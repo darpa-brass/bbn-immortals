@@ -4,22 +4,18 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.config.ImmortalsConfig;
-import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
-import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
+import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetailsList;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
 import okhttp3.Request;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Body;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -36,7 +32,7 @@ public class MockServices {
         private boolean isExecuted = false;
         private T returnData;
 
-        public MockRetrofitAction(@Nonnull String path, @Nonnull ImmortalsUtils.NetworkLogger logger, @Nonnull Object body, T returnData) {
+        public MockRetrofitAction(@Nonnull String path, @Nonnull ImmortalsUtils.NetworkLogger logger, @Nullable Object body, T returnData) {
             this.path = path;
             this.logger = logger;
             this.body = body;
@@ -114,13 +110,13 @@ public class MockServices {
         }
 
         @Override
-        public Call<Void> updateAdaptationStatus(AdaptationDetails testAdapterState) {
+        public Call<Void> updateAdaptationStatus(AdaptationDetailsList testAdapterState) {
             logger.logPostReceived("/dasListener/updateAdaptationStatus", testAdapterState);
             return new MockRetrofitAction<>("/dasListener/updateAdaptationStatus", logger, testAdapterState, null);
         }
 
         @Override
-        public Call<Void> updateValidationStatus(TestDetails validatorState) {
+        public Call<Void> updateValidationStatus(TestDetailsList validatorState) {
             return new MockRetrofitAction<>("/dasListener/updateValidationStatus", logger, validatorState, null);
         }
     }

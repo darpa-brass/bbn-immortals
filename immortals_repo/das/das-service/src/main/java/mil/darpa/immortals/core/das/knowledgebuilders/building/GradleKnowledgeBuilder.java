@@ -1,169 +1,189 @@
 package mil.darpa.immortals.core.das.knowledgebuilders.building;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import mil.darpa.immortals.analysis.adaptationtargets.ImmortalsGradleProjectData;
 import mil.darpa.immortals.config.ImmortalsConfig;
+import mil.darpa.immortals.core.api.TestCaseReport;
+import mil.darpa.immortals.core.api.TestCaseReportSet;
 import mil.darpa.immortals.core.das.adaptationtargets.building.AdaptationTargetBuildBase;
 import mil.darpa.immortals.core.das.adaptationtargets.building.AdaptationTargetBuildInstance;
-import mil.darpa.immortals.core.das.adaptationtargets.building.BuildPlatform;
-import mil.darpa.immortals.core.das.adaptationtargets.building.DeploymentTarget;
+import mil.darpa.immortals.core.das.adaptationtargets.testing.ClassFileCoverageSet;
+import mil.darpa.immortals.core.das.adaptationtargets.testing.XmlParser;
 import mil.darpa.immortals.core.das.knowledgebuilders.IKnowledgeBuilder;
 import org.apache.jena.rdf.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by awellman@bbn.com on 1/29/18.
  */
 public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
 
-    private static final Map<String, AdaptationTargetBuildBase> adaptationBuildTargets = new HashMap<>();
+    private Logger logger = LoggerFactory.getLogger(GradleKnowledgeBuilder.class);
+
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    private static final Map<String, AdaptationTargetBuildBase> adaptationBuildTargetsLong = new HashMap<>();
+    private static final Map<String, AdaptationTargetBuildBase> adaptationBuildTargetsShort = new HashMap<>();
     private static final HashMap<String, AdaptationTargetBuildInstance> adaptationBuildInstances = new HashMap<>();
 
-    @Override
-    public Model buildKnowledge(Map<String, Object> parameter) throws Exception {
-        // TODO: Derive this information from the actual build
-        synchronized (adaptationBuildTargets) {
-            if (adaptationBuildTargets.size() == 0) {
-                Map<String, String> deploymentFileMap = new HashMap<>();
-                deploymentFileMap.put(ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(
-                        "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/ATAKLite-Config.json").toString(),
-                        "/sdcard/ataklite/ATAKLite-Config.json");
-                deploymentFileMap.put(ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(
-                        "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/sample_image.jpg").toString(),
-                        "/sdcard/ataklite/sample_image.jpg");
-                deploymentFileMap.put(ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(
-                        "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/env.json").toString(),
-                        "/sdcard/ataklite/env.json");
+    private static synchronized void loadData() throws IOException {
+        if (adaptationBuildTargetsLong.size() == 0) {
+            ImmortalsConfig ic = ImmortalsConfig.getInstance();
 
-                // Add ATAKLite
-                adaptationBuildTargets.put("ATAKLite", new AdaptationTargetBuildBase(
-                        "ATAKLite",
-                        2000,
-                        DeploymentTarget.ANDROID,
-                        "21",
-                        ImmortalsConfig.getInstance().globals.getImmortalsRoot().toString(),
-                        "applications/client/ATAKLite",
-                        "ATAKLite-debug.apk",
-                        "build.gradle",
-                        deploymentFileMap,
-                        "src",
-                        "com.bbn.ataklite",
-                        "com.bbn.ataklite.MainActivity",
-                        ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("gradlew").toString(),
-                        BuildPlatform.GRADLE,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                ));
 
-                deploymentFileMap = new HashMap<>();
-                deploymentFileMap.put("Marti-Config.json", "Marti-Config.json");
+            // Read in the initially analyzed data
+            Path dataFile = ic.extensions.immortalizer.getProducedDataTargetFile();
+            JsonObject jsonData = gson.fromJson(new FileReader(dataFile.toFile()), JsonObject.class);
 
-                // Add Marti
-                adaptationBuildTargets.put("Marti", new AdaptationTargetBuildBase(
-                        "Marti",
-                        2000,
-                        DeploymentTarget.JAVA,
-                        "8",
-                        ImmortalsConfig.getInstance().globals.getImmortalsRoot().toString(),
-                        "applications/server/Marti",
-                        "Marti-immortals.jar",
-                        "build.gradle",
-                        deploymentFileMap,
-                        "src",
-                        "com.bbn.marti",
-                        "com.bbn.marti.service.MartiMain",
-                        ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("gradlew").toString(),
-                        BuildPlatform.GRADLE,
-                        new String[]{"clean", "build", "-x", "test"},
-                        new String[]{"--daemon", "clean", "validate"},
-                        "build/test-results/validate",
-                        null,
-                        null,
-                        null,
-                        null
-                ));
+            for (Map.Entry<String, JsonElement> entry : jsonData.entrySet()) {
 
-                adaptationBuildTargets.put("TakServerDataManager", new AdaptationTargetBuildBase(
-                        "TakServerDataManager",
-                        0,
-                        DeploymentTarget.JAVA,
-                        "8",
-                        ImmortalsConfig.getInstance().globals.getImmortalsRoot().toString(),
-                        "shared/modules/dfus/TakServerDataManager/",
-                        null,
-                        "build.gradle",
-                        new HashMap<>(),
-                        "src/main/java",
-                        "mil.darpa.immortals.dfus",
-                        null,
-                        ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("gradlew").toString(),
-                        BuildPlatform.GRADLE,
-                        new String[]{"clean", "build", "-x", "test"},
-                        new String[]{"clean", "validate"},
-                        "build/test-results/validate",
-                        new String[]{"publish"},
-                        "mil.darpa.immortals.dfus",
-                        "TakServerDataManager",
-                        "2.0-LOCAL"
-                ));
+                ImmortalsGradleProjectData projectData = gson.fromJson(entry.getValue(), ImmortalsGradleProjectData.class);
+                AdaptationTargetBuildBase base = new AdaptationTargetBuildBase(projectData);
+
+                adaptationBuildTargetsShort.put(projectData.getTargetName(), base);
+                adaptationBuildTargetsLong.put(projectData.getIdentifier(), base);
             }
         }
+    }
 
+    private synchronized void analyzeAdaptationTarget(@Nonnull String identifier, @Nonnull JsonElement data) throws Exception {
+        ImmortalsGradleProjectData projectData = gson.fromJson(data, ImmortalsGradleProjectData.class);
+        AdaptationTargetBuildBase base = new AdaptationTargetBuildBase(projectData);
+
+        if (base.canTest()) {
+            logger.info("Collecting test coverage data for project '" + base.getTargetName() + "'.");
+            HashMap<String, ClassFileCoverageSet> artifactTestClasses = new HashMap<>();
+            Set<TestCaseReportSet> artifactTestReports = new HashSet<>();
+
+            TestCaseReportSet allResults = base.executeCleanAndTest(null);
+            TestCaseReportSet tcrs = XmlParser.getTestResultsFromFlatDirectory(base.getTestResultsPath().toFile(), base.getTargetName(), null);
+
+            for (TestCaseReport report : allResults) {
+                List<String> tests = Arrays.asList(report.getTestCaseIdentifier());
+                ClassFileCoverageSet coverage = base.executeCleanTestAndGetCoverage(tests);
+                artifactTestClasses.put(report.getTestCaseIdentifier(), coverage);
+
+
+            }
+
+            JsonElement je = gson.toJsonTree(artifactTestClasses);
+            data.getAsJsonObject().add("baseTestClassFileCoverage", je);
+
+            je = gson.toJsonTree(tcrs);
+            data.getAsJsonObject().add("baseTestCaseReports", je);
+
+            logger.info("Collection of test coverage data for project '" + base.getTargetName() + "' done.");
+        } else {
+            logger.debug("Project '" + base.getTargetName() + "' has no tests to collect coverage data for.");
+        }
+    }
+
+    @Override
+    public synchronized Model buildKnowledge(Map<String, Object> parameter) throws Exception {
+
+        if (ImmortalsConfig.getInstance().extensions.immortalizer.isPerformTestCoverageAnalysis()) {
+            logger.info("Executing test coverage.");
+
+            ImmortalsConfig ic = ImmortalsConfig.getInstance();
+
+            // Read in the initially analyzed data
+            Path dataFile = ic.extensions.immortalizer.getProducedDataTargetFile();
+            JsonObject jsonData = gson.fromJson(new FileReader(dataFile.toFile()), JsonObject.class);
+
+            for (Map.Entry<String, JsonElement> entry : jsonData.entrySet()) {
+                // Update the data in memory
+                analyzeAdaptationTarget(entry.getKey(), entry.getValue());
+            }
+            // And then update the data on disk
+            FileWriter fw = new FileWriter(dataFile.toFile());
+            gson.toJson(jsonData, fw);
+            fw.flush();
+            fw.close();
+        } else {
+            logger.debug("Skipping execution of test coverage.");
+
+        }
         return null;
     }
 
-    public static synchronized AdaptationTargetBuildInstance getBuildInstance(@Nonnull String applicationIdentifier,
-                                                                              @Nonnull String adaptationIdentifier) {
-        String identifier = applicationIdentifier + "-" + adaptationIdentifier;
-        AdaptationTargetBuildInstance abi = adaptationBuildInstances.get(identifier);
+    public static synchronized AdaptationTargetBuildInstance getBuildInstance(@Nonnull String baseApplicationIdentifier,
+                                                                              @Nonnull String adaptationIdentifier) throws IOException {
+        loadData();
+        String appInstanceIdentifier = baseApplicationIdentifier + "-" + adaptationIdentifier;
+        AdaptationTargetBuildInstance buildInstance = adaptationBuildInstances.get(appInstanceIdentifier);
 
-        if (abi == null) {
-            AdaptationTargetBuildBase abb = adaptationBuildTargets.get(applicationIdentifier);
-            abi = new AdaptationTargetBuildInstance(adaptationIdentifier, abb);
-            abi.getBuildRoot();
+        if (buildInstance == null) {
+            AdaptationTargetBuildBase buildBase = adaptationBuildTargetsLong.get(baseApplicationIdentifier);
+            if (buildBase == null) {
+                buildBase = adaptationBuildTargetsShort.get(baseApplicationIdentifier);
+            }
+            
+            if (buildBase != null) {
+                buildInstance = new AdaptationTargetBuildInstance(adaptationIdentifier, buildBase);
+                buildInstance.getBuildRoot();
+                adaptationBuildInstances.put(appInstanceIdentifier, buildInstance);
+            }
         }
-
-        return abi;
+        return buildInstance;
     }
 
     @Nullable
-    public static synchronized AdaptationTargetBuildBase getBuildBase(@Nonnull String applicationIdentifier) {
-        return adaptationBuildTargets.get(applicationIdentifier);
+    public static synchronized AdaptationTargetBuildBase getBuildBase(@Nonnull String applicationIdentifier) throws IOException {
+        loadData();
+        AdaptationTargetBuildBase b = adaptationBuildTargetsLong.get(applicationIdentifier);
+        if (b == null) {
+            b = adaptationBuildTargetsShort.get(applicationIdentifier);
+        }
+        return b;
+    }
+
+//    public static synchronized HashMap<String, Set<String>> getAllTargetTests() throws IOException {
+//        loadData();
+//        HashMap<String, Set<String>> rval = new HashMap<>();
+//
+//        for (Map.Entry<String, AdaptationTargetBuildBase> entry : adaptationBuildTargets.entrySet()) {
+//            ImmortalsGradleProjectData rawData = entry.getValue().getRawBaseProjectData();
+//            if (rawData.getBaseTestClassFileCoverage() != null && rawData.getBaseTestClassFileCoverage().size() > 0) {
+//                rval.put(entry.getKey(), rawData.getBaseTestClassFileCoverage().keySet());
+//            }
+//        }
+//        return rval;
+//    }
+
+    public static synchronized HashMap<String, Set<String>> getAllTargetTests() throws IOException {
+        loadData();
+        HashMap<String, Set<String>> rval = new HashMap<> ();
+
+        for (Map.Entry<String, AdaptationTargetBuildBase> entry : adaptationBuildTargetsLong.entrySet()) {
+            ImmortalsGradleProjectData rawData = entry.getValue().getRawBaseProjectData();
+            Set<TestCaseReport> tcrs = rawData.getBaseTestReports();
+            if (tcrs != null && tcrs.size() > 0) {
+                rval.put(entry.getKey(), tcrs.stream().map(TestCaseReport::getTestCaseIdentifier).collect(Collectors.toSet()));
+            }
+        }
+        return rval;
     }
 
     public static void main(String[] args) {
         try {
-            // Init the knowledge builder
             GradleKnowledgeBuilder gkb = new GradleKnowledgeBuilder();
             gkb.buildKnowledge(null);
-
-            // Request the build information for the artifact you are interested in
-            AdaptationTargetBuildBase base = gkb.getBuildBase("TakServerDataManager");
-
-            // Get the source root
-            Path baseSourceRoot = base.getSourceRoot();
-            System.out.println(baseSourceRoot.toString());
-
-            // Create an aadaptation identifier
-            String adaptationIdentifier = "adaptation" + Long.toString(System.currentTimeMillis()).substring(0, 10);
-
-            // Get a build instance, which copies and creates the new artifact
-            AdaptationTargetBuildInstance instance = gkb.getBuildInstance("TakServerDataManager", adaptationIdentifier);
-
-            // Get the build instance source root
-            Path adaptationSourceRoot = instance.getSourceRoot();
-            System.out.println(adaptationSourceRoot.toString());
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
 }

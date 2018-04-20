@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,13 @@ public class KnowledgeBuilderManager {
 		
 		FileOutputStream out = null;
 		
+		
 		try {
+			logger.info("Executing knowledge builders.");
+			// Initialize Gradle information for all known projects
+			GradleKnowledgeBuilder gkr = new GradleKnowledgeBuilder();
+			gkr.buildKnowledge(null);
+			
 			//####Initialize SchemaDependencyKnowledgeBuilder#####
 			//Get root folder of data DFUs
 			String dataDFURoot = ImmortalsConfig.getInstance().globals.getImmortalsRoot()

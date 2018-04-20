@@ -17,15 +17,21 @@ class ImmortalizerPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        // Add the immortalize task
-        project.tasks.create(ImmortalizeTask.TASK_IDENTIFIER, ImmortalizeTask.class)
-        project.tasks.create(ImmortalizeCleanTask.TASK_IDENTIFIER, ImmortalizeCleanTask.class);
+        // Add BBN-created tasks
+        Task immortalize = project.tasks.create(ImmortalizeTask.TASK_IDENTIFIER, ImmortalizeTask.class)
+        project.tasks.create(AnalyzeGradleBuildTask.TASK_IDENTIFIER, AnalyzeGradleBuildTask.class)
+        project.tasks.create(ImmortalizeCleanTask.TASK_IDENTIFIER, ImmortalizeCleanTask.class)
 
         // Add the immortalizer configuration extension
         project.getExtensions().add(PLUGIN_EXTENSION_IDENTIFIER, new ImmortalizerPluginExtension())
 
-        project.afterEvaluate {
+        ImmortalizerPluginExtension ipe = project.getExtensions().getByType(ImmortalizerPluginExtension.class)
 
+        if (ipe.performBytecodeAnalysis) {
+            immortalize.dependsOn(SECURBORATION_BYTECODE_TASK)
+        }
+        
+        project.afterEvaluate {
             // Get the original task list
             Set<Task> originalTasks = project.tasks.findAll()
 
@@ -34,22 +40,18 @@ class ImmortalizerPlugin implements Plugin<Project> {
 
             // Rename the group for Securboration tasks 
             project.tasks.findAll {
-                it
                 if (!originalTasks.contains(it)) {
-                    if (it.group.equals('IMMoRTALS')) {
+                    if (it.group =='IMMoRTALS') {
                         it.group = 'IMMoRTALS KRGP'
                     }
                 }
             }
 
             // After everything has been evaluated, propagate settings from the immortalizer plugin extension to other plugins
-            ImmortalizerPluginExtension ipe = project.getExtensions().getByType(ImmortalizerPluginExtension.class)
+            
             project.krgp.targetDir = ipe.ttlTargetDir
             project.krgp.includedLibs = []
-
-            if (ipe.performBytecodeAnalysis) {
-                project.getTasks().findByName(ANALYSIS_TASK_IDENTIFIER).finalizedBy(project.getTasks().findByName("bytecode"))
-            }
+            project.krgp.completeAnalysis = ipe.performCompleteGradleTaskAnalysis
         }
     }
 }

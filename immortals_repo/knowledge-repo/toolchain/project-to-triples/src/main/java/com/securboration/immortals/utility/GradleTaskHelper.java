@@ -7,13 +7,11 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.BlockComment;
-import com.github.javaparser.ast.expr.AssignExpr;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.google.common.base.CaseFormat;
 import com.securboration.immortals.j2s.mapper.PojoMappingContext;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
 import com.securboration.immortals.o2t.analysis.ObjectToTriples;
@@ -22,6 +20,7 @@ import com.securboration.immortals.ontology.analysis.DataflowNode;
 import com.securboration.immortals.ontology.analysis.InterMethodDataflowNode;
 import com.securboration.immortals.ontology.constraint.*;
 import com.securboration.immortals.ontology.dfu.instance.FunctionalAspectInstance;
+import com.securboration.immortals.ontology.pattern.spec.CodeSpec;
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.ontology.pojos.markup.Ignore;
 import com.securboration.immortals.ontology.property.impact.ImpactStatement;
@@ -214,6 +213,29 @@ public class GradleTaskHelper {
         }
     }
     
+    private static class CleanUpStreamUgmentationMethods extends VoidVisitorAdapter<Void> {
+
+        @Override
+        public void visit(MethodDeclaration md, Void arg) {
+            
+            if (md.getNameAsString().equalsIgnoreCase("wrapInputStream") ||
+                    md.getNameAsString().equalsIgnoreCase("wrapOutputStream")) {
+
+                Modifier[] modifiers = new Modifier[] {};
+                NodeList<Parameter> parameters = md.getParameters();
+                for (Parameter parameter : parameters) {
+                    parameter.setModifiers(Arrays.stream(modifiers).collect(Collectors.toCollection(() ->
+                            EnumSet.noneOf(Modifier.class))));
+                    if (parameter.getNameAsString().toLowerCase().contains("stream")) {
+                        parameter.setName("streamVar");
+                    } else if (parameter.getNameAsString().toLowerCase().contains("cipher")) {
+                        parameter.setName("cipherVar");
+                    }
+                }
+            }
+        }
+    }
+    
     private static class AddFieldToExistingClassVisitor extends VoidVisitorAdapter<Void> {
         
         private String fieldType;
@@ -278,8 +300,12 @@ public class GradleTaskHelper {
 
                 
                 NodeList<Parameter> parameters = new NodeList<>();
-                parameters.add(new Parameter(JavaParser.parseType(streamType), "var0"));
-                parameters.add(new Parameter(JavaParser.parseType(cipherImpl), "var1"));
+                String streamIdentifier = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, streamType
+                        .substring(streamType.lastIndexOf(".") + 1));
+                String cipherIdentifier = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, cipherImpl
+                        .substring(cipherImpl.lastIndexOf(".") + 1));
+                parameters.add(new Parameter(JavaParser.parseType(streamType), streamIdentifier));
+                parameters.add(new Parameter(JavaParser.parseType(cipherImpl), cipherIdentifier));
                 specSolutions = new AssertableSolutionSet();
                 MethodDeclaration wrapOutputStreamDeclaration = new MethodDeclaration();
                 wrapOutputStreamDeclaration.setName("wrapOutputStream");
@@ -312,11 +338,10 @@ public class GradleTaskHelper {
                 getInputStreamImpl.setBody(JavaParser.parseBlock(codeReplacement));
 
                 cd.getMembers().add(getInputStreamImpl);
-
                 specSolutions = new AssertableSolutionSet();
                 NodeList<Parameter> parameters = new NodeList<>();
-                parameters.add(new Parameter(JavaParser.parseType(streamType), "var0"));
-                parameters.add(new Parameter(JavaParser.parseType(cipherImpl), "var1"));
+                parameters.add(new Parameter(JavaParser.parseType(streamType), "streamVar"));
+                parameters.add(new Parameter(JavaParser.parseType(cipherImpl), "cipherImpl"));
                 MethodDeclaration wrapInputStreamDeclaration = new MethodDeclaration();
                 wrapInputStreamDeclaration.setName("wrapInputStream");
                 wrapInputStreamDeclaration.setType(JavaParser.parseClassOrInterfaceType(streamType));
@@ -332,22 +357,30 @@ public class GradleTaskHelper {
                 
                 cd.getMembers().add(wrapInputStreamDeclaration);
             }
+            
         }
     }
     
-    private static class AffectedMethodsVisitor extends VoidVisitorAdapter<Void> {
+    private static class AugmentationSurfaceMethodVisitor extends VoidVisitorAdapter<Void> {
         
-        private List<String> affectedMethods = new ArrayList<>();
-        
+        private CodeSpec codeSpec;
+
         @Override
-        public void visit(MethodDeclaration md, Void arg) {
-            StreamImplementationArchivist.affectedMethodsToRepair.keySet().stream().filter(method -> method.equals(md.getSignature().asString()))
-                    .findFirst().ifPresent(x -> {
-                        affectedMethods.add(md.getSignature().asString());
-                        BlockStmt blockStmt = JavaParser.parseBlock(StreamImplementationArchivist.affectedMethodsToRepair.get(x));
-                        md.removeBody();
-                        md.setBody(blockStmt);
-            });
+        public void visit(ClassOrInterfaceDeclaration cd, Void arg) {
+            
+            Optional<MethodDeclaration> augmentationSurfaceMethodOption = cd.getMethods().stream().filter(md -> md.getSignature().asString()
+                    .equals(codeSpec.getMethodSignature())).findFirst();
+            
+            if (augmentationSurfaceMethodOption.isPresent()) {
+                MethodDeclaration augmentationSurfaceMethod = augmentationSurfaceMethodOption.get();
+                augmentationSurfaceMethod.removeBody();
+                augmentationSurfaceMethod.setBody(JavaParser.parseBlock(codeSpec.getCode()));
+            }
+            
+        }
+
+        public void setCodeSpec(CodeSpec codeSpec) {
+            this.codeSpec = codeSpec;
         }
     }
     
@@ -355,13 +388,13 @@ public class GradleTaskHelper {
 
         private String streamType;
         private String wrappedClassSimpleName;
+        private String complexity;
         
         @Override
         public void visit(ClassOrInterfaceDeclaration cd, Void arg) {
             
             Optional<ConstructorDeclaration> constructorOption = cd.getConstructorByParameterTypes(wrappedClassSimpleName);
             NodeList<CatchClause> tryCatches = null;
-            String cipherImplName = null;
             NodeList<Statement> rebuildConstructor = new NodeList<>();
             String tryBody = null;
             if (constructorOption.isPresent()) {
@@ -376,45 +409,19 @@ public class GradleTaskHelper {
                         TryStmt tryStmt = (TryStmt) bodyStatement;
                         tryCatches = tryStmt.getCatchClauses();
                         tryBody = tryStmt.getTryBlock().toString();
-                        List<Node> tryNodes = tryStmt.getChildNodes().get(0).getChildNodes();
-                        Node wrapNode = tryNodes.get(tryNodes.size() - 2);
                         
-                        if (wrapNode instanceof ExpressionStmt) {
-                            
-                            ExpressionStmt wrapExpression = (ExpressionStmt) wrapNode;
-                            Expression expression = wrapExpression.getExpression();
-                            
-                            if (expression instanceof AssignExpr) {
-                                
-                                Expression valueExpression = ((AssignExpr) expression).getValue();
-                                
-                                if (valueExpression instanceof MethodCallExpr) {
-                                    
-                                    MethodCallExpr wrapCall = (MethodCallExpr) valueExpression;
-                                    Node getCipherImplNameNode = wrapCall.getChildNodes().get(wrapCall.getChildNodes().size() - 1);
-                                    
-                                    if (getCipherImplNameNode instanceof NameExpr) {
-                                        cipherImplName = ((NameExpr) getCipherImplNameNode).getName().getIdentifier();
-                                    }
-                                }
-                            }
-                        }
                     } else {
                         rebuildConstructor.add(bodyStatement);
                     }
                 }
-
                 
-                
-                if (streamType.equals("java.io.OutputStream")) {
+                if (streamType.equals("java.io.OutputStream") && complexity.equals("simple")) {
                     int indexOfInputStream = tryBody.indexOf("this.inputstream");
                     String temp = tryBody.substring(indexOfInputStream);
                     int tempInt = temp.indexOf("\n");
 
-                    String newInsertions = "\t\tOutputStream os = getOutputStreamImpl();\n" +
-                            "\t\tos = wrapOutputStream(os, ???CIPHER_IMPL_NAME???);\n" +
-                            "\t\tthis.outputstream = os;\n";
-                    newInsertions = newInsertions.replace("???CIPHER_IMPL_NAME???", cipherImplName);
+                    String newInsertions = "\t\tthis.outputstream = wrapOutputStream" +
+                            "(this.getOutputStreamImpl(), initCipherImpl());\n";
                     
                     StringBuilder buildString = new StringBuilder(tryBody);
                     buildString.insert((indexOfInputStream + tempInt) + 1, newInsertions);
@@ -423,15 +430,13 @@ public class GradleTaskHelper {
                     TryStmt newTryStmt = new TryStmt(newTryBody, tryCatches, new BlockStmt());
                     rebuildConstructor.add(newTryStmt);
                     constructor.setBody(new BlockStmt(rebuildConstructor));
-                } else if (streamType.equals("java.io.InputStream")) {
+                } else if (streamType.equals("java.io.InputStream") && complexity.equals("simple")) {
                     int indexOfOutputStream = tryBody.indexOf("this.outputstream");
                     String temp = tryBody.substring(indexOfOutputStream);
                     int tempInt = temp.indexOf("\n");
 
-                    String newInsertions = "InputStream is = getInputStreamImpl();\n" +
-                            "            is = wrapInputStream(is, ???CIPHER_IMPL_NAME???);\n" +
-                            "            this.inputstream = is;\n";
-                    newInsertions = newInsertions.replace("???CIPHER_IMPL_NAME???", cipherImplName);
+                    String newInsertions = "\t\tthis.inputstream = wrapInputStream(this.getInputStreamImpl()," +
+                            "initCipherImpl());\n";
                     
                     StringBuilder buildString = new StringBuilder(tryBody);
                     buildString.insert((indexOfOutputStream + tempInt) + 1, newInsertions);
@@ -515,12 +520,275 @@ public class GradleTaskHelper {
         }
     }
     
+    private static class ImplementRequiredMethodsVisitor extends VoidVisitorAdapter<Void> {
+
+        private List<CodeSpec> codeSpecs;
+        
+        @Override
+        public void visit(ClassOrInterfaceDeclaration cd, Void arg) {
+            
+            Set<String> methodDeclarationSet = new HashSet<>();
+            for (MethodDeclaration md : cd.getMethods()) {
+                methodDeclarationSet.add(md.getSignature().asString());
+            }
+
+            Set<String> codeSpecSignatures = new HashSet<>();
+            for (CodeSpec codeSpec : codeSpecs) {
+                codeSpecSignatures.add(codeSpec.getMethodSignature().substring
+                        (0, codeSpec.getMethodSignature().lastIndexOf(")") + 1));
+            }
+            
+            Sets.SetView<String> methodsAlreadyImplemented = Sets.intersection(methodDeclarationSet, codeSpecSignatures);
+            
+            if (methodsAlreadyImplemented.size() == codeSpecs.size()) {
+                return;
+            } else if (!methodsAlreadyImplemented.isEmpty()) {
+                for (String alreadyImplementedMethod : methodsAlreadyImplemented) {
+                    codeSpecs.remove(alreadyImplementedMethod);
+                }
+            }
+            
+            for (CodeSpec codeSpec : codeSpecs) {
+                
+                String methodSignature = codeSpec.getMethodSignature();
+                MethodDeclaration methodDeclaration = new MethodDeclaration();
+                methodDeclaration.setName(methodSignature.substring(0, methodSignature.indexOf("(")));
+                
+                String parametersString = methodSignature.substring(methodSignature.indexOf("(") + 1, methodSignature.indexOf(")"));
+                String[] parametersArray = parametersString.split(",");
+
+                NodeList<Parameter> parameters = new NodeList<>();
+                if (!parametersString.equals("")) {
+                    for (String parameter : parametersArray) {
+                        Type type = JavaParser.parseType(parameter.trim());
+                        parameters.add(new Parameter(type, CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, type.asString()) + "Param"));
+                    }
+                }
+                
+                NodeList<ReferenceType> thrownExceptions = new NodeList<>();
+                
+                if (!codeSpec.getCode().contains("throw")) {
+                    thrownExceptions.add(JavaParser.parseClassOrInterfaceType("java.lang.Exception"));
+                    methodDeclaration.setThrownExceptions(thrownExceptions);
+                }
+                methodDeclaration.setParameters(parameters);
+                methodDeclaration.setBody(JavaParser.parseBlock(codeSpec.getCode()));
+                String returnType = codeSpec.getMethodSignature().substring(codeSpec.getMethodSignature().lastIndexOf(")") + 1);
+                switch (returnType.charAt(0)) {
+                    
+                    case 'Z':
+                        returnType = "boolean";
+                        break;
+                    case 'B':
+                        returnType = "byte";
+                        break;
+                    case 'C':
+                        returnType = "char";
+                        break;
+                    case 'S':
+                        returnType = "short";
+                        break;
+                    case 'I':
+                        returnType = "int";
+                        break;
+                    case 'J':
+                        returnType = "long";
+                        break;
+                    case 'F':
+                        returnType = "float";
+                        break;
+                    case 'D':
+                        returnType = "double";
+                        break;
+                    case 'L':
+                        returnType = returnType.substring(1);
+                        break;
+                    case 'V':
+                        returnType = "void";
+                        break;
+                    default:
+                        break;
+                }
+                
+                methodDeclaration.setType(JavaParser.parseType(returnType.replaceAll("\\/", "\\.")));
+                Modifier[] modifiers = new Modifier[] {Modifier.PUBLIC};
+                methodDeclaration.setModifiers(Arrays.stream(modifiers).collect(Collectors.toCollection(() -> EnumSet.noneOf(Modifier.class))));
+                
+                cd.getMembers().add(methodDeclaration);
+            }
+                
+            
+            
+        }
+
+        public void setCodeSpecs(List<CodeSpec> codeSpecs) {
+            this.codeSpecs = codeSpecs;
+        }
+    }
+    
+    
+    public Optional<String> checkForNecessaryImplementations(String wrappedClassName, String source, File sourceFile) throws IOException {
+        
+        String getNecessaryImplementations = "prefix IMMoRTALS_pattern_spec: <http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#> \n" +
+                "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\n" +
+                "select ?codeSpecSig ?codeSpecCode where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\n" +
+                "\t\t?specComponent a IMMoRTALS_pattern_spec:SpecComponent\n" +
+                "\t\t; IMMoRTALS:hasAspectBeingPerformed <http://darpa.mil/immortals/ontology/r2.0.0/functionality/wrapper#AspectRuntimeImplementation>\n" +
+                "\t\t; IMMoRTALS:hasCodeSpec ?codeSpec .\n" +
+                "\t\t\n" +
+                "\t\t?codeSpec a IMMoRTALS_pattern_spec:CodeSpec\n" +
+                "\t\t; IMMoRTALS:hasClassName \"???CLASS_NAME???\"\n" +
+                "\t\t; IMMoRTALS:hasMethodSignature ?codeSpecSig\n" +
+                "\t\t; IMMoRTALS:hasCode ?codeSpecCode .\n" +
+                "\t}\n" +
+                "}";
+        getNecessaryImplementations = getNecessaryImplementations.replace("???GRAPH_NAME???", graphName)
+                .replace("???CLASS_NAME???", wrappedClassName.replaceAll("\\.", "\\/"));
+        AssertableSolutionSet necessaryImplementationSolutionSet = new AssertableSolutionSet();
+        
+        this.client.executeSelectQuery(getNecessaryImplementations, necessaryImplementationSolutionSet);
+        List<CodeSpec> codeSpecs = new ArrayList<>();
+        
+        for (Solution necessaryImplementationSolution : necessaryImplementationSolutionSet.getSolutions()) {
+            CodeSpec codeSpec = new CodeSpec();
+            codeSpec.setClassName(wrappedClassName);
+            codeSpec.setMethodSignature(necessaryImplementationSolution.get("codeSpecSig"));
+            codeSpec.setCode(necessaryImplementationSolution.get("codeSpecCode"));
+            codeSpecs.add(codeSpec);
+        }
+        
+        ImplementRequiredMethodsVisitor implementRequiredMethodsVisitor = new ImplementRequiredMethodsVisitor();
+        implementRequiredMethodsVisitor.setCodeSpecs(codeSpecs);
+        
+        if (source != null && sourceFile != null) {
+            CompilationUnit compilationUnit = JavaParser.parse(source);
+            compilationUnit.accept(implementRequiredMethodsVisitor, null);
+
+            Files.write(sourceFile.toPath(), Collections.singleton(compilationUnit.toString()), StandardCharsets.UTF_8);
+            return Optional.of(compilationUnit.toString());
+        } else if (source == null) {
+            CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
+            compilationUnit.accept(implementRequiredMethodsVisitor, null);
+
+            Files.write(sourceFile.toPath(), Collections.singleton(compilationUnit.toString()), StandardCharsets.UTF_8);
+            return Optional.empty();
+        } else {
+            CompilationUnit compilationUnit = JavaParser.parse(source);
+            compilationUnit.accept(implementRequiredMethodsVisitor, null);
+
+            return Optional.of(compilationUnit.toString());
+        }
+    }
+    
+    public Optional<String> augmentAdaptationSurfaceMethods(String wrappedClassName, String streamType, String source, File sourceFile) throws IOException {
+        
+        // TODO temp, need to be able to infer using soot or javaparser
+        String complexity;
+        if (wrappedClassName.equals("java.net.Socket")) {
+            complexity = "simple";
+        } else {
+            complexity = "complex";
+        }
+        
+        String getAugmentationSurfaceMethods = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_pattern_spec: <http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#>\n" +
+                "select ?codeSpecSig ?codeSpecCode where {\n" +
+                "\t\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\n" +
+                "\t\t?specComponent a IMMoRTALS_pattern_spec:SpecComponent\n" +
+                "\t\t; IMMoRTALS:hasAspectBeingPerformed <???ASPECT???>\n" +
+                "\t\t; IMMoRTALS:hasCodeSpec ?codeSpec .\n" +
+                "\t\t\n" +
+                "\t\t?codeSpec a IMMoRTALS_pattern_spec:CodeSpec\n" +
+                "\t\t; IMMoRTALS:hasClassName \"???CLASS_NAME???\"\n" +
+                "\t\t; IMMoRTALS:hasMethodSignature ?codeSpecSig\n" +
+                "\t\t; IMMoRTALS:hasCode ?codeSpecCode .\n" +
+                "\t\n" +
+                "\t}\n" +
+                "}";
+        getAugmentationSurfaceMethods = getAugmentationSurfaceMethods.replace("???GRAPH_NAME???", this.graphName)
+                .replace("???CLASS_NAME???", wrappedClassName.replaceAll("\\.", "\\/"));
+        AssertableSolutionSet augmentationSurfaceMethodSolutions = new AssertableSolutionSet();
+        
+        if (streamType.equals("java.io.OutputStream")) {
+            
+            switch (complexity) {
+                
+                case "simple":
+                    getAugmentationSurfaceMethods = getAugmentationSurfaceMethods.replace("???ASPECT???",
+                            "http://darpa.mil/immortals/ontology/r2.0.0/functionality/wrapper#AspectUtilizeEncryptedStream");
+                    break;
+                case "complex":
+                    getAugmentationSurfaceMethods = getAugmentationSurfaceMethods.replace("???ASPECT???",
+                            "http://darpa.mil/immortals/ontology/r2.0.0/resources/streams#AspectWriteMessage");
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+        } else {
+
+            switch (complexity) {
+
+                case "simple":
+                    getAugmentationSurfaceMethods = getAugmentationSurfaceMethods.replace("???ASPECT???",
+                            "http://darpa.mil/immortals/ontology/r2.0.0/functionality/wrapper#AspectUtilizeDecryptedStream");
+                    break;
+                case "complex":
+                    getAugmentationSurfaceMethods = getAugmentationSurfaceMethods.replace("???ASPECT???",
+                            "http://darpa.mil/immortals/ontology/r2.0.0/resources/streams#AspectReadMessage");
+                    break;
+
+                default:
+                    break;
+            }
+            
+        }
+        
+        this.client.executeSelectQuery(getAugmentationSurfaceMethods, augmentationSurfaceMethodSolutions);
+        
+        CodeSpec codeSpec = new CodeSpec();
+        codeSpec.setMethodSignature(augmentationSurfaceMethodSolutions.getSolutions().get(0).get("codeSpecSig"));
+        codeSpec.setCode(augmentationSurfaceMethodSolutions.getSolutions().get(0).get("codeSpecCode"));
+        
+        AugmentationSurfaceMethodVisitor augmentationSurfaceMethodVisitor = new AugmentationSurfaceMethodVisitor();
+        augmentationSurfaceMethodVisitor.setCodeSpec(codeSpec);
+
+        if (source == null) {
+            CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
+            compilationUnit.accept(augmentationSurfaceMethodVisitor, null);
+
+            Files.write(sourceFile.toPath(), Collections.singleton(compilationUnit.toString()), StandardCharsets.UTF_8);
+            return Optional.empty();
+
+        } else {
+            CompilationUnit compilationUnit = JavaParser.parse(source);
+            compilationUnit.accept(augmentationSurfaceMethodVisitor, null);
+
+            return Optional.of(compilationUnit.toString());
+        }
+        
+    }
+    
     public String parseRawCode(String source, String wrappedClassName, List<String> augmentedMethods, String streamType,
                                String aspectUUID, String cipherImpl) {
         
+        String complexity;
+        //TODO derive from soot or javaparser
+        if (wrappedClassName.equals("java/net/Socket")) {
+            complexity = "simple";
+        } else {
+            complexity = "complex";
+        }
+        
         StreamImplementationArchivist.initializeArchive(wrappedClassName);
         
-        AffectedMethodsVisitor affectedMethodsVisitor = new AffectedMethodsVisitor();
+       // AffectedMethodsVisitor affectedMethodsVisitor = new AffectedMethodsVisitor();
         
         AddFieldToExistingClassVisitor addFieldToExistingClassVisitor = new AddFieldToExistingClassVisitor();
         addFieldToExistingClassVisitor.fieldType = streamType;
@@ -536,39 +804,40 @@ public class GradleTaskHelper {
         AugmentConstructorVisitor augmentConstructorVisitor = new AugmentConstructorVisitor();
         augmentConstructorVisitor.streamType = streamType;
         augmentConstructorVisitor.wrappedClassSimpleName = wrappedClassName.substring(wrappedClassName.lastIndexOf("/") + 1);
+        augmentConstructorVisitor.complexity = complexity;
         
         CompilationUnit compilationUnit = JavaParser.parse(source);
-        compilationUnit.accept(affectedMethodsVisitor, null);
         compilationUnit.accept(addFieldToExistingClassVisitor, null);
         compilationUnit.accept(addAutoGeneratedMethodsVisitor, null);
         compilationUnit.accept(augmentConstructorVisitor, null);
         
-        augmentedMethods.addAll(affectedMethodsVisitor.affectedMethods);
-        
-        String sourceCode = null;
-        if (streamType.equals("java.io.OutputStream") && augmentedMethods.contains("getStreamImpl()")) {
-             sourceCode = compilationUnit.toString().replaceAll("getStreamImpl", "getInputStreamImpl")
-             .replaceAll(" wrap\\(", " wrapInputStream(");
-        } else if (streamType.equals("java.io.InputStream") && augmentedMethods.contains("getStreamImpl()")) {
-            sourceCode = compilationUnit.toString().replaceAll("getStreamImpl", "getOutputStreamImpl")
-                    .replaceAll(" wrap\\(", " wrapOutputStream(");
-        }
+        if (complexity.equals("simple")) {
 
-        return sourceCode;
+            String sourceCode = null;
+            if (streamType.equals("java.io.OutputStream") && augmentedMethods.contains("getStreamImpl()")) {
+                sourceCode = compilationUnit.toString().replaceAll("getStreamImpl", "getInputStreamImpl")
+                        .replaceAll(" wrap\\(", " wrapInputStream(");
+            } else if (streamType.equals("java.io.InputStream") && augmentedMethods.contains("getStreamImpl()")) {
+                sourceCode = compilationUnit.toString().replaceAll("getStreamImpl", "getOutputStreamImpl")
+                        .replaceAll(" wrap\\(", " wrapOutputStream(");
+            }
+            
+            compilationUnit = JavaParser.parse(sourceCode);
+            compilationUnit.accept(new CleanUpStreamUgmentationMethods(), null);
+            
+            return compilationUnit.toString();
+        } else {
+            return compilationUnit.toString();
+        }
     }
     
     public String parseWrapperClasses(File wrapperSource, String aspectUUID, String wrappedClassName, List<String> augmentedMethods) {
         
-        StreamImplementationArchivist.initializeArchive(wrappedClassName);
-        
         InitializerRemoverVisitor removerVisitor = new InitializerRemoverVisitor();
         MethodLineNumberVisitor lineNumberVisitor = new MethodLineNumberVisitor();
-        AffectedMethodsVisitor affectedMethodsVisitor = new AffectedMethodsVisitor();
         
         try {
             CompilationUnit compilationUnit = JavaParser.parse(wrapperSource);
-            compilationUnit.accept(affectedMethodsVisitor, null);
-            augmentedMethods.addAll(affectedMethodsVisitor.affectedMethods);
             
             lineNumberVisitor.taskHelper = this;
             lineNumberVisitor.aspectUUID = aspectUUID;

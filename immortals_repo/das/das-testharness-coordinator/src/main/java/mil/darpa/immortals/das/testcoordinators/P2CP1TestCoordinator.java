@@ -90,126 +90,74 @@ public class P2CP1TestCoordinator implements TestCoordinatorExecutionInterface {
 
     @Override
     public Response execute(SubmissionModel submissionModel, boolean attemptAdaptation) {
+        logger.info("PC2CP1TestCoordinator executed.");
 
         try {
-            if (submissionModel.martiServerModel != null || submissionModel.globalModel != null || submissionModel.atakLiteClientModel != null) {
-                // If the environment should be perturbed, validate the submissionModel and perturb it
+            String adaptationIdentifier = submissionModel.sessionIdentifier;
+
+            // Check if what this CP cares about is set
+            boolean perturbEnvironment = submissionModel.martiServerModel != null &&
+                    submissionModel.martiServerModel.requirements != null &&
+                    submissionModel.martiServerModel.requirements.postgresqlPerturbation != null;
+
+            logger.info("Adaptation identifier: " + adaptationIdentifier);
+
+
+            // Validate the input submission model
+            if (perturbEnvironment) {
                 List<String> errors = validatePerturbation(submissionModel);
                 String error = String.join("\n", errors);
 
+                // If there are errors, log and return BAD_REQUEST
                 if (!errors.isEmpty()) {
                     logger.error("Validation error in submission model for CP1.");
                     errors.forEach(e -> logger.error(e + System.lineSeparator()));
                     return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
                 }
             }
-           
-            if (attemptAdaptation) {
 
-                Runnable adaptationTask = () -> {
-                    doAdaptation(submissionModel);
-                };
-                Thread t = new Thread(adaptationTask);
-                t.setUncaughtExceptionHandler(ImmortalsErrorHandler.fatalExceptionHandler);
-                t.start();
-                logger.info("Adaptation entered running state.");
-                return Response.ok().build();
-
-            } else {
-
-                Runnable validationTask = () -> {
-
-                    AdaptationDetails adaptationDetails = null;
-
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
                     try {
-                        String adaptationIdentifier = submissionModel.sessionIdentifier;
-                        logger.info("Adaptation identifier: " + adaptationIdentifier);
 
-                        if (submissionModel.martiServerModel != null || submissionModel.globalModel != null || submissionModel.atakLiteClientModel != null) {
-                            logger.info("Setting up CP 1.");
+                        if (perturbEnvironment) {
+                            logger.info("Perturbing Environment for CP1.");
                             setupChallengeProblem(submissionModel);
                         }
 
-                        logger.info("Creating deployment model for CP 1.");
+                        logger.info("Creating deployment model for CP1.");
                         String deploymentModel = getDeploymentModel(adaptationIdentifier);
                         logger.trace("Deployment Model: " + deploymentModel);
 
-                        // TODO: These adaptation details probably don't belong here....
-                        SubmissionServices.getDasSubmitter().submitValidationRequest(deploymentModel).execute();
-                        logger.info("TH Submitting deployment model to DAS: ACK Received");
+                        if (attemptAdaptation) {
+                            logger.info("Submitting deployment model for CP1 to DAS for adaptation");
+                            SubmissionServices.getDasSubmitter().submitAdaptationRequest(deploymentModel).execute();
+                        } else {
+                            logger.info("Submitting deployment model for CP1 to DAS for validation");
+                            SubmissionServices.getDasSubmitter().submitValidationRequest(deploymentModel).execute();
+                        }
 
-//            if (adaptationDetails == null) {
-//                throw new Exception("Missing adaptation details after submitting to DAS.");
-//            }
                     } catch (Exception e) {
                         logger.error("Unexpected exception during adaptation request handling.", e);
                         ImmortalsErrorHandler.reportFatalException(e);
                     }
+                }
+            });
 
-                };
-                Thread t = new Thread(validationTask);
-                t.setUncaughtExceptionHandler(ImmortalsErrorHandler.fatalExceptionHandler);
-                t.start();
+            t.setUncaughtExceptionHandler(ImmortalsErrorHandler.fatalExceptionHandler);
+            t.start();
+            if (attemptAdaptation) {
                 logger.info("Adaptation entered running state.");
-                return Response.ok().build();
-
-            }
-        } catch (Exception e) {
-            logger.error("Exception during initial submission to DAS.");
-
-            return Response.serverError().build();
-        }
-
-
-    }
-
-    @Override
-    public Response execute(SubmissionModel submissionModel) {
-        logger.info("PC2CP1TestCoordinator executed.");
-        try {
-            List<String> errors = validatePerturbation(submissionModel);
-            String error = String.join("\n", errors);
-
-            if (!errors.isEmpty()) {
-                logger.error("Validation error in submission model for CP1.");
-                errors.forEach(e -> logger.error(e + System.lineSeparator()));
-                return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
             } else {
-                Runnable adaptationTask = () -> {
-                    doAdaptation(submissionModel);
-                };
-
-                Thread t = new Thread(adaptationTask);
-                t.setUncaughtExceptionHandler(ImmortalsErrorHandler.fatalExceptionHandler);
-                t.start();
-                logger.info("Adaptation entered running state.");
-                return Response.ok().build();
+                logger.info("Validation entered running state.");
             }
+            return Response.ok().build();
+
         } catch (Exception e) {
             logger.error("Exception during initial submission to DAS.");
 
             return Response.serverError().build();
-        }
-    }
-
-    private void doAdaptation(SubmissionModel submissionModel) {
-        try {
-            String adaptationIdentifier = submissionModel.sessionIdentifier;
-            logger.info("Adaptation identifier: " + adaptationIdentifier);
-
-            logger.info("Setting up CP 1.");
-            setupChallengeProblem(submissionModel);
-
-            logger.info("Creating deployment model for CP 1.");
-            String deploymentModel = getDeploymentModel(adaptationIdentifier);
-            logger.trace("Deployment Model: " + deploymentModel);
-
-            submitAdaptationRequest(deploymentModel);
-            logger.info("TH Submitting deployment model to DAS: ACK Received");
-
-        } catch (Exception e) {
-            logger.error("Unexpected exception during adaptation request handling.", e);
-            ImmortalsErrorHandler.reportFatalException(e);
         }
     }
 
@@ -825,7 +773,7 @@ public class P2CP1TestCoordinator implements TestCoordinatorExecutionInterface {
 
         tables.add(table);
 
-        tc.execute(sm);
+        tc.execute(sm, true);
 
     }
 }

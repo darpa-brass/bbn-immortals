@@ -1,0 +1,19 @@
+[
+    {
+        "scenarioIdentifier": "p2cp3challenge",
+        "submissionModel": {
+            "martiServerModel": {
+                "requirements": {
+                    "libraryUpgrade": "ElevationApi_2"
+                }
+            }
+        },
+        "expectedAdaptationResult": "SUCCESS",
+        "expectedVerdictOutcome": "PASS",
+        "rootConfigurationModifications": {
+            "validationEnvironment.lifecycle.haltEnvironment": "True"
+        },
+        "submissionFlow": "Challenge",
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
+    }
+]

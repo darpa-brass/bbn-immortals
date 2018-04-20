@@ -1,0 +1,869 @@
+/usr/lib/jvm/java-8-oracle/bin/java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35682,suspend=y,server=n -javaagent:/home/ubuntu/tools/idea-IU-162.2032.8/plugins/Groovy/lib/agent/gragent.jar -Dfile.encoding=UTF-8 -classpath /usr/lib/jvm/java-8-oracle/jre/lib/charsets.jar:/usr/lib/jvm/java-8-oracle/jre/lib/deploy.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/cldrdata.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/dnsns.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/jaccess.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/jfxrt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/localedata.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/nashorn.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/sunec.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/sunjce_provider.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/sunpkcs11.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/zipfs.jar:/usr/lib/jvm/java-8-oracle/jre/lib/javaws.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jce.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jfr.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jfxswt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jsse.jar:/usr/lib/jvm/java-8-oracle/jre/lib/management-agent.jar:/usr/lib/jvm/java-8-oracle/jre/lib/plugin.jar:/usr/lib/jvm/java-8-oracle/jre/lib/resources.jar:/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar:/home/ubuntu/research/hddRASS/build/classes/main:/home/ubuntu/research/hddRASS/build/resources/main:/home/ubuntu/research/hddRASS/lib/cruisecontrol.jar:/home/ubuntu/research/hddRASS/lib/asm-tree-5.0.3.jar:/home/ubuntu/research/hddRASS/lib/json-simple-1.1.jar:/home/ubuntu/research/hddRASS/lib/asm-xml-5.0.3.jar:/home/ubuntu/research/hddRASS/lib/hamcrest-core-1.3.jar:/home/ubuntu/research/hddRASS/lib/java-hamcrest-2.0.0.0.jar:/home/ubuntu/research/hddRASS/lib/asm-util-5.0.3.jar:/home/ubuntu/research/hddRASS/lib/commons-collections4-4.1.jar:/home/ubuntu/research/hddRASS/lib/junit-4.12.jar:/home/ubuntu/research/hddRASS/lib/asm-analysis-5.0.3.jar:/home/ubuntu/research/hddRASS/lib/asm-commons-5.0.3.jar:/home/ubuntu/research/hddRASS/lib/commons-cli-1.3.1.jar:/home/ubuntu/research/hddRASS/lib/json-20160212.jar:/home/ubuntu/research/hddRASS/lib/log4j-1.2.17.jar:/home/ubuntu/research/hddRASS/lib/hamcrest-junit-2.0.0.0.jar:/home/ubuntu/research/hddRASS/lib/javaparser-1.0.8.jar:/home/ubuntu/research/hddRASS/lib/asm-5.0.3.jar:/home/ubuntu/tools/idea-IU-162.2032.8/lib/idea_rt.jar Driver.MutateScript
+Connected to the target VM, address: '127.0.0.1:35682', transport: 'socket'
+{"buildFilePath":"build.gradle","applicationPath":"\/root\/arpit-marti\/applications\/server\/Marti\/","sourceSubpath":"src","buildTool":"gradle","requiredValidators":["com.bbn.marti.Tests.testSaTransmission","com.bbn.marti.Tests.testImageTransmission"],"buildToolBuildParameter":"clean build","testResultPath":"\/root\/arpit-marti\/applications\/server\/Marti\/build\/test-results\/validate\/","buildToolPath":"\/root\/arpit-marti\/gradlew","buildToolValidationParameters":"clean validate","testFileRegex":""}
+**************************************Test results are true. Reduction performed.  ***************************************************
+CotEventSender.java
+ProtocolListener.java
+TransportInterface.java
+TcpSocketServer.java
+TcpTransport.java
+Transport.java
+CotChannel.java
+Protocol.java
+CotServerChannel.java
+SubmissionServiceFunctionalUnit.java
+TcpInitializationData.java
+SocketData.java
+CotData.java
+CotChannelData.java
+TcpTransportToCotChannelData.java
+CotEventImageExtractor.java
+TcpSocketServerToCotServerChannel.java
+BoundingBoxProcessor.java
+BoundingBox.java
+ImageStripper.java
+CotByteBufferPipe.java
+CotEventContainerToCotDataEvent.java
+CotEventContainerBytesExtractionPipe.java
+SocketToTcpTransport.java
+TcpInitializationDataToTcpSocketServer.java
+Callbacks.java
+FixedSizedBlockingQueue.java
+DateUtil.java
+FileSystemUtils.java
+PrioritizedQueue.java
+Assertion.java
+Util.java
+CoreConfig.java
+CoreMonitor.java
+BaseService.java
+SubmissionService.java
+Subscription.java
+SubscriptionManager.java
+BrokerService.java
+MartiMain.java
+RemoteSubscription.java
+CoreConfigInterface.java
+RemoteContact.java
+ContextFacade.java
+DataFerryManagerInterface.java
+SubscriptionManagerInterface.java
+BadgeOfShame.java
+MonitorInterface.java
+MonitorCallbackinterface.java
+QueueMetric.java
+RemoteFile.java
+DataServiceConfiguration.java
+DataServiceProxy.java
+DataServiceStatusValue.java
+Endpoints.java
+DataService.java
+QueryResultStatusValue.java
+QueryResult.java
+CotEvent.java
+CotEventContainer.java
+CotEventQueue.java
+CotPrintingProtocolListener.java
+Images.java
+FlowTagFilter.java
+ImageFormattingFilter.java
+DropTypeFilter.java
+Filter.java
+ImageProcessingFilter.java
+/root/arpit-marti/applications/server/Marti/src/com/bbn/marti/net/CotEventSender.java
+src/com/bbn/marti/net/CotEventSender.java
+-986511538 q.addItem(c, importance, c.getUid(), replaceByKey);
+Final {
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+done.....................................................................................
+-1289051568 return cotChannel;
+Final {
+}
+Exception in thread "Thread-11" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)
+**************************************Test results are true. Reduction performed.  ***************************************************
+done.....................................................................................
+-734555640 log.error("Problem sending msg to " + cotChannel + ": " + e.getMessage());
+**************************************Test results are true. Reduction performed.  ***************************************************
+-926747909 return 0;
+**************************************Test results are true. Reduction performed.  ***************************************************
+920604706 int nbytes = -1;
+**************************************Test results are true. Reduction performed.  ***************************************************
+done.....................................................................................
+java.lang.ClassCastException: japa.parser.ast.stmt.ExpressionStmt cannot be cast to japa.parser.ast.stmt.BlockStmt
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelFromBlock(ClassMethodLineManipulator.java:338)
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelStatementsFromMethodName(ClassMethodLineManipulator.java:194)
+	at JReduce.Reducer.CreateInitialDelta(Reducer.java:75)
+	at JReduce.Reducer.<init>(Reducer.java:56)
+	at JReduce.HierarchicalReducer.Reduce(HierarchicalReducer.java:81)
+	at JReduce.HierarchicalClassReducer.lambda$ReduceClassFromFullPath$3(HierarchicalClassReducer.java:133)
+	at java.util.ArrayList.forEach(ArrayList.java:1249)
+	at JReduce.HierarchicalClassReducer.ReduceClassFromFullPath(HierarchicalClassReducer.java:115)
+	at Driver.MutateScript.main(MutateScript.java:110)
+java.lang.ClassCastException: japa.parser.ast.stmt.ExpressionStmt cannot be cast to japa.parser.ast.stmt.BlockStmt
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelFromBlock(ClassMethodLineManipulator.java:338)
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelStatementsFromMethodName(ClassMethodLineManipulator.java:194)
+	at JReduce.Reducer.CreateInitialDelta(Reducer.java:75)
+	at JReduce.Reducer.<init>(Reducer.java:56)
+	at JReduce.HierarchicalReducer.Reduce(HierarchicalReducer.java:81)
+	at JReduce.HierarchicalClassReducer.lambda$ReduceClassFromFullPath$3(HierarchicalClassReducer.java:133)
+	at java.util.ArrayList.forEach(ArrayList.java:1249)
+	at JReduce.HierarchicalClassReducer.ReduceClassFromFullPath(HierarchicalClassReducer.java:115)
+	at Driver.MutateScript.main(MutateScript.java:110)
+java.lang.ClassCastException: japa.parser.ast.stmt.ExpressionStmt cannot be cast to japa.parser.ast.stmt.BlockStmt
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelFromBlock(ClassMethodLineManipulator.java:338)
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelStatementsFromMethodName(ClassMethodLineManipulator.java:194)
+	at JReduce.Reducer.CreateInitialDelta(Reducer.java:75)
+	at JReduce.Reducer.<init>(Reducer.java:56)
+	at JReduce.HierarchicalReducer.Reduce(HierarchicalReducer.java:81)
+	at JReduce.HierarchicalClassReducer.lambda$ReduceClassFromFullPath$3(HierarchicalClassReducer.java:133)
+	at java.util.ArrayList.forEach(ArrayList.java:1249)
+	at JReduce.HierarchicalClassReducer.ReduceClassFromFullPath(HierarchicalClassReducer.java:115)
+	at Driver.MutateScript.main(MutateScript.java:110)
+1331348831 synchronized (this) {
+    this.runThread = Thread.currentThread();
+    keepgoing.set(true);
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+done.....................................................................................
+-2048286992 runThread.interrupt();
+Final {
+    synchronized (this) {
+        keepgoing.set(false);
+        if (this.runThread != null) {
+        }
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+-1146462218 keepgoing.set(false);
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    synchronized (this) {
+        if (this.runThread != null) {
+        }
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    synchronized (this) {
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+547393149 synchronized (this) {
+}
+Final {
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+done.....................................................................................
+1098475787 return;
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+        } else {
+            nextTimeMs -= deltaMs;
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+        return;
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+            return;
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+            return;
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+
+
+
+
+
+
+
+/usr/lib/jvm/java-8-oracle/bin/java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35682,suspend=y,server=n -javaagent:/home/ubuntu/tools/idea-IU-162.2032.8/plugins/Groovy/lib/agent/gragent.jar -Dfile.encoding=UTF-8 -classpath /usr/lib/jvm/java-8-oracle/jre/lib/charsets.jar:/usr/lib/jvm/java-8-oracle/jre/lib/deploy.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/cldrdata.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/dnsns.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/jaccess.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/jfxrt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/localedata.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/nashorn.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/sunec.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/sunjce_provider.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/sunpkcs11.jar:/usr/lib/jvm/java-8-oracle/jre/lib/ext/zipfs.jar:/usr/lib/jvm/java-8-oracle/jre/lib/javaws.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jce.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jfr.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jfxswt.jar:/usr/lib/jvm/java-8-oracle/jre/lib/jsse.jar:/usr/lib/jvm/java-8-oracle/jre/lib/management-agent.jar:/usr/lib/jvm/java-8-oracle/jre/lib/plugin.jar:/usr/lib/jvm/java-8-oracle/jre/lib/resources.jar:/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar:/home/ubuntu/research/hddRASS/build/classes/main:/home/ubuntu/research/hddRASS/build/resources/main:/home/ubuntu/research/hddRASS/lib/cruisecontrol.jar:/home/ubuntu/research/hddRASS/lib/asm-tree-5.0.3.jar:/home/ubuntu/research/hddRASS/lib/json-simple-1.1.jar:/home/ubuntu/research/hddRASS/lib/asm-xml-5.0.3.jar:/home/ubuntu/research/hddRASS/lib/hamcrest-core-1.3.jar:/home/ubuntu/research/hddRASS/lib/java-hamcrest-2.0.0.0.jar:/home/ubuntu/research/hddRASS/lib/asm-util-5.0.3.jar:/home/ubuntu/research/hddRASS/lib/commons-collections4-4.1.jar:/home/ubuntu/research/hddRASS/lib/junit-4.12.jar:/home/ubuntu/research/hddRASS/lib/asm-analysis-5.0.3.jar:/home/ubuntu/research/hddRASS/lib/asm-commons-5.0.3.jar:/home/ubuntu/research/hddRASS/lib/commons-cli-1.3.1.jar:/home/ubuntu/research/hddRASS/lib/json-20160212.jar:/home/ubuntu/research/hddRASS/lib/log4j-1.2.17.jar:/home/ubuntu/research/hddRASS/lib/hamcrest-junit-2.0.0.0.jar:/home/ubuntu/research/hddRASS/lib/javaparser-1.0.8.jar:/home/ubuntu/research/hddRASS/lib/asm-5.0.3.jar:/home/ubuntu/tools/idea-IU-162.2032.8/lib/idea_rt.jar Driver.MutateScript
+Connected to the target VM, address: '127.0.0.1:35682', transport: 'socket'
+{"buildFilePath":"build.gradle","applicationPath":"\/root\/arpit-marti\/applications\/server\/Marti\/","sourceSubpath":"src","buildTool":"gradle","requiredValidators":["com.bbn.marti.Tests.testSaTransmission","com.bbn.marti.Tests.testImageTransmission"],"buildToolBuildParameter":"clean build","testResultPath":"\/root\/arpit-marti\/applications\/server\/Marti\/build\/test-results\/validate\/","buildToolPath":"\/root\/arpit-marti\/gradlew","buildToolValidationParameters":"clean validate","testFileRegex":""}
+**************************************Test results are true. Reduction performed.  ***************************************************
+CotEventSender.java
+ProtocolListener.java
+TransportInterface.java
+TcpSocketServer.java
+TcpTransport.java
+Transport.java
+CotChannel.java
+Protocol.java
+CotServerChannel.java
+SubmissionServiceFunctionalUnit.java
+TcpInitializationData.java
+SocketData.java
+CotData.java
+CotChannelData.java
+TcpTransportToCotChannelData.java
+CotEventImageExtractor.java
+TcpSocketServerToCotServerChannel.java
+BoundingBoxProcessor.java
+BoundingBox.java
+ImageStripper.java
+CotByteBufferPipe.java
+CotEventContainerToCotDataEvent.java
+CotEventContainerBytesExtractionPipe.java
+SocketToTcpTransport.java
+TcpInitializationDataToTcpSocketServer.java
+Callbacks.java
+FixedSizedBlockingQueue.java
+DateUtil.java
+FileSystemUtils.java
+PrioritizedQueue.java
+Assertion.java
+Util.java
+CoreConfig.java
+CoreMonitor.java
+BaseService.java
+SubmissionService.java
+Subscription.java
+SubscriptionManager.java
+BrokerService.java
+MartiMain.java
+RemoteSubscription.java
+CoreConfigInterface.java
+RemoteContact.java
+ContextFacade.java
+DataFerryManagerInterface.java
+SubscriptionManagerInterface.java
+BadgeOfShame.java
+MonitorInterface.java
+MonitorCallbackinterface.java
+QueueMetric.java
+RemoteFile.java
+DataServiceConfiguration.java
+DataServiceProxy.java
+DataServiceStatusValue.java
+Endpoints.java
+DataService.java
+QueryResultStatusValue.java
+QueryResult.java
+CotEvent.java
+CotEventContainer.java
+CotEventQueue.java
+CotPrintingProtocolListener.java
+Images.java
+FlowTagFilter.java
+ImageFormattingFilter.java
+DropTypeFilter.java
+Filter.java
+ImageProcessingFilter.java
+/root/arpit-marti/applications/server/Marti/src/com/bbn/marti/net/CotEventSender.java
+src/com/bbn/marti/net/CotEventSender.java
+-986511538 q.addItem(c, importance, c.getUid(), replaceByKey);
+Final {
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+done.....................................................................................
+-1289051568 return cotChannel;
+Final {
+}
+Exception in thread "Thread-11" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)
+**************************************Test results are true. Reduction performed.  ***************************************************
+done.....................................................................................
+-734555640 log.error("Problem sending msg to " + cotChannel + ": " + e.getMessage());
+**************************************Test results are true. Reduction performed.  ***************************************************
+-926747909 return 0;
+**************************************Test results are true. Reduction performed.  ***************************************************
+920604706 int nbytes = -1;
+**************************************Test results are true. Reduction performed.  ***************************************************
+done.....................................................................................
+java.lang.ClassCastException: japa.parser.ast.stmt.ExpressionStmt cannot be cast to japa.parser.ast.stmt.BlockStmt
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelFromBlock(ClassMethodLineManipulator.java:338)
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelStatementsFromMethodName(ClassMethodLineManipulator.java:194)
+	at JReduce.Reducer.CreateInitialDelta(Reducer.java:75)
+	at JReduce.Reducer.<init>(Reducer.java:56)
+	at JReduce.HierarchicalReducer.Reduce(HierarchicalReducer.java:81)
+	at JReduce.HierarchicalClassReducer.lambda$ReduceClassFromFullPath$3(HierarchicalClassReducer.java:133)
+	at java.util.ArrayList.forEach(ArrayList.java:1249)
+	at JReduce.HierarchicalClassReducer.ReduceClassFromFullPath(HierarchicalClassReducer.java:115)
+	at Driver.MutateScript.main(MutateScript.java:110)
+java.lang.ClassCastException: japa.parser.ast.stmt.ExpressionStmt cannot be cast to japa.parser.ast.stmt.BlockStmt
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelFromBlock(ClassMethodLineManipulator.java:338)
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelStatementsFromMethodName(ClassMethodLineManipulator.java:194)
+	at JReduce.Reducer.CreateInitialDelta(Reducer.java:75)
+	at JReduce.Reducer.<init>(Reducer.java:56)
+	at JReduce.HierarchicalReducer.Reduce(HierarchicalReducer.java:81)
+	at JReduce.HierarchicalClassReducer.lambda$ReduceClassFromFullPath$3(HierarchicalClassReducer.java:133)
+	at java.util.ArrayList.forEach(ArrayList.java:1249)
+	at JReduce.HierarchicalClassReducer.ReduceClassFromFullPath(HierarchicalClassReducer.java:115)
+	at Driver.MutateScript.main(MutateScript.java:110)
+java.lang.ClassCastException: japa.parser.ast.stmt.ExpressionStmt cannot be cast to japa.parser.ast.stmt.BlockStmt
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelFromBlock(ClassMethodLineManipulator.java:338)
+	at ASTManipulation.ClassMethodLineManipulator.GetNthLevelStatementsFromMethodName(ClassMethodLineManipulator.java:194)
+	at JReduce.Reducer.CreateInitialDelta(Reducer.java:75)
+	at JReduce.Reducer.<init>(Reducer.java:56)
+	at JReduce.HierarchicalReducer.Reduce(HierarchicalReducer.java:81)
+	at JReduce.HierarchicalClassReducer.lambda$ReduceClassFromFullPath$3(HierarchicalClassReducer.java:133)
+	at java.util.ArrayList.forEach(ArrayList.java:1249)
+	at JReduce.HierarchicalClassReducer.ReduceClassFromFullPath(HierarchicalClassReducer.java:115)
+	at Driver.MutateScript.main(MutateScript.java:110)
+1331348831 synchronized (this) {
+    this.runThread = Thread.currentThread();
+    keepgoing.set(true);
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+done.....................................................................................
+-2048286992 runThread.interrupt();
+Final {
+    synchronized (this) {
+        keepgoing.set(false);
+        if (this.runThread != null) {
+        }
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+-1146462218 keepgoing.set(false);
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    synchronized (this) {
+        if (this.runThread != null) {
+        }
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    synchronized (this) {
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+547393149 synchronized (this) {
+}
+Final {
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+done.....................................................................................
+1098475787 return;
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+        } else {
+            nextTimeMs -= deltaMs;
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+        return;
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+            return;
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+            return;
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+1098475787 return;
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+    } else {
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+Exception in thread "Thread-86" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+        return;
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+            return;
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+    } catch (InterruptedException e) {
+        if (nextSize <= 0) {
+            return;
+        }
+    }
+}
+Exception in thread "Thread-92" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+        return;
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+            return;
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+    } catch (InterruptedException e) {
+        if (nextSize <= 0) {
+            return;
+        }
+    }
+}
+Exception in thread "Thread-98" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+    } else {
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+Exception in thread "Thread-104" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)
+**************************************Test results are true. Reduction performed.  ***************************************************
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+        if (deltaMs >= nextTimeMs) {
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+Exception in thread "Thread-113" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+        return;
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+    } else {
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+            return;
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+Exception in thread "Thread-119" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+        return;
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+            return;
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+            return;
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+Exception in thread "Thread-125" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+        return;
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+            return;
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        if (nextSize <= 0) {
+            return;
+        }
+        sleepUntilNext(nextSize, 0);
+    }
+}
+Exception in thread "Thread-131" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+        return;
+    }
+    if (oldBw != 0) {
+        nextTimeMs = ((1000 * messageSize * 8) / 1024) / oldBw;
+        if (deltaMs >= nextTimeMs) {
+            return;
+        } else {
+        }
+    } else {
+        nextTimeMs = 0;
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+            return;
+        }
+    }
+}
+**************************************Test results are true. Reduction performed.  ***************************************************
+**************************************Test results are true. Reduction performed.  ***************************************************
+Final {
+    long oldBw = availBwKbps.get();
+    long nextTimeMs;
+    if (oldBw == UNLIMITED_BW) {
+    }
+    if (oldBw != 0) {
+    } else {
+        System.err.println("Warning: zero bandwidth available.  Waiting for update...");
+    }
+    long nextTimeAbs = System.currentTimeMillis() + nextTimeMs;
+    try {
+        this.wait(nextTimeMs);
+    } catch (InterruptedException e) {
+        long remainingTime = nextTimeAbs - System.currentTimeMillis();
+        long nextSize = (remainingTime * oldBw * 1024) / 8 / 1000;
+        if (nextSize <= 0) {
+        }
+    }
+}
+Exception in thread "Thread-143" java.lang.NullPointerException
+	at Helper.FileOperationUtil.getLatestResultFile(FileOperationUtil.java:205)
+	at JReduce.ThreadedImmortalRunner.run(ThreadedImmortalRunner.java:39)

@@ -1,6 +1,7 @@
 package com.bbn.cot;
 
 import com.bbn.filter.Images;
+import mil.darpa.immortals.dfus.ElevationData;
 import org.dom4j.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,18 +146,18 @@ public class CotEventContainer {
     public Double getHae() {
         return Double.parseDouble(getPointAttribute("hae"));
     }
-
-    public void setHae(double value, double le) {
-        setPointAddtribute("hae", Double.toString(value));
-        setPointAddtribute("le", Double.toString(value));
+    
+    public void setElevationData(ElevationData elevationData) {
+        setPointAddtribute("hae", Double.toString(elevationData.getHae()));
+        setPointAddtribute("le", Double.toString(elevationData.getLe()));
     }
 
     public String getHow() {
         return getRootAttribute("how");
     }
 
-    public String getLat() {
-        return getPointAttribute("lat");
+    public Double getLat() {
+        return Double.parseDouble(getPointAttribute("lat"));
     }
 
     public Double getLe() {
@@ -184,8 +185,8 @@ public class CotEventContainer {
         }
     }
 
-    public String getLon() {
-        return getPointAttribute("lon");
+    public double getLon() {
+        return Double.parseDouble(getPointAttribute("lon"));
     }
 
     public String getOpex() {

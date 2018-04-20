@@ -1,11 +1,7 @@
 module DSL.Sugar where
 
-import DSL.Types
-import DSL.Effect
-import DSL.Expression
-import DSL.Model
 import DSL.Name
-import DSL.Path
+import DSL.Types
 import DSL.Primitive
 
 
@@ -16,8 +12,8 @@ import DSL.Primitive
 -- ** Expressions
 
 -- | Literal component ID.
-dfu :: Name -> Expr
-dfu = Lit . One . S . mkSymbol
+dfu :: Name -> V Expr
+dfu = One . Lit . One . S . mkSymbol
 
 -- | Primitive floor operation.
 pFloor :: V Expr -> Expr
@@ -43,13 +39,16 @@ check :: Path -> VType -> V Expr -> Stmt
 check p t e = Do p (Check (Fun (Param "$val" t) e))
 
 -- | Modify a resource.
-modify :: Path -> VType -> V Expr -> Stmt
-modify p t e = Do p (Modify (Fun (Param "$val" t) e))
+modify' :: Path -> VType -> V Expr -> Stmt
+modify' p t e = Do p (Modify (Fun (Param "$val" t) e))
+
+modify :: Path -> PType -> V Expr -> Stmt
+modify p t e = modify' p (One t) e
 
 -- | Reference the current value of a resource.
 --   For use with the 'check' and 'modify' smart constructors.
-val :: Expr
-val = Ref "$val"
+val :: V Expr
+val = One (Ref "$val")
 
 -- | Check whether a unit-valued resource is present.
 checkUnit :: Path -> Stmt
@@ -58,6 +57,9 @@ checkUnit p = Do p (Check (Fun (Param "$val" (One TUnit)) true))
 -- | Create a unit-valued resource.
 createUnit :: Path -> Stmt
 createUnit p = Do p (Create (One . Lit . One $ Unit))
+
+mkVExpr :: PVal -> V Expr
+mkVExpr = One . Lit . One
 
 {- TODO TODO TODO
 -- | Macro for an integer-case construct. Evaluates the expression, then

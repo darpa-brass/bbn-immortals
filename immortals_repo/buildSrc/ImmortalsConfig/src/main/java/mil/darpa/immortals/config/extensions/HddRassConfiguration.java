@@ -14,7 +14,9 @@ public class HddRassConfiguration {
 
     private final String identifier = "hddrass";
 
-    private final String jarPath = "extensions/osu/hddrass/hddRASS-1.0-SNAPSHOT.jar";
+    private final String jarPath = "extensions/osu/hddrass/build/libs/hddRASS-1.0-SNAPSHOT.jar";
+    
+    private final String gradleBuildFile = "extensions/osu/hddrass/build.gradle";
 
     public Path getJarPath() {
         return ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(jarPath);
@@ -30,5 +32,9 @@ public class HddRassConfiguration {
 
     public Path getWorkingDirectory() {
         return Paths.get(GlobalsConfig.mkworkingdir("_" + identifier));
+    }
+    
+    public String getGradleBuildFile() {
+        return gradleBuildFile;
     }
 }

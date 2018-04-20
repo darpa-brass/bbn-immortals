@@ -22,6 +22,7 @@ import java.util.HashMap;
 public class ImmortalsUtils {
     // GSON is thread-safe and efficient enough for our purposes so I'm putting a globally usable one here
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson nonHtmlEscapingGson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 
     private static final HashMap<String, NetworkLogger> loggerMap = new HashMap<>();
 
@@ -118,5 +119,9 @@ public class ImmortalsUtils {
 
     public static Gson getGson() {
         return gson;
+    }
+    
+    public static Gson getNonHtmlEscapingGson() {
+        return nonHtmlEscapingGson;
     }
 }

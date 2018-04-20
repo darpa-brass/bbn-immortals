@@ -2,6 +2,7 @@ package com.securboration.immortals.project2triples;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GradleData {
@@ -94,6 +95,11 @@ public class GradleData {
      * This project's version
      */
 	private String version;
+
+    /**
+     * Additional source files that aren't found in the standard src/java/etc. directories
+     */
+	private List<String> additionalSources;
 
 	public String getCompiledProjectJarPath() {
 		return compiledProjectJarPath;
@@ -219,5 +225,13 @@ public class GradleData {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public List<String> getAdditionalSources() {
+        return additionalSources;
+    }
+
+    public void setAdditionalSources(List<String> additionalSources) {
+        this.additionalSources = additionalSources;
     }
 }

@@ -1,10 +1,10 @@
 package mil.darpa.immortals.core.das;
 
 import mil.darpa.immortals.ImmortalsUtils;
+import mil.darpa.immortals.core.api.TestCaseReport;
+import mil.darpa.immortals.core.api.TestCaseReportSet;
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
-import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
-import mil.darpa.immortals.core.api.ll.phase2.result.TestAdapterState;
-import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
+import mil.darpa.immortals.core.api.ll.phase2.result.*;
 import mil.darpa.immortals.core.api.ll.phase2.result.status.DasOutcome;
 import mil.darpa.immortals.core.api.ll.phase2.result.status.TestOutcome;
 import mil.darpa.immortals.core.das.ll.TestHarnessAdapterMediator;
@@ -16,6 +16,7 @@ import mil.darpa.immortals.testadapter.restendpoints.DasSubmissionInterface;
 import retrofit2.Call;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,9 +24,9 @@ import java.util.List;
  * Created by awellman@bbn.com on 12/20/17.
  */
 public class Mock {
-    
+
     public static TestOutcome desiredTestOutcome = TestOutcome.COMPLETE_PASS;
-    
+
     public static AdaptationDetails dasSubmission(SubmissionModel submissionModel, String cpIdentifier) {
 
         final AdaptationDetails ad = new AdaptationDetails(
@@ -39,7 +40,10 @@ public class Mock {
                 Thread.sleep(300);
                 AdaptationDetails ad2 = ad.produceUpdate(DasOutcome.SUCCESS, new LinkedList<>(), Arrays.asList("Did a little more stuff for " + cpIdentifier));
                 ad2.dasOutcome = DasOutcome.SUCCESS;
-                TestHarnessAdapterMediator.getInstance().updateAdaptationStatus(ad2);
+                AdaptationDetailsList adl = new AdaptationDetailsList();
+                adl.add(ad2);
+
+                TestHarnessAdapterMediator.getInstance().updateAdaptationStatus(adl);
 
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -51,37 +55,59 @@ public class Mock {
     }
 
 
-    public static List<TestDetails> appDeploymentSubmission(SubmissionModel submissionModel, String cpIdentifier) {
+    public static TestDetailsList appDeploymentSubmission(SubmissionModel submissionModel, String cpIdentifier) {
         TestHarnessAdapterMediator thm = TestHarnessAdapterMediator.getInstance();
 
         // TODO: Log error if running already
-        List<TestDetails> currentTests = new LinkedList<>();
-        currentTests.add(new TestDetails(
-                cpIdentifier + "TestZero",
-                TestOutcome.RUNNING,
-                submissionModel.sessionIdentifier
-        ));
+        TestDetailsList tdl = new TestDetailsList();
+//        List<TestDetails> currentTests = new LinkedList<>();
 
-        currentTests.add(new TestDetails(
-                cpIdentifier + "TestOne",
-                TestOutcome.RUNNING,
-                submissionModel.sessionIdentifier
-        ));
+        TestDetails td0 = new TestDetails(
+                new TestCaseReport(
+                        "DummyTarget",
+                        "TestZero",
+                        3.145,
+                        null,
+                        new HashSet<>(Arrays.asList("NoFunc"))
+                ), submissionModel.sessionIdentifier);
+        tdl.add(td0);
 
-        currentTests.add(new TestDetails(
-                cpIdentifier + "TestTwo",
-                TestOutcome.RUNNING,
-                submissionModel.sessionIdentifier
-        ));
+        TestDetails td1 = new TestDetails(
+                new TestCaseReport(
+                        "DummyTarget",
+                        "TestOne",
+                        3.145,
+                        null,
+                        new HashSet<>(Arrays.asList("NoFunc"))
+                ), submissionModel.sessionIdentifier);
+        tdl.add(td1);
+
+        TestDetails td2 = new TestDetails(
+                new TestCaseReport(
+                        "DummyTarget",
+                        "TestTwo",
+                        3.145,
+                        null,
+                        new HashSet<>(Arrays.asList("NoFunc"))
+                ), submissionModel.sessionIdentifier);
+        tdl.add(td2);
+
 
         Thread t = new Thread(() -> {
             try {
                 Thread.sleep(300);
-                List<TestDetails> updatedTests = new LinkedList<>();
-                for (TestDetails td : currentTests) {
-                    TestDetails td2 = td.clone();
-                    td2.currentState = TestOutcome.COMPLETE_PASS;
-                    updatedTests.add(td2);
+                TestDetailsList updatedTests = new TestDetailsList();
+                for (TestDetails td : tdl) {
+
+                    TestDetails tdx = new TestDetails(new TestCaseReport(
+                            "DummyTarget",
+                            td.testIdentifier,
+                            3.145,
+                            null,
+                            null
+                    ), submissionModel.sessionIdentifier);
+                    tdx.currentState = TestOutcome.COMPLETE_PASS;
+                    updatedTests.add(tdx);
                 }
                 thm.updateDeploymentTestStatus(updatedTests);
 
@@ -93,7 +119,7 @@ public class Mock {
 
         t.start();
 
-        return currentTests;
+        return tdl;
     }
 
     public static class MockTestHarness implements TestHarnessSubmissionInterface {
@@ -137,35 +163,51 @@ public class Mock {
             Thread t = new Thread(() -> {
                 try {
                     Thread.sleep(300);
-                    
+
                     AdaptationDetails ad = new AdaptationDetails(
                             "DummyAdapter",
                             DasOutcome.PENDING,
                             "DummyAdaptationIdentifier");
-                    TestAdapterSubmitter.updateAdaptationStatus(ad);
-                    
+                    AdaptationDetailsList adl = new AdaptationDetailsList();
+                    adl.add(ad);
+                    TestAdapterSubmitter.updateAdaptationStatus(adl);
+
                     Thread.sleep(300);
 
-                    TestDetails td = new TestDetails(
+                    TestCaseReport tcr0 = new TestCaseReport(
+                            "DummyTarget",
                             "DummyTest",
-                            TestOutcome.PENDING,
-                            "DummyAdaptationIdentifier"
-                    );
-                    TestAdapterSubmitter.updateValidationStatus(td);
+                            1.337,
+                            null,
+                            Arrays.asList("Functionality0", "Functionality1"));
+                    TestDetails td0 = new TestDetails(tcr0, "DummyAdaptationIdentifier");
+                    TestDetailsList td = new TestDetailsList();
+                    td.add(td0);
                     
+                    TestAdapterSubmitter.updateValidationStatus(td.producePendingList());
+
                     Thread.sleep(300);
-                    
+
                     ad = ad.produceUpdate(DasOutcome.RUNNING, null, null);
-                    TestAdapterSubmitter.updateAdaptationStatus(ad);
+                    adl.clear();
+                    adl.add(ad);
+                    TestAdapterSubmitter.updateAdaptationStatus(adl);
                     Thread.sleep(300);
                     ad = ad.produceUpdate(DasOutcome.SUCCESS, null, null);
-                    TestAdapterSubmitter.updateAdaptationStatus(ad);
                     
-                    
-                    td = td.produceUpdate(TestOutcome.RUNNING);
-                    TestAdapterSubmitter.updateValidationStatus(td);
+                    adl.clear();
+                    adl.add(ad);
+                    TestAdapterSubmitter.updateAdaptationStatus(adl);
+
                     Thread.sleep(300);
-                    td = td.produceUpdate(TestOutcome.COMPLETE_PASS);
+
+                    TestAdapterSubmitter.updateValidationStatus(td.producePendingList());
+
+                    TestAdapterSubmitter.updateValidationStatus(td.produceRunningList());
+                    Thread.sleep(300);
+                    td0 = td0.produceUpdate(desiredTestOutcome);
+                    td.clear();
+                    td.add(td0);
                     TestAdapterSubmitter.updateValidationStatus(td);
 
                 } catch (InterruptedException e) {
@@ -174,8 +216,7 @@ public class Mock {
             });
             t.start();
 
-            
-            
+
             return new MockServices.MockRetrofitAction<String>("/bbn/das/submitAdaptationRequest", mockLogger, rdf, "DummyAdaptationRequest");
         }
 
@@ -183,27 +224,44 @@ public class Mock {
         public Call<String> submitValidationRequest(String rdf) {
             Thread t = new Thread(() -> {
                 try {
-                    TestDetails td = new TestDetails(
-                            "DummyTest",
-                            TestOutcome.PENDING,
-                            "DummyValidationIdentifier"
-                    );
-                    TestAdapterSubmitter.updateValidationStatus(td);
-                    Thread.sleep(300);
+
+                    TestCaseReport tcr0;
+                    if (desiredTestOutcome == TestOutcome.COMPLETE_PASS) {
+                        tcr0 = new TestCaseReport(
+                                "DummyTarget",
+                                "DummyTest",
+                                1.337,
+                                null,
+                                Arrays.asList("Functionality0", "Functionality1"));
+                    } else {
+                        tcr0 = new TestCaseReport(
+                                "DummyTarget",
+                                "DummyTest",
+                                1.337,
+                                "FAILED",
+                                Arrays.asList("Functionality0", "Functionality1"));
+                    }
+                    TestCaseReportSet tcrs = new TestCaseReportSet();
+                    tcrs.add(tcr0);
                     
-                    td = td.produceUpdate(TestOutcome.RUNNING);
-                    TestAdapterSubmitter.updateValidationStatus(td);
-                    Thread.sleep(300);
+                    TestDetailsList tdl = TestDetailsList.fromTestCaseReportSet("DummyAdaptationIdentifier", tcrs);
                     
-                    td = td.produceUpdate(desiredTestOutcome);
-                    TestAdapterSubmitter.updateValidationStatus(td);
+                    Thread.sleep(200);
+                    TestAdapterSubmitter.updateValidationStatus(tdl.producePendingList());
+                    
+                    Thread.sleep(300);
+
+                    TestAdapterSubmitter.updateValidationStatus(tdl.produceRunningList());
+                    Thread.sleep(300);
+
+                    TestAdapterSubmitter.updateValidationStatus(tdl);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             });
             t.start();
 
-            return new MockServices.MockRetrofitAction<String>("/bbn/das/submitValidationRequest", mockLogger, rdf,"DummyValidationRequest");
+            return new MockServices.MockRetrofitAction<String>("/bbn/das/submitValidationRequest", mockLogger, rdf, "DummyValidationRequest");
         }
     }
 

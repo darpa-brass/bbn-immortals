@@ -51,10 +51,17 @@ The source code for the server lives here:
 
 https://github.com/babeloff/aql-server-brass
 
-To call the server see th sample client.
+To call the server see the sample client.
 
 https://github.com/babeloff/aql-server-brass/blob/master/aql/src/aql/brass/client.clj
 
 
+# Context
 
+svn/buildSrc/ImmortalsConfig/src/main/java/mil/darpa/immortals/config/extensions/AqlBrassConfiguration.java
 
+Has the variable names
+* mavenRepositoryUrl = "https://github.com/babeloff/mvn-repo/raw/master/releases";
+* mavenGroupId = "babeloff";
+* mavenArtifactId = "aql-server-brass";
+* mavenVersion = "2018.03.20";

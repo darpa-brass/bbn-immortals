@@ -15,7 +15,7 @@ import mil.darpa.immortals.config.ImmortalsConfig;
 public class SimpleKnowledgeRepoClient {
 
 	//private static final String urlBase = "http://localhost:9999/immortalsRepositoryService/";
-	private static final String urlBase = "http://localhost:9999/krs/";
+	private static final String urlBase = "http://localhost:9999/krs/ingest/";
 	
     public String ingest() throws IOException {
         

@@ -55,17 +55,17 @@ class SystemValidator:
         self.das_process.wait(timeout=10)
         self.das_process.kill()
 
-        if not get_configuration().debug.useMockDas:
-            ir = get_configuration().globals.immortalsRoot
-            results = subprocess.run(['bash', 'setup.sh', '--unattended'],
-                           cwd=os.path.join(ir, 'database/server'),
-                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            results.check_returncode()
+        # if not get_configuration().debug.useMockDas:
+            # ir = get_configuration().globals.immortalsRoot
+            # results = subprocess.run(['bash', 'setup.sh', '--unattended'],
+            #                cwd=os.path.join(ir, 'database/server'),
+            #                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            # results.check_returncode()
 
-            cwd = os.path.join(ir, 'das/das-service')
-            results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar'), '--analyze'],
-                           cwd=cwd,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            results.check_returncode()
+            # cwd = os.path.join(ir, 'das/das-service')
+            # results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar'), '--analyze'],
+            #                cwd=cwd,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            # results.check_returncode()
 
         if not self.das_stdout.closed:
             self.das_stdout.flush()

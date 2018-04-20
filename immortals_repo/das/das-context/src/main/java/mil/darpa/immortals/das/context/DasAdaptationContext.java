@@ -2,11 +2,15 @@ package mil.darpa.immortals.das.context;
 
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
+import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetailsList;
 import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
+import mil.darpa.immortals.core.api.TestCaseReportSet;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * Created by awellman@bbn.com on 10/25/17.
@@ -16,7 +20,7 @@ public class DasAdaptationContext {
     private String adaptationIdentifier;
     private String deploymentModelUri;
     private String knowledgeUri;
-    private boolean adaptationDisabled;
+    private TestCaseReportSet adaptationTargetTestReports = null;
 
     public DasAdaptationContext() {
     }
@@ -25,7 +29,6 @@ public class DasAdaptationContext {
         this.adaptationIdentifier = adaptationIdentifier;
         this.deploymentModelUri = deploymentModelUri;
         this.knowledgeUri = knowledgeUri;
-        this.adaptationDisabled = adaptationDisabled;
     }
 
     public String getDeploymentModelUri() {
@@ -56,11 +59,13 @@ public class DasAdaptationContext {
      * @param adaptationDetails
      */
     public void submitAdaptationStatus(AdaptationDetails adaptationDetails) {
-        TestAdapterSubmitter.updateAdaptationStatus(adaptationDetails);
+        AdaptationDetailsList adl = new AdaptationDetailsList();
+        adl.add(adaptationDetails);
+        TestAdapterSubmitter.updateAdaptationStatus(adl);
     }
 
-    public void submitValidationStatus(TestDetails testDetails) {
-        TestAdapterSubmitter.updateValidationStatus(testDetails);
+    public void submitValidationStatus(TestDetailsList testDetails) {
+        TestAdapterSubmitter.updateValidationStatus(new TestDetailsList(testDetails));
     }
 
     /**
@@ -84,7 +89,11 @@ public class DasAdaptationContext {
         ImmortalsErrorHandler.reportFatalException(t);
     }
 
-    public boolean isAdaptationDisabled() {
-        return adaptationDisabled;
+    void setAdaptationTargetTestReports(@Nonnull TestCaseReportSet adaptationTargetTestReports) {
+        this.adaptationTargetTestReports = new TestCaseReportSet(adaptationTargetTestReports);
+    }
+
+    public TestCaseReportSet getAdaptationTargetTestReports() {
+        return adaptationTargetTestReports;
     }
 }

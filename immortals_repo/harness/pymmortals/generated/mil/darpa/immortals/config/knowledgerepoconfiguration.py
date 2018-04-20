@@ -1,10 +1,10 @@
-from pymmortals.generated.mil.darpa.immortals.config.restfulappconfiginterface import RestfulAppConfigInterface
+from pymmortals.datatypes.serializable import Serializable
 from typing import Dict
 from typing import List
 
 
 # noinspection PyPep8Naming
-class KnowledgeRepoConfiguration(RestfulAppConfigInterface):
+class KnowledgeRepoConfiguration(Serializable):
     _validator_values = dict()
 
     _types = dict()

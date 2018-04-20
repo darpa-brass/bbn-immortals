@@ -1,7 +1,7 @@
 from ubuntu:16.04
 
 # Set general environment variables
-#ENV SHELL /bin/bash
+ENV SHELL /bin/bash
 ENV USER root
 
 # Copy the immortals repository directory to the container

@@ -5,13 +5,13 @@ from typing import FrozenSet
 # noinspection PyPep8Naming
 class DatabaseColumns(Enum):
     def __init__(self, key_idx_value: str, castorDefinition: str, columnName: str, description: str, takDefinition: str):
-        self.key_idx_value = key_idx_value
+        self._key_idx_value = key_idx_value
         self.castorDefinition = castorDefinition  # type: str
-        self.key_idx_value = key_idx_value
+        self._key_idx_value = key_idx_value
         self.columnName = columnName  # type: str
-        self.key_idx_value = key_idx_value
+        self._key_idx_value = key_idx_value
         self.description = description  # type: str
-        self.key_idx_value = key_idx_value
+        self._key_idx_value = key_idx_value
         self.takDefinition = takDefinition  # type: str
 
     CotEvent_SourceId = ("CotEvent_SourceId",

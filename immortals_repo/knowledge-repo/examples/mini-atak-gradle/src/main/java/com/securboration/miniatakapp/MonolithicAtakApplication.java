@@ -210,17 +210,12 @@ public class MonolithicAtakApplication {
 
             private final byte pad = 0x55;
             
-            @FunctionalAspectAnnotation(
-                    aspect = AspectCipherEncryptStream.class
-            )
+
             @BinaryData
             public byte[] encryptStream(@BinaryData byte[] message, @mil.darpa.immortals.annotation.dsl.ontology.functionality.datatype.OutputStream OutputStream outputStream) {
                 return null;
             }
             
-            @FunctionalAspectAnnotation(
-                    aspect = AspectCipherDecryptStream.class
-            )
             public byte[] decryptStream(@BinaryData byte[] message, @mil.darpa.immortals.annotation.dsl.ontology.functionality.datatype.InputStream InputStream inputStream) {
                 return null;
             }

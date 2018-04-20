@@ -30,6 +30,7 @@ jar {
 }
 
 dependencies {
+    compile project(':shared:modules:core')
     compile('org.geotools:gt-geotiff:18.1') {
         exclude group: 'xerces', module: 'xercesImpl'
     }
