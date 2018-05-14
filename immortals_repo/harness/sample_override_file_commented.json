@@ -1,17 +1,28 @@
 {
+    // Test harness configuration
     "testHarness": {
+        // The HTTP REST port the test harness is listening on
         "port": 44444,
+        // The testharness base url
         "url": "127.0.0.1"
     },
     "testAdapter": {
+        // The HTTP REST port the test adapter is listening on
         "port": 55555,
+        // The test adapter base url
         "url": "127.0.0.1"
     },
+    // A list of android environments made available to the DAS
     "androidEnvironments": [
         {
+            // The ADB identifier for the emulator instance
             "adbIdentifier": "emulator-5580",
+            // The ADB port for the emulator instance
             "adbPort": 5580,
+            // The URL of the emulator instance
             "adbUrl": "127.0.0.1",
+            // The 'AndroidEmulatorRequirement' data that describes this emulator.
+            // This should match one of the emulators listed in the DASPrerequisites object provided to the Evaluator.
             "environmentDetails": {
                 "androidVersion": 21,
                 "externallyAccessibleUrls": [
@@ -45,5 +56,6 @@
             }
         }
     ],
+    // The DAS and Marti Server address accessible from the emulators
     "martiAddress": "10.0.2.2"
 }

@@ -13,14 +13,23 @@ continue to add functionality it may be worth varying some of those values to se
 ## Status
 
 #### CP1
+See details at the [CP1 Document](phase02/ChallengeProblems/Immortals-Phase2-cp1-SchemaMigration.md)
+
+Current Status:
  * Baseline A, Baseline B, and Challenge fully implemented.
- * Currently returning success for repair even though one DFU is failing to repair. Detailed degraded state will be 
-   added in an upcoming version.
+ * The failure of one of the CP1 tests is now passed through and results in a "DEGRADED" state. The intent is to 
+   improve what we are doing to resolve this issue prior to final evaluation.
 
 ### CP2
+See details at the [CP2 Document](phase02/ChallengeProblems/Immortals-Phase2-cp2-CrossAppDepend.md)
+
+Current Status:
  * Implementation in progress 
 
 ### CP3
+See details at the [CP3 Document](phase02/ChallengeProblems/Immortals-Phase2-cp3-LibraryEvol.md)
+
+Current Status:
  * Baseline A, Baseline B, and Challenge have been fully implemented for library mutation with one server mutation library (ElevationApi_2)
  * Implementation of additional libraries and partial library upgrades are in progress 
  
@@ -49,88 +58,14 @@ Basic tests are for basic development only and ignored for deployment):
 | Full Deployment            |  PASS   |  
 | Full Deployment Validation |  PASS   |  
 | Baseline Marti             |  PASS   |  
-| API Smoke Test             |  PASS   |
+| API Smoke Test             | NOT RUN |
 ```
-
-### Additional Testing
-
-Once an image has been created and saved, you should also be able to perform a full execution of CP1's Baseline A, 
-Baseline B, and Challenge scenario as follows.  It is recommended to not do this on an image you intend to continue 
- using for deployment as behavior in that scenario is untested. This script location and naming convention is subject 
- to change.
-
-1.  Navigate to the harness directory
-    `$ cd ~/immortals_repo/harness`
-2.  Execute the test. This may take some time depending on the system (30 - 60 minutes is the estimate, but it is 
-heavily bound to single-core CPU power):
-    `$ ./test_cp1.sh`
 
 ## Configuration
 
-Many configuration parameters can be overridden using a configuration file. A subset of these are documented below for 
-deployment use.
-
-### Specifying Configuration Properties
-
-Configuration properties can be set one of the following ways:
-
-#### Set an environment variable
-
-A file can be specified for the **IMMORTALS_OVERRIDE_FILE** environment variable as follows:  
-
-`export IMMORTALS_OVERRIDE_FILE=/path/to/my/json/file.json`
-
-#### Pass to Script
-
-Some scripts are set up to allow a value to be passed to them and export that environment variable automatically. For 
-Example, when you start the das, you may do the following:
-
-``$ ./start.sh --set-override-file-data "`cat /path/to/my/json/file.json`"``
-
-### Configuration Sample
-```json
-{
-    "testHarness": {
-        // The port the Test Harness is running on
-        "port": 44444,
-        // The host address the Test Harness is running on
-        "url": "127.0.0.1"
-    },
-    "testAdapter": {
-        // The port the Test Adapter should run on
-        "port": 55555,
-        // The port the Test Adapter should run on
-        "url": "127.0.0.1"
-    },
-    // Values that are specific to the deployment environment that will need to be modified
-    "deploymentEnvironment": {
-        // The address the Marti server instance will run on. This will be the same as the DAS
-        "martiAddress": "10.0.2.2",
-        // A list of android emulators available for the DAS and SUT to utilize via ADB. You may configure the number 
-        // and version of the emulators per-challenge problem. However, if you would like to simplify things, providing 
-        // two emulators running androidVersion 21 and two emulators running androidVersion 23 for all challenge 
-        // problems would also worked.
-        "androidEnvironments" : [
-            {
-                // The port the given android emulator uses for ADB access
-                "adbPort" : 5580,
-                // The URL of the android emulator
-                "adbUrl" : "127.0.0.1",
-                // The Identifier used to identify it within an ADB instance
-                "adbIdentifier": "emulator-5580",
-                // The Android version in use.
-                "androidVersion": 21
-            },
-            {
-                "adbPort" : 5578,
-                "adbUrl" : "127.0.0.1",
-                "adbIdentifier": "emulator-5578",
-                "androidVersion": 21
-            }
-        ]
-    }
-}
-```
+Many configuration parameters can be overridden using a configuration file. 
+Please see the [Prerequisites](phase02/ChallengeProblems/Immortals-Phase2-DasPrerequisites.md) document 
+for more details.
 
 ## Starting The DAS
 

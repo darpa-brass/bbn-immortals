@@ -1,0 +1,49 @@
+{
+    "cp1": {
+        "androidEmulators": [],
+        "challengeProblemUrl": "/action/databaseSchemaPerturbation"
+    },
+    "cp2": {
+        "androidEmulators": [
+            {
+                "androidVersion": 21,
+                "externallyAccessibleUrls": [],
+                "superuserAccess": false,
+                "uploadBandwidthLimitKilobitsPerSecond": null
+            },
+            {
+                "androidVersion": 21,
+                "externallyAccessibleUrls": [],
+                "superuserAccess": false,
+                "uploadBandwidthLimitKilobitsPerSecond": null
+            }
+        ],
+        "challengeProblemUrl": "/action/crossApplicationDependencies"
+    },
+    "cp3": {
+        "androidEmulators": [
+            {
+                "androidVersion": 21,
+                "externallyAccessibleUrls": [
+                    "dropbox.com:443",
+                    "dropbox.com:80"
+                ],
+                "superuserAccess": true,
+                "uploadBandwidthLimitKilobitsPerSecond": 800
+            },
+            {
+                "androidVersion": 21,
+                "externallyAccessibleUrls": [],
+                "superuserAccess": false,
+                "uploadBandwidthLimitKilobitsPerSecond": null
+            },
+            {
+                "androidVersion": 21,
+                "externallyAccessibleUrls": [],
+                "superuserAccess": false,
+                "uploadBandwidthLimitKilobitsPerSecond": null
+            }
+        ],
+        "challengeProblemUrl": "/action/libraryEvolution"
+    }
+}
