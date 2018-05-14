@@ -13,8 +13,8 @@ import javax.annotation.Nonnull;
 public class TestAdapterState {
 
     @Result
-    @Description("Last Updated time (equivalent to Java 'System.currentTimeMillis()')")
-    public Long timestamp;
+    @Description("Sequence number to preserve ordering regardless of network delay")
+    public int sequence = -1;
 
     @Result
     @Description("The internal identifier used to bind this perturbation to any artifacts produced")
@@ -31,8 +31,8 @@ public class TestAdapterState {
     public TestAdapterState() {
     }
 
-    public TestAdapterState(long timestamp, @Nonnull String identifier) {
-        this.timestamp = timestamp;
+    public TestAdapterState(@Nonnull String identifier) {
+        this.sequence = sequence;
         this.identifier = identifier;
         this.adaptation = new AdaptationStateObject();
         this.validation = new ValidationStateObject();

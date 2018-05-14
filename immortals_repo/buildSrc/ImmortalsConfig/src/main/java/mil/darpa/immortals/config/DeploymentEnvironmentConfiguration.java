@@ -1,5 +1,7 @@
 package mil.darpa.immortals.config;
 
+import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,11 +22,27 @@ public class DeploymentEnvironmentConfiguration {
         return martiAddress;
     }
 
+    public static class AndroidEmulatorRequirement {
+        private final int androidVersion;
+        private final Integer bandwidthLimitKilobitsPerSecond;
+        private final String[] externallyAccessibleUrls;
+        private final boolean superuserAccess;
+
+        public AndroidEmulatorRequirement(int androidVersion, @Nullable Integer bandwidthLimitKilobitsPerSecond, boolean superuserAccess,
+                                          @Nullable String[] externallyAccessibleUrls) {
+            this.androidVersion = androidVersion;
+            this.bandwidthLimitKilobitsPerSecond = bandwidthLimitKilobitsPerSecond;
+            this.superuserAccess = superuserAccess;
+            this.externallyAccessibleUrls = externallyAccessibleUrls == null ? new String[0] :
+                    Arrays.copyOf(externallyAccessibleUrls, externallyAccessibleUrls.length);
+        }
+    }
+
     public static class AndroidEnivronmentConfiguration {
         private int adbPort;
         private String adbUrl;
         private String adbIdentifier;
-        private int androidVersion;
+        private AndroidEmulatorRequirement environmentDetails;
 
         public int getAdbPort() {
             return adbPort;
@@ -37,10 +55,9 @@ public class DeploymentEnvironmentConfiguration {
         public String getAdbIdentifier() {
             return adbIdentifier;
         }
-
-        public int getAndroidVersion() {
-            return androidVersion;
+        
+        public AndroidEmulatorRequirement getEnvironmentDetails() {
+            return environmentDetails;
         }
     }
-
 }

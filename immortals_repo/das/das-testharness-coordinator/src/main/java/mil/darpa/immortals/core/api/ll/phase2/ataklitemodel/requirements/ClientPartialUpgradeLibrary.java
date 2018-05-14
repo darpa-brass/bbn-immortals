@@ -2,6 +2,7 @@ package mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements;
 
 import mil.darpa.immortals.core.api.annotations.Description;
 import mil.darpa.immortals.core.api.annotations.P2CP3;
+import mil.darpa.immortals.core.api.annotations.Unstable;
 import mil.darpa.immortals.core.api.ll.phase2.UpgradableLibraryInterface;
 
 /**
@@ -16,7 +17,9 @@ public enum ClientPartialUpgradeLibrary implements UpgradableLibraryInterface {
             "com.dropbox.core:dropbox-core-sdk:3.0.6");
 
     public final String description;
+    @Unstable
     public final String oldDependencyCoordinates;
+    @Unstable
     public final String newDependencyCoordinates;
 
     ClientPartialUpgradeLibrary(String description, String oldDependencyCoordinates, String newDependencyCoordinates) {

@@ -2,6 +2,8 @@ package mil.darpa.immortals.config;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 /**
@@ -16,6 +18,7 @@ public class DasServiceConfiguration implements RestfulAppConfigInterface {
     private String url = "127.0.0.1";
     private String exePath = GlobalsConfig.staticImmortalsRoot.resolve("das/das-service/das.jar").toAbsolutePath().toString();
     private String workingDirectory = GlobalsConfig.mkworkingdir("_" + identifier);
+    private String workingDirectoryTemplateFolder = null;
     private String[] interpreterParameters = new String[0];
     private String[] parameters = new String[0];
     private HashMap<String, String> environmentVariables = new HashMap<>();
@@ -87,5 +90,11 @@ public class DasServiceConfiguration implements RestfulAppConfigInterface {
     @Override
     public String getReadyStdoutLineRegexPattern() {
         return readyStdoutLineRegexPattern;
+    }
+
+    @Override
+    public Path getWorkingDirectoryTemplateFolder() {
+        if (workingDirectoryTemplateFolder == null) return null;
+        return Paths.get(workingDirectoryTemplateFolder);
     }
 }

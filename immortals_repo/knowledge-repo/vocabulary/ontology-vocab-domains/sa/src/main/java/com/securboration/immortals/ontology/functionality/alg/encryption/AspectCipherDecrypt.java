@@ -24,6 +24,8 @@ public class AspectCipherDecrypt extends DefaultAspectBase {
                 out()});
         super.setImpactStatements(new ImpactStatement[] {
                 decryptImpact()});
+        super.setInverseAspect(AspectCipherEncrypt.class);
+        super.setAspectSpecificResourceDependencies(new Class[] {AspectCipherInitialize.class, AspectCipherConfig.class});
     }
     
     private static DataProperty decrypt(){

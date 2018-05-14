@@ -13,7 +13,7 @@ public class GlobalRequirements {
 
     @P2CP2
     @Description("The transmission of data")
-    DataInTransit dataInTransit;
+    public DataInTransit dataInTransit;
     
     public GlobalRequirements() {}
 

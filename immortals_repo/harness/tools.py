@@ -2,11 +2,7 @@
 
 import argparse
 import logging
-import os
-import shutil
-import time
 
-from pymmortals.immortalsglobals import get_configuration
 from pymmortals.immortalsglobals import main_thread_cleanup_hookup
 from pymmortals.resources import resourcemanager
 from pymmortals.testing.systemvalidator import SystemValidator
@@ -19,22 +15,19 @@ _sub_parsers = _parser.add_subparsers(help='Available Commands')
 
 def _add_llds_parser(subparsers):
     def llds_main(zargs=None):
-        if zargs is None:
-            zargs = _parser.parse_args()
-
         from pymmortals.testing import ll_dummy_server
-        ll_dummy_server.run_test_scenario(test_suite_identifier=zargs.test_suite,
-                                          test_identifier=zargs.test)
+        if '.' in zargs.test:
+            test_split = zargs.test.split('.')
+            ll_dummy_server.run_test_scenario(test_suite_identifier=test_split[0],
+                                              test_identifier=test_split[1])
+        else:
+            ll_dummy_server.run_test_scenario(test_suite_identifier=zargs.test, test_identifier=None)
 
-    llds_parser = subparsers.add_parser('llds',help='Immortals Mock LL TH')
-    suite_parsers = llds_parser.add_subparsers(help='Avaiable Test Suites')
-    suite_identifiers = resourcemanager.get_p2_test_suite_list()
-
-    for si in suite_identifiers:
-        test_identifiers = resourcemanager.get_p2_test_suite_test_list(si)
-        suite_parser = suite_parsers.add_parser(si)
-        suite_parser.add_argument('test', metavar='TEST', choices=test_identifiers)
-        suite_parser.set_defaults(func=llds_main, test_suite=si)
+    llds_parser = subparsers.add_parser('llds', help='Immortals Mock LL TH')
+    llds_parser.add_argument('test',
+                             metavar='TEST',
+                             choices=resourcemanager.get_p2_unified_test_suite_and_test_list())
+    llds_parser.set_defaults(func=llds_main)
 
 
 def _add_olympus_parser(subparsers):
@@ -68,66 +61,72 @@ def _add_tools_parser(subparsers):
     dmttl_parser.set_defaults(func=tools_dmttl_main)
 
 
-def _add_vacuum_parser(subparsers):
-    def vacuum_main(zargs=None):
-        if zargs is None:
-            zargs = _parser.parse_args()
+# def _add_vacuum_parser(subparsers):
+#     def vacuum_main(zargs=None):
+#         if zargs is None:
+#             zargs = _parser.parse_args()
+#
+#         if zargs.operation == 'files' or zargs.operation == 'all':
+#             timestamp = str(int(time.time() * 1000))
+#
+#             if os.path.exists('/test/debug'):
+#                 shutil.move('/test/debug', '/test/debug-' + timestamp)
+#
+#             if os.path.exists('/test/log'):
+#                 shutil.move('/test/log', '/test/log-' + timestamp)
+#
+#             lldsl = os.path.join(get_configuration().globals.immortalsRoot, 'harness/ll_dummy_server.log')
+#             if os.path.exists(lldsl):
+#                 shutil.move(lldsl,
+#                             os.path.join(get_configuration().globals.immortalsRoot,
+#                                          'harness/ll_dummy_server' + timestamp + '.log'))
+#
+#         if zargs.operation == 'emulators' or zargs.operation == 'all':
+#             from pymmortals.scenariorunner.platforms.android import emuhelper
+#             emuhelper.wipe_emulators()
+#
+#     vacuum_parser = subparsers.add_parser('vacuum', help='Vacuum Cleaner')
+#     vacuum_parser.add_argument('operation',
+#                                metavar='OPERATION',
+#                                choices=['all', 'files', 'emulators'])
+#     vacuum_parser.set_defaults(func=vacuum_main)
 
-        if zargs.operation == 'files' or zargs.operation == 'all':
-            timestamp = str(int(time.time() * 1000))
 
-            if os.path.exists('/test/debug'):
-                shutil.move('/test/debug', '/test/debug-' + timestamp)
-
-            if os.path.exists('/test/log'):
-                shutil.move('/test/log', '/test/log-' + timestamp)
-
-            lldsl = os.path.join(get_configuration().globals.immortalsRoot, 'harness/ll_dummy_server.log')
-            if os.path.exists(lldsl):
-                shutil.move(lldsl,
-                            os.path.join(get_configuration().globals.immortalsRoot,
-                                         'harness/ll_dummy_server' + timestamp + '.log'))
-
-        if zargs.operation == 'emulators' or zargs.operation == 'all':
-            from pymmortals.scenariorunner.platforms.android import emuhelper
-            emuhelper.wipe_emulators()
-
-    vacuum_parser = subparsers.add_parser('vacuum', help='Vacuum Cleaner')
-    vacuum_parser.add_argument('operation',
-                               metavar='OPERATION',
-                               choices=['all', 'files', 'emulators'])
-    vacuum_parser.set_defaults(func=vacuum_main)
-
-
-def _add_emulator_setup_parser(subparsers):
-    # noinspection PyUnusedLocal
-    def setup_emulators_main(zargs=None):
-        from pymmortals.scenariorunner.platforms.android.emuhelper import initially_setup_emulators
-        initially_setup_emulators()
-
-    emulator_parser = subparsers.add_parser('setupemulators')
-    emulator_parser.set_defaults(func=setup_emulators_main)
+# def _add_emulator_setup_parser(subparsers):
+#     # noinspection PyUnusedLocal
+#     def setup_emulators_main(zargs=None):
+#         from pymmortals.scenariorunner.platforms.android.emuhelper import initially_setup_emulators
+#         initially_setup_emulators()
+#
+#     emulator_parser = subparsers.add_parser('setupemulators')
+#     emulator_parser.set_defaults(func=setup_emulators_main)
 
 
 def _add_orchestrate_parser(subparsers):
     def orchestrate_main(zargs=None):
         sv = SystemValidator(immortals_root=zargs.immortalsRoot)
-        sv.start(test_suite_identifier=zargs.test_suite, test_identifier=None)
+        if '.' in zargs.test:
+            test_split = zargs.test.split('.')
+            sv.start(test_suite_identifier=test_split[0], test_identifier=test_split[1])
+        else:
+            sv.start(test_suite_identifier=zargs.test, test_identifier=None)
 
     o_parser = subparsers.add_parser('orchestrate', help='Orchestrate an end-to-end scenario')
-    o_parser.add_argument('test_suite',
-                          metavar='TEST_SUITE',
-                          choices=resourcemanager.get_p2_test_suite_list())
+    o_parser.add_argument('test',
+                          metavar='TEST',
+                          choices=resourcemanager.get_p2_unified_test_suite_and_test_list())
+
     o_parser.add_argument('-r', '--immortalsRoot', type=str)
+
     o_parser.set_defaults(func=orchestrate_main)
 
 
 _add_llds_parser(_sub_parsers)
 _add_olympus_parser(_sub_parsers)
 _add_tools_parser(_sub_parsers)
-_add_vacuum_parser(_sub_parsers)
+# _add_vacuum_parser(_sub_parsers)
 _add_orchestrate_parser(_sub_parsers)
-_add_emulator_setup_parser(_sub_parsers)
+# _add_emulator_setup_parser(_sub_parsers)
 
 network_logger = logging.getLogger
 

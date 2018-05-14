@@ -7,9 +7,7 @@ class ClientPartialUpgradeLibrary(Enum):
     def __init__(self, key_idx_value: str, description: str, newDependencyCoordinates: str, oldDependencyCoordinates: str):
         self._key_idx_value = key_idx_value
         self.description = description  # type: str
-        self._key_idx_value = key_idx_value
         self.newDependencyCoordinates = newDependencyCoordinates  # type: str
-        self._key_idx_value = key_idx_value
         self.oldDependencyCoordinates = oldDependencyCoordinates  # type: str
 
     Dropbox_3_0_6 = ("Dropbox_3_0_6",

@@ -5,6 +5,7 @@ from threading import RLock
 from typing import Dict, Union, List, Callable, Optional
 
 import pymmortals.threadprocessrouter as tpr
+from pymmortals import immortalsglobals as ig
 from pymmortals.datatypes.serializable import Serializable
 from pymmortals.datatypes.testing import Phase2TestHarnessListenerInterface, Phase2SubmissionFlow, Phase2TestScenario
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.testadapterendpoint import TestAdapterEndpoint
@@ -16,10 +17,18 @@ keep_going = True
 
 
 def immortals_assert(assertion: bool, msg: Optional[str] = None):
-    global keep_going
-    if not assertion:
-        keep_going = False
-        assert assertion, msg
+    # noinspection PyBroadException
+    try:
+        global keep_going
+        if not assertion:
+            keep_going = False
+            assert assertion, msg
+    except Exception as e:
+        if ig.get_configuration().debug.haltTestingOnFailure:
+            ig.set_exit_code(-1)
+            ig.exception_handler(*sys.exc_info())
+        else:
+            raise e
 
 
 def immortals_assert_isinstance(obj, clazz):
@@ -85,13 +94,15 @@ class NetworkExpectationValidator:
                  endpoint: Union[TestHarnessEndpoint, TestAdapterEndpoint],
                  submission_values: Union[Dict, str, None],
                  ack_values: Union[Dict, str, None],
-                 ack_code: int):
+                 ack_code: int,
+                 allow_multiple_sequential_occurrences: bool = False):
         self.endpoint = endpoint
         self.submission_values = submission_values
         self.ack_values = ack_values
         self.ack_code = ack_code
         self.submission_validated = False
         self.ack_validated = False
+        self.allow_multiple_sequential_occurrences = allow_multiple_sequential_occurrences
 
     def validate_submission(self, endpoint: Union[TestHarnessEndpoint, TestAdapterEndpoint],
                             body_str: str):
@@ -104,6 +115,16 @@ class NetworkExpectationValidator:
         self._validate_values(body_str=body_str, expected_values=self.submission_values)
 
         self.submission_validated = True
+
+    def submission_will_validate(self, endpoint: Union[TestHarnessEndpoint, TestAdapterEndpoint],
+                                 body_str: str):
+        immortals_assert(not self.submission_validated)
+        immortals_assert(not self.ack_validated)
+
+        if endpoint != self.endpoint:
+            return False
+
+        return self._values_will_validate(body_str=body_str, expected_values=self.submission_values)
 
     def validate_ack(self, endpoint: Union[TestHarnessEndpoint, TestAdapterEndpoint],
                      body_str: str, status_code: int = None):
@@ -124,6 +145,16 @@ class NetworkExpectationValidator:
 
     def finished(self) -> bool:
         return self.submission_validated and self.ack_validated
+
+    def clone(self):
+        obj = NetworkExpectationValidator(
+            endpoint=self.endpoint,
+            submission_values=self.submission_values,
+            ack_values=self.ack_values,
+            ack_code=self.ack_code,
+            allow_multiple_sequential_occurrences=self.allow_multiple_sequential_occurrences
+        )
+        return obj
 
     @staticmethod
     def _validate_values(body_str: str, expected_values: Dict[str, str]):
@@ -146,6 +177,27 @@ class NetworkExpectationValidator:
                 immortals_assert(target_d[override_tail] == expected_values[key],
                                  ('Value of "' + str(target_d[override_tail]) + '" for "' + key
                                   + '" Does not match expected value of "' + str(expected_values[key]) + '"!'))
+
+    @staticmethod
+    def _values_will_validate(body_str: str, expected_values: Dict[str, str]) -> bool:
+        if expected_values is None:
+            return not (body_str is not None and body_str != 'null' and body_str != '')
+
+        else:
+            for key in expected_values:
+                target_d = json.loads(body_str)
+
+                override_path = key.split('.')
+                override_tail = override_path.pop()
+
+                for path_element in override_path:
+                    value = target_d[path_element]
+                    target_d = value
+
+                if target_d[override_tail] != expected_values[key]:
+                    return False
+
+        return True
 
 
 def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[NetworkExpectationValidator]:
@@ -177,7 +229,7 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
         validators.append(
             NetworkExpectationValidator(
                 endpoint=test_scenario.perturbationScenario.endpoint,
-                submission_values = None if flow == Phase2SubmissionFlow.BaselineA else {},
+                submission_values=None if flow == Phase2SubmissionFlow.BaselineA else {},
                 ack_values={
                     "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
                     "validation.verdictOutcome": "PENDING"
@@ -194,8 +246,9 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
                     "validation.verdictOutcome": "PENDING"
                 },
                 ack_values=None,
-                ack_code=200
-            )
+                ack_code=200,
+                allow_multiple_sequential_occurrences=True
+            ),
         )
 
         validators.append(
@@ -206,7 +259,8 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
                     "validation.verdictOutcome": "RUNNING"
                 },
                 ack_values=None,
-                ack_code=200
+                ack_code=200,
+                allow_multiple_sequential_occurrences=True
             )
         )
 
@@ -243,19 +297,8 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
                     "validation.verdictOutcome": "PENDING"
                 },
                 ack_values=None,
-                ack_code=200
-            )
-        )
-
-        validators.append(
-            NetworkExpectationValidator(
-                endpoint=TestHarnessEndpoint.STATUS,
-                submission_values={
-                    "adaptation.adaptationStatus": "PENDING",
-                    "validation.verdictOutcome": "PENDING"
-                },
-                ack_values=None,
-                ack_code=200
+                ack_code=200,
+                allow_multiple_sequential_occurrences=True
             )
         )
 
@@ -267,7 +310,8 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
                     "validation.verdictOutcome": "PENDING"
                 },
                 ack_values=None,
-                ack_code=200
+                ack_code=200,
+                allow_multiple_sequential_occurrences=True
             )
         )
 
@@ -279,22 +323,11 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
                     "validation.verdictOutcome": "PENDING"
                 },
                 ack_values=None,
-                ack_code=200
+                ack_code=200,
+                allow_multiple_sequential_occurrences=True
             )
         )
 
-        validators.append(
-            NetworkExpectationValidator(
-                endpoint=TestHarnessEndpoint.STATUS,
-                submission_values={
-                    "adaptation.adaptationStatus": test_scenario.expectedAdaptationResult.name,
-                    "validation.verdictOutcome": "PENDING"
-                },
-                ack_values=None,
-                ack_code=200
-            )
-        )
-       
         validators.append(
             NetworkExpectationValidator(
                 endpoint=TestHarnessEndpoint.STATUS,
@@ -303,7 +336,8 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
                     "validation.verdictOutcome": "RUNNING"
                 },
                 ack_values=None,
-                ack_code=200
+                ack_code=200,
+                allow_multiple_sequential_occurrences=True
             )
         )
 
@@ -315,7 +349,7 @@ def generate_expected_activity(test_scenario: Phase2TestScenario) -> List[Networ
                     "validation.verdictOutcome": test_scenario.expectedVerdictOutcome.name
                 },
                 ack_values=None,
-                ack_code=200
+                ack_code=200,
             )
         )
 
@@ -371,8 +405,7 @@ class ScenarioExecution(Phase2TestHarnessListenerInterface):
     def sent_post_ack_listener(self, endpoint: TestAdapterEndpoint, response_code: int, body_str: str):
         immortals_assert_isinstance(endpoint, TestAdapterEndpoint)
         validator = self._pending_acks.pop(0)
-        immortals_assert_isinstance(validator.endpoint, TestAdapterEndpoint)\
-
+        immortals_assert_isinstance(validator.endpoint, TestAdapterEndpoint)
         self._log_expected_and_actual(validator=validator, endpoint=endpoint,
                                       body_val=body_str, status_code=response_code)
         validator.validate_ack(endpoint=endpoint, body_str=body_str, status_code=response_code)
@@ -387,7 +420,18 @@ class ScenarioExecution(Phase2TestHarnessListenerInterface):
     def receiving_post_listener(self, endpoint: TestHarnessEndpoint, body_str: str):
         immortals_assert_isinstance(endpoint, TestHarnessEndpoint)
         immortals_assert_isinstance(self._expected_activity[0].endpoint, TestHarnessEndpoint)
-        validator = self._expected_activity.pop(0)
+
+        if self._ignored_network_event is None or not self._ignored_network_event.submission_will_validate(endpoint,
+                                                                                                           body_str):
+            validator = self._expected_activity.pop(0)
+            if validator.allow_multiple_sequential_occurrences:
+                self._ignored_network_event = validator.clone()
+            else:
+                self._ignored_network_event = None
+        else:
+            validator = self._ignored_network_event
+            self._ignored_network_event = self._ignored_network_event.clone()
+
         self._pending_acks.append(validator)
 
         # validator = self._expected_activity.pop(0)
@@ -411,6 +455,7 @@ class ScenarioExecution(Phase2TestHarnessListenerInterface):
         self._expected_activity = \
             generate_expected_activity(test_scenario=test_scenario)  # type: List[NetworkExpectationValidator]
         self._pending_acks = list()  # type: List[NetworkExpectationValidator]
+        self._ignored_network_event = None  # type: NetworkExpectationValidator
 
     def _log_expected_and_actual(self, validator: NetworkExpectationValidator,
                                  endpoint: Union[TestAdapterEndpoint, TestHarnessEndpoint],
@@ -456,7 +501,7 @@ class TABehaviorValidator(Phase2TestHarnessListenerInterface):
     :type _scenario_executions: list[ScenarioExecution]
     """
 
-    def __init__(self, done_listener: Callable, test_suite_identifier: str, test_identifier: str):
+    def __init__(self, done_listener: Callable, test_suite_identifier: str, test_identifier: str = None):
         """
         :param done_listener: The listener to call when the validation is finished
         :param test_suite_identifier: The test suite to get the tests from

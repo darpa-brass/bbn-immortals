@@ -2,6 +2,7 @@ package mil.darpa.immortals.config;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
@@ -17,6 +18,7 @@ public class KnowledgeRepoConfiguration implements RestfulAppConfigInterface {
     private int port = 9999;
 
     private String exePath = GlobalsConfig.staticImmortalsRoot.resolve("knowledge-repo/knowledge-repo/repository-service/target/immortals-repository-service-boot.war").toAbsolutePath().toString();
+    private String workingDirectoryTemplateFolder = null;
     private String workingDirectory = GlobalsConfig.mkworkingdir("_" + identifier);
     private String[] interpreterParameters = {
             "-Djava.security.egd=file:/dev/urandom",
@@ -90,5 +92,11 @@ public class KnowledgeRepoConfiguration implements RestfulAppConfigInterface {
     @Override
     public String getReadyStdoutLineRegexPattern() {
         return readyStdoutLineRegexPattern;
+    }
+
+    @Override
+    public Path getWorkingDirectoryTemplateFolder() {
+        if (workingDirectoryTemplateFolder == null) return null;
+        return Paths.get(workingDirectoryTemplateFolder);
     }
 }

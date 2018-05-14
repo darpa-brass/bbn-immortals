@@ -16,9 +16,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by awellman@bbn.com on 1/5/18.
@@ -54,7 +53,7 @@ public class SubmissionServices {
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(baseUrl)
                         .addConverterFactory(ScalarsConverterFactory.create())
-                        .addConverterFactory(GsonConverterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create(ImmortalsUtils.gson))
                         .client(client)
                         .build();
 
@@ -81,6 +80,7 @@ public class SubmissionServices {
 
     public static class TestHarnessSubmitter implements TestHarnessSubmissionInterface {
 
+        private final AtomicInteger sequenceGenerator = new AtomicInteger(0);
         private final String remoteIdentifier = "TH";
         private final TestHarnessSubmissionInterface testHarnessSubmitter;
         private final ImmortalsUtils.NetworkLogger networkLogger;
@@ -124,7 +124,7 @@ public class SubmissionServices {
 
         @Override
         public synchronized Call<Void> status(TestAdapterState testAdapterState) {
-            testAdapterState.timestamp = System.currentTimeMillis();
+            testAdapterState.sequence = sequenceGenerator.getAndIncrement();
             networkLogger.logPostSending("/status", testAdapterState);
             Call<Void> call = testHarnessSubmitter.status(testAdapterState);
             return call;
@@ -132,7 +132,7 @@ public class SubmissionServices {
 
         @Override
         public synchronized Call<Void> done(TestAdapterState testAdapterState) {
-            testAdapterState.timestamp = System.currentTimeMillis();
+            testAdapterState.sequence = sequenceGenerator.getAndIncrement();
             networkLogger.logPostSending("/done", testAdapterState);
             Call<Void> call = testHarnessSubmitter.done(testAdapterState);
             return call;

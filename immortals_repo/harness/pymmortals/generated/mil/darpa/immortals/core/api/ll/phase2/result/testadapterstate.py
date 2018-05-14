@@ -12,10 +12,10 @@ class TestAdapterState(Serializable):
     def __init__(self,
                  adaptation: AdaptationStateObject = None,
                  identifier: str = None,
-                 timestamp: int = None,
+                 sequence: int = None,
                  validation: ValidationStateObject = None):
         super().__init__()
         self.adaptation = adaptation
         self.identifier = identifier
-        self.timestamp = timestamp
+        self.sequence = sequence
         self.validation = validation

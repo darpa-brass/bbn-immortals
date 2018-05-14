@@ -2,6 +2,7 @@ package mil.darpa.immortals.config;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.Collections;
@@ -21,6 +22,7 @@ public class FusekiConfiguration implements RestfulAppConfigInterface {
     private String url = "127.0.0.1";
     private String exePath = System.getenv("FUSEKI_HOME") == null ? "" : Paths.get(System.getenv("FUSEKI_HOME")).resolve("fuseki-server.jar").toAbsolutePath().toString();
     private String workingDirectory = GlobalsConfig.mkworkingdir("_" + identifier);
+    private String workingDirectoryTemplateFolder;
     private String[] interpreterParameters = new String[0];
     private String[] parameters = {
             "--update", "--mem", "--port=" + Integer.toString(port), "/ds"
@@ -94,5 +96,11 @@ public class FusekiConfiguration implements RestfulAppConfigInterface {
     @Override
     public String getReadyStdoutLineRegexPattern() {
         return readyStdoutLineRegexPattern;
+    }
+
+    @Override
+    public Path getWorkingDirectoryTemplateFolder() {
+        if (workingDirectoryTemplateFolder == null) return null;
+        return Paths.get(workingDirectoryTemplateFolder);
     }
 }

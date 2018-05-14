@@ -1,5 +1,9 @@
 package com.securboration.immortals.wrapper;
 
+import com.securboration.immortals.ontology.constraint.MethodAdaptation;
+import com.securboration.immortals.ontology.functionality.FunctionalAspect;
+import com.securboration.immortals.ontology.pattern.spec.CodeSpec;
+import com.securboration.immortals.utility.GradleTaskHelper;
 import soot.*;
 import soot.jimple.*;
 
@@ -12,9 +16,12 @@ public class Wrapper {
     private SootClass wrappedClass;
     private SootClass wrapperClass;
     private String streamType;
+    private List<FunctionalAspect> aspectsAdapted;
+    private Optional<String> configurationParameters;
     
     protected Wrapper(SootClass _wrappedClass) {
         wrappedClass = _wrappedClass;
+        aspectsAdapted = new ArrayList<>();
     }
     
     protected SootMethod createCipherWrapperConstructorSimple(SootClass newClass, SootField oldClassField, SootClass cipherImplClass,
@@ -132,16 +139,54 @@ public class Wrapper {
         return newConstructor;
     }
     
+    protected void expandConstructorSurface(SootMethod construct, SootField streamField, SootMethod streamGetter,
+                                            SootMethod cipherInit, SootMethod streamWrap) {
+        
+        JimpleBody constructBody = (JimpleBody) construct.getActiveBody();
+        Chain<Unit> units = constructBody.getUnits();
+        Local thisLocal = constructBody.getThisLocal();
+
+        Local cipherImplLocal = null;
+        Chain<Local> locals = constructBody.getLocals();
+        for (Local local : locals) {
+            if (local.getType().equals(cipherInit.getReturnType())) {
+                cipherImplLocal = local;
+                break;
+            }
+        }
+        
+        Chain<Trap> traps = constructBody.getTraps();
+        Trap mainTrap = traps.getFirst();
+        
+        Unit firstTrapUnit = mainTrap.getBeginUnit();
+
+        Local streamImplLocal = Jimple.v().newLocal("streamImpl", streamField.getType());
+        constructBody.getLocals().add(streamImplLocal);
+
+        AssignStmt streamImplAssign = Jimple.v().newAssignStmt(streamImplLocal, Jimple.v().newVirtualInvokeExpr(thisLocal,
+                streamGetter.makeRef()));
+        units.insertAfter(streamImplAssign, firstTrapUnit);
+
+        StaticInvokeExpr wrapExpression = Jimple.v().newStaticInvokeExpr(streamWrap.makeRef(),
+                streamImplLocal, cipherImplLocal);
+
+        AssignStmt wrappedStreamAssign = Jimple.v().newAssignStmt(streamImplLocal, wrapExpression);
+        units.insertAfter(wrappedStreamAssign, streamImplAssign);
+
+        AssignStmt wrappedStreamToFieldAssign = Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(thisLocal, 
+                streamField.makeRef()), streamImplLocal);
+        units.insertAfter(wrappedStreamToFieldAssign, wrappedStreamAssign);
+    }
+    
     protected SootMethod createGetStreamImplMethod(SootClass wrapperClass) {
 
         List<Type> parameterTypes = new ArrayList<>();
         SootClass streamClass = Scene.v().getSootClass(this.streamType);
-
         List<SootClass> exceptionClasses = new ArrayList<>();
         SootClass exceptionClass = Scene.v().getSootClass("java.lang.Exception");
         exceptionClasses.add(exceptionClass);
 
-        SootMethod getStreamImplMethod = new SootMethod("getStreamImpl", parameterTypes, streamClass.getType(),
+        SootMethod getStreamImplMethod = new SootMethod("get" + streamClass.getShortName() +"Impl", parameterTypes, streamClass.getType(),
                 Modifier.PUBLIC, exceptionClasses);
 
         wrapperClass.addMethod(getStreamImplMethod);
@@ -179,8 +224,8 @@ public class Wrapper {
         SootClass exceptionClass = Scene.v().getSootClass("java.lang.Exception");
         exceptionClasses.add(exceptionClass);
 
-        SootMethod streamAugmentationMethod = new SootMethod("wrap", parameterTypes, streamClass.getType(),
-                Modifier.PUBLIC | Modifier.STATIC, exceptionClasses);
+        SootMethod streamAugmentationMethod = new SootMethod("wrap" + streamClass.getShortName(),
+                parameterTypes, streamClass.getType(), Modifier.PUBLIC | Modifier.STATIC, exceptionClasses);
         
         wrapperClass.addMethod(streamAugmentationMethod);
         JimpleBody wrapBody = Jimple.v().newBody(streamAugmentationMethod);
@@ -373,6 +418,117 @@ public class Wrapper {
         return Jimple.v().newInvokeStmt(callSuperConstruct);
     }
     
+    public void introduceMediationMethods(List<CodeSpec> codeSpecs, GradleTaskHelper taskHelper) {
+        
+        for (CodeSpec codeSpec : codeSpecs) {
+            
+            if (taskHelper.checkForPreviousAugmentation(codeSpec)) {
+                continue;
+            }
+            
+            String methodSignature = codeSpec.getMethodSignature();
+
+            String parametersString = methodSignature.substring(methodSignature.indexOf("(") + 1, methodSignature.indexOf(")"));
+            String[] parametersArray = parametersString.split(",");
+
+            List<Type> parameterTypes = new ArrayList<>();
+            if (!parametersString.equals("")) {
+                for (String parameter : parametersArray) {
+                    parseType(parameter.trim(), parameterTypes);
+                }
+            }
+            
+            SootClass exceptionClass = Scene.v().getSootClass(
+                    "java.lang.Exception");
+            List<SootClass> exceptionClasses = new ArrayList<>();
+            exceptionClasses.add(exceptionClass);
+            
+            SootMethod newMediationMethod = new SootMethod(methodSignature.substring(0, methodSignature.indexOf("(")),
+                    parameterTypes, getMediationMethodReturnType(codeSpec), Modifier.PUBLIC, exceptionClasses);
+            
+            this.wrapperClass.addMethod(newMediationMethod);
+            JimpleBody wrapBody = Jimple.v().newBody(newMediationMethod);
+            wrapBody.insertIdentityStmts();
+            newMediationMethod.setActiveBody(wrapBody);
+
+            SootClass runtimeExceptionClass = Scene.v().getSootClass(
+                    "java.lang.RuntimeException");
+            RefType exceptionType = RefType.v(runtimeExceptionClass);
+            SootMethod exceptionInitMethod = runtimeExceptionClass.getMethod("void <init>(java.lang.String)");
+
+            Local exceptionLocal = Jimple.v().newLocal("exceptionLocal", exceptionType);
+            wrapBody.getLocals().add(exceptionLocal);
+
+            wrapBody.getUnits().add(Jimple.v().newAssignStmt(exceptionLocal, Jimple.v().newNewExpr(exceptionType)));
+            wrapBody.getUnits().add(Jimple.v().newInvokeStmt(Jimple.v().newSpecialInvokeExpr(exceptionLocal,
+                    exceptionInitMethod.makeRef(), StringConstant.v("This method needs to be written by the user with " +
+                            "configurations of their choosing."))));
+            wrapBody.getUnits().add(Jimple.v().newThrowStmt(exceptionLocal));
+
+            MethodAdaptation mediationAdaptation = new MethodAdaptation();
+            mediationAdaptation.setSignature(codeSpec.getMethodSignature());
+            taskHelper.getMethodAdaptations().add(mediationAdaptation);
+        }
+    }
+
+    private void parseType(String parameter, List<Type> parameterTypes) {
+        switch (parameter) {
+            case "int":
+                parameterTypes.add(IntType.v());
+                break;
+            case "byte":
+                parameterTypes.add(ByteType.v());
+                break;
+            case "boolean":
+                parameterTypes.add(BooleanType.v());
+                break;
+            default:
+                SootClass paramClass = Scene.v().loadClassAndSupport(parameter.replace("/", "."));
+                parameterTypes.add(paramClass.getType());
+        }
+    }
+
+    private RefType getMediationMethodReturnType(CodeSpec codeSpec) {
+        String returnType = codeSpec.getMethodSignature().substring(codeSpec.getMethodSignature().lastIndexOf(")") + 1);
+        switch (returnType.charAt(0)) {
+            case 'Z':
+                returnType = "boolean";
+                break;
+            case 'B':
+                returnType = "byte";
+                break;
+            case 'C':
+                returnType = "char";
+                break;
+            case 'S':
+                returnType = "short";
+                break;
+            case 'I':
+                returnType = "int";
+                break;
+            case 'J':
+                returnType = "long";
+                break;
+            case 'F':
+                returnType = "float";
+                break;
+            case 'D':
+                returnType = "double";
+                break;
+            case 'L':
+                returnType = returnType.substring(1);
+                break;
+            case 'V':
+                returnType = "void";
+                break;
+            default:
+                break;
+        }
+        
+        SootClass returnTypeClass = Scene.v().loadClassAndSupport(returnType.replace("/", "."));
+        return returnTypeClass.getType();
+    }
+
     protected SootMethod getCorrespondingSuperConstruct(SootClass superClass, List<Type> paramTypes) {
         
         for (SootMethod method : superClass.getMethods()) {
@@ -402,5 +558,21 @@ public class Wrapper {
 
     public void setStreamType(String streamType) {
         this.streamType = streamType;
+    }
+
+    public Optional<String> getConfigurationParameters() {
+        return configurationParameters;
+    }
+
+    public void setConfigurationParameters(Optional<String> configurationParameters) {
+        this.configurationParameters = configurationParameters;
+    }
+
+    public List<FunctionalAspect> getAspectsAdapted() {
+        return aspectsAdapted;
+    }
+
+    public void setAspectsAdapted(List<FunctionalAspect> aspectsAdapted) {
+        this.aspectsAdapted = aspectsAdapted;
     }
 }

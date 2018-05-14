@@ -39,6 +39,20 @@ def get_p2_test_suite(suite_identifier: str) -> Dict:
                                                      suite_identifier + '.json')))
 
 
+def get_p2_unified_test_suite_and_test_list() -> List[str]:
+    test_list = list()
+    test_files = resource_listdir('pymmortals.resources', "p2_test_scenarios")
+    for f in test_files:
+        if not f.startswith('__'):
+            test_suite_name = f.replace('.json', '')
+            test_list.append(test_suite_name)
+            test_names = get_p2_test_suite_test_list(test_suite_name)
+            for i in range(len(test_names)):
+                test_list.append(test_suite_name + '.' + test_names[i])
+
+    return test_list
+
+
 def get_p2_test_suite_test_list(suite_identifier: str):
     test_list = json.loads(clean_json_str(resource_string('pymmortals.resources.p2_test_scenarios',
                                                           suite_identifier + '.json')))

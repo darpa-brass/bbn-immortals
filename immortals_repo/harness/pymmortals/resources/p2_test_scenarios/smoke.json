@@ -4,9 +4,6 @@
         "submissionModel": null,
         "expectedAdaptationResult": "NOT_APPLICABLE",
         "expectedVerdictOutcome": "PASS",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "BaselineA",
         "perturbationScenario": "P2CP1DatabaseSchema"
     },
@@ -44,9 +41,6 @@
         },
         "expectedAdaptationResult": "NOT_APPLICABLE",
         "expectedVerdictOutcome": "FAIL",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "BaselineB",
         "perturbationScenario": "P2CP1DatabaseSchema"
     },
@@ -84,9 +78,6 @@
         },
         "expectedAdaptationResult": "SUCCESS",
         "expectedVerdictOutcome": "PASS",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "Challenge",
         "perturbationScenario": "P2CP1DatabaseSchema"
     },
@@ -95,9 +86,6 @@
         "submissionModel": null,
         "expectedAdaptationResult": "NOT_APPLICABLE",
         "expectedVerdictOutcome": "PASS",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "BaselineA",
         "perturbationScenario": "P2CP2DataInTransit"
     },
@@ -114,9 +102,6 @@
         },
         "expectedAdaptationResult": "NOT_APPLICABLE",
         "expectedVerdictOutcome": "FAIL",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "BaselineB",
         "perturbationScenario": "P2CP2DataInTransit"
     },
@@ -133,9 +118,6 @@
         },
         "expectedAdaptationResult": "SUCCESS",
         "expectedVerdictOutcome": "PASS",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "Challenge",
         "perturbationScenario": "P2CP2DataInTransit"
     },
@@ -144,9 +126,6 @@
         "submissionModel": null,
         "expectedAdaptationResult": "NOT_APPLICABLE",
         "expectedVerdictOutcome": "PASS",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "BaselineA",
         "perturbationScenario": "P2CP3JavaLibraryMutation"
     },
@@ -161,9 +140,6 @@
         },
         "expectedAdaptationResult": "NOT_APPLICABLE",
         "expectedVerdictOutcome": "FAIL",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "BaselineB",
         "perturbationScenario": "P2CP3JavaLibraryMutation"
     },
@@ -178,9 +154,6 @@
         },
         "expectedAdaptationResult": "SUCCESS",
         "expectedVerdictOutcome": "PASS",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "Challenge",
         "perturbationScenario": "P2CP3JavaLibraryMutation"
     }

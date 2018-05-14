@@ -1,6 +1,7 @@
 package mil.darpa.immortals.core.das;
 
 import com.google.gson.Gson;
+import mil.darpa.immortals.ImmortalsUtils;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -22,7 +23,7 @@ import java.lang.reflect.Type;
 @Consumes(MediaType.APPLICATION_JSON)
 public class GsonJacksonHelper<T> implements MessageBodyReader<T>, MessageBodyWriter<T> {
 
-    private final Gson gson = new Gson();
+    private final Gson gson = ImmortalsUtils.gson;
 
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {

@@ -31,11 +31,11 @@ public class HddRassExecuter {
     public Process execute() throws IOException {
 
 
-        ImmortalsUtils.getGson().toJson(initObject);
+        ImmortalsUtils.gson.toJson(initObject);
 
         Path mutationScript = ImmortalsConfig.getInstance().extensions.hddrass.getExecutionWorkingDirectory(adaptationIdentifier).resolve("mutatescript.json");
         FileWriter configFileWriter = new FileWriter(mutationScript.toFile());
-        configFileWriter.write(ImmortalsUtils.getNonHtmlEscapingGson().toJson(initObject));
+        configFileWriter.write(ImmortalsUtils.nonHtmlEscapingGson.toJson(initObject));
         configFileWriter.flush();
         configFileWriter.close();
 

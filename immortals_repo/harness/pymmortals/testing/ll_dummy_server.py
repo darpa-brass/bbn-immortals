@@ -1,7 +1,8 @@
 #!/usr/bin/env python
+import json
 import socketserver
-import time
-from typing import Dict, Union, Callable
+from threading import RLock
+from typing import Dict, Union, Callable, Tuple
 
 import bottle
 from cherrypy import wsgiserver
@@ -40,6 +41,10 @@ class LLHarness(bottle.Bottle):
 
         self._results = []
 
+        self._event_map = dict()  # type: Dict[int, Tuple[TestHarnessEndpoint, str]]
+        self._rx_lock = RLock()
+        self._next_sequence = 0
+
         socketserver.TCPServer.allow_reuse_address = True
         socketserver.ThreadingTCPServer.allow_reuse_address = True
 
@@ -48,7 +53,28 @@ class LLHarness(bottle.Bottle):
         self._done_listener = self.stop if done_listener_is_self else done_listener
         self._event_listener = None  # type: Phase2TestHarnessListenerInterface
 
-    def load_test(self, test_suite_identifier: str, test_identifier: str) -> Phase2TestScenario:
+    def reset_sequence_counter(self):
+        self._next_sequence = 0
+
+    def _add_received_event(self, endpoint: TestHarnessEndpoint, body_str: str):
+        with self._rx_lock:
+            print("ADDING EVENT WHILE WAITING FOR '" + str(self._next_sequence) + "'")
+            body_json = json.loads(body_str)
+            seq = body_json['sequence']
+            self._event_map[seq] = (endpoint, body_str)
+            print("ADDED EVENT '" + str(seq) + "'")
+
+            while self._next_sequence in self._event_map:
+                d = self._event_map.pop(self._next_sequence)
+                endpoint = d[0]
+                body_val = d[1]
+                self._next_sequence = self._next_sequence + 1
+
+                self._event_listener.receiving_post_listener(endpoint=endpoint, body_str=body_val)
+                print("EVENT_PROCESSED")
+                self._set_success_response(endpoint=endpoint)
+
+    def load_test(self, test_suite_identifier: str, test_identifier: str = None) -> Phase2TestScenario:
         """
         :return: The first test scenario to run
         """
@@ -62,7 +88,7 @@ class LLHarness(bottle.Bottle):
     def start(self):
         bottle.run(app=self, server=self.server, debug=True)
 
-    def stop(self, test_scenario: Phase2TestScenario = None):
+    def stop(self):
         if self.server is not None:
             self.server.stop()
 
@@ -78,32 +104,26 @@ class LLHarness(bottle.Bottle):
                    method=TestHarnessEndpoint.DONE.restType.name, callback=self._done)
 
     def _error(self):
-        body_str = bottle.request.body.read().decode()
-
-        time.sleep(.2)
-        self._event_listener.receiving_post_listener(TestHarnessEndpoint.ERROR, body_str)
-        self._set_success_response(endpoint=TestHarnessEndpoint.ERROR)
+        with self._rx_lock:
+            body_str = bottle.request.body.read().decode()
+            self._event_listener.receiving_post_listener(TestHarnessEndpoint.ERROR, body_str)
+            self._set_success_response(endpoint=TestHarnessEndpoint.ERROR)
 
     def _ready(self):
-        body_str = bottle.request.body.read().decode()
-
-        time.sleep(.2)
-        self._event_listener.receiving_post_listener(TestHarnessEndpoint.READY, body_str)
-        self._set_success_response(endpoint=TestHarnessEndpoint.READY)
+        with self._rx_lock:
+            body_str = bottle.request.body.read().decode()
+            self._event_listener.receiving_post_listener(TestHarnessEndpoint.READY, body_str)
+            self._set_success_response(endpoint=TestHarnessEndpoint.READY)
 
     def _status(self):
-        body_str = bottle.request.body.read().decode()
-
-        time.sleep(.2)
-        self._event_listener.receiving_post_listener(TestHarnessEndpoint.STATUS, body_str)
-        self._set_success_response(endpoint=TestHarnessEndpoint.STATUS)
+        with self._rx_lock:
+            body_str = bottle.request.body.read().decode()
+            self._add_received_event(TestHarnessEndpoint.STATUS, body_str)
 
     def _done(self):
-        body_str = bottle.request.body.read().decode()
-
-        time.sleep(.2)
-        self._event_listener.receiving_post_listener(TestHarnessEndpoint.DONE, body_str)
-        self._set_success_response(endpoint=TestHarnessEndpoint.DONE)
+        with self._rx_lock:
+            body_str = bottle.request.body.read().decode()
+            self._add_received_event(TestHarnessEndpoint.DONE, body_str)
 
     def _set_success_response(self, endpoint: TestHarnessEndpoint, body: Union[str, Dict, None] = None):
         if body is None:
@@ -121,7 +141,7 @@ class LLHarness(bottle.Bottle):
         self._event_listener.received_post_ack_listener(endpoint=endpoint, response_code=200, body_str=body)
 
 
-def run_test_scenario(test_suite_identifier: str, test_identifier: str):
+def run_test_scenario(test_suite_identifier: str, test_identifier: str = None):
     config = get_configuration().testHarness
 
     harness = LLHarness(

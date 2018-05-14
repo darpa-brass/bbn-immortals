@@ -20,10 +20,7 @@ public class TestHarnessAdapterStateContainer {
                                             @Nonnull TestHarnessAdapterMediator.ChallengeProblem challengeProblem) {
         this.submissionModel = submissionModel;
         this.challengeProblem = challengeProblem;
-
-        // TODO: THis should not be hard coded!
         this.testAdapterState = new TestAdapterState(
-                System.currentTimeMillis(),
                 submissionModel.sessionIdentifier
         );
     }

@@ -22,7 +22,8 @@ class TestAdapterConfiguration(Serializable):
                  url: str = None,
                  userManaged: bool = None,
                  websocketPort: int = None,
-                 workingDirectory: str = None):
+                 workingDirectory: str = None,
+                 workingDirectoryTemplateFolder: str = None):
         super().__init__()
         self.environmentVariables = environmentVariables
         self.exePath = exePath
@@ -37,3 +38,4 @@ class TestAdapterConfiguration(Serializable):
         self.userManaged = userManaged
         self.websocketPort = websocketPort
         self.workingDirectory = workingDirectory
+        self.workingDirectoryTemplateFolder = workingDirectoryTemplateFolder

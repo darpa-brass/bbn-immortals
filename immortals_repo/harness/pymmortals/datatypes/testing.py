@@ -62,8 +62,7 @@ class Phase2TestScenario(Serializable):
                  expectedAdaptationResult: DasOutcome,
                  expectedVerdictOutcome: VerdictOutcome,
                  scenarioIdentifier: str,
-                 submissionModel: SubmissionModel,
-                 rootConfigurationModifications: Dict[str, str]):
+                 submissionModel: SubmissionModel):
         super().__init__()
         self.submissionFlow = submissionFlow
         self.perturbationScenario = perturbationScenario
@@ -71,4 +70,3 @@ class Phase2TestScenario(Serializable):
         self.expectedVerdictOutcome = expectedVerdictOutcome
         self.scenarioIdentifier = scenarioIdentifier
         self.submissionModel = submissionModel
-        self.rootConfigurationModifications = rootConfigurationModifications

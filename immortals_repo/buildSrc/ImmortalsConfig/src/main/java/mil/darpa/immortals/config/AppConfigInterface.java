@@ -1,5 +1,6 @@
 package mil.darpa.immortals.config;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 
 /**
@@ -13,6 +14,8 @@ public interface AppConfigInterface {
     public String getIdentifier();
 
     public String getExePath();
+    
+    public Path getWorkingDirectoryTemplateFolder();
 
     public String getWorkingDirectory();
     

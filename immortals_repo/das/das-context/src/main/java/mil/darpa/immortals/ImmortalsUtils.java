@@ -8,23 +8,39 @@ import ch.qos.logback.core.FileAppender;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mil.darpa.immortals.config.ImmortalsConfig;
+import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetailsList;
+import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
 import java.util.HashMap;
 
 /**
  * Created by awellman@bbn.com on 1/11/18.
  */
 public class ImmortalsUtils {
-    // GSON is thread-safe and efficient enough for our purposes so I'm putting a globally usable one here
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final Gson nonHtmlEscapingGson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-
     private static final HashMap<String, NetworkLogger> loggerMap = new HashMap<>();
+
+    public static final Gson gson;
+    public static final Gson nonHtmlEscapingGson;
+
+    static {
+        GsonBuilder builder = new GsonBuilder();
+        gson = builder.registerTypeAdapter(TestDetailsList.class, new TestDetailsList.TestDetailsListDeserializer())
+                .registerTypeAdapter(TestDetailsList.class, new TestDetailsList.TestDetailsListSerializer())
+                .registerTypeAdapter(AdaptationDetailsList.class, new AdaptationDetailsList.AdaptationDetailsListDeserializer())
+                .registerTypeAdapter(AdaptationDetailsList.class, new AdaptationDetailsList.AdaptationDetailsListSerializer())
+                .setPrettyPrinting().create();
+
+        builder = new GsonBuilder();
+        nonHtmlEscapingGson = builder.registerTypeAdapter(TestDetailsList.class, new TestDetailsList.TestDetailsListDeserializer())
+                .registerTypeAdapter(TestDetailsList.class, new TestDetailsList.TestDetailsListSerializer())
+                .registerTypeAdapter(AdaptationDetailsList.class, new AdaptationDetailsList.AdaptationDetailsListDeserializer())
+                .registerTypeAdapter(AdaptationDetailsList.class, new AdaptationDetailsList.AdaptationDetailsListSerializer())
+                .setPrettyPrinting().disableHtmlEscaping().create();
+    }
 
     public static synchronized NetworkLogger getNetworkLogger(@Nonnull String localIdentifier, @Nullable String remoteIdentifier) {
         String identifier = localIdentifier + (remoteIdentifier == null ? "" : "-" + remoteIdentifier);
@@ -115,13 +131,5 @@ public class ImmortalsUtils {
         public synchronized void logGetReceivedAckSending(@Nonnull String path, @Nullable Object body) {
             logger.debug(String.format(sendingAckToReceivedTemplate, "GET", path, getBody(body)));
         }
-    }
-
-    public static Gson getGson() {
-        return gson;
-    }
-    
-    public static Gson getNonHtmlEscapingGson() {
-        return nonHtmlEscapingGson;
     }
 }

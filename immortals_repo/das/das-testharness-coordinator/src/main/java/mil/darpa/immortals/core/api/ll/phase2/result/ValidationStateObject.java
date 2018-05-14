@@ -20,7 +20,6 @@ public class ValidationStateObject {
 
     @Result
     @Description("The tests executed to support the verdict outcome")
-    @Unstable
     public LinkedList<TestStateObject> executedTests = new LinkedList<>();
 
     public ValidationStateObject() {

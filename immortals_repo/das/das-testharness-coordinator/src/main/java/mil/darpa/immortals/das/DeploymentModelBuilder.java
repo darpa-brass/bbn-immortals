@@ -258,7 +258,7 @@ public class DeploymentModelBuilder {
                     null
             );
 
-            System.out.println(ImmortalsUtils.getNonHtmlEscapingGson().toJson(submissionModel));
+            System.out.println(ImmortalsUtils.nonHtmlEscapingGson.toJson(submissionModel));
             
             DeploymentModelBuilder dmb = new DeploymentModelBuilder(submissionModel);
             dmb.build();

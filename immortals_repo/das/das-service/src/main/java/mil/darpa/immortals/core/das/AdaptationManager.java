@@ -9,7 +9,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
-import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
 import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
 import mil.darpa.immortals.core.das.adaptationmodules.hddrass.HddRassAdapter;
 import mil.darpa.immortals.core.api.TestCaseReportSet;
@@ -35,14 +34,14 @@ public class AdaptationManager {
     static final Logger logger = LoggerFactory.getLogger(AdaptationManager.class);
     private List<IAdaptationModule> adaptationModules = new ArrayList<>();
     private List<UpgradeModuleInterface> upgradeModules = new ArrayList<>();
-    
+
     static {
         instance = new AdaptationManager();
     }
 
     private AdaptationManager() {
         upgradeModules.add(new LibraryUpgradeModule());
-        
+
         adaptationModules.add(new HddRassAdapter());
         adaptationModules.add(new SchemaEvolutionAdapter());
     }
@@ -61,7 +60,7 @@ public class AdaptationManager {
                     upgradeModule.apply(dac);
                 }
             }
-            
+
             List<IAdaptationModule> toExecute = new LinkedList<>();
 
             // Then attempt to execute all tests from applicable adaptation targets in the deployment model to get
@@ -76,13 +75,6 @@ public class AdaptationManager {
             // Followed by submitting the test details to the Test Adapter
             TestDetailsList td = TestDetailsList.fromTestCaseReportSet(dac.getAdaptationIdentifer(), initialTestReports);
             dac.submitValidationStatus(td);
-            
-            // TODO: Manage queuing of messages in TA instead of this sleep!
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
 
             // Then, determine which adaptation modules will be run
             for (IAdaptationModule am : adaptationModules) {
@@ -103,28 +95,21 @@ public class AdaptationManager {
 
             currentModule = null;
 
-            // TODO: Manage queuing of messages in TA instead of this sleep!
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
             // For each adaptation
             for (IAdaptationModule am : toExecute) {
                 currentModule = am;
                 logger.info("Invoking Adaptation Module: " + am.getClass().getName());
-                
+
                 // Submit the RUNNING status update
                 AdaptationDetails ad = new AdaptationDetails(
                         am.getClass().getName(),
                         DasOutcome.RUNNING, dac.getAdaptationIdentifer());
                 dac.submitAdaptationStatus(ad);
-                
-                
+
+
                 // Perform the adaptation
                 am.apply(dac);
-                
+
                 // And attempt another round of validation
                 TestCaseReportSet testReports = vm.executeValidation(true);
             }

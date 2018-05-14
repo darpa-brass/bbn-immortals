@@ -5,6 +5,7 @@ import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.config.RestfulAppConfigInterface;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -20,15 +21,17 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
     private long startupTimeMS = 20000;
     private String identifier = "aqlbrass";
     
-    private final String mavenRepositoryUrl = "https://github.com/babeloff/mvn-repo/raw/master/releases";
-    private final String mavenGroupId = "babeloff";
+    private final String mavenRepositoryUrl = "https://nexus.isis.vanderbilt.edu/repository/maven-snapshots/";
+    private final String mavenGroupId = "aql-brass-server";
     private final String mavenArtifactId = "aql-brass-server";
-    private final String mavenVersion = "2018.03.20";
+    private final String mavenVersion = "2018.04.25-SNAPSHOT";
+    private final String mavenClassifier = "standalone";
 
     private int port = 9090;
     private String protocol = "http";
     private String url = "127.0.0.1";
     private String workingDirectory = GlobalsConfig.mkworkingdir("_" + identifier);
+    private String workingDirectoryTemplateFolder = null;
     private String exePath = GlobalsConfig.getExtensionsDownloadDir().resolve(mavenArtifactId + ".jar").toString();
     private String[] interpreterParameters  = new String[0];
     private String[] parameters = {
@@ -137,5 +140,17 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
     @Override
     public String getMavenFullDependencyCoordinate() {
         return MavenArtifactInterface.toDependencyCoordinate(this);
+    }
+
+    @Nullable
+    @Override
+    public String getMavenOptionalClassifier() {
+        return mavenClassifier;
+    }
+
+    @Override
+    public Path getWorkingDirectoryTemplateFolder() {
+        if (workingDirectoryTemplateFolder == null) return null;
+        return Paths.get(workingDirectoryTemplateFolder);
     }
 }

@@ -1,8 +1,11 @@
 import copy
+import json
 import os
 from typing import Dict, List, Set
 
 from pymmortals.datatypes.serializable import Serializable
+from pymmortals.generated.mil.darpa.immortals.config.deploymentenvironmentconfiguration import \
+    DeploymentEnvironmentConfiguration, AndroidEnivronmentConfiguration
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.atakliterequirements import \
     AtakliteRequirements
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.ataklitesubmissionmodel import \
@@ -13,6 +16,8 @@ from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.r
     ClientPartialUpgradeLibrary
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements.clientupgradelibrary import \
     ClientUpgradeLibrary
+from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.dasprerequisites import DASPrerequisites, \
+    ChallengeProblemRequirements, AndroidEmulatorRequirement
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.functionality.dataintransit import DataInTransit
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.functionality.securitystandard import SecurityStandard
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.globalmodel.globalrequirements import \
@@ -121,13 +126,13 @@ _sample_cp3_submission_model = SubmissionModel(
     martiServerModel=MartiSubmissionModel(
         requirements=MartiRequirements(
             partialLibraryUpgrade=ServerPartialUpgradeLibrary.Dom4jCot_2,
-            libraryUpgrade=ServerUpgradeLibrary.ImageSaverLibrary_2
+            libraryUpgrade=ServerUpgradeLibrary.ElevationApi_2
         )
     ),
     atakLiteClientModel=ATAKLiteSubmissionModel(
         requirements=AtakliteRequirements(
             deploymentPlatformVersion=AndroidPlatformVersion.Android23,
-            partialLibraryUpgrade=ClientPartialUpgradeLibrary.Dropbox_X_X,
+            partialLibraryUpgrade=ClientPartialUpgradeLibrary.Dropbox_3_0_6,
             libraryUpgrade=ClientUpgradeLibrary.ToBeDetermined_X_X
         )
     )
@@ -146,9 +151,17 @@ _sample_test_adapter_state = TestAdapterState(
     adaptation=AdaptationStateObject(
         adaptationStatus=DasOutcome.SUCCESS,
         details=AdaptationDetails(
-            dasOutcome=DasOutcome.SUCCESS,
             adaptationIdentifier="PerturbationValidationInstanceIdentifier",
-            details="Some Additional Details"
+            adaptorIdentifier="PerturbationAdaptationMethodIdentifier",
+            dasOutcome=DasOutcome.SUCCESS,
+            detailMessages=[
+                "Additional Details",
+                "More Additional Details"
+            ],
+            errorMessages=[
+                "ErrorMessage",
+                "AnotherErrorMessage"
+            ]
         )
     ),
     validation=ValidationStateObject(
@@ -183,6 +196,102 @@ _sample_test_adapter_state = TestAdapterState(
         ]
     )
 )
+
+_prerequisites = DASPrerequisites(
+    cp1=ChallengeProblemRequirements(
+        challengeProblemUrl='/action/databaseSchemaPerturbation',
+        androidEmulators=[]
+    ),
+    cp2=ChallengeProblemRequirements(
+        challengeProblemUrl='/action/crossApplicationDependencies',
+        androidEmulators=[
+            AndroidEmulatorRequirement(
+                androidVersion=21,
+                uploadBandwidthLimitKilobitsPerSecond=None,
+                externallyAccessibleUrls=[],
+                superuserAccess=False
+            ),
+            AndroidEmulatorRequirement(
+                androidVersion=21,
+                uploadBandwidthLimitKilobitsPerSecond=None,
+                externallyAccessibleUrls=[],
+                superuserAccess=False
+            )
+        ]
+    ),
+    cp3=ChallengeProblemRequirements(
+        challengeProblemUrl='/action/libraryEvolution',
+        androidEmulators=[
+            AndroidEmulatorRequirement(
+                androidVersion=21,
+                uploadBandwidthLimitKilobitsPerSecond=800,
+                externallyAccessibleUrls=[
+                    "dropbox.com:443",
+                    "dropbox.com:80"
+                ],
+                superuserAccess=True
+            ),
+            AndroidEmulatorRequirement(
+                androidVersion=21,
+                uploadBandwidthLimitKilobitsPerSecond=None,
+                externallyAccessibleUrls=[],
+                superuserAccess=False
+            ),
+            AndroidEmulatorRequirement(
+                androidVersion=21,
+                uploadBandwidthLimitKilobitsPerSecond=None,
+                externallyAccessibleUrls=[],
+                superuserAccess=False
+            )
+        ]
+    )
+)
+
+_input_das_configuration = DeploymentEnvironmentConfiguration(
+    martiAddress="10.0.2.2",
+    androidEnvironments=[
+        AndroidEnivronmentConfiguration(
+            adbPort=5580,
+            adbUrl="127.0.0.1",
+            adbIdentifier="emulator-5580",
+            environmentDetails=AndroidEmulatorRequirement(
+                androidVersion=21,
+                uploadBandwidthLimitKilobitsPerSecond=800,
+                externallyAccessibleUrls=[
+                    "dropbox.com:443",
+                    "dropbox.com:80"
+                ],
+                superuserAccess=True
+            )
+        ),
+        AndroidEnivronmentConfiguration(
+            adbPort=5578,
+            adbUrl="127.0.0.1",
+            adbIdentifier="emulator-5578",
+            environmentDetails=AndroidEmulatorRequirement(
+                androidVersion=21,
+                uploadBandwidthLimitKilobitsPerSecond=None,
+                externallyAccessibleUrls=[],
+                superuserAccess=False
+            )
+        ),
+        AndroidEnivronmentConfiguration(
+            adbPort=5576,
+            adbUrl="127.0.0.1",
+            adbIdentifier="emulator-5576",
+            environmentDetails=
+
+            AndroidEmulatorRequirement(
+                androidVersion=21,
+                uploadBandwidthLimitKilobitsPerSecond=None,
+                externallyAccessibleUrls=[],
+                superuserAccess=False
+            )
+        )
+    ]
+)
+
+_input_das_configuration.to_file_pretty('sample_override_file.json', include_metadata=False)
 
 
 class ApiGenerator:
@@ -227,6 +336,9 @@ def generate_apis():
 
     response_lines = ag.markdownify(apis={DocumentationTag.RESULT}, input_example=_sample_test_adapter_state)
     open('ll_response_api.md', 'w').writelines(response_lines)
+
+    prerequisites_lines = ag.markdownify(apis={DocumentationTag.PREREQUISITES}, input_example=_prerequisites)
+    open('ll_prerequisites_api.md', 'w').writelines(prerequisites_lines)
 
     unified_lines = ag.markdownify(apis={DocumentationTag.P2CP1, DocumentationTag.P2CP2, DocumentationTag.P2CP3},
                                    input_example=_sample_unified_submission_model)

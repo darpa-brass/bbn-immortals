@@ -3,9 +3,7 @@ package mil.darpa.immortals.das.context;
 import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.config.TestAdapterConfiguration;
-import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
 import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetailsList;
-import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
 import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,12 +15,14 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 import javax.annotation.Nonnull;
-import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by awellman@bbn.com on 1/5/18.
  */
 public class TestAdapterSubmitter {
+
+    private static final AtomicInteger sequenceGenerator = new AtomicInteger(0);
 
     public interface TestAdapterSubmissionInterface {
         @POST("/dasListener/updateAdaptationStatus")
@@ -50,7 +50,7 @@ public class TestAdapterSubmitter {
             TestAdapterConfiguration tac = ImmortalsConfig.getInstance().testAdapter;
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(tac.getProtocol() + "://" + tac.getUrl() + ":" + tac.getPort() + "/")
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(ImmortalsUtils.gson))
                     .build();
 
             submissionInterface = retrofit.create(TestAdapterSubmissionInterface.class);
@@ -69,7 +69,14 @@ public class TestAdapterSubmitter {
         return instance;
     }
 
-    public static void updateAdaptationStatus(@Nonnull AdaptationDetailsList adaptationDetails) {
+    public static synchronized void updateAdaptationStatus(@Nonnull AdaptationDetailsList adaptationDetails) {
+        updateAdaptationStatus(adaptationDetails, true);
+    }
+
+    public static synchronized void updateAdaptationStatus(@Nonnull AdaptationDetailsList adaptationDetails, boolean updateSequenceNumber) {
+        if (updateSequenceNumber) {
+            adaptationDetails.sequence = sequenceGenerator.getAndIncrement();
+        }
         networkLogger.logPostSending("/dasListener/updateAdaptationStatus", adaptationDetails);
         getInstance().submissionInterface.updateAdaptationStatus(adaptationDetails).enqueue(new Callback<Void>() {
             @Override
@@ -84,7 +91,14 @@ public class TestAdapterSubmitter {
         });
     }
 
-    public static void updateValidationStatus(@Nonnull TestDetailsList testDetails) {
+    public static synchronized void updateValidationStatus(@Nonnull TestDetailsList testDetails) {
+        updateValidationStatus(testDetails, true);
+    }
+
+    public static synchronized void updateValidationStatus(@Nonnull TestDetailsList testDetails, boolean updateSequenceNumber) {
+        if (updateSequenceNumber) {
+            testDetails.sequence = sequenceGenerator.getAndIncrement();
+        }
         networkLogger.logPostSending("/dasListener/updateValidationStatus", testDetails);
         getInstance().submissionInterface.updateValidationStatus(testDetails).enqueue(new Callback<Void>() {
             @Override

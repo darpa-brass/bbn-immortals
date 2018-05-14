@@ -3,25 +3,43 @@ from typing import List
 
 
 # noinspection PyPep8Naming
+class AndroidEmulatorRequirement(Serializable):
+    _validator_values = dict()
+
+    _types = dict()
+
+    def __init__(self,
+                 androidVersion: int = None,
+                 bandwidthLimitKilobitsPerSecond: int = None,
+                 externallyAccessibleUrls: List[str] = None,
+                 superuserAccess: bool = None):
+        super().__init__()
+        self.androidVersion = androidVersion
+        self.bandwidthLimitKilobitsPerSecond = bandwidthLimitKilobitsPerSecond
+        self.externallyAccessibleUrls = externallyAccessibleUrls
+        self.superuserAccess = superuserAccess
+
+
+# noinspection PyPep8Naming
+class AndroidEnivronmentConfiguration(Serializable):
+    _validator_values = dict()
+
+    _types = dict()
+
+    def __init__(self,
+                 adbIdentifier: str = None,
+                 adbPort: int = None,
+                 adbUrl: str = None,
+                 environmentDetails: AndroidEmulatorRequirement = None):
+        super().__init__()
+        self.adbIdentifier = adbIdentifier
+        self.adbPort = adbPort
+        self.adbUrl = adbUrl
+        self.environmentDetails = environmentDetails
+
+
+# noinspection PyPep8Naming
 class DeploymentEnvironmentConfiguration(Serializable):
-
-    # noinspection PyPep8Naming
-    class AndroidEnivronmentConfiguration(Serializable):
-        _validator_values = dict()
-
-        _types = dict()
-
-        def __init__(self,
-                     adbIdentifier: str = None,
-                     adbPort: int = None,
-                     adbUrl: str = None,
-                     androidVersion: int = None):
-            super().__init__()
-            self.adbIdentifier = adbIdentifier
-            self.adbPort = adbPort
-            self.adbUrl = adbUrl
-            self.androidVersion = androidVersion
-
     _validator_values = dict()
 
     _types = dict()

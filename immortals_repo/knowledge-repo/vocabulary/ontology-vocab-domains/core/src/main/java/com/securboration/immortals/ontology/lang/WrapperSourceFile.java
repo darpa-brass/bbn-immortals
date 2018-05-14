@@ -1,7 +1,8 @@
 package com.securboration.immortals.ontology.lang;
 
-
 public class WrapperSourceFile extends SourceFile {
+    
+    private WrapperAdaptation[] wrapperAdaptations;
     
     private String[] augmentedMethods;
 
@@ -11,5 +12,13 @@ public class WrapperSourceFile extends SourceFile {
 
     public void setAugmentedMethods(String[] augmentedMethods) {
         this.augmentedMethods = augmentedMethods;
+    }
+
+    public WrapperAdaptation[] getWrapperAdaptations() {
+        return wrapperAdaptations;
+    }
+
+    public void setWrapperAdaptations(WrapperAdaptation[] wrapperAdaptations) {
+        this.wrapperAdaptations = wrapperAdaptations;
     }
 }

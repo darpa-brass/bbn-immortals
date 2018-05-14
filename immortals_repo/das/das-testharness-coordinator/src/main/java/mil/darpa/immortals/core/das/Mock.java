@@ -18,7 +18,6 @@ import retrofit2.Call;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by awellman@bbn.com on 12/20/17.
@@ -161,58 +160,54 @@ public class Mock {
         @Override
         public Call<String> submitAdaptationRequest(String rdf) {
             Thread t = new Thread(() -> {
-                try {
-                    Thread.sleep(300);
+                AdaptationDetails ad0 = new AdaptationDetails(
+                        "DummyAdapter",
+                        DasOutcome.PENDING,
+                        "DummyAdaptationIdentifier");
+                AdaptationDetailsList adl0 = new AdaptationDetailsList();
+                adl0.add(ad0);
+                adl0.sequence = 0;
 
-                    AdaptationDetails ad = new AdaptationDetails(
-                            "DummyAdapter",
-                            DasOutcome.PENDING,
-                            "DummyAdaptationIdentifier");
-                    AdaptationDetailsList adl = new AdaptationDetailsList();
-                    adl.add(ad);
-                    TestAdapterSubmitter.updateAdaptationStatus(adl);
+                TestCaseReport tcr0 = new TestCaseReport(
+                        "DummyTarget",
+                        "DummyTest",
+                        1.337,
+                        null,
+                        Arrays.asList("Functionality0", "Functionality1"));
+                TestDetails td0 = new TestDetails(tcr0, "DummyAdaptationIdentifier");
+                TestDetailsList tdl0 = new TestDetailsList();
+                tdl0.add(td0);
+                TestDetailsList tdl1 = tdl0.producePendingList();
+                tdl1.sequence = 1;
+                AdaptationDetails ad1 = ad0.produceUpdate(DasOutcome.RUNNING, null, null);
+                AdaptationDetailsList adl1 = new AdaptationDetailsList();
+                adl1.add(ad1);
+                adl1.sequence = 2;
 
-                    Thread.sleep(300);
+                AdaptationDetails ad2 = ad1.produceUpdate(DasOutcome.SUCCESS, null, null);
+                AdaptationDetailsList adl2 = new AdaptationDetailsList();
+                adl2.add(ad2);
+                adl2.sequence = 3;
 
-                    TestCaseReport tcr0 = new TestCaseReport(
-                            "DummyTarget",
-                            "DummyTest",
-                            1.337,
-                            null,
-                            Arrays.asList("Functionality0", "Functionality1"));
-                    TestDetails td0 = new TestDetails(tcr0, "DummyAdaptationIdentifier");
-                    TestDetailsList td = new TestDetailsList();
-                    td.add(td0);
-                    
-                    TestAdapterSubmitter.updateValidationStatus(td.producePendingList());
+                TestDetailsList tdl2 = tdl0.producePendingList();
+                tdl2.sequence = 4;
 
-                    Thread.sleep(300);
+                TestDetailsList tdl3 = tdl0.produceRunningList();
+                tdl3.sequence = 5;
 
-                    ad = ad.produceUpdate(DasOutcome.RUNNING, null, null);
-                    adl.clear();
-                    adl.add(ad);
-                    TestAdapterSubmitter.updateAdaptationStatus(adl);
-                    Thread.sleep(300);
-                    ad = ad.produceUpdate(DasOutcome.SUCCESS, null, null);
-                    
-                    adl.clear();
-                    adl.add(ad);
-                    TestAdapterSubmitter.updateAdaptationStatus(adl);
+                TestDetails td4 = td0.produceUpdate(desiredTestOutcome);
+                TestDetailsList tdl4 = new TestDetailsList();
+                tdl4.add(td4);
+                tdl4.sequence = 6;
 
-                    Thread.sleep(300);
-
-                    TestAdapterSubmitter.updateValidationStatus(td.producePendingList());
-
-                    TestAdapterSubmitter.updateValidationStatus(td.produceRunningList());
-                    Thread.sleep(300);
-                    td0 = td0.produceUpdate(desiredTestOutcome);
-                    td.clear();
-                    td.add(td0);
-                    TestAdapterSubmitter.updateValidationStatus(td);
-
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                TestAdapterSubmitter.updateValidationStatus(tdl3, false);
+                TestAdapterSubmitter.updateAdaptationStatus(adl1, false);
+                TestAdapterSubmitter.updateAdaptationStatus(adl2, false);
+                TestAdapterSubmitter.updateValidationStatus(tdl2, false);
+                TestAdapterSubmitter.updateValidationStatus(tdl1, false);
+                TestAdapterSubmitter.updateValidationStatus(tdl4, false);
+                TestAdapterSubmitter.updateValidationStatus(tdl4, false);
+                TestAdapterSubmitter.updateAdaptationStatus(adl0, false);
             });
             t.start();
 
@@ -223,41 +218,40 @@ public class Mock {
         @Override
         public Call<String> submitValidationRequest(String rdf) {
             Thread t = new Thread(() -> {
-                try {
-
-                    TestCaseReport tcr0;
-                    if (desiredTestOutcome == TestOutcome.COMPLETE_PASS) {
-                        tcr0 = new TestCaseReport(
-                                "DummyTarget",
-                                "DummyTest",
-                                1.337,
-                                null,
-                                Arrays.asList("Functionality0", "Functionality1"));
-                    } else {
-                        tcr0 = new TestCaseReport(
-                                "DummyTarget",
-                                "DummyTest",
-                                1.337,
-                                "FAILED",
-                                Arrays.asList("Functionality0", "Functionality1"));
-                    }
-                    TestCaseReportSet tcrs = new TestCaseReportSet();
-                    tcrs.add(tcr0);
-                    
-                    TestDetailsList tdl = TestDetailsList.fromTestCaseReportSet("DummyAdaptationIdentifier", tcrs);
-                    
-                    Thread.sleep(200);
-                    TestAdapterSubmitter.updateValidationStatus(tdl.producePendingList());
-                    
-                    Thread.sleep(300);
-
-                    TestAdapterSubmitter.updateValidationStatus(tdl.produceRunningList());
-                    Thread.sleep(300);
-
-                    TestAdapterSubmitter.updateValidationStatus(tdl);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                TestCaseReport tcr0;
+                if (desiredTestOutcome == TestOutcome.COMPLETE_PASS) {
+                    tcr0 = new TestCaseReport(
+                            "DummyTarget",
+                            "DummyTest",
+                            1.337,
+                            null,
+                            Arrays.asList("Functionality0", "Functionality1"));
+                } else {
+                    tcr0 = new TestCaseReport(
+                            "DummyTarget",
+                            "DummyTest",
+                            1.337,
+                            "FAILED",
+                            Arrays.asList("Functionality0", "Functionality1"));
                 }
+                TestCaseReportSet tcrs = new TestCaseReportSet();
+                tcrs.add(tcr0);
+
+                TestDetailsList tdlX = TestDetailsList.fromTestCaseReportSet("DummyAdaptationIdentifier", tcrs);
+
+                
+                TestDetailsList tdl0 = tdlX.producePendingList();
+                tdl0.sequence = 0;
+                TestDetailsList tdl1 = tdl0.produceRunningList();
+                tdl1.sequence = 1;
+                
+                TestDetailsList tdl2 = tdlX;
+                tdl2.sequence = 2;
+
+
+                TestAdapterSubmitter.updateValidationStatus(tdl0, false);
+                TestAdapterSubmitter.updateValidationStatus(tdl1, false);
+                TestAdapterSubmitter.updateValidationStatus(tdl2, false);
             });
             t.start();
 

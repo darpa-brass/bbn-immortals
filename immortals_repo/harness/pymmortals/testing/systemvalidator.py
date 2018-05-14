@@ -1,13 +1,13 @@
 import os
-import sys
+import shutil
 import subprocess
+import sys
 from subprocess import Popen, PIPE
-from typing import Optional, Dict
+from typing import Optional
 
 from pymmortals import immortalsglobals as ig
 from pymmortals.datatypes import root_configuration
-# from pymmortals.datatypes.root_configuration import get_configuration
-from pymmortals.datatypes.testing import Phase2TestScenario
+from pymmortals.datatypes.testing import Phase2TestScenario, Phase2SubmissionFlow
 from pymmortals.immortalsglobals import get_configuration
 from pymmortals.testing.harness_listeners import TABehaviorValidator
 from pymmortals.testing.ll_dummy_server import LLHarness
@@ -24,8 +24,9 @@ class SystemValidator:
         self.harness = None  # type: LLHarness
         self.test_suite_identifier = None  # type: str
         self.test_identifier = None  # type: str
+        self._current_test_scenario = None  # type: Phase2TestScenario
 
-    def _start_das(self, test_scenario: Phase2TestScenario, overrides: Optional[Dict[str, str]] = None):
+    def _start_das(self):
         # target_override_filepath = _construct_override_file(test_scenario=test_scenario, overrides=overrides)
 
         if self.immortals_root is None:
@@ -35,9 +36,9 @@ class SystemValidator:
             print(immortals_root)
 
         self.das_stdout = open(os.path.join(get_configuration().globals.globalLogDirectory,
-                                            test_scenario.scenarioIdentifier + '-start-stdout.txt'), 'a')
+                                            self._current_test_scenario.scenarioIdentifier + '-start-stdout.txt'), 'a')
         self.das_stderr = open(os.path.join(get_configuration().globals.globalLogDirectory,
-                                            test_scenario.scenarioIdentifier + '-start-stderr.txt'), 'a')
+                                            self._current_test_scenario.scenarioIdentifier + '-start-stderr.txt'), 'a')
         try:
             self.das_process = Popen([
                 'bash',
@@ -46,7 +47,7 @@ class SystemValidator:
                 stdin=PIPE,
                 stderr=self.das_stderr,
                 stdout=self.das_stdout)
-        except ResourceWarning as r:
+        except ResourceWarning:
             # Ignore this...
             pass
 
@@ -54,18 +55,6 @@ class SystemValidator:
         self.das_process.terminate()
         self.das_process.wait(timeout=10)
         self.das_process.kill()
-
-        # if not get_configuration().debug.useMockDas:
-            # ir = get_configuration().globals.immortalsRoot
-            # results = subprocess.run(['bash', 'setup.sh', '--unattended'],
-            #                cwd=os.path.join(ir, 'database/server'),
-            #                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            # results.check_returncode()
-
-            # cwd = os.path.join(ir, 'das/das-service')
-            # results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar'), '--analyze'],
-            #                cwd=cwd,stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            # results.check_returncode()
 
         if not self.das_stdout.closed:
             self.das_stdout.flush()
@@ -77,8 +66,28 @@ class SystemValidator:
     def done_listener(self, next_test_scenario: Phase2TestScenario):
         self._stop_das()
 
+        if not get_configuration().debug.useMockDas and \
+                self._current_test_scenario.submissionFlow is not Phase2SubmissionFlow.BaselineA:
+            ir = get_configuration().globals.immortalsRoot
+            results = subprocess.run(['bash', 'setup.sh', '--unattended'],
+                                     cwd=os.path.join(ir, 'database/server'),
+                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            results.check_returncode()
+
+            cwd = os.path.join(ir, 'das/das-service')
+            results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar'), '--analyze'],
+                                     cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            results.check_returncode()
+
+            gradle_original = os.path.join(ir, 'settings.gradle.original')
+            if os.path.exists(gradle_original):
+                shutil.copy2(gradle_original, os.path.join(ir, 'settings.gradle'))
+
         if next_test_scenario is not None:
-            self._start_das(next_test_scenario)
+            self.harness.reset_sequence_counter()
+            self._current_test_scenario = next_test_scenario
+            self._start_das()
+
         else:
             ig.force_exit()
 
@@ -96,7 +105,8 @@ class SystemValidator:
 
         ig.add_exit_handler(self.exit_handler)
 
-        self._start_das(test_scenario=initial_test_scenario)
+        self._current_test_scenario = initial_test_scenario
+        self._start_das()
 
         self.harness.start()
         ig.force_exit()

@@ -1,7 +1,10 @@
 package com.securboration.immortals.wrapper;
 
 import com.google.common.base.CaseFormat;
+import com.securboration.immortals.aframes.AnalysisFrameAssessment;
 import com.securboration.immortals.ontology.analysis.MethodInvocationDataflowNode;
+import com.securboration.immortals.ontology.constraint.ConstructorAdaptation;
+import com.securboration.immortals.ontology.constraint.FieldAdaptation;
 import com.securboration.immortals.ontology.lang.WrapperSourceFile;
 import com.securboration.immortals.utility.Decompiler;
 import com.securboration.immortals.utility.GradleTaskHelper;
@@ -13,6 +16,7 @@ import soot.util.JasminOutputStream;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WrapperFactory {
     
@@ -23,6 +27,8 @@ public class WrapperFactory {
     }
     
     public Wrapper createWrapper(String className, List<String> dependencies, Set<String> dependentFiles) {
+        
+        Scene.v().getSootClassPath();
         
         boolean bootstrapRT = false;
         boolean bootstrapJCE = false;
@@ -36,14 +42,12 @@ public class WrapperFactory {
                 break;
             }
         }
-
         
         Options.v().set_keep_line_number(true);
         PhaseOptions.v().setPhaseOption("jb", "use-original-names:true");
         SootClass wrappedClass = null;
         
         try {
-            
             if (bootstrapRT) {
                 Scene.v().setSootClassPath("");
                 StringBuilder sootCP = new StringBuilder("");
@@ -58,8 +62,9 @@ public class WrapperFactory {
                 Scene.v().setSootClassPath(sootCP.toString());
                 
             } else {
-                Scene.v().extendSootClassPath(System.getProperty("java.home") + File.separatorChar 
+                Scene.v().extendSootClassPath(System.getProperty("java.home") + File.separatorChar
                         + "lib" + File.separatorChar + "jce.jar");
+                bootstrapJCE = true;
             }
             
             if (!bootstrapJCE) {
@@ -111,7 +116,7 @@ public class WrapperFactory {
         wrapper.setWrapperClass(wrapperClass);
     }
 
-    public List<String> wrapWithCipher(Wrapper wrapper, String cipherImpl, WrapperSourceFile[] wrapperSourceFiles,
+    public boolean wrapWithCipher(Wrapper wrapper, String cipherImpl, WrapperSourceFile[] wrapperSourceFiles,
                                        GradleTaskHelper taskHelper, boolean plugin, List<MethodInvocationDataflowNode> methodNodes) throws IOException {
         String complexity;
         //TODO infer complexity based on soot or javaparser analysis
@@ -130,13 +135,12 @@ public class WrapperFactory {
 
         SootClass wrappedClass = wrapper.getWrappedClass();
         String wrapperClassName = "Wrapper" + wrapper.getWrappedClass().getShortName();
-        SootClass wrapperClass = new SootClass(wrapperClassName, modifiers);
-        wrapper.setWrapperClass(wrapperClass);
-        Scene.v().addClass(wrapperClass);
-        wrapperClass.setSuperclass(wrappedClass);
+        SootClass wrapperClass;
         
         checkForInaccessibleMethods(wrappedClass, methodNodes);
-        
+
+        SootClass cipherImplClass = Scene.v().loadClassAndSupport(cipherImpl);
+
         String checkForPreviousAugmentation = "prefix IMMoRTALS_constraint: <http://darpa.mil/immortals/ontology/r2.0.0/constraint#> \n" +
                 "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
                 "\n" +
@@ -153,15 +157,85 @@ public class WrapperFactory {
         GradleTaskHelper.AssertableSolutionSet previousAugmentationSolutions = new GradleTaskHelper.AssertableSolutionSet();
         
         taskHelper.getClient().executeSelectQuery(checkForPreviousAugmentation, previousAugmentationSolutions);
-        
+        String[] argTypes;
         if (!previousAugmentationSolutions.getSolutions().isEmpty()) {
-            return augmentedMethods;
+            
+            //TODO
+            wrapperClass = Scene.v().loadClassAndSupport(wrapperClassName);
+            wrapper.setWrapperClass(wrapperClass);
+
+            SootField streamImplField = new SootField(wrapper.getStreamType().replace("java.io.", "").toLowerCase(),
+                    Scene.v().getRefType(wrapper.getStreamType()), Modifier.PRIVATE);
+            List<Type> fieldTypes = wrapperClass.getFields().stream()
+                                                            .map(SootField::getType)
+                                                            .collect(Collectors.toList());
+            
+            if (fieldTypes.stream().anyMatch(type -> type.equals(streamImplField.getType())) ||
+                    complexity.equals("complex")) {
+                return true;
+            } else {
+
+                wrapperClass.addField(streamImplField);
+                //TODO
+                FieldAdaptation streamImplFieldAdapt = new FieldAdaptation();
+                streamImplFieldAdapt.setSurfaceName(streamImplField.getName());
+                streamImplFieldAdapt.setFieldType(streamImplField.getType().toString());
+                taskHelper.getFieldAdaptations().add(streamImplFieldAdapt);
+
+                SootMethod wrapMethod = wrapper.createStreamAugmentationMethod(cipherImplClass, wrapperClass);
+                augmentedMethods.add(wrapMethod.getSignature());
+                
+                SootMethod getStreamImplMethod = wrapper.createGetStreamImplMethod(wrapperClass);
+                augmentedMethods.add(getStreamImplMethod.getSignature());
+                
+                SootMethod construct = null;
+                List<SootMethod> searchForConstruct = wrapperClass.getMethods();
+                for (SootMethod possConstruct : searchForConstruct) {
+                    if (possConstruct.getName().equals("<init>")) {
+                        List<Type> paramTypes = possConstruct.getParameterTypes();
+                        if (paramTypes.get(0).equals(wrappedClass.getType())) {
+                            construct = possConstruct;
+                        }
+                    }
+                }
+                
+                SootMethod cipherInitMethod = wrapperClass.getMethodByName("initCipherImpl");
+                wrapper.expandConstructorSurface(construct, streamImplField, getStreamImplMethod, cipherInitMethod,
+                        wrapMethod);
+
+                Decompiler decompiler = new Decompiler();
+                String bareBonesWrapperPath = this.produceWrapperClassFile(wrapper);
+
+                String pathToJavaSource;
+                if (plugin) {
+                    pathToJavaSource = taskHelper.getResultsDir() + "Wrapper" + wrapper.getWrappedClass().getShortName() + ".java";
+                } else {
+                    pathToJavaSource = bareBonesWrapperPath.substring(0, bareBonesWrapperPath.lastIndexOf("/")) + "/Wrapper"
+                            + wrapper.getWrappedClass().getShortName() + ".java";
+                }
+
+                File producedFile = decompiler.decompileClassFile(bareBonesWrapperPath, pathToJavaSource, plugin);
+                String producedFileSource = FileUtils.readFileToString(producedFile);
+                
+                AnalysisFrameAssessment.expandAdaptationSurface(taskHelper, Optional.empty()
+                        , Optional.of("Wrapper" + wrapper.getWrappedClass().getShortName() + ".java"),
+                        producedFileSource, false);
+            }
+            return true;
         }
+        
+        wrapperClass = new SootClass(wrapperClassName, modifiers);
+        wrapper.setWrapperClass(wrapperClass);
+        Scene.v().addClass(wrapperClass);
+        wrapperClass.setSuperclass(wrappedClass);
         
         SootField newField = new SootField(wrappedClass.getShortName().toLowerCase(), wrappedClass.getType(), Modifier.PRIVATE);
         wrapperClass.addField(newField);
-        
-        SootClass cipherImplClass = Scene.v().loadClassAndSupport(cipherImpl);
+        //TODO
+        FieldAdaptation fieldAdaptation = new FieldAdaptation();
+        fieldAdaptation.setFieldType(newField.getType().toString());
+        fieldAdaptation.setSurfaceName(newField.getName());
+        taskHelper.getFieldAdaptations().add(fieldAdaptation);
         
         List<SootMethod> constructors = new ArrayList<>();
         Iterator methods = wrappedClass.getMethods().iterator();
@@ -195,38 +269,64 @@ public class WrapperFactory {
 
         // Doesn't matter which super constructor to call, as long as one gets called
         SootMethod initMethod = wrapper.createCipherInitializationMethod(wrapperClass, cipherImplClass);
-        augmentedMethods.add(initMethod.getSignature());
         
         if (complexity.equals("simple")) {
-
+            
             SootField streamImplField = new SootField(wrapper.getStreamType().replace("java.io.", "").toLowerCase(),
                     Scene.v().getRefType(wrapper.getStreamType()), Modifier.PRIVATE);
             wrapperClass.addField(streamImplField);
+            //TODO
+            FieldAdaptation streamImplFieldAdapt = new FieldAdaptation();
+            streamImplFieldAdapt.setSurfaceName(streamImplField.getName());
+            streamImplFieldAdapt.setFieldType(streamImplField.getType().toString());
+            taskHelper.getFieldAdaptations().add(streamImplFieldAdapt);
             
             SootMethod wrapMethod = wrapper.createStreamAugmentationMethod(cipherImplClass, wrapperClass);
-            augmentedMethods.add(wrapMethod.getSignature());
             
             SootMethod getStreamImplMethod = wrapper.createGetStreamImplMethod(wrapperClass);
-            augmentedMethods.add(getStreamImplMethod.getSignature());
             
             SootMethod newConstructor = wrapper.createCipherWrapperConstructorSimple(wrapperClass, newField,
                     cipherImplClass, initMethod, wrapMethod, getStreamImplMethod, streamImplField);
-            augmentedMethods.add(newConstructor.getSignature());
+            
+            ConstructorAdaptation newConstructorAdapt = new ConstructorAdaptation();
+            newConstructorAdapt.setSurfaceName(newConstructor.getName());
+            argTypes = new String[newConstructor.getParameterTypes().size()];
+            int i = 0;
+            for (Type argType : newConstructor.getParameterTypes()) {
+                argTypes[i] = argType.toString();
+                i++;
+            }
+            newConstructorAdapt.setArgTypes(argTypes);
+            taskHelper.getConstructorAdaptations().add(newConstructorAdapt);
         } else {
 
             SootField cipherField = new SootField(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, cipherImplClass.getShortName()),
                     cipherImplClass.getType(), Modifier.PRIVATE);
             wrapperClass.addField(cipherField);
             
+            FieldAdaptation cipherFieldAdapt = new FieldAdaptation();
+            cipherFieldAdapt.setSurfaceName(cipherField.getName());
+            cipherFieldAdapt.setFieldType(cipherField.getType().toString());
+            
             SootMethod newConstructor = wrapper.createCipherWrapperConstructorComplex(wrapperClass, newField,
                     constructors.get(0), initMethod, cipherField);
             augmentedMethods.add(newConstructor.getSignature());
+            
+            ConstructorAdaptation newConstructorAdapt = new ConstructorAdaptation();
+            newConstructorAdapt.setSurfaceName(newConstructor.getName());
+            argTypes = new String[newConstructor.getParameterTypes().size()];
+            int i = 0;
+            for (Type argType : newConstructor.getParameterTypes()) {
+                argTypes[i] = argType.toString();
+                i++;
+            }
+            newConstructorAdapt.setArgTypes(argTypes);
+            taskHelper.getConstructorAdaptations().add(newConstructorAdapt);
         }
         
         wrapper.setWrapperClass(wrapperClass);
         
         bareBonesWrapperPath = this.produceWrapperClassFile(wrapper);
-
         if (plugin) {
             pathToJavaSource = taskHelper.getResultsDir() + "Wrapper" + wrapper.getWrappedClass().getShortName() + ".java";
         } else {
@@ -242,7 +342,7 @@ public class WrapperFactory {
         wrapperSourceFile.setSource(producedFileSource);
         wrapperSourceFiles[1] = wrapperSourceFile;
         
-        return augmentedMethods;
+        return false;
     }
     
     public String produceWrapperClassFile(Wrapper wrapper) throws IOException {

@@ -1,7 +1,9 @@
 import copy
+import functools
 import logging
 import os
 import re
+import sys
 from collections import OrderedDict
 from enum import Enum
 from typing import List, Dict, Set, Union
@@ -78,6 +80,12 @@ class DocumentationTag(Enum):
     P2CP2 = 1
     P2CP3 = 2
     RESULT = 3
+    PREREQUISITES = 4
+
+
+class PojoizeException(BaseException):
+    def __init__(self, message):
+        super().__init__(message)
 
 
 def _java_to_python_type(input_type: ReferenceType) -> str:
@@ -87,94 +95,97 @@ def _java_to_python_type(input_type: ReferenceType) -> str:
     :return: The source code annotation string for the corresponding python type
     """
     type_name = input_type.name
-    is_list = False
-    is_set = False
-    is_map = False
+    try:
+        is_list = False
+        is_set = False
+        is_map = False
 
-    # Array check
-    if input_type.dimensions is not None:
-        array_dimensions = len(input_type.dimensions)
-        if array_dimensions == 1 and input_type.dimensions[0] is None:
-            is_list = True
-        elif array_dimensions > 1:
-            raise Exception('Unexpected!')
+        # Array check
+        if input_type.dimensions is not None:
+            array_dimensions = len(input_type.dimensions)
+            if array_dimensions == 1 and input_type.dimensions[0] is None:
+                is_list = True
+            elif array_dimensions > 1:
+                raise PojoizeException("Unsupported dimensions length!")
 
-    if type_name in _java_value_map:
-        return_type = _java_value_map[type_name]
+        if type_name in _java_value_map:
+            return_type = _java_value_map[type_name]
 
-    elif type_name == 'LinkedList' or type_name == 'ArrayList' or type_name == 'List':
-        assert (len(input_type.arguments) == 1)
-        assert (isinstance(input_type.arguments[0], TypeArgument))
-        assert (isinstance(input_type.arguments[0].type, ReferenceType))
-        inner_type_name = input_type.arguments[0].type.name
-        if inner_type_name in _java_value_map:
-            return_type = _java_value_map[input_type.arguments[0].type.name]
-        else:
-            return_type = inner_type_name
-        is_list = True
-
-    elif type_name == 'HashSet' or type_name == 'Set' or type_name == 'CopyOnWriteArraySet':
-        assert (len(input_type.arguments) == 1)
-        assert (isinstance(input_type.arguments[0], TypeArgument))
-        assert (isinstance(input_type.arguments[0].type, ReferenceType))
-        inner_type_name = input_type.arguments[0].type.name
-        if inner_type_name in _java_value_map:
-            return_type = _java_value_map[input_type.arguments[0].type.name]
-        else:
-            return_type = inner_type_name
-        is_set = True
-
-    elif type_name == 'HashMap' or type_name == 'Map':
-        assert (len(input_type.arguments) == 2)
-        assert (isinstance(input_type.arguments[0], TypeArgument))
-        assert (isinstance(input_type.arguments[0].type, ReferenceType))
-        assert (isinstance(input_type.arguments[1], TypeArgument))
-        assert (isinstance(input_type.arguments[1].type, ReferenceType))
-
-        inner_key_type_name = input_type.arguments[0].type.name
-        if inner_key_type_name in _java_value_map:
-            return_type = _java_value_map[inner_key_type_name]
-        else:
-            return_type = inner_key_type_name
-
-        inner_value_type_name = input_type.arguments[1].type.name
-        if inner_value_type_name in _java_value_map:
-            return_type = return_type + ',' + _java_value_map[inner_value_type_name]
-        else:
-            return_type = return_type + ',' + inner_value_type_name
-        is_map = True
-
-    elif type_name == 'Class':
-        if input_type.arguments is None:
-            # It is a generic class
-            return_type = 'Type'
-
-        elif len(input_type.arguments) == 1:
-            # It is a class of a specific type
-            if input_type.arguments[0].pattern_type == 'extends':
-                return_type = 'Type[' + input_type.arguments[0].type.name + ']'
-
-            elif input_type.arguments[0].pattern_type == '?':
-                return_type = 'Type'
+        elif type_name == 'LinkedList' or type_name == 'ArrayList' or type_name == 'List':
+            assert (len(input_type.arguments) == 1)
+            assert (isinstance(input_type.arguments[0], TypeArgument))
+            assert (isinstance(input_type.arguments[0].type, ReferenceType))
+            inner_type_name = input_type.arguments[0].type.name
+            if inner_type_name in _java_value_map:
+                return_type = _java_value_map[input_type.arguments[0].type.name]
             else:
-                raise Exception('Unexpected')
+                return_type = inner_type_name
+            is_list = True
+
+        elif type_name == 'HashSet' or type_name == 'Set' or type_name == 'CopyOnWriteArraySet':
+            assert (len(input_type.arguments) == 1)
+            assert (isinstance(input_type.arguments[0], TypeArgument))
+            assert (isinstance(input_type.arguments[0].type, ReferenceType))
+            inner_type_name = input_type.arguments[0].type.name
+            if inner_type_name in _java_value_map:
+                return_type = _java_value_map[input_type.arguments[0].type.name]
+            else:
+                return_type = inner_type_name
+            is_set = True
+
+        elif type_name == 'HashMap' or type_name == 'Map':
+            assert (len(input_type.arguments) == 2)
+            assert (isinstance(input_type.arguments[0], TypeArgument))
+            assert (isinstance(input_type.arguments[0].type, ReferenceType))
+            assert (isinstance(input_type.arguments[1], TypeArgument))
+            assert (isinstance(input_type.arguments[1].type, ReferenceType))
+
+            inner_key_type_name = input_type.arguments[0].type.name
+            if inner_key_type_name in _java_value_map:
+                return_type = _java_value_map[inner_key_type_name]
+            else:
+                return_type = inner_key_type_name
+
+            inner_value_type_name = input_type.arguments[1].type.name
+            if inner_value_type_name in _java_value_map:
+                return_type = return_type + ',' + _java_value_map[inner_value_type_name]
+            else:
+                return_type = return_type + ',' + inner_value_type_name
+            is_map = True
+
+        elif type_name == 'Class':
+            if input_type.arguments is None:
+                # It is a generic class
+                return_type = 'Type'
+
+            elif len(input_type.arguments) == 1:
+                # It is a class of a specific type
+                if input_type.arguments[0].pattern_type == 'extends':
+                    return_type = 'Type[' + input_type.arguments[0].type.name + ']'
+
+                elif input_type.arguments[0].pattern_type == '?':
+                    return_type = 'Type'
+                else:
+                    raise PojoizeException('Unsupported class declaration pattern!')
+            else:
+                raise PojoizeException('Unsupported argument length!')
+
         else:
-            raise Exception('Unexpected')
+            return_type = input_type.name
 
-    else:
-        return_type = input_type.name
+        if is_list and return_type != 'bytes':
+            return 'List[' + return_type + ']'
 
-    if is_list and return_type != 'bytes':
-        return 'List[' + return_type + ']'
+        elif is_set:
+            return 'Set[' + return_type + ']'
 
-    elif is_set:
-        return 'Set[' + return_type + ']'
+        elif is_map:
+            return 'Dict[' + return_type + ']'
 
-    elif is_map:
-        return 'Dict[' + return_type + ']'
-
-    else:
-        return return_type
+        else:
+            return return_type
+    except PojoizeException as e:
+        raise PojoizeException(type_name + ': ' + str(e)).with_traceback(sys.exc_info()[2])
 
 
 def _is_uuid(s: str) -> bool:
@@ -216,6 +227,9 @@ def _get_cps(declaration: Declaration) -> List[DocumentationTag]:
         elif a.name == 'Result':
             apis.append(DocumentationTag.RESULT)
 
+        elif a.name == 'Prerequisites':
+            apis.append(DocumentationTag.PREREQUISITES)
+
     return apis
 
 
@@ -250,42 +264,54 @@ class FieldData:
 
         if (include_private or 'private' not in declaration.modifiers) and 'transient' not in declaration.modifiers:
             if 'static' in declaration.modifiers:
-                raise Exception('Static fields not currently supported!')
+                raise PojoizeException('Static fields not currently supported!')
 
             assert (len(declaration.declarators) == 1)
             assert (isinstance(declaration.declarators[0], VariableDeclarator))
             field_name = declaration.declarators[0].name
 
-            if isinstance(declaration.type, ReferenceType):
-                field_type = _java_to_python_type(declaration.type)
+            try:
 
-            elif isinstance(declaration.type, BasicType):
-                field_type = _java_value_map[declaration.type.name]
+                if isinstance(declaration.type, ReferenceType):
+                    field_type = _java_to_python_type(declaration.type)
 
-            else:
-                raise Exception('Unexpected type "' + str(declaration.type) + "'!")
+                elif isinstance(declaration.type, BasicType):
+                    field_type = _java_value_map[declaration.type.name]
 
-            unstable = _get_unstable(declaration=declaration)
+                else:
+                    raise PojoizeException('Unsupported type "' + str(declaration.type) + "'!")
 
-            initializer = declaration.declarators[0].initializer  # type: ClassCreator
-            if initializer is None or ignore_default_param_values:
-                field_value = None
+                unstable = _get_unstable(declaration=declaration)
 
-            elif isinstance(initializer, Literal):
-                field_value = initializer.value
+                initializer = declaration.declarators[0].initializer  # type: ClassCreator
+                if initializer is None or ignore_default_param_values:
+                    field_value = None
 
-            else:
-                raise Exception('Only Primitive and empty constructor initializers currently supported!')
+                elif isinstance(initializer, Literal):
+                    field_value = initializer.value
 
-            assert (field_name is not None)
-            assert (field_type is not None)
+                elif isinstance(initializer, MemberReference):
+                    field_value = initializer.qualifier + '.' + initializer.member
 
-            description = _get_description(declaration=declaration)
+                elif isinstance(initializer, ClassCreator) and initializer.type.name == 'LinkedList':
+                    _logger.warning(
+                        'Ignoring default value for "' + field_name + '" with type "' + initializer.type.name + '"')
+                    field_value = None
 
-            return FieldData(name=field_name, type=field_type,
-                             description=description,
-                             apis=_get_cps(declaration=declaration),
-                             unstable=unstable, value=field_value)
+                else:
+                    raise PojoizeException('Only Primitive and empty constructor initializers currently supported!')
+
+                assert (field_name is not None)
+                assert (field_type is not None)
+
+                description = _get_description(declaration=declaration)
+
+                return FieldData(name=field_name, type=field_type,
+                                 description=description,
+                                 apis=_get_cps(declaration=declaration),
+                                 unstable=unstable, value=field_value)
+            except PojoizeException as e:
+                raise PojoizeException(field_name + ': ' + str(e)).with_traceback(sys.exc_info()[2])
 
     def all_types(self) -> List[str]:
         types = list()  # type: List[str]
@@ -328,7 +354,8 @@ class FieldData:
                 unprocessed_inner = True
 
             elif t.count(',') > 1:
-                raise Exception("No more than two generic types are supported for variables at this time!")
+                raise PojoizeException(
+                    self.name + ': No more than two generic types are supported for variables at this time!')
 
             else:
                 if t not in types:
@@ -351,7 +378,8 @@ class AbstractPojoBuilderConfig:
                  inheritance: List[str] = None,
                  imports: Dict[str, str] = None,
                  wildcard_imports: List[str] = None,
-                 nested_class_configs: Dict[str, "AbstractPojoBuilderConfig"] = None):
+                 nested_class_configs: Dict[str, "AbstractPojoBuilderConfig"] = None,
+                 parent_class_config: "AbstractPojoBuilderConfig" = None):
         """
         :param package: The package the class should be placed in
         :param class_name: The name of the class
@@ -360,6 +388,7 @@ class AbstractPojoBuilderConfig:
         :param imports: Imports th class needs
         :param wildcard_imports: Wildcard java imports (ex. "imort java.lang.*")
         :param nested_class_configs: configurations for nested classes
+        :param parent_class_config: Configuration for the parent class if it is nested
         """
         self.package = package
         self.class_name = class_name
@@ -372,6 +401,7 @@ class AbstractPojoBuilderConfig:
         self.wildcard_imports = wildcard_imports if wildcard_imports is not None else list()
         self.nested_class_configs = \
             nested_class_configs if nested_class_configs is not None else dict()  # type: Dict[str, AbstractPojoBuilderConfig]
+        self.parent_class_config = parent_class_config
 
     def add_imports_by_type_strings(self, t: List[str], path_classnames: Dict[str, Set[str]],
                                     superclass_imports: Dict[str, str] = None) -> bool:
@@ -452,7 +482,7 @@ class AbstractPojoBuilderConfig:
                                 changed = True
 
                 if not success:
-                    raise Exception('Could not match up an import for type "' + t + "'!")
+                    raise PojoizeException(t + ': Could not match up an import!')
 
         return changed
 
@@ -469,7 +499,8 @@ class PojoClassBuilderConfig(AbstractPojoBuilderConfig):
                  inheritance: List[str] = None,
                  imports: Dict[str, str] = None,
                  wildcard_imports: List[str] = None,
-                 nested_class_configs: Dict[str, AbstractPojoBuilderConfig] = None):
+                 nested_class_configs: Dict[str, AbstractPojoBuilderConfig] = None,
+                 parent_class_config: AbstractPojoBuilderConfig = None):
         """
         :param package: The package the class should be placed in
         :param class_name: The name of the class
@@ -482,7 +513,8 @@ class PojoClassBuilderConfig(AbstractPojoBuilderConfig):
         """
         super().__init__(package=package, class_name=class_name, fields=fields, description=description,
                          unstable=unstable, apis=apis, inheritance=inheritance, imports=imports,
-                         wildcard_imports=wildcard_imports, nested_class_configs=nested_class_configs)
+                         wildcard_imports=wildcard_imports, nested_class_configs=nested_class_configs,
+                         parent_class_config=parent_class_config)
         self.inherited_fields = inherited_fields if inherited_fields is not None else list()  # type: List[FieldData]
 
         # Add Serializable since very generated python object inherits it to aid serialization
@@ -515,37 +547,39 @@ class PojoClassBuilderConfig(AbstractPojoBuilderConfig):
 
     def swallow_superclass_typename(self, superclass_name: str, path_classnames: Dict[str, Set[str]],
                                     path_classes: Dict[str, Set[AbstractPojoBuilderConfig]]) -> bool:
+        try:
+            # Add the import for that class if necessary
+            changed = self.add_imports_by_type_strings(t=[superclass_name], path_classnames=path_classnames)
 
-        # Add the import for that class if necessary
-        changed = self.add_imports_by_type_strings(t=[superclass_name], path_classnames=path_classnames)
+            # And if it is not a built in
+            if superclass_name not in _built_ins:
+                # Get the configuration from the path_classdata
+                superclass = next(
+                    (x for x in path_classes[self.imports[superclass_name].replace('pymmortals.generated.', '').replace(
+                        '.' + superclass_name.lower(), '')] if x.class_name == superclass_name),
+                    None)
 
-        # And if it is not a built in
-        if superclass_name not in _built_ins:
-            # Get the configuration from the path_classdata
-            superclass = next(
-                (x for x in path_classes[self.imports[superclass_name].replace('pymmortals.generated.', '').replace(
-                    '.' + superclass_name.lower(), '')] if x.class_name == superclass_name),
-                None)
+                # Assert it is also a class and not an enum
+                assert isinstance(superclass, PojoClassBuilderConfig), 'A Class cannot inherit from an Enum!'
 
-            # Assert it is also a class and not an enum
-            assert isinstance(superclass, PojoClassBuilderConfig), 'A Class cannot inherit from an Enum!'
-
-            # And for each superclass field
-            for field in superclass.fields:
-                # Add it to the object
-                changed = self.add_inherited_field(field=field, path_classnames=path_classnames,
-                                                   superclass_imports=superclass.imports) or changed
-
-            # And for each superclass inherited field
-            for field in superclass.inherited_fields:
-                # If the import has been added to the superclass
-
-                if field.core_type() in superclass.imports or field.core_type() in import_type_omissions:
+                # And for each superclass field
+                for field in superclass.fields:
                     # Add it to the object
                     changed = self.add_inherited_field(field=field, path_classnames=path_classnames,
                                                        superclass_imports=superclass.imports) or changed
 
-        return changed
+                # And for each superclass inherited field
+                for field in superclass.inherited_fields:
+                    # If the import has been added to the superclass
+
+                    if field.core_type() in superclass.imports or field.core_type() in import_type_omissions:
+                        # Add it to the object
+                        changed = self.add_inherited_field(field=field, path_classnames=path_classnames,
+                                                           superclass_imports=superclass.imports) or changed
+
+            return changed
+        except PojoizeException as e:
+            raise PojoizeException(superclass_name + ': ' + str(e)).with_traceback(sys.exc_info()[2])
 
 
 class PojoEnumBuilderConfig(AbstractPojoBuilderConfig):
@@ -561,7 +595,8 @@ class PojoEnumBuilderConfig(AbstractPojoBuilderConfig):
                  inheritance: List[str] = None,
                  imports: Dict[str, str] = None,
                  wildcard_imports: List[str] = None,
-                 nested_class_configs: Dict[str, AbstractPojoBuilderConfig] = None):
+                 nested_class_configs: Dict[str, AbstractPojoBuilderConfig] = None,
+                 parent_class_config: AbstractPojoBuilderConfig = None):
         """
         :param package: The package the class should be placed in
         :param class_name: The name of the class
@@ -574,7 +609,8 @@ class PojoEnumBuilderConfig(AbstractPojoBuilderConfig):
         """
         super().__init__(package=package, class_name=class_name, fields=fields, description=description,
                          unstable=unstable, apis=apis, inheritance=inheritance, imports=imports,
-                         nested_class_configs=nested_class_configs, wildcard_imports=wildcard_imports)
+                         nested_class_configs=nested_class_configs, parent_class_config=parent_class_config,
+                         wildcard_imports=wildcard_imports)
         self.instance_labels = instance_labels  # type: List[str]
         self.instance_parameter_fields = instance_parameter_fields  # type: Dict[str, List[FieldData]]
 
@@ -639,248 +675,265 @@ class Pojoizer:
                             _logger.warning('Ignoring file "' + file_path + '"')
 
     def load_type_declaration(self, t: TypeDeclaration, class_path: str, class_imports: Dict[str, str],
-                              class_wildcard_imports: List[str]) -> AbstractPojoBuilderConfig:
+                              class_wildcard_imports: List[str],
+                              parent_class_config: AbstractPojoBuilderConfig = None) -> AbstractPojoBuilderConfig:
         assert self.conversion_method == ConversionMethod.VARS
 
-        inheritance = list()  # type: List[str]
-
-        fields = list()  # type: List[FieldData]
-        apis = None  # type: List[DocumentationTag]
-        nested_classes = dict()  # type: Dict[str, AbstractPojoBuilderConfig]
-        unstable = False
-
-        if 'extends' in t.attrs and t.extends is not None:
-            if isinstance(t.extends, list):
-                assert len(t.extends) == 1
-                assert isinstance(t.extends[0], ReferenceType)
-                val = t.extends[0].name
-                if val in _inheritance_type_map:
-                    val = _inheritance_type_map[val]
-                inheritance.append(val)
-            else:
-                assert isinstance(t.extends, ReferenceType)
-                val = t.extends.name
-                if val in _inheritance_type_map:
-                    val = _inheritance_type_map[val]
-                inheritance.append(val)
-
-        # if 'implements' in t.attrs and t.implements is not None:
-        #     for i in t.implements:
-        #         val = i.name
-        #         if val in _java_value_map:
-        #             val = _java_value_map[val]
-        #         inheritance.append(val)
-
         class_name = t.name
-        class_description = None
-        if self.do_generate_markdown:
-            class_description = _get_description(t)
-            apis = _get_cps(t)
-            unstable = _get_unstable(t)
 
-        # if it is an enum
-        if isinstance(t, EnumDeclaration):
-            instance_labels = list()  # type: List[str]
-            instance_fields = OrderedDict()  # type: Dict[str, List[FieldData]]
-            param_names = list()  # type: List[str]
-            param_types = list()  # type: List[str]
+        try:
 
-            # Search the declarations for the constructor and extract the parameter types from it
-            for declaration in t.body.declarations:
+            inheritance = list()  # type: List[str]
 
-                # Also extract the field information to match it with the parameters and any additional metadata
-                if isinstance(declaration, FieldDeclaration):
-                    fields.append(FieldData.from_field_declaration(
-                        declaration=declaration,
-                        include_private=False,
-                        ignore_default_param_values=self.ignore_default_param_values))
+            fields = dict()  # type: List[str,FieldData]
+            apis = None  # type: List[DocumentationTag]
+            nested_classes = dict()  # type: Dict[str, AbstractPojoBuilderConfig]
+            unstable = False
 
-                elif isinstance(declaration, ConstructorDeclaration):
-                    param_type = None
-
-                    for param in declaration.parameters:
-                        assert (isinstance(param, FormalParameter))
-                        param_name = param.name
-                        if isinstance(param.type, ReferenceType):
-                            param_type = _java_to_python_type(param.type)
-
-                        elif isinstance(param.type, BasicType):
-                            param_type = _java_value_map[param.type.name]
-
-                        assert (param_name is not None)
-                        assert (param_type is not None)
-                        param_names.append(param_name)
-                        param_types.append(param_type)
-
-                elif isinstance(declaration, MethodDeclaration):
-                    _logger.warning('Ignoring method "' + declaration.name + '" in Enum "' + class_name + '"')
-
+            if 'extends' in t.attrs and t.extends is not None:
+                if isinstance(t.extends, list):
+                    assert len(t.extends) == 1
+                    assert isinstance(t.extends[0], ReferenceType)
+                    val = t.extends[0].name
+                    if val in _inheritance_type_map:
+                        val = _inheritance_type_map[val]
+                    inheritance.append(val)
                 else:
-                    raise Exception('Unexpected parameter type ' + declaration)
+                    assert isinstance(t.extends, ReferenceType)
+                    val = t.extends.name
+                    if val in _inheritance_type_map:
+                        val = _inheritance_type_map[val]
+                    inheritance.append(val)
 
-            # Validate each parameter name has a matching field
-            # after a simple attempt a normalization
-            pn = list()  # type: List[str]
-            for n in param_names:
-                if n.startswith("_"):
-                    pn.append(n[1:])
-                else:
-                    pn.append(n)
+            # if 'implements' in t.attrs and t.implements is not None:
+            #     for i in t.implements:
+            #         val = i.name
+            #         if val in _java_value_map:
+            #             val = _java_value_map[val]
+            #         inheritance.append(val)
 
-            param_names = pn
+            class_description = None
+            if self.do_generate_markdown:
+                class_description = _get_description(t)
+                apis = _get_cps(t)
+                unstable = _get_unstable(t)
 
-            assert (set(param_names).issubset(set([x.name for x in fields])))
+            # if it is an enum
+            if isinstance(t, EnumDeclaration):
+                instance_labels = list()  # type: List[str]
+                instance_fields = OrderedDict()  # type: Dict[str, List[FieldData]]
+                param_names = list()  # type: List[str]
+                param_types = list()  # type: List[str]
 
-            # Validate each parameter and field type match
-            for i in range(0, len(param_names)):
-                pn = param_names[i]
-                pt = param_types[i]
-                assert (pt == next((x.raw_type for x in fields if x.name == pn), None))
+                # Search the declarations for the constructor and extract the parameter types from it
+                for declaration in t.body.declarations:
 
-            # Get the label and values for each enum instance
-            for constant in t.body.constants:
-                instance_field_values = list()  # type: List[FieldData]
+                    # Also extract the field information to match it with the parameters and any additional metadata
+                    if isinstance(declaration, FieldDeclaration):
+                        fd = FieldData.from_field_declaration(
+                            declaration=declaration,
+                            include_private=False,
+                            ignore_default_param_values=self.ignore_default_param_values)
+                        fields[fd.name] = fd
 
-                assert (isinstance(constant, EnumConstantDeclaration))
-                instance_name = constant.name
+                    elif isinstance(declaration, ConstructorDeclaration):
+                        param_type = None
 
-                if constant.arguments is not None and len(constant.arguments) > 0:
+                        for param in declaration.parameters:
+                            assert (isinstance(param, FormalParameter))
+                            param_name = param.name
+                            if isinstance(param.type, ReferenceType):
+                                param_type = _java_to_python_type(param.type)
 
-                    for idx in range(len(constant.arguments)):
-                        arg = constant.arguments[idx]
-                        instance_param_field = fields[idx].clone()
+                            elif isinstance(param.type, BasicType):
+                                param_type = _java_value_map[param.type.name]
 
-                        if isinstance(arg, Literal):
-                            if arg.value == 'null':
-                                instance_param_field.value = 'None'
-                            else:
-                                instance_param_field.value = arg.value
+                            assert (param_name is not None)
+                            assert (param_type is not None)
+                            param_names.append(param_name)
+                            param_types.append(param_type)
 
-                        elif isinstance(arg, MemberReference):
-                            instance_param_field.value = arg.qualifier + '.' + arg.member
-
-                        elif isinstance(arg, ClassReference):
-                            assert (isinstance(arg.type, ReferenceType))
-                            instance_param_field.value = _java_to_python_type(arg.type)
-
-                        else:
-                            raise Exception('Unexpected argument type ' + arg)
-
-                        instance_field_values.append(instance_param_field)
-
-                    instance_fields[instance_name] = instance_field_values
-
-                assert (instance_name is not None)
-                instance_labels.append(instance_name)
-
-            ccc = PojoEnumBuilderConfig(
-                package=class_path,
-                class_name=class_name,
-                instance_labels=instance_labels,
-                fields=fields,
-                description=class_description,
-                unstable=unstable,
-                apis=apis,
-                instance_parameter_fields=instance_fields,
-                inheritance=inheritance,
-                imports=class_imports,
-                wildcard_imports=class_wildcard_imports)
-
-            self.path_classes[class_path].add(ccc)
-            self.path_classnames[class_path].add(ccc.class_name)
-            return ccc
-
-        elif isinstance(t, ClassDeclaration):
-            ignore = len([k for k in t.annotations if k.name == 'Ignore']) > 0
-            if ignore:
-                _logger.warning('Ignoring "@Ignore"ed class ' + class_path + '.' + class_name)
-
-            else:
-                for declaration in t.body:
-                    if any([k for k in _types_to_ignore if isinstance(declaration, k)]):
-                        # Ignore these types for now
-                        pass
-
-                    elif (isinstance(declaration, List) and len(declaration) == 1 and
-                          any([k for k in _types_to_ignore if isinstance(declaration[0], k)])):
-                        # Ignore these types for now
-                        pass
-
-                    elif isinstance(declaration, FieldDeclaration):
-                        if 'static' in declaration.modifiers:
-                            _logger.warning(
-                                "Ignoring static variable of type '" + declaration.type.name + "' in class '" + class_path + '.' + class_name + "'")
-                        else:
-                            field = FieldData.from_field_declaration(
-                                declaration=declaration, include_private=True,
-                                ignore_default_param_values=self.ignore_default_param_values)
-                            if field is not None:
-                                fields.append(field)
-
-                    elif isinstance(declaration, ClassDeclaration):
-                        cp = class_path + '-' + class_name
-                        if cp not in self.path_classnames:
-                            self.path_classnames[cp] = set()
-                        if cp not in self.path_classes:
-                            self.path_classes[cp] = set()
-                        nested_class = self.load_type_declaration(t=declaration,
-                                                                  class_path=cp,
-                                                                  class_imports=class_imports,
-                                                                  class_wildcard_imports=class_wildcard_imports)
-                        nested_classes[nested_class.class_name] = nested_class
+                    elif isinstance(declaration, MethodDeclaration):
+                        _logger.warning('Ignoring method "' + declaration.name + '" in Enum "' + class_name + '"')
 
                     else:
-                        raise Exception(
-                            'Unexpected type "' + str(declaration) +
-                            '" for class ' + class_path + '.' + class_name + '!')
+                        raise PojoizeException('Unsupported parameter type ' + declaration)
 
-                ccc = PojoClassBuilderConfig(
+                # Validate each parameter name has a matching field
+                # after a simple attempt a normalization
+                pn = list()  # type: List[str]
+                for n in param_names:
+                    if n.startswith("_"):
+                        pn.append(n[1:])
+                    else:
+                        pn.append(n)
+
+                param_names = pn
+
+                assert (set(param_names).issubset(set([x.name for x in fields.values()])))
+
+                # Validate each parameter and field type match
+                for i in range(0, len(param_names)):
+                    pn = param_names[i]
+                    pt = param_types[i]
+                    assert (pt == next((x.raw_type for x in fields.values() if x.name == pn), None))
+
+                # Get the label and values for each enum instance
+                for constant in t.body.constants:
+                    instance_field_values = dict()  # type: Dict[str, FieldData]
+
+                    assert (isinstance(constant, EnumConstantDeclaration))
+                    instance_name = constant.name
+
+                    if constant.arguments is not None and len(constant.arguments) > 0:
+                        for idx in range(len(constant.arguments)):
+                            arg = constant.arguments[idx]
+                            instance_param_field = fields[param_names[idx]].clone()
+
+                            if isinstance(arg, Literal):
+                                if arg.value == 'null':
+                                    instance_param_field.value = 'None'
+                                else:
+                                    instance_param_field.value = arg.value
+
+                            elif isinstance(arg, MemberReference):
+                                instance_param_field.value = arg.qualifier + '.' + arg.member
+
+                            elif isinstance(arg, ClassReference):
+                                assert (isinstance(arg.type, ReferenceType))
+                                instance_param_field.value = _java_to_python_type(arg.type)
+
+                            else:
+                                raise PojoizeException('Unsupported argument type ' + arg)
+
+                            instance_field_values[instance_param_field.name] = instance_param_field
+
+                        ordered_field_list = list()
+                        for identifier in sorted(instance_field_values.keys()):
+                            ordered_field_list.append(instance_field_values[identifier])
+
+                        instance_fields[instance_name] = ordered_field_list
+
+                    assert (instance_name is not None)
+                    instance_labels.append(instance_name)
+
+                ccc = PojoEnumBuilderConfig(
                     package=class_path,
                     class_name=class_name,
-                    fields=fields,
+                    instance_labels=instance_labels,
+                    fields=list(fields.values()),
                     description=class_description,
                     unstable=unstable,
                     apis=apis,
-                    inherited_fields=None,
+                    instance_parameter_fields=instance_fields,
                     inheritance=inheritance,
                     imports=class_imports,
-                    wildcard_imports=class_wildcard_imports,
-                    nested_class_configs=nested_classes
-                )
+                    wildcard_imports=class_wildcard_imports)
 
                 self.path_classes[class_path].add(ccc)
                 self.path_classnames[class_path].add(ccc.class_name)
                 return ccc
 
-        elif isinstance(t, InterfaceDeclaration):
-            ccc = PojoClassBuilderConfig(
-                package=class_path,
-                class_name=class_name,
-                fields=list(),
-                description=None,
-                unstable=unstable,
-                apis=apis,
-                inheritance=inheritance,
-                imports=class_imports,
-                wildcard_imports=class_wildcard_imports
-            )
+            elif isinstance(t, ClassDeclaration):
+                ignore = len([k for k in t.annotations if k.name == 'Ignore']) > 0
+                if ignore:
+                    _logger.warning('Ignoring "@Ignore"ed class ' + class_path + '.' + class_name)
 
-            self.path_classes[class_path].add(ccc)
-            self.path_classnames[class_path].add(ccc.class_name)
-            return ccc
+                else:
+                    for declaration in t.body:
+                        if any([k for k in _types_to_ignore if isinstance(declaration, k)]):
+                            # Ignore these types for now
+                            pass
 
-        elif not isinstance(t, AnnotationDeclaration):
-            raise Exception('Unexpected type declaration "' + str(t) + '"!')
+                        elif (isinstance(declaration, List) and len(declaration) == 1 and
+                              any([k for k in _types_to_ignore if isinstance(declaration[0], k)])):
+                            # Ignore these types for now
+                            pass
+
+                        elif isinstance(declaration, FieldDeclaration):
+                            if 'static' in declaration.modifiers:
+                                _logger.warning(
+                                    "Ignoring static variable of type '" + declaration.type.name + "' in class '" + class_path + '.' + class_name + "'")
+                            else:
+                                field = FieldData.from_field_declaration(
+                                    declaration=declaration, include_private=True,
+                                    ignore_default_param_values=self.ignore_default_param_values)
+                                if field is not None:
+                                    fields[field.name] = field
+
+                        elif isinstance(declaration, ClassDeclaration):
+                            cp = class_path + '.' + class_name.lower()
+                            if cp not in self.path_classnames:
+                                self.path_classnames[cp] = set()
+                            if cp not in self.path_classes:
+                                self.path_classes[cp] = set()
+                            nested_class = self.load_type_declaration(t=declaration,
+                                                                      class_path=cp,
+                                                                      class_imports=class_imports,
+                                                                      class_wildcard_imports=class_wildcard_imports)
+                            nested_classes[nested_class.class_name] = nested_class
+
+                        else:
+                            raise PojoizeException(
+                                'Unsupported type "' + str(declaration) + '!')
+
+                    ccc = PojoClassBuilderConfig(
+                        package=class_path,
+                        class_name=class_name,
+                        fields=list(fields.values()),
+                        description=class_description,
+                        unstable=unstable,
+                        apis=apis,
+                        inherited_fields=None,
+                        inheritance=inheritance,
+                        imports=class_imports,
+                        wildcard_imports=class_wildcard_imports,
+                        nested_class_configs=nested_classes
+                    )
+
+                    self.path_classes[class_path].add(ccc)
+                    self.path_classnames[class_path].add(ccc.class_name)
+                    for nested_class_config in nested_classes.values():
+                        nested_class_config.parent_class_config = ccc
+                    return ccc
+
+            elif isinstance(t, InterfaceDeclaration):
+                ccc = PojoClassBuilderConfig(
+                    package=class_path,
+                    class_name=class_name,
+                    fields=list(),
+                    description=None,
+                    unstable=unstable,
+                    apis=apis,
+                    inheritance=inheritance,
+                    imports=class_imports,
+                    wildcard_imports=class_wildcard_imports
+                )
+
+                self.path_classes[class_path].add(ccc)
+                self.path_classnames[class_path].add(ccc.class_name)
+                for nested_class_config in nested_classes.values():
+                    nested_class_config.parent_class_config = ccc
+                return ccc
+
+            elif not isinstance(t, AnnotationDeclaration):
+                raise PojoizeException('Unsupported type declaration "' + str(t) + '"!')
+
+        except PojoizeException as e:
+            raise PojoizeException(class_path + '.' + class_name + ': ' + str(e)).with_traceback(sys.exc_info()[2])
 
     def load_file(self, filepath):
-        if self.conversion_method == ConversionMethod.VARS:
-            self._load_file_vars(filepath=filepath)
+        try:
+            if self.conversion_method == ConversionMethod.VARS:
+                self._load_file_vars(filepath=filepath)
 
-        elif self.conversion_method == ConversionMethod.GETS:
-            self._load_file_gets(filepath=filepath)
+            elif self.conversion_method == ConversionMethod.GETS:
+                self._load_file_gets(filepath=filepath)
 
-        else:
-            raise Exception('Unexpected conversion method "' + str(self.conversion_method) + '"!')
+            else:
+                raise PojoizeException('Unexpected conversion method "' + str(self.conversion_method) + '"!')
+        except PojoizeException as e:
+            raise PojoizeException(filepath + ': ' + str(e)).with_traceback(sys.exc_info()[2])
 
     def _load_file_gets(self, filepath):
         # parse the ast
@@ -890,7 +943,7 @@ class Pojoizer:
             return
 
         elif len(tree.types) != 1:
-            raise Exception('Cannot support multiple types!')
+            raise PojoizeException('Cannot support multiple types!')
 
         class_path = tree.package.name
         class_imports = OrderedDict()  # type: Dict[str, str]
@@ -982,7 +1035,7 @@ class Pojoizer:
                         _logger.warning('Ignoring method "' + declaration.name + '" in Enum "' + class_name + '"')
 
                     else:
-                        raise Exception('Unexpected parameter type ' + declaration)
+                        raise PojoizeException('Unsupported parameter type ' + declaration)
 
                 # Validate each parameter name has a matching field
                 # after a simple attempt a normalization
@@ -1003,6 +1056,15 @@ class Pojoizer:
                     pt = param_types[i]
                     assert (pt == next((x.raw_type for x in fields if x.name == pn), None))
 
+                # Build a map from the original order to the alphabetical order for the parameter declarations
+                field_index_remapping = dict()  # type: Dict[int, int]
+                for idx in range(len(ordered_param_name_list)):
+                    param_name = ordered_param_name_list[idx]
+                    for idx2 in range(len(fields)):
+                        field = fields[idx2]
+                        if param_name == field.name:
+                            field_index_remapping[idx] = idx2
+
                 # Get the label and values for each enum instance
                 for constant in t.body.constants:
                     instance_field_values = list()  # type: List[FieldData]
@@ -1014,7 +1076,7 @@ class Pojoizer:
 
                         for idx in range(len(constant.arguments)):
                             arg = constant.arguments[idx]
-                            instance_param_field = fields[idx].clone()
+                            instance_param_field = fields[field_index_remapping[idx]].clone()
 
                             if isinstance(arg, Literal):
                                 if arg.value == 'null':
@@ -1030,7 +1092,7 @@ class Pojoizer:
                                 instance_param_field.value = _java_to_python_type(arg.type)
 
                             else:
-                                raise Exception('Unexpected argument type ' + arg)
+                                raise PojoizeException('Unsupported argument type ' + arg)
 
                             instance_field_values.append(instance_param_field)
 
@@ -1084,11 +1146,10 @@ class Pojoizer:
                                         + class_name + '.' + declaration.name)
 
                                 else:
-                                    raise Exception('Unexpected non-ignored type "'
-                                                    + str(declaration) + '" for file "' + filepath + ''"!")
+                                    raise PojoizeException('Unsupported non-ignored type "' + str(declaration) + '!')
 
-                            raise Exception(
-                                'Unexpected type "' + str(declaration) + '" for file "' + filepath + ''"!")
+                            raise PojoizeException(
+                                'Unsupported type "' + str(declaration) + '!')
 
                     ccc = PojoClassBuilderConfig(
                         package=class_path,
@@ -1123,7 +1184,7 @@ class Pojoizer:
                 self.path_classnames[class_path].add(ccc.class_name)
 
             elif not isinstance(t, AnnotationDeclaration):
-                raise Exception('Unexpected type declaration "' + str(t) + '"!')
+                raise PojoizeException('Unsupported type declaration "' + str(t) + '"!')
 
     def _load_file_vars(self, filepath):
         # parse the ast
@@ -1133,7 +1194,7 @@ class Pojoizer:
             return
 
         elif len(tree.types) != 1:
-            raise Exception('Cannot support multiple types!')
+            raise PojoizeException('Cannot support multiple types!')
 
         class_path = tree.package.name
         class_imports = OrderedDict()  # type:Dict[str, str]
@@ -1196,7 +1257,8 @@ class Pojoizer:
                                         if f.value is not 'None':
                                             config.add_imports_by_type_strings([f.value], self.path_classnames)
                                     elif '[Type' in f.raw_type or 'Type]' in f.raw_type:
-                                        raise Exception("Pojoizing of nested types currently not supported!")
+                                        raise PojoizeException(
+                                            config.class_name + ': Pojoizing of nested types currently not supported!')
 
                     # Otherwise, if it is a class builder
                     elif isinstance(config, PojoClassBuilderConfig):
@@ -1253,50 +1315,101 @@ class Pojoizer:
                         c.inherited_fields.sort(key=lambda x: x.name)
 
                 elif isinstance(c, PojoEnumBuilderConfig):
-                    for p in c.instance_parameter_fields.values():  # type: List[FieldData]
-                        p.sort(key=lambda x: x.name)
+                    # Already Sorted
+                    pass
 
                 else:
                     raise Exception('Unexpected type "' + c.__class__.__name__ + '"!')
 
-        # Then remove unnecessary imports
+        # Then update imports and remove unnecessary imports
         for k in self.path_classes.keys():
-            for config in self.path_classes[k]:
-                types = set(config.inheritance)  # type: Set[str]
-                for field in config.fields:
-                    types = types.union(field.all_types())
+            for cfg in self.path_classes[k]:
+                path_class_types = set(cfg.inheritance)  # type: Set[str]
 
-                if isinstance(config, PojoClassBuilderConfig):
-                    for field in config.inherited_fields:
-                        types = types.union(field.all_types())
+                def combine_imports(config: AbstractPojoBuilderConfig, types: Set[str]):
+                    for field in config.fields:
+                        types.update(field.all_types())
 
-                if isinstance(config, PojoEnumBuilderConfig):
-                    if config.fields is not None and len(config.fields) > 0:
-                        types.add('FrozenSet')
-                        for field in config.fields:
-                            types = types.union(field.all_types())
+                    if isinstance(config, PojoClassBuilderConfig):
+                        for field in config.inherited_fields:
+                            types.update(field.all_types())
 
-                        for values in config.instance_parameter_fields.values():
-                            for f in values:
-                                if f.raw_type == 'Type':
-                                    types.add(f.value)
-                                elif '[Type' in f.raw_type or 'Type]' in f.raw_type:
-                                    raise Exception("Pojoizing of nested types currently not supported!")
-                                    # if enum which returns stuff with params add frozen set and do not remove
-                                    # if value.
+                    if isinstance(config, PojoEnumBuilderConfig):
+                        if config.fields is not None and len(config.fields) > 0:
+                            types.add('FrozenSet')
+                            for field in config.fields:
+                                types.update(field.all_types())
 
-                import_keys = [k for k in config.imports.keys()]
+                            for values in config.instance_parameter_fields.values():
+                                for f in values:
+                                    if f.raw_type == 'Type':
+                                        types.add(f.value)
+                                    elif '[Type' in f.raw_type or 'Type]' in f.raw_type:
+                                        raise PojoizeException(
+                                            config.class_name + ": Pojoizing of nested types currently not supported!")
+                                        # if enum which returns stuff with params add frozen set and do not remove
+                                        # if value.
+
+                combine_imports(cfg, path_class_types)
+
+                for ncc in cfg.nested_class_configs.values():
+                    combine_imports(ncc, path_class_types)
+                    cfg.imports.update(ncc.imports)
+
+                import_keys = [k for k in cfg.imports.keys()]
+
                 for i in import_keys:
-                    if i not in types:
-                        config.imports.pop(i)
+                    if i not in path_class_types and i in cfg.imports:
+                        cfg.imports.pop(i)
+                    elif i in cfg.nested_class_configs.keys():
+                        cfg.imports.pop(i)
 
-    def _construct_class(self, config: AbstractPojoBuilderConfig, indentation_level: int):
+    def _construct_class(self, config: AbstractPojoBuilderConfig, indentation_level: int, ignore_nested: bool = False):
         lines = list()  # type: List[str]
 
         def lappend(line: str, ind_level: int = 0, target_list: List = None):
             if target_list is None:
                 target_list = lines
             target_list.append((indentation_level + ind_level) * _ind + line + '\n')
+
+        # If there are nested classes we need to ensure all classes are defined so that none forward reference another
+        if len(config.nested_class_configs) > 0 and not ignore_nested:
+            # Put them all in one dictionary
+            configs = config.nested_class_configs.copy()
+            configs[config.class_name] = config
+
+            # Create a comparator for sorting
+            def compare(key0: str, key1: str):
+                cfg0 = configs[key0]
+                cfg1 = configs[key1]
+
+                for fld in cfg0.fields:
+                    if cfg1.class_name in fld.all_types():
+                        return 1
+
+                for fld in cfg1.fields:
+                    if cfg0.class_name in fld.all_types():
+                        return -1
+
+                if key0 == key1:
+                    return 0
+
+                if key0 < key1:
+                    return -1
+                if key0 > key1:
+                    return 1
+
+            # Sort the keys
+            keys = sorted(configs.keys(), key=functools.cmp_to_key(compare))
+
+            # Add them in the appropriate order
+            for key in keys:
+                if len(lines) > 0:
+                    lines.append('\n\n')
+                lines = lines + self._construct_class(configs[key], 0, True)
+
+            # And then return the lines
+            return lines
 
         # Class Declaration Line
         lappend('# noinspection PyPep8Naming')
@@ -1311,11 +1424,6 @@ class Pojoizer:
 
             lappend('class ' + config.class_name + '(' + ', '.join(inherited_list) + '):')
 
-        for nested_class in config.nested_class_configs.values():
-            lines.append('\n')
-            lines = lines + self._construct_class(nested_class, indentation_level + 1)
-            lines.append('\n')
-
         if isinstance(config, PojoEnumBuilderConfig):
             instantiation_lines = list()
             get_all_lines = list()
@@ -1323,13 +1431,14 @@ class Pojoizer:
             if config.instance_parameter_fields is not None and len(config.instance_parameter_fields) > 0:
                 parameters = 'key_idx_value: str, '
 
+                lappend('self._key_idx_value = key_idx_value', 2, instantiation_lines)
+
                 for idx in range(0, len(config.fields)):
                     field = config.fields[idx]
                     has_next = idx < (len(config.fields) - 1)
 
                     parameters = parameters + (field.name + ': ' + field.raw_type + (', ' if has_next else ''))
 
-                    lappend('self._key_idx_value = key_idx_value', 2, instantiation_lines)
                     lappend('self.' + field.name + ' = ' + field.name + '  # type: ' + field.raw_type, 2,
                             instantiation_lines)
 
@@ -1352,18 +1461,19 @@ class Pojoizer:
 
                 instance_lines = list()
                 for label in config.instance_labels:
-                    parameter_values = [k.value for k in config.instance_parameter_fields[label]]
-
                     lappend(label + ' = ("' + label + '",', 1, instance_lines)
 
-                    for idx in range(0, len(parameter_values)):
-                        pv = parameter_values[idx]
-                        has_next = (len(parameter_values) - 1) != idx
+                    # sorted_parameters = sorted(config.instance_parameter_fields[label], key=lambda x: x.name)
+                    params = config.instance_parameter_fields[label]
+
+                    for idx in range(0, len(params)):
+                        field = params[idx]
+                        has_next = (len(params) - 1 != idx)
                         if has_next:
-                            lappend(pv + ',', 2, instance_lines)
+                            lappend(field.value + ',', 2, instance_lines)
 
                         else:
-                            lappend(pv + ')', 2, instance_lines)
+                            lappend(field.value + ')', 2, instance_lines)
                             instance_lines.append('\n')
 
                 lines = lines + instance_lines
@@ -1426,6 +1536,10 @@ class Pojoizer:
         return lines
 
     def _construct_file(self, config: AbstractPojoBuilderConfig):
+        # If there is a dash in the package, it is a subclass, and construction is handled by the parent class
+        if config.parent_class_config is not None:
+            return
+
         pkg_dir = config.package.replace('.', '/')
         target_dir = os.path.join(self.target_directory, pkg_dir)
 
@@ -1457,12 +1571,7 @@ class Pojoizer:
         lines = lines + self._construct_class(config, 0)
 
         pkg = config.package + '.' + config.class_name.lower()
-        if pkg in self.path_classes:
-            target = os.path.join(self.target_directory, pkg.replace('.', '/'), '__init__.py')
-            open(target, 'w').writelines(lines)
-
-        else:
-            open(os.path.join(target_dir, config.class_name.lower() + '.py'), 'w').writelines(lines)
+        open(os.path.join(target_dir, config.class_name.lower() + '.py'), 'w').writelines(lines)
 
     def do_construction(self):
         self._preprocess_class_data()
@@ -1510,54 +1619,7 @@ def pojoize_knowledge_repo():
     p.do_construction()
 
 
-def pojoize_ll_api_p2():
-    # Pojoize the shared POJOs
-    p = Pojoizer(conversion_method=ConversionMethod.VARS,
-                 target_directory=_target_module_directory,
-                 target_package=_target_package,
-                 do_generate_markdown=False,
-                 ignore_default_param_values=True
-                 )
-    packages_root = 'mil/darpa/immortals/core/api'
-
-    p.load_directory(
-        root_directory=os.path.join(_immortals_root,
-                                    'das/das-context/src/main/java/'),
-        packages_root=packages_root
-    )
-
-    p.load_directory(
-        root_directory=os.path.join(_immortals_root,
-                                    'das/das-testharness-coordinator/src/main/java/'),
-        packages_root=packages_root
-    )
-    p.do_construction()
-
-
-def pojoize_immortals_config():
-    # Pojoize ImmortalsConfig
-    p = Pojoizer(conversion_method=ConversionMethod.VARS,
-                 target_directory=_target_module_directory,
-                 target_package=_target_package,
-                 do_generate_markdown=False,
-                 ignore_default_param_values=True
-                 )
-    root_dir = os.path.join(_immortals_root, 'buildSrc/ImmortalsConfig/src/main/java/')
-    # packages_root = 'mil/darpa/immortals/core/api/ll/phase2'
-    packages_root = 'mil/darpa/immortals/config'
-    p.load_directory(root_directory=root_dir,
-                     packages_root=packages_root,
-                     ignore_files=[
-                         'mil/darpa/immortals/config/StaticConfig.java'
-                     ])
-
-    p.load_directory(root_directory=root_dir,
-                     packages_root='mil/darpa/immortals/core')
-
-    p.do_construction()
-
-
-def pojoize_all():
+def pojoize_immortals_repo():
     # Pojoize the shared POJOs
     p = Pojoizer(conversion_method=ConversionMethod.VARS,
                  target_directory=_target_module_directory,
@@ -1635,7 +1697,5 @@ def pojoize_all():
 
 
 if __name__ == '__main__':
+    pojoize_immortals_repo()
     # pojoize_knowledge_repo()
-    # pojoize_ll_api_p2()
-    pojoize_immortals_config()
-    pojoize_ll_api_p2()

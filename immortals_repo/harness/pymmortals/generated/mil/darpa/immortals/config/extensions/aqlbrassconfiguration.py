@@ -15,6 +15,7 @@ class AqlBrassConfiguration(Serializable):
                  identifier: str = None,
                  interpreterParameters: List[str] = None,
                  mavenArtifactId: str = None,
+                 mavenClassifier: str = None,
                  mavenGroupId: str = None,
                  mavenRepositoryUrl: str = None,
                  mavenVersion: str = None,
@@ -25,13 +26,15 @@ class AqlBrassConfiguration(Serializable):
                  startupTimeMS: int = None,
                  url: str = None,
                  userManaged: bool = None,
-                 workingDirectory: str = None):
+                 workingDirectory: str = None,
+                 workingDirectoryTemplateFolder: str = None):
         super().__init__()
         self.environmentVariables = environmentVariables
         self.exePath = exePath
         self.identifier = identifier
         self.interpreterParameters = interpreterParameters
         self.mavenArtifactId = mavenArtifactId
+        self.mavenClassifier = mavenClassifier
         self.mavenGroupId = mavenGroupId
         self.mavenRepositoryUrl = mavenRepositoryUrl
         self.mavenVersion = mavenVersion
@@ -43,3 +46,4 @@ class AqlBrassConfiguration(Serializable):
         self.url = url
         self.userManaged = userManaged
         self.workingDirectory = workingDirectory
+        self.workingDirectoryTemplateFolder = workingDirectoryTemplateFolder

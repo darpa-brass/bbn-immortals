@@ -21,12 +21,20 @@ import mil.darpa.immortals.core.das.knowledgebuilders.schemadependency.SchemaDep
 import mil.darpa.immortals.core.das.sparql.DataDFU;
 import mil.darpa.immortals.core.das.sparql.SchemaMigrationTarget;
 import mil.darpa.immortals.das.context.DasAdaptationContext;
+
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.postgresql.ds.PGPoolingDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -425,6 +433,12 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
 
         if (isApplicable(context)) {
 
+            try {
+            	getAqlQueries(context);
+            } catch (Exception e) {
+            	logger.error("AQL process invocation failed.", e);
+            }
+
             //Check each data DFU for impact
             //Impact is determined by executing the query with the same parameters used to create the training data
             //The returned data is compared to the training data and if there are any differences (or exceptions during execution)
@@ -455,6 +469,7 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
                     }
                 }
             }
+            
 
             DasOutcome outcome;
 
@@ -495,5 +510,35 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
             throw new RuntimeException(e);
         }
     }
+        
+    public void getAqlQueries(DasAdaptationContext dac) throws Exception {
 
+        String queryMappings = null;
+        
+        Path submissionModel = ImmortalsConfig.getInstance().extensions.castor
+        		.getExecutionWorkingDirectory(dac.getAdaptationIdentifer()).resolve("submissionModel.json");
+
+        String schemaPerturbation = new String(Files.readAllBytes(submissionModel));
+
+        logger.debug("Submitting schema perturbation to aql service.");
+
+    	aqlService = ClientBuilder.newClient(new ClientConfig()
+                .register(JacksonFeature.class))
+                .target(AQL_SERVICE_CONTEXT_ROOT);
+        queryMappings = aqlService.request().post(
+                Entity.entity(schemaPerturbation, MediaType.APPLICATION_JSON), String.class);
+
+        if (queryMappings == null || queryMappings.trim().length() == 0) {
+            logger.error("Could not retrieve query mappings from AQL service.");
+            //Don't throw exception for now
+        } else {
+        	//Convert queryMappings to native Java structure
+        }
+    }
+    
+    
+
+    private static WebTarget aqlService;
+    private static final String AQL_SERVICE_CONTEXT_ROOT = ImmortalsConfig.getInstance().extensions.aqlbrass.getFullUrl().resolve("/brass/p2/c1/json").toString();
+    
 }

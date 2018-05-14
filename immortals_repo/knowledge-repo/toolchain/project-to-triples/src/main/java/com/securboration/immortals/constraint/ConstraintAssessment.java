@@ -252,6 +252,7 @@ public class ConstraintAssessment {
                                        dataFlowUUID, assertion, dependencies, config));
                             }
                         }
+                        AnalysisFrameAssessment.performWrapperCodeInsertions(taskHelper, config);
                     }
                     
                 } else {
@@ -379,6 +380,7 @@ public class ConstraintAssessment {
                                 taskHelper.getPw().println("Starting repairs on consumer...");
                                 analysisImpacts[1] = AnalysisFrameAssessment.repairConsumer(taskHelper, config, (InterMethodDataflowNode) edge.getConsumer(),
                                         propertyImpact, dependencies, flowDesign);
+                                
                                 constraintViolation.setAnalysisImpacts(analysisImpacts);
                             } else {
                                 // doesn't contain inter-process impact, scope of repair process is (relatively) small

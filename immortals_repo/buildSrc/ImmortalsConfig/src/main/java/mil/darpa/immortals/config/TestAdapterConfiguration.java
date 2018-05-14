@@ -2,6 +2,7 @@ package mil.darpa.immortals.config;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
@@ -16,6 +17,7 @@ public class TestAdapterConfiguration implements RestfulAppConfigInterface {
     private String protocol = "http";
     private String url = "brass-ta";
     private String exePath = GlobalsConfig.staticImmortalsRoot.resolve("das/das-testharness-coordinator/build/libs/das-testharness-coordinator-2.0-LOCAL.jar").toAbsolutePath().toString();
+    private String workingDirectoryTemplateFolder = null;
     private String workingDirectory = GlobalsConfig.mkworkingdir("_" + identifier);
     private String[] interpreterParameters = new String[0];
     private String[] parameters = new String[0];
@@ -44,6 +46,12 @@ public class TestAdapterConfiguration implements RestfulAppConfigInterface {
     @Override
     public String getExePath() {
         return exePath;
+    }
+
+    @Override
+    public Path getWorkingDirectoryTemplateFolder() {
+        if (workingDirectoryTemplateFolder == null) return null;
+        return Paths.get(workingDirectoryTemplateFolder);
     }
 
     @Override

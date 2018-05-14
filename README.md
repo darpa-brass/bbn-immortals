@@ -35,37 +35,55 @@ Current Status:
  
 ## Initial Online Setup
 
-The initial setup will go through dependency installation, building, and installation of the DAS. It will also copy the 
-immortals_root to /tmp/immortals_deployment_test to perform some tests while keeping the execution directory pristine.
+The initial setup will go through dependency installation, building, and installation of the DAS.  
+
+##### Vagrant Installation
+
+Simply execute `vagrant up` within the immortals_repo folder containing the `Vagrantfile`
+
+##### Manual Installation
 
 1. Install Python 3.5 if necessary  
     `$ sudo apt-get install python3.5`
 2. As a normal user, copy immortals_repo into their home directory so that the following structure matches up with the 
 repository:  
     `~/immortals_repo/das`
-3.  Navigate to the utilities within the extracted directory  
-    `$ cd ~/immortals_repo/shared/utils`
-4.  Execute the installation script. You may be asked one or more times for your root credentials to install software.  
+3.  Navigate to the harness directory  
+    `$ cd ~/immortals_repo/harness`
+4.  Execute the setup preparation command  
+    `$ ./prepare_setup.sh`
+5.  Execute setup. You may be asked one or more times for your root credentials to install software.  
+    `$ ./setup.sh`
+6.  Copy the generated immortalsrc to your home directory  
+    `$ cp immortalsrc ~/.immortalsrc`
+7.  Navigate to the root immortals repository  
+    `$ cd ~/immortals_repo`
+8.  Execute DAS deployment  
+    `$ ./gradlew deploy`
+9.  Execute the installation script. You may be asked one or more times for your root credentials to install software.  
     `$ ./install.sh --ll-mode`  
 
-A successful result should output something like the following with a zero return code for automated validation checking (The 
-Basic tests are for basic development only and ignored for deployment):  
+##### Assisted Installation
 
-```
-| Basic Installation         | NOT RUN |  
-| Basic Build                | NOT RUN |  
-| Full Installation          |  PASS   |  
-| Full Deployment            |  PASS   |  
-| Full Deployment Validation |  PASS   |  
-| Baseline Marti             |  PASS   |  
-| API Smoke Test             | NOT RUN |
-```
+Assisted installation (which performs all the manual steps and executes some tests) is currently being updated.
 
-## Configuration
+## Smoke Test
+
+The smoke test can be run as follows:
+
+1.  Navigate to `~/immortals_repo/harness`  
+2.  Change `smoke_override_file.json` to reflect the proper Test Harness and Test Adapter configurations.  
+3.  Execute the following command:  
+    `./smoke.sh`  
+
+It will return a non-zero status along with a description of the issue if the smoke test fails.
+
+## DAS Execution Configuration
 
 Many configuration parameters can be overridden using a configuration file. 
 Please see the [Prerequisites](phase02/ChallengeProblems/Immortals-Phase2-DasPrerequisites.md) document 
 for more details.
+
 
 ## Starting The DAS
 

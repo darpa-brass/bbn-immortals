@@ -1,6 +1,6 @@
 package mil.darpa.immortals.core.api.ll.phase2.result;
 
-import com.google.gson.Gson;
+import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.core.api.TestCaseReport;
 import mil.darpa.immortals.core.api.annotations.Description;
 import mil.darpa.immortals.core.api.annotations.Unstable;
@@ -19,7 +19,6 @@ import java.util.Set;
 @Description("The current state of a test execution")
 public class TestDetails extends AbstractTestDetails {
 
-    private static transient Gson gson = new Gson();
 
     @Description("Messages indicating the reasons for failure")
     public LinkedList<String> errorMessages;
@@ -33,7 +32,7 @@ public class TestDetails extends AbstractTestDetails {
     }
 
     public TestDetails(@Nonnull TestCaseReport testCaseReport, @Nonnull String adaptationIdentifier) {
-        super(testCaseReport.getTestCaseIdentifier(), testCaseReport.getFailureMessage() ==  null ? TestOutcome.COMPLETE_PASS : TestOutcome.COMPLETE_FAIL, adaptationIdentifier, testCaseReport.getValidatedFunctionality());
+        super(testCaseReport.getTestCaseIdentifier(), testCaseReport.getFailureMessage() == null ? TestOutcome.COMPLETE_PASS : TestOutcome.COMPLETE_FAIL, adaptationIdentifier, testCaseReport.getValidatedFunctionality());
         this.testCaseReport = testCaseReport;
     }
 
@@ -48,7 +47,7 @@ public class TestDetails extends AbstractTestDetails {
     }
 
     public String toString() {
-        return gson.toJson(this, TestDetails.class);
+        return ImmortalsUtils.gson.toJson(this, TestDetails.class);
     }
 
     /**

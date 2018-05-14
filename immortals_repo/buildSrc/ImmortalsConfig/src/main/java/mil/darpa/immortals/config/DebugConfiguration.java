@@ -17,6 +17,7 @@ public class DebugConfiguration {
     private Boolean logNetworkActivityToSeparateFile = true;
     private int shutdownGracePeriodMS = 10000;
     public String loggingConfigDirectory = GlobalsConfig.staticImmortalsRoot.resolve("das/das-launcher/logging_scripts").toAbsolutePath().toString() + "/";
+    private boolean haltTestingOnFailure = true;
     
 
 
@@ -79,5 +80,9 @@ public class DebugConfiguration {
      */
     public String getLoggingConfigDirectory() {
         return loggingConfigDirectory;
+    }
+
+    public boolean isHaltTestingOnFailure() {
+        return haltTestingOnFailure;
     }
 }

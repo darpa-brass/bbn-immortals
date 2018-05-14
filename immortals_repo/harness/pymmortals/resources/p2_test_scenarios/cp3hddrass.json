@@ -1,0 +1,38 @@
+[
+    {
+        "scenarioIdentifier": "p2cp3baselineA",
+        "submissionModel": null,
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "PASS",
+        "submissionFlow": "BaselineA",
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
+    },
+    {
+        "scenarioIdentifier": "p2cp3baselineB",
+        "submissionModel": {
+            "martiServerModel": {
+                "requirements": {
+                    "libraryUpgrade": "ElevationApi_2"
+                }
+            }
+        },
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "FAIL",
+        "submissionFlow": "BaselineB",
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
+    },
+    {
+        "scenarioIdentifier": "p2cp3challenge",
+        "submissionModel": {
+            "martiServerModel": {
+                "requirements": {
+                    "libraryUpgrade": "ElevationApi_2"
+                }
+            }
+        },
+        "expectedAdaptationResult": "SUCCESS",
+        "expectedVerdictOutcome": "PASS",
+        "submissionFlow": "Challenge",
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
+    }
+]

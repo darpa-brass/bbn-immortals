@@ -12,9 +12,6 @@ import javax.annotation.Nonnull;
 @Unstable
 public abstract class AbstractAdaptationDetails {
     
-    @Description("A timestamp for the status update")
-    public long timestamp;
-
     @Description("The current state of the adaptation")
     public DasOutcome dasOutcome;
 
@@ -28,7 +25,6 @@ public abstract class AbstractAdaptationDetails {
     }
 
     public AbstractAdaptationDetails(@Nonnull String adaptorIdentifier, @Nonnull DasOutcome dasOutcome, @Nonnull String adaptationIdentifier) {
-        this.timestamp = System.currentTimeMillis();
         this.adaptorIdentifier = adaptorIdentifier;
         this.dasOutcome = dasOutcome;
         this.adaptationIdentifier = adaptationIdentifier;

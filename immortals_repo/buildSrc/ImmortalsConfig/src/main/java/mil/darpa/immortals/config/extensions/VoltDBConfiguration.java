@@ -4,6 +4,7 @@ import mil.darpa.immortals.config.GlobalsConfig;
 import mil.darpa.immortals.config.RestfulAppConfigInterface;
 
 import java.net.URI;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
@@ -17,7 +18,8 @@ public class VoltDBConfiguration implements RestfulAppConfigInterface {
     private int port = 21212;
     private String protocol = "http";
     private String url = "127.0.0.1";
-    private String workingDirectory = GlobalsConfig.staticImmortalsRoot.resolve("castor/voltdb7").toString();
+    private String workingDirectoryTemplateFolder = GlobalsConfig.staticImmortalsRoot.resolve("castor/voltdb7").toString();
+    private String workingDirectory = GlobalsConfig.mkworkingdir("_" + identifier);
     private String exePath = Paths.get(workingDirectory).resolve("build.xml").toString();
     private String[] interpreterParameters = { "-buildfile" };
     private String[] parameters = {"clean", "init", "start"};
@@ -86,5 +88,11 @@ public class VoltDBConfiguration implements RestfulAppConfigInterface {
     @Override
     public String getReadyStdoutLineRegexPattern() {
         return readyStdoutLineRegexPattern;
+    }
+
+    @Override
+    public Path getWorkingDirectoryTemplateFolder() {
+        if (workingDirectoryTemplateFolder == null) return null;
+        return Paths.get(workingDirectoryTemplateFolder);
     }
 }

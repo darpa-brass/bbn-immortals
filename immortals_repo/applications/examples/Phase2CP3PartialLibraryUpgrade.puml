@@ -1,0 +1,62 @@
+@startuml
+
+:Library Upgrade Requested;
+
+:Update Library;
+note left
+Replace Library dependency in build.gradle
+end note
+
+:Build Application;
+note left
+Execute `./gradlew clean build`
+end note
+if (Build Failed?) then (no)
+    :Run Application Tests;
+    note left
+            Execute `./gradlew clean test`
+                                   or
+    `./gradlew clean connectedAndroidTest`
+    
+    Tests:
+      - One or more that break
+         with the new library version
+      - One or more that validate security
+         vulnerabilities have been patched
+    end note
+    
+    if (Tests Failed) then (no)
+        :No Adaptation
+            needed;
+        stop
+    
+    else (yes)
+    
+    endif
+
+else (yes)
+endif
+
+:Execute Partial Library Upgrade;
+
+:Re-Run Application Tests;
+    note left
+            Execute `./gradlew clean test`
+                                   or
+    `./gradlew clean connectedAndroidTest`
+    
+    Tests:
+      - One or more that break
+         with the new library version
+      - One or more that validate security
+         vulnerabilities have been patched
+    end note
+if (TestsFailed) then (yes)
+    :Adaptation Failed;
+    stop
+else (no)
+    :Adaptation Successful;
+
+stop
+
+@enduml

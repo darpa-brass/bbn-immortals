@@ -45,6 +45,7 @@ public class ImmortalsGradleProjectData {
                                       String[] buildToolBuildParameters,
                                       ImmortalsGradleTestData testing,
                                       ImmortalsGradlePublishData publishing,
+                                      ImmortalsGradleExecutionData executionData,
                                       HashMap<String, ClassFileCoverageSet> baseTestClassFileCoverage,
                                       Collection<TestCaseReport> baseTestCaseReports) {
         this.targetName = targetName;
@@ -85,36 +86,30 @@ public class ImmortalsGradleProjectData {
                         "/sdcard/ataklite/env.json");
 
                 this.execution = new ImmortalsGradleExecutionData(
-                        2000,
-                        "ATAKLite-debug.apk",
+                        executionData.getExecutionStartSettleTimeMS(),
+                        executionData.getExecutableFilename(),
                         deploymentFileMap,
-                        "com.bbn.ataklite",
-                        "com.bbn.ataklite.MainActivity");
+                        executionData.getExecutionPackageIdentifier(),
+                        executionData.getExecutionMainMethodClasspath()
+                );
                 break;
 
             case "Marti":
                 deploymentFileMap.put("Marti-Config.json", "Marti-Config.json");
 
                 this.execution = new ImmortalsGradleExecutionData(
-                        2000,
-                        "Marti-immortals.jar",
+                        executionData.getExecutionStartSettleTimeMS(),
+                        executionData.getExecutableFilename(),
                         deploymentFileMap,
-                        "com.bbn.marti",
-                        "com.bbn.marti.service.MartiMain");
-                break;
-
-            case "TakServerDataManager":
-                this.execution = new ImmortalsGradleExecutionData(
-                        0,
-                        null,
-                        deploymentFileMap,
-                        "mil.darpa.immortals.dfus",
-                        null
+                        executionData.getExecutionPackageIdentifier(),
+                        executionData.getExecutionMainMethodClasspath()
                 );
+
                 break;
 
             default:
-                this.execution = null;
+                this.execution = executionData;
+
         }
     }
 

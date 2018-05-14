@@ -4,6 +4,7 @@ import com.android.build.gradle.AppExtension
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
+import groovy.xml.QName
 import mil.darpa.immortals.analysis.adaptationtargets.*
 import mil.darpa.immortals.config.ImmortalsConfig
 import org.apache.commons.io.FileUtils
@@ -41,6 +42,96 @@ class AnalyzeGradleBuildTask extends DefaultTask {
                     publication.groupId, publication.artifactId, publication.version, publishParameters)
         }
         return null
+    }
+
+    private static final ImmortalsGradleExecutionData getExecutionData(Project project) {
+        String executionMainMethodClasspath = null
+        String executionPackageIdentifier = null
+
+        String executableFile = null
+
+        if (project.hasProperty('jar')) {
+            // If it is a java project that publishes a jar, extract applicable information from the manifest entry
+
+            if (project.jar.hasProperty('archiveName')) {
+                executableFile = project.jar.archiveName
+            }
+
+            if (project.jar.hasProperty('manifest') && project.jar.manifest.hasProperty('attributes') &&
+                    project.jar.manifest.attributes instanceof Map<String, String>) {
+
+
+                for (Map.Entry<String, String> entry : project.jar.manifest.attributes.entrySet()) {
+                    if (entry.getKey().toLowerCase().equals("main-class")) {
+                        executionMainMethodClasspath = entry.getValue()
+                        executionPackageIdentifier = executionMainMethodClasspath.substring(0, executionMainMethodClasspath.lastIndexOf("."))
+                        break
+                    }
+                }
+            }
+
+        } else if (project.hasProperty('android')) {
+            // If it is an android application, extract the applicable information from the AndroidManifest.xml file
+            
+            // TODO; This can probably be done more programatically if I can figure out exactly where the final name is stored
+            executableFile = project.name + '-debug.apk'
+
+            if (project.android.hasProperty('sourceSets') && project.android.sourceSets.hasProperty('main') &&
+                    project.android.sourceSets.main.hasProperty('properties') && project.android.sourceSets.main.hasProperty('manifestFile')) {
+                File f = project.android.sourceSets.main.manifestFile
+                Node data = new XmlParser().parse(f)
+
+                if (data.attributes().containsKey('package')) {
+                    executionPackageIdentifier = data.attribute('package')
+                }
+
+                def app = data['application']
+                if (app.size() > 0) {
+                    if (app[0]['activity'].size() > 0) {
+                        for (Node activity : app[0]['activity']) {
+                            String activityName = null
+                            for (Map.Entry<Object, Object> entry : activity.attributes()) {
+                                if (entry.key.class == QName) {
+                                    QName key = (QName) entry.key
+                                    if (key.namespaceURI.equals('http://schemas.android.com/apk/res/android') &&
+                                            key.getLocalPart().equals('name')) {
+                                        activityName = entry.value
+                                    }
+                                }
+                            }
+
+                            if (activity['intent-filter'].size() > 0) {
+                                for (Node intentFilter : activity['intent-filter']) {
+                                    if (intentFilter['action'].size() > 0) {
+                                        for (Node intentFilterAction : intentFilter['action']) {
+                                            for (Map.Entry<Object, Object> entry : intentFilterAction.attributes()) {
+                                                if (entry.key.class == QName) {
+                                                    QName key = (QName) entry.key
+                                                    if (key.namespaceURI.equals('http://schemas.android.com/apk/res/android') &&
+                                                            key.getLocalPart().equals('name') &&
+                                                            entry.value.equals('android.intent.action.MAIN')
+                                                    ) {
+                                                        executionMainMethodClasspath = executionPackageIdentifier + activityName
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return new ImmortalsGradleExecutionData(
+                2000,
+                executableFile,
+                null,
+                executionPackageIdentifier,
+                executionMainMethodClasspath
+        )
     }
 
     private static final ImmortalsGradleTestData getTestingData(Project project) {
@@ -122,6 +213,7 @@ class AnalyzeGradleBuildTask extends DefaultTask {
 
         ImmortalsGradlePublishData publishingData = getPublishingData(project)
         ImmortalsGradleTestData testingData = getTestingData(project)
+        ImmortalsGradleExecutionData executionData = getExecutionData(project)
 
         String[] buildToolBuildParameters = ["clean", "build", "-x", "test"]
 
@@ -139,6 +231,7 @@ class AnalyzeGradleBuildTask extends DefaultTask {
                 buildToolBuildParameters,
                 testingData,
                 publishingData,
+                executionData,
                 null,
                 null
         )

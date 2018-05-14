@@ -1,0 +1,59 @@
+group 'com.securboration'
+version 'r2.0.0'
+
+buildscript {
+    def IMMORTALS_REPO = "../shared/IMMORTALS_REPO"
+    repositories {
+        repositories {
+            mavenLocal()
+            maven {
+                url IMMORTALS_REPO.toString()
+            }
+        }
+        dependencies {
+            classpath group: 'com.securboration', name: 'immortals-project-to-triples', version: 'r2.0.0'
+        }
+    }
+}
+apply plugin: 'maven-publish'
+
+apply plugin: 'java'
+apply plugin: 'com.securboration.p2t'
+apply plugin:'application'
+mainClassName = 'com.securboration.miniatakapp.dfus.cipher.test.TestHarness'
+
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+targetCompatibility = '1.7'
+sourceCompatibility = '1.7'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url "shared/IMMORTALS_REPO"
+        }
+    }
+}
+
+dependencies {
+	compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.59'
+    compile group: 'org.apache.commons', name: 'commons-compress', version: '1.9'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+    compile group: 'com.securboration', name: 'immortals-adsl-generate', version: 'r2.0.0'
+
+}

@@ -181,7 +181,20 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
             byte[] bytecode
             ) {
         
-        ClassNode cn = BytecodeHelper.getClassNode(bytecode);
+        final ClassNode cn;
+        
+        try{
+            cn = BytecodeHelper.getClassNode(bytecode);
+        } catch(Exception e){
+            System.err.printf(
+                "WARNING: ASM encountered an error while parsing a " +
+                "%dB class with hash %s (it will be skipped)\n", 
+                bytecode.length,
+                classHash
+                );
+            
+            return;
+        }
         
         Collection<AnnotationNode> classAnnotations = 
                 AnnotationHelper.getAnnotations(cn);

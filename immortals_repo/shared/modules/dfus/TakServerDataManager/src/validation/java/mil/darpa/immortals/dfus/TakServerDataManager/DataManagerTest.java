@@ -93,8 +93,7 @@ public class DataManagerTest {
 	}
 
 	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
-	// TODO: Re-enable once more granular test reporting is supported!
-//	@Test
+	@Test
 	public void testCotEventsForUidAndInterval() {
 
 		String sourceName = "ICAO-ACEA99";

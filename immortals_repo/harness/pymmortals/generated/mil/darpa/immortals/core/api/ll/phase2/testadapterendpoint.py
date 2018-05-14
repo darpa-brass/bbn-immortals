@@ -12,11 +12,8 @@ class TestAdapterEndpoint(Enum):
     def __init__(self, key_idx_value: str, ackDatatype: Type, path: str, restType: RestType, submitDatatype: Type):
         self._key_idx_value = key_idx_value
         self.ackDatatype = ackDatatype  # type: Type
-        self._key_idx_value = key_idx_value
         self.path = path  # type: str
-        self._key_idx_value = key_idx_value
         self.restType = restType  # type: RestType
-        self._key_idx_value = key_idx_value
         self.submitDatatype = submitDatatype  # type: Type
 
     CP1 = ("CP1",

@@ -7,9 +7,7 @@ class ServerPartialUpgradeLibrary(Enum):
     def __init__(self, key_idx_value: str, description: str, newDependencyCoordinates: str, oldDependencyCoordinates: str):
         self._key_idx_value = key_idx_value
         self.description = description  # type: str
-        self._key_idx_value = key_idx_value
         self.newDependencyCoordinates = newDependencyCoordinates  # type: str
-        self._key_idx_value = key_idx_value
         self.oldDependencyCoordinates = oldDependencyCoordinates  # type: str
 
     Dom4jCot_2 = ("Dom4jCot_2",

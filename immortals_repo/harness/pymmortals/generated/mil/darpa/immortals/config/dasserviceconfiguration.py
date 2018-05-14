@@ -21,7 +21,8 @@ class DasServiceConfiguration(Serializable):
                  startupTimeMS: int = None,
                  url: str = None,
                  userManaged: bool = None,
-                 workingDirectory: str = None):
+                 workingDirectory: str = None,
+                 workingDirectoryTemplateFolder: str = None):
         super().__init__()
         self.environmentVariables = environmentVariables
         self.exePath = exePath
@@ -35,3 +36,4 @@ class DasServiceConfiguration(Serializable):
         self.url = url
         self.userManaged = userManaged
         self.workingDirectory = workingDirectory
+        self.workingDirectoryTemplateFolder = workingDirectoryTemplateFolder

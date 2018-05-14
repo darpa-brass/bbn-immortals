@@ -262,6 +262,11 @@ public class DasLauncher {
 
     private ProcessBuilder prepareProcess(ImmortalsServiceManifest service) throws IOException {
         AppConfigInterface appConfig = service.getConfig();
+        
+        Path templateFolder = appConfig.getWorkingDirectoryTemplateFolder();
+        if (templateFolder != null) {
+            FileUtils.copyDirectory(templateFolder.toFile(), new File(appConfig.getWorkingDirectory()));
+        }
 
         ProcessBuilder pb = new ProcessBuilder();
 
@@ -431,9 +436,7 @@ public class DasLauncher {
                         try {
                             line = r.readLine();
 
-                            if (line == null) {
-                                System.err.println("WTFWTFWTF!!!");
-                            } else {
+                            if (line != null) {
                                 System.out.println(line);
                             }
 

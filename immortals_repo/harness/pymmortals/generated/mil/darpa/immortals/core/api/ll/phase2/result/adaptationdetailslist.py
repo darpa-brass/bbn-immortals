@@ -1,13 +1,33 @@
-from typing import Set
+from typing import List
 
 
 # noinspection PyPep8Naming
-class AdaptationDetailsList(Set):
+class AdaptationDetailsList(List):
     _validator_values = dict()
 
     _types = dict()
 
     def __init__(self,
-                 timestamp: int = None):
+                 sequence: int = None):
         super().__init__()
-        self.timestamp = timestamp
+        self.sequence = sequence
+
+
+# noinspection PyPep8Naming
+class AdaptationDetailsListDeserializer(Serializable):
+    _validator_values = dict()
+
+    _types = dict()
+
+    def __init__(self):
+        super().__init__()
+
+
+# noinspection PyPep8Naming
+class AdaptationDetailsListSerializer(Serializable):
+    _validator_values = dict()
+
+    _types = dict()
+
+    def __init__(self):
+        super().__init__()

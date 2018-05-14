@@ -14,8 +14,7 @@ class AdaptationDetails(AbstractAdaptationDetails):
                  adaptorIdentifier: str = None,
                  dasOutcome: DasOutcome = None,
                  detailMessages: List[str] = None,
-                 errorMessages: List[str] = None,
-                 timestamp: int = None):
-        super().__init__(adaptationIdentifier=adaptationIdentifier, adaptorIdentifier=adaptorIdentifier, dasOutcome=dasOutcome, timestamp=timestamp)
+                 errorMessages: List[str] = None):
+        super().__init__(adaptationIdentifier=adaptationIdentifier, adaptorIdentifier=adaptorIdentifier, dasOutcome=dasOutcome)
         self.detailMessages = detailMessages
         self.errorMessages = errorMessages

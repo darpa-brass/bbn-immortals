@@ -75,35 +75,30 @@ public class HddRassAdapter implements IAdaptationModule {
             for (TestCaseReport testCaseReport : failedTests) {
 
 
-                // If the functionality it validates
+                // If the functionality it validates intersects with the functionality provided by the library
                 Set<String> testCaseValidatedFunctionality = testCaseReport.getValidatedFunctionality();
-
-
-                //Intersects with the functionality provided by the library
                 testCaseValidatedFunctionality.retainAll(providedFunctionality);
                 if (testCaseValidatedFunctionality.size() > 0) {
 
-                    // Add the classes that test touches to the classes to be prioritized initially by hddRASS
-                    AdaptationTargetBuildBase base = GradleKnowledgeBuilder.getBuildBase(testCaseReport.getTestCaseTarget());
-                    HashMap<String, ClassFileCoverageSet> classFileCoverage = base.getRawBaseProjectData().getBaseTestClassFileCoverage();
-                    if (classFileCoverage.containsKey(testCaseReport.getTestCaseIdentifier())) {
-                        initialClassesToTarget.addAll(classFileCoverage.get(testCaseReport.getTestCaseIdentifier()).getPartiallyOrFullyCovered().stream().map(t -> t.getIdentifier().replaceAll("/", ".")).collect(Collectors.toSet()));
-                    }
-
-
-                    // And any of that functionality is not required
+                    // And that functionality is optional, remove the test for the tests provided to hddRASS
                     Set<String> appTestCaseValidatedFunctionality = new HashSet<>(testCaseValidatedFunctionality);
                     for (DetermineHddRassApplicability.HddRassApplicabilityDetails details : applicabilityDetails) {
                         appTestCaseValidatedFunctionality.removeAll(details.getRequiredTargetFunctionality());
 
                         if (appTestCaseValidatedFunctionality.size() > 0) {
-                            // hddRASS is applicable
+                            // And if there are still tests to be used, hddRASS is applicable
                             rval = true;
                         }
                     }
+
+                    // Then add the classes that test touches to the classes to be prioritized initially by hddRASS
+                    AdaptationTargetBuildBase base = GradleKnowledgeBuilder.getBuildBase(testCaseReport.getTestCaseTarget());
+                    HashMap<String, ClassFileCoverageSet> classFileCoverage = base.getRawBaseProjectData().getBaseTestClassFileCoverage();
+                    if (classFileCoverage.containsKey(testCaseReport.getTestCaseIdentifier())) {
+                        initialClassesToTarget.addAll(classFileCoverage.get(testCaseReport.getTestCaseIdentifier()).getPartiallyOrFullyCovered().stream().map(t -> t.getIdentifier().replaceAll("/", ".")).collect(Collectors.toSet()));
+                    }
                 }
             }
-
         }
         return rval;
     }
@@ -116,22 +111,25 @@ public class HddRassAdapter implements IAdaptationModule {
             return;
         }
 
-        for (DetermineHddRassApplicability.HddRassApplicabilityDetails details : applicabilityDetails) {
+        for (DetermineHddRassApplicability.HddRassApplicabilityDetails deploymentModelApplicabilityDetails : applicabilityDetails) {
             // For each requested upgrade
 
             // Collect all tests from the application
-            List<TestCaseReport> appTests = allTests.stream().filter(t -> t.getTestCaseTarget().equals(details.getAdaptationTarget())).collect(Collectors.toList());
+            List<TestCaseReport> appTests = allTests.stream().filter(t -> t.getTestCaseTarget().equals(deploymentModelApplicabilityDetails.getAdaptationTarget())).collect(Collectors.toList());
+            
             // Collect all failed tests from the application
-            List<TestCaseReport> appFailedTests = failedTests.stream().filter(t -> t.getTestCaseTarget().equals(details.getAdaptationTarget())).collect(Collectors.toList());
+            List<TestCaseReport> appFailedTests = failedTests.stream().filter(t -> t.getTestCaseTarget().equals(deploymentModelApplicabilityDetails.getAdaptationTarget())).collect(Collectors.toList());
 
+            
+            
             // Copy the failed tests to an optional tests variable
             List<TestCaseReport> optionalTests = new LinkedList<>();
 
             for (TestCaseReport test : appFailedTests) {
                 // And for each failed test
 
-                // If nothing is removed from the tests validated functionality when you remove required functionality tags
-                if (!test.getValidatedFunctionality().removeAll(details.getRequiredTargetFunctionality())) {
+                // If no required functionality is validated by the test
+                if (!test.getValidatedFunctionality().removeAll(deploymentModelApplicabilityDetails.getRequiredTargetFunctionality())) {
                     // Add it to the optional tests
                     optionalTests.add(test);
                 }
@@ -142,7 +140,7 @@ public class HddRassAdapter implements IAdaptationModule {
 
             // And use them as the test identifiers
             List<String> testsToExecute = appTests.stream().map(TestCaseReport::getTestCaseIdentifier).collect(Collectors.toList());
-            AdaptationTargetBuildInstance buildInstance = GradleKnowledgeBuilder.getBuildInstance(details.getAdaptationTarget(), context.getAdaptationIdentifer());
+            AdaptationTargetBuildInstance buildInstance = GradleKnowledgeBuilder.getBuildInstance(deploymentModelApplicabilityDetails.getAdaptationTarget(), context.getAdaptationIdentifer());
 
             int code = -1;
 

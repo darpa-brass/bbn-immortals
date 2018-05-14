@@ -123,12 +123,16 @@ class Markdownifier(Pojoizer):
                             if field.core_type() not in display_order:
                                 display_order.append(field.core_type())
 
-                            field_classpath = config.imports[field.core_type()] \
+                            if field.raw_type in config.nested_class_configs.keys():
+                                _get_display_order(config.nested_class_configs[field.raw_type], display_order)
+
+                            else:
+                                field_classpath = config.imports[field.core_type()] \
                                 [len(self.target_package) + 1:-(len(field.core_type()) + 1)]
-                            next_config = next(
-                                (x for x in self.path_classes[field_classpath] if x.class_name == field.core_type()),
-                                None) # type: AbstractPojoBuilderConfig
-                            _get_display_order(next_config, display_order)
+                                next_config = next(
+                                    (x for x in self.path_classes[field_classpath] if x.class_name == field.core_type()),
+                                    None) # type: AbstractPojoBuilderConfig
+                                _get_display_order(next_config, display_order)
 
         rval.append(root_config.class_name)
 

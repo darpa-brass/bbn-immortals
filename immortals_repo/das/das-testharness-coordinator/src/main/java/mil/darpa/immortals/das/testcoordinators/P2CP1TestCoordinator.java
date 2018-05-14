@@ -21,6 +21,9 @@ import org.postgresql.ds.PGPoolingDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
@@ -184,6 +187,32 @@ public class P2CP1TestCoordinator implements TestCoordinatorExecutionInterface {
 
     }
 
+    private String getModifiedSubmissionModel(SubmissionModel submissionModel) {
+    	    	
+        LinkedList<DatabaseTableConfiguration> tablesInModel = submissionModel.martiServerModel.requirements.postgresqlPerturbation.tables;
+
+        int tableIndex = 0;
+        
+        JsonArrayBuilder tab = Json.createArrayBuilder();
+        
+        for (DatabaseTableConfiguration table : tablesInModel) {
+        	JsonArrayBuilder cab = Json.createArrayBuilder();
+        	table.columns.forEach(c -> cab.add(c.columnName));
+
+        	tab.add(Json.createObjectBuilder()
+        			.add("table", tableNames.get(tableIndex++))
+        			.add("columns", cab));
+        }
+        
+    	JsonObject jsonObject = Json.createObjectBuilder()
+    			.add("martiServerModel", Json.createObjectBuilder()
+    					.add("requirements", Json.createObjectBuilder()
+    							.add("postgresqlPerturbation", Json.createObjectBuilder()
+    									.add("tables", tab)))).build();
+    	
+    	return jsonObject.toString();
+    }
+    
     private void setupChallengeProblem(SubmissionModel submissionModel) throws Exception {
 
         //Create new tables from submissionModel
@@ -210,10 +239,19 @@ public class P2CP1TestCoordinator implements TestCoordinatorExecutionInterface {
             String perturbedDdl = preparePerturbedSchema(conn, submissionModel);
             logger.info("Prepared voltdb perturbation DDL.");
 
-            //Write perturbed schema ddl to file (to support dataModel generation by Castor)
             Path castorSubmissionFolder = ImmortalsConfig.getInstance().extensions.castor.getExecutionWorkingDirectory(submissionModel.sessionIdentifier);
             logger.trace("Castor submission folder is: " + castorSubmissionFolder.toString());
+            
+            //Write submission model as json
+            Path jsonPath = castorSubmissionFolder.resolve("submissionModel.json");
+            writer = new FileWriter(jsonPath.toFile(), false);
+            writer.write(getModifiedSubmissionModel(submissionModel));
+            writer.flush();
+            writer.close();
 
+            logger.info("Wrote submission model to Castor submission folder.");
+
+            //Write perturbed schema ddl to file (to support dataModel generation by Castor)
             Path ddlPath = castorSubmissionFolder.resolve("ddl.sql");
             writer = new FileWriter(ddlPath.toFile(), false);
             writer.write(sourceTableDDL + ";" + perturbedDdl);
@@ -774,6 +812,6 @@ public class P2CP1TestCoordinator implements TestCoordinatorExecutionInterface {
         tables.add(table);
 
         tc.execute(sm, true);
-
+        //System.out.println(tc.getModifiedSubmissionModel(sm));
     }
 }

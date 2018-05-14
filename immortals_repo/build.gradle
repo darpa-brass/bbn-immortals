@@ -85,6 +85,25 @@ def buildHddRass = task('buildHddRass', type: GradleBuild) {
     tasks = ['clean', 'jar']
 }
 
+// Various tasks to provide build/clean functionality of external projects
+def dslSetup = task('dslSetup', type: Exec) {
+    workingDir = IMMORTALS_ROOT.resolve('dsl/resource-dsl').toString()
+    executable = 'stack'
+    args = ['setup']
+}
+
+def dslBuild = task('dslBuild', type: Exec) {
+    workingDir = IMMORTALS_ROOT.resolve('dsl/resource-dsl').toString()
+    executable = 'stack'
+    args = ['build']
+}.dependsOn(dslSetup)
+
+def dslClean = task('dslClean', type: Exec) {
+    workingDir = IMMORTALS_ROOT.resolve('dsl/resource-dsl').toString()
+    executable = 'stack'
+    args = ['clean']
+}.dependsOn(dslSetup)
+
 def publish = task('publish') {
     subprojects.each {
         it.afterEvaluate {
@@ -120,10 +139,12 @@ def buildAtakLite = task('buildAtakLite', type: GradleBuild) {
 
 def setupExtensions = task("setupExtensions") {
     afterEvaluate {
-        try {
-            ImmortalsServiceManifest.deploy()
-        } catch (Exception e) {
-            println(e.getMessage())
+        doLast {
+            try {
+                ImmortalsServiceManifest.deploy()
+            } catch (Exception e) {
+                println(e.getMessage())
+            }
         }
     }
 }

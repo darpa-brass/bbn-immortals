@@ -1,14 +1,20 @@
 package com.securboration.immortals.aframes;
 
+import com.securboration.immortals.ontology.dfu.instance.DfuInstance;
 import com.securboration.immortals.ontology.frame.CallTrace;
 import com.securboration.immortals.ontology.analysis.*;
 import com.securboration.immortals.ontology.dfu.instance.FunctionalAspectInstance;
 
-import com.securboration.immortals.ontology.functionality.DesignPattern;
+import com.securboration.immortals.ontology.functionality.*;
+import com.securboration.immortals.ontology.functionality.alg.encryption.*;
+import com.securboration.immortals.ontology.functionality.aspects.AspectConfigureRequest;
+import com.securboration.immortals.ontology.functionality.aspects.AspectConfigureSolution;
+import com.securboration.immortals.ontology.functionality.datatype.DataType;
 import com.securboration.immortals.ontology.lang.AugmentedMethodInvocation;
 import com.securboration.immortals.ontology.lang.AugmentedUserSourceFile;
 import com.securboration.immortals.ontology.lang.ProgrammingLanguage;
 import com.securboration.immortals.ontology.lang.WrapperSourceFile;
+import com.securboration.immortals.ontology.pattern.spec.CodeSpec;
 import com.securboration.immortals.utility.Decompiler;
 import com.securboration.immortals.utility.GradleTaskHelper;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
@@ -16,7 +22,6 @@ import com.securboration.immortals.o2t.analysis.ObjectToTriples;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
 import com.securboration.immortals.ontology.constraint.*;
 import com.securboration.immortals.ontology.frame.AnalysisFrameAssessmentReport;
-import com.securboration.immortals.ontology.functionality.FunctionalAspect;
 
 import com.securboration.immortals.ontology.functionality.datatype.DataProperty;
 import com.securboration.immortals.ontology.property.Property;
@@ -26,6 +31,8 @@ import com.securboration.immortals.repo.query.TriplesToPojo;
 
 import com.securboration.immortals.wrapper.Wrapper;
 import com.securboration.immortals.wrapper.WrapperFactory;
+import org.apache.commons.io.FileUtils;
+import org.apache.jena.atlas.lib.Pair;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +45,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.securboration.immortals.utility.GradleTaskHelper.*;
 
@@ -636,30 +645,7 @@ public class AnalysisFrameAssessment {
         }
         return node;
     }
-
-    private static DataflowEdge pojofyEdge(String edgeUUID, GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config) throws Exception {
-
-        TriplesToPojo.SparqlPojoContext nodePojoResults = taskHelper.getObjectRepresentation(edgeUUID, DATAFLOW_TYPE, config);
-
-        for (Map<String, Object> nodePojo : nodePojoResults) {
-
-            DataflowEdge edge = (DataflowEdge) nodePojo.get("obj");
-
-            Model m = ObjectToTriples.convert(config.getCleanContext(true), edge);
-            String serilazedModel = null;
-            try {
-                serilazedModel = OntologyHelper.serializeModel(m, "TURTLE", false);
-            } catch (IOException exc) {
-                logger.debug(exc.getLocalizedMessage());
-            }
-            taskHelper.getPw().println(serilazedModel + "\n\n");
-
-            return edge;
-
-        }
-        return null;
-    }
-
+    
     private static LinkedBlockingQueue<UnWrapper> constructUnwrappers(DataflowAnalysisFrame frame, PrintWriter pw) {
 
         LinkedBlockingQueue<UnWrapper> unWrappers = new LinkedBlockingQueue<>();
@@ -684,10 +670,8 @@ public class AnalysisFrameAssessment {
                 unWrapper.setObservedDataType(frame.getAnalysisFrameDataType());
                 unWrappers.add(unWrapper);
             }
-
             frame = frame.getAnalysisFrameChild();
         }
-
         return unWrappers;
     }
     
@@ -723,22 +707,505 @@ public class AnalysisFrameAssessment {
                 impactStatements.toArray(new ImpactStatement[impactStatements.size()]), config);
     }
     
-    private static WrapperImplementationImpact developInstanceStreamSolution(FunctionalAspectInstance aspectInstance, InterMethodDataflowNode node,
-                                                                                     Set<File> dependencies, GradleTaskHelper taskHelper,
-                                                                                     ObjectToTriplesConfiguration config) throws Exception {
-        WrapperImplementationImpact wrapperImpact = new WrapperImplementationImpact();
-        String applicableStreamObject;
+    public static Wrapper constructWrapperFoundation(FunctionalAspectInstance aspectInstance, InterMethodDataflowNode node,
+                                                    Set<File> dependencies, GradleTaskHelper taskHelper,
+                                                    ObjectToTriplesConfiguration config, WrapperImplementationImpact impact,
+                                                     String cipherImpl) throws Exception {
+        
+        boolean previouslyAugmented = false;
         FunctionalAspect functionalAspect = aspectInstance.getAbstractAspect().newInstance();
+        impact.setAspectImplemented(functionalAspect.getClass());
+        String applicableStreamObject = AnalysisFrameAssessment.getStreamObject(functionalAspect);
+        AssertableSolutionSet traceSolutions = findStreamImplementationInUsersCode(node, taskHelper, config, 
+                applicableStreamObject);
 
-        if (functionalAspect.getInverseAspect() == null) {
-            applicableStreamObject = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#InputStream";
+        if (traceSolutions.getSolutions().isEmpty()) {
+            taskHelper.getPw().println("No streams found; stream cipher implementation can not be inserted.");
+            return null;
         } else {
-            applicableStreamObject = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#OutputStream";
+            taskHelper.getPw().println("Stream found. Attempting to find where it is initialized...");
+
+            ArrayList<CallTrace> callTraces = findWrapperInsertionSite(taskHelper, config, traceSolutions);
+            CallTrace streamCallTrace = callTraces.get(0);
+            MethodInvocationDataflowNode streamInitializationNode = (MethodInvocationDataflowNode) 
+                    streamCallTrace.getCallSteps()[streamCallTrace.getCallSteps().length - 1];
+
+            taskHelper.getPw().println("Found where stream is initialized, getting environment information to correctly specify where to implement new wrapper" +
+                    " class...");
+
+            AssertableSolutionSet initCallInfoSolution = getInitializationData(taskHelper, config, streamInitializationNode);
+            
+            String initCallOwnerName = initCallInfoSolution.getSolutions().get(0).get("methodName");
+            String initCallOwnerOwner = initCallInfoSolution.getSolutions().get(0).get("class");
+            String initCallOwnerOwnerName = initCallInfoSolution.getSolutions().get(0).get("className");
+
+            List<MethodInvocationDataflowNode> methodNodes = new ArrayList<>();
+            MethodInvocationDataflowNode initializerNode = (MethodInvocationDataflowNode)
+                    streamCallTrace.getCallSteps()[streamCallTrace.getCallSteps().length - 1];
+            for (DataflowNode dataflowNode : streamCallTrace.getCallSteps()) {
+                if (dataflowNode instanceof MethodInvocationDataflowNode) {
+                    methodNodes.add((MethodInvocationDataflowNode) dataflowNode);
+                }
+            }
+
+            methodNodes.removeIf(methodNode -> !methodNode.getJavaClassName().equals
+                    (streamInitializationNode.getJavaClassName()));
+
+            AssertableSolutionSet ownerSourceSolutions = getWrapperInsertionSiteContext(taskHelper, initCallOwnerOwnerName);
+            
+            String applicationSourceFileName = "fileNameNotFound.java";
+            String applicationSource;
+            List<String> applicationSourceLines = new ArrayList<>();
+            if (!ownerSourceSolutions.getSolutions().isEmpty()) {
+                applicationSourceFileName = ownerSourceSolutions.getSolutions().get(0).get("fileName");
+                applicationSource = ownerSourceSolutions.getSolutions().get(0).get("source");
+                applicationSourceLines = Arrays.asList(applicationSource.split("\n"));
+            }
+
+            AugmentedUserSourceFile augmentedUserSourceFile = new AugmentedUserSourceFile();
+            augmentedUserSourceFile.setFileName(applicationSourceFileName);
+            String getDependentFiles = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                    "\n" +
+                    "select ?dependentFiles where {\n" +
+                    "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                    "\t\t<???CLASS???> IMMoRTALS:hasDependentFiles ?dependentFiles .\n" +
+                    "\t}\n" +
+                    "}";
+            getDependentFiles = getDependentFiles.replace("???GRAPH_NAME???", taskHelper.getGraphName()).
+                    replace("???CLASS???", initCallOwnerOwner);
+            AssertableSolutionSet dependentFileSolutions = new AssertableSolutionSet();
+            taskHelper.getClient().executeSelectQuery(getDependentFiles, dependentFileSolutions);
+
+            taskHelper.getPw().println("Precise location of initialization found, can now proceed to create wrapper class...");
+            
+            Set<String> dependentFiles = sanitizeDependencyPaths(dependentFileSolutions);
+            List<String> dependencyPaths = new ArrayList<>();
+            for (File dependency : dependencies) {
+                dependencyPaths.add(dependency.getAbsolutePath());
+            }
+
+            WrapperFactory wrapperFactory = null;
+            Wrapper wrapper = null;
+            WrapperSourceFile[] producedSourceFiles = new WrapperSourceFile[3];
+            boolean plugin = analysisViaPlugin(taskHelper);
+
+            switch (functionalAspect.getAspectId()) {
+
+                case "cipherEncrypt": {
+                    wrapperFactory = new WrapperFactory();
+                    wrapper = initializeWrapper(streamInitializationNode, dependentFiles, dependencyPaths,
+                            wrapperFactory, "java.io.OutputStream");
+                    
+                    previouslyAugmented = wrapperFactory.wrapWithCipher(wrapper, cipherImpl, producedSourceFiles,
+                            taskHelper, plugin, methodNodes);
+                    
+                    augmentUserApplication(methodNodes, taskHelper, initializerNode, applicationSourceLines,
+                            wrapper, initCallOwnerOwnerName);
+                    
+                    checkForImplementationSpecificMethods(taskHelper, wrapper);
+                    break;
+                }
+                
+                case "cipherDecrypt": {
+
+                    wrapperFactory = new WrapperFactory();
+                    wrapper = initializeWrapper(streamInitializationNode, dependentFiles, dependencyPaths,
+                            wrapperFactory, "java.io.InputStream");
+
+                    previouslyAugmented = wrapperFactory.wrapWithCipher(wrapper, cipherImpl, producedSourceFiles,
+                            taskHelper, plugin, methodNodes);
+                    
+                    augmentUserApplication(methodNodes, taskHelper, initializerNode, applicationSourceLines,
+                            wrapper, initCallOwnerOwnerName);
+                    
+                    checkForImplementationSpecificMethods(taskHelper, wrapper);
+                }
+            }
+
+            taskHelper.getPw().println("Wrapper class created: Wrapper" + wrapper.getWrappedClass().getShortName() +
+                    ". It will be placed in the specified plugin directory. Replace your stream implementation in " + initCallOwnerOwnerName
+                    + ", method " + initCallOwnerName + ", at line number " + streamInitializationNode.getLineNumber() +
+                    " with a reference to the produced wrapper class.\n");
+
+            if (!previouslyAugmented) {
+                String classFileLocation = wrapperFactory.produceWrapperClassFile(wrapper);
+                File javaSource = decompileWrapperFoundation(taskHelper, wrapper, plugin,
+                        classFileLocation);
+                String source = FileUtils.readFileToString(javaSource);
+                
+                WrapperSourceFile wrapperSourceFile = new WrapperSourceFile();
+                wrapperSourceFile.setSource(source);
+                wrapperSourceFile.setFileSystemPath(javaSource.getAbsolutePath());
+                wrapperSourceFile.setFileName(javaSource.getName());
+                producedSourceFiles[2] = wrapperSourceFile;
+                impact.setProducedSourceFiles(producedSourceFiles);
+                impact.setAugmentedUserFile(augmentedUserSourceFile);
+                impact.setInitializationNode(streamInitializationNode);
+                taskHelper.getClient().addToModel(ObjectToTriples.convert(config, impact), taskHelper.getGraphName());
+                
+                wrapper.getAspectsAdapted().add(functionalAspect);
+                return wrapper;
+            } else {
+                recordAspectAdaptation(taskHelper, functionalAspect, wrapper);
+            }
+        }
+        return null;
+    }
+    
+    public static AspectConfigureRequest generateConfigurationRequest(FunctionalAspectInstance aspectInstance, GradleTaskHelper taskHelper, 
+                                                     ObjectToTriplesConfiguration config) throws Exception{
+        String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
+        AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
+
+        taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
+
+        Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
+                cipherImplSolutions);
+
+        String functionalityUUID = cipherImplSolutions.getSolutions().get(0).get("dfuFunctionality");
+        Functionality functionality = (Functionality) TriplesToPojo.convert(taskHelper.getGraphName(),
+                functionalityUUID, taskHelper.getClient());
+
+        AspectConfigureRequest configureRequest = new AspectConfigureRequest();
+        List<DataType> typesOfParameters = new ArrayList<>();
+        Class<? extends FunctionalAspect> abstractAspect = aspectInstance.getAbstractAspect();
+
+        FunctionalAspect instantiateAspect = null;
+        try {
+            instantiateAspect = abstractAspect.newInstance();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+
+        Class[] aspectSpecificDependencies = instantiateAspect.getAspectSpecificResourceDependencies();
+        if (aspectSpecificDependencies.length != 0) {
+            List<FunctionalAspect> aspectDependencies = new ArrayList<>();
+            for (Class clazz : aspectSpecificDependencies) {
+                try {
+                    Object obj = clazz.newInstance();
+                    if (obj instanceof FunctionalAspect) {
+
+                        FunctionalAspect functionalAspect = (FunctionalAspect) obj;
+                        aspectDependencies.add(functionalAspect);
+                        for (Input in : functionalAspect.getInputs()) {
+                            Class<? extends DataType> abstractDataType = in.getType();
+                            typesOfParameters.add(abstractDataType.newInstance());
+                        }
+                    }
+                } catch(Exception exc) {
+                    exc.printStackTrace();
+                }
+            }
+        }
+
+        DataType[] dataTypeArr = new DataType[typesOfParameters.size()];
+        for (int i = 0; i < dataTypeArr.length; i++) {
+            dataTypeArr[i] = typesOfParameters.get(i);
+        }
+
+
+        List<DfuInstance> dfuInstances = new ArrayList<>(dfuInstanceStringMap.keySet());
+        DfuInstance[] dfuInstanceArr = new DfuInstance[dfuInstances.size()];
+        for (int i = 0; i < dfuInstanceArr.length; i++) {
+            dfuInstanceArr[i] = dfuInstances.get(i);
+        }
+
+        configureRequest.setConfigurationUnknowns(dataTypeArr);
+        configureRequest.setCandidateImpls(dfuInstanceArr);
+        configureRequest.setRequiredFunctionality(functionality.getClass());
+        
+        return configureRequest;
+    }
+    
+    public static AspectConfigureSolution retrieveConfigurationSolution(DfuInstance dfuInstance) {
+        
+        ConfigurationBinding[] tempConfigurationBindings = new ConfigurationBinding[5];
+
+        ConfigurationBinding configurationBinding0 = new ConfigurationBinding();
+        configurationBinding0.setSemanticType(CipherAlgorithm.class);
+        configurationBinding0.setBinding("AES");
+        ConfigurationBinding configurationBinding1 = new ConfigurationBinding();
+        configurationBinding1.setSemanticType(CipherKeyLength.class);
+        configurationBinding1.setBinding("16");
+        ConfigurationBinding configurationBinding2 = new ConfigurationBinding();
+        configurationBinding2.setSemanticType(CipherBlockSize.class);
+        configurationBinding2.setBinding("256");
+        ConfigurationBinding configurationBinding3 = new ConfigurationBinding();
+        configurationBinding3.setSemanticType(CipherChainingMode.class);
+        configurationBinding3.setBinding("CBC");
+        ConfigurationBinding configurationBinding4 = new ConfigurationBinding();
+        configurationBinding4.setSemanticType(PaddingScheme.class);
+        configurationBinding4.setBinding("PKCS5Padding");
+        tempConfigurationBindings[0] = configurationBinding0;
+        tempConfigurationBindings[1] = configurationBinding1;
+        tempConfigurationBindings[2] = configurationBinding2;
+        tempConfigurationBindings[3] = configurationBinding3;
+        tempConfigurationBindings[4] = configurationBinding4;
+
+        AspectConfigureSolution configureSolution = new AspectConfigureSolution();
+        configureSolution.setChosenInstance(dfuInstance);
+        configureSolution.setConfigurationBindings(tempConfigurationBindings);
+        
+        return configureSolution;
+    }
+
+    private static void recordAspectAdaptation(GradleTaskHelper taskHelper, FunctionalAspect functionalAspect, Wrapper wrapper) {
+        for (Wrapper cachedWrapper : taskHelper.getWrappers()) {
+            if (cachedWrapper.getWrapperClass().getName().equals(
+                    wrapper.getWrapperClass().getName())) {
+                boolean aspectAlreadyRecorded = false;
+                for (FunctionalAspect wrapperAspect : cachedWrapper.getAspectsAdapted()) {
+                    if (wrapperAspect.getAspectId().equals(functionalAspect.getAspectId())) {
+                        aspectAlreadyRecorded = true;
+                    }
+                }
+                if (!aspectAlreadyRecorded) {
+                    cachedWrapper.getAspectsAdapted().add(functionalAspect);
+                }
+            }
+        }
+    }
+
+    private static void checkForImplementationSpecificMethods(GradleTaskHelper taskHelper, Wrapper wrapper) {
+        String wrappedClassName = wrapper.getWrappedClass().getName();
+        String getNecessaryImplementations = "prefix IMMoRTALS_pattern_spec: <http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#> \n" +
+                "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\n" +
+                "select ?codeSpecSig ?codeSpecCode where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\n" +
+                "\t\t?specComponent a IMMoRTALS_pattern_spec:SpecComponent\n" +
+                "\t\t; IMMoRTALS:hasAspectBeingPerformed <http://darpa.mil/immortals/ontology/r2.0.0/functionality/wrapper#AspectRuntimeImplementation>\n" +
+                "\t\t; IMMoRTALS:hasCodeSpec ?codeSpec .\n" +
+                "\t\t\n" +
+                "\t\t?codeSpec a IMMoRTALS_pattern_spec:CodeSpec\n" +
+                "\t\t; IMMoRTALS:hasClassName \"???CLASS_NAME???\"\n" +
+                "\t\t; IMMoRTALS:hasMethodSignature ?codeSpecSig\n" +
+                "\t\t; IMMoRTALS:hasCode ?codeSpecCode .\n" +
+                "\t}\n" +
+                "}";
+        getNecessaryImplementations = getNecessaryImplementations.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                .replace("???CLASS_NAME???", wrappedClassName.replaceAll("\\.", "\\/"));
+        AssertableSolutionSet necessaryImplementationSolutionSet = new AssertableSolutionSet();
+
+        taskHelper.getClient().executeSelectQuery(getNecessaryImplementations, necessaryImplementationSolutionSet);
+        List<CodeSpec> codeSpecs = new ArrayList<>();
+
+        for (Solution necessaryImplementationSolution : necessaryImplementationSolutionSet.getSolutions()) {
+            
+            CodeSpec codeSpec = new CodeSpec();
+            codeSpec.setClassName(wrappedClassName);
+            codeSpec.setMethodSignature(necessaryImplementationSolution.get("codeSpecSig"));
+            codeSpec.setCode(necessaryImplementationSolution.get("codeSpecCode"));
+            codeSpecs.add(codeSpec);
         }
         
-        String headOfTraceUUID = config.getNamingContext().getNameForObject(node);
+        wrapper.introduceMediationMethods(codeSpecs, taskHelper);
+    }
+
+    private static String getStreamObject(FunctionalAspect functionalAspect) {
+        return functionalAspect.getAspectId().contains("Encrypt") ?
+                "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#OutputStream" :
+                "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#InputStream";
+    }
+
+    private static File decompileWrapperFoundation(GradleTaskHelper taskHelper, Wrapper wrapper, boolean plugin,
+                                            String classFileLocation) throws IOException {
+        Decompiler decompiler = new Decompiler();
+        File javaSource;
+        if (plugin) {
+            javaSource = decompiler.decompileClassFile(classFileLocation, taskHelper.getResultsDir()
+                    + "/Wrapper" + wrapper.getWrappedClass().getShortName() + ".java", plugin);
+        } else {
+            javaSource = decompiler.decompileClassFile(classFileLocation,
+                    classFileLocation.substring(0, classFileLocation.lastIndexOf("/"))
+                            + "/Wrapper" + wrapper.getWrappedClass().getShortName() + ".java", plugin);
+        }
         
-        GradleTaskHelper.AssertableSolutionSet traceSolutions = new GradleTaskHelper.AssertableSolutionSet();
+        return javaSource;
+    }
+    
+    public static void performWrapperCodeInsertions(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config) throws Exception {
+        
+        
+        for (Wrapper wrapper : taskHelper.getWrappers()) {
+            String wrappedClassFileName = wrapper.getWrapperClass().getShortName() + ".java";
+
+            String getPreviouslyAugmentedSource = getWrapperSource(wrappedClassFileName, taskHelper);
+            AssertableSolutionSet sourceSolutions = new AssertableSolutionSet();
+            taskHelper.getClient().executeSelectQuery(getPreviouslyAugmentedSource, sourceSolutions);
+
+            Solution sourceSolution = sourceSolutions.getSolutions().get(0);
+            String sourceFileName = sourceSolution.get("sourceFile");
+            String source = sourceSolution.get("sourceCode"); // retrieve source from ontology
+
+            if (wrapper.getWrappedClass().isAbstract()) {
+                Optional<String> sourceWithAbstractMethodsImplemented = taskHelper.checkForNecessaryImplementations(
+                        wrapper.getWrappedClass().getName(), source, null);
+                if (sourceWithAbstractMethodsImplemented.isPresent()) {
+                    source = sourceWithAbstractMethodsImplemented.get();
+                }
+            }
+            
+            Optional<String> sourceWithAugmentationSurfaceMethods = taskHelper.augmentAdaptationSurfaceMethods(
+                    wrapper.getWrappedClass().getName(), source, null, wrapper);
+            if (sourceWithAugmentationSurfaceMethods.isPresent()) {
+                source = sourceWithAugmentationSurfaceMethods.get();
+            }
+            
+            WrapperSourceFile sourceFile = (WrapperSourceFile) TriplesToPojo.convert(taskHelper.getGraphName(),
+                    sourceFileName, taskHelper.getClient());
+            sourceFile.setSource(source);
+
+            taskHelper.getClient().addToModel(ObjectToTriples.convert(config, sourceFile), taskHelper.getGraphName());
+
+            Files.write(Paths.get(sourceFile.getFileSystemPath()), Collections.singleton(source), StandardCharsets.UTF_8);
+        }
+    }
+
+    private static String getWrapperSource(String wrappedClassFileName, GradleTaskHelper taskHelper) {
+        String getPreviouslyAugmentedSource = "prefix IMMoRTALS_constraint: <http://darpa.mil/immortals/ontology/r2.0.0/constraint#> \n" +
+                "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
+                "\n" +
+                "select ?sourceFile ?sourceCode where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t\n" +
+                "\t\t?impacts IMMoRTALS:hasProducedSourceFiles ?sourceFile .\n" +
+                "\t\t\n" +
+                "\t\t?sourceFile IMMoRTALS:hasFileName \"???FILE_NAME???\"\n" +
+                "\t\t; IMMoRTALS:hasSource ?sourceCode .\n" +
+                "\t}\n" +
+                "}";
+        getPreviouslyAugmentedSource = getPreviouslyAugmentedSource.replace("???FILE_NAME???",
+                wrappedClassFileName)
+                .replace("???GRAPH_NAME???", taskHelper.getGraphName());
+        return getPreviouslyAugmentedSource;
+    }
+
+    public static String getImplementationSpecificStrings(GradleTaskHelper taskHelper, String chosenInstanceUUID) {
+        String getUsageParadigmMagicString = "prefix IMMoRTALS_pattern_spec: <http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#>\n" +
+                "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\n" +
+                "select ?magicString ?configVars where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t?usageParadigm a IMMoRTALS_pattern_spec:AbstractUsageParadigm\n" +
+                "\t\t; IMMoRTALS:hasDfuInstance <???DFU_INSTANCE???>\n" +
+                "\t\t; IMMoRTALS:hasMagicInitString ?magicString\n" +
+                "\t\t; IMMoRTALS:hasConfigurationVariables ?configVars .\n" +
+                "\t}\n" +
+                "}";
+        getUsageParadigmMagicString = getUsageParadigmMagicString.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                .replace("???DFU_INSTANCE???", chosenInstanceUUID);
+        return getUsageParadigmMagicString;
+    }
+
+    public static String retrieveChosenDfuImpl(FunctionalAspectInstance aspectInstance, GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config) {
+        String getCipherImpl = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
+                "select ?cipherImpl ?dfu ?dfuFunctionality where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t\n" +
+                "\t\t?class IMMoRTALS:hasHash ?hash\n" +
+                "\t\t; IMMoRTALS:hasClassModel ?classModel .\n" +
+                "\n\t\t?classModel IMMoRTALS:hasClassName ?cipherImpl ." +
+                "\t\t?dfu IMMoRTALS:hasClassPointer ?hash\n" +
+                "\t\t; IMMoRTALS:hasFunctionalAspects <???ASPECT_INSTANCE???> \n" +
+                "\t\t; IMMoRTALS:hasFunctionalityAbstraction ?dfuFunctionality .\n" +
+                "\t}\n" +
+                "}";
+        getCipherImpl = getCipherImpl.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???ASPECT_INSTANCE???"
+                , config.getNamingContext().getNameForObject(aspectInstance));
+        return getCipherImpl;
+    }
+
+    private static Wrapper initializeWrapper(MethodInvocationDataflowNode streamInitializationNode, Set<String> dependentFiles,
+                                             List<String> dependencyPaths, WrapperFactory wrapperFactory, String s) {
+        Wrapper wrapper;
+        wrapper = wrapperFactory.createWrapper(streamInitializationNode.getJavaClassName().replace("/", "."),
+                dependencyPaths, dependentFiles);
+
+        wrapper.setStreamType(s);
+        return wrapper;
+    }
+
+    private static boolean analysisViaPlugin(GradleTaskHelper taskHelper) {
+        boolean plugin;
+        if (taskHelper.getResultsDir() == null) {
+            plugin = false;
+        } else {
+            plugin = true;
+        }
+        return plugin;
+    }
+
+    private static Set<String> sanitizeDependencyPaths(AssertableSolutionSet dependentFileSolutions) throws UnsupportedEncodingException {
+        Set<String> dependentFiles = new HashSet<>();
+        for (Solution dependentFileSolution : dependentFileSolutions.getSolutions()) {
+            String dependentFileFullPath = dependentFileSolution.get("dependentFiles");
+            dependentFiles.add(URLDecoder.decode(dependentFileFullPath.replace("\\", "/").
+                    substring(dependentFileFullPath.indexOf("jar:file:/") + 10, dependentFileFullPath.indexOf("!")), "UTF-8"));
+        }
+        return dependentFiles;
+    }
+
+    private static AssertableSolutionSet getWrapperInsertionSiteContext(GradleTaskHelper taskHelper, String initCallOwnerOwnerName) {
+        String sourceCodeRepoSafeName = initCallOwnerOwnerName.replaceAll("/", ".");
+        if (sourceCodeRepoSafeName.contains("$")) {
+            sourceCodeRepoSafeName = sourceCodeRepoSafeName.substring(0, sourceCodeRepoSafeName.indexOf("$"));
+        }
+
+        String getInitCallOwnerOwnerSource = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\n" +
+                "select distinct ?fileName ?source where {\n" +
+                "  \n" +
+                "\t\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "    \n" +
+                "\t\t?javaProject IMMoRTALS:hasSourceCodeRepo ?sourceCodeRepo\n" +
+                "    \t; IMMoRTALS:hasCompiledSourceHash ?compiledHash .\n" +
+                "\t\t\n" +
+                "\t\t?sourceCodeRepo IMMoRTALS:hasSourceFiles ?sourceFiles .\n" +
+                "\t\t\n" +
+                "\t\t?sourceFiles IMMoRTALS:hasFullyQualifiedName \"???CLASS_NAME???\"\n" +
+                "\t\t; IMMoRTALS:hasSource ?source \n" +
+                "\t\t; IMMoRTALS:hasFileName ?fileName .\n" +
+                "\t\t\n" +
+                "\t\t?classArtifact IMMoRTALS:hasHash ?compiledHash .\n" +
+                "\t\t\n" +
+                "\t\t?classArtifact IMMoRTALS:hasClassModel ?aClass .\n" +
+                "\t\t\n" +
+                "\t\t?aClass IMMoRTALS:hasClassName \"???CLASS_NAME_URL???\" .}\n" +
+                "}";
+        getInitCallOwnerOwnerSource = getInitCallOwnerOwnerSource.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                .replace("???CLASS_NAME???", sourceCodeRepoSafeName).replace(
+                        "???CLASS_NAME_URL???", initCallOwnerOwnerName);
+        AssertableSolutionSet ownerSourceSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getInitCallOwnerOwnerSource, ownerSourceSolutions);
+        return ownerSourceSolutions;
+    }
+
+    private static ArrayList<CallTrace> findWrapperInsertionSite(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config, AssertableSolutionSet traceSolutions) throws Exception {
+        String streamStarterNodeUUID = traceSolutions.getSolutions().get(0).get("nodes");
+        String streamStarterEdgeUUID = traceSolutions.getSolutions().get(0).get("edge");
+
+        MethodInvocationDataflowEdge streamStarterEdge = (MethodInvocationDataflowEdge) TriplesToPojo.convert(taskHelper.getGraphName(),
+                streamStarterEdgeUUID, taskHelper.getClient());
+
+
+        return getAllReverseCallTraces(taskHelper, streamStarterNodeUUID, new CallTrace(),
+                streamStarterEdge.getDataflowAnalysisFrame(), config);
+    }
+
+    private static AssertableSolutionSet findStreamImplementationInUsersCode(InterMethodDataflowNode node, GradleTaskHelper taskHelper,
+                                                                             ObjectToTriplesConfiguration config, 
+                                                                             String applicableStreamObject) {
+        
+        String headOfTraceUUID = config.getNamingContext().getNameForObject(node);
+        AssertableSolutionSet traceSolutions = new AssertableSolutionSet();
+        getStreamImplementation(taskHelper, applicableStreamObject, headOfTraceUUID, traceSolutions);
+        return traceSolutions;
+    }
+
+    private static void getStreamImplementation(GradleTaskHelper taskHelper, String applicableStreamObject, String headOfTraceUUID,
+                                                AssertableSolutionSet traceSolutions) {
         final String getCalledNodes = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#> \n" +
                 "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -763,375 +1230,78 @@ public class AnalysisFrameAssessment {
                 ("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???NODE???", headOfTraceUUID)
                 .replace("???DATA???", applicableStreamObject) + "\n\n");
         taskHelper.getPw().println("Searching for your specific stream implementation...");
-        if (traceSolutions.getSolutions().isEmpty()) {
-            taskHelper.getPw().println("No streams found; stream cipher implementation can not be inserted.");
-        } else {
-            taskHelper.getPw().println("Stream found. Attempting to find where it is initialized...");
-            
-            String streamStarterNodeUUID = traceSolutions.getSolutions().get(0).get("nodes");
-            String streamStarterEdgeUUID = traceSolutions.getSolutions().get(0).get("edge");
+    }
 
-            TriplesToPojo.SparqlPojoContext streamStarterEdges = taskHelper.getObjectRepresentation(streamStarterEdgeUUID,
-                    DATAFLOW_METHOD_TYPE, config);
-            MethodInvocationDataflowEdge streamStarterEdge = null;
-            for (Map<String, Object> mapping : streamStarterEdges) {
-                streamStarterEdge = (MethodInvocationDataflowEdge) mapping.get("obj");
-            }
+    private static AssertableSolutionSet getInitializationData(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config,
+                                                               MethodInvocationDataflowNode streamInitializationNode) {
+        String getInformationAboutInitMethodCall = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\t\t\n" +
+                "select * where {\n" +
+                "\tgraph <http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t?aMethod IMMoRTALS:hasMethodName ?methodName\n" +
+                "\t\t; IMMoRTALS:hasInterestingInstructions ?methodCallNodes\n" +
+                "        ; IMMoRTALS:hasOwner ?class .\n" +
+                "    \n" +
+                "        ?class IMMoRTALS:hasClassName ?className .\n" +
+                "\t\t\n" +
+                "\t\t?methodCallNodes  IMMoRTALS:hasSemanticLink <???SEMANTIC_LINK???>" +
+                "\t}\n" +
+                "}";
+        getInformationAboutInitMethodCall = getInformationAboutInitMethodCall.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                .replace("???SEMANTIC_LINK???", config.getNamingContext().getNameForObject(streamInitializationNode));
+        taskHelper.getPw().println("Getting surrounding semantic information of method call node using query:\n\n" 
+                + getInformationAboutInitMethodCall + "\n\n");
+        AssertableSolutionSet initCallInfoSolution = new AssertableSolutionSet();
 
-            ArrayList<CallTrace> callTraces = getAllReverseCallTraces(taskHelper, streamStarterNodeUUID, new CallTrace(),
-                    streamStarterEdge.getDataflowAnalysisFrame(), config);
-            
-            CallTrace streamCallTrace = callTraces.get(0);
-            MethodInvocationDataflowNode streamInitializationNode = (MethodInvocationDataflowNode) streamCallTrace.getCallSteps()[streamCallTrace.getCallSteps().length - 1];
+        taskHelper.getClient().executeSelectQuery(getInformationAboutInitMethodCall, initCallInfoSolution);
 
-            taskHelper.getPw().println("Found where stream is initialized, getting environment information to correctly specify where to implement new wrapper" +
-                    " class...");
-            
-            String getInformationAboutInitMethodCall = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
-                    "\t\t\n" +
-                    "select * where {\n" +
-                    "\tgraph <http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
-                    "\t\t?aMethod IMMoRTALS:hasMethodName ?methodName\n" +
-                    "\t\t; IMMoRTALS:hasInterestingInstructions ?methodCallNodes\n" +
-                    "        ; IMMoRTALS:hasOwner ?class .\n" +
-                    "    \n" +
-                    "        ?class IMMoRTALS:hasClassName ?className .\n" +
-                    "\t\t\n" +
-                    "\t\t?methodCallNodes  IMMoRTALS:hasSemanticLink <???SEMANTIC_LINK???>" +
-                    "\t}\n" +
-                    "}";
-            getInformationAboutInitMethodCall = getInformationAboutInitMethodCall.replace("???GRAPH_NAME???", taskHelper.getGraphName())
-                    .replace("???SEMANTIC_LINK???", config.getNamingContext().getNameForObject(streamInitializationNode));
-            taskHelper.getPw().println("Getting surrounding semantic information of method call node using query:\n\n" 
-                    + getInformationAboutInitMethodCall + "\n\n");
-            AssertableSolutionSet initCallInfoSolution = new AssertableSolutionSet();
+        if (initCallInfoSolution.getSolutions().isEmpty()) {
+            taskHelper.getPw().println("Unable to gather required information about stream initialization, possible cause is" +
+                    " insufficient data flow analysis.");
+        }
+        return initCallInfoSolution;
+    }
 
-            taskHelper.getClient().executeSelectQuery(getInformationAboutInitMethodCall, initCallInfoSolution);
+    public static String generateMagicString(GradleTaskHelper taskHelper, String magicString, AspectConfigureSolution configureSolution,
+                                            AssertableSolutionSet usageParadigmSolutions) throws ClassNotFoundException,
+            InstantiationException, IllegalAccessException, NoSuchFieldException {
+        
+        for (Solution usageParadigmSolution : usageParadigmSolutions.getSolutions()) {
             
-            if (initCallInfoSolution.getSolutions().isEmpty()) {
-                taskHelper.getPw().println("Unable to gather required information about stream initialization, possible cause is" +
-                        " insufficient data flow analysis.");
-            }
-            
-            String initCallOwnerName = initCallInfoSolution.getSolutions().get(0).get("methodName");
-            String initCallOwnerOwner = initCallInfoSolution.getSolutions().get(0).get("class");
-            String initCallOwnerOwnerName = initCallInfoSolution.getSolutions().get(0).get("className");
-            
-            List<MethodInvocationDataflowNode> methodNodes = new ArrayList<>();
-            MethodInvocationDataflowNode initializerNode = (MethodInvocationDataflowNode)
-                    streamCallTrace.getCallSteps()[streamCallTrace.getCallSteps().length - 1];
-            for (DataflowNode dataflowNode : streamCallTrace.getCallSteps()) {
-                if (dataflowNode instanceof MethodInvocationDataflowNode) {
-                    methodNodes.add((MethodInvocationDataflowNode) dataflowNode);
+            String configurationVarUUID = usageParadigmSolution.get("configVars");
+            Object configurationVarObject = TriplesToPojo.convert(taskHelper.getGraphName(), configurationVarUUID,
+                    taskHelper.getClient());
+            if (configurationVarObject instanceof DfuConfigurationVariable) {
+                DfuConfigurationVariable dfuConfigurationVariable = (DfuConfigurationVariable) configurationVarObject;
+                Optional<ConfigurationBinding> configurationBindingOption = Arrays.stream(configureSolution.getConfigurationBindings())
+                        .filter(binding -> binding.getSemanticType().equals(dfuConfigurationVariable.getSemanticType())).findFirst();
+                
+                if (configurationBindingOption.isPresent()) {
+                    ConfigurationBinding configurationBinding = configurationBindingOption.get();
+                    magicString = magicString.replace(dfuConfigurationVariable.getMagicStringVar(), configurationBinding.getBinding());
                 }
             }
-            
-            methodNodes.removeIf(methodNode -> !methodNode.getJavaClassName().equals
-                    (streamInitializationNode.getJavaClassName()));
-            
-            String sourceCodeRepoSafeName = initCallOwnerOwnerName.replaceAll("/", ".");
-            
-            if (sourceCodeRepoSafeName.contains("$")) {
-                sourceCodeRepoSafeName = sourceCodeRepoSafeName.substring(0, sourceCodeRepoSafeName.indexOf("$"));
-            }
-            
-            String getInitCallOwnerOwnerSource = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
-                    "\n" +
-                    "select distinct ?fileName ?source where {\n" +
-                    "  \n" +
-                    "\t\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
-                    "    \n" +
-                    "\t\t?javaProject IMMoRTALS:hasSourceCodeRepo ?sourceCodeRepo\n" +
-                    "    \t; IMMoRTALS:hasCompiledSourceHash ?compiledHash .\n" +
-                    "\t\t\n" +
-                    "\t\t?sourceCodeRepo IMMoRTALS:hasSourceFiles ?sourceFiles .\n" +
-                    "\t\t\n" +
-                    "\t\t?sourceFiles IMMoRTALS:hasFullyQualifiedName \"???CLASS_NAME???\"\n" +
-                    "\t\t; IMMoRTALS:hasSource ?source \n" +
-                    "\t\t; IMMoRTALS:hasFileName ?fileName .\n" +
-                    "\t\t\n" +
-                    "\t\t?classArtifact IMMoRTALS:hasHash ?compiledHash .\n" +
-                    "\t\t\n" +
-                    "\t\t?classArtifact IMMoRTALS:hasClassModel ?aClass .\n" +
-                    "\t\t\n" +
-                    "\t\t?aClass IMMoRTALS:hasClassName \"???CLASS_NAME_URL???\" .}\n" +
-                    "}";
-            getInitCallOwnerOwnerSource = getInitCallOwnerOwnerSource.replace("???GRAPH_NAME???", taskHelper.getGraphName())
-                    .replace("???CLASS_NAME???", sourceCodeRepoSafeName).replace(
-                            "???CLASS_NAME_URL???", initCallOwnerOwnerName);
-            AssertableSolutionSet ownerSourceSolutions = new AssertableSolutionSet();
-            taskHelper.getClient().executeSelectQuery(getInitCallOwnerOwnerSource, ownerSourceSolutions);
-            
-            String applicationSourceFileName = "fileNameNotFound.java";
-            String applicationSource;
-            List<String> applicationSourceLines = new ArrayList<>();
-            if (!ownerSourceSolutions.getSolutions().isEmpty()) {
-                applicationSourceFileName = ownerSourceSolutions.getSolutions().get(0).get("fileName");
-                applicationSource = ownerSourceSolutions.getSolutions().get(0).get("source");
-                applicationSourceLines = Arrays.asList(applicationSource.split("\n"));
-            }
-
-            AugmentedUserSourceFile augmentedUserSourceFile = new AugmentedUserSourceFile();
-            augmentedUserSourceFile.setFileName(applicationSourceFileName);
-            String getDependentFiles = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
-                    "\n" +
-                    "select ?dependentFiles where {\n" +
-                    "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
-                    "\t\t<???CLASS???> IMMoRTALS:hasDependentFiles ?dependentFiles .\n" +
-                    "\t}\n" +
-                    "}";
-            getDependentFiles = getDependentFiles.replace("???GRAPH_NAME???", taskHelper.getGraphName()).
-                    replace("???CLASS???", initCallOwnerOwner);
-            AssertableSolutionSet dependentFileSolutions = new AssertableSolutionSet();
-            taskHelper.getClient().executeSelectQuery(getDependentFiles, dependentFileSolutions);
-            
-            Set<String> dependentFiles = new HashSet<>();
-            for (Solution dependentFileSolution : dependentFileSolutions.getSolutions()) {
-                String dependentFileFullPath = dependentFileSolution.get("dependentFiles");
-                dependentFiles.add(URLDecoder.decode(dependentFileFullPath.replace("\\", "/").
-                        substring(dependentFileFullPath.indexOf("jar:file:/") + 10, dependentFileFullPath.indexOf("!")), "UTF-8"));
-            }
-            
-            taskHelper.getPw().println("Precise location of initialization found, can now proceed to create wrapper class...");
-            
-            List<String> dependencyPaths = new ArrayList<>();
-            
-            for (File dependency : dependencies) {
-                dependencyPaths.add(dependency.getAbsolutePath());
-            }
-
-            WrapperFactory wrapperFactory = null;
-            Wrapper wrapper = null;
-            String aspectUUID = null;
-            String cipherImpl = null;
-            List<String> augmentedMethods = new ArrayList<>();
-            boolean alreadyExistingWrapper = false;
-            WrapperSourceFile[] producedSourceFiles = new WrapperSourceFile[3];
-            
-            boolean plugin;
-            if (taskHelper.getResultsDir() == null) {
-                plugin = false;
-            } else {
-                plugin = true;
-            }
-            
-            switch (functionalAspect.getAspectId()) {
-                
-                case "cipherEncrypt": {
-                    wrapperFactory = new WrapperFactory();
-                    wrapper = wrapperFactory.createWrapper(streamInitializationNode.getJavaClassName().replace("/", "."),
-                            dependencyPaths, dependentFiles);
-                    
-                    wrapper.setStreamType("java.io.OutputStream");
-                    
-                    String getCipherImpl = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
-                            "select ?cipherImpl where {\n" +
-                            "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
-                            "\t\t\n" +
-                            "\t\t?class IMMoRTALS:hasHash ?hash\n" +
-                            "\t\t; IMMoRTALS:hasClassModel ?classModel .\n" +
-                            "\n\t\t?classModel IMMoRTALS:hasClassName ?cipherImpl ." +
-                            "\t\t?dfu IMMoRTALS:hasClassPointer ?hash\n" +
-                            "\t\t; IMMoRTALS:hasFunctionalAspects <???ASPECT_INSTANCE???> .\n" +
-                            "\t}\n" +
-                            "}";
-                    getCipherImpl = getCipherImpl.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???ASPECT_INSTANCE???"
-                            , config.getNamingContext().getNameForObject(aspectInstance));
-                    AssertableSolutionSet cipherImplSoln = new AssertableSolutionSet();
-
-                    taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSoln);
-                    cipherImpl = cipherImplSoln.getSolutions().get(0).get("cipherImpl");
-                    cipherImpl = cipherImpl.replace("/", ".").replace(".class", "");
-
-                    augmentedMethods.addAll(wrapperFactory.wrapWithCipher(wrapper, cipherImpl, producedSourceFiles, taskHelper, plugin, methodNodes));
-                    augmentUserApplication(methodNodes, taskHelper, initializerNode, applicationSourceLines, wrapper, initCallOwnerOwnerName);
-                    
-                    if (augmentedMethods.isEmpty()) {
-                        alreadyExistingWrapper = true;
-                    }
-                    
-                    augmentedUserSourceFile.setAugmentedMethodInvocations(recordAugmentedUserCode(initializerNode, methodNodes));
-                    
-                    aspectUUID = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#AspectCipherEncrypt";
-                    break;
-                }                  
-                case "cipherDecrypt":
-
-                    wrapperFactory = new WrapperFactory();
-                    wrapper = wrapperFactory.createWrapper(streamInitializationNode.getJavaClassName().replace("/", "."),
-                            dependencyPaths, dependentFiles);
-                    wrapper.setStreamType("java.io.InputStream");
-
-                    String getCipherImpl = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
-                            "select ?cipherImpl where {\n" +
-                            "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
-                            "\t\t\n" +
-                            "\t\t?class IMMoRTALS:hasHash ?hash\n" +
-                            "\t\t; IMMoRTALS:hasClassModel ?classModel .\n" +
-                            "\n\t\t?classModel IMMoRTALS:hasClassName ?cipherImpl ." +
-                            "\t\t?dfu IMMoRTALS:hasClassPointer ?hash\n" +
-                            "\t\t; IMMoRTALS:hasFunctionalAspects <???ASPECT_INSTANCE???> .\n" +
-                            "\t}\n" +
-                            "}";
-                    getCipherImpl = getCipherImpl.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???ASPECT_INSTANCE???"
-                            ,config.getNamingContext().getNameForObject(aspectInstance));
-                    AssertableSolutionSet cipherImplSoln = new AssertableSolutionSet();
-
-                    taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSoln);
-                    cipherImpl = cipherImplSoln.getSolutions().get(0).get("cipherImpl");
-                    cipherImpl = cipherImpl.replace("/", ".").replace(".class", "");
-
-                    augmentedMethods.addAll(wrapperFactory.wrapWithCipher(wrapper, cipherImpl, producedSourceFiles,
-                            taskHelper, plugin, methodNodes));
-                    augmentUserApplication(methodNodes, taskHelper, initializerNode, applicationSourceLines, wrapper, initCallOwnerOwnerName);
-                    if (augmentedMethods.isEmpty()) {
-                        alreadyExistingWrapper = true;
-                    }
-
-                    augmentedUserSourceFile.setAugmentedMethodInvocations(recordAugmentedUserCode(initializerNode, methodNodes));
-
-                    aspectUUID = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#AspectCipherDecrypt";
-                    break;
-            }
-            
-            if (alreadyExistingWrapper) {
-                
-                String getPreviouslyAugmentedSource = "prefix IMMoRTALS_constraint: <http://darpa.mil/immortals/ontology/r2.0.0/constraint#> \n" +
-                        "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
-                        "\n" +
-                        "select ?sourceFile ?sourceCode where {\n" +
-                        "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
-                        "\t\t\n" +
-                        "\t\t?impacts IMMoRTALS:hasProducedSourceFiles ?sourceFile .\n" +
-                        "\t\t\n" +
-                        "\t\t?sourceFile IMMoRTALS:hasFileName \"???FILE_NAME???\"\n" +
-                        "\t\t; IMMoRTALS:hasSource ?sourceCode .\n" +
-                        "\t}\n" +
-                        "}";
-                getPreviouslyAugmentedSource = getPreviouslyAugmentedSource.replace("???FILE_NAME???",
-                        "Wrapper" + wrapper.getWrappedClass().getShortName() + ".java")
-                                    .replace("???GRAPH_NAME???", taskHelper.getGraphName());
-                AssertableSolutionSet sourceSolutions = new AssertableSolutionSet();
-                
-                taskHelper.getClient().executeSelectQuery(getPreviouslyAugmentedSource, sourceSolutions);
-                
-                Solution sourceSolution = sourceSolutions.getSolutions().get(0);
-                String source = sourceSolution.get("sourceCode"); // retrieve source from ontology
-                
-                if (wrapper.getWrappedClass().isAbstract()) {
-                    Optional<String> sourceWithAbstractMethodsImplemented = taskHelper.checkForNecessaryImplementations(wrapper.getWrappedClass().getName(),
-                            source, null);
-                    if (sourceWithAbstractMethodsImplemented.isPresent()) {
-                        source = sourceWithAbstractMethodsImplemented.get();
-                    }
-                }
-                
-                Optional<String> sourceWithAugmentationSurfaceMethods = taskHelper.augmentAdaptationSurfaceMethods(wrapper.getWrappedClass().getName(),
-                        wrapper.getStreamType(), source, null);
-                if (sourceWithAugmentationSurfaceMethods.isPresent()) {
-                    source = sourceWithAugmentationSurfaceMethods.get();
-                }
-                
-                TriplesToPojo.SparqlPojoContext sourceFileResults = taskHelper.getObjectRepresentation(sourceSolution.get("sourceFile"),
-                        WRAPPER_SOURCE_FILE_TYPE, config);
-                
-                WrapperSourceFile sourceFile = null;
-                for (Map<String, Object> sourceFileResult : sourceFileResults) {
-                    sourceFile = (WrapperSourceFile) sourceFileResult.get("obj");
-                }
-                
-                String[] existingAugmentedMethods = sourceFile.getAugmentedMethods();
-                ArrayList<String> augmentedMethodsList = new ArrayList<>(Arrays.asList(existingAugmentedMethods));
-                
-                source = taskHelper.parseRawCode(source, wrapper.getWrappedClass().getName().replace(".", "/"),
-                        augmentedMethodsList, wrapper.getStreamType(), aspectUUID, cipherImpl);
-                sourceFile.setSource(source);
-                String[] newAugmentedMethods = new String[existingAugmentedMethods.length + augmentedMethodsList.size()];
-                
-                for (int i = 0; i < existingAugmentedMethods.length; i++) {
-                    newAugmentedMethods[i] = existingAugmentedMethods[i];
-                }
-                
-                Iterator<String> augmentedMethodsIter = augmentedMethodsList.iterator();
-                for (int i = existingAugmentedMethods.length; i < newAugmentedMethods.length; i++) {
-                    newAugmentedMethods[i] = augmentedMethodsIter.next();
-                }
-                
-                sourceFile.setAugmentedMethods(newAugmentedMethods);
-                taskHelper.getClient().addToModel(ObjectToTriples.convert(config, sourceFile), taskHelper.getGraphName());
-
-                Files.write(Paths.get(sourceFile.getFileSystemPath()), Collections.singleton(source), StandardCharsets.UTF_8);
-                return null;
-            }
-            
-            taskHelper.getPw().println("Wrapper class created: Wrapper" + wrapper.getWrappedClass().getShortName() +
-                ". It will be placed in the specified plugin directory. Replace your stream implementation in " + initCallOwnerOwnerName 
-                + ", method " + initCallOwnerName + ", at line number " + streamInitializationNode.getLineNumber() + 
-                " with a reference to the produced wrapper class.\n");
-            
-            String classFileLocation = wrapperFactory.produceWrapperClassFile(wrapper);
-
-            Decompiler decompiler = new Decompiler();
-            File javaSource = null;
-            String source = null;
-            if (plugin) {
-                javaSource = decompiler.decompileClassFile(classFileLocation, taskHelper.getResultsDir()
-                        + "/Wrapper" + wrapper.getWrappedClass().getShortName() + ".java", plugin);
-                source = taskHelper.parseWrapperClasses(javaSource, aspectUUID,
-                        wrapper.getWrappedClass().getName().replace(".", "/"), augmentedMethods);
-            } else {
-                javaSource = decompiler.decompileClassFile(classFileLocation,
-                        classFileLocation.substring(0, classFileLocation.lastIndexOf("/"))
-                                + "/Wrapper" + wrapper.getWrappedClass().getShortName() + ".java", plugin);
-                source = taskHelper.parseWrapperClasses(javaSource, aspectUUID,
-                        wrapper.getWrappedClass().getName().replace(".", "/"), augmentedMethods);
-            }
-            
-            if (wrapper.getWrappedClass().isAbstract()) {
-                Optional<String> sourceUpdatedWithRequiredMethods = taskHelper.checkForNecessaryImplementations(
-                        wrapper.getWrappedClass().getName(), source, javaSource);
-                
-                if (sourceUpdatedWithRequiredMethods.isPresent()) {
-                    source = sourceUpdatedWithRequiredMethods.get();
-                }
-            }
-            
-            Optional<String> sourceOption = taskHelper.augmentAdaptationSurfaceMethods(wrapper.getWrappedClass().getName(), wrapper.getStreamType(),
-                        source, javaSource);
-            
-            if (sourceOption.isPresent()) {
-                source = sourceOption.get();
-            }
-            
-            String[] augmentedMethodsArray = new String[augmentedMethods.size()];
-            
-            for (int i = 0; i < augmentedMethodsArray.length; i++) {
-                augmentedMethodsArray[i] = augmentedMethods.get(i);
-            }
-            
-            source = source.replaceAll("\\(" + wrapper.getWrapperClass().getShortName() + "\\)", "");
-            
-            wrapperImpact.setAspectImplemented(functionalAspect.getClass());
-            wrapperImpact.setInitializationNode(streamInitializationNode);
-            WrapperSourceFile producedFile = new WrapperSourceFile();
-            producedFile.setSource(source);
-            producedFile.setAugmentedMethods(augmentedMethodsArray);
-            producedFile.setFileSystemPath(javaSource.getAbsolutePath().replace("\\", "/"));
-            
-            producedFile.setFileName(javaSource.getName());
-            ProgrammingLanguage sourceLanguage = new ProgrammingLanguage();
-            sourceLanguage.setLanguageName("java");
-            sourceLanguage.setVersionTag("8");
-            producedFile.setLanguageModel(sourceLanguage);
-            producedSourceFiles[2] = producedFile;
-            wrapperImpact.setProducedSourceFiles(producedSourceFiles);
-            wrapperImpact.setAugmentedUserFile(augmentedUserSourceFile);
-            taskHelper.getClient().addToModel(ObjectToTriples.convert(config, wrapperImpact), taskHelper.getGraphName());
         }
         
-        return wrapperImpact;
+        return magicString;
     }
-    
+
+    public static Map<DfuInstance, Pair<String, String>> getDfuInstanceStringMap(GradleTaskHelper taskHelper,
+                                                                                 AssertableSolutionSet cipherImplSolutions) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+        Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = new HashMap<>();
+        for (Solution cipherImplSolution : cipherImplSolutions.getSolutions()) {
+
+            String cipherImplName = cipherImplSolution.get("cipherImpl");
+            String dfuInstanceUUID = cipherImplSolution.get("dfu");
+            Object dfuInstanceObject = TriplesToPojo.convert(taskHelper.getGraphName(), dfuInstanceUUID, taskHelper.getClient());
+            
+            if (dfuInstanceObject instanceof DfuInstance) {
+                Pair<String, String> dfuUUIDAndCipherImpl = new Pair<>(dfuInstanceUUID, cipherImplName);
+                dfuInstanceStringMap.put((DfuInstance) dfuInstanceObject, dfuUUIDAndCipherImpl);
+            }
+        }
+        return dfuInstanceStringMap;
+    }
     
     private static void getEveryStepsImpact(GradleTaskHelper taskHelper, CallTrace callTrace) {
         
@@ -1207,6 +1377,11 @@ public class AnalysisFrameAssessment {
         String streamIdentifier = augmentInitializationNode(initializerNode, applicationLines,
                     wrapper.getWrapperClass().getShortName());
         
+        if (streamIdentifier == null) {
+            // no assignment performed, so no stream identifier
+            return;
+        }
+        
         if (!affectedNodes.isEmpty()) {
             for (MethodInvocationDataflowNode nodeToAugment : affectedNodes) {
                 augmentInaccessibleInheritedMethods(nodeToAugment, applicationLines, streamIdentifier);
@@ -1219,85 +1394,121 @@ public class AnalysisFrameAssessment {
             newSourceBuilder.append(newSourceLine);
         }
 
-        String sourceCodeRepoSafeName = initCallOwnerOwnerName.replaceAll("/", ".");
-        if (sourceCodeRepoSafeName.contains("$")) {
-            sourceCodeRepoSafeName = sourceCodeRepoSafeName.substring(0, sourceCodeRepoSafeName.indexOf("$"));
-        }
-        String replaceCurrentApplicationSource = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
-                "\n" +
-                "WITH <http://localhost:3030/ds/data/???GRAPH_NAME???>\n" +
-                "DELETE {?sourceFiles IMMoRTALS:hasSource ?source}\n" +
-                "INSERT {?sourceFiles IMMoRTALS:hasSource \"???NEW_SOURCE???\"}\n" +
-                "WHERE { ?javaProject IMMoRTALS:hasClasspaths ?classpaths\n" +
-                "\t\t; IMMoRTALS:hasSourceCodeRepo ?sourceCodeRepo\n" +
-                "    \t; IMMoRTALS:hasCompiledSourceHash ?compiledHash .\n" +
-                "\t\t\n" +
-                "\t\t?sourceCodeRepo IMMoRTALS:hasSourceFiles ?sourceFiles .\n" +
-                "\t\t\n" +
-                "\t\t?sourceFiles IMMoRTALS:hasFullyQualifiedName \"???CLASS_NAME???\"\n" +
-                "\t\t; IMMoRTALS:hasSource ?source .\n" +
-                "\t\t\n" +
-                "\t\t?classArtifact IMMoRTALS:hasHash ?compiledHash .\n" +
-                "\t\t\n" +
-                "\t\t?classArtifact IMMoRTALS:hasClassModel ?aClass .\n" +
-                "\t\t\n" +
-                "\t\t?aClass IMMoRTALS:hasClassName \"???CLASS_NAME_URL???\" .}\n" +
-                "\t\t";
-        replaceCurrentApplicationSource = replaceCurrentApplicationSource.replace("???GRAPH_NAME???",
-                taskHelper.getGraphName()).replace("???CLASS_NAME???", sourceCodeRepoSafeName)
-                .replace("???CLASS_NAME_URL???", initCallOwnerOwnerName)
-                .replace("???NEW_SOURCE???", newSourceBuilder.toString().replaceAll("\"", "\\\\\""));
-        taskHelper.getClient().executeUpdate(replaceCurrentApplicationSource);
+        expandAdaptationSurface(taskHelper, Optional.of(initCallOwnerOwnerName), Optional.empty()
+                ,newSourceBuilder.toString(), true);
+    }
+
+    public static void expandAdaptationSurface(GradleTaskHelper taskHelper, Optional<String> ownerNameOption,
+                                                Optional<String> fileNameOption, String newSource, boolean userCode) throws IOException {
         
-        String getActualSourceFile = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
-                "select ?path where {" +
-                "\t\t graph<http://localhost:3030/ds/data/???GRAPH_NAME???> {" +
-                " ?javaProject IMMoRTALS:hasClasspaths ?classpaths\n" +
-                "\t\t; IMMoRTALS:hasSourceCodeRepo ?sourceCodeRepo\n" +
-                "    \t; IMMoRTALS:hasCompiledSourceHash ?compiledHash .\n" +
-                "\t\t\n" +
-                "\t\t?sourceCodeRepo IMMoRTALS:hasSourceFiles ?sourceFiles .\n" +
-                "\t\t\n" +
-                "\t\t?sourceFiles IMMoRTALS:hasFullyQualifiedName \"???CLASS_NAME???\"\n" +
-                "\t\t; IMMoRTALS:hasFileSystemPath ?path .\n" +
-                "\t\t\n" +
-                "\t\t?classArtifact IMMoRTALS:hasHash ?compiledHash .\n" +
-                "\t\t\n" +
-                "\t\t?classArtifact IMMoRTALS:hasClassModel ?aClass .\n" +
-                "\t\t\n" +
-                "\t\t?aClass IMMoRTALS:hasClassName \"???CLASS_NAME_URL???\" ." +
-                "\t}" +
-                "}\n";
-        getActualSourceFile = getActualSourceFile.replace("???GRAPH_NAME???",
-                taskHelper.getGraphName()).replace("???CLASS_NAME???", initCallOwnerOwnerName.replaceAll("/",
-                ".")).replace("???CLASS_NAME_URL???", initCallOwnerOwnerName).replace("???NEW_SOURCE???",
-                newSourceBuilder.toString());
-        AssertableSolutionSet sourceFileSolutions = new AssertableSolutionSet();
-        taskHelper.getClient().executeSelectQuery(getActualSourceFile, sourceFileSolutions);
-        
-        if (!sourceFileSolutions.getSolutions().isEmpty()) {
+        if (userCode) {
+
+            String initCallOwnerOwnerName = null;
+            if (ownerNameOption.isPresent()) {
+                initCallOwnerOwnerName = ownerNameOption.get();
+            }
             
-            String sourceFilePath = sourceFileSolutions.getSolutions().get(0).get("path");
-            File sourceFile = new File(sourceFilePath);
+            String sourceCodeRepoSafeName = initCallOwnerOwnerName.replaceAll("/", ".");
+            if (sourceCodeRepoSafeName.contains("$")) {
+                sourceCodeRepoSafeName = sourceCodeRepoSafeName.substring(0, sourceCodeRepoSafeName.indexOf("$"));
+            }
             
-            if (sourceFile.exists()) {
-                
-                System.out.println("User application file found on local file system, do you want" +
-                        " constraint analysis to automatically augment it in order to resolve remediation" +
-                        " strategy?  y/n");
-                Scanner sc = new Scanner(System.in);
-                String userInput = sc.next();
-                
-                if (userInput.equalsIgnoreCase("yes") || userInput.equalsIgnoreCase("y"))  {
-                    Files.write(sourceFile.toPath(), Collections.singleton(newSourceBuilder.toString()), Charset.defaultCharset());
-                } else {
-                    System.out.println("Immortals system won't change application source, user can retrieve augmented code from the" +
-                            "source code repo preserved in ontology.");
+            String replaceCurrentApplicationSource = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                    "\n" +
+                    "WITH <http://localhost:3030/ds/data/???GRAPH_NAME???>\n" +
+                    "DELETE {?sourceFiles IMMoRTALS:hasSource ?source}\n" +
+                    "INSERT {?sourceFiles IMMoRTALS:hasSource \"???NEW_SOURCE???\"}\n" +
+                    "WHERE { ?javaProject IMMoRTALS:hasClasspaths ?classpaths\n" +
+                    "\t\t; IMMoRTALS:hasSourceCodeRepo ?sourceCodeRepo\n" +
+                    "    \t; IMMoRTALS:hasCompiledSourceHash ?compiledHash .\n" +
+                    "\t\t\n" +
+                    "\t\t?sourceCodeRepo IMMoRTALS:hasSourceFiles ?sourceFiles .\n" +
+                    "\t\t\n" +
+                    "\t\t?sourceFiles IMMoRTALS:hasFullyQualifiedName \"???CLASS_NAME???\"\n" +
+                    "\t\t; IMMoRTALS:hasSource ?source .\n" +
+                    "\t\t\n" +
+                    "\t\t?classArtifact IMMoRTALS:hasHash ?compiledHash .\n" +
+                    "\t\t\n" +
+                    "\t\t?classArtifact IMMoRTALS:hasClassModel ?aClass .\n" +
+                    "\t\t\n" +
+                    "\t\t?aClass IMMoRTALS:hasClassName \"???CLASS_NAME_URL???\" .}\n" +
+                    "\t\t";
+            replaceCurrentApplicationSource = replaceCurrentApplicationSource.replace("???GRAPH_NAME???",
+                    taskHelper.getGraphName()).replace("???CLASS_NAME???", sourceCodeRepoSafeName)
+                    .replace("???CLASS_NAME_URL???", initCallOwnerOwnerName)
+                    .replace("???NEW_SOURCE???", newSource.replaceAll("\"", "\\\\\""));
+            taskHelper.getClient().executeUpdate(replaceCurrentApplicationSource);
+            
+            String getActualSourceFile = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                    "select ?path where {" +
+                    "\t\t graph<http://localhost:3030/ds/data/???GRAPH_NAME???> {" +
+                    " ?javaProject IMMoRTALS:hasClasspaths ?classpaths\n" +
+                    "\t\t; IMMoRTALS:hasSourceCodeRepo ?sourceCodeRepo\n" +
+                    "    \t; IMMoRTALS:hasCompiledSourceHash ?compiledHash .\n" +
+                    "\t\t\n" +
+                    "\t\t?sourceCodeRepo IMMoRTALS:hasSourceFiles ?sourceFiles .\n" +
+                    "\t\t\n" +
+                    "\t\t?sourceFiles IMMoRTALS:hasFullyQualifiedName \"???CLASS_NAME???\"\n" +
+                    "\t\t; IMMoRTALS:hasFileSystemPath ?path .\n" +
+                    "\t\t\n" +
+                    "\t\t?classArtifact IMMoRTALS:hasHash ?compiledHash .\n" +
+                    "\t\t\n" +
+                    "\t\t?classArtifact IMMoRTALS:hasClassModel ?aClass .\n" +
+                    "\t\t\n" +
+                    "\t\t?aClass IMMoRTALS:hasClassName \"???CLASS_NAME_URL???\" ." +
+                    "\t}" +
+                    "}\n";
+            getActualSourceFile = getActualSourceFile.replace("???GRAPH_NAME???",
+                    taskHelper.getGraphName()).replace("???CLASS_NAME???", initCallOwnerOwnerName.replaceAll("/",
+                    ".")).replace("???CLASS_NAME_URL???", initCallOwnerOwnerName).replace("???NEW_SOURCE???",
+                    newSource);
+            AssertableSolutionSet sourceFileSolutions = new AssertableSolutionSet();
+            taskHelper.getClient().executeSelectQuery(getActualSourceFile, sourceFileSolutions);
+
+            if (!sourceFileSolutions.getSolutions().isEmpty()) {
+
+                String sourceFilePath = sourceFileSolutions.getSolutions().get(0).get("path");
+                File sourceFile = new File(sourceFilePath);
+
+                if (sourceFile.exists()) {
+
+                    System.out.println("User application file found on local file system, do you want" +
+                            " constraint analysis to automatically augment it in order to resolve remediation" +
+                            " strategy?  y/n");
+                    Scanner sc = new Scanner(System.in);
+                    String userInput = sc.next();
+
+                    if (userInput.equalsIgnoreCase("yes") || userInput.equalsIgnoreCase("y")) {
+                        Files.write(sourceFile.toPath(), Collections.singleton(newSource), Charset.defaultCharset());
+                    } else {
+                        System.out.println("Immortals system won't change application source, user can retrieve augmented code from the" +
+                                "source code repo preserved in ontology.");
+                    }
                 }
             }
+        } else {
+
+            String fileName = null;
+            if (fileNameOption.isPresent()) {
+                fileName = fileNameOption.get();
+            }
+
+            String replaceWrapperSource = "prefix IMMoRTALS_lang: <http://darpa.mil/immortals/ontology/r2.0.0/lang#> \n" +
+                    "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
+                    "\n" +
+                    "WITH <http://localhost:3030/ds/data/???GRAPH_NAME???>\n" +
+                    "DELETE {?wrapperSourceFile IMMoRTALS:hasSource ?source}\n" +
+                    "INSERT {?wrapperSourceFile IMMoRTALS:hasSource \"???NEW_SOURCE???\"}\n" +
+                    "WHERE  {?wrapperSourceFile a IMMoRTALS_lang:WrapperSourceFile\n" +
+                    "\t\t; IMMoRTALS:hasFileName \"???FILE_NAME???\"\n" +
+                    "\t\t; IMMoRTALS:hasSource ?source .}";
+            replaceWrapperSource = replaceWrapperSource.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace(
+                    "???NEW_SOURCE???", newSource.replace("\n", "\\n")
+                            .replaceAll("\"", "\\\\\"")).replace("???FILE_NAME???", fileName);
+            taskHelper.getClient().executeUpdate(replaceWrapperSource);
         }
     }
-    
+
     private static String augmentInitializationNode(MethodInvocationDataflowNode methodNode, List<String> applicationSourceLines, 
                                                     String wrapperClassName) {
         
@@ -1307,29 +1518,61 @@ public class AnalysisFrameAssessment {
         
         String[] sidesOfExpression = initializationLine.split("=");
         
-        String[] leftSideOfExpression = sidesOfExpression[0].trim().split(" ");
-        if (leftSideOfExpression.length > 1) {
-            // new var assignment    
-            identifier = leftSideOfExpression[1];
+        if (sidesOfExpression.length == 1) {
+            
+            Pattern p = Pattern.compile("(.[a-zA-Z0-9_.-]+\\." + methodNode.getJavaMethodName() + ")");
+            Matcher m = p.matcher(initializationLine);
+            
+            if (m.find()) {
+                int indexOfInit = initializationLine.indexOf(m.group());
+                String restOfLine = initializationLine.substring(indexOfInit);
+                
+                int resolvedInitMethod = 1;
+                int currentIndex = 0;
+                for (char c : restOfLine.toCharArray()) {
+                    if (c == '(') {
+                        resolvedInitMethod++;
+                    } else if (c == ')') {
+                        resolvedInitMethod--;
+                    }
+                    if (resolvedInitMethod == 1) {
+                        break;
+                    }
+                    currentIndex++;
+                }
+
+                StringBuilder sb = new StringBuilder(initializationLine);
+                sb.insert(currentIndex + indexOfInit,")");
+                sb.insert(indexOfInit + 1, " new " + wrapperClassName + "(");
+                applicationSourceLines.set(initializationLineNumber, sb.toString());
+            }
         } else {
-            // existing field assignment
-            identifier = leftSideOfExpression[0];
+
+            String[] leftSideOfExpression = sidesOfExpression[0].trim().split(" ");
+            if (leftSideOfExpression.length > 1) {
+                // new var assignment    
+                identifier = leftSideOfExpression[1];
+            } else {
+                // existing field assignment
+                identifier = leftSideOfExpression[0];
+            }
+
+            if (initializationLine.contains(wrapperClassName)) {
+                return identifier;
+            }
+
+            StringBuilder sb = new StringBuilder(initializationLine);
+            sb.insert(sb.indexOf("=") + 1, " new " + wrapperClassName + "(");
+            sb.insert(sb.lastIndexOf(";"), ")");
+
+            applicationSourceLines.set(initializationLineNumber, sb.toString());
         }
-        
-        if (initializationLine.contains(wrapperClassName)) {
-            return identifier;
-        }
-        
-        StringBuilder sb = new StringBuilder(initializationLine);
-        sb.insert(sb.indexOf("=") + 1, " new " + wrapperClassName + "(");
-        sb.insert(sb.lastIndexOf(";"),")");
-        
-        applicationSourceLines.set(initializationLineNumber, sb.toString());
         
         return identifier;
     }
     
-    private static AugmentedMethodInvocation[] recordAugmentedUserCode(MethodInvocationDataflowNode initializerNode, List<MethodInvocationDataflowNode> methodNodes) {
+    private static AugmentedMethodInvocation[] recordAugmentedUserCode(MethodInvocationDataflowNode initializerNode,
+                                                                       List<MethodInvocationDataflowNode> methodNodes) {
 
         AugmentedMethodInvocation augmentedInitializer = new AugmentedMethodInvocation();
         augmentedInitializer.setLineNumber(initializerNode.getLineNumber());
@@ -1370,11 +1613,102 @@ public class AnalysisFrameAssessment {
         
     }
     
+    public static AspectConfigureSolution checkForUnknownConfigurations(FunctionalAspectInstance aspectInstance,
+                                                                         Map<DfuInstance, Pair<String, String>> candidateImpls, 
+                                                                         Functionality functionality) {
+        
+        AspectConfigureRequest configureRequest = new AspectConfigureRequest();
+        List<DataType> typesOfParameters = new ArrayList<>();
+        Class<? extends FunctionalAspect> abstractAspect = aspectInstance.getAbstractAspect();
+        
+        FunctionalAspect instantiateAspect = null;
+        try {
+            instantiateAspect = abstractAspect.newInstance();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+
+        Class[] aspectSpecificDependencies = instantiateAspect.getAspectSpecificResourceDependencies();
+        if (aspectSpecificDependencies.length != 0) {
+            List<FunctionalAspect> aspectDependencies = new ArrayList<>();
+            for (Class clazz : aspectSpecificDependencies) {
+                try {
+                    Object obj = clazz.newInstance();
+                    if (obj instanceof FunctionalAspect) {
+                        
+                        FunctionalAspect functionalAspect = (FunctionalAspect) obj;
+                        aspectDependencies.add(functionalAspect);
+                        for (Input in : functionalAspect.getInputs()) {
+                            Class<? extends DataType> abstractDataType = in.getType();
+                            typesOfParameters.add(abstractDataType.newInstance());
+                        }
+                    }
+                } catch(Exception exc) {
+                    exc.printStackTrace();
+                }
+            }
+        } else {
+            return null;
+        }
+        
+        DataType[] dataTypeArr = new DataType[typesOfParameters.size()];
+        for (int i = 0; i < dataTypeArr.length; i++) {
+            dataTypeArr[i] = typesOfParameters.get(i);
+        }
+        
+        
+        List<DfuInstance> dfuInstances = new ArrayList<>(candidateImpls.keySet());
+        DfuInstance[] dfuInstanceArr = new DfuInstance[dfuInstances.size()];
+        for (int i = 0; i < dfuInstanceArr.length; i++) {
+            dfuInstanceArr[i] = dfuInstances.get(i);
+        }
+        
+        configureRequest.setConfigurationUnknowns(dataTypeArr);
+        configureRequest.setCandidateImpls(dfuInstanceArr);
+        configureRequest.setRequiredFunctionality(functionality.getClass());
+        
+        //TODO doesn't do anything yet, for right now we will just fabricate a solution
+        getConfigureSolution(configureRequest);
+
+        ConfigurationBinding[] tempConfigurationBindings = new ConfigurationBinding[5];
+        
+        ConfigurationBinding configurationBinding0 = new ConfigurationBinding();
+        configurationBinding0.setSemanticType(CipherAlgorithm.class);
+        configurationBinding0.setBinding("AES");
+        ConfigurationBinding configurationBinding1 = new ConfigurationBinding();
+        configurationBinding1.setSemanticType(CipherKeyLength.class);
+        configurationBinding1.setBinding("16");
+        ConfigurationBinding configurationBinding2 = new ConfigurationBinding();
+        configurationBinding2.setSemanticType(CipherBlockSize.class);
+        configurationBinding2.setBinding("256");
+        ConfigurationBinding configurationBinding3 = new ConfigurationBinding();
+        configurationBinding3.setSemanticType(CipherChainingMode.class);
+        configurationBinding3.setBinding("CBC");
+        ConfigurationBinding configurationBinding4 = new ConfigurationBinding();
+        configurationBinding4.setSemanticType(PaddingScheme.class);
+        configurationBinding4.setBinding("PKCS5Padding");
+        tempConfigurationBindings[0] = configurationBinding0;
+        tempConfigurationBindings[1] = configurationBinding1;
+        tempConfigurationBindings[2] = configurationBinding2;
+        tempConfigurationBindings[3] = configurationBinding3;
+        tempConfigurationBindings[4] = configurationBinding4;
+        
+        AspectConfigureSolution tempConfigureSolution = new AspectConfigureSolution();
+        tempConfigureSolution.setChosenInstance(dfuInstanceArr[0]);
+        tempConfigureSolution.setConfigurationBindings(tempConfigurationBindings);
+
+        return tempConfigureSolution;
+    }
+    
+    private static AspectConfigureSolution getConfigureSolution(AspectConfigureRequest aspectConfigureRequest) {
+        return null;
+    }
+    
     public static AnalysisImpact repairConsumer(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config,
                                       InterMethodDataflowNode consumer, PropertyImpact propertyImpact, Set<File> dependencies,
                                                             DesignPattern flowDesign) throws Exception {
         
-        AnalysisImpact analysisImpact = new AnalysisImpact();
+        WrapperImplementationImpact analysisImpact = new WrapperImplementationImpact();
         taskHelper.getPw().println("Finding instances that implement the required functional aspect...");
         FunctionalAspectInstance[] aspectInstances = taskHelper.getInstancesFromImpactStatement(propertyImpact, config);
 
@@ -1382,22 +1716,66 @@ public class AnalysisFrameAssessment {
             taskHelper.getPw().println("Unable to find instance(s) required for repairing system, implement instance and re-run analysis.");
             return analysisImpact;
         }
+
+        List<AspectConfigureRequest> aspectConfigureRequests = new ArrayList<>();
+        for (FunctionalAspectInstance aspectInstance : aspectInstances) {
+            aspectConfigureRequests.add(AnalysisFrameAssessment.generateConfigurationRequest(aspectInstance,
+                    taskHelper, config));
+        }
         
         for (FunctionalAspectInstance aspectInstance : aspectInstances) {
+            String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
+            AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
+
+            taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
+
+            Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
+                    cipherImplSolutions);
+
+            AspectConfigureSolution aspectConfigureSolution = AnalysisFrameAssessment.retrieveConfigurationSolution(
+                    dfuInstanceStringMap.keySet().iterator().next());            
+            String cipherImpl = null;
+            String magicString = null;
+            if (aspectConfigureSolution != null) {
+
+                DfuInstance chosenInstance = aspectConfigureSolution.getChosenInstance();
+
+                Pair<String, String> dfuUUIDToCipherImpl = dfuInstanceStringMap.get(chosenInstance);
+
+                String getUsageParadigmMagicString = getImplementationSpecificStrings(taskHelper,
+                        dfuUUIDToCipherImpl.getLeft());
+                AssertableSolutionSet usageParadigmSolutions = new AssertableSolutionSet();
+                taskHelper.getClient().executeSelectQuery(getUsageParadigmMagicString, usageParadigmSolutions);
+
+                magicString = usageParadigmSolutions.getSolutions().get(0).get("magicString");
+                magicString = generateMagicString(taskHelper, magicString, aspectConfigureSolution, usageParadigmSolutions);
+                cipherImpl = dfuUUIDToCipherImpl.getRight();
+            }
+            
             taskHelper.getPw().println("Instance found. Determining its design pattern...");
             switch (flowDesign) {
                 case FUNCTIONAL:
                     taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a block design " +
                             "pattern. Repairs will occur immediately adjacent to the inter-process boundary...");
-                    analysisImpact = taskHelper.constructAspectImpact(aspectInstance, consumer,
-                            AspectAugmentationSpecification.AUGMENT_ONE, consumer.getLineNumber() + 1, config);
+                    
                     break;
                 case STREAM:
                     taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a stream design pattern." +
                             " Repairs will vary based on the code system's stream implementation. Immortals will begin " +
                             "the process of wrapping the stream implementation in a custom class...");
-                    analysisImpact = developInstanceStreamSolution(aspectInstance, consumer, dependencies, taskHelper,
-                            config);
+                    
+                    Wrapper wrapper = constructWrapperFoundation(aspectInstance, consumer, dependencies, taskHelper,
+                            config, analysisImpact, cipherImpl.replace("/", "."));
+
+                    if (wrapper!= null) {
+                        if (magicString != null) {
+                            // user specified configuration parameters, pass to code insertion stage
+                            wrapper.setConfigurationParameters(Optional.of(magicString));
+                        } else {
+                            wrapper.setConfigurationParameters(Optional.empty());
+                        }
+                        taskHelper.getWrappers().add(wrapper);
+                    }
                     break;
                 default:
                     break;
@@ -1411,7 +1789,7 @@ public class AnalysisFrameAssessment {
                                                             InterMethodDataflowNode producer, PropertyImpact propertyImpact, Set<File> dependencies,
                                                             DesignPattern flowDesign) throws Exception {
         
-        AnalysisImpact analysisImpact = new AnalysisImpact();
+        WrapperImplementationImpact analysisImpact = new WrapperImplementationImpact();
         taskHelper.getPw().println("Finding instances that implement the required functional aspect...\n\n");
         FunctionalAspectInstance[] aspectInstances = taskHelper.getInstancesFromImpactStatement(propertyImpact, config);
 
@@ -1419,27 +1797,96 @@ public class AnalysisFrameAssessment {
             taskHelper.getPw().println("Unable to find instance(s) required for repairing system, implement instance and re-run analysis.");
             return analysisImpact;
         }
-        
+
+        List<AspectConfigureRequest> aspectConfigureRequests = new ArrayList<>();
+        for (FunctionalAspectInstance aspectInstance : aspectInstances) {
+            aspectConfigureRequests.add(AnalysisFrameAssessment.generateConfigurationRequest(aspectInstance,
+                    taskHelper, config));
+        }
+
+        //TODO should be only one
         taskHelper.getPw().println("Instances found. Determining their design pattern...");
         for (FunctionalAspectInstance aspectInstance : aspectInstances) {
 
+            String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
+            AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
+
+            taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
+
+            Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
+                    cipherImplSolutions);
+            
+            AspectConfigureSolution aspectConfigureSolution = AnalysisFrameAssessment.retrieveConfigurationSolution(
+                    dfuInstanceStringMap.keySet().iterator().next());
+            String cipherImpl = null;
+            String magicString = null;
+            if (aspectConfigureSolution != null) {
+
+                DfuInstance chosenInstance = aspectConfigureSolution.getChosenInstance();
+
+                Pair<String, String> dfuUUIDToCipherImpl = dfuInstanceStringMap.get(chosenInstance);
+
+                String getUsageParadigmMagicString = getImplementationSpecificStrings(taskHelper,
+                        dfuUUIDToCipherImpl.getLeft());
+                AssertableSolutionSet usageParadigmSolutions = new AssertableSolutionSet();
+                taskHelper.getClient().executeSelectQuery(getUsageParadigmMagicString, usageParadigmSolutions);
+
+                magicString = usageParadigmSolutions.getSolutions().get(0).get("magicString");
+                magicString = generateMagicString(taskHelper, magicString, aspectConfigureSolution, usageParadigmSolutions);
+                cipherImpl = dfuUUIDToCipherImpl.getRight();
+            }
+            
             switch (flowDesign) {
                 case FUNCTIONAL:
                     taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a block design " +
                             "pattern.");
-                    analysisImpact = taskHelper.constructAspectImpact(aspectInstance, producer,
+                    taskHelper.constructAspectImpact(aspectInstance, producer,
                             AspectAugmentationSpecification.AUGMENT_ONE, producer.getLineNumber() - 1, config);
                     break;
                 case STREAM:
                     taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a stream design pattern." +
                             " Immortals will begin the process of wrapping the stream implementation in a custom class...");
-                    analysisImpact = developInstanceStreamSolution(aspectInstance, producer, dependencies, taskHelper,
-                            config);
+                    //analysisImpact = developInstanceStreamSolution(aspectInstance, producer, dependencies, taskHelper,
+                            //config);
+                    Wrapper wrapper = constructWrapperFoundation(aspectInstance, producer, dependencies, taskHelper,
+                            config, analysisImpact, cipherImpl.replace("/", "."));
+                    if (wrapper!= null) {
+                        if (magicString != null) {
+                            // user specified configuration parameters, pass to code insertion stage
+                            wrapper.setConfigurationParameters(Optional.of(magicString));
+                        } else {
+                            wrapper.setConfigurationParameters(Optional.empty());
+                        }
+                        taskHelper.getWrappers().add(wrapper);
+                    }
                     break;
                 default:
                     break;
             }
         }
         return analysisImpact;
+    }
+
+    private static String getChosenInstanceUUID(DfuInstance chosenInstance, GradleTaskHelper taskHelper) {
+        
+        String getInstanceUUID = "prefix IMMoRTALS_dfu_instance: <http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#> \n" +
+                "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\n" +
+                "select ?uuid where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t?uuid a IMMoRTALS_dfu_instance:DfuInstance\n" +
+                "\t\t; IMMoRTALS:hasClassPointer \"???CLASS_POINTER???\" .\n" +
+                "\t}\n" +
+                "}";
+        getInstanceUUID = getInstanceUUID.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                .replace("???CLASS_POINTER???", chosenInstance.getClassPointer());
+        AssertableSolutionSet assertableSolutionSet = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getInstanceUUID, assertableSolutionSet);
+        
+        if (!assertableSolutionSet.getSolutions().isEmpty()) {
+            return assertableSolutionSet.getSolutions().get(0).get("uuid");
+        } else {
+            return null;
+        }
     }
 }

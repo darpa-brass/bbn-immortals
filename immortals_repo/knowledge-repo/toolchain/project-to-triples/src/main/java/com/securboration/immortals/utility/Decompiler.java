@@ -1,7 +1,6 @@
 package com.securboration.immortals.utility;
 
 import com.strobel.decompiler.PlainTextOutput;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,7 +11,6 @@ public class Decompiler {
     
     public File decompileClassFile(String classFilePath, String javaSourcePath, boolean plugin) throws IOException {
         
-        //File classFile = new File(classFilePath);
         File sourceFile = new File(javaSourcePath);
         
         try (final FileOutputStream fileOutputStream = new FileOutputStream(sourceFile);

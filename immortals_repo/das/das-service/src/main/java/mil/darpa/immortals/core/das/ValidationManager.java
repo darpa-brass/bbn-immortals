@@ -3,8 +3,6 @@ package mil.darpa.immortals.core.das;
 import mil.darpa.immortals.core.api.TestCaseReport;
 import mil.darpa.immortals.core.api.TestCaseReportSet;
 import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
-import mil.darpa.immortals.core.api.ll.phase2.result.status.TestOutcome;
-import mil.darpa.immortals.core.das.adaptationmodules.hddrass.Hacks;
 import mil.darpa.immortals.core.das.adaptationtargets.building.AdaptationTargetBuildInstance;
 import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
 import mil.darpa.immortals.core.das.sparql.adaptationtargets.DetermineAllAnnotatedTestFunctionality;
@@ -54,18 +52,9 @@ public class ValidationManager {
             dac.submitValidationStatus(initialTdl.producePendingList());
         }
 
-        // TODO: Not this!
-        Thread.sleep(300);
-
         if (reportStatus) {
             dac.submitValidationStatus(initialTdl.produceRunningList());
         }
-
-        // TODO: Not this!
-        Thread.sleep(300);
-
-//        Set<String> testsToExecute = cfcs.stream().map(t -> t.getIdentifier()).collect(Collectors.toSet());
-
 
         TestCaseReportSet testCaseReports = new TestCaseReportSet();
 

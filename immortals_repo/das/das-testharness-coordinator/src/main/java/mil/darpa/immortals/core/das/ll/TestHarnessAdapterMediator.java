@@ -25,12 +25,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.function.Consumer;
 
 /**
  * Created by awellman@bbn.com on 9/29/17.
  */
 public class TestHarnessAdapterMediator {
-
 
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -42,6 +44,8 @@ public class TestHarnessAdapterMediator {
 
 
     private final TestHarnessSubmissionInterface submissionInterface;
+
+    private final MediatorFlowController mediatorFlowController;
 
     @Nullable
     private TestHarnessAdapterStateContainer state;
@@ -60,17 +64,57 @@ public class TestHarnessAdapterMediator {
         }
     }
 
+    public static class MediatorFlowController {
+
+        private int nextSequence = 0;
+
+        private final Consumer<AdaptationDetailsList> adaptationDetailsListConsumer;
+        private final Consumer<TestDetailsList> testDetailsListConsumer;
+
+        public MediatorFlowController(Consumer<AdaptationDetailsList> adaptationDetailsListConsumer,
+                                      Consumer<TestDetailsList> testDetailsListConsumer) {
+            this.adaptationDetailsListConsumer = adaptationDetailsListConsumer;
+            this.testDetailsListConsumer = testDetailsListConsumer;
+        }
+
+        private final HashMap<Integer, Object> receivedObjects = new HashMap<>();
+
+        public synchronized void addAdaptationUpdate(@Nonnull AdaptationDetailsList adaptationDetailsList) {
+            addObject(adaptationDetailsList.sequence, adaptationDetailsList);
+        }
+
+        private synchronized void addObject(int sequence, Object obj) {
+            receivedObjects.put(sequence, obj);
+
+            while (receivedObjects.containsKey(nextSequence)) {
+                Object data = receivedObjects.remove(nextSequence);
+                if (data instanceof AdaptationDetailsList) {
+                    adaptationDetailsListConsumer.accept((AdaptationDetailsList) data);
+
+                } else if (data instanceof TestDetailsList) {
+                    testDetailsListConsumer.accept((TestDetailsList) data);
+                }
+                nextSequence++;
+            }
+        }
+
+        public synchronized void addTestUpdate(@Nonnull TestDetailsList testDetailsList) {
+            addObject(testDetailsList.sequence, testDetailsList);
+        }
+    }
+
     public synchronized Response updateAdaptationStatus(@Nonnull AdaptationDetailsList adaptationDetailsList) {
-        // TODO: Handle multiple adaptations
-        AdaptationDetails ad = adaptationDetailsList.iterator().next();
-        logger.info("Received AD: " + ad.dasOutcome.name());
-        innerUpdateDasStatus(ad, true);
-        // TODO: This should probably be more verbose...
+        mediatorFlowController.addAdaptationUpdate(adaptationDetailsList);
         return Response.ok().build();
     }
 
+    private synchronized void innerUpdateAdaptationStatus(@Nonnull AdaptationDetailsList adaptationDetailsList) {
+        boolean sendUpdate = true;
 
-    private synchronized void innerUpdateDasStatus(@Nonnull AdaptationDetails adaptationDetails, boolean sendUpdate) {
+        // TODO: Handle multiple adaptations
+        AdaptationDetails adaptationDetails = adaptationDetailsList.iterator().next();
+
+
         state.testAdapterState.adaptation.details = adaptationDetails;
         DasOutcome previousOutcome = state.testAdapterState.adaptation.adaptationStatus;
         state.testAdapterState.adaptation.adaptationStatus = adaptationDetails.dasOutcome;
@@ -144,12 +188,12 @@ public class TestHarnessAdapterMediator {
     }
 
     public synchronized Response updateDeploymentTestStatus(TestDetailsList testDetails) {
-        innerUpdateValidatorStatus(testDetails, true);
-        // TODO: This should probably be more verbose...
+        mediatorFlowController.addTestUpdate(testDetails);
         return Response.ok().build();
     }
 
-    private synchronized void innerUpdateValidatorStatus(TestDetailsList testDetails, boolean sendUpdate) {
+    private synchronized void innerUpdateValidatorStatus(TestDetailsList testDetails) {
+        boolean sendUpdate = true;
         if (logger.isTraceEnabled()) {
             // TODO: Update to handle multiple test details
             String td;
@@ -183,62 +227,66 @@ public class TestHarnessAdapterMediator {
         VerdictOutcome vo = VerdictOutcome.PENDING;
 
         if (!state.initialValidationUpdate) {
-            VerdictOutcome previousVO = state.testAdapterState.validation.verdictOutcome;
+            LinkedList<TestStateObject> tests = state.testAdapterState.validation.executedTests;
 
-            testIter:
-            for (TestStateObject tso : state.testAdapterState.validation.executedTests) {
-                // TODO: Sort out which means which in terms of the final representative state with mixed test outcomes
-                switch (tso.actualStatus) {
-                    case PENDING:
-                        vo = VerdictOutcome.PENDING;
-//                        if (previousVO != VerdictOutcome.PENDING) {
-//                            vo = VerdictOutcome.ERROR;
-//                            ImmortalsErrorHandler.reportFatalError("Invalid validatation state transition for validator '" + tso.testIdentifier + "' from " + previousVO.name() + "to " + tso.actualStatus + "!");
-//                            break testIter;
-//                        }
-                        break;
+            long errorCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.ERROR).count();
+            long invalidCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.INVALID).count();
+            long notApplicableCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.NOT_APPLICABLE).count();
+            long pendingCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.PENDING).count();
+            long runningCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.RUNNING).count();
+            long incompleteCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.INCOMPLETE).count();
+            long completePassCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.COMPLETE_PASS).count();
+            long completeDegradedCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.COMPLETE_DEGRADED).count();
+            long completeFailCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.COMPLETE_FAIL).count();
 
-                    case NOT_APPLICABLE:
-                        vo = VerdictOutcome.ERROR;
-                        ImmortalsErrorHandler.reportFatalError("No validators should be NOT_APPLICABLE!");
-                        break testIter;
+            if (logger.isDebugEnabled()) {
+                String msg = "ReceivedTests:" +
+                        "\n\tError: " + errorCount +
+                        "\n\tInvalid: " + invalidCount +
+                        "\n\tNotApplicable: " + notApplicableCount +
+                        "\n\tPending: " + pendingCount +
+                        "\n\tRunning: " + runningCount +
+                        "\n\tIncomplete: " + incompleteCount +
+                        "\n\tCompletePass: " + completePassCount +
+                        "\n\tCompleteDegraded: " + completeDegradedCount +
+                        "\n\tCompleteFail: " + completeFailCount;
+                logger.debug(msg);
+            }
 
-                    case RUNNING:
-//                        if (previousVO != VerdictOutcome.PENDING && previousVO != VerdictOutcome.RUNNING) {
-//                            if (vo == VerdictOutcome.PENDING || vo == VerdictOutcome.RUNNING) {
-//                                ImmortalsErrorHandler.reportFatalError("Unexpected verdict outcome transition from terminal state '"
-//                                        + previousVO.name() + " to non-terminal state '" + vo.name() + "'!");
-//                            } else {
-//                                ImmortalsErrorHandler.reportFatalError("Unexpected verdict outcome transition from terminal state '"
-//                                        + previousVO.name() + " to terminal state '" + vo.name() + "'!");
-//                            }
-//                        }
+            if (errorCount > 0) {
+                // An error has occurred
+                vo = VerdictOutcome.ERROR;
 
-                        vo = VerdictOutcome.RUNNING;
-                        break testIter;
+            } else if (incompleteCount > 0 || invalidCount > 0 || notApplicableCount > 0) {
+                // This state is unexpected and the TH does not support it
+                vo = VerdictOutcome.ERROR;
+                ImmortalsErrorHandler.reportFatalError("Unexpecte validator state of INCOMPLETE, INVALID, or NOT_APPLICABLE!");
 
-                    case ERROR:
-                        vo = VerdictOutcome.ERROR;
-                        break testIter;
+            } else if (runningCount > 0) {
+                vo = VerdictOutcome.RUNNING;
+            } else if (pendingCount > 0) {
+                vo = VerdictOutcome.PENDING;
 
-                    case INVALID:
-                        vo = VerdictOutcome.INCONCLUSIVE;
-                        break testIter;
+            } else {
+                // Validation has finished
 
-                    case INCOMPLETE:
-                        break;
-
-                    case COMPLETE_PASS:
-                        vo = VerdictOutcome.PASS;
-                        break;
-
-                    case COMPLETE_DEGRADED:
+                if (completeFailCount == 0) {
+                    if (completeDegradedCount == 0) {
+                        if (completePassCount == 0) {
+                            vo = VerdictOutcome.INCONCLUSIVE;
+                        } else {
+                            vo = VerdictOutcome.PASS;
+                        }
+                    } else {
                         vo = VerdictOutcome.DEGRADED;
-                        break;
+                    }
 
-                    case COMPLETE_FAIL:
+                } else {
+                    if (completePassCount == 0) {
                         vo = VerdictOutcome.FAIL;
-                        break testIter;
+                    } else {
+                        vo = VerdictOutcome.DEGRADED;
+                    }
                 }
             }
         }
@@ -255,6 +303,7 @@ public class TestHarnessAdapterMediator {
                         ImmortalsErrorHandler.reportFatalException(e);
                     }
                 }
+                state.initialValidationUpdate = false;
                 break;
 
             case PASS:
@@ -273,7 +322,6 @@ public class TestHarnessAdapterMediator {
                 }
                 break;
         }
-        state.initialValidationUpdate = false;
     }
 
     public synchronized Response thGetAlive() {
@@ -308,7 +356,9 @@ public class TestHarnessAdapterMediator {
 
     private TestHarnessAdapterMediator() {
         this.applicationDeployer = new AdaptedApplicationDeployer();
-        submissionInterface = SubmissionServices.getTestHarnessSubmitter();
+        this.submissionInterface = SubmissionServices.getTestHarnessSubmitter();
+        this.mediatorFlowController = new MediatorFlowController(this::innerUpdateAdaptationStatus,
+                this::innerUpdateValidatorStatus);
     }
 
     @Nullable
@@ -362,13 +412,17 @@ public class TestHarnessAdapterMediator {
         Response initialResponse;
 
         boolean environmentPerturbed =
-                (submissionModel.martiServerModel != null &&
-                        submissionModel.martiServerModel.requirements != null &&
-                        (submissionModel.martiServerModel.requirements.libraryUpgrade != null ||
-                                submissionModel.martiServerModel.requirements.partialLibraryUpgrade != null ||
-                                submissionModel.martiServerModel.requirements.postgresqlPerturbation != null)
+                (
+                        submissionModel.martiServerModel != null &&
+                                submissionModel.martiServerModel.requirements != null &&
+                                (submissionModel.martiServerModel.requirements.libraryUpgrade != null ||
+                                        submissionModel.martiServerModel.requirements.partialLibraryUpgrade != null ||
+                                        submissionModel.martiServerModel.requirements.postgresqlPerturbation != null)
+                ) || (
+                        submissionModel.globalModel != null && submissionModel.globalModel.requirements != null &&
+                                submissionModel.globalModel.requirements.dataInTransit != null
                 );
-                
+
         logger.debug("Submission model has no perturbations.");
 
         if (ImmortalsConfig.getInstance().debug.isUseMockTestCoordinators()) {

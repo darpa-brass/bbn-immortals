@@ -7,84 +7,81 @@ class DatabaseColumns(Enum):
     def __init__(self, key_idx_value: str, castorDefinition: str, columnName: str, description: str, takDefinition: str):
         self._key_idx_value = key_idx_value
         self.castorDefinition = castorDefinition  # type: str
-        self._key_idx_value = key_idx_value
         self.columnName = columnName  # type: str
-        self._key_idx_value = key_idx_value
         self.description = description  # type: str
-        self._key_idx_value = key_idx_value
         self.takDefinition = takDefinition  # type: str
 
     CotEvent_SourceId = ("CotEvent_SourceId",
-        "The foreign key for the source the event is associated with",
+        "varchar(16) not null",
         "source_id",
-        "integer not null",
-        "varchar(16) not null")
+        "The foreign key for the source the event is associated with",
+        "integer not null")
 
     CotEvent_CotType = ("CotEvent_CotType",
-        "The CoT event type",
+        "varchar(16) not null",
         "cot_type",
-        "character varying not null",
-        "varchar(16) not null")
+        "The CoT event type",
+        "character varying not null")
 
     CotEvent_How = ("CotEvent_How",
-        "The standardized source type of the message",
+        "varchar(16) not null",
         "how",
-        "character varying not null",
-        "varchar(16) not null")
+        "The standardized source type of the message",
+        "character varying not null")
 
     CotEvent_Detail = ("CotEvent_Detail",
-        "The detail field of the CoT event",
+        "varchar(400) not null",
         "detail",
-        "text not null",
-        "varchar(400) not null")
+        "The detail field of the CoT event",
+        "text not null")
 
     CotEvent_ServerTime = ("CotEvent_ServerTime",
-        "The timestamp for the event",
+        "varchar(16) not null",
         "servertime",
-        "bigint not null",
-        "varchar(16) not null")
+        "The timestamp for the event",
+        "bigint not null")
 
     Position_PointHae = ("Position_PointHae",
-        "Altitude",
+        "varchar(16) not null",
         "point_hae",
-        "integer not null",
-        "varchar(16) not null")
+        "Altitude",
+        "integer not null")
 
     Position_PointCE = ("Position_PointCE",
-        "Circular Error",
+        "varchar(16) not null",
         "point_ce",
-        "integer not null",
-        "varchar(16) not null")
+        "Circular Error",
+        "integer not null")
 
     Position_PointLE = ("Position_PointLE",
-        "Linear Error",
+        "varchar(16) not null",
         "point_le",
-        "integer not null",
-        "varchar(16) not null")
+        "Linear Error",
+        "integer not null")
 
     Position_TileX = ("Position_TileX",
-        "The X tile the position is within",
+        "varchar(16) not null",
         "tileX",
-        "integer not null",
-        "varchar(16) not null")
+        "The X tile the position is within",
+        "integer not null")
 
     Position_TileY = ("Position_TileY",
-        "The Y tile the position is within",
+        "varchar(16) not null",
         "tileY",
-        "integer not null",
-        "varchar(16) not null")
+        "The Y tile the position is within",
+        "integer not null")
 
     Position_Longitude = ("Position_Longitude",
-        "The longitude of the position",
+        "varchar(24) not null",
         "longitude",
-        "double precision not null",
-        "varchar(24) not null")
+        "The longitude of the position",
+        "double precision not null")
 
     Position_Latitude = ("Position_Latitude",
-        "The latitude of the position",
+        "varchar(24) not null",
         "latitude",
-        "double precision not null",
-        "varchar(24) not null")
+        "The latitude of the position",
+        "double precision not null")
 
     @classmethod
     def all_castorDefinition(cls) -> FrozenSet[str]:

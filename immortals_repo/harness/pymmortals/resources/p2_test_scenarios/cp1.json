@@ -4,9 +4,6 @@
         "submissionModel": null,
         "expectedAdaptationResult": "NOT_APPLICABLE",
         "expectedVerdictOutcome": "PASS",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "BaselineA",
         "perturbationScenario": "P2CP1DatabaseSchema"
     },
@@ -44,9 +41,6 @@
         },
         "expectedAdaptationResult": "NOT_APPLICABLE",
         "expectedVerdictOutcome": "FAIL",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
         "submissionFlow": "BaselineB",
         "perturbationScenario": "P2CP1DatabaseSchema"
     },
@@ -83,10 +77,7 @@
             }
         },
         "expectedAdaptationResult": "SUCCESS",
-        "expectedVerdictOutcome": "PASS",
-        "rootConfigurationModifications": {
-            "validationEnvironment.lifecycle.haltEnvironment": "True"
-        },
+        "expectedVerdictOutcome": "DEGRADED",
         "submissionFlow": "Challenge",
         "perturbationScenario": "P2CP1DatabaseSchema"
     }
