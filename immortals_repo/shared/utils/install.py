@@ -47,6 +47,10 @@ parser.add_argument('-l', '--ll-mode', action='store_true', default=False,
                     help="Uses a set of predefined configuration options optimized for LL testing, " +
                          "ignoring all other parameters other than '--dry-run'.")
 
+parser.add_argument('-x', '--fail-fast', action='store_true', default=False,
+                    help="Causes the installation sequence to fail at the first sign of trouble.")
+
+
 class TestResults:
 
     def __init__(self):
@@ -143,10 +147,15 @@ class ImmortalsRootDeploymentTester:
         # noinspection PyBroadException
         try:
             self._results.basic_installation = False
-            self._results.basic_installation = self._run(
-                'setup_base_environment',
-                ['sudo', 'apt-get', '-y', 'install', 'maven', 'openjdk-8-jdk-headless'],
-                cwd=self._immortals_root_basic)
+            self._results.basic_installation = self._run('setup_base_environment', ['sudo', 'apt-get', 'update'],
+                                                         cwd=self._immortals_root_basic)
+
+            if self._results.basic_installation:
+                self._results.basic_installation = self._run(
+                    'setup_base_environment',
+                    ['sudo', 'apt-get', '-y', 'install', 'maven', 'openjdk-8-jdk-headless'],
+                    cwd=self._immortals_root_basic)
+
         except Exception:
             self._results.basic_installation = False
         return self._results.basic_installation
@@ -199,6 +208,7 @@ class ImmortalsRootDeploymentTester:
             if self._build_in_current_project:
                 cwd = self._real_immortals_root
             else:
+                self._create_build_dir(self._immortals_root_deployment)
                 cwd = self._immortals_root_deployment
 
             if self._clean_first:
@@ -245,7 +255,8 @@ class ImmortalsRootDeploymentTester:
                 for label in expected_artifacts.keys():
                     for path in expected_artifacts.get(label):
                         assert os.path.exists(os.path.join(self._immortals_root_deployment, path)), \
-                            'ERROR: ' + label + ' artifact "' + os.path.join(self._immortals_root_deployment, path) + '" was not found!'
+                            'ERROR: ' + label + ' artifact "' + os.path.join(self._immortals_root_deployment,
+                                                                             path) + '" was not found!'
 
                 expected_good_commands = {
                     "database": [
@@ -309,29 +320,38 @@ def main():
             args.skip_deployment_validation = False
             args.skip_marti_baseline = False
             args.skip_api_smoketest = False
+            args.fail_fast = True
+
+        ff = args.fail_fast
 
         tester = ImmortalsRootDeploymentTester(dry_run=args.dry_run, clean_first=args.clean_first,
                                                build_in_current_project=args.build_in_current_project,
                                                use_existing_tmp_project=args.use_existing_tmp_project)
 
+        execution_sequence = list()
+
         if not args.skip_basic_build:
             if not args.skip_environment_setup:
-                tester.test_basic_environment_setup()
-            tester.test_basic_build()
+                execution_sequence.append(tester.test_basic_environment_setup)
+            execution_sequence.append(tester.test_basic_build)
 
         if not args.skip_full_deployment:
             if not args.skip_environment_setup:
-                tester.test_deployment_environment_setup()
-            tester.test_deployment()
+                execution_sequence.append(tester.test_deployment_environment_setup)
+            execution_sequence.append(tester.test_deployment)
 
         if not args.skip_full_deployment and not args.skip_deployment_validation:
-            tester.validate_deployment()
+            execution_sequence.append(tester.validate_deployment)
 
         if not args.skip_marti_baseline:
-            tester.test_baseline_marti()
+            execution_sequence.append(tester.test_baseline_marti)
 
         if not args.skip_api_smoketest:
-            tester.test_api_smoke()
+            execution_sequence.append(tester.test_api_smoke)
+
+        for method in execution_sequence:
+            if not method() and ff:
+                break
 
     except Exception:
         traceback.print_exc()
@@ -343,4 +363,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

@@ -94,7 +94,7 @@ In the event of any test failures the _install.sh_ script returns a non-zero exi
 
 #### Vagrant Installation
 
-The Vagrant installation wraps the **Manual Installation**. Simply execute `vagrant up` within the immortals_repo 
+The Vagrant installation wraps the **Assisted Installation**. Simply execute `vagrant up` within the immortals_repo 
 folder containing the `Vagrantfile`. This will execute an installation within a vagrant container.
 
 

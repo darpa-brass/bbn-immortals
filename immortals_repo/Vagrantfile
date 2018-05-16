@@ -9,13 +9,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "./", destination: "$HOME/immortals_root"
 
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
-    sudo apt-get update
-    sudo apt-get install -y python3.5
-    cd ~/immortals_root/harness
-    ./prepare_setup.sh --installation-dir ~/.immortals
-    ./setup.sh
-    cp immortalsrc ~/.immortalsrc
-    cd ~/immortals_root
-    ./gradlew deploy
+    cd ~/immortals_root/shared/utils
+    ./install.sh --ll-mode
   SHELL
 end
