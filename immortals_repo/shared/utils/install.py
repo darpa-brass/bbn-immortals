@@ -22,13 +22,10 @@ parser.add_argument('-f', '--skip-full-deployment', action='store_true', default
                     help='skips full project build deployment')
 
 parser.add_argument('-v', '--skip-deployment-validation', action='store_true', default=False,
-                    help='Skips the project deployment validation')
+                    help='Skips the project deployment validation. Automatically enabled if full deployment is skipped')
 
 parser.add_argument('-a', '--skip-api-smoketest', action='store_true', default=False,
                     help='Skips the api smoke test')
-
-parser.add_argument('-1', '--skip-cp1-smoketest', action='store_true', default=False,
-                    help='Skips the cp1 smoke test')
 
 parser.add_argument('-m', '--skip-marti-baseline', action='store_true', default=False,
                     help='Skips the baseline Marti validation tests')
@@ -50,9 +47,6 @@ parser.add_argument('-l', '--ll-mode', action='store_true', default=False,
                     help="Uses a set of predefined configuration options optimized for LL testing, " +
                          "ignoring all other parameters other than '--dry-run'.")
 
-
-_ll_mode = False
-
 class TestResults:
 
     def __init__(self):
@@ -63,7 +57,6 @@ class TestResults:
         self.full_deployment_validation = None
         self.baseline_marti = None
         self.api_smoke_test = None
-        self.cp1_smoke_test = None
 
     @staticmethod
     def _stringify_result(value: Optional[bool] = None):
@@ -83,7 +76,6 @@ class TestResults:
                '\n| Full Deployment Validation |' + TestResults._stringify_result(self.full_deployment_validation) + \
                '\n| Baseline Marti             |' + TestResults._stringify_result(self.baseline_marti) + \
                '\n| API Smoke Test             |' + TestResults._stringify_result(self.api_smoke_test)
-               # '\n| CP1 Smoke Test             |' + TestResults._stringify_result(self.cp1_smoke_test)
 
 
 class ImmortalsRootDeploymentTester:
@@ -101,8 +93,7 @@ class ImmortalsRootDeploymentTester:
         self._immortals_root_deployment = os.path.join(_staging_dir, 'immortals_root_deploy') + '/'
         self._test_root = self._immortals_root_basic
 
-        if not _ll_mode:
-            self._create_build_dir(self._immortals_root_basic)
+        self._create_build_dir(self._immortals_root_basic)
 
     def _create_build_dir(self, target_path: str):
         dir_exists = os.path.exists(target_path)
@@ -210,13 +201,12 @@ class ImmortalsRootDeploymentTester:
             else:
                 cwd = self._immortals_root_deployment
 
-            # Perform a basic build
             if self._clean_first:
                 self._run('perform_basic_deployment_clean', ['bash', 'gradlew', 'clean'], cwd=cwd)
 
             self._results.full_deployment = False
             self._results.full_deployment = self._run('perform_deployment',
-                                                      ['bash', 'gradlew', 'deploy', 'buildknowledge'], cwd=cwd)
+                                                      ['bash', 'gradlew', 'deploy'], cwd=cwd)
 
         except Exception:
             self._results.full_deployment = False
@@ -224,8 +214,7 @@ class ImmortalsRootDeploymentTester:
         if self._build_in_current_project:
             self._create_build_dir(self._immortals_root_deployment)
 
-        if self._results.full_deployment:
-            self._test_root = self._immortals_root_deployment
+        self._test_root = self._immortals_root_deployment
 
         return self._results.full_deployment
 
@@ -256,7 +245,7 @@ class ImmortalsRootDeploymentTester:
                 for label in expected_artifacts.keys():
                     for path in expected_artifacts.get(label):
                         assert os.path.exists(os.path.join(self._immortals_root_deployment, path)), \
-                            'ERROR: ' + label + ' artifact "' + path + '" was not found!'
+                            'ERROR: ' + label + ' artifact "' + os.path.join(self._immortals_root_deployment, path) + '" was not found!'
 
                 expected_good_commands = {
                     "database": [
@@ -288,22 +277,12 @@ class ImmortalsRootDeploymentTester:
             self._results.api_smoke_test = False
         return self._results.api_smoke_test
 
-    def test_cp1_smoke(self):
-        # noinspection PyBroadException
-        try:
-            self._results.cp1_smoke_test = False;
-            cwd = os.path.join(self._immortals_root_deployment, 'harness')
-            self._results.cp1_smoke_test = self._run('cp1_test', ['bash', 'test_cp1.sh'], cwd=cwd)
-        except Exception:
-            self._results.cp1_smoke_test = False
-        return self._results.cp1_smoke_test
-
     def test_baseline_marti(self):
         # noinspection PyBroadException
         try:
             self._results.baseline_marti = False
             cwd = os.path.join(self._test_root, 'applications/server/Marti')
-            self._results.baseline_marti = self._run('baseline_marti', ['../../../gradlew', 'clean', 'validate'],
+            self._results.baseline_marti = self._run('baseline_marti', ['../../../gradlew', 'clean', 'test'],
                                                      cwd=cwd)
         except Exception:
             self._results.baseline_marti = False
@@ -314,50 +293,45 @@ class ImmortalsRootDeploymentTester:
 
 
 def main():
-    global _ll_mode
     args = parser.parse_args()
     tester = None
 
     # noinspection PyBroadException
     try:
         if args.ll_mode:
-            _ll_mode = True
-            tester = ImmortalsRootDeploymentTester(dry_run=args.dry_run, clean_first=False,
-                                                   build_in_current_project=True,
-                                                   use_existing_tmp_project=False)
-            if tester.test_deployment_environment_setup():
-                if tester.test_deployment():
-                    if tester.validate_deployment():
-                        if tester.test_baseline_marti():
-                            tester.test_api_smoke()
-                                # tester.test_cp1_smoke()
+            args.clean_first = False
+            args.build_in_current_project = True
+            args.use_existing_tmp_project = False
 
-        else:
-            tester = ImmortalsRootDeploymentTester(dry_run=args.dry_run, clean_first=args.clean_first,
-                                                   build_in_current_project=args.build_in_current_project,
-                                                   use_existing_tmp_project=args.use_existing_tmp_project)
+            args.skip_basic_build = False
+            args.skip_full_deployment = False
+            args.skip_environment_setup = False
+            args.skip_deployment_validation = False
+            args.skip_marti_baseline = False
+            args.skip_api_smoketest = False
 
-            if not args.skip_basic_build:
-                if not args.skip_environment_setup:
-                    tester.test_basic_environment_setup()
-                tester.test_basic_build()
+        tester = ImmortalsRootDeploymentTester(dry_run=args.dry_run, clean_first=args.clean_first,
+                                               build_in_current_project=args.build_in_current_project,
+                                               use_existing_tmp_project=args.use_existing_tmp_project)
 
-            if args.skip_full_deployment:
-                if not args.skip_environment_setup:
-                    tester.test_deployment_environment_setup()
-                tester.test_deployment()
+        if not args.skip_basic_build:
+            if not args.skip_environment_setup:
+                tester.test_basic_environment_setup()
+            tester.test_basic_build()
 
-            if not args.skip_deployment_validation:
-                tester.validate_deployment()
+        if not args.skip_full_deployment:
+            if not args.skip_environment_setup:
+                tester.test_deployment_environment_setup()
+            tester.test_deployment()
 
-            if not args.skip_marti_baseline:
-                tester.test_baseline_marti()
+        if not args.skip_full_deployment and not args.skip_deployment_validation:
+            tester.validate_deployment()
 
-            if not args.skip_api_smoketest:
-                tester.test_api_smoke()
+        if not args.skip_marti_baseline:
+            tester.test_baseline_marti()
 
-            if not args.skip_cp1_smoketest:
-                tester.test_cp1_smoke()
+        if not args.skip_api_smoketest:
+            tester.test_api_smoke()
 
     except Exception:
         traceback.print_exc()
@@ -369,3 +343,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

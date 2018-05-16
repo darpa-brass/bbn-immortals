@@ -17,20 +17,29 @@
     },
     "deploymentEnvironment": {
         "martiAddress": "10.0.2.2",
-        "androidEnvironments" : [
+        "androidEnvironments": [
             {
-                "adbPort" : 5580,
-                "adbUrl" : "127.0.0.1",
+                "adbPort": 5580,
+                "adbUrl": "127.0.0.1",
                 "adbIdentifier": "emulator-5580",
-                "androidVersion": 21
+                "environmentDetails": {
+                    "androidVersion": 21,
+                    "externallyAccessibleUrls": [],
+                    "superuserAccess": false,
+                    "uploadBandwidthLimitKilobitsPerSecond": null
+                }
             },
             {
-                "adbPort" : 5578,
-                "adbUrl" : "127.0.0.1",
+                "adbPort": 5578,
+                "adbUrl": "127.0.0.1",
                 "adbIdentifier": "emulator-5578",
-                "androidVersion": 21
+                "environmentDetails": {
+                    "androidVersion": 21,
+                    "externallyAccessibleUrls": [],
+                    "superuserAccess": false,
+                    "uploadBandwidthLimitKilobitsPerSecond": null
+                }
             }
- 
         ]
     }
 }

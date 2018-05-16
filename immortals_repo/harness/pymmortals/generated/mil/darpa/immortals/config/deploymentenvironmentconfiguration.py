@@ -10,14 +10,14 @@ class AndroidEmulatorRequirement(Serializable):
 
     def __init__(self,
                  androidVersion: int = None,
-                 bandwidthLimitKilobitsPerSecond: int = None,
                  externallyAccessibleUrls: List[str] = None,
-                 superuserAccess: bool = None):
+                 superuserAccess: bool = None,
+                 uploadBandwidthLimitKilobitsPerSecond: int = None):
         super().__init__()
         self.androidVersion = androidVersion
-        self.bandwidthLimitKilobitsPerSecond = bandwidthLimitKilobitsPerSecond
         self.externallyAccessibleUrls = externallyAccessibleUrls
         self.superuserAccess = superuserAccess
+        self.uploadBandwidthLimitKilobitsPerSecond = uploadBandwidthLimitKilobitsPerSecond
 
 
 # noinspection PyPep8Naming

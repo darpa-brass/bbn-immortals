@@ -1,5 +1,6 @@
 # IMMoRTALS Test Adapter Instructions
 
+
 ## Overview
 The IMMoRTALS Test Adapter consists of a copy of the IMMoRTALS source code repository.
 
@@ -9,6 +10,7 @@ an openssh server enabled.
 
 I would recommend a base system with 8GB of memory and 8 threads (via 8 cores or 4 cores with hyperthreading).  As we 
 continue to add functionality it may be worth varying some of those values to see what provides decent execution time.
+
 
 ## Status
 
@@ -30,18 +32,18 @@ Current Status:
 See details at the [CP3 Document](phase02/ChallengeProblems/Immortals-Phase2-cp3-LibraryEvol.md)
 
 Current Status:
- * Baseline A, Baseline B, and Challenge have been fully implemented for library mutation with one server mutation library (ElevationApi_2)
+ * Baseline A, Baseline B, and Challenge have been fully implemented for library mutation with one server mutation 
+   library (ElevationApi_2)
  * Implementation of additional libraries and partial library upgrades are in progress 
+ 
  
 ## Initial Online Setup
 
-The initial setup will go through dependency installation, building, and installation of the DAS.  
+The initial setup requires an internet connection and will go through dependency installation, building, and 
+installation of the DAS. It is recommended to use the **Vagrant Installation** or **Assisted Installation** as they 
+will perform additional checks to ensure the DAS is ready for use.
 
-##### Vagrant Installation
-
-Simply execute `vagrant up` within the immortals_repo folder containing the `Vagrantfile`
-
-##### Manual Installation
+#### Manual Installation
 
 1. Install Python 3.5 if necessary  
     `$ sudo apt-get install python3.5`
@@ -63,42 +65,90 @@ repository:
 9.  Execute the installation script. You may be asked one or more times for your root credentials to install software.  
     `$ ./install.sh --ll-mode`  
 
-##### Assisted Installation
+#### Assisted Installation
 
-Assisted installation (which performs all the manual steps and executes some tests) is currently being updated.
+Assisted installation performs all steps included in **Manual Installation**.  
 
-## Smoke Test
+It also copies the repository to `/tmp/immortals_deployment_test/` and executes the smoke test along with some 
+additional verifications to ensure the environment has been set up properly. In a successful scenario the end result 
+is a chart similar to the following:  
 
-The smoke test can be run as follows:
+| Results                    |         |
+| ---------------------------|---------|
+| Basic Installation         |  PASS   |
+| Basic Build                |  PASS   |
+| Full Installation          |  PASS   |
+| Full Deployment            |  PASS   |
+| Full Deployment Validation |  PASS   |
+| Baseline Marti             |  PASS   |
+| API Smoke Test             |  PASS   |
 
-1.  Navigate to `~/immortals_repo/harness`  
+Steps:
+
+1.  Navigate to the utils directory  
+    `$ cd ~/immortals_repo/shared/utils`  
+2.  Execute the install script  
+    `$ ./install.sh`  
+
+In the event of any test failures the _install.sh_ script returns a non-zero exit code.
+
+#### Vagrant Installation
+
+The Vagrant installation wraps the **Manual Installation**. Simply execute `vagrant up` within the immortals_repo 
+folder containing the `Vagrantfile`. This will execute an installation within a vagrant container.
+
+
+## Testing
+
+Testing should not be done on an image intended to be saved for evaluation since the DAS is not guaranteed to be 
+stateless between executions!
+
+### Smoke Test
+
+The smoke test is included within the **Assisted Installation** and **Vagrant Installation**. However, if you wish to 
+run it manually (which can be useful for validating the actual Test Harness works with the Test Adapter) you may do so 
+as follows:
+
+1.  Navigate to the immortals harness directory  
+    `$ cd ~/immortals_repo/harness`  
 2.  Change `smoke_override_file.json` to reflect the proper Test Harness and Test Adapter configurations.  
 3.  Execute the following command:  
-    `./smoke.sh`  
+    `$ ./smoke.sh`  
 
 It will return a non-zero status along with a description of the issue if the smoke test fails.
 
-## DAS Execution Configuration
+### Validation Test
 
-Many configuration parameters can be overridden using a configuration file. 
+The validation test will run a single Challenge instance of each perturbation type that has been implemented to ensure 
+that the DAS executes as expected given valid perturbation info from our mock Test Harness. 
+
+Steps:
+
+1.  Navigate to the utils directory  
+    `$ cd ~/immortals_repo/shared/utils`  
+2.  Execute the test script  
+    `$ ./test.sh`  
+
+It will return a non-zero status along with a description of the issue if any of the validation tests fails.
+
+
+## DAS Execution
+
+### Configuration
+
+Certain environment components such as Android emulators, machine hosts, and ports must be provided by the evaluator. 
 Please see the [Prerequisites](phase02/ChallengeProblems/Immortals-Phase2-DasPrerequisites.md) document 
 for more details.
 
-
-## Starting The DAS
+### Starting The DAS
 
 To start the DAS, perform the following steps. If the Test Harness is not ready to receive the _/ready_ signal, startup 
 will fail!
 
-Start by changing to the DAS directory as follows:  
-`cd ~/immortals_repo/das`
+Steps:
 
-You can then start it one of two ways:
-
-1.  Provide the configuration as a variable  
-``./start.sh --set-override-file-data "`cat /path/to/my/json/file.json``  
-
-2.  Export the configuration and then start it  
-``export IMMORTALS_OVERRIDE_FILE=/path/to/my/override/file.json``  
-``./start.sh``
+1.  Navigate to the DAS Directory  
+    `cd ~/immortals_repo/das`  
+2.  Start the das, providing the configuration as a variable  
+    ``./start.sh --set-override-file-data "`cat /path/to/my/json/file.json``  
 

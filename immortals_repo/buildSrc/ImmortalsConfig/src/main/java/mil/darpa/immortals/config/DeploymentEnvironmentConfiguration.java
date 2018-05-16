@@ -24,14 +24,14 @@ public class DeploymentEnvironmentConfiguration {
 
     public static class AndroidEmulatorRequirement {
         private final int androidVersion;
-        private final Integer bandwidthLimitKilobitsPerSecond;
+        private final Integer uploadBandwidthLimitKilobitsPerSecond;
         private final String[] externallyAccessibleUrls;
         private final boolean superuserAccess;
 
-        public AndroidEmulatorRequirement(int androidVersion, @Nullable Integer bandwidthLimitKilobitsPerSecond, boolean superuserAccess,
+        public AndroidEmulatorRequirement(int androidVersion, @Nullable Integer uploadBandwidthLimitKilobitsPerSecond, boolean superuserAccess,
                                           @Nullable String[] externallyAccessibleUrls) {
             this.androidVersion = androidVersion;
-            this.bandwidthLimitKilobitsPerSecond = bandwidthLimitKilobitsPerSecond;
+            this.uploadBandwidthLimitKilobitsPerSecond = uploadBandwidthLimitKilobitsPerSecond;
             this.superuserAccess = superuserAccess;
             this.externallyAccessibleUrls = externallyAccessibleUrls == null ? new String[0] :
                     Arrays.copyOf(externallyAccessibleUrls, externallyAccessibleUrls.length);

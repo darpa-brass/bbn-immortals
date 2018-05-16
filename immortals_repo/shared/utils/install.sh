@@ -44,4 +44,13 @@ else
   cd ${REPO_DIR}/shared/utils
 fi
 
-python3.5 install.py "$ARGS"
+if [[ "`which python3.5`" = "" ]];then
+  sudo apt-get update
+  sudo apt-get -y install python3.5
+fi
+
+if [[ "$ARGS" = "" ]];then
+  python3.5 install.py
+else
+  python3.5 install.py "$ARGS"
+fi

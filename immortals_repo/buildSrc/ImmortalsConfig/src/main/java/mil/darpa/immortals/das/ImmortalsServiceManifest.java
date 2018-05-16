@@ -16,7 +16,7 @@ public enum ImmortalsServiceManifest {
     fuseki,
     knowledgerepo,
     voltdb,
-    aqlbrass,
+//    aqlbrass,
     dasservice,
     testadapter;
 
@@ -35,8 +35,8 @@ public enum ImmortalsServiceManifest {
                 return ic.testAdapter;
             case voltdb:
                 return ic.extensions.voltdb;
-            case aqlbrass:
-                return ic.extensions.aqlbrass;
+//            case aqlbrass:
+//                return ic.extensions.aqlbrass;
         }
         throw new RuntimeException("Unexpected service enum '" + this.name() + "'!");
     }
@@ -54,8 +54,8 @@ public enum ImmortalsServiceManifest {
                 return ic.debug.isUseMockTestAdapter();
             case voltdb:
                 return false;
-            case aqlbrass:
-                return ic.debug.isUseMockAqlBrass();
+//            case aqlbrass:
+//                return ic.debug.isUseMockAqlBrass();
         }
         throw new RuntimeException("Unexpected service enum '" + this.name() + "'!");
     }
@@ -74,7 +74,7 @@ public enum ImmortalsServiceManifest {
 
                     ProcessBuilder pb = new ProcessBuilder(mvnFetchCommand);
                     Process p = pb.start();
-                    p.waitFor(60000, TimeUnit.MILLISECONDS);
+                    p.waitFor(120000, TimeUnit.MILLISECONDS);
 
                     if (p.exitValue() != 0) {
                         throw new IOException("Failed to download dependency '" + config.getIdentifier() + "'!");
