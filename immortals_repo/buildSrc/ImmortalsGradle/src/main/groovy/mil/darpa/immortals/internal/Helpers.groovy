@@ -162,10 +162,12 @@ class Helpers {
 
     static void applyJacocoCoverage(Project target) {
         target.apply plugin: 'jacoco'
-
-        target.jacocoTestReport {
-            reports {
-                xml.enabled true
+        
+        if (target.hasProperty('jacocoTestReport')) {
+            target.jacocoTestReport {
+                reports {
+                    xml.enabled true
+                }
             }
         }
     }

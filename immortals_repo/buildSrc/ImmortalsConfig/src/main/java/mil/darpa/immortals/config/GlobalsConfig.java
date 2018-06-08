@@ -122,6 +122,18 @@ public class GlobalsConfig {
         }
         return dirPath.toString();
     }
+    
+    public static Path mkextensiondir(@Nonnull String subdir) {
+        Path dirPath = staticImmortalsRoot.resolve("extensions") .resolve(subdir).toAbsolutePath();
+        if (!Files.exists(dirPath)) {
+            try {
+                Files.createDirectories(dirPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return dirPath;
+    }
 
     public static Path getExtensionsDownloadDir() {
         try {

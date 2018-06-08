@@ -1,0 +1,1315 @@
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_functionality_datatype: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_cp: <http://darpa.mil/immortals/ontology/r2.0.0/cp#> .
+@prefix IMMoRTALS_ordering: <http://darpa.mil/immortals/ontology/r2.0.0/ordering#> .
+@prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#> .
+@prefix IMMoRTALS_android: <http://darpa.mil/immortals/ontology/r2.0.0/android#> .
+@prefix IMMoRTALS_unix: <http://darpa.mil/immortals/ontology/r2.0.0/unix#> .
+@prefix IMMoRTALS_core: <http://darpa.mil/immortals/ontology/r2.0.0/core#> .
+@prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> .
+@prefix IMMoRTALS_resource_containment: <http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#> .
+@prefix IMMoRTALS_java_util: <http://darpa.mil/immortals/ontology/r2.0.0/java/util#> .
+@prefix IMMoRTALS_measurement: <http://darpa.mil/immortals/ontology/r2.0.0/measurement#> .
+@prefix IMMoRTALS_property: <http://darpa.mil/immortals/ontology/r2.0.0/property#> .
+@prefix IMMoRTALS_cp_context: <http://darpa.mil/immortals/ontology/r2.0.0/cp/context#> .
+@prefix IMMoRTALS_windows: <http://darpa.mil/immortals/ontology/r2.0.0/windows#> .
+@prefix IMMoRTALS_property_impact: <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#> .
+@prefix IMMoRTALS_functionality_dataproperties: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#> .
+@prefix IMMoRTALS_measurement_cp1cp2: <http://darpa.mil/immortals/ontology/r2.0.0/measurement/cp1cp2#> .
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix IMMoRTALS_metrics: <http://darpa.mil/immortals/ontology/r2.0.0/metrics#> .
+@prefix IMMoRTALS_connectivity: <http://darpa.mil/immortals/ontology/r2.0.0/connectivity#> .
+@prefix IMMoRTALS_server: <http://darpa.mil/immortals/ontology/r2.0.0/server#> .
+@prefix IMMoRTALS_cp_java: <http://darpa.mil/immortals/ontology/r2.0.0/cp/java#> .
+@prefix IMMoRTALS_types: <http://darpa.mil/immortals/ontology/r2.0.0/types#> .
+@prefix IMMoRTALS_image_fidelity: <http://darpa.mil/immortals/ontology/r2.0.0/image/fidelity#> .
+
+IMMoRTALS_cp:MissionSpec
+        a                            owl:Class ;
+        rdfs:label                   "MissionSpec" ;
+        rdfs:subClassOf              IMMoRTALS_cp:SoftwareSpec ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableForm
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasHumanReadableForm
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRightValue
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRightValue
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_metrics:Metric ;
+                                       owl:onProperty     IMMoRTALS:hasRightValue
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAssertionCriterion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  _:b0 ;
+                                       owl:onProperty     IMMoRTALS:hasAssertionCriterion
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableForm
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAssertionCriterion
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.MissionSpec" .
+
+IMMoRTALS:hasBytes  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_cp_java:ClasspathResource ;
+        rdfs:range   xsd:base64Binary .
+
+IMMoRTALS_cp_context:MetaData
+        a                            owl:Class ;
+        rdfs:label                   "MetaData" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOrigin
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOrigin
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasOrigin
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.context.MetaData" .
+
+IMMoRTALS_connectivity:LocationReportRate
+        a                            owl:Class ;
+        rdfs:label                   "LocationReportRate" ;
+        rdfs:subClassOf              IMMoRTALS_connectivity:PliReportRate ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.connectivity.LocationReportRate" .
+
+IMMoRTALS_resources:PlatformResource
+        a             owl:Class ;
+        rdfs:comment  "A resource present on a specific platform  E.g., a library (code dependency) a platform architecture (embedded linux, windows, ...) compute resources (CPU, GPU, ...) an external resource accessed via IO (network, disk, ...)  @author jstaples " .
+
+IMMoRTALS:hasSessionIdentifier
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_cp:GmeInterchangeFormat ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_measurement_cp1cp2:ImageSizeMegapixels
+        a                            owl:Class ;
+        rdfs:label                   "ImageSizeMegapixels" ;
+        rdfs:subClassOf              IMMoRTALS_property:Property ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNumMegapixels
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNumMegapixels
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:double ;
+                                       owl:onProperty     IMMoRTALS:hasNumMegapixels
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.measurement.cp1cp2.ImageSizeMegapixels" .
+
+IMMoRTALS:hasClassName
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_measurement:CodeUnitPointer ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasCompiledFrom
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp_java:JavaClassFile ;
+        rdfs:range   IMMoRTALS_cp_java:JavaSourceCodeFile .
+
+IMMoRTALS:hasResourceModel
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_resource_containment:ResourceContainmentModel ;
+        rdfs:range   IMMoRTALS_resource_containment:ResourceContainmentModelNode .
+
+IMMoRTALS_server:JavaInstallation
+        a                            owl:Class ;
+        rdfs:label                   "JavaInstallation" ;
+        rdfs:subClassOf              IMMoRTALS_resources:PlatformResource ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.server.JavaInstallation" .
+
+IMMoRTALS:hasWidth  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_image_fidelity:ResolutionFidelity ;
+        rdfs:range   xsd:int .
+
+IMMoRTALS:hasHumanReadableForm
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_cp:MissionSpec ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasPlatformResources
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_android:AndroidPlatform ;
+        rdfs:range   IMMoRTALS_resources:PlatformResource .
+
+IMMoRTALS_unix:MacPlatform
+        a                            owl:Class ;
+        rdfs:label                   "MacPlatform" ;
+        rdfs:subClassOf              IMMoRTALS_unix:UnixPlatform ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.unix.MacPlatform" .
+
+IMMoRTALS_measurement:CodeUnitPointer
+        a                            owl:Class ;
+        rdfs:label                   "CodeUnitPointer" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClassName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasPointerString
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasClassName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClassName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPointerString
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPointerString
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.measurement.CodeUnitPointer" .
+
+IMMoRTALS_cp_context:ImmortalsContext
+        a                            owl:Class ;
+        rdfs:label                   "ImmortalsContext" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasGraphs
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasGraphs
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_util:ArrayList ;
+                                       owl:onProperty     IMMoRTALS:hasGraphs
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.context.ImmortalsContext" .
+
+IMMoRTALS_cp_java:CompiledArtifact
+        a                            owl:Class ;
+        rdfs:label                   "CompiledArtifact" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.java.CompiledArtifact" .
+
+IMMoRTALS:hasHumanReadableDescription
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_cp:GmeInterchangeFormat ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasAssertionCriterion
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_cp:MissionSpec ;
+        rdfs:range   _:b0 .
+
+IMMoRTALS:hasConstraints
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp:RevisedGmeInterchangeFormat ;
+        rdfs:range   IMMoRTALS_property_impact:ProscriptiveCauseEffectAssertion .
+
+IMMoRTALS:hasOrigin  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_cp_context:MetaData ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_resource_containment:ResourceContainmentModelNode
+        a                            owl:Class ;
+        rdfs:label                   "ResourceContainmentModelNode" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasContainedNode
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_resource_containment:ResourceContainmentModelNode ;
+                                       owl:onProperty     IMMoRTALS:hasContainedNode
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resource.containment.ResourceContainmentModelNode" .
+
+IMMoRTALS_measurement:DfuPointer
+        a                            owl:Class ;
+        rdfs:label                   "DfuPointer" ;
+        rdfs:subClassOf              IMMoRTALS_measurement:CodeUnitPointer ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_functionality:Functionality ;
+                                       owl:onProperty     IMMoRTALS:hasRelevantFunctionality
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRelevantFunctionalAspect
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRelevantFunctionality
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRelevantFunctionality
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRelevantFunctionalAspect
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_functionality:FunctionalAspect ;
+                                       owl:onProperty     IMMoRTALS:hasRelevantFunctionalAspect
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.measurement.DfuPointer" .
+
+IMMoRTALS:hasGraphs  a  owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp_context:ImmortalsContext ;
+        rdfs:range   IMMoRTALS_java_util:ArrayList .
+
+IMMoRTALS_android:AndroidPlatform
+        a                            owl:Class ;
+        rdfs:label                   "AndroidPlatform" ;
+        rdfs:subClassOf              IMMoRTALS_resources:ExecutionPlatform ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPlatformResources
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_resources:PlatformResource ;
+                                       owl:onProperty     IMMoRTALS:hasPlatformResources
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAndroidPlatformVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAndroidPlatformVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasAndroidPlatformVersion
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.android.AndroidPlatform" .
+
+IMMoRTALS_connectivity:NumClients
+        a                            owl:Class ;
+        rdfs:label                   "NumClients" ;
+        rdfs:subClassOf              IMMoRTALS_property:Property ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNumClients
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNumClients
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:int ;
+                                       owl:onProperty     IMMoRTALS:hasNumClients
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.connectivity.NumClients" .
+
+IMMoRTALS:hasFunctionalityProvided
+        a            rdf:Property ;
+        rdfs:domain  IMMoRTALS_cp:FunctionalitySpec ;
+        rdfs:range   IMMoRTALS_functionality:FunctionalAspect .
+
+IMMoRTALS:hasFunctionalitySpec
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp:GmeInterchangeFormat ;
+        rdfs:range   IMMoRTALS_cp:FunctionalitySpec .
+
+IMMoRTALS_cp:FunctionalitySpec
+        a                            owl:Class ;
+        rdfs:label                   "FunctionalitySpec" ;
+        rdfs:subClassOf              IMMoRTALS_cp:SoftwareSpec ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_functionality:FunctionalAspect ;
+                                       owl:onProperty     IMMoRTALS:hasFunctionalityProvided
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPropertyConstraint
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFunctionalityProvided
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFunctionalityPerformed
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_property_impact:PropertyConstraint ;
+                                       owl:onProperty     IMMoRTALS:hasPropertyConstraint
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_functionality:Functionality ;
+                                       owl:onProperty     IMMoRTALS:hasFunctionalityPerformed
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFunctionalityPerformed
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFunctionalityProvided
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.FunctionalitySpec" .
+
+IMMoRTALS_server:JdkVersion
+        a                            owl:Class ;
+        rdfs:label                   "JdkVersion" ;
+        rdfs:subClassOf              IMMoRTALS_property:Property ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasJdkVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasJdkVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasJdkVersion
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.server.JdkVersion" .
+
+IMMoRTALS:hasReportsPerMinute
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_connectivity:PliReportRate ;
+        rdfs:range   xsd:double .
+
+IMMoRTALS_functionality:Functionality
+        a             owl:Class ;
+        rdfs:comment  "A description of what a functional unit of software does (but not how it is done). If we know that two different pieces of code do essentially the same thing in a different way, the idea is that we can adapt our software by swapping between them.  @author jstaples " .
+
+IMMoRTALS_property_impact:ProscriptiveCauseEffectAssertion
+        a             owl:Class ;
+        rdfs:comment  "Describes the impact of something explicitly prohibited (e.g., what happens when we exceed some hard resource limit?)  @author jstaples " .
+
+IMMoRTALS:hasAndroidPlatformVersion
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_android:AndroidPlatformVersion , IMMoRTALS_android:AndroidPlatform ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_server:ServerPlatform
+        a                            owl:Class ;
+        rdfs:label                   "ServerPlatform" ;
+        rdfs:subClassOf              IMMoRTALS_unix:LinuxPlatform ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.server.ServerPlatform" .
+
+IMMoRTALS:hasBitDepth
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_image_fidelity:ColorChannel ;
+        rdfs:range   xsd:int .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode
+        a                            owl:Class ;
+        rdfs:label                   "ConcreteResourceNode" ;
+        rdfs:subClassOf              IMMoRTALS_resource_containment:ResourceContainmentModelNode ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResource
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResource
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_core:Resource ;
+                                       owl:onProperty     IMMoRTALS:hasResource
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resource.containment.ConcreteResourceNode" .
+
+IMMoRTALS_image_fidelity:Monochrome
+        a                            IMMoRTALS_image_fidelity:ColorFidelity ;
+        IMMoRTALS:hasChannels        IMMoRTALS_image_fidelity:ColorChannel-655f8204-001e-4f7d-8d90-74d36cd6458a ;
+        IMMoRTALS:hasHidden          false ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.image.fidelity.Monochrome" .
+
+IMMoRTALS_cp_java:Classpath
+        a                            owl:Class ;
+        rdfs:label                   "Classpath" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClasspath
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_cp_java:ClasspathResource ;
+                                       owl:onProperty     IMMoRTALS:hasClasspath
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.java.Classpath" .
+
+IMMoRTALS:hasResourceType
+        a            rdf:Property ;
+        rdfs:domain  IMMoRTALS_resource_containment:AbstractResourceNode ;
+        rdfs:range   IMMoRTALS_core:Resource .
+
+IMMoRTALS:hasChannels
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_image_fidelity:ColorFidelity ;
+        rdfs:range   IMMoRTALS_image_fidelity:ColorChannel .
+
+IMMoRTALS_measurement:MetricProfile
+        a                            owl:Class ;
+        rdfs:label                   "MetricProfile" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_property:Property ;
+                                       owl:onProperty     IMMoRTALS:hasMeasuredProperty
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_measurement:CodeUnitPointer ;
+                                       owl:onProperty     IMMoRTALS:hasCodeUnit
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCodeUnit
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMeasuredProperty
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCodeUnit
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.measurement.MetricProfile" .
+
+IMMoRTALS:hasName  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_cp_context:Graph ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_measurement:MeasurementProfile
+        a                            owl:Class ;
+        rdfs:label                   "MeasurementProfile" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMeasurement
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_measurement:MeasurementInstance ;
+                                       owl:onProperty     IMMoRTALS:hasMeasurement
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCodeUnit
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCodeUnit
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_measurement:CodeUnitPointer ;
+                                       owl:onProperty     IMMoRTALS:hasCodeUnit
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.measurement.MeasurementProfile" .
+
+IMMoRTALS_cp_context:Graph
+        a                            owl:Class ;
+        rdfs:label                   "Graph" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasName
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.context.Graph" .
+
+IMMoRTALS_unix:UnixPlatform
+        a                            owl:Class ;
+        rdfs:label                   "UnixPlatform" ;
+        rdfs:subClassOf              IMMoRTALS_resources:ExecutionPlatform ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.unix.UnixPlatform" .
+
+IMMoRTALS:hasKiloBytesPerSecond
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_connectivity:BandwidthKiloBitsPerSecond ;
+        rdfs:range   xsd:long .
+
+IMMoRTALS:hasPointerString
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_measurement:CodeUnitPointer ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasNumMegapixels
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_measurement_cp1cp2:ImageSizeMegapixels ;
+        rdfs:range   xsd:double .
+
+IMMoRTALS:hasPrecedenceOfSpec
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp:SoftwareSpec ;
+        rdfs:range   IMMoRTALS_ordering:ExplicitNumericOrderingMechanism .
+
+IMMoRTALS_cp_java:DependencyEdge
+        a                            owl:Class ;
+        rdfs:label                   "DependencyEdge" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifacts
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:BytecodeArtifact ;
+                                       owl:onProperty     IMMoRTALS:hasArtifacts
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.java.DependencyEdge" .
+
+IMMoRTALS:hasMeasurement
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_measurement:MeasurementProfile ;
+        rdfs:range   IMMoRTALS_measurement:MeasurementInstance .
+
+_:b1    a                            owl:DataRange ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.image.fidelity.ColorType" ;
+        owl:oneOf                    ( "MONOCHROME" "GREYSCALE" "BLUE" "GREEN" "RED" ) .
+
+IMMoRTALS_image_fidelity:ColorChannel-655f8204-001e-4f7d-8d90-74d36cd6458a
+        a                          IMMoRTALS_image_fidelity:ColorChannel ;
+        IMMoRTALS:hasBitDepth      "1"^^xsd:int ;
+        IMMoRTALS:hasChannelColor  "MONOCHROME" .
+
+IMMoRTALS:hasCodeUnit
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_measurement:MetricProfile , IMMoRTALS_measurement:MeasurementProfile ;
+        rdfs:range   IMMoRTALS_measurement:CodeUnitPointer .
+
+IMMoRTALS_measurement:MeasurementInstance
+        a                            owl:Class ;
+        rdfs:label                   "MeasurementInstance" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_property:Property ;
+                                       owl:onProperty     IMMoRTALS:hasMeasuredValue
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasQualifier
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMeasuredValue
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasQualifier
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMeasuredValue
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasQualifier
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.measurement.MeasurementInstance" .
+
+IMMoRTALS:hasChannelColor
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_image_fidelity:ColorChannel ;
+        rdfs:range   _:b1 .
+
+IMMoRTALS_cp:GmeInterchangeFormat
+        a                            owl:Class ;
+        rdfs:label                   "GmeInterchangeFormat" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasSessionIdentifier
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasHumanReadableDescription
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMissionSpec
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDescription
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_core:Resource ;
+                                       owl:onProperty     IMMoRTALS:hasAvailableResources
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAvailableResources
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFunctionalitySpec
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSessionIdentifier
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDescription
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_cp:MissionSpec ;
+                                       owl:onProperty     IMMoRTALS:hasMissionSpec
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSessionIdentifier
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_cp:FunctionalitySpec ;
+                                       owl:onProperty     IMMoRTALS:hasFunctionalitySpec
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.GmeInterchangeFormat" .
+
+IMMoRTALS_windows:WindowsPlatform
+        a                            owl:Class ;
+        rdfs:label                   "WindowsPlatform" ;
+        rdfs:subClassOf              IMMoRTALS_resources:ExecutionPlatform ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.windows.WindowsPlatform" .
+
+IMMoRTALS_connectivity:BandwidthKiloBitsPerSecond
+        a                            owl:Class ;
+        rdfs:label                   "BandwidthKiloBitsPerSecond" ;
+        rdfs:subClassOf              IMMoRTALS_property:Property ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasKiloBytesPerSecond
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasKiloBytesPerSecond
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:long ;
+                                       owl:onProperty     IMMoRTALS:hasKiloBytesPerSecond
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.connectivity.BandwidthKiloBitsPerSecond" .
+
+IMMoRTALS_image_fidelity:Greyscale8
+        a                            IMMoRTALS_image_fidelity:ColorFidelity ;
+        IMMoRTALS:hasChannels        IMMoRTALS_image_fidelity:ColorChannel-b42f337b-b560-4c5b-aab5-97d27383506b ;
+        IMMoRTALS:hasHidden          false ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.image.fidelity.Greyscale8" .
+
+IMMoRTALS:hasJdkVersion
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_server:JdkVersion ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_resource_containment:ResourceContainmentModel
+        a                            owl:Class ;
+        rdfs:label                   "ResourceContainmentModel" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResourceModel
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_resource_containment:ResourceContainmentModelNode ;
+                                       owl:onProperty     IMMoRTALS:hasResourceModel
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resource.containment.ResourceContainmentModel" .
+
+IMMoRTALS_connectivity:LocationAccuracy
+        a                            owl:Class ;
+        rdfs:label                   "LocationAccuracy" ;
+        rdfs:subClassOf              IMMoRTALS_property:Property ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.connectivity.LocationAccuracy" .
+
+IMMoRTALS_property_impact:PropertyConstraint
+        a             owl:Class ;
+        rdfs:comment  "Describes a constraint on a property  @author jstaples " .
+
+IMMoRTALS_connectivity:PliReportRate
+        a                            owl:Class ;
+        rdfs:label                   "PliReportRate" ;
+        rdfs:subClassOf              IMMoRTALS_property:Property ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasReportsPerMinute
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasReportsPerMinute
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:double ;
+                                       owl:onProperty     IMMoRTALS:hasReportsPerMinute
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.connectivity.PliReportRate" .
+
+IMMoRTALS:hasMethodName
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_measurement:CodeUnitPointer ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_unix:LinuxPlatform
+        a                            owl:Class ;
+        rdfs:label                   "LinuxPlatform" ;
+        rdfs:subClassOf              IMMoRTALS_unix:UnixPlatform ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.unix.LinuxPlatform" .
+
+IMMoRTALS_cp_java:ChallengeProblem
+        a                            owl:Class ;
+        rdfs:label                   "ChallengeProblem" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifacts
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:BytecodeArtifact ;
+                                       owl:onProperty     IMMoRTALS:hasArtifacts
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.java.ChallengeProblem" .
+
+IMMoRTALS_cp:RevisedGmeInterchangeFormat
+        a                            owl:Class ;
+        rdfs:label                   "RevisedGmeInterchangeFormat" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAvailableResources
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_core:Resource ;
+                                       owl:onProperty     IMMoRTALS:hasAvailableResources
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasConstraints
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_property_impact:ProscriptiveCauseEffectAssertion ;
+                                       owl:onProperty     IMMoRTALS:hasConstraints
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.RevisedGmeInterchangeFormat" .
+
+IMMoRTALS_functionality_dataproperties:ImageFidelity
+        a       owl:Class .
+
+IMMoRTALS_measurement:MetricSet
+        a                            owl:Class ;
+        rdfs:label                   "MetricSet" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasProfiles
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_measurement:MetricProfile ;
+                                       owl:onProperty     IMMoRTALS:hasProfiles
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.measurement.MetricSet" .
+
+IMMoRTALS:hasHumanReadableDesc
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_resource_containment:ResourceContainmentModelNode , IMMoRTALS_resource_containment:ResourceContainmentModel , IMMoRTALS_measurement:MetricProfile ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasMeasuredValue
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_measurement:MeasurementInstance ;
+        rdfs:range   IMMoRTALS_property:Property .
+
+IMMoRTALS:hasClasspathName
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_cp_java:ClasspathResource ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasRelevantFunctionality
+        a            rdf:Property ;
+        rdfs:domain  IMMoRTALS_measurement:DfuPointer ;
+        rdfs:range   IMMoRTALS_functionality:Functionality .
+
+IMMoRTALS_resources:ExecutionPlatform
+        a             owl:Class ;
+        rdfs:comment  "A platform on which execution can occur. The platform is a combination of physical (e.g., memory, cpu) and logical (e.g., OS version, system libraries) components.  @author jstaples " .
+
+IMMoRTALS_property:Property
+        a             owl:Class ;
+        rdfs:comment  "A property of something. Broadly can be broken into properties of data, properties of algorithms, and properties of resources.  @author jstaples " .
+
+IMMoRTALS:hasLocation
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_cp_java:JavaSourceCodeFile ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_cp_java:ClasspathResource
+        a                            owl:Class ;
+        rdfs:label                   "ClasspathResource" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClasspathName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClasspathName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasClasspathName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytes
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:base64Binary ;
+                                       owl:onProperty     IMMoRTALS:hasBytes
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.java.ClasspathResource" .
+
+IMMoRTALS:hasContainedNode
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_resource_containment:ResourceContainmentModelNode ;
+        rdfs:range   IMMoRTALS_resource_containment:ResourceContainmentModelNode .
+
+IMMoRTALS_connectivity:ImageReportRate
+        a                            owl:Class ;
+        rdfs:label                   "ImageReportRate" ;
+        rdfs:subClassOf              IMMoRTALS_connectivity:PliReportRate ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.connectivity.ImageReportRate" .
+
+IMMoRTALS_image_fidelity:ImageSize1024x1024
+        a                            IMMoRTALS_image_fidelity:ResolutionFidelity ;
+        IMMoRTALS:hasHeight          "1024"^^xsd:int ;
+        IMMoRTALS:hasHidden          false ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.image.fidelity.ImageSize1024x1024" ;
+        IMMoRTALS:hasWidth           "1024"^^xsd:int .
+
+IMMoRTALS_image_fidelity:ColorChannel-488a49cf-f17a-47bb-9dd6-70be2b99b01f
+        a                          IMMoRTALS_image_fidelity:ColorChannel ;
+        IMMoRTALS:hasBitDepth      "24"^^xsd:int ;
+        IMMoRTALS:hasChannelColor  "RED" .
+
+IMMoRTALS:hasProfiles
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_measurement:MetricSet ;
+        rdfs:range   IMMoRTALS_measurement:MetricProfile .
+
+IMMoRTALS:ImmortalsBaseClass
+        a       owl:Class .
+
+IMMoRTALS:hasResource
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        rdfs:range   IMMoRTALS_core:Resource .
+
+IMMoRTALS_metrics:Metric
+        a             owl:Class ;
+        rdfs:comment  "An instance of a measurement  @author jstaples " .
+
+IMMoRTALS_functionality:FunctionalAspect
+        a             owl:Class ;
+        rdfs:comment  "A description of a specific thing done by some abstraction of functionality.  E.g., a counter abstraction might have increment and zeroize functional aspects  @author Securboration " .
+
+IMMoRTALS_cp_java:DependencyCoordinate
+        a                            owl:Class ;
+        rdfs:label                   "DependencyCoordinate" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifacts
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:BytecodeArtifact ;
+                                       owl:onProperty     IMMoRTALS:hasArtifacts
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.java.DependencyCoordinate" .
+
+IMMoRTALS_image_fidelity:Rgb24
+        a                            IMMoRTALS_image_fidelity:ColorFidelity ;
+        IMMoRTALS:hasChannels        IMMoRTALS_image_fidelity:ColorChannel-488a49cf-f17a-47bb-9dd6-70be2b99b01f , IMMoRTALS_image_fidelity:ColorChannel-724ae161-f8be-4bc0-8e43-688aa18d795e , IMMoRTALS_image_fidelity:ColorChannel-ea54f168-840e-4e2e-85bc-1da8242c6787 ;
+        IMMoRTALS:hasHidden          false ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.image.fidelity.Rgb24" .
+
+IMMoRTALS:hasRelevantFunctionalAspect
+        a            rdf:Property ;
+        rdfs:domain  IMMoRTALS_measurement:DfuPointer ;
+        rdfs:range   IMMoRTALS_functionality:FunctionalAspect .
+
+IMMoRTALS_image_fidelity:ResolutionFidelity
+        a                            owl:Class ;
+        rdfs:label                   "ResolutionFidelity" ;
+        rdfs:subClassOf              IMMoRTALS_functionality_dataproperties:ImageFidelity ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:int ;
+                                       owl:onProperty     IMMoRTALS:hasHeight
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHeight
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:int ;
+                                       owl:onProperty     IMMoRTALS:hasWidth
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasWidth
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasWidth
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHeight
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.image.fidelity.ResolutionFidelity" .
+
+IMMoRTALS_android:AndroidPlatformVersion
+        a                            owl:Class ;
+        rdfs:label                   "AndroidPlatformVersion" ;
+        rdfs:subClassOf              IMMoRTALS_property:Property ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAndroidPlatformVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAndroidPlatformVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasAndroidPlatformVersion
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.android.AndroidPlatformVersion" .
+
+IMMoRTALS_image_fidelity:ColorChannel-ea54f168-840e-4e2e-85bc-1da8242c6787
+        a                          IMMoRTALS_image_fidelity:ColorChannel ;
+        IMMoRTALS:hasBitDepth      "24"^^xsd:int ;
+        IMMoRTALS:hasChannelColor  "BLUE" .
+
+IMMoRTALS:hasMeasuredProperty
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_measurement:MetricProfile ;
+        rdfs:range   IMMoRTALS_property:Property .
+
+IMMoRTALS_image_fidelity:ImageSize512x512
+        a                            IMMoRTALS_image_fidelity:ResolutionFidelity ;
+        IMMoRTALS:hasHeight          "512"^^xsd:int ;
+        IMMoRTALS:hasHidden          false ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.image.fidelity.ImageSize512x512" ;
+        IMMoRTALS:hasWidth           "512"^^xsd:int .
+
+IMMoRTALS:hasRightValue
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp:MissionSpec ;
+        rdfs:range   IMMoRTALS_metrics:Metric .
+
+IMMoRTALS_ordering:ExplicitNumericOrderingMechanism
+        a             owl:Class ;
+        rdfs:comment  "Describes the ordering of an item by numerical precedence.    Lower numbers have higher precedence.  @author jstaples " .
+
+IMMoRTALS:hasMissionSpec
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp:GmeInterchangeFormat ;
+        rdfs:range   IMMoRTALS_cp:MissionSpec .
+
+IMMoRTALS:hasArtifacts
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp_java:Jar , IMMoRTALS_cp_java:DependencyEdge , IMMoRTALS_cp_java:DependencyCoordinate , IMMoRTALS_cp_java:ChallengeProblem ;
+        rdfs:range   IMMoRTALS_bytecode:BytecodeArtifact .
+
+IMMoRTALS_image_fidelity:ColorFidelity
+        a                            owl:Class ;
+        rdfs:label                   "ColorFidelity" ;
+        rdfs:subClassOf              IMMoRTALS_functionality_dataproperties:ImageFidelity ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasChannels
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_image_fidelity:ColorChannel ;
+                                       owl:onProperty     IMMoRTALS:hasChannels
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.image.fidelity.ColorFidelity" .
+
+IMMoRTALS_image_fidelity:ColorChannel-724ae161-f8be-4bc0-8e43-688aa18d795e
+        a                          IMMoRTALS_image_fidelity:ColorChannel ;
+        IMMoRTALS:hasBitDepth      "24"^^xsd:int ;
+        IMMoRTALS:hasChannelColor  "GREEN" .
+
+IMMoRTALS:hasFunctionalityPerformed
+        a            rdf:Property ;
+        rdfs:domain  IMMoRTALS_cp:FunctionalitySpec ;
+        rdfs:range   IMMoRTALS_functionality:Functionality .
+
+IMMoRTALS_cp:SoftwareSpec
+        a                            owl:Class ;
+        rdfs:label                   "SoftwareSpec" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPrecedenceOfSpec
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPrecedenceOfSpec
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_ordering:ExplicitNumericOrderingMechanism ;
+                                       owl:onProperty     IMMoRTALS:hasPrecedenceOfSpec
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.SoftwareSpec" .
+
+IMMoRTALS_image_fidelity:ImageSize4096x4096
+        a                            IMMoRTALS_image_fidelity:ResolutionFidelity ;
+        IMMoRTALS:hasHeight          "4096"^^xsd:int ;
+        IMMoRTALS:hasHidden          false ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.image.fidelity.ImageSize4096x4096" ;
+        IMMoRTALS:hasWidth           "4096"^^xsd:int .
+
+IMMoRTALS_image_fidelity:ColorChannel
+        a                            owl:Class ;
+        rdfs:label                   "ColorChannel" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  _:b1 ;
+                                       owl:onProperty     IMMoRTALS:hasChannelColor
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBitDepth
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasChannelColor
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBitDepth
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:int ;
+                                       owl:onProperty     IMMoRTALS:hasBitDepth
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasChannelColor
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.image.fidelity.ColorChannel" .
+
+IMMoRTALS_java_util:ArrayList
+        a       owl:Class .
+
+IMMoRTALS_bytecode:BytecodeArtifact
+        a       owl:Class .
+
+_:b0    a                            owl:DataRange ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.constraint.ValueCriterionType" ;
+        owl:oneOf                    ( "VALUE_EQUALS" "VALUE_LESS_THAN_INCLUSIVE" "VALUE_LESS_THAN_EXCLUSIVE" "VALUE_GREATER_THAN_INCLUSIVE" "VALUE_GREATER_THAN_EXCLUSIVE" ) .
+
+IMMoRTALS:hasPropertyConstraint
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp:FunctionalitySpec ;
+        rdfs:range   IMMoRTALS_property_impact:PropertyConstraint .
+
+IMMoRTALS:hasNumClients
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_connectivity:NumClients ;
+        rdfs:range   xsd:int .
+
+IMMoRTALS_cp_java:Jar
+        a                            owl:Class ;
+        rdfs:label                   "Jar" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifacts
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:BytecodeArtifact ;
+                                       owl:onProperty     IMMoRTALS:hasArtifacts
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.java.Jar" .
+
+IMMoRTALS_image_fidelity:ColorChannel-b42f337b-b560-4c5b-aab5-97d27383506b
+        a                          IMMoRTALS_image_fidelity:ColorChannel ;
+        IMMoRTALS:hasBitDepth      "8"^^xsd:int ;
+        IMMoRTALS:hasChannelColor  "GREYSCALE" .
+
+IMMoRTALS_cp_java:JavaClassFile
+        a                            owl:Class ;
+        rdfs:label                   "JavaClassFile" ;
+        rdfs:subClassOf              IMMoRTALS_cp_java:ClasspathResource ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCompiledFrom
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCompiledFrom
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_cp_java:JavaSourceCodeFile ;
+                                       owl:onProperty     IMMoRTALS:hasCompiledFrom
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.java.JavaClassFile" .
+
+IMMoRTALS_types:CotMessage
+        a                            owl:Class ;
+        rdfs:label                   "CotMessage" ;
+        rdfs:subClassOf              IMMoRTALS_functionality_datatype:DataType ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.types.CotMessage" .
+
+IMMoRTALS_core:Resource
+        a             owl:Class ;
+        rdfs:comment  "A description of something upon which software might depend  E.g., a library (code dependency), a platform architecture (embedded linux, windows, ...), compute resources (CPU, GPU, ...), an external resource accessed via IO (network, disk, ...)  @author jstaples " .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels
+        a                            owl:Class ;
+        rdfs:label                   "OutputImageSizeMegapixels" ;
+        rdfs:subClassOf              IMMoRTALS_measurement_cp1cp2:ImageSizeMegapixels ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.measurement.cp1cp2.OutputImageSizeMegapixels" .
+
+IMMoRTALS:hasClasspath
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp_java:Classpath ;
+        rdfs:range   IMMoRTALS_cp_java:ClasspathResource .
+
+IMMoRTALS_resource_containment:AbstractResourceNode
+        a                            owl:Class ;
+        rdfs:label                   "AbstractResourceNode" ;
+        rdfs:subClassOf              IMMoRTALS_resource_containment:ResourceContainmentModelNode ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResourceType
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResourceType
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_core:Resource ;
+                                       owl:onProperty     IMMoRTALS:hasResourceType
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resource.containment.AbstractResourceNode" .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels
+        a                            owl:Class ;
+        rdfs:label                   "InputImageSizeMegapixels" ;
+        rdfs:subClassOf              IMMoRTALS_measurement_cp1cp2:ImageSizeMegapixels ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.measurement.cp1cp2.InputImageSizeMegapixels" .
+
+IMMoRTALS:hasAvailableResources
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_cp:RevisedGmeInterchangeFormat , IMMoRTALS_cp:GmeInterchangeFormat ;
+        rdfs:range   IMMoRTALS_core:Resource .
+
+IMMoRTALS:hasQualifier
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_measurement:MeasurementInstance ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasHeight  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_image_fidelity:ResolutionFidelity ;
+        rdfs:range   xsd:int .
+
+IMMoRTALS_functionality_datatype:DataType
+        a             owl:Class ;
+        rdfs:comment  "A semantic data type  @author jstaples " .
+
+IMMoRTALS_cp_java:JavaSourceCodeFile
+        a                            owl:Class ;
+        rdfs:label                   "JavaSourceCodeFile" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasLocation
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasLocation
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasLocation
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp.java.JavaSourceCodeFile" .

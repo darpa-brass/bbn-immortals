@@ -1,6 +1,7 @@
 package mil.darpa.immortals
 
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.internal.tasks.AndroidTestTask
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
@@ -11,6 +12,7 @@ import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.publish.Publication
 import org.gradle.api.publish.PublishingExtension
@@ -72,7 +74,7 @@ class AnalyzeGradleBuildTask extends DefaultTask {
 
         } else if (project.hasProperty('android')) {
             // If it is an android application, extract the applicable information from the AndroidManifest.xml file
-            
+
             // TODO; This can probably be done more programatically if I can figure out exactly where the final name is stored
             executableFile = project.name + '-debug.apk'
 
@@ -138,33 +140,42 @@ class AnalyzeGradleBuildTask extends DefaultTask {
         String repoLocation = project.rootProject.buildFile.parent.toString() + "/"
         String projectRepoPath = (project.buildFile.parent + "/").replace(repoLocation, "")
 
-
         String testResultXmlSubdirectory = null
-        if (project.hasProperty('test') && project.test.hasProperty('reports') &&
-                project.test.reports.hasProperty('junitXml') && project.test.reports.junitXml.hasProperty('destination')) {
-            testResultXmlSubdirectory = project.test.reports.junitXml.destination.absolutePath.replace(repoLocation, "").replace(projectRepoPath, "") + '/'
-        }
+        String testCoverageReportXmlFileSubpath = null
+        String[] buildToolValidationParameters = null
+        
+        if (project.getPlugins().hasPlugin("com.android.application")) {
 
-        if (testResultXmlSubdirectory != null) {
-
-            String testCoverageReportXmlFileSubpath = null
-            if (project.hasProperty('jacocoTestReport') && project.jacocoTestReport.hasProperty('reports') &&
-                    project.jacocoTestReport.reports.hasProperty('xml') &&
-                    project.jacocoTestReport.reports.xml.hasProperty('destination')) {
-                testCoverageReportXmlFileSubpath = project.jacocoTestReport.reports.xml.destination.absolutePath.replace(repoLocation, "").replace(projectRepoPath, "")
+                testResultXmlSubdirectory = 'build/outputs/androidTest-results/connected/'
+                buildToolValidationParameters = ["clean", "connectedAndroidTest"]
+            
+        } else {
+            
+            if (project.hasProperty('test') && project.test.hasProperty('reports') &&
+                    project.test.reports.hasProperty('junitXml') && project.test.reports.junitXml.hasProperty('destination')) {
+                testResultXmlSubdirectory = project.test.reports.junitXml.destination.absolutePath.replace(repoLocation, "").replace(projectRepoPath, "") + '/'
             }
-
-            String[] buildToolValidationParameters = null
+            
+            if (testResultXmlSubdirectory != null) {
+                if (project.hasProperty('jacocoTestReport') && project.jacocoTestReport.hasProperty('reports') &&
+                        project.jacocoTestReport.reports.hasProperty('xml') &&
+                        project.jacocoTestReport.reports.xml.hasProperty('destination')) {
+                    testCoverageReportXmlFileSubpath = project.jacocoTestReport.reports.xml.destination.absolutePath.replace(repoLocation, "").replace(projectRepoPath, "")
+                }
+            }
+            
             if (project.tasks.findAll { t -> t instanceof Test && 'validate'.equals(t.name) }.size() > 0) {
                 buildToolValidationParameters = ["--daemon", "clean", "validate"]
+
             } else if (project.tasks.findAll { t -> t instanceof Test }.size() > 0) {
                 buildToolValidationParameters = ["--daemon", "clean", "test"]
             }
-
-            if (buildToolValidationParameters != null) {
-                return new ImmortalsGradleTestData(buildToolValidationParameters, testResultXmlSubdirectory, testCoverageReportXmlFileSubpath)
-            }
         }
+
+        if (buildToolValidationParameters != null) {
+            return new ImmortalsGradleTestData(buildToolValidationParameters, testResultXmlSubdirectory, testCoverageReportXmlFileSubpath)
+        }
+            
         return null
     }
 
@@ -176,6 +187,7 @@ class AnalyzeGradleBuildTask extends DefaultTask {
         }
 
         // Get the basic data common to all gradle projects
+        String targetUid = project.getBuildFile().parent
         String targetName = project.name
         String targetGroup = project.group
         String targetVersion = project.version
@@ -218,6 +230,7 @@ class AnalyzeGradleBuildTask extends DefaultTask {
         String[] buildToolBuildParameters = ["clean", "build", "-x", "test"]
 
         ImmortalsGradleProjectData igpd = new ImmortalsGradleProjectData(
+                targetUid,
                 targetName,
                 targetGroup,
                 targetVersion,

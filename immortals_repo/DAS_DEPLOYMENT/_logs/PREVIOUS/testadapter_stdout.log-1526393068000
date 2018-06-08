@@ -1,0 +1,360 @@
+10:04:28.937 [main] DEBUG Jena - Jena initialization
+Started TestAdapter at URL 'http://127.0.0.1:55555/'.
+10:04:33.809 [main] DEBUG m.d.i.testadapter.SubmissionServices - Constructing TH Submitter with URL 'http://127.0.0.1:44444'.
+10:04:34.086 [grizzly-http-server-0] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - STATE HAS BEEN SET WITH VALUE: 
+ChallengeProblem: P2CP2
+SubmissionModel: {
+  "sessionIdentifier": "I1526392905060Challenge",
+  "globalModel": {
+    "requirements": {
+      "dataInTransit": {
+        "securityStandard": "NIST800Dash171"
+      }
+    }
+  }
+}
+TestAdapterState: {
+  "sequence": -1,
+  "identifier": "I1526392905060Challenge",
+  "adaptation": {
+    "adaptationStatus": "PENDING"
+  },
+  "validation": {
+    "verdictOutcome": "PENDING",
+    "executedTests": []
+  }
+}
+
+10:04:34.086 [grizzly-http-server-0] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - Submission model has no perturbations.
+10:04:34.086 [grizzly-http-server-0] DEBUG m.d.i.d.t.DummyTestCoordinator - Submitting empty adaptation request.
+10:04:34.087 [grizzly-http-server-0] DEBUG m.d.i.testadapter.SubmissionServices - Using Mock DAS Submitter.
+10:04:35.128 [grizzly-http-server-8] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - Received AdaptationDetails with dasOutcome of 'PENDING
+10:04:35.138 [grizzly-http-server-8] TRACE m.d.i.c.d.l.TestHarnessAdapterMediator - innerUpdateValidatorStatus:state: 
+ChallengeProblem: P2CP2
+SubmissionModel: {
+  "sessionIdentifier": "I1526392905060Challenge",
+  "globalModel": {
+    "requirements": {
+      "dataInTransit": {
+        "securityStandard": "NIST800Dash171"
+      }
+    }
+  }
+}
+TestAdapterState: {
+  "sequence": 0,
+  "identifier": "I1526392905060Challenge",
+  "adaptation": {
+    "adaptationStatus": "PENDING",
+    "details": {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "PENDING",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  },
+  "validation": {
+    "verdictOutcome": "PENDING",
+    "executedTests": []
+  }
+}
+testDetails: [
+  {
+    "errorMessages": [],
+    "detailMessages": [],
+    "testCaseReport": {
+      "testCaseTarget": "DummyTarget",
+      "testCaseIdentifier": "DummyTest",
+      "duration": 1.337,
+      "validatedFunctionality": [
+        "Functionality0",
+        "Functionality1"
+      ]
+    },
+    "timestamp": 1526393074089,
+    "currentState": "PENDING",
+    "testIdentifier": "DummyTest",
+    "adaptationIdentifier": "DummyAdaptationIdentifier",
+    "validatedFunctionality": [
+      "Functionality1",
+      "Functionality0"
+    ]
+  }
+]
+10:04:35.148 [grizzly-http-server-8] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - Received AdaptationDetails with dasOutcome of 'RUNNING
+10:04:35.156 [grizzly-http-server-8] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - Received AdaptationDetails with dasOutcome of 'SUCCESS
+10:04:35.164 [grizzly-http-server-8] TRACE m.d.i.c.d.l.TestHarnessAdapterMediator - innerUpdateValidatorStatus:state: 
+ChallengeProblem: P2CP2
+SubmissionModel: {
+  "sessionIdentifier": "I1526392905060Challenge",
+  "globalModel": {
+    "requirements": {
+      "dataInTransit": {
+        "securityStandard": "NIST800Dash171"
+      }
+    }
+  }
+}
+TestAdapterState: {
+  "sequence": 3,
+  "identifier": "I1526392905060Challenge",
+  "adaptation": {
+    "adaptationStatus": "SUCCESS",
+    "details": {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "SUCCESS",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  },
+  "validation": {
+    "verdictOutcome": "PENDING",
+    "executedTests": [
+      {
+        "testIdentifier": "DummyTest",
+        "intent": "Functionality1+Functionality0",
+        "desiredStatus": "COMPLETE_PASS",
+        "actualStatus": "PENDING",
+        "details": {
+          "errorMessages": [],
+          "detailMessages": [],
+          "testCaseReport": {
+            "testCaseTarget": "DummyTarget",
+            "testCaseIdentifier": "DummyTest",
+            "duration": 1.337,
+            "validatedFunctionality": [
+              "Functionality0",
+              "Functionality1"
+            ]
+          },
+          "timestamp": 1526393074089,
+          "currentState": "PENDING",
+          "testIdentifier": "DummyTest",
+          "adaptationIdentifier": "DummyAdaptationIdentifier",
+          "validatedFunctionality": [
+            "Functionality1",
+            "Functionality0"
+          ]
+        }
+      }
+    ]
+  }
+}
+testDetails: [
+  {
+    "errorMessages": [],
+    "detailMessages": [],
+    "testCaseReport": {
+      "testCaseTarget": "DummyTarget",
+      "testCaseIdentifier": "DummyTest",
+      "duration": 1.337,
+      "validatedFunctionality": [
+        "Functionality0",
+        "Functionality1"
+      ]
+    },
+    "timestamp": 1526393074089,
+    "currentState": "PENDING",
+    "testIdentifier": "DummyTest",
+    "adaptationIdentifier": "DummyAdaptationIdentifier",
+    "validatedFunctionality": [
+      "Functionality1",
+      "Functionality0"
+    ]
+  }
+]
+10:04:35.167 [grizzly-http-server-8] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - ReceivedTests:
+	Error: 0
+	Invalid: 0
+	NotApplicable: 0
+	Pending: 1
+	Running: 0
+	Incomplete: 0
+	CompletePass: 0
+	CompleteDegraded: 0
+	CompleteFail: 0
+10:04:35.174 [grizzly-http-server-8] TRACE m.d.i.c.d.l.TestHarnessAdapterMediator - innerUpdateValidatorStatus:state: 
+ChallengeProblem: P2CP2
+SubmissionModel: {
+  "sessionIdentifier": "I1526392905060Challenge",
+  "globalModel": {
+    "requirements": {
+      "dataInTransit": {
+        "securityStandard": "NIST800Dash171"
+      }
+    }
+  }
+}
+TestAdapterState: {
+  "sequence": 4,
+  "identifier": "I1526392905060Challenge",
+  "adaptation": {
+    "adaptationStatus": "SUCCESS",
+    "details": {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "SUCCESS",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  },
+  "validation": {
+    "verdictOutcome": "PENDING",
+    "executedTests": [
+      {
+        "testIdentifier": "DummyTest",
+        "intent": "Functionality1+Functionality0",
+        "desiredStatus": "COMPLETE_PASS",
+        "actualStatus": "PENDING",
+        "details": {
+          "errorMessages": [],
+          "detailMessages": [],
+          "testCaseReport": {
+            "testCaseTarget": "DummyTarget",
+            "testCaseIdentifier": "DummyTest",
+            "duration": 1.337,
+            "validatedFunctionality": [
+              "Functionality0",
+              "Functionality1"
+            ]
+          },
+          "timestamp": 1526393074089,
+          "currentState": "PENDING",
+          "testIdentifier": "DummyTest",
+          "adaptationIdentifier": "DummyAdaptationIdentifier",
+          "validatedFunctionality": [
+            "Functionality1",
+            "Functionality0"
+          ]
+        }
+      }
+    ]
+  }
+}
+testDetails: [
+  {
+    "errorMessages": [],
+    "detailMessages": [],
+    "testCaseReport": {
+      "testCaseTarget": "DummyTarget",
+      "testCaseIdentifier": "DummyTest",
+      "duration": 1.337,
+      "validatedFunctionality": [
+        "Functionality0",
+        "Functionality1"
+      ]
+    },
+    "timestamp": 1526393074089,
+    "currentState": "RUNNING",
+    "testIdentifier": "DummyTest",
+    "adaptationIdentifier": "DummyAdaptationIdentifier",
+    "validatedFunctionality": [
+      "Functionality1",
+      "Functionality0"
+    ]
+  }
+]
+10:04:35.174 [grizzly-http-server-8] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - ReceivedTests:
+	Error: 0
+	Invalid: 0
+	NotApplicable: 0
+	Pending: 0
+	Running: 1
+	Incomplete: 0
+	CompletePass: 0
+	CompleteDegraded: 0
+	CompleteFail: 0
+10:04:35.181 [grizzly-http-server-8] TRACE m.d.i.c.d.l.TestHarnessAdapterMediator - innerUpdateValidatorStatus:state: 
+ChallengeProblem: P2CP2
+SubmissionModel: {
+  "sessionIdentifier": "I1526392905060Challenge",
+  "globalModel": {
+    "requirements": {
+      "dataInTransit": {
+        "securityStandard": "NIST800Dash171"
+      }
+    }
+  }
+}
+TestAdapterState: {
+  "sequence": 5,
+  "identifier": "I1526392905060Challenge",
+  "adaptation": {
+    "adaptationStatus": "SUCCESS",
+    "details": {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "SUCCESS",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  },
+  "validation": {
+    "verdictOutcome": "RUNNING",
+    "executedTests": [
+      {
+        "testIdentifier": "DummyTest",
+        "intent": "Functionality1+Functionality0",
+        "desiredStatus": "COMPLETE_PASS",
+        "actualStatus": "RUNNING",
+        "details": {
+          "errorMessages": [],
+          "detailMessages": [],
+          "testCaseReport": {
+            "testCaseTarget": "DummyTarget",
+            "testCaseIdentifier": "DummyTest",
+            "duration": 1.337,
+            "validatedFunctionality": [
+              "Functionality0",
+              "Functionality1"
+            ]
+          },
+          "timestamp": 1526393074089,
+          "currentState": "RUNNING",
+          "testIdentifier": "DummyTest",
+          "adaptationIdentifier": "DummyAdaptationIdentifier",
+          "validatedFunctionality": [
+            "Functionality1",
+            "Functionality0"
+          ]
+        }
+      }
+    ]
+  }
+}
+testDetails: [
+  {
+    "errorMessages": [],
+    "detailMessages": [],
+    "testCaseReport": {
+      "testCaseTarget": "DummyTarget",
+      "testCaseIdentifier": "DummyTest",
+      "duration": 1.337,
+      "validatedFunctionality": [
+        "Functionality0",
+        "Functionality1"
+      ]
+    },
+    "timestamp": 1526393074089,
+    "currentState": "COMPLETE_PASS",
+    "testIdentifier": "DummyTest",
+    "adaptationIdentifier": "DummyAdaptationIdentifier",
+    "validatedFunctionality": [
+      "Functionality1",
+      "Functionality0"
+    ]
+  }
+]
+10:04:35.181 [grizzly-http-server-8] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - ReceivedTests:
+	Error: 0
+	Invalid: 0
+	NotApplicable: 0
+	Pending: 0
+	Running: 0
+	Incomplete: 0
+	CompletePass: 1
+	CompleteDegraded: 0
+	CompleteFail: 0
+Shutting down TestAdapter...

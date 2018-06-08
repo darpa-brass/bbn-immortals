@@ -7,27 +7,40 @@ import com.securboration.immortals.o2t.ontology.OntologyHelper;
 import com.securboration.immortals.ontology.analysis.*;
 import com.securboration.immortals.ontology.constraint.*;
 
+import com.securboration.immortals.ontology.dfu.instance.DfuInstance;
+import com.securboration.immortals.ontology.dfu.instance.FunctionalAspectInstance;
+import com.securboration.immortals.ontology.functionality.ConfigurationBinding;
 import com.securboration.immortals.ontology.functionality.DesignPattern;
+import com.securboration.immortals.ontology.functionality.DfuConfigurationVariable;
+import com.securboration.immortals.ontology.functionality.FunctionalAspect;
+import com.securboration.immortals.ontology.functionality.aspects.AspectConfigureRequest;
+import com.securboration.immortals.ontology.functionality.aspects.AspectConfigureSolution;
+import com.securboration.immortals.ontology.functionality.aspects.DefaultAspectBase;
 import com.securboration.immortals.ontology.functionality.datatype.DataProperty;
+import com.securboration.immortals.ontology.gmei.DeploymentModel;
 import com.securboration.immortals.ontology.property.Property;
 import com.securboration.immortals.ontology.property.impact.*;
 import com.securboration.immortals.repo.query.TriplesToPojo;
+import com.securboration.immortals.utility.ConfigurationCheckerRules;
 import com.securboration.immortals.utility.GradleTaskHelper;
+import org.apache.jena.atlas.lib.Pair;
 import org.apache.jena.rdf.model.Model;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import static com.securboration.immortals.aframes.AnalysisFrameAssessment.getDfuInstanceStringMap;
+import static com.securboration.immortals.aframes.AnalysisFrameAssessment.retrieveChosenDfuImpl;
 import static com.securboration.immortals.utility.GradleTaskHelper.*;
 
 public class ConstraintAssessment {
 
-    public static ConstraintAssessmentReport constraintAnalysis(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config, Set<File> dependencies) throws Exception {
+    public static void constraintAnalysis(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config) throws Exception {
 
-        ConstraintAssessmentReport assessmentReport = new ConstraintAssessmentReport();
-        List<ConstraintViolation> constraintViolations = new ArrayList<>();
-        
         String getConstraints = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "prefix IMMoRTALS_impact:  <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#>\n" +
                 "\n" +
@@ -42,9 +55,9 @@ public class ConstraintAssessment {
                 "}";
 
         getConstraints = getConstraints.replace("???GRAPH_NAME???", taskHelper.getGraphName());
-        
+
         taskHelper.getPw().println("Retrieving constraints using query:\n\n" + getConstraints + "\n\n");
-        
+
         GradleTaskHelper.AssertableSolutionSet constraints = new GradleTaskHelper.AssertableSolutionSet();
         taskHelper.getClient().executeSelectQuery(getConstraints, constraints);
         if (constraints.getSolutions().size() != 0) {
@@ -55,9 +68,8 @@ public class ConstraintAssessment {
                 String applicableDataType = constraint.get("dataType");
                 taskHelper.getPw().println("Constraint found: ");
 
-
                 TriplesToPojo.SparqlPojoContext results = taskHelper.getObjectRepresentation(constraintUUID,
-                        CONSTRAINT_TYPE,config);
+                        CONSTRAINT_TYPE, config);
                 ProscriptiveCauseEffectAssertion assertion = null;
                 for (Map<String, Object> result : results) {
                     assertion = (ProscriptiveCauseEffectAssertion) result.get("obj");
@@ -65,12 +77,41 @@ public class ConstraintAssessment {
 
                     Model assertModel = ObjectToTriples.convert(config.getCleanContext(true), assertion);
                     try {
-                       taskHelper.getPw().println(OntologyHelper.serializeModel(assertModel, "TURTLE", false));
+                        taskHelper.getPw().println(OntologyHelper.serializeModel(assertModel, "TURTLE", false));
                     } catch (IOException exc) {
                         exc.printStackTrace();
                     }
                 }
-                
+
+                // check to see if constraint was already resolved
+                String getResolvedConstraintUUIDs = "prefix IMMoRTALS_constraint: <http://darpa.mil/immortals/ontology/r2.0.0/constraint#> \n" +
+                        "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
+                        "\n" +
+                        "select ?constraintUUID where {\n" +
+                        "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                        "\t\t?report a IMMoRTALS_constraint:ConstraintAssessmentReport\n" +
+                        "\t\t; IMMoRTALS:hasConstraintViolations ?violations .\n" +
+                        "\t\t\n" +
+                        "\t\t?violations IMMoRTALS:hasConstraint ?constraintUUID .\n" +
+                        "\t}\n" +
+                        "}";
+                getResolvedConstraintUUIDs = getResolvedConstraintUUIDs.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+                AssertableSolutionSet constraintUUIDSolutions = new AssertableSolutionSet();
+                taskHelper.getClient().executeSelectQuery(getResolvedConstraintUUIDs, constraintUUIDSolutions);
+
+                boolean alreadyResolved = false;
+                for (Solution constraintUUIDSolution : constraintUUIDSolutions.getSolutions()) {
+                    String resolvedConstraintUUID = constraintUUIDSolution.get("constraintUUID");
+                    if (resolvedConstraintUUID.equals(constraintUUID)) {
+                        //constraint has already been resolved
+                        alreadyResolved = true;
+                    }
+                }
+
+                if (alreadyResolved) {
+                    continue;
+                }
+
                 // find any data flows that it applies to.
                 String getApplicableDataflows = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
                         "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
@@ -140,7 +181,7 @@ public class ConstraintAssessment {
 
                         taskHelper.getPw().println("Retrieving criteria for violating constraint using query:\n\n" + getCriterion + "\n\n");
                         taskHelper.getPw().println("Criteria found: ");
-                        
+
                         criterionResults.forEach(solution ->{
                             AbstractPropertyCriterion propertyCriterion = (AbstractPropertyCriterion) solution.get("obj");
                             taskHelper.getPw().println(solution.get("obj$uri") + "\n");
@@ -160,15 +201,15 @@ public class ConstraintAssessment {
                         for (GradleTaskHelper.Solution dataFlowEdge : dataFlowEdges.getSolutions()) {
                             taskHelper.getPw().println("Retrieving data flows that fall under this constraint's authority" +
                                     " using query:\n\n" + getApplicableDataflows + "\n\n");
-                            
+
                             String dataFlowUUID = dataFlowEdge.get("dataFlowEdge");
                             taskHelper.getPw().println("Data flow found: ");
                             TriplesToPojo.SparqlPojoContext edgeResults = taskHelper.getObjectRepresentation(dataFlowUUID, GradleTaskHelper.DATAFLOW_INTER_METHOD_TYPE,
                                     config);
-                            
-                            
+
+
                             for (Map<String, Object> edgeResult : edgeResults) {
-                                
+
                                 InterMethodDataflowEdge interEdge = (InterMethodDataflowEdge) edgeResult.get("obj");
                                 taskHelper.getPw().println(edgeResult.get("obj$uri") + "\n");
                                 Model edgeModel = ObjectToTriples.convert(config.getCleanContext(true), interEdge);
@@ -178,7 +219,7 @@ public class ConstraintAssessment {
                                     exc.printStackTrace();
                                 }
                             }
-                            
+
                             switch (criterionRelation) {
                                 case "PROPERTY_ABSENT":
                                     String getEdgeProperties = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
@@ -192,7 +233,7 @@ public class ConstraintAssessment {
                                             "}";
                                     getEdgeProperties = getEdgeProperties.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???DATA_FLOW???", dataFlowUUID);
                                     taskHelper.getPw().println("Retrieving current edge properties using query:\n\n" + getEdgeProperties + "\n\n");
-                                    
+
                                     GradleTaskHelper.AssertableSolutionSet edgeProperties = new GradleTaskHelper.AssertableSolutionSet();
                                     taskHelper.getClient().executeSelectQuery(getEdgeProperties, edgeProperties);
                                     if (edgeProperties.getSolutions().size() == 0) {
@@ -222,7 +263,7 @@ public class ConstraintAssessment {
                                                     .replace("???GRAPH_NAME???", taskHelper.getGraphName());
                                             taskHelper.getPw().println("Asking whether the property class is an instance of the specified class using query:\n\n"
                                                     + getSpecifiedProperty + "\n\n");
-                                          
+
                                             if (taskHelper.getClient().executeAskQuery(getSpecifiedProperty)) {
                                                 if (standardType != null) {
                                                     criterionSatisfied = assertStandards(taskHelper, edgePropertyUUID, standardType);
@@ -247,36 +288,31 @@ public class ConstraintAssessment {
                             if (criterionSatisfied) {
                                 taskHelper.getPw().println(dataFlowUUID + " satisfies criterion " + criterionUUID);
                             } else {
-                               taskHelper.getPw().println("Edge fails constraint.");
-                               constraintViolations.add(satisfyConstraint(taskHelper, 
-                                       dataFlowUUID, assertion, dependencies, config));
+                                taskHelper.getPw().println("Edge fails constraint.");
+                                satisfyConstraint(taskHelper, dataFlowUUID, assertion, config);
                             }
                         }
-                        AnalysisFrameAssessment.performWrapperCodeInsertions(taskHelper, config);
                     }
-                    
+
                 } else {
                     taskHelper.getPw().println("Constraint has no applicable data flow edges.");
                 }
             }
         }
-        
+
         taskHelper.getPw().println("All constraints have been analyzed.");
-        
+
         taskHelper.getPw().flush();
         taskHelper.getPw().close();
-        assessmentReport.setConstraintViolations(constraintViolations.toArray(
-                new ConstraintViolation[constraintViolations.size()]));
-        return assessmentReport;
     }
-    
-    private static ConstraintViolation satisfyConstraint(GradleTaskHelper taskHelper, String dataFlowUUID, ProscriptiveCauseEffectAssertion constraint, 
-                                                         Set<File> dependencies, ObjectToTriplesConfiguration config) throws Exception {
-        
+
+    private static void satisfyConstraint(GradleTaskHelper taskHelper, String dataFlowUUID, ProscriptiveCauseEffectAssertion constraint,
+                                          ObjectToTriplesConfiguration config) throws Exception {
+
         String constraintUUID = config.getNamingContext().getNameForObject(constraint);
         ConstraintViolation constraintViolation = new ConstraintViolation();
         constraintViolation.setConstraint(constraint);
-        
+
         TriplesToPojo.SparqlPojoContext dataFlowObject = taskHelper.getObjectRepresentation(dataFlowUUID, DATAFLOW_INTER_METHOD_TYPE,
                 config);
 
@@ -285,6 +321,7 @@ public class ConstraintAssessment {
             edge = (InterMethodDataflowEdge) mapping.get("obj");
         }
 
+        constraintViolation.setEdgeInViolation(edge);
         // Get the impacts involved in applying this mitigation strategy...
         String getStrategyImpacts = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#>\n" +
@@ -325,17 +362,17 @@ public class ConstraintAssessment {
 
         if (strategyImpacts.getSolutions().size() != 0) {
             for (Solution strategyImpact : strategyImpacts.getSolutions()) {
-                
+
                 String mitigationStrategyUUID = strategyImpact.get("strategy");
                 TriplesToPojo.SparqlPojoContext mitigationStrategyPojos = taskHelper.getObjectRepresentation(mitigationStrategyUUID,
                         MITIGATION_STRATEGY_TYPE, config);
-                
+
                 PrescriptiveCauseEffectAssertion mitigationStrategy = null;
                 for (Map<String, Object> mitigationStrategyPojo : mitigationStrategyPojos) {
                     mitigationStrategy = (PrescriptiveCauseEffectAssertion) mitigationStrategyPojo.get("obj");
                 }
                 constraintViolation.setMitigationStrategyUtilized(mitigationStrategy);
-                
+
                 String impactCriterionPropertyUUID = strategyImpact.get("property1");
                 TriplesToPojo.SparqlPojoContext propertyObject = taskHelper.getObjectRepresentation(impactCriterionPropertyUUID,
                         PROPERTY_TYPE, config);
@@ -349,11 +386,10 @@ public class ConstraintAssessment {
                 PropertyImpact propertyImpact = new PropertyImpact();
                 propertyImpact.setImpactOnProperty(PropertyImpactType.ADDS);
                 propertyImpact.setImpactedProperty(property.getClass());
-                
+
                 taskHelper.getPw().println("Mitigation strategy has impact: " + propertyImpact.getImpactOnProperty() + ", on property: " +
                         propertyImpact.getImpactedProperty() + "\nAnalyzing how this will affect data flows...");
 
-                AnalysisImpact[] analysisImpacts = new AnalysisImpact[2];
                 switch(impactCriterionType) {
                     case "PROPERTY_ADDED":
                         modifyEdge(edge, property, config, taskHelper);
@@ -362,43 +398,177 @@ public class ConstraintAssessment {
                             if (((DataProperty) property).isHidden()) {
                                 taskHelper.getPw().println("Adding this property will have inter-process impacts, will have to analyze both consumer and producer" +
                                         " systems...");
-                                constraintViolation.setScopeOfRepairs(ScopeOfRepairs.INTER_PROCESS);
                                 DesignPattern flowDesign = getDataflowDesignPattern(config.getNamingContext().getNameForObject(edge.getProducer()),
                                         taskHelper);
-                                
+
                                 if (flowDesign.equals(DesignPattern.FUNCTIONAL)) {
                                     taskHelper.getPw().println("Functional data flow detected, proceeding with repairs...");
                                 } else if (flowDesign.equals(DesignPattern.STREAM)) {
                                     taskHelper.getPw().println("Streaming data flow detected, proceeding with repairs...");
                                 }
-                                
-                                analysisImpacts[0] = AnalysisFrameAssessment.repairProducer(taskHelper, config, (InterMethodDataflowNode) edge.getProducer(),
-                                        propertyImpact, dependencies, flowDesign);
-                                
-                                // contains inter-process impact, scope of repair process is large
-                                propertyImpact.setImpactOnProperty(PropertyImpactType.REMOVES);
-                                taskHelper.getPw().println("Starting repairs on consumer...");
-                                analysisImpacts[1] = AnalysisFrameAssessment.repairConsumer(taskHelper, config, (InterMethodDataflowNode) edge.getConsumer(),
-                                        propertyImpact, dependencies, flowDesign);
-                                
-                                constraintViolation.setAnalysisImpacts(analysisImpacts);
-                            } else {
-                                // doesn't contain inter-process impact, scope of repair process is (relatively) small
-                            }
 
+                                FunctionalAspectInstance[] aspectInstances = taskHelper.getInstancesFromImpactStatement(propertyImpact, config);
+
+                                if (aspectInstances.length == 0) {
+                                    taskHelper.getPw().println("Unable to find instance(s) required for repairing system, implement instance and re-run analysis.");
+                                    return;
+                                }
+
+                                List<AspectConfigureRequest> aspectConfigureRequests = new ArrayList<>();
+                                for (FunctionalAspectInstance aspectInstance : aspectInstances) {
+                                    aspectConfigureRequests.add(AnalysisFrameAssessment.generateConfigurationRequest(aspectInstance,
+                                            taskHelper, config));
+                                }
+
+                                for (AspectConfigureRequest configureRequest : aspectConfigureRequests) {
+                                    taskHelper.getClient().addToModel(ObjectToTriples.convert(config, configureRequest),
+                                            taskHelper.getGraphName());
+                                }
+
+                                taskHelper.getClient().addToModel(ObjectToTriples.convert(config, constraintViolation), taskHelper.getGraphName());
+                            }
                         }
                         break;
                     default:
                         break;
                 }
-                return constraintViolation;
+            }
+        }
+    }
+
+    public static String createAdaptationSurface(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config, Set<File> dependencies) throws Exception {
+
+        ConstraintAssessmentReport assessmentReport = new ConstraintAssessmentReport();
+        AspectConfigureSolution chosenSolution = getAspectConfigureSolution(taskHelper);
+
+        List<ConstraintViolation> constraintViolations = retrieveConstraintViolations(taskHelper);
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+
+            AnalysisImpact[] analysisImpacts = new AnalysisImpact[2];
+            PrescriptiveCauseEffectAssertion causeEffectAssertion = constraintViolation.getMitigationStrategyUtilized();
+            ImpactStatement[] impactStatementsArr = causeEffectAssertion.getImpact();
+            PropertyImpact propertyImpact = null;
+            for (ImpactStatement impactStatement : impactStatementsArr) {
+                if (impactStatement instanceof RemediationImpact) {
+                    propertyImpact = (PropertyImpact) ((RemediationImpact) impactStatement).getRemediationStrategy().getImpact()[0];
+                }
+            }
+
+            FunctionalAspectInstance aspectInstance = retrieveAspectFromChosenDfu(chosenSolution.getChosenInstance(),
+                    propertyImpact);
+            analysisImpacts[0] = AnalysisFrameAssessment.repairProducer(taskHelper, config, (InterMethodDataflowNode)
+                            constraintViolation.getEdgeInViolation().getProducer(), dependencies, DesignPattern.STREAM,
+                    chosenSolution, aspectInstance);
+
+            propertyImpact.setImpactOnProperty(PropertyImpactType.REMOVES);
+            aspectInstance = retrieveAspectFromChosenDfu(chosenSolution.getChosenInstance(),
+                    propertyImpact);
+            taskHelper.getPw().println("Starting repairs on consumer...");
+            analysisImpacts[1] = AnalysisFrameAssessment.repairConsumer(taskHelper, config, (InterMethodDataflowNode)
+                            constraintViolation.getEdgeInViolation().getConsumer(), dependencies, DesignPattern.STREAM,
+                    aspectInstance, chosenSolution);
+
+            constraintViolation.setAnalysisImpacts(analysisImpacts);
+        }
+
+        AnalysisFrameAssessment.performWrapperCodeInsertions(taskHelper, config);
+
+        ConstraintViolation[] constraintViolationsArr = new ConstraintViolation[constraintViolations.size()];
+        int i = 0;
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            constraintViolationsArr[i] = constraintViolation;
+        }
+        assessmentReport.setConstraintViolations(constraintViolationsArr);
+        taskHelper.getClient().addToModel(ObjectToTriples.convert(config, assessmentReport), taskHelper.getGraphName());
+        return config.getNamingContext().getNameForObject(assessmentReport);
+    }
+    
+    private static AspectConfigureSolution getAspectConfigureSolution(GradleTaskHelper taskHelper) throws Exception {
+        DeploymentModel deploymentModel = retrieveDeploymentModel(taskHelper);
+        List<AspectConfigureSolution> configureSolutions = AnalysisFrameAssessment.retrieveConfigurationSolutions(taskHelper);
+        AspectConfigureSolution chosenSolution = null;
+        for (AspectConfigureSolution configureSolution : configureSolutions) {
+            if (ConfigurationCheckerRules.checkConfiguration(deploymentModel, configureSolution) != null) {
+                chosenSolution = configureSolution;
+                break;
+            }
+        }
+        return chosenSolution;
+    }
+
+    private static DeploymentModel retrieveDeploymentModel(GradleTaskHelper taskHelper) throws ClassNotFoundException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+
+        String getDeploymentModel = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                " prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#>\n" +
+                "\n" +
+                "select ?deploymentModel where {\n" +
+                "\t\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\n" +
+                "\t\t?deploymentModel a IMMoRTALS_gmei:DeploymentModel .\n" +
+                "\t\n" +
+                "\t}\n" +
+                "}";
+        getDeploymentModel = getDeploymentModel.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+        AssertableSolutionSet deploymentSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getDeploymentModel, deploymentSolutions);
+
+        if (!deploymentSolutions.getSolutions().isEmpty()) {
+            String modelUUID = deploymentSolutions.getSolutions().get(0).get("deploymentModel");
+            DeploymentModel deploymentModel = (DeploymentModel) TriplesToPojo.convert(taskHelper.getGraphName(), modelUUID, taskHelper.getClient());
+            return deploymentModel;
+        }
+
+        return null;
+    }
+
+    private static List<ConstraintViolation> retrieveConstraintViolations(GradleTaskHelper taskHelper) throws Exception {
+        List<ConstraintViolation> constraintViolations = new ArrayList<>();
+        String getConstraintViolations = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_property_impact: <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#>\n" +
+                "\n" +
+                "select ?constraintViolation where {\n" +
+                "\t\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t?constraintViolation a IMMoRTALS_property_impact:ConstraintViolation .\n" +
+                "\t}\n" +
+                "}";
+        getConstraintViolations = getConstraintViolations.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+        AssertableSolutionSet constraintViolationSolutionSet= new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getConstraintViolations, constraintViolationSolutionSet);
+
+        if (!constraintViolationSolutionSet.getSolutions().isEmpty()) {
+            List<Solution> constraintViolationSolutions = constraintViolationSolutionSet.getSolutions();
+            for (Solution constraintViolationSolution : constraintViolationSolutions) {
+                String constraintViolationUUID = constraintViolationSolution.get("constraintViolation");
+                constraintViolations.add((ConstraintViolation) TriplesToPojo.convert(taskHelper.getGraphName(), constraintViolationUUID, taskHelper.getClient()));
+            }
+        }
+        return constraintViolations;
+    }
+
+    private static FunctionalAspectInstance retrieveAspectFromChosenDfu(DfuInstance chosenInstance, PropertyImpact propertyImpact) throws IllegalAccessException, InstantiationException {
+
+        PropertyImpactType propertyImpactType = propertyImpact.getImpactOnProperty();
+        for (FunctionalAspectInstance aspectInstance : chosenInstance.getFunctionalAspects()) {
+            FunctionalAspect functionalAspect = aspectInstance.getAbstractAspect().newInstance();
+            if (functionalAspect instanceof DefaultAspectBase) {
+                for (ImpactStatement impactStatement : functionalAspect.getImpactStatements()) {
+                    if (impactStatement instanceof PropertyImpact) {
+                        PropertyImpact propertyImpact1 = (PropertyImpact) impactStatement;
+                        if (propertyImpact.getImpactedProperty().isInstance(propertyImpact.getImpactedProperty().newInstance()) &&
+                                propertyImpact1.getImpactOnProperty().equals(propertyImpactType)) {
+                            return aspectInstance;
+                        }
+                    }
+                }
             }
         }
         return null;
     }
-    
+
     private static DesignPattern getDataflowDesignPattern(String producerNodeUUID, GradleTaskHelper taskHelper) {
-        
+
         GradleTaskHelper.AssertableSolutionSet traceSolutions = new GradleTaskHelper.AssertableSolutionSet();
         final String getCalledNodes = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#> \n" +
@@ -420,15 +590,15 @@ public class ConstraintAssessment {
         taskHelper.getClient().executeSelectQuery(getCalledNodes.replace("???GRAPH_NAME???", taskHelper.getGraphName()).
                 replace("???NODE???", producerNodeUUID)
                 .replace("???DATA???", "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#OutputStream"), traceSolutions);
-        
+
         if (traceSolutions.getSolutions().isEmpty()) {
             return DesignPattern.FUNCTIONAL;
         } else {
             return DesignPattern.STREAM;
         }
     }
-    
-    
+
+
     private static void modifyEdge(DataflowEdge edge, Property property, ObjectToTriplesConfiguration config, GradleTaskHelper taskHelper) {
 
         DataflowAnalysisFrame affectedFrame = edge.getDataflowAnalysisFrame();
@@ -441,7 +611,7 @@ public class ConstraintAssessment {
         }
         currentPropsArr.add(property);
         affectedFrame.setFrameProperties(currentPropsArr.toArray(new Property[currentPropsArr.size()]));
-        
+
         currentPropsArr = new ArrayList<>();
         if (edge.getEdgeProperties() != null) {
             for (Property currentProperty : edge.getEdgeProperties()) {
@@ -450,10 +620,10 @@ public class ConstraintAssessment {
         }
         currentPropsArr.add(property);
         edge.setEdgeProperties(currentPropsArr.toArray(new Property[currentPropsArr.size()]));
-        
+
         taskHelper.getClient().addToModel(ObjectToTriples.convert(config, edge), taskHelper.getGraphName());
     }
-    
+
     private static boolean assertStandards(GradleTaskHelper taskHelper, String propertyUUID, String standardType) throws Exception {
         switch (standardType) {
             case "STANDARD_CURRENT_BEST":
@@ -477,8 +647,8 @@ public class ConstraintAssessment {
                 taskHelper.getClient().executeSelectQuery(checkIfCurrentBest, solutionSet);
 
                 if (solutionSet.getSolutions().size() != 0) {
-                        System.out.println("Property is current best, fulfills constraint.");
-                        return true;
+                    System.out.println("Property is current best, fulfills constraint.");
+                    return true;
                 } else {
                     System.out.println("Property is not current best standard, fails constraint.");
                     return false;

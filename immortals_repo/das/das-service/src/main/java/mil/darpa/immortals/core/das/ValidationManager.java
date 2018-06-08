@@ -3,6 +3,7 @@ package mil.darpa.immortals.core.das;
 import mil.darpa.immortals.core.api.TestCaseReport;
 import mil.darpa.immortals.core.api.TestCaseReportSet;
 import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
+import mil.darpa.immortals.core.das.adaptationmodules.hddrass.Hacks;
 import mil.darpa.immortals.core.das.adaptationtargets.building.AdaptationTargetBuildInstance;
 import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
 import mil.darpa.immortals.core.das.sparql.adaptationtargets.DetermineAllAnnotatedTestFunctionality;
@@ -12,6 +13,7 @@ import mil.darpa.immortals.das.context.DasAdaptationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,21 +35,28 @@ public class ValidationManager {
 
         // First produce a list of pending tests and report it to the server
         Map<String, Set<String>> allTests = GradleKnowledgeBuilder.getAllTargetTests();
+        Set<String> targets = DetermineTargets.select(dac);
         TestCaseReportSet tcrsInitial = new TestCaseReportSet();
-        for (String artifactIdentifier : allTests.keySet()) {
-            Set<String> tests = allTests.get(artifactIdentifier);
-            for (String testIdentifier : tests) {
-                tcrsInitial.add(new TestCaseReport(
-                        artifactIdentifier,
-                        testIdentifier,
-                        0,
-                        null,
-                        null
-                ));
+        for (String target : targets) {
+            if (allTests.containsKey(target)) {
+                String artifactIdentifier = target;
+                Set<String> tests = allTests.get(artifactIdentifier);
+                for (String testIdentifier : tests) {
+                    tcrsInitial.add(new TestCaseReport(
+                            artifactIdentifier,
+                            testIdentifier,
+                            0,
+                            null,
+                            null
+                    ));
+                }
             }
         }
 
         TestDetailsList initialTdl = TestDetailsList.fromTestCaseReportSet(dac.getAdaptationIdentifer(), tcrsInitial);
+        if (initialTdl == null || initialTdl.isEmpty()) {
+            initialTdl = Hacks.getMissingExpectedTestsCP3PLUGFirstValidation(dac);
+        }
         if (reportStatus) {
             dac.submitValidationStatus(initialTdl.producePendingList());
         }
@@ -63,6 +72,7 @@ public class ValidationManager {
 
         // First, get all the functionality bound to tests
         Map<String, Map<String, Set<String>>> functionality = DetermineAllAnnotatedTestFunctionality.select(dac);
+        Hacks.injectMissingTestFunctionalityCP3PLUGFirstValidation(dac, functionality);
 
         Set<String> allDependencyCoordinates = new HashSet<>();
 
@@ -70,7 +80,12 @@ public class ValidationManager {
         for (String target : DetermineTargets.select(dac)) {
             // Determine its proper identifier
             // TODO: Align identifiers better
-            String identifier = target.substring(target.indexOf(":")+1, target.lastIndexOf(":"));
+            String identifier;
+            if (!new File(target).exists()) {
+                identifier = target.substring(target.indexOf(":") + 1, target.lastIndexOf(":"));
+            } else {
+                identifier = target;
+            }
 
             // Add all its dependencies coordinates
             allDependencyCoordinates.addAll(DetermineTargetDependencyCoordinates.select(dac, identifier));

@@ -6,7 +6,7 @@ import java.util.HashMap;
 /**
  * Created by awellman@bbn.com on 12/19/17.
  */
-public interface AppConfigInterface {
+public interface AppConfigInterface extends ExtensionInterface {
     public boolean isUserManaged();
     
     public long getStartupTimeMS();

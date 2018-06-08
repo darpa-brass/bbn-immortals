@@ -260,7 +260,7 @@ public class TestHarnessAdapterMediator {
             } else if (incompleteCount > 0 || invalidCount > 0 || notApplicableCount > 0) {
                 // This state is unexpected and the TH does not support it
                 vo = VerdictOutcome.ERROR;
-                ImmortalsErrorHandler.reportFatalError("Unexpecte validator state of INCOMPLETE, INVALID, or NOT_APPLICABLE!");
+                ImmortalsErrorHandler.reportFatalError("Unexpected validator state of INCOMPLETE, INVALID, or NOT_APPLICABLE!");
 
             } else if (runningCount > 0) {
                 vo = VerdictOutcome.RUNNING;
@@ -278,14 +278,26 @@ public class TestHarnessAdapterMediator {
                             vo = VerdictOutcome.PASS;
                         }
                     } else {
+                        //TODO: Replace this hack
                         vo = VerdictOutcome.DEGRADED;
+                        for (TestStateObject tso : tests) {
+                            if(tso.testIdentifier.equals("mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest") && tso.actualStatus != TestOutcome.COMPLETE_PASS) {
+                                vo = VerdictOutcome.FAIL;
+                            }
+                        }
                     }
 
                 } else {
                     if (completePassCount == 0) {
                         vo = VerdictOutcome.FAIL;
                     } else {
+                        //TODO: Replace this hack
                         vo = VerdictOutcome.DEGRADED;
+                        for (TestStateObject tso : tests) {
+                            if(tso.testIdentifier.equals("mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest") && tso.actualStatus != TestOutcome.COMPLETE_PASS) {
+                                vo = VerdictOutcome.FAIL;
+                            }
+                        }
                     }
                 }
             }
@@ -418,6 +430,12 @@ public class TestHarnessAdapterMediator {
                                 (submissionModel.martiServerModel.requirements.libraryUpgrade != null ||
                                         submissionModel.martiServerModel.requirements.partialLibraryUpgrade != null ||
                                         submissionModel.martiServerModel.requirements.postgresqlPerturbation != null)
+                ) || (
+                        submissionModel.atakLiteClientModel != null &&
+                                submissionModel.atakLiteClientModel.requirements != null &&
+                                (submissionModel.atakLiteClientModel.requirements.libraryUpgrade != null ||
+                                        submissionModel.atakLiteClientModel.requirements.partialLibraryUpgrade != null)
+
                 ) || (
                         submissionModel.globalModel != null && submissionModel.globalModel.requirements != null &&
                                 submissionModel.globalModel.requirements.dataInTransit != null

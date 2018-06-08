@@ -54,10 +54,15 @@ public interface AdaptationTargetInterface {
     Path getSourceRoot();
 
     /**
-     * @return The general identifier for the target application. Not unique between instances.
+     * @return The the name for the target application. Not unique between instances.
      */
     String getTargetName();
 
+    /**
+     * @return The identifier for the target application. Not unique between instances. Likely to be longer and more unique than {@link #getTargetName()}
+     */
+    String getTargetIdentifier();
+    
     /**
      * @return If executable, how long the application takes to settle until dependents can utilize it. Null otherwise
      */

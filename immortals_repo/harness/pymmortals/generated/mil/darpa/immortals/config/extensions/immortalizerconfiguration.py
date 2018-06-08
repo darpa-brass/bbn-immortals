@@ -12,6 +12,7 @@ class ImmortalizerConfiguration(Serializable):
                  performBuildFileAnalysis: bool = None,
                  performKrgpBytecodeAnalysis: bool = None,
                  performKrgpCompleteGradleTaskAnalysis: bool = None,
+                 performSchemaAnalysis: bool = None,
                  performTestCoverageAnalysis: bool = None,
                  producedDataTargetFile: str = None):
         super().__init__()
@@ -19,5 +20,6 @@ class ImmortalizerConfiguration(Serializable):
         self.performBuildFileAnalysis = performBuildFileAnalysis
         self.performKrgpBytecodeAnalysis = performKrgpBytecodeAnalysis
         self.performKrgpCompleteGradleTaskAnalysis = performKrgpCompleteGradleTaskAnalysis
+        self.performSchemaAnalysis = performSchemaAnalysis
         self.performTestCoverageAnalysis = performTestCoverageAnalysis
         self.producedDataTargetFile = producedDataTargetFile

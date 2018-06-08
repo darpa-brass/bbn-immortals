@@ -5,10 +5,12 @@ import GHC.Generics (Generic)
 
 import Control.Monad (when)
 import Options.Applicative
-import Data.Monoid
 import Data.Foldable
-import Data.SBV ((|||),(&&&))
+import Data.Monoid
+import Data.Maybe (fromJust)
+import Data.SBV ((|||),(&&&),bnot)
 import qualified Data.Text as T
+import qualified Data.Set as S
 
 import DSL.Types
 import DSL.Name
@@ -16,182 +18,145 @@ import DSL.Environment
 import DSL.Model
 import DSL.Serialize
 import DSL.Sugar
+import DSL.Options
 
 -- ** Initial environment
 
-crossAppResEnv :: ResEnv
-crossAppResEnv = envFromListAcc [
-    ("/Server/Hardware/AESNI", Chc (dim "SAESNI") (One (Just Unit)) (One Nothing)),
-    ("/Client/Hardware/AESNI", Chc (dim "CAESNI") (One (Just Unit)) (One Nothing)),
-    ("/Server/JCEUnlimitedStrength", Chc (dim "SJCEUS") (One (Just Unit)) (One Nothing)),
-    ("/Client/JCEUnlimitedStrength", Chc (dim "CJCEUS") (One (Just Unit)) (One Nothing))
-  ]
+crossAppResEnv :: Bool -> ResEnv
+crossAppResEnv True = envSingle "/StrongEncryptionPolicy" (One (Just Unit))
+crossAppResEnv False = envEmpty
 
 -- ** Application model
 
 appModel = Model
   [
     Param "serverProvider" (One TSymbol),
-    Param "clientProvider" (One TSymbol),
-    Param "keysize" (One TInt)
+    Param "clientProvider" (One TSymbol)
   ]
-  [ Elems [
-    In "/Server" [Elems[Load (One . Ref $ "serverProvider") [One . Ref $ "keysize"]]],
-    In "/Client" [Elems[Load (One . Ref $ "clientProvider") [One . Ref $ "keysize"]]]
-  ]]
+  (checkSEP ++ checkRules ++ [ Elems [
+    In "/Server" [Elems[Load (One . Ref $ "serverProvider") []]],
+    In "/Client" [Elems[Load (One . Ref $ "clientProvider") []]],
+    check "/Server/Algorithm" (One TSymbol) (One (P2 (SS_B SEqu) val (One . Res $ "/Client/Algorithm"))),
+    check "/Server/Mode" (One TSymbol) (One (P2 (SS_B SEqu) val (One . Res $ "/Client/Mode"))),
+    check "/Server/Padding" (One TSymbol) (One (P2 (SS_B SEqu) val (One . Res $ "/Client/Padding")))
+  ]])
+  where
+    checkSEP :: Block
+    checkSEP = [
+        Split sepCtx
+          [Elems [checkUnit "/StrongEncryptionPolicy"]]
+          []
+      ]
+
+    mkKsz :: [Int] -> [T.Text]
+    mkKsz = fmap (\i -> "KSZ" <> (T.pack . show) i)
+
+    allKsz = mkKsz [8,16,24,32,40,48,56,64]
+
+    sepCtx :: BExpr
+    sepCtx = fromJust (exclusive allKsz (mkKsz [24,32,40,48,56,64]))
+
+    algRules = [
+        ("AES", [16, 24, 32]),
+        ("ARIA", [16, 24, 32]),
+        ("Blowfish", [8, 16, 24, 32, 40, 48, 56, 64]),
+        ("Camellia", [16, 24, 32]),
+        ("CAST5", [8, 16]),
+        ("CAST6", [8, 16, 24, 32, 40, 48, 56, 64]),
+        ("DES", [8]),
+        ("DESede", [24, 16]),
+        ("DSTU7624", [16, 32]),
+        ("GCM", [16, 24, 32]),
+        ("GOST28147", [32]),
+        ("IDEA", [8, 16, 24, 32, 40, 48, 56, 64]),
+        ("Noekeon", [16, 24, 32, 40, 48, 56, 64]),
+        ("RC2", [8, 16, 24, 32, 40, 48, 56, 64]),
+        ("RC5", [8, 16, 24, 32, 40, 48, 56, 64]),
+        ("RC5_64", []),
+        ("RC6", [8, 16, 24, 32, 40, 48, 56, 64]),
+        ("Rijndael", [16, 24, 32]),
+        ("SEED", [16, 24, 32, 40, 48, 56, 64]),
+        ("SEEDWrap", []),
+        ("Serpent_128", []),
+        ("Skipjack", [16, 24, 32, 40, 48, 56, 64]),
+        ("SM4", [16]),
+        ("TEA", [16]),
+        ("Threefish_256", [32]),
+        ("Threefish_512", [64]),
+        ("Threefish_1024", []),
+        ("Twofish", [8, 16, 24, 32]),
+        ("XTEA", [16])
+      ]
+
+    checkRules :: Block
+    checkRules = foldMap (uncurry kszRule) algRules
+
+    kszRule :: T.Text -> [Int] -> Block
+    kszRule alg is = [
+        Split (BRef alg &&& foldOr (disallowed is))
+          [Elems[checkUnit "Keysize"]]
+          []
+      ]
+
+    disallowed is = S.toList $ S.fromList allKsz `S.difference` S.fromList (mkKsz is)
+
+    foldOr [] = BLit False
+    foldOr [x] = BRef x
+    foldOr (x:xs) = BRef x ||| foldOr xs
 
 -- ** DFUs
 
+mkCrossAppDFU :: [T.Text] -> [T.Text] -> [T.Text] -> Model
+mkCrossAppDFU algs pads modes = Model []
+  (mk "Algorithm" algs ++ mk "Mode" modes ++ mk "Padding" pads)
+    where
+      mk name xs = foldMap (\a -> [Split (foldOthers a xs) [Elems[ create name (mkVExpr (S . Symbol $ a)) ]] []]) xs
+      others x xs = S.difference (S.fromList xs) (S.singleton x)
+      foldOthers x xs = foldl' (\b a -> b &&& (bnot (BRef a))) (BRef x) (S.toList (others x xs))
+
 javaxDFU :: Model
-javaxDFU = Model [Param "keysize" (One TInt)]
-  [
-    Elems [
-      If (ksz .> (Chc (dim "DES") 64 128))
-        [Elems[checkUnit "JCEUnlimitedStrength"]]
-        [],
-      If (Chc (dim "AES")
-           aes
-           (Chc (dim "Blowfish")
-             blowfish
-             (Chc (dim "DES")
-               des
-               (Chc (dim "DES3")
-                 des3
-                 (mkVExpr . B $ False)
-               )
-             )
-           )
-         )
-        [Elems[create "KeySize" ksz]]
-        [Elems[check "KeySize" (One TInt) (mkVExpr . B $ False)]],
-      create "Algorithm" (foldChc ["NOALG", "AES", "Blowfish", "DES", "DES3"]),
-      create "Mode" (foldChc ["NOMODE", "ECB", "CBC", "PCBC", "CTR", "CTS", "CFB", "OFB"]),
-      create "Padding" (foldChc ["NOPADDING","PKCS5", "ISO10126"])
-    ]
-  ]
-  where
-    ksz = One . Ref $ "keysize"
-    aes = ksz .== 128 ||| ksz .== 192 ||| ksz .== 256
-    blowfish = ksz .>= 32 &&& ksz .<= 448 &&& ksz .% 8 .== 0
-    des = ksz .== 56
-    des3 = ksz .== 112 &&& ksz .== 168
+javaxDFU = mkCrossAppDFU
+             ["AES", "Blowfish", "DES", "DESede", "RC2", "Rijndael"]
+             ["PKCS5Padding", "NoPadding"]
+             ["ECB", "CBC", "CTR", "CFB", "OFB", "CTS"]
 
-bcDFU :: Model
-bcDFU = Model [Param "keysize" (One TInt)]
-  [
-    Elems [
-      If (Chc (dim "AES")
-           aes
-           (Chc (dim "Blowfish")
-             blowfish
-             (Chc (dim "DES")
-               des
-               (Chc (dim "DES3")
-                 des3
-                 (Chc (dim "TwoFish")
-                   twofish
-                   (Chc (dim "ThreeFish")
-                     threefish
-                     (mkVExpr . B $ False)
-                   )
-                 )
-               )
-             )
-           )
-         )
-        [Elems[create "KeySize" ksz]]
-        [Elems[check "KeySize" (One TInt) (mkVExpr . B $ False)]],
-      create "Algorithm" (foldChc ["NOALG", "AES", "Blowfish", "DES", "DES3", "TwoFish", "ThreeFish"]),
-      create "Mode" (foldChc ["NOMODE", "ECB", "CBC", "PCBC", "CTR", "CTS", "CFB", "OFB", "CCM", "EAX"]),
-      create "Padding" (foldChc ["NOPADDING","PKCS5", "ISO10126", "X923", "TBC"])
-    ]
-  ]
-  where
-    ksz = One . Ref $ "keysize"
-    aes = ksz .== 128 ||| ksz .== 192 ||| ksz .== 256
-    blowfish = ksz .>= 32 &&& ksz .<= 448 &&& ksz .% 8 .== 0
-    des = ksz .== 56
-    des3 = ksz .== 112 &&& ksz .== 168
-    twofish = aes
-    threefish = ksz .== 256 ||| ksz .== 512 ||| ksz .== 1024
-
-aesniDFU :: Model
-aesniDFU = Model [Param "keysize" (One TInt)]
-  [
-    Split (dim "AES")
-      [Elems[checkUnit "AESNI"]]
-      [],
-    Elems [
-      If (Chc (dim "AES")
-           aes
-           (Chc (dim "Blowfish")
-             blowfish
-             (Chc (dim "DES")
-               des
-               (Chc (dim "DES3")
-                 des3
-                 (mkVExpr . B $ False)
-               )
-             )
-           )
-         )
-        [Elems[create "KeySize" ksz]]
-        [Elems[check "KeySize" (One TInt) (mkVExpr . B $ False)]],
-      create "Algorithm" (foldChc ["NOALG", "AES", "Blowfish", "DES", "DES3"]),
-      create "Mode" (foldChc ["NOMODE", "ECB", "CBC", "PCBC", "CTR", "CTS", "CFB", "OFB"]),
-      create "Padding" (foldChc ["NOPADDING","PKCS5", "ISO10126"])
-    ]
-  ]
-  where
-    ksz = One . Ref $ "keysize"
-    aes = ksz .== 128 ||| ksz .== 192 ||| ksz .== 256
-    blowfish = ksz .>= 32 &&& ksz .<= 448 &&& ksz .% 8 .== 0
-    des = ksz .== 56
-    des3 = ksz .== 112 &&& ksz .== 168
-
-foldChc :: [T.Text] -> V Expr
-foldChc [] = error "whoops!"
-foldChc (start:names) = One . Lit $ foldl' f (One . S . Symbol $ start) names
-  where
-    f r n = Chc (BRef n) (One . S . Symbol $ n) r
+bouncyDFU :: Model
+bouncyDFU = mkCrossAppDFU
+              ["AES", "ARIA", "Blowfish", "Camellia", "CAST5", "CAST6", "DES", "DESede", "DSTU7624", "GCM", "GOST28147", "IDEA", "Noekeon", "RC2", "RC5", "RC6", "Rijndael", "SEED", "Skipjack", "SM4", "TEA", "Threefish_256", "Threefish_512", "Twofish", "XTEA"]
+              ["ZeroBytePadding", "PKCS5Padding", "PKCS7Padding", "ISO10126_2Padding", "ISO7816_4Padding", "TBCPadding", "X923Padding", "NoPadding"]
+              ["ECB", "CBC", "CTR", "CFB", "CTS", "OFB", "OpenPGPCFB", "PGPCFBBlock", "SICBlock"]
 
 crossAppDFUs :: Dictionary
-crossAppDFUs = modelDict [("Javax", javaxDFU), ("AESNI", aesniDFU), ("BouncyCastle", bcDFU)]
+crossAppDFUs = modelDict [("Javax", javaxDFU), ("BouncyCastle", bouncyDFU)]
 
 -- * Config
 
-crossAppConfig :: Symbol -> Symbol -> Int -> [V PVal]
-crossAppConfig s c ksz = [One . S $ s, One . S $ c, One . I $ ksz]
+crossAppConfig :: Symbol -> Symbol -> [V PVal]
+crossAppConfig s c = [One . S $ s, One . S $ c]
 
 --
 -- * Requirements
 --
 
-crossAppReqs :: Symbol -> Int -> Symbol -> Symbol -> Profile
-crossAppReqs alg ksz mode pad = toProfile $ Model []
-  [ Elems [
-      In "Server" chk,
-      In "Client" chk
-  ]]
-    where
-      chk = [ Elems [
-          check "Algorithm" (One TSymbol) (One (P2 (SS_B SEqu) val (mkVExpr . S $ alg))),
-          check "KeySize" (One TInt) (val .== (mkVExpr . I $ ksz)),
-          check "Mode" (One TSymbol) (One (P2 (SS_B SEqu) val (mkVExpr . S $ mode))),
-          check "Padding" (One TSymbol) (One (P2 (SS_B SEqu) val (mkVExpr . S $ pad)))
-        ]]
+crossAppReqs :: Profile
+crossAppReqs = toProfile $ Model [] []
 
 --
 -- * Driver
 --
 
+data CAConfig = CAConfig {
+    serverProv :: String,
+    clientProv :: String
+  } deriving (Show,Eq,Read,Data,Typeable,Generic)
+
 data CrossAppOpts = CrossAppOpts
      { genDict   :: Bool
      , genModel  :: Bool
-     , genInit   :: Bool
-     , genConfig :: Maybe (String,String,Int)
-     , genReqs   :: Maybe (String,Int,String,String) }
-  deriving (Data,Eq,Generic,Read,Show,Typeable)
+     , genInit   :: Maybe Bool
+     , genConfig :: Maybe CAConfig
+     , genReqs   :: Bool}
+  deriving (Eq,Read,Show,Data,Typeable,Generic)
 
 parseCrossAppOpts :: Parser CrossAppOpts
 parseCrossAppOpts = CrossAppOpts
@@ -203,30 +168,31 @@ parseCrossAppOpts = CrossAppOpts
        ( long "model"
       <> help "Generate application model" )
 
-  <*> switch
+  <*> (optional . option auto)
        ( long "init"
-      <> help "Generate initial resource environment" )
+      <> metavar "BOOL"
+      <> help ("Generate initial resource environment. Takes a boolean argument "
+      <> "where True indicates the presence of the StrongEncryptionPolicy files.") )
 
-  <*> (optional . option auto)
+  <*> (optional . option (readRecord "CAConfig"))
        ( long "config"
-      <> metavar "(server provider,client provider,keysize)"
-      <> help "Generate configuration by giving the name of the provider to use on the server and client, as well as the keysize to use" )
+      <> metavar "(serverProv,clientProv)"
+      <> help "Generate configuration by giving the name of the provider to use on the server and client" )
 
-  <*> (optional . option auto)
+  <*> switch
        ( long "reqs"
-      <> metavar "(alg,ksz,mode,pad)"
-      <> help "Generate mission requirements for a given algorithm, keysize, mode, and padding scheme (e.g. AES, 256, CTR, and PKCS5)" )
+      <> help "Generate empty mission requirements" )
 
 runCrossApp :: CrossAppOpts -> IO ()
 runCrossApp opts = do
     when (genDict opts)   (writeJSON defaultDict crossAppDFUs)
     when (genModel opts)  (writeJSON defaultModel appModel)
-    when (genInit opts)   (writeJSON defaultInit crossAppResEnv)
+    case (genInit opts) of
+      Just b -> writeJSON defaultInit (crossAppResEnv b)
+      Nothing -> return ()
     case (genConfig opts) of
-      Just (s,c,ksz) -> writeJSON defaultConfig (crossAppConfig (str2sym s) (str2sym c) ksz)
+      Just (CAConfig s c) -> writeJSON defaultConfig (crossAppConfig (str2sym s) (str2sym c))
       Nothing -> return ()
-    case (genReqs opts) of
-      Just (alg,ksz,mode,pad) -> writeJSON defaultReqs (crossAppReqs (str2sym alg) ksz (str2sym mode) (str2sym pad))
-      Nothing -> return ()
+    when (genReqs opts) (writeJSON defaultReqs crossAppReqs)
     where
       str2sym = Symbol . T.pack

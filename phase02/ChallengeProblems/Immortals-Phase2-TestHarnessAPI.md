@@ -147,7 +147,7 @@ __Description__: The overall status of the Test Adapter used for all done, statu
 | ---------- | --------------------- | -------------------------------------------------------------------------------- |  
 | adaptation | AdaptationStateObject | The state of the DAS adaptation                                                  |  
 | identifier | str                   | The internal identifier used to bind this perturbation to any artifacts produced |  
-| timestamp  | int                   | Last Updated time (equivalent to Java 'System.currentTimeMillis()')              |  
+| sequence   | int                   | Sequence number to preserve ordering regardless of network delay                 |  
 | validation | ValidationStateObject | The state of the validation                                                      |  
 
 #### AdaptationStateObject  

@@ -1,5 +1,7 @@
 package com.securboration.immortals.ontology.constraint;
 
+import com.securboration.immortals.ontology.property.impact.ConstraintViolation;
+
 public class ConstraintAssessmentReport {
     
     private String timeOfAssessment;

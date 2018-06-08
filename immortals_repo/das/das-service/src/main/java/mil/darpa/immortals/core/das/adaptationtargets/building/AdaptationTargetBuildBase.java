@@ -87,6 +87,11 @@ public class AdaptationTargetBuildBase implements AdaptationTargetInterface {
     public String getTargetName() {
         return projectData.getTargetName();
     }
+    
+    @Override
+    public String getTargetIdentifier() {
+        return projectData.getIdentifier();
+    }
 
     @Override
     public Integer getExecutionStartSettleTimeMS() {
@@ -240,7 +245,7 @@ public class AdaptationTargetBuildBase implements AdaptationTargetInterface {
         if (result == null) {
             return null;
         }
-        return XmlParser.getTestResultsFromFlatDirectory(getTestResultsPath().toFile(), getTargetName(), null);
+        return XmlParser.getTestResultsFromFlatDirectory(getTestResultsPath().toFile(), getTargetIdentifier(), null);
 
     }
 }

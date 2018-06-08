@@ -26,4 +26,9 @@ public class ATAKLiteSubmissionModel implements SubmissionModelInterface {
     public RequirementsInterface getRequirements() {
         return requirements;
     }
+    
+    @Override
+    public String getIdentifier() {
+        return "ATAKLite";
+    }
 }

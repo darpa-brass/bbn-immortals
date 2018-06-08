@@ -15,6 +15,8 @@ public class AspectConfigureRequest {
     public Class<? extends Functionality> getRequiredFunctionality() {
         return requiredFunctionality;
     }
+    
+    private AspectConfigureSolution minimumConfigurationSolution;
 
     public void setRequiredFunctionality(Class<? extends Functionality> requiredFunctionality) {
         this.requiredFunctionality = requiredFunctionality;
@@ -34,5 +36,13 @@ public class AspectConfigureRequest {
 
     public void setCandidateImpls(DfuInstance[] candidateImpls) {
         this.candidateImpls = candidateImpls;
+    }
+
+    public AspectConfigureSolution getMinimumConfigurationSolution() {
+        return minimumConfigurationSolution;
+    }
+
+    public void setMinimumConfigurationSolution(AspectConfigureSolution minimumConfigurationSolution) {
+        this.minimumConfigurationSolution = minimumConfigurationSolution;
     }
 }

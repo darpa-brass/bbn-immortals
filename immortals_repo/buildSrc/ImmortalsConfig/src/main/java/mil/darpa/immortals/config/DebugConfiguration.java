@@ -10,7 +10,7 @@ public class DebugConfiguration {
     private Boolean useMockApplicationDeployment = true;
     private Boolean useMockTestHarness = false;
     private Boolean useMockTestAdapter = false;
-    private Boolean useMockAqlBrass = true;
+    private Boolean useMockAqlBrass = false;
     private boolean useMockExtensionHddRass = false;
     private boolean useMockExtensionSchemaEvolution = false;
     private boolean useMockTestCoordinators = false;

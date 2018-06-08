@@ -36,12 +36,15 @@ public class CipherImplBouncyCrypto implements CipherImplApi{
     private String paddingScheme;
 
     private SecretKeySpec keySpec;
-    private IvParameterSpec initVectorSpec;
-
+    
+    private String ivGeneratorString;
+    
     public CipherImplBouncyCrypto(){}
     
+    private static final Provider provider = new BouncyCastleProvider();
+    
     protected Provider getProvider(){
-        return new BouncyCastleProvider();
+        return provider;
     }
 
     private Cipher getCipher() throws NoSuchAlgorithmException, NoSuchPaddingException{
@@ -84,49 +87,65 @@ public class CipherImplBouncyCrypto implements CipherImplApi{
         return keySpec;
     }
 
-    private IvParameterSpec getInitVectorSpec(
-            final String initVectorPhrase,
-            final int lengthBytes
-    ) throws NoSuchAlgorithmException{
-        return new IvParameterSpec(
-            hash(initVectorPhrase,lengthBytes)
-            );
-        
-    }
-
     //streaming cipher API
-
+    
     @Override
     public CipherOutputStream acquire(OutputStream o) {
 
         try{
             Cipher cipher = getCipher();
-    
-            cipher.init(
+            final IvParameterSpec iv = getIv(cipher);
+            
+            if(iv != null){
+                cipher.init(
                     Cipher.ENCRYPT_MODE,
                     keySpec,
-                    initVectorSpec
-            );
-    
+                    iv
+                    );
+            } else {
+                cipher.init(
+                        Cipher.ENCRYPT_MODE,
+                        keySpec
+                );
+            }
+            
             return new CipherOutputStream(o,cipher);
         } catch(Exception e){
             throw new RuntimeException(e);
         }
     }
-
+    
+    private IvParameterSpec getIv(Cipher cipher) throws NoSuchAlgorithmException{
+        if(ivGeneratorString == null){
+            return null;
+        }
+        
+        return new IvParameterSpec(
+            hash(ivGeneratorString,cipher.getBlockSize())
+            );
+    }
+    
     @Override
-    public CipherInputStream acquire(InputStream i) {
+    public CipherInputStream acquire(final InputStream in) {
 
         try{
-            Cipher cipher = getCipher();
+            final Cipher cipher = getCipher();
+            final IvParameterSpec iv = getIv(cipher);
     
-            cipher.init(
+            if(iv != null){
+                cipher.init(
                     Cipher.DECRYPT_MODE,
                     keySpec,
-                    initVectorSpec
-            );
+                    iv
+                    );
+            } else {
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        keySpec
+                );
+            }
     
-            return new CipherInputStream(i,cipher);
+            return new CipherInputStream(in,cipher);
         } catch(Exception e){
             throw new RuntimeException(e);
         }
@@ -136,68 +155,19 @@ public class CipherImplBouncyCrypto implements CipherImplApi{
 
     @Override
     public byte[] encrypt(byte[] data) {
-        try{
-            Cipher cipher = getCipher();
-            cipher.init(
-                    Cipher.ENCRYPT_MODE,
-                    keySpec,
-                    initVectorSpec
-            );
-    
-            return cipher.doFinal(data);
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
+        throw new RuntimeException("no impl");
     }
 
     @Override
     @FunctionalAspectAnnotation(aspect = AspectCipherEncrypt.class)
     public byte[] encryptChunk(byte[] data) {
-        try{
-            Cipher cipher;
-    
-            if(this.encryptionCipher != null) {
-                cipher = this.encryptionCipher;
-            } else {
-                cipher = getCipher();
-                cipher.init(
-                        Cipher.ENCRYPT_MODE,
-                        keySpec,
-                        initVectorSpec
-                );
-    
-                this.encryptionCipher = cipher;
-            }
-    
-            return cipher.update(data);
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
+        throw new RuntimeException("no impl");
     }
 
     @Override
     @FunctionalAspectAnnotation(aspect = AspectCipherDecrypt.class)
     public byte[] decryptChunk(byte[] data) {
-        try{
-            Cipher cipher;
-    
-            if(this.decryptionCipher != null) {
-                cipher = this.decryptionCipher;
-            } else {
-                cipher = getCipher();
-                cipher.init(
-                        Cipher.DECRYPT_MODE,
-                        keySpec,
-                        initVectorSpec
-                );
-    
-                this.decryptionCipher = cipher;
-            }
-    
-            return cipher.update(data);
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
+        throw new RuntimeException("no impl");
     }
 
     
@@ -210,11 +180,21 @@ public class CipherImplBouncyCrypto implements CipherImplApi{
                 cipher = this.encryptionCipher;
             } else {
                 cipher = getCipher();
-                cipher.init(
+                
+                final IvParameterSpec iv = getIv(cipher);
+                
+                if(iv != null){
+                    cipher.init(
                         Cipher.ENCRYPT_MODE,
                         keySpec,
-                        initVectorSpec
-                );
+                        iv
+                        );
+                } else {
+                    cipher.init(
+                        Cipher.ENCRYPT_MODE, 
+                        keySpec
+                        );
+                }
     
                 this.encryptionCipher = cipher;
             }
@@ -236,27 +216,7 @@ public class CipherImplBouncyCrypto implements CipherImplApi{
 
     @Override
     public byte[] decrypt(byte[] data) {
-        
-        try{
-            Cipher cipher = getCipher();
-            cipher.init(
-                    Cipher.DECRYPT_MODE,
-                    keySpec,
-                    initVectorSpec
-            );
-    
-            byte[] result = cipher.doFinal(data);
-    
-            {//TODO: this feels janky
-                byte[] trimmed = new byte[result.length - 16];
-                System.arraycopy(result, 0, trimmed, 0, trimmed.length);
-                result = trimmed;
-            }
-    
-            return result;
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
+        throw new RuntimeException("no impl");
     }
 
     @Override
@@ -274,7 +234,8 @@ public class CipherImplBouncyCrypto implements CipherImplApi{
 
         try{
             this.keySpec = getKeySpec(keyPhrase,algorithm,keyLengthBytes);
-            this.initVectorSpec = getInitVectorSpec(initVectorPhrase,keyLengthBytes);
+            
+            this.ivGeneratorString = initVectorPhrase;
         } catch(Exception e){
             throw new RuntimeException(e);
         }

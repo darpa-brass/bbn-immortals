@@ -1,0 +1,79 @@
+import mil.darpa.immortals.config.ImmortalsConfig
+import mil.darpa.immortals.config.extensions.MavenArtifactInterface
+import mil.darpa.immortals.das.ImmortalsServiceManifest
+
+import java.nio.file.Paths
+
+// Make the plugins and repositories (including the local one) available
+buildscript {
+    def IMMORTALS_REPO = Paths.get(getBuildscript().getSourceFile().parentFile.parent).resolve('shared/IMMORTALS_REPO').toAbsolutePath()
+    repositories {
+        mavenCentral()
+        maven {
+            url IMMORTALS_REPO.toString()
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath 'mil.darpa.immortals:ImmortalsConfig:+'
+        classpath 'mil.darpa.immortals:ImmortalsGradle:+'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
+}
+
+repositories {
+    // General
+    mavenCentral()
+    // General
+    jcenter()
+
+    // aql-brass-server
+    maven { url "https://clojars.org/repo/" }
+    // aql-brass-server
+    maven { url "https://nexus.isis.vanderbilt.edu/repository/maven-snapshots/" }
+}
+
+configurations {
+    deploy
+}
+
+dependencies {
+    // aql-brass-server
+    deploy 'aql-brass-server:aql-brass-server:2018.04.25-SNAPSHOT:standalone@jar'
+}
+
+def deploy = task('deploy') {
+    doLast {
+        for (Configuration config : configurations.findResults { i -> (i.isCanBeResolved() && i.name.equals('deploy')) ? i : null }) {
+            for (ResolvedDependency dep : config.resolvedConfiguration.firstLevelModuleDependencies) {
+                for (ResolvedArtifact ra : dep.getAllModuleArtifacts()) {
+                    MavenArtifactInterface targetServiceConfig = (MavenArtifactInterface) ImmortalsServiceManifest.findResult { i ->
+                        (i.config instanceof MavenArtifactInterface && i.config.mavenGroupId.equals(dep.moduleGroup)
+                                && i.config.mavenArtifactId.equals(dep.moduleName)) ? i.config : null
+                    }
+                    if (targetServiceConfig == null) {
+                        throw new GradleException(
+                                "Could not find configuration in ImmortalsServiceManifest with the group '" +
+                                        dep.moduleGroup + "' and the name '" + dep.moduleName + "'!")
+                    }
+                    def targetPath = Paths.get(targetServiceConfig.getExePath())
+                    copy {
+                        from ra.file
+                        into(targetPath.parent.toString())
+                        rename { targetPath.toFile().name }
+                    }
+                }
+
+            }
+        }
+        ImmortalsServiceManifest.deploy()
+    }
+    finalizedBy(
+            task('buildHddRass', type: GradleBuild) {
+                group = 'IMMoRTALS Deploy'
+                description = 'Builds the hddRASS binary file'
+                buildFile = ImmortalsConfig.instance.globals.immortalsRoot.resolve(ImmortalsConfig.instance.extensions.hddrass.gradleBuildFile).toString()
+                tasks = ['clean', 'jar']
+            }
+    )
+}

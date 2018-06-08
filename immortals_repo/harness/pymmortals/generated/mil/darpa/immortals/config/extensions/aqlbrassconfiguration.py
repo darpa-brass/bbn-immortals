@@ -14,11 +14,9 @@ class AqlBrassConfiguration(Serializable):
                  exePath: str = None,
                  identifier: str = None,
                  interpreterParameters: List[str] = None,
+                 mavenArtifactExtension: str = None,
                  mavenArtifactId: str = None,
-                 mavenClassifier: str = None,
                  mavenGroupId: str = None,
-                 mavenRepositoryUrl: str = None,
-                 mavenVersion: str = None,
                  parameters: List[str] = None,
                  port: int = None,
                  protocol: str = None,
@@ -33,11 +31,9 @@ class AqlBrassConfiguration(Serializable):
         self.exePath = exePath
         self.identifier = identifier
         self.interpreterParameters = interpreterParameters
+        self.mavenArtifactExtension = mavenArtifactExtension
         self.mavenArtifactId = mavenArtifactId
-        self.mavenClassifier = mavenClassifier
         self.mavenGroupId = mavenGroupId
-        self.mavenRepositoryUrl = mavenRepositoryUrl
-        self.mavenVersion = mavenVersion
         self.parameters = parameters
         self.port = port
         self.protocol = protocol

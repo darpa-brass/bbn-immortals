@@ -1,0 +1,6 @@
+Buildfile: /Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_voltdb/build.xml
+
+clean:
+   [delete] Deleting directory /Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_voltdb/voltdbroot
+
+init:

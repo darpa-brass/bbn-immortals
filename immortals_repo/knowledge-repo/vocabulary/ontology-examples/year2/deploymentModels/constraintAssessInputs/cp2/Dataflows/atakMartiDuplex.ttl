@@ -1,0 +1,808 @@
+@prefix IMMoRTALS_com_securboration_immortals_exampleDataflows: <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/exampleDataflows#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_functionality_datatype: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_property_impact: <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#> .
+@prefix IMMoRTALS_functionality_dataproperties: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#> .
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> .
+@prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#> .
+@prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#> .
+@prefix IMMoRTALS_types: <http://darpa.mil/immortals/ontology/r2.0.0/types#> .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DecodeToCreateCoordinate
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.OfferData ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_types:CotMessage ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-2a450083-1115-4457-943f-e32f6cf5fea0 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$DecodeToCreateCoordinate" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DecodeData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ProcessToMessageConversion
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ConvertToCotMessage ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-fde8d991-c906-4a73-8637-47c1e812e4d2 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ProcessToMessageConversion" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ProcessByteBuffer .
+
+IMMoRTALS_cp2:Analysis.Atak.AtakSoftware
+        a                               IMMoRTALS_resources:CompiledSoftware ;
+        IMMoRTALS:hasApplicationName    "ATAK" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "An instance of the ATAK project" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.Analysis$Atak$AtakSoftware" ;
+        IMMoRTALS:hasSoftwareCoordinate
+                "com.bbn.ataklite" ;
+        IMMoRTALS:hasVersionControlUrl  "https://dsl-external.bbn.com/svn/immortals/trunk/applications/client/ATAKLite" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateCotMessage
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com/bbn/ataklite/CoTMessage" ;
+        IMMoRTALS:hasJavaMethodName     "<init>" ;
+        IMMoRTALS:hasJavaMethodPointer  "uH9lGZmDYA3u0xK9tJXbcKuP9l6D5VAHdq1qeJppNSk=/methods/<init>(Landroid/location/Location;Ljava/lang/String;)V" ;
+        IMMoRTALS:hasLineNumber         "340"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateCotMessage" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ReceiveToByteBuffer
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.PassMessageToByteBuffer ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-f287c501-39dd-44e7-962f-6753da3db610 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ReceiveToByteBuffer" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ReceiveMessage .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-fde8d991-c906-4a73-8637-47c1e812e4d2
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-5fa858eb-8674-44db-99c3-ae2d5774228f ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleEventToWriteMessage
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DispatchMessage ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:OutputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-b4818331-5793-4182-b533-680fec37f135 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$HandleEventToWriteMessage" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleWriteEvent .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-e7d8b5aa-d576-4c86-be64-9e928e99cb36
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_types:CotMessage .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ConvertToCotMessage
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "mil/darpa/immortals/datatypes/cot/dom4j/StreamingCotProcessor" ;
+        IMMoRTALS:hasJavaMethodName     "add" ;
+        IMMoRTALS:hasJavaMethodPointer  "1iuV2HNQvhout5vLQ4oIhHcL+ISu5ovlvd+W48yoQk4=/methods/add(Ljava/lang/String;Ljava/lang/Object;)Ljava/util/List;" ;
+        IMMoRTALS:hasLineNumber         "38"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ConvertToCotMessage" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-e9baaab9-ff4b-462d-95ea-0d2ffb6fd668
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:OutputStream .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-ba1bc962-01b4-45a2-a740-920abc15cd67
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:InputStream .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.SendToNetworkPipe
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com/bbn/marti/immortals/net/tcp/Transport$SendToNetworkPipe" ;
+        IMMoRTALS:hasJavaMethodName     "consume" ;
+        IMMoRTALS:hasJavaMethodPointer  "/VjdXmX9wvvpde4v3KvK1RpLEb7rh8qs2Br78Gf5cTg=/methods/consume(Ljava/lang/Object;)V" ;
+        IMMoRTALS:hasLineNumber         "71"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$SendToNetworkPipe" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-791de628-76da-48b9-bd87-b3d8a97e742e
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:OutputStream .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-bc709bea-589b-4eae-8742-49e206dfc66f
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:OutputStream .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-05087910-cd51-4781-b43d-81c9780ed5fd
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_types:CotMessage .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.RetrieveCoTEventToSendToNetwork
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.SendToNetworkPipe ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-59b1ccd6-6bbb-48c9-9ea9-97b170e9bb73 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$RetrieveCoTEventToSendToNetwork" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.RetrieveCoTEvent .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-97033003-16bf-4f14-b1ef-9997c659d5a2
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_types:CotMessage .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateAtakStreams
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasJavaMethodName     "open" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "85"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateAtakStreams" .
+
+IMMoRTALS_cp2:Analysis.Marti.MartiServer
+        a                            IMMoRTALS_resources:Server ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a server running MARTI" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Marti$MartiServer" ;
+        IMMoRTALS:hasResources       IMMoRTALS_cp2:Analysis.Marti.MartiSoftware , IMMoRTALS_cp2:Analysis.Marti.MartiFileSystem , IMMoRTALS_cp2:Analysis.Shared.SaNetwork .
+
+IMMoRTALS_property_impact:AbstractDataflowBindingSite-7d15218a-329f-4062-b501-d6ad2371530f
+        a                  IMMoRTALS_property_impact:AbstractDataflowBindingSite ;
+        IMMoRTALS:hasDest  IMMoRTALS_cp2:Analysis.Marti.MartiServer ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Any data between an android mobile device and server" ;
+        IMMoRTALS:hasSrc   IMMoRTALS_cp2:Analysis.Atak.AtakPhone .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-e5470825-d696-4a58-9d99-d3f7c9714b08
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-bbf33481-00c4-403a-a750-b743057be4f1 ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateDataOutputStreamToWriteData
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.WriteData ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:OutputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-ea8cc805-be85-4508-acde-1e2f3f6f9aaa ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateDataOutputStreamToWriteData" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateDataOutputStream .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateSocketToGetInputStream
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.GetInputStream ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:InputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-14559590-0207-4d2d-8f86-67e2451705c5 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateSocketToGetInputStream" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateSocket .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-43ebc720-c1df-44df-b142-19982523f157
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ReceiveFromServerToOfferData
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.OfferData ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-eedc6fcb-6e98-4e3f-b3f4-1704d329afa6 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ReceiveFromServerToOfferData" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ReceiveFromServer .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateSelectionEventToHandleWriteEvent
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleWriteEvent ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:OutputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-74fc0e78-72b6-43a5-b8ea-4c6a98ac8663 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateSelectionEventToHandleWriteEvent" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateSelectionEvent .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.PassMessageToByteBuffer
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "mil/darpa/immortals/core/synthesis/AbstractMultisuccessorConsumingPipe" ;
+        IMMoRTALS:hasJavaMethodName     "consume" ;
+        IMMoRTALS:hasJavaMethodPointer  "/VjdXmX9wvvpde4v3KvK1RpLEb7rh8qs2Br78Gf5cTg=/methods/consume(Ljava/lang/Object;)V" ;
+        IMMoRTALS:hasLineNumber         "157"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$PassMessageToByteBuffer" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-6f380dc1-a76b-4a21-ab8b-b62b93b73b95
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_types:CotMessage .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ReceiveMessage
+        a                               IMMoRTALS_analysis:InterMethodDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/io/InputStream" ;
+        IMMoRTALS:hasJavaMethodName     "read" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "154"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ReceiveMessage" ;
+        IMMoRTALS:hasResourceTemplate   IMMoRTALS_cp2:Analysis.Marti.MartiServer .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.FirstRegister
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasJavaMethodName     "register" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "97"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$FirstRegister" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.WriteToClientToReceiveFromServer
+        a                            IMMoRTALS_analysis:InterMethodDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ReceiveFromServer ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-cbb1f792-002d-49d8-b928-3e221f0bab92 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$WriteToClientToReceiveFromServer" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.WriteData .
+
+IMMoRTALS_property_impact:AbstractDataflowBindingSite-c680b1e0-e901-41ec-8aae-9af16822c111
+        a                  IMMoRTALS_property_impact:AbstractDataflowBindingSite ;
+        IMMoRTALS:hasDest  IMMoRTALS_cp2:Analysis.Atak.AtakPhone ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Any data between an android mobile device and server" ;
+        IMMoRTALS:hasSrc   IMMoRTALS_cp2:Analysis.Marti.MartiServer .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleDataToWriteToClient
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.WriteData ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-21fb6296-071b-482c-bdb1-afeed800f3ef ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$HandleDataToWriteToClient" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ProcessByteBuffer
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com/bbn/marti/immortals/pipes/CotByteBufferPipe" ;
+        IMMoRTALS:hasJavaMethodName     "process" ;
+        IMMoRTALS:hasJavaMethodPointer  "2yBtUZohoZzDg50IdKkexAjiumwzbIyrdhKk+G+hg1c=/methods/process(Ljava/lang/Object;)Ljava/lang/Object;" ;
+        IMMoRTALS:hasLineNumber         "57"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ProcessByteBuffer" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.GetOutputStream
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/net/Socket" ;
+        IMMoRTALS:hasJavaMethodName     "getOutputStream" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "84"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$GetOutputStream" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ProcessToDispatch
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DispatchMessage ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-e5470825-d696-4a58-9d99-d3f7c9714b08 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ProcessToDispatch" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ProcessByCotByter .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.FirstRegisterToSecondRegister
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.SecondRegister ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:OutputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-bc709bea-589b-4eae-8742-49e206dfc66f ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$FirstRegisterToSecondRegister" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.FirstRegister .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-d401b383-6ae7-4598-b74d-d7dd4d67d874
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:OutputStream .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-14191719-7714-45b6-b6b3-16f529f8118f
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:OutputStream .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-59b1ccd6-6bbb-48c9-9ea9-97b170e9bb73
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ProcessByCotByter
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com/bbn/ataklite/pipes/CotByter" ;
+        IMMoRTALS:hasJavaMethodName     "process" ;
+        IMMoRTALS:hasJavaMethodPointer  "jFRqNEnAgyPfFq6cwBUtVywcZcSAlJ+4pZ7JcRClXoQ=/methods/process(Lcom/bbn/ataklite/CoTMessage;)[B" ;
+        IMMoRTALS:hasLineNumber         "38"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ProcessByCotByter" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateSelectionEvent
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com/bbn/ataklite/net/SelectionEvent" ;
+        IMMoRTALS:hasJavaMethodName     "<init>" ;
+        IMMoRTALS:hasJavaMethodPointer  "DAboW+5MJBY4dZp3Fx0Qx7qZXK09C4xuDzoSmg3hrX4=/methods/<init>(Ljava/nio/channels/SelectionKey;Ljava/nio/channels/SocketChannel;Ljava/lang/Object;)V" ;
+        IMMoRTALS:hasLineNumber         "116"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateSelectionEvent" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.SendToNetworkPipeToHandleData
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleData ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-5e0bc38d-6735-402c-ba2c-ffa50db1769f ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$SendToNetworkPipeToHandleData" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.SendToNetworkPipe .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-ea8cc805-be85-4508-acde-1e2f3f6f9aaa
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:OutputStream .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-14559590-0207-4d2d-8f86-67e2451705c5
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:InputStream .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-d996b0f4-bed3-4cec-a8e3-53ac7e36c524
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_types:CotMessage .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateSocket
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/net/Socket" ;
+        IMMoRTALS:hasJavaMethodName     "<init>" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "60"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateSocket" .
+
+IMMoRTALS_cp2:Analysis.Atak.AtakPhone
+        a                            IMMoRTALS_resources:AndroidPhone ;
+        IMMoRTALS:hasHumanReadableDescription
+                "A phone with a file system connected to a network and running ATAK." ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Atak$AtakPhone" ;
+        IMMoRTALS:hasResources       IMMoRTALS_cp2:Analysis.Atak.AtakPhoneFileSystem , IMMoRTALS_cp2:Analysis.Shared.SaNetwork , IMMoRTALS_cp2:Analysis.Atak.AtakSoftware .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.GetInputStream
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/net/Socket" ;
+        IMMoRTALS:hasJavaMethodName     "getInputStream" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "151"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$GetInputStream" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-21fb6296-071b-482c-bdb1-afeed800f3ef
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_cp2:Analysis.Atak.AtakPhoneFileSystem
+        a                            IMMoRTALS_resources:FileSystemResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a file system" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Atak$AtakPhoneFileSystem" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-5e0bc38d-6735-402c-ba2c-ffa50db1769f
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ByteBufferToProcess
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ProcessByteBuffer ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-485180d8-4949-433a-9ffb-96370a45356f ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ByteBufferToProcess" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.PassMessageToByteBuffer .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateSocketToGetOutputStream
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.GetOutputStream ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:OutputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-e9baaab9-ff4b-462d-95ea-0d2ffb6fd668 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateSocketToGetOutputStream" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateSocket .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleData
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com/bbn/marti/immortals/net/tcp/TcpTransport" ;
+        IMMoRTALS:hasJavaMethodName     "handleData" ;
+        IMMoRTALS:hasJavaMethodPointer  "TrSeCkTeGU2+hdurzhBrlKOaSG6MdTZOU8RWpYUrbqo=/methods/handleData([B)V" ;
+        IMMoRTALS:hasLineNumber         "118"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$HandleData" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.OfferDataToDequeue
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DequeueData ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-e8351656-a0bf-48cd-98bc-7bf26090c7d3 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$OfferDataToDequeue" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.OfferData .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-5fa858eb-8674-44db-99c3-ae2d5774228f
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_types:CotMessage .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleReadToReceiveFromServer
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ReceiveFromServer ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:InputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-ba1bc962-01b4-45a2-a740-920abc15cd67 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$HandleReadToReceiveFromServer" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleRead .
+
+IMMoRTALS_property_impact:PropertyImpact-b274ed19-c967-4120-bc0b-1f1ce8cdcfff
+        a                              IMMoRTALS_property_impact:PropertyImpact ;
+        IMMoRTALS:hasImpactOnProperty  "ADDS" ;
+        IMMoRTALS:hasImpactedProperty  IMMoRTALS_functionality:ConfidentialProperty .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-c8759c8c-4cd6-4cfe-a12c-23b6ff7f9be3
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:OutputStream .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ConfidentialDataImplementationStrategy
+        a                            IMMoRTALS_property_impact:PrescriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:ConstraintViolationCriterion-d0ab25a1-8fb0-4958-b204-1c72544a7f44 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "When the DataSafetyConstraint is \"hard\" violated, this strategy can mitigate the violation, while at the same time introducing ImpactOfEncryptingData." ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:RemediationImpact-229058f3-2864-486e-b3a6-c9c0d4c1176a ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ConfidentialDataImplementationStrategy" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.GetInputToReadMessage
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ReceiveMessage ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:InputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-6ce91777-b757-48cb-a227-a05e343738de ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$GetInputToReadMessage" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.GetInputStream .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateInputStreamToHandleRead
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleRead ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:InputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-36ea8ed0-7c68-44c4-b874-7b661fe4da53 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateInputStreamToHandleRead" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateAtakStreams .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.OfferData
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/util/concurrent/LinkedBlockingQueue" ;
+        IMMoRTALS:hasJavaMethodName     "offer" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "33"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$OfferData" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-36ea8ed0-7c68-44c4-b874-7b661fe4da53
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:InputStream .
+
+IMMoRTALS_property_impact:AbstractPropertyCriterion-a5358d21-a3ed-4976-b9cf-71dcf0934021
+        a                       IMMoRTALS_property_impact:AbstractPropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_ABSENT" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "This criterion specifies a situation where a confidential property is absent." ;
+        IMMoRTALS:hasProperty   IMMoRTALS_functionality:ConfidentialProperty .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleWriteEvent
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com/bbn/ataklite/net/WriteHandler" ;
+        IMMoRTALS:hasJavaMethodName     "handleEvent" ;
+        IMMoRTALS:hasJavaMethodPointer  "cuceBFnuDgKTTxGg17SNpUdiwwVKynyKc/lrZM1Dy5E=/methods/handleEvent(Lcom/bbn/ataklite/net/SelectionEvent;)V" ;
+        IMMoRTALS:hasLineNumber         "116"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$HandleWriteEvent" .
+
+IMMoRTALS_property_impact:ConstraintViolationCriterion-d0ab25a1-8fb0-4958-b204-1c72544a7f44
+        a                        IMMoRTALS_property_impact:ConstraintViolationCriterion ;
+        IMMoRTALS:hasConstraint  IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DataSafetyConstraint ;
+        IMMoRTALS:hasTriggeringConstraintCriterion
+                "WHEN_HARD_VIOLATED" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.SecondRegisterToCreateSelectionEvent
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateSelectionEvent ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:OutputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-c8759c8c-4cd6-4cfe-a12c-23b6ff7f9be3 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$SecondRegisterToCreateSelectionEvent" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.SecondRegister .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-bbf33481-00c4-403a-a750-b743057be4f1
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_types:CotMessage .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-e8351656-a0bf-48cd-98bc-7bf26090c7d3
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_property_impact:AbstractPropertyCriterion-d463686c-4e79-4b3f-931b-83386efb1d26
+        a                       IMMoRTALS_property_impact:AbstractPropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_ADDED" ;
+        IMMoRTALS:hasProperty   IMMoRTALS_functionality_dataproperties:Encrypted .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ConfigureBlocking
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasJavaMethodName     "configureBlocking" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "86"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ConfigureBlocking" .
+
+IMMoRTALS_cp2:Analysis.Marti.MartiSoftware
+        a                               IMMoRTALS_resources:CompiledSoftware ;
+        IMMoRTALS:hasApplicationName    "MARTI" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "An instance of the MARTI project" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.Analysis$Marti$MartiSoftware" ;
+        IMMoRTALS:hasSoftwareCoordinate
+                "mil.darpa.immortals:Marti-immortals:2.0-LOCAL" ;
+        IMMoRTALS:hasVersionControlUrl  "https://dsl-external.bbn.com/svn/immortals/trunk/applications/server/Marti" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-cde02469-1800-4e75-8bb9-04bd2ea5de3d
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-97033003-16bf-4f14-b1ef-9997c659d5a2 ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-6ce91777-b757-48cb-a227-a05e343738de
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:InputStream .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-b4818331-5793-4182-b533-680fec37f135
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:OutputStream .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateDataOutputStream
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/io/DataOutputStream" ;
+        IMMoRTALS:hasJavaMethodName     "<init>" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "84"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateDataOutputStream" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.RetrieveCoTEvent
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com/bbn/marti/immortals/pipes/CotEventContainerBytesExtractionPipe" ;
+        IMMoRTALS:hasJavaMethodName     "consume" ;
+        IMMoRTALS:hasJavaMethodPointer  "/VjdXmX9wvvpde4v3KvK1RpLEb7rh8qs2Br78Gf5cTg=/methods/consume(Ljava/lang/Object;)V" ;
+        IMMoRTALS:hasLineNumber         "71"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$RetrieveCoTEvent" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ConfigureBlockingToFirstRegister
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.FirstRegister ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:OutputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-d401b383-6ae7-4598-b74d-d7dd4d67d874 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ConfigureBlockingToFirstRegister" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ConfigureBlocking .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-f287c501-39dd-44e7-962f-6753da3db610
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-e7d8b5aa-d576-4c86-be64-9e928e99cb36 ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ReceiveFromServer
+        a                               IMMoRTALS_analysis:InterMethodDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasJavaMethodName     "read" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "23"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ReceiveFromServer" ;
+        IMMoRTALS:hasResourceTemplate   IMMoRTALS_cp2:Analysis.Atak.AtakPhone .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DispatchToReceive
+        a                            IMMoRTALS_analysis:InterMethodDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ReceiveMessage ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-cde02469-1800-4e75-8bb9-04bd2ea5de3d ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$DispatchToReceive" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DispatchMessage .
+
+IMMoRTALS_cp2:Analysis.Shared.SaNetwork
+        a                            IMMoRTALS_resources:NetworkResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a network for communicating SA data" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Shared$SaNetwork" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.GetOutputToCreateDataOutputStream
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateDataOutputStream ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:OutputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-14191719-7714-45b6-b6b3-16f529f8118f ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$GetOutputToCreateDataOutputStream" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.GetOutputStream .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DispatchMessage
+        a                               IMMoRTALS_analysis:InterMethodDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasJavaMethodName     "write" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "30"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$DispatchMessage" ;
+        IMMoRTALS:hasResourceTemplate   IMMoRTALS_cp2:Analysis.Atak.AtakPhone .
+
+IMMoRTALS_property_impact:ConstraintViolationImpact-0fe31d35-3130-4a0b-aa83-f44ca7de0702
+        a       IMMoRTALS_property_impact:ConstraintViolationImpact ;
+        IMMoRTALS:hasConstraintViolationType
+                "HARD_CONSTRAINT_VIOLATION" ;
+        IMMoRTALS:hasDirectionOfViolation
+                "UNDERSHOOT" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ImpactOfEncryptingData
+        a                            IMMoRTALS_property_impact:PredictiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:AbstractPropertyCriterion-d463686c-4e79-4b3f-931b-83386efb1d26 ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:PropertyImpact-b274ed19-c967-4120-bc0b-1f1ce8cdcfff ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ImpactOfEncryptingData" .
+
+IMMoRTALS_property_impact:RemediationImpact-229058f3-2864-486e-b3a6-c9c0d4c1176a
+        a       IMMoRTALS_property_impact:RemediationImpact ;
+        IMMoRTALS:hasRemediationStrategy
+                IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ImpactOfEncryptingData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateCotMessageToCotByter
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ProcessByCotByter ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_types:CotMessage ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-6f380dc1-a76b-4a21-ab8b-b62b93b73b95 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateCotMessageToCotByter" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateCotMessage .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.WriteData
+        a                               IMMoRTALS_analysis:InterMethodDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/io/DataOutputStream" ;
+        IMMoRTALS:hasJavaMethodName     "write" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "85"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$WriteData" ;
+        IMMoRTALS:hasResourceTemplate   IMMoRTALS_cp2:Analysis.Marti.MartiServer .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateStreamsToConfigureBlocking
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ConfigureBlocking ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:OutputStream ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-791de628-76da-48b9-bd87-b3d8a97e742e ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateStreamsToConfigureBlocking" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateAtakStreams .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.SecondRegister
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasJavaMethodName     "register" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "89"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$SecondRegister" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-74fc0e78-72b6-43a5-b8ea-4c6a98ac8663
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:OutputStream .
+
+IMMoRTALS_cp2:Analysis.Marti.MartiFileSystem
+        a                            IMMoRTALS_resources:FileSystemResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a file system" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Marti$MartiFileSystem" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.HandleRead
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com/bbn/ataklite/net/ReadHandler" ;
+        IMMoRTALS:hasJavaMethodName     "handleEvent" ;
+        IMMoRTALS:hasJavaMethodPointer  "saxtKqX/Tc28fV9qfluPVPD7e0glqYbFa/4xv6Z1ZO0=/methods/handleEvent(Lcom/bbn/ataklite/net/SelectionEvent;)V" ;
+        IMMoRTALS:hasLineNumber         "114"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$HandleRead" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DequeueData
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com/bbn/ataklite/net/Dispatcher" ;
+        IMMoRTALS:hasJavaMethodName     "produce" ;
+        IMMoRTALS:hasJavaMethodPointer  "2Qh/VHMYP3GTPNXpNLX4ZNG/YIAIsru1za5ZDhYdcNw=/methods/produce()Ljava/lang/Object;" ;
+        IMMoRTALS:hasLineNumber         "39"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$DequeueData" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-2a450083-1115-4457-943f-e32f6cf5fea0
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_types:CotMessage .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-eedc6fcb-6e98-4e3f-b3f4-1704d329afa6
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.CreateCoordinate
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "mil/darpa/immortals/datatypes/Coordinates" ;
+        IMMoRTALS:hasJavaMethodName     "<init>" ;
+        IMMoRTALS:hasJavaMethodPointer  "QH/F+KSG+4XdmBHRR0Q5xt+jvs3RBh8QUy84cv682nU=/methods/<init>(DDLjava/lang/Double;Ljava/lang/Float;JLjava/lang/String;)V" ;
+        IMMoRTALS:hasLineNumber         "212"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateCoordinate" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-cbb1f792-002d-49d8-b928-3e221f0bab92
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-d996b0f4-bed3-4cec-a8e3-53ac7e36c524 ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DataSafetyConstraint
+        a                            IMMoRTALS_property_impact:ProscriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasApplicableDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasAssertionBindingSites
+                IMMoRTALS_property_impact:AbstractDataflowBindingSite-7d15218a-329f-4062-b501-d6ad2371530f , IMMoRTALS_property_impact:AbstractDataflowBindingSite-c680b1e0-e901-41ec-8aae-9af16822c111 ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:AbstractPropertyCriterion-a5358d21-a3ed-4976-b9cf-71dcf0934021 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "All data being transmitted between MobileAndroidDevices and Servers must be confidential" ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:ConstraintViolationImpact-0fe31d35-3130-4a0b-aa83-f44ca7de0702 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$DataSafetyConstraint" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DecodeData
+        a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "java/lang/String" ;
+        IMMoRTALS:hasJavaMethodName     "<init>" ;
+        IMMoRTALS:hasJavaMethodPointer  "unableToGenerateMethodPointer" ;
+        IMMoRTALS:hasLineNumber         "40"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$DecodeData" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-485180d8-4949-433a-9ffb-96370a45356f
+        a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-05087910-cd51-4781-b43d-81c9780ed5fd ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DequeueToDecode
+        a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DecodeData ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-43ebc720-c1df-44df-b142-19982523f157 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$DequeueToDecode" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DequeueData .

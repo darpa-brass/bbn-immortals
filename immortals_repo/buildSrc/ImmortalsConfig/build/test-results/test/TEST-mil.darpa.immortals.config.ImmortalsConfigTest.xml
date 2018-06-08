@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="mil.darpa.immortals.config.ImmortalsConfigTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2018-06-01T18:06:38" hostname="dhcp89-77-152.bbn.com" time="0.076">
+  <properties/>
+  <testcase name="testImmortalsRootExists" classname="mil.darpa.immortals.config.ImmortalsConfigTest" time="0.053"/>
+  <testcase name="testImmortalsRepositoryExists" classname="mil.darpa.immortals.config.ImmortalsConfigTest" time="0.001"/>
+  <testcase name="testDirectoryAutoCreation" classname="mil.darpa.immortals.config.ImmortalsConfigTest" time="0.003"/>
+  <testcase name="writeImmortalsConfigToDisk" classname="mil.darpa.immortals.config.ImmortalsConfigTest" time="0.018"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -121,4 +121,19 @@ public class MockServices {
         }
     }
 
+
+    public static class MockTestHarnessErrorSubmitter implements ImmortalsErrorHandler.TestHarnessErrorSubmissionInterface {
+
+        private ImmortalsUtils.NetworkLogger logger = new ImmortalsUtils.NetworkLogger("MOCKTH", null);
+
+        public MockTestHarnessErrorSubmitter() {
+        }
+
+        @Override
+        public Call<Void> error(String value) {
+            logger.logPostReceived("/error", null);
+            return new mil.darpa.immortals.das.context.MockServices.MockRetrofitAction<>("/error", logger, value, null);
+        }
+
+    }
 }

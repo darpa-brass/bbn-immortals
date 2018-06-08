@@ -1,5 +1,3 @@
-import mil.darpa.immortals.config.ImmortalsConfig
-
 buildscript {
     repositories {
         mavenCentral()
@@ -28,21 +26,19 @@ repositories {
 apply plugin: 'com.android.application'
 apply plugin: 'mil.darpa.immortals'
 
-def bc = ImmortalsConfig.instance.build
-
 group = 'mil.darpa.immortals'
-version = bc.augmentations.publishVersion
+version = '2.0-LOCAL'
 
 android {
-    compileSdkVersion bc.augmentations.androidCompileSdkVersion
-    buildToolsVersion bc.augmentations.androidBuildToolsVersion
+    compileSdkVersion 21
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.bbn.ataklite"
-        minSdkVersion bc.augmentations.androidMinSdkVersion
-        targetSdkVersion bc.augmentations.androidTargetSdkVersion
+        minSdkVersion 21
+        targetSdkVersion 21
         versionCode 1
-        versionName bc.das.publishVersion
+        versionName version
     }
 
     sourceSets {

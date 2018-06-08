@@ -1,0 +1,1054 @@
+[2018-05-15 10:02:11,963] TA sending POST /bbin/das/submitValidationRequest to DAS with BODY:
+""
+[2018-05-15 10:02:12,997] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 2,
+  "values": [
+    {
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392931964,
+      "currentState": "COMPLETE_PASS",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:02:12,998] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 1,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392931965,
+      "currentState": "RUNNING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:02:12,999] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 0,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392931965,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:02:12,999] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:02:12,999] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:02:40,378] TA sending POST /bbin/das/submitValidationRequest to DAS with BODY:
+""
+[2018-05-15 10:02:41,405] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 1,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "failureMessage": "FAILED",
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392960379,
+      "currentState": "RUNNING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:02:41,406] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 0,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "failureMessage": "FAILED",
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392960379,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:02:41,407] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 2,
+  "values": [
+    {
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "failureMessage": "FAILED",
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392960379,
+      "currentState": "COMPLETE_FAIL",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:02:41,407] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:02:41,431] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:03:08,742] TA sending POST bbn/das/submitAdaptationRequest to DAS with BODY:
+""
+[2018-05-15 10:03:09,772] TA received POST /dasListener/updateAdaptationStatus with BODY:
+{
+  "sequence": 2,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "RUNNING",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  ]
+}
+[2018-05-15 10:03:09,773] TA sending ACK to received POST /dasListener/updateAdaptationStatus with no BODY
+[2018-05-15 10:03:09,774] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 5,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392988743,
+      "currentState": "RUNNING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:03:09,774] TA received POST /dasListener/updateAdaptationStatus with BODY:
+{
+  "sequence": 3,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "SUCCESS",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  ]
+}
+[2018-05-15 10:03:09,775] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:03:09,775] TA sending ACK to received POST /dasListener/updateAdaptationStatus with no BODY
+[2018-05-15 10:03:09,779] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 4,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392988743,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:03:09,780] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:03:09,780] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 1,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392988743,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:03:09,781] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:03:09,782] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 6,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392988743,
+      "currentState": "COMPLETE_PASS",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:03:09,783] TA received POST /dasListener/updateAdaptationStatus with BODY:
+{
+  "sequence": 0,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "PENDING",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  ]
+}
+[2018-05-15 10:03:09,783] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 6,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526392988743,
+      "currentState": "COMPLETE_PASS",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:03:09,783] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:03:37,247] TA sending POST /bbin/das/submitValidationRequest to DAS with BODY:
+""
+[2018-05-15 10:03:38,281] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 0,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393017248,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:03:38,283] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 1,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393017249,
+      "currentState": "RUNNING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:03:38,285] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 2,
+  "values": [
+    {
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393017248,
+      "currentState": "COMPLETE_PASS",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:03:38,301] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:03:38,301] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:04:05,735] TA sending POST /bbin/das/submitValidationRequest to DAS with BODY:
+""
+[2018-05-15 10:04:06,760] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 0,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "failureMessage": "FAILED",
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393045737,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:04:06,761] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 1,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "failureMessage": "FAILED",
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393045737,
+      "currentState": "RUNNING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:04:06,761] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 2,
+  "values": [
+    {
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "failureMessage": "FAILED",
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393045736,
+      "currentState": "COMPLETE_FAIL",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:04:06,776] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:04:06,776] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:04:34,088] TA sending POST bbn/das/submitAdaptationRequest to DAS with BODY:
+""
+[2018-05-15 10:04:35,117] TA received POST /dasListener/updateAdaptationStatus with BODY:
+{
+  "sequence": 2,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "RUNNING",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  ]
+}
+[2018-05-15 10:04:35,118] TA received POST /dasListener/updateAdaptationStatus with BODY:
+{
+  "sequence": 3,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "SUCCESS",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  ]
+}
+[2018-05-15 10:04:35,119] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 5,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393074089,
+      "currentState": "RUNNING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:04:35,119] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:04:35,119] TA sending ACK to received POST /dasListener/updateAdaptationStatus with no BODY
+[2018-05-15 10:04:35,120] TA sending ACK to received POST /dasListener/updateAdaptationStatus with no BODY
+[2018-05-15 10:04:35,121] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 4,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393074089,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:04:35,121] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:04:35,125] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 1,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393074089,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:04:35,125] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:04:35,128] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 6,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393074089,
+      "currentState": "COMPLETE_PASS",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:04:35,128] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 6,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393074089,
+      "currentState": "COMPLETE_PASS",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:04:35,128] TA received POST /dasListener/updateAdaptationStatus with BODY:
+{
+  "sequence": 0,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "PENDING",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  ]
+}
+[2018-05-15 10:04:35,128] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:04:35,128] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:05:02,459] TA sending POST /bbin/das/submitValidationRequest to DAS with BODY:
+""
+[2018-05-15 10:05:03,487] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 0,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393102460,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:05:03,487] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 1,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393102460,
+      "currentState": "RUNNING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:05:03,488] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 2,
+  "values": [
+    {
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393102460,
+      "currentState": "COMPLETE_PASS",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:05:03,502] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:05:03,502] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:05:30,848] TA sending POST /bbin/das/submitValidationRequest to DAS with BODY:
+""
+[2018-05-15 10:05:31,875] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 0,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "failureMessage": "FAILED",
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393130849,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:05:31,876] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 1,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "failureMessage": "FAILED",
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393130849,
+      "currentState": "RUNNING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:05:31,876] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 2,
+  "values": [
+    {
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "failureMessage": "FAILED",
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393130849,
+      "currentState": "COMPLETE_FAIL",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:05:31,890] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:05:31,891] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:05:59,221] TA sending POST bbn/das/submitAdaptationRequest to DAS with BODY:
+""
+[2018-05-15 10:06:00,256] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 5,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393159222,
+      "currentState": "RUNNING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:06:00,258] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:06:00,258] TA received POST /dasListener/updateAdaptationStatus with BODY:
+{
+  "sequence": 3,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "SUCCESS",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  ]
+}
+[2018-05-15 10:06:00,259] TA received POST /dasListener/updateAdaptationStatus with BODY:
+{
+  "sequence": 2,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "RUNNING",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  ]
+}
+[2018-05-15 10:06:00,259] TA sending ACK to received POST /dasListener/updateAdaptationStatus with no BODY
+[2018-05-15 10:06:00,259] TA sending ACK to received POST /dasListener/updateAdaptationStatus with no BODY
+[2018-05-15 10:06:00,263] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 4,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393159222,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:06:00,263] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:06:00,264] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 1,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393159222,
+      "currentState": "PENDING",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:06:00,264] TA sending ACK to received POST /dasListener/updateValidationStatus with no BODY
+[2018-05-15 10:06:00,266] TA received POST /dasListener/updateAdaptationStatus with BODY:
+{
+  "sequence": 0,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "dasOutcome": "PENDING",
+      "adaptorIdentifier": "DummyAdapter",
+      "adaptationIdentifier": "DummyAdaptationIdentifier"
+    }
+  ]
+}
+[2018-05-15 10:06:00,266] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 6,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393159223,
+      "currentState": "COMPLETE_PASS",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:06:00,267] TA received POST /dasListener/updateValidationStatus with BODY:
+{
+  "sequence": 6,
+  "values": [
+    {
+      "errorMessages": [],
+      "detailMessages": [],
+      "testCaseReport": {
+        "testCaseTarget": "DummyTarget",
+        "testCaseIdentifier": "DummyTest",
+        "duration": 1.337,
+        "validatedFunctionality": [
+          "Functionality0",
+          "Functionality1"
+        ]
+      },
+      "timestamp": 1526393159223,
+      "currentState": "COMPLETE_PASS",
+      "testIdentifier": "DummyTest",
+      "adaptationIdentifier": "DummyAdaptationIdentifier",
+      "validatedFunctionality": [
+        "Functionality1",
+        "Functionality0"
+      ]
+    }
+  ]
+}
+[2018-05-15 10:06:00,320] TA sending ACK to received POST /dasListener/updateAdaptationStatus with no BODY

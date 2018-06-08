@@ -1,5 +1,7 @@
 package mil.darpa.immortals
 
+import mil.darpa.immortals.config.ImmortalsConfig
+import mil.darpa.immortals.internal.Helpers
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -24,6 +26,8 @@ class ImmortalizerPlugin implements Plugin<Project> {
 
         // Add the immortalizer configuration extension
         project.getExtensions().add(PLUGIN_EXTENSION_IDENTIFIER, new ImmortalizerPluginExtension())
+
+        Helpers.applyJacocoCoverage(project)
 
         ImmortalizerPluginExtension ipe = project.getExtensions().getByType(ImmortalizerPluginExtension.class)
 
@@ -52,6 +56,7 @@ class ImmortalizerPlugin implements Plugin<Project> {
             project.krgp.targetDir = ipe.ttlTargetDir
             project.krgp.includedLibs = []
             project.krgp.completeAnalysis = ipe.performCompleteGradleTaskAnalysis
+            project.krgp.vcsAnchor = ImmortalsConfig.instance.globals.immortalsRoot
         }
     }
 }

@@ -19,8 +19,6 @@ See details at the [CP1 Document](phase02/ChallengeProblems/Immortals-Phase2-cp1
 
 Current Status:
  * Baseline A, Baseline B, and Challenge fully implemented.
- * The failure of one of the CP1 tests is now passed through and results in a "DEGRADED" state. The intent is to 
-   improve what we are doing to resolve this issue prior to final evaluation.
 
 ### CP2
 See details at the [CP2 Document](phase02/ChallengeProblems/Immortals-Phase2-cp2-CrossAppDepend.md)
@@ -34,7 +32,9 @@ See details at the [CP3 Document](phase02/ChallengeProblems/Immortals-Phase2-cp3
 Current Status:
  * Baseline A, Baseline B, and Challenge have been fully implemented for library mutation with one server mutation 
    library (ElevationApi_2)
- * Implementation of additional libraries and partial library upgrades are in progress 
+ * Baseline A, Baseline B, and Challenge have been fully implemented for partial library upgrades with one client 
+   mutation library(Dropbox_3_0_6)
+ * One additional library upgrade adaptation is in progress
  
  
 ## Initial Online Setup
@@ -94,7 +94,7 @@ In the event of any test failures the _install.sh_ script returns a non-zero exi
 
 #### Vagrant Installation
 
-The Vagrant installation wraps the **Manual Installation**. Simply execute `vagrant up` within the immortals_repo 
+The Vagrant installation wraps the **Assisted Installation**. Simply execute `vagrant up` within the immortals_repo 
 folder containing the `Vagrantfile`. This will execute an installation within a vagrant container.
 
 

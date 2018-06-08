@@ -29,17 +29,20 @@ public class DetermineLibraryUpgrades extends SparqlQuery {
     }
 
     public static List<LibraryUpgrade> select(DasAdaptationContext dac) {
-
+        
         String query =
                 "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> " +
                         "prefix IMMoRTALS_mil_darpa_immortals_ontology: <http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#> " +
                         "prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#>  " +
                         "prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> " +
-                        "SELECT ?targetResource ?originalDependencyCoordinates ?upgradedDependencyCoordinates " +
+                        "SELECT ?artifactIdentifier ?originalDependencyCoordinates ?upgradedDependencyCoordinates " +
                         "WHERE { " +
-                        "    GRAPH <" + dac.getKnowldgeUri() + "> { " +
+                        "      GRAPH <" + dac.getKnowldgeUri() + "> { " +
                         "    ?aDeploymentModel a IMMoRTALS_gmei:DeploymentModel .  " +
                         "    ?aDeploymentModel IMMoRTALS:hasSessionIdentifier \"" + dac.getAdaptationIdentifer() + "\" .  " +
+                        "    ?aResourceContainmentModel IMMoRTALS:hasResourceModel ?aConcreteResourceNode . " +
+                        "    ?aConcreteResourceNode IMMoRTALS:hasResource ?targetApplication . " +
+                        "    ?targetApplication IMMoRTALS_mil_darpa_immortals_ontology:hasArtifactIdentifier ?artifactIdentifier . " +
                         "    ?aDeploymentModel IMMoRTALS:hasResourceMigrationTargets ?resourceMigrationTargets . " +
                         "    ?resourceMigrationTargets IMMoRTALS:hasTargetResource ?libraryTarget . " +
                         "    ?libraryTarget a IMMoRTALS_resources:SoftwareLibrary . " +
@@ -49,15 +52,13 @@ public class DetermineLibraryUpgrades extends SparqlQuery {
                         "    ?originalResource IMMoRTALS_mil_darpa_immortals_ontology:hasDependencyCoordinates ?originalDependencyCoordinates . " +
                         "    ?aDeploymentModel IMMoRTALS:hasAvailableResources ?availableResources . " +
                         "    ?aDeploymentModel IMMoRTALS:hasResourceContainmentModel ?aResourceContainmentModel . " +
-                        "    ?aResourceContainmentModel IMMoRTALS:hasResourceModel ?aConcreteResourceNode . " +
                         "    ?aConcreteResourceNode IMMoRTALS:hasContainedNode ?containedLibraryNode . " +
                         "    ?containedLibraryNode IMMoRTALS:hasResource ?containedLibraryResource . " +
-                        "    ?containedLibraryResource  IMMoRTALS_mil_darpa_immortals_ontology:hasDependencyCoordinates ?originalDependencyCoordinates . " +
-                        "    ?aConcreteResourceNode IMMoRTALS:hasResource ?targetResource . " +
                         "    ?containedLibraryResource a IMMoRTALS_resources:SoftwareLibrary . " +
+                        "    ?containedLibraryResource  IMMoRTALS_mil_darpa_immortals_ontology:hasDependencyCoordinates ?originalDependencyCoordinates . " +
+                        "    FILTER NOT EXISTS { ?containedLibraryResource IMMoRTALS_mil_darpa_immortals_ontology:hasKnownVulnerability ?knownVulnerability } . " +
                         "  }  " +
                         "} ";
-
 
         ResultSet resultSet = getResultSet(query);
 
@@ -67,7 +68,7 @@ public class DetermineLibraryUpgrades extends SparqlQuery {
             QuerySolution qs = resultSet.next();
 
             LibraryUpgrade res = new LibraryUpgrade(
-                    Hacks.deploymentModelIdentifierToAbsoluteIdentifier(qs.getResource("targetResource").toString()),
+                    qs.getLiteral("artifactIdentifier").toString(),
                     qs.getLiteral("originalDependencyCoordinates").getString(),
                     qs.getLiteral("upgradedDependencyCoordinates").getString()
             );

@@ -68,14 +68,43 @@
         "immortalizer": {
             "performBuildFileAnalysis": true,
             "performKrgpBytecodeAnalysis": true,
-            "performKrgpCompleteGradleTaskAnalysis": true,
-            "performTestCoverageAnalysis": true
+            "performKrgpCompleteGradleTaskAnalysis":true,
+            "performTestCoverageAnalysis": true,
+            "performSchemaAnalysis": true
         },
-        "voltdb" : {
+        "voltdb": {
             "userManaged": false
         },
-        "aqlbrass" : {
+        "aqlbrass": {
             "userManaged": false
         }
-    }
+    },
+    "deploymentEnvironment": {
+        "androidEnvironments": [
+            {
+                "adbIdentifier": "emulator-5554",
+                "adbPort": 5554,
+                "adbUrl": "127.0.0.1",
+                "environmentDetails": {
+                    "androidVersion": 21,
+                    "externallyAccessibleUrls": [
+                        "dropbox.com:443",
+                        "dropbox.com:80"
+                    ],
+                    "uploadBandwidthLimitKilobitsPerSecond": 800
+                }
+            }
+        ],
+        "martiAddress": "10.0.2.2"
+    },
+    "targetApplicationUris": [
+        "shared/modules/core",
+        "shared/modules/dfus/ElevationApi-1",
+        "shared/modules/dfus/ElevationApi-2",
+        "shared/modules/dfus/TakServerDataManager",
+        "applications/server/Marti",
+        "applications/client/ATAKLite",
+        "applications/examples/ThirdPartyLibAnalysisAndroidApp",
+        "applications/examples/ThirdPartyLibAnalysisJavaApp"
+    ]
 }

@@ -9,6 +9,7 @@ from pymmortals.generated.mil.darpa.immortals.config.globalsconfig import Global
 from pymmortals.generated.mil.darpa.immortals.config.knowledgerepoconfiguration import KnowledgeRepoConfiguration
 from pymmortals.generated.mil.darpa.immortals.config.testadapterconfiguration import TestAdapterConfiguration
 from pymmortals.generated.mil.darpa.immortals.config.testharnessconfiguration import TestHarnessConfiguration
+from typing import List
 
 
 # noinspection PyPep8Naming
@@ -26,6 +27,7 @@ class ImmortalsConfig(Serializable):
                  fuseki: FusekiConfiguration = None,
                  globals: GlobalsConfig = None,
                  knowledgeRepoService: KnowledgeRepoConfiguration = None,
+                 targetApplicationUris: List[str] = None,
                  testAdapter: TestAdapterConfiguration = None,
                  testHarness: TestHarnessConfiguration = None):
         super().__init__()
@@ -37,5 +39,6 @@ class ImmortalsConfig(Serializable):
         self.fuseki = fuseki
         self.globals = globals
         self.knowledgeRepoService = knowledgeRepoService
+        self.targetApplicationUris = targetApplicationUris
         self.testAdapter = testAdapter
         self.testHarness = testHarness

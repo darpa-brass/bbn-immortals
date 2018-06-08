@@ -5,9 +5,7 @@ import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.config.RestfulAppConfigInterface;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -20,20 +18,18 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
     private boolean userManaged = false;
     private long startupTimeMS = 20000;
     private String identifier = "aqlbrass";
-    
-    private final String mavenRepositoryUrl = "https://nexus.isis.vanderbilt.edu/repository/maven-snapshots/";
+
     private final String mavenGroupId = "aql-brass-server";
     private final String mavenArtifactId = "aql-brass-server";
-    private final String mavenVersion = "2018.04.25-SNAPSHOT";
-    private final String mavenClassifier = "standalone";
+    private final String mavenArtifactExtension = "jar";
 
     private int port = 9090;
     private String protocol = "http";
     private String url = "127.0.0.1";
     private String workingDirectory = GlobalsConfig.mkworkingdir("_" + identifier);
     private String workingDirectoryTemplateFolder = null;
-    private String exePath = GlobalsConfig.getExtensionsDownloadDir().resolve(mavenArtifactId + ".jar").toString();
-    private String[] interpreterParameters  = new String[0];
+    private String exePath = GlobalsConfig.mkextensiondir("vanderbilt").resolve(mavenGroupId + "-" + mavenArtifactId + "." + mavenArtifactExtension).toString();
+    private String[] interpreterParameters = new String[0];
     private String[] parameters = {
             "--hostname",
             url,
@@ -93,11 +89,6 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
     }
 
     @Override
-    public String getMavenRepositoryUrl() {
-        return mavenRepositoryUrl;
-    }
-
-    @Override
     public String getMavenGroupId() {
         return mavenGroupId;
     }
@@ -108,8 +99,8 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
     }
 
     @Override
-    public String getMavenVersion() {
-        return mavenVersion;
+    public String getMavenArtifactExtension() {
+        return mavenArtifactExtension;
     }
 
     @Override
@@ -135,17 +126,6 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
     @Override
     public String getReadyStdoutLineRegexPattern() {
         return readyStdoutLineRegexPattern;
-    }
-    
-    @Override
-    public String getMavenFullDependencyCoordinate() {
-        return MavenArtifactInterface.toDependencyCoordinate(this);
-    }
-
-    @Nullable
-    @Override
-    public String getMavenOptionalClassifier() {
-        return mavenClassifier;
     }
 
     @Override

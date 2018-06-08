@@ -29,33 +29,19 @@ if (DO_CLEAN) {
     exec {
         workingDir = IMMORTALS_ROOT.resolve('knowledge-repo').toString()
         executable = 'mvn'
-        args = ['-pl', 'vocabulary/dsl-generate', 'clean']
+        args = ['clean']
     }
 
-    exec {
-        workingDir = IMMORTALS_ROOT.resolve('knowledge-repo').toString()
-        executable = 'mvn'
-        args = ['-pl', 'toolchain/project-to-triples', 'clean']
-    }
 } else {
-    // Publish the ADSL if it has not been published
-    if (!file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-adsl-generate/r2.0.0/immortals-adsl-generate-r2.0.0.jar').exists()) {
+    // Publish knowledge-repo artifacts if they have not been published
+    if (!file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-adsl-generate/r2.0.0/immortals-adsl-generate-r2.0.0.jar').exists() ||
+            !file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-project-to-triples/r2.0.0/immortals-project-to-triples-r2.0.0.jar').exists()) {
         exec {
             workingDir = IMMORTALS_ROOT.resolve('knowledge-repo').toString()
             executable = 'mvn'
-            args = ['-pl', 'vocabulary/dsl-generate', '-DskipTests', '-am', 'install']
+            args = ['-DskipTests', '-am', 'install']
         }
     }
-
-    // Publish the gradle plugin if it has not been published
-    if (!file(IMMORTALS_REPO.toString() + '/com/securboration/immortals-project-to-triples/r2.0.0/immortals-project-to-triples-r2.0.0.jar').exists()) {
-        exec {
-            workingDir = IMMORTALS_ROOT.resolve('knowledge-repo').toString()
-            executable = 'mvn'
-            args = ['-pl', 'toolchain/project-to-triples', '-DskipTests', '-am', 'install']
-        }
-    }
-
 }
 
 include 'ImmortalsConfig'

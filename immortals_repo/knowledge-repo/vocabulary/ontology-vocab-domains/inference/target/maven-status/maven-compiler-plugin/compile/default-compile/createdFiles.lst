@@ -1,0 +1,15 @@
+com/securboration/immortals/ontology/inference/AskQueryResult.class
+com/securboration/immortals/ontology/inference/HaltingCriterion.class
+com/securboration/immortals/ontology/inference/HaltingCriterionSimple.class
+com/securboration/immortals/ontology/inference/instances/UcrLinkage.class
+com/securboration/immortals/ontology/inference/HaltingCriterionAsk.class
+com/securboration/immortals/ontology/inference/SparqlQuery.class
+com/securboration/immortals/ontology/inference/ConstructQuery.class
+com/securboration/immortals/ontology/inference/InferenceRule.class
+com/securboration/immortals/ontology/inference/SimpleHaltingCondition.class
+com/securboration/immortals/ontology/inference/ConstructQueryResult.class
+com/securboration/immortals/ontology/inference/InferenceRules.class
+com/securboration/immortals/ontology/inference/QueryResult.class
+com/securboration/immortals/ontology/inference/AskQuery.class
+com/securboration/immortals/ontology/inference/HaltingCriterionComplex.class
+com/securboration/immortals/ontology/inference/InferenceRuleExecution.class

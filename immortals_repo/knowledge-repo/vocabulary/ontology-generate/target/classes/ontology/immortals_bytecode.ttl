@@ -1,0 +1,1540 @@
+@prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_lang: <http://darpa.mil/immortals/ontology/r2.0.0/lang#> .
+@prefix IMMoRTALS_java_source: <http://darpa.mil/immortals/ontology/r2.0.0/java/source#> .
+@prefix IMMoRTALS_java_util: <http://darpa.mil/immortals/ontology/r2.0.0/java/util#> .
+@prefix IMMoRTALS_bytecode_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode/analysis#> .
+@prefix IMMoRTALS_core: <http://darpa.mil/immortals/ontology/r2.0.0/core#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_bytecode_application: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode/application#> .
+@prefix IMMoRTALS_bytecode_dependency: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode/dependency#> .
+
+IMMoRTALS_java_source:BuildMechanism
+        a                            owl:Class ;
+        rdfs:label                   "BuildMechanism" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBuildMechanism
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBuildMechanism
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasBuildMechanism
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.java.source.BuildMechanism" .
+
+IMMoRTALS:hasAnnotations
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:MethodStructure , IMMoRTALS_bytecode:ClassStructure ;
+        rdfs:range   IMMoRTALS_bytecode:AnAnnotation .
+
+IMMoRTALS:hasCoordinate
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:JarArtifact , IMMoRTALS_bytecode:Dependency ;
+        rdfs:range   IMMoRTALS_bytecode:BytecodeArtifactCoordinate .
+
+IMMoRTALS_bytecode:ClasspathResource
+        a                            owl:Class ;
+        rdfs:label                   "ClasspathResource" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:ClasspathElement ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.ClasspathResource" .
+
+IMMoRTALS:hasSourceFiles
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_java_source:JavaProject ;
+        rdfs:range   IMMoRTALS_java_source:JavaSourceFile .
+
+IMMoRTALS_bytecode_analysis:BasicBlockDecomposition
+        a                            owl:Class ;
+        rdfs:label                   "BasicBlockDecomposition" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNodes
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_util:List ;
+                                       owl:onProperty     IMMoRTALS:hasNodes
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode_analysis:BasicBlock ;
+                                       owl:onProperty     IMMoRTALS:hasRoot
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNodes
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRoot
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRoot
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.analysis.BasicBlockDecomposition" .
+
+IMMoRTALS:hasHumanReadableDesc
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:BasicBlock ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasLineNumber
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:MethodCall ;
+        rdfs:range   xsd:int .
+
+IMMoRTALS:hasFieldOwnerHash
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:FieldAccess ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_bytecode:AnnotationKeyValuePair
+        a                            owl:Class ;
+        rdfs:label                   "AnnotationKeyValuePair" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:ClassStructure ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasValue
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasValue
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasKey
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasKey
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasKey
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasValue
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.AnnotationKeyValuePair" .
+
+IMMoRTALS_java_util:List
+        a       owl:Class .
+
+IMMoRTALS:hasAnnotationClassName
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AnAnnotation ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_bytecode:BytecodeArtifact
+        a                            owl:Class ;
+        rdfs:label                   "BytecodeArtifact" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:ClasspathElement ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.BytecodeArtifact" .
+
+IMMoRTALS_bytecode:DependencyExclusion
+        a                            owl:Class ;
+        rdfs:label                   "DependencyExclusion" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasGroupId
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifactId
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasArtifactId
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasGroupId
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasGroupId
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifactId
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.DependencyExclusion" .
+
+IMMoRTALS:hasScopeBegin
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:LocalVariable ;
+        rdfs:range   xsd:unsignedByte .
+
+IMMoRTALS:hasSuccessors
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:BasicBlock ;
+        rdfs:range   IMMoRTALS_java_util:List .
+
+IMMoRTALS:hasKeyValuePairs
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AnAnnotation ;
+        rdfs:range   IMMoRTALS_bytecode:AnnotationKeyValuePair .
+
+IMMoRTALS:hasModifiers
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:ClassStructure ;
+        rdfs:range   _:b0 .
+
+IMMoRTALS:hasCalledMethodDesc
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:MethodCall ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_bytecode_application:Classpath
+        a                            owl:Class ;
+        rdfs:label                   "Classpath" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasElement
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:ClasspathElement ;
+                                       owl:onProperty     IMMoRTALS:hasElement
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.application.Classpath" .
+
+IMMoRTALS_bytecode:ClassArtifact
+        a                            owl:Class ;
+        rdfs:label                   "ClassArtifact" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:BytecodeArtifact ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClassModel
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClassModel
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:AClass ;
+                                       owl:onProperty     IMMoRTALS:hasClassModel
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.ClassArtifact" .
+
+IMMoRTALS:hasVersion  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasHash  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:ClasspathElement ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_bytecode_dependency:LibraryDependencyEdge
+        a                            owl:Class ;
+        rdfs:label                   "LibraryDependencyEdge" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDependency
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:Dependency ;
+                                       owl:onProperty     IMMoRTALS:hasDependency
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifact
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifact
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:JarArtifact ;
+                                       owl:onProperty     IMMoRTALS:hasArtifact
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.dependency.LibraryDependencyEdge" .
+
+IMMoRTALS:hasBinaryForm
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:ClasspathElement ;
+        rdfs:range   xsd:base64Binary .
+
+IMMoRTALS:hasInterestingInstructions
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AMethod ;
+        rdfs:range   IMMoRTALS_bytecode_analysis:Instruction .
+
+IMMoRTALS:hasSourceUrl
+        a            owl:FunctionalProperty , owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AClass ;
+        rdfs:range   xsd:string .
+
+_:b1    a                            owl:DataRange ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.InvocationType" ;
+        owl:oneOf                    ( "VIRTUAL" "STATIC" "SPECIAL" "INTERFACE" ) .
+
+IMMoRTALS_bytecode:AnAnnotation
+        a                            owl:Class ;
+        rdfs:label                   "AnAnnotation" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:ClassStructure ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasKeyValuePairs
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:AnnotationKeyValuePair ;
+                                       owl:onProperty     IMMoRTALS:hasKeyValuePairs
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAnnotationClassName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAnnotationClassName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasAnnotationClassName
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.AnAnnotation" .
+
+IMMoRTALS:hasType  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:Dependency ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasCoordinateTag
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+        rdfs:range   xsd:string .
+
+_:b0    a                            owl:DataRange ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.Modifier" ;
+        owl:oneOf                    ( "VARARGS" "SYNTHETIC" "SUPER" "MANDATED" "ENUM" "DEPRECATED" "BRIDGE" "ANNOTATION" "VOLATILE" "TRANSIENT" "SYNCHRONIZED" "STRICT" "STATIC" "PUBLIC" "PROTECTED" "PRIVATE" "NATIVE" "INTERFACE" "FINAL" "ABSTRACT" ) .
+
+IMMoRTALS_bytecode_analysis:MethodCall
+        a                            owl:Class ;
+        rdfs:label                   "MethodCall" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode_analysis:Instruction ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:boolean ;
+                                       owl:onProperty     IMMoRTALS:hasOwnerAssurance
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOrder
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasLineNumber
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:int ;
+                                       owl:onProperty     IMMoRTALS:hasOrder
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCalledMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasLineNumber
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasOwner
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOwnerAssurance
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:int ;
+                                       owl:onProperty     IMMoRTALS:hasLineNumber
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCalledMethodDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOwner
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCalledMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  _:b1 ;
+                                       owl:onProperty     IMMoRTALS:hasInvocationType
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOwner
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOwnerAssurance
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOrder
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasCalledMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCalledMethodDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasCalledMethodDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasInvocationType
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasInvocationType
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.analysis.MethodCall" .
+
+IMMoRTALS_bytecode:Dependency
+        a                            owl:Class ;
+        rdfs:label                   "Dependency" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOptional
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+                                       owl:onProperty     IMMoRTALS:hasCoordinate
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasExclusions
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasType
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSystemPath
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasClassifier
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasScope
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOptional
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasType
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCoordinate
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasScope
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClassifier
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasSystemPath
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:DependencyExclusion ;
+                                       owl:onProperty     IMMoRTALS:hasExclusions
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasOptional
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasType
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClassifier
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasScope
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCoordinate
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSystemPath
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.Dependency" .
+
+IMMoRTALS_bytecode_dependency:DependencyGraph
+        a                            owl:Class ;
+        rdfs:label                   "DependencyGraph" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDependencyEdge
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode_dependency:LibraryDependencyEdge ;
+                                       owl:onProperty     IMMoRTALS:hasDependencyEdge
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.dependency.DependencyGraph" .
+
+IMMoRTALS_bytecode_analysis:Instruction
+        a                            owl:Class ;
+        rdfs:label                   "Instruction" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.analysis.Instruction" .
+
+IMMoRTALS:hasDependencyEdge
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_dependency:DependencyGraph ;
+        rdfs:range   IMMoRTALS_bytecode_dependency:LibraryDependencyEdge .
+
+IMMoRTALS:hasPlatformVersionTag
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:BytecodeVersion ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasArtifact
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_dependency:LibraryDependencyEdge ;
+        rdfs:range   IMMoRTALS_bytecode:JarArtifact .
+
+IMMoRTALS:hasInstructions
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:BasicBlock ;
+        rdfs:range   IMMoRTALS_java_util:List .
+
+IMMoRTALS_bytecode:MethodArg
+        a                            owl:Class ;
+        rdfs:label                   "MethodArg" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:LocalVariable ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArgNumber
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArgNumber
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:int ;
+                                       owl:onProperty     IMMoRTALS:hasArgNumber
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.MethodArg" .
+
+IMMoRTALS:hasOwnerAssurance
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:MethodCall ;
+        rdfs:range   xsd:boolean .
+
+IMMoRTALS:hasClassUrl
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AClass ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_bytecode:AMethod
+        a                            owl:Class ;
+        rdfs:label                   "AMethod" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:ClassStructure ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasBytecode
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasMethodDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode_analysis:BasicBlockDecomposition ;
+                                       owl:onProperty     IMMoRTALS:hasBasicBlockAnalysis
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:MethodArg ;
+                                       owl:onProperty     IMMoRTALS:hasMethodArgs
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBasicBlockAnalysis
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytecode
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasBytecodePointer
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBasicBlockAnalysis
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytecode
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodArgs
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytecodePointer
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytecodePointer
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode_analysis:Instruction ;
+                                       owl:onProperty     IMMoRTALS:hasInterestingInstructions
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasInterestingInstructions
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.AMethod" .
+
+IMMoRTALS:hasLibrary  a  owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:BytecodeLibrary ;
+        rdfs:range   IMMoRTALS_bytecode:BytecodeArtifactCoordinate .
+
+IMMoRTALS:hasJarContents
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:JarArtifact ;
+        rdfs:range   IMMoRTALS_bytecode:ClasspathElement .
+
+IMMoRTALS_bytecode:BytecodeVersion
+        a                            owl:Class ;
+        rdfs:label                   "BytecodeVersion" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMinorVersionTag
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMinorVersionTag
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPlatformVersionTag
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasPlatformVersionTag
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMajorVersionTag
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasMinorVersionTag
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMajorVersionTag
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasMajorVersionTag
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPlatformVersionTag
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.BytecodeVersion" .
+
+IMMoRTALS_bytecode:MethodStructure
+        a                            owl:Class ;
+        rdfs:label                   "MethodStructure" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAnnotations
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:AnAnnotation ;
+                                       owl:onProperty     IMMoRTALS:hasAnnotations
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOwner
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOwner
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:AMethod ;
+                                       owl:onProperty     IMMoRTALS:hasOwner
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.MethodStructure" .
+
+IMMoRTALS:hasGroupId  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:DependencyExclusion , IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasOwner  a  owl:DatatypeProperty , owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:MethodCall , IMMoRTALS_bytecode:MethodStructure , IMMoRTALS_bytecode:ClassStructure ;
+        rdfs:range   xsd:string , IMMoRTALS_bytecode:AMethod , IMMoRTALS_bytecode:AClass .
+
+IMMoRTALS:hasClassModel
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:ClassArtifact ;
+        rdfs:range   IMMoRTALS_bytecode:AClass .
+
+IMMoRTALS:hasSystemPath
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:Dependency ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasProducesArtifact
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_java_source:JavaProject ;
+        rdfs:range   IMMoRTALS_bytecode:BytecodeArtifactCoordinate .
+
+IMMoRTALS:hasBytecodeVersion
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AClass ;
+        rdfs:range   IMMoRTALS_bytecode:BytecodeVersion .
+
+IMMoRTALS:hasNodes  a  owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:BasicBlockDecomposition ;
+        rdfs:range   IMMoRTALS_java_util:List .
+
+IMMoRTALS:hasScopeEnd
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:LocalVariable ;
+        rdfs:range   xsd:unsignedByte .
+
+IMMoRTALS:hasFieldDesc
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:FieldAccess , IMMoRTALS_bytecode:AField ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasDependentFiles
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AClass ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasScope  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:Dependency ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasSource  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AClass ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasFileSystemPath
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:JarArtifact ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_bytecode:AField
+        a                            owl:Class ;
+        rdfs:label                   "AField" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:ClassStructure ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytecodePointer
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasFieldDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFieldDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytecodePointer
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFieldName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasBytecodePointer
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasFieldName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFieldName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFieldDesc
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.AField" .
+
+IMMoRTALS:hasName  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_java_source:JavaSourceFile , IMMoRTALS_bytecode:LocalVariable , IMMoRTALS_bytecode:ClasspathElement ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_bytecode:BytecodeArtifactCoordinate
+        a                            owl:Class ;
+        rdfs:label                   "BytecodeArtifactCoordinate" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCoordinateTag
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCoordinateTag
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifactId
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasArtifactId
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasGroupId
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasGroupId
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifactId
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasCoordinateTag
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasGroupId
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.BytecodeArtifactCoordinate" .
+
+IMMoRTALS_bytecode_analysis:FieldAccess
+        a                            owl:Class ;
+        rdfs:label                   "FieldAccess" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode_analysis:Instruction ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFieldName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFieldName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFieldDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasFieldDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasFieldOwnerHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFieldDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFieldOwnerHash
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasFieldName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFieldOwnerHash
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.analysis.FieldAccess" .
+
+IMMoRTALS:hasBytecode
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AMethod ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasBytes  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_java_source:JavaSourceFile ;
+        rdfs:range   xsd:base64Binary .
+
+IMMoRTALS:hasExclusions
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:Dependency ;
+        rdfs:range   IMMoRTALS_bytecode:DependencyExclusion .
+
+IMMoRTALS:hasArtifacts
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:Library ;
+        rdfs:range   IMMoRTALS_bytecode:BytecodeArtifact .
+
+IMMoRTALS_bytecode:JarArtifact
+        a                            owl:Class ;
+        rdfs:label                   "JarArtifact" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:BytecodeArtifact ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+                                       owl:onProperty     IMMoRTALS:hasCoordinate
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasJarContents
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:ClasspathElement ;
+                                       owl:onProperty     IMMoRTALS:hasJarContents
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFileSystemPath
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFileSystemPath
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasFileSystemPath
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCoordinate
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCoordinate
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.JarArtifact" .
+
+IMMoRTALS:hasElement  a  owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_application:Classpath ;
+        rdfs:range   IMMoRTALS_bytecode:ClasspathElement .
+
+IMMoRTALS:hasOrder  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:MethodCall ;
+        rdfs:range   xsd:int .
+
+IMMoRTALS:hasBasicBlockAnalysis
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AMethod ;
+        rdfs:range   IMMoRTALS_bytecode_analysis:BasicBlockDecomposition .
+
+IMMoRTALS_bytecode:BytecodeLibrary
+        a                            owl:Class ;
+        rdfs:label                   "BytecodeLibrary" ;
+        rdfs:subClassOf              IMMoRTALS_core:Resource ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasLibrary
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasLibrary
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+                                       owl:onProperty     IMMoRTALS:hasLibrary
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.BytecodeLibrary" .
+
+IMMoRTALS_bytecode:ClasspathElement
+        a                            owl:Class ;
+        rdfs:label                   "ClasspathElement" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:base64Binary ;
+                                       owl:onProperty     IMMoRTALS:hasBinaryForm
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBinaryForm
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHash
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.ClasspathElement" .
+
+IMMoRTALS_core:Resource
+        a             owl:Class ;
+        rdfs:comment  "A description of something upon which software might depend  E.g., a library (code dependency), a platform architecture (embedded linux, windows, ...), compute resources (CPU, GPU, ...), an external resource accessed via IO (network, disk, ...)  @author jstaples " .
+
+IMMoRTALS:hasDependency
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_dependency:LibraryDependencyEdge ;
+        rdfs:range   IMMoRTALS_bytecode:Dependency .
+
+IMMoRTALS_bytecode_analysis:BasicBlock
+        a                            owl:Class ;
+        rdfs:label                   "BasicBlock" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_util:List ;
+                                       owl:onProperty     IMMoRTALS:hasPredecessors
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSuccessors
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasId
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_util:List ;
+                                       owl:onProperty     IMMoRTALS:hasSuccessors
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasId
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPredecessors
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_util:List ;
+                                       owl:onProperty     IMMoRTALS:hasInstructions
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSuccessors
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPredecessors
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasInstructions
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasInstructions
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasId
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.analysis.BasicBlock" .
+
+IMMoRTALS:hasKey  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AnnotationKeyValuePair ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasCalledMethodName
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:MethodCall ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasMethodArgs
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AMethod ;
+        rdfs:range   IMMoRTALS_bytecode:MethodArg .
+
+IMMoRTALS_bytecode:LocalVariable
+        a                            owl:Class ;
+        rdfs:label                   "LocalVariable" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:MethodStructure ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:unsignedByte ;
+                                       owl:onProperty     IMMoRTALS:hasScopeBegin
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasScopeEnd
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasDeclaredTypeDescriptor
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:int ;
+                                       owl:onProperty     IMMoRTALS:hasLocalIndex
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasScopeBegin
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasLocalIndex
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:unsignedByte ;
+                                       owl:onProperty     IMMoRTALS:hasScopeEnd
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDeclaredTypeDescriptor
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasScopeEnd
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDeclaredTypeDescriptor
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasLocalIndex
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasScopeBegin
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasName
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.LocalVariable" .
+
+IMMoRTALS:hasArgNumber
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:MethodArg ;
+        rdfs:range   xsd:int .
+
+IMMoRTALS:hasMethodDesc
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AMethod ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasMinorVersionTag
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:BytecodeVersion ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_lang:CompiledCodeUnit
+        a             owl:Class ;
+        rdfs:comment  "The result of compiling an individual source code unit.  @author jstaples " .
+
+IMMoRTALS:hasOptional
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:Dependency ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:ImmortalsBaseClass
+        a       owl:Class .
+
+IMMoRTALS:hasFields  a  owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AClass ;
+        rdfs:range   IMMoRTALS_bytecode:AField .
+
+IMMoRTALS:hasPredecessors
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:BasicBlock ;
+        rdfs:range   IMMoRTALS_java_util:List .
+
+IMMoRTALS_bytecode:AClass
+        a                            owl:Class ;
+        rdfs:label                   "AClass" ;
+        rdfs:subClassOf              IMMoRTALS_bytecode:ClassStructure ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDependentFiles
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClassName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClassUrl
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethods
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasClassName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:BytecodeVersion ;
+                                       owl:onProperty     IMMoRTALS:hasBytecodeVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytecodePointer
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFields
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClassUrl
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSourceUrl
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:AClass ;
+                                       owl:onProperty     IMMoRTALS:hasInnerClasses
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:AMethod ;
+                                       owl:onProperty     IMMoRTALS:hasMethods
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSource
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasBytecodePointer
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSourceUrl
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasInnerClasses
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytecodeVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasSource
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytecodePointer
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:AField ;
+                                       owl:onProperty     IMMoRTALS:hasFields
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytecodeVersion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasSourceUrl
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSource
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasDependentFiles
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasClassUrl
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClassName
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.AClass" .
+
+IMMoRTALS:hasFieldName
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:FieldAccess , IMMoRTALS_bytecode:AField ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasMethods  a  owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AClass ;
+        rdfs:range   IMMoRTALS_bytecode:AMethod .
+
+IMMoRTALS:hasDeclaredTypeDescriptor
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:LocalVariable ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasValue  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AnnotationKeyValuePair ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasBytecodePointer
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AMethod , IMMoRTALS_bytecode:AField , IMMoRTALS_bytecode:AClass ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasArtifactId
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:DependencyExclusion , IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasClassifier
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:Dependency ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_java_source:JavaProject
+        a                            owl:Class ;
+        rdfs:label                   "JavaProject" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBuildMechanism
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasProducesArtifact
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_source:BuildMechanism ;
+                                       owl:onProperty     IMMoRTALS:hasBuildMechanism
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSourceFiles
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasProducesArtifact
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+                                       owl:onProperty     IMMoRTALS:hasProducesArtifact
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_source:JavaSourceFile ;
+                                       owl:onProperty     IMMoRTALS:hasSourceFiles
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBuildMechanism
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.java.source.JavaProject" .
+
+IMMoRTALS_bytecode:ClassStructure
+        a                            owl:Class ;
+        rdfs:label                   "ClassStructure" ;
+        rdfs:subClassOf              IMMoRTALS_lang:CompiledCodeUnit ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasModifiers
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:AClass ;
+                                       owl:onProperty     IMMoRTALS:hasOwner
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:AnAnnotation ;
+                                       owl:onProperty     IMMoRTALS:hasAnnotations
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOwner
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  _:b0 ;
+                                       owl:onProperty     IMMoRTALS:hasModifiers
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAnnotations
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOwner
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.ClassStructure" .
+
+IMMoRTALS_java_source:JavaSourceFile
+        a                            owl:Class ;
+        rdfs:label                   "JavaSourceFile" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasName
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasBytes
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:base64Binary ;
+                                       owl:onProperty     IMMoRTALS:hasBytes
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.java.source.JavaSourceFile" .
+
+IMMoRTALS:hasClassName
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AClass ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasBuildMechanism
+        a            owl:ObjectProperty , owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_java_source:JavaProject , IMMoRTALS_java_source:BuildMechanism ;
+        rdfs:range   IMMoRTALS_java_source:BuildMechanism , xsd:string .
+
+IMMoRTALS:hasInnerClasses
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AClass ;
+        rdfs:range   IMMoRTALS_bytecode:AClass .
+
+IMMoRTALS:hasLocalIndex
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:LocalVariable ;
+        rdfs:range   xsd:int .
+
+IMMoRTALS_bytecode:Library
+        a                            owl:Class ;
+        rdfs:label                   "Library" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasArtifacts
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_bytecode:BytecodeArtifact ;
+                                       owl:onProperty     IMMoRTALS:hasArtifacts
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.bytecode.Library" .
+
+IMMoRTALS:hasRoot  a  owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:BasicBlockDecomposition ;
+        rdfs:range   IMMoRTALS_bytecode_analysis:BasicBlock .
+
+IMMoRTALS:hasInvocationType
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:MethodCall ;
+        rdfs:range   _:b1 .
+
+IMMoRTALS:hasMajorVersionTag
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:BytecodeVersion ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasMethodName
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode:AMethod ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasId  a   owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_bytecode_analysis:BasicBlock ;
+        rdfs:range   xsd:string .

@@ -4,7 +4,7 @@ import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiRequirements;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiSubmissionModel;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.ServerUpgradeLibrary;
-import mil.darpa.immortals.das.DeploymentModelBuilder;
+import mil.darpa.immortals.das.deploymentmodel.DeploymentModelBuilder;
 import org.apache.jena.rdf.model.Model;
 
 import javax.annotation.Nonnull;

@@ -30,3 +30,5 @@ psql -a -d $immortals_db -c "$command"
 
 command="COPY $schema.master_cot_event FROM '$parent_path/data/master_cot_event.csv' DELIMITER ',' CSV HEADER;"
 psql -a -d $immortals_db -c "$command"
+
+psql -a -d $immortals_db -v default_schema=$schema -f "$parent_path/pgcommon/aql_shim.sql"

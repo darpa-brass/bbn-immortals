@@ -1,0 +1,9 @@
+com/securboration/immortals/ontology/DynamicCallGraph.class
+com/securboration/immortals/ontology/CallGraph.class
+com/securboration/immortals/ontology/FunctionalityTestRun.class
+com/securboration/immortals/ontology/FunctionalityExemplarDriver.class
+com/securboration/immortals/ontology/DynamicCallGraphEdge.class
+com/securboration/immortals/ontology/FunctionalityTest.class
+com/securboration/immortals/ontology/StaticCallGraph.class
+com/securboration/immortals/ontology/FunctionalityCheck.class
+com/securboration/immortals/ontology/StaticCallGraphEdge.class

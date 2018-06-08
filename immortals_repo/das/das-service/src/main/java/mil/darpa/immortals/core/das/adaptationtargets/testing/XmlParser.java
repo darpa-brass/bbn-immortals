@@ -42,7 +42,12 @@ public class XmlParser {
         if (failureNode != null) {
             if (failureNode instanceof Element) {
                 Element e = (Element) failureNode;
-                failureMessage = e.attributeValue("message");
+                String msg = e.attributeValue("message");
+                
+                if (msg == null) {
+                    msg = e.getStringValue();
+                }
+                failureMessage = msg;
             }
         }
         return new TestCaseReport(testCaseTarget, testCaseIdentifier, time, failureMessage, validatedFunctionality);

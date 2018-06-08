@@ -38,22 +38,24 @@ public class KnowledgeBuilderManager {
 			Map<String, Object> schemaParams = new HashMap<String, Object>();
 			schemaParams.put(SchemaDependencyKnowledgeBuilder.PARAM_DATA_DFU_ROOT, dataDFURoot);
 			
-			//Invoke schema dependency knowledge builder so it generates a model of the data DFUs
-			IKnowledgeBuilder kb = new SchemaDependencyKnowledgeBuilder();
-			Model schemaModel = kb.buildKnowledge(schemaParams);
-			
-			//Write the model to the ingestion folder in TURTLE format
-			Path knowledgeIngestionPath = ImmortalsConfig.getInstance().globals.getTtlIngestionDirectory();
-    		File schemaKnowledgeFile = new File(knowledgeIngestionPath.toFile(), "schemaDependencies.ttl");
-			
-    		if (!schemaKnowledgeFile.exists()) {
-				schemaKnowledgeFile.createNewFile();
-			}
-			
-    		out = new FileOutputStream(schemaKnowledgeFile);
+			if (ImmortalsConfig.getInstance().extensions.immortalizer.isPerformSchemaAnalysis()) {
+				//Invoke schema dependency knowledge builder so it generates a model of the data DFUs
+				IKnowledgeBuilder kb = new SchemaDependencyKnowledgeBuilder();
+				Model schemaModel = kb.buildKnowledge(schemaParams);
 
-			schemaModel.write(out, "TURTLE");
-			//#####################################################
+				//Write the model to the ingestion folder in TURTLE format
+				Path knowledgeIngestionPath = ImmortalsConfig.getInstance().globals.getTtlIngestionDirectory();
+				File schemaKnowledgeFile = new File(knowledgeIngestionPath.toFile(), "schemaDependencies.ttl");
+
+				if (!schemaKnowledgeFile.exists()) {
+					schemaKnowledgeFile.createNewFile();
+				}
+
+				out = new FileOutputStream(schemaKnowledgeFile);
+
+				schemaModel.write(out, "TURTLE");
+				//#####################################################
+			}
 		} catch (Exception e) {
 			logger.error("Unexpected error initializing knowledge builders: " + e.getMessage());
 		} finally {

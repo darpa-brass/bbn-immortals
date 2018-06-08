@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Implementation-Title: IMMoRTALS-DAS-Launcher
+Main-Class: mil.darpa.immortals.das.DasLauncher
+

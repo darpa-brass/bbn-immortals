@@ -1,0 +1,38 @@
+[
+    {
+        "scenarioIdentifier": "p2cp3baselineA",
+        "submissionModel": null,
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "PASS",
+        "submissionFlow": "BaselineA",
+        "perturbationScenario": "P2CP3AndroidPartialLibraryUpgrade"
+    },
+    {
+        "scenarioIdentifier": "p2cp3baselineB",
+        "submissionModel": {
+            "atakLiteClientModel": {
+                "requirements": {
+                    "partialLibraryUpgrade": "Dropbox_3_0_6"
+                }
+            }
+        },
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "FAIL",
+        "submissionFlow": "BaselineB",
+        "perturbationScenario": "P2CP3AndroidPartialLibraryUpgrade"
+    },
+    {
+        "scenarioIdentifier": "p2cp3challenge",
+        "submissionModel": {
+            "atakLiteClientModel": {
+                "requirements": {
+                    "partialLibraryUpgrade": "Dropbox_3_0_6"
+                }
+            }
+        },
+        "expectedAdaptationResult": "SUCCESS",
+        "expectedVerdictOutcome": "PASS",
+        "submissionFlow": "Challenge",
+        "perturbationScenario": "P2CP3AndroidPartialLibraryUpgrade"
+    }
+]

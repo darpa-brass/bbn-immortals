@@ -52,5 +52,5 @@ if [ "$1" == "--set-override-file-data" ];then
   fi
 
 else
-  python3.5 tools.py "$@"
+  python3 tools.py "$@"
 fi

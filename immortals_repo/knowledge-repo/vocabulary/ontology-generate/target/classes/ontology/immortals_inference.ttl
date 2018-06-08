@@ -1,0 +1,365 @@
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_java_util: <http://darpa.mil/immortals/ontology/r2.0.0/java/util#> .
+@prefix IMMoRTALS_inference_instances: <http://darpa.mil/immortals/ontology/r2.0.0/inference/instances#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix IMMoRTALS_inference: <http://darpa.mil/immortals/ontology/r2.0.0/inference#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+IMMoRTALS:ImmortalsBaseClass
+        a       owl:Class .
+
+IMMoRTALS:hasAnswer  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_inference:AskQueryResult ;
+        rdfs:range   xsd:boolean .
+
+IMMoRTALS_inference:HaltingCriterion
+        a                            owl:Class ;
+        rdfs:label                   "HaltingCriterion" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.HaltingCriterion" .
+
+IMMoRTALS:hasExplicitPrecondition
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_inference:InferenceRule ;
+        rdfs:range   IMMoRTALS_java_util:List .
+
+IMMoRTALS:hasIterateUntilNoNewTriples
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_inference:InferenceRules ;
+        rdfs:range   xsd:boolean .
+
+IMMoRTALS_inference_instances:UcrLinkage
+        a                            IMMoRTALS_inference:InferenceRules ;
+        IMMoRTALS:hasIterateUntilNoNewTriples
+                false ;
+        IMMoRTALS:hasMaxIterations   "1"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.instances.UcrLinkage" ;
+        IMMoRTALS:hasRules           IMMoRTALS_inference:InferenceRule-8f1b6920-3eb4-4553-9e5b-9dd067de4e88 .
+
+IMMoRTALS:hasPredicate
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_inference:InferenceRule ;
+        rdfs:range   IMMoRTALS_java_util:List .
+
+IMMoRTALS:hasForwardInferenceRule
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_inference:InferenceRule ;
+        rdfs:range   IMMoRTALS_inference:ConstructQuery .
+
+IMMoRTALS_inference:InferenceRule-8f1b6920-3eb4-4553-9e5b-9dd067de4e88
+        a                               IMMoRTALS_inference:InferenceRule ;
+        IMMoRTALS:hasForwardInferenceRule
+                IMMoRTALS_inference:ConstructQuery-dae50586-47a4-4695-8008-854142a2d30b ;
+        IMMoRTALS:hasHumanReadableDesc  "links UCR's DFU-agnostic analysis to the DFU-aware analysis performed by the IMMoRTALS Gradle plugin" .
+
+IMMoRTALS:hasQueryText
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_inference:SparqlQuery ;
+        rdfs:range   xsd:string .
+
+_:b0    a                            owl:DataRange ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.SimpleHaltingCondition" ;
+        owl:oneOf                    ( "NEVER" "AFTER_TEN_ITERATIONS" "AFTER_THREE_ITERATIONS" "AFTER_TWO_ITERATIONS" "AFTER_ONE_ITERATION" "AFTER_NO_NEW_TRIPLES" "BEFORE_FIRST_ITERATION" ) .
+
+IMMoRTALS_inference:HaltingCriterionSimple
+        a                            owl:Class ;
+        rdfs:label                   "HaltingCriterionSimple" ;
+        rdfs:subClassOf              IMMoRTALS_inference:HaltingCriterion ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSimpleHaltingCriterion
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSimpleHaltingCriterion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  _:b0 ;
+                                       owl:onProperty     IMMoRTALS:hasSimpleHaltingCriterion
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.HaltingCriterionSimple" .
+
+IMMoRTALS_inference:AskQueryResult
+        a                            owl:Class ;
+        rdfs:label                   "AskQueryResult" ;
+        rdfs:subClassOf              IMMoRTALS_inference:QueryResult ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAnswer
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAnswer
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:boolean ;
+                                       owl:onProperty     IMMoRTALS:hasAnswer
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.AskQueryResult" .
+
+IMMoRTALS:hasRule  a  owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_inference:InferenceRuleExecution ;
+        rdfs:range   IMMoRTALS_inference:InferenceRule .
+
+IMMoRTALS_inference:ConstructQuery
+        a                            owl:Class ;
+        rdfs:label                   "ConstructQuery" ;
+        rdfs:subClassOf              IMMoRTALS_inference:SparqlQuery ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.ConstructQuery" .
+
+IMMoRTALS_inference:InferenceRuleExecution
+        a                            owl:Class ;
+        rdfs:label                   "InferenceRuleExecution" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResult
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResult
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_inference:InferenceRule ;
+                                       owl:onProperty     IMMoRTALS:hasRule
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRule
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_inference:QueryResult ;
+                                       owl:onProperty     IMMoRTALS:hasResult
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRule
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.InferenceRuleExecution" .
+
+IMMoRTALS_inference:InferenceRule
+        a                            owl:Class ;
+        rdfs:label                   "InferenceRule" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_util:List ;
+                                       owl:onProperty     IMMoRTALS:hasExplicitPrecondition
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPredicate
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasExplicitPrecondition
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasForwardInferenceRule
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_inference:ConstructQuery ;
+                                       owl:onProperty     IMMoRTALS:hasForwardInferenceRule
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasExplicitPrecondition
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasPredicate
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasForwardInferenceRule
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_util:List ;
+                                       owl:onProperty     IMMoRTALS:hasPredicate
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.InferenceRule" .
+
+IMMoRTALS:hasRules  a  owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_inference:InferenceRules ;
+        rdfs:range   IMMoRTALS_java_util:List .
+
+IMMoRTALS:hasSimpleHaltingCriterion
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_inference:HaltingCriterionSimple ;
+        rdfs:range   _:b0 .
+
+IMMoRTALS_inference:AskQuery
+        a                            owl:Class ;
+        rdfs:label                   "AskQuery" ;
+        rdfs:subClassOf              IMMoRTALS_inference:SparqlQuery ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.AskQuery" .
+
+IMMoRTALS_inference:ConstructQueryResult
+        a                            owl:Class ;
+        rdfs:label                   "ConstructQueryResult" ;
+        rdfs:subClassOf              IMMoRTALS_inference:QueryResult ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResultGraph
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResultGraph
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasResultGraph
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.ConstructQueryResult" .
+
+IMMoRTALS_inference:InferenceRules
+        a                            owl:Class ;
+        rdfs:label                   "InferenceRules" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:unsignedByte ;
+                                       owl:onProperty     IMMoRTALS:hasMaxIterations
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasIterateUntilNoNewTriples
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:unsignedByte ;
+                                       owl:onProperty     IMMoRTALS:hasMaxTimeMillis
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMaxTimeMillis
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMaxIterations
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:boolean ;
+                                       owl:onProperty     IMMoRTALS:hasIterateUntilNoNewTriples
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRules
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMaxTimeMillis
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasIterateUntilNoNewTriples
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_util:List ;
+                                       owl:onProperty     IMMoRTALS:hasRules
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMaxIterations
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasRules
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.InferenceRules" .
+
+IMMoRTALS:hasHaltingQuery
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_inference:HaltingCriterionAsk ;
+        rdfs:range   IMMoRTALS_inference:AskQuery .
+
+IMMoRTALS_inference:QueryResult
+        a                            owl:Class ;
+        rdfs:label                   "QueryResult" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.QueryResult" .
+
+IMMoRTALS_inference:HaltingCriterionComplex
+        a                            owl:Class ;
+        rdfs:label                   "HaltingCriterionComplex" ;
+        rdfs:subClassOf              IMMoRTALS_inference:HaltingCriterion ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.HaltingCriterionComplex" .
+
+IMMoRTALS_inference:ConstructQuery-dae50586-47a4-4695-8008-854142a2d30b
+        a                       IMMoRTALS_inference:ConstructQuery ;
+        IMMoRTALS:hasQueryText  "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\r\nCONSTRUCT {     ?dfuInstance IMMoRTALS:hasResourceDependencies ?resourceType } WHERE {\r\n    GRAPH <?GRAPH?> { \r\n        ?dfuInstance a <http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance> .\r\n        ?dfuInstance IMMoRTALS:hasFunctionalAspects ?functionalAspect .\r\n        ?functionalAspect IMMoRTALS:hasMethodPointer ?pointer .\r\n    } .\r\n    GRAPH <?GRAPH?> { \r\n        ?report a <http://darpa.mil/immortals/ontology/r2.0.0/analysis#AnalysisReport> .\r\n        ?report IMMoRTALS:hasMeasurementProfile ?measurementProfile .\r\n        ?measurementProfile IMMoRTALS:hasCodeUnit ?codeUnit .\r\n        ?codeUnit IMMoRTALS:hasPointerString ?pointer . \r\n        ?report IMMoRTALS:hasDiscoveredDependency ?dependencyAssertion .\r\n        ?dependencyAssertion IMMoRTALS:hasDependency ?resourceType .\r\n    } .\r\n}" .
+
+IMMoRTALS:hasResultGraph
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_inference:ConstructQueryResult ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasResult  a  owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_inference:InferenceRuleExecution ;
+        rdfs:range   IMMoRTALS_inference:QueryResult .
+
+IMMoRTALS_java_util:List
+        a       owl:Class .
+
+IMMoRTALS_inference:HaltingCriterionAsk
+        a                            owl:Class ;
+        rdfs:label                   "HaltingCriterionAsk" ;
+        rdfs:subClassOf              IMMoRTALS_inference:HaltingCriterionComplex ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHaltingQuery
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHaltingQuery
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_inference:AskQuery ;
+                                       owl:onProperty     IMMoRTALS:hasHaltingQuery
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.HaltingCriterionAsk" .
+
+IMMoRTALS:hasMaxIterations
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_inference:InferenceRules ;
+        rdfs:range   xsd:unsignedByte .
+
+IMMoRTALS:hasHumanReadableDesc
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_inference:InferenceRule ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_inference:SparqlQuery
+        a                            owl:Class ;
+        rdfs:label                   "SparqlQuery" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasQueryText
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasQueryText
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasQueryText
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.inference.SparqlQuery" .
+
+IMMoRTALS:hasMaxTimeMillis
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_inference:InferenceRules ;
+        rdfs:range   xsd:unsignedByte .

@@ -1,8 +1,8 @@
-from pymmortals.datatypes.serializable import Serializable
+from pymmortals.generated.mil.darpa.immortals.config.extensioninterface import ExtensionInterface
 
 
 # noinspection PyPep8Naming
-class AppConfigInterface(Serializable):
+class AppConfigInterface(ExtensionInterface):
     _validator_values = dict()
 
     _types = dict()

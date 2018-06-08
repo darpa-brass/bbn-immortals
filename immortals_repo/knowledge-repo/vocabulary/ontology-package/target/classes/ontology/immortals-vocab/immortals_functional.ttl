@@ -1,0 +1,452 @@
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix IMMoRTALS_java_compiler: <http://darpa.mil/immortals/ontology/r2.0.0/java/compiler#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+IMMoRTALS:ImmortalsBaseClass
+        a       owl:Class .
+
+IMMoRTALS:hasDynamicCallGraph
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS:CallGraph ;
+        rdfs:range   IMMoRTALS:DynamicCallGraph .
+
+IMMoRTALS:CallGraph  a               owl:Class ;
+        rdfs:label                   "CallGraph" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasStaticCallGraph
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDynamicCallGraph
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS:StaticCallGraph ;
+                                       owl:onProperty     IMMoRTALS:hasStaticCallGraph
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDynamicCallGraph
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClasspath
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClasspath
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasStaticCallGraph
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_compiler:NamedClasspath ;
+                                       owl:onProperty     IMMoRTALS:hasClasspath
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS:DynamicCallGraph ;
+                                       owl:onProperty     IMMoRTALS:hasDynamicCallGraph
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.CallGraph" .
+
+IMMoRTALS:hasFunctionalityTestRuns
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS:FunctionalityCheck ;
+        rdfs:range   IMMoRTALS:FunctionalityTestRun .
+
+IMMoRTALS:hasCallerHash
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS:StaticCallGraphEdge , IMMoRTALS:DynamicCallGraphEdge ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasStaticCallGraph
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS:CallGraph ;
+        rdfs:range   IMMoRTALS:StaticCallGraph .
+
+IMMoRTALS:StaticCallGraphEdge
+        a                            owl:Class ;
+        rdfs:label                   "StaticCallGraphEdge" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCalledHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNote
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCalledHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNote
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCallerHash
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasCallerHash
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasCalledHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOrder
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasNote
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCallerHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOrder
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:int ;
+                                       owl:onProperty     IMMoRTALS:hasOrder
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.StaticCallGraphEdge" .
+
+IMMoRTALS:DynamicCallGraph
+        a                            owl:Class ;
+        rdfs:label                   "DynamicCallGraph" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDynamicCallGraphEdges
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS:DynamicCallGraphEdge ;
+                                       owl:onProperty     IMMoRTALS:hasDynamicCallGraphEdges
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.DynamicCallGraph" .
+
+IMMoRTALS:hasTestBeginTime
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS:FunctionalityTestRun ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasCalledHash
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS:StaticCallGraphEdge , IMMoRTALS:DynamicCallGraphEdge ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasMethodPointer
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS:FunctionalityCheck ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasType  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS:FunctionalityCheck ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasDynamicCallGraphEdges
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS:DynamicCallGraph ;
+        rdfs:range   IMMoRTALS:DynamicCallGraphEdge .
+
+IMMoRTALS:hasTemplateTaught
+        a             owl:DatatypeProperty ;
+        rdfs:comment  "What function are we being taught?" ;
+        rdfs:domain   IMMoRTALS:FunctionalityExemplarDriver ;
+        rdfs:range    xsd:string .
+
+IMMoRTALS:hasOrder  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS:StaticCallGraphEdge ;
+        rdfs:range   xsd:int .
+
+IMMoRTALS:FunctionalityTestRun
+        a                            owl:Class ;
+        rdfs:label                   "FunctionalityTestRun" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasTestEndTime
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasTestBeginTime
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSuccess
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasTestBeginTime
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS:CallGraph ;
+                                       owl:onProperty     IMMoRTALS:hasCallGraph
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSuccess
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCallGraph
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasTestEndTime
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasTestBeginTime
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:boolean ;
+                                       owl:onProperty     IMMoRTALS:hasSuccess
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCallGraph
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasTestEndTime
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.FunctionalityTestRun" .
+
+IMMoRTALS:hasSuccess  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS:FunctionalityTestRun ;
+        rdfs:range   xsd:boolean .
+
+IMMoRTALS:hasClasspath
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS:FunctionalityCheck , IMMoRTALS:CallGraph ;
+        rdfs:range   IMMoRTALS_java_compiler:NamedClasspath .
+
+IMMoRTALS:hasNote  a  owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS:StaticCallGraphEdge , IMMoRTALS:FunctionalityExemplarDriver , IMMoRTALS:DynamicCallGraphEdge ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasCallGraph
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS:FunctionalityTestRun ;
+        rdfs:range   IMMoRTALS:CallGraph .
+
+IMMoRTALS:DynamicCallGraphEdge
+        a                            owl:Class ;
+        rdfs:label                   "DynamicCallGraphEdge" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasCalledHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCalledHash
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasCallerHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCalledHash
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasNote
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNote
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCallerHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCallerHash
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNote
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.DynamicCallGraphEdge" .
+
+IMMoRTALS:FunctionalityTest
+        a                            owl:Class ;
+        rdfs:label                   "FunctionalityTest" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFunctionality
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFunctionality
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_functionality:Functionality ;
+                                       owl:onProperty     IMMoRTALS:hasFunctionality
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDesc
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.FunctionalityTest" .
+
+IMMoRTALS:hasStaticCallGraphEdges
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS:StaticCallGraph ;
+        rdfs:range   IMMoRTALS:StaticCallGraphEdge .
+
+IMMoRTALS:hasFunctionality
+        a             rdf:Property ;
+        rdfs:comment  "functionality being tested." ;
+        rdfs:domain   IMMoRTALS:FunctionalityTest ;
+        rdfs:range    IMMoRTALS_functionality:Functionality .
+
+IMMoRTALS:FunctionalityCheck
+        a                            owl:Class ;
+        rdfs:label                   "FunctionalityCheck" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_java_compiler:NamedClasspath ;
+                                       owl:onProperty     IMMoRTALS:hasClasspath
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodPointer
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasType
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasType
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFunctionalityTestRuns
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodPointer
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasMethodPointer
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasType
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClasspath
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS:FunctionalityTestRun ;
+                                       owl:onProperty     IMMoRTALS:hasFunctionalityTestRuns
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasClasspath
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.FunctionalityCheck" .
+
+IMMoRTALS:hasTestEndTime
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS:FunctionalityTestRun ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_functionality:Functionality
+        a             owl:Class ;
+        rdfs:comment  "A description of what a functional unit of software does (but not how it is done). If we know that two different pieces of code do essentially the same thing in a different way, the idea is that we can adapt our software by swapping between them.  @author jstaples " .
+
+IMMoRTALS:StaticCallGraph
+        a                            owl:Class ;
+        rdfs:label                   "StaticCallGraph" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasStaticCallGraphEdges
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS:StaticCallGraphEdge ;
+                                       owl:onProperty     IMMoRTALS:hasStaticCallGraphEdges
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.StaticCallGraph" .
+
+IMMoRTALS_java_compiler:NamedClasspath
+        a       owl:Class .
+
+IMMoRTALS:hasInstructions
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS:FunctionalityExemplarDriver ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:hasHumanReadableDesc
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS:FunctionalityTest ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS:FunctionalityExemplarDriver
+        a                            owl:Class ;
+        rdfs:label                   "FunctionalityExemplarDriver" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNote
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasNote
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasNote
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasInstructions
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasInstructions
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasTemplateTaught
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasTemplateTaught
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasTemplateTaught
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.FunctionalityExemplarDriver" .

@@ -70,12 +70,15 @@ public class ProjectToTriplesMain {
 		
 	}
 	
+	public static void main(String[] args) {
+    }
+    
 	public String testFunction(){
 		return "Hello, world!";
 	}
 	
 	public String gradleDataToTriples(GradleData gd, GradleTaskHelper taskHelper, ArrayList<String> includedLibs,
-                                      boolean completeAnalysis) throws Exception{
+                                      boolean completeAnalysis, String vcsAnchor) throws Exception{
 		String uuid = getUUID();
 		o2tc = new ObjectToTriplesConfiguration("r2.0.0");
 		JavaProject x = new JavaProject();
@@ -188,7 +191,7 @@ public class ProjectToTriplesMain {
 				ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration("r2.0.0");
 				AnnotationParser annotationParser = new AnnotationParser(config, neededClassPaths);
 				
-				CompiledJavaSourceFile sourceFile = processClassFileFromString(path, taskHelper, String.valueOf(gd.getProperty("vcsAnchor")), gd);
+				CompiledJavaSourceFile sourceFile = processClassFileFromString(path, taskHelper, basedir, gd);
 				
 				if (elementPathList.add(path)) {
 					compiledSourcesHash.add(sourceFile.getHash());
@@ -318,6 +321,17 @@ public class ProjectToTriplesMain {
 		projectCoordinate.setGroupId(gd.getGroup());
 		projectCoordinate.setArtifactId(gd.getArtifact());
 		projectCoordinate.setVersion(gd.getVersion());
+
+        if (vcsAnchor != null && basedir != null) {
+            //String fileRemoteURL = getPath(basedir.substring(basedir.indexOf(vcsAnchor) + vcsAnchor.length() + 1));
+            VcsCoordinate vcsInfo = new VcsCoordinate();
+            vcsInfo.setVersion(gd.getVersion()); //TODO
+            vcsInfo.setVersionControlUrl(basedir); //TODO
+            x.setVcsCoordinate(vcsInfo);
+        } else {
+            taskHelper.getPw().println("Unable to set remote URL and link to local file location, check you've set the correct parameters and/or there are no" +
+                    "package with file path conflicts.");
+        }
 		
 		x.setCoordinate(projectCoordinate);
 		Model m = ObjectToTriples.convert(o2tc, x);
@@ -523,11 +537,12 @@ public class ProjectToTriplesMain {
 		    sourceFilePath = list.get(0);
         }
         
-		if (!vcsAnchor.equals("null") && sourceFilePath != null) {
-            String fileRemoteURL = sourceFilePath.substring(sourceFilePath.indexOf(vcsAnchor) + vcsAnchor.length() + 1);
+		if (vcsAnchor != null && sourceFilePath != null) {
+		    // TODO Phasing out the remote repo path, all should be the path to the project's build file
+            //String fileRemoteURL = sourceFilePath.substring(sourceFilePath.indexOf(vcsAnchor) + vcsAnchor.length() + 1);
             VcsCoordinate vcsInfo = new VcsCoordinate();
-            vcsInfo.setVersion("TEMP"); //TODO
-            vcsInfo.setVersionControlUrl("https://dsl-external.bbn.com/svn/immortals/trunk" + fileRemoteURL); //TODO
+            vcsInfo.setVersion(gradleData.getVersion()); //TODO
+            vcsInfo.setVersionControlUrl(vcsAnchor); //TODO
             c.setVcsInfo(vcsInfo);
             c.setAbsoluteFilePath(sourceFilePath);
         } else {

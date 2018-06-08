@@ -17,7 +17,7 @@
             }
         },
         "expectedAdaptationResult": "NOT_APPLICABLE",
-        "expectedVerdictOutcome": "FAIL",
+        "expectedVerdictOutcome": "DEGRADED",
         "submissionFlow": "BaselineB",
         "perturbationScenario": "P2CP3JavaLibraryMutation"
     },

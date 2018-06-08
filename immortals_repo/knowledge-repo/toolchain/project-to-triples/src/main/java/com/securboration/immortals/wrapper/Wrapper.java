@@ -1,10 +1,15 @@
 package com.securboration.immortals.wrapper;
 
 import com.securboration.immortals.ontology.constraint.MethodAdaptation;
+import com.securboration.immortals.ontology.functionality.ConfigurationBinding;
 import com.securboration.immortals.ontology.functionality.FunctionalAspect;
+import com.securboration.immortals.ontology.functionality.alg.encryption.*;
+import com.securboration.immortals.ontology.functionality.datatype.DataType;
 import com.securboration.immortals.ontology.pattern.spec.CodeSpec;
 import com.securboration.immortals.utility.GradleTaskHelper;
+import com.securboration.immortals.utility.cipher.CipherInfo;
 import soot.*;
+import soot.javaToJimple.LocalGenerator;
 import soot.jimple.*;
 
 import soot.util.Chain;
@@ -12,27 +17,28 @@ import soot.util.Chain;
 import java.util.*;
 
 public class Wrapper {
-    
+
     private SootClass wrappedClass;
     private SootClass wrapperClass;
     private String streamType;
     private List<FunctionalAspect> aspectsAdapted;
-    private Optional<String> configurationParameters;
-    
+    private CipherInfo cipherInfo;
+
     protected Wrapper(SootClass _wrappedClass) {
         wrappedClass = _wrappedClass;
         aspectsAdapted = new ArrayList<>();
+        cipherInfo = new CipherInfo();
     }
-    
+
     protected SootMethod createCipherWrapperConstructorSimple(SootClass newClass, SootField oldClassField, SootClass cipherImplClass,
-                                                  SootMethod initMethod, SootMethod wrapMethod, SootMethod getStreamImplMethod,
-                                                  SootField streamImplField) {
-        
+                                                              SootMethod initMethod, SootMethod wrapMethod, SootMethod getStreamImplMethod,
+                                                              SootField streamImplField) {
+
         List<Type> parameterTypes = new ArrayList<>();
         parameterTypes.add(wrappedClass.getType());
         SootMethod newConstructor = new SootMethod("<init>", parameterTypes, VoidType.v(), Modifier.PUBLIC);
         newClass.addMethod(newConstructor);
-        
+
         SootClass streamType = Scene.v().getSootClass(this.streamType);
 
         JimpleBody constructorBody = Jimple.v().newBody(newConstructor);
@@ -41,7 +47,7 @@ public class Wrapper {
 
         Chain units = constructorBody.getUnits();
         Local thisLocal = constructorBody.getThisLocal();
-        
+
         AssignStmt assignConstructor = Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(thisLocal, oldClassField.makeRef()),
                 constructorBody.getParameterLocal(0));
         units.add(assignConstructor);
@@ -49,40 +55,40 @@ public class Wrapper {
         constructorBody.getLocals().add(cipherImplLocal);
         AssignStmt cipherImplAssign = Jimple.v().newAssignStmt(cipherImplLocal, Jimple.v().newStaticInvokeExpr(initMethod.makeRef()));
         units.add(cipherImplAssign);
-        
+
         Local streamImplLocal = Jimple.v().newLocal("streamImpl", streamType.getType());
         constructorBody.getLocals().add(streamImplLocal);
 
         AssignStmt streamImplAssign = Jimple.v().newAssignStmt(streamImplLocal, Jimple.v().newVirtualInvokeExpr(thisLocal, getStreamImplMethod.makeRef()));
         units.add(streamImplAssign);
-        
+
         StaticInvokeExpr wrapExpression = Jimple.v().newStaticInvokeExpr(wrapMethod.makeRef(), streamImplLocal, cipherImplLocal);
-        
+
         AssignStmt wrappedStreamAssign = Jimple.v().newAssignStmt(streamImplLocal, wrapExpression);
         units.add(wrappedStreamAssign);
-        
+
         AssignStmt wrappedStreamToFieldAssign = Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(thisLocal, streamImplField.makeRef()), streamImplLocal);
         units.add(wrappedStreamToFieldAssign);
-        
+
         ReturnVoidStmt retStmt = Jimple.v().newReturnVoidStmt();
         GotoStmt gotoStmt = Jimple.v().newGotoStmt(retStmt);
         units.add(gotoStmt);
-        
+
         Local l_r1 = Jimple.v().newLocal("r1", RefType.v("java.lang.Exception"));
         Local l_r3 = Jimple.v().newLocal("$r3", RefType.v("java.lang.Exception"));
-        
+
         constructorBody.getLocals().add(l_r1);
         constructorBody.getLocals().add(l_r3);
-        
+
         IdentityStmt exceptionIdStmt = Jimple.v().newIdentityStmt(l_r3, Jimple.v().newCaughtExceptionRef());
         units.add(exceptionIdStmt);
         units.add(Jimple.v().newAssignStmt(l_r1, l_r3));
         units.add(Jimple.v().newNopStmt());
-        
+
         constructorBody.getTraps().add(Jimple.v().newTrap(Scene.v().getSootClass("java.lang.Exception"), cipherImplAssign, gotoStmt, exceptionIdStmt));
-        
+
         units.add(retStmt);
-        
+
         return newConstructor;
     }
 
@@ -93,7 +99,7 @@ public class Wrapper {
         parameterTypes.add(wrappedClass.getType());
         SootMethod newConstructor = new SootMethod("<init>", parameterTypes, VoidType.v(), Modifier.PUBLIC);
         newClass.addMethod(newConstructor);
-        
+
         JimpleBody constructorBody = Jimple.v().newBody(newConstructor);
         constructorBody.insertIdentityStmts();
         newConstructor.setActiveBody(constructorBody);
@@ -106,17 +112,17 @@ public class Wrapper {
         AssignStmt assignConstructor = Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(thisLocal, oldClassField.makeRef()),
                 constructorBody.getParameterLocal(0));
         units.add(assignConstructor);
-        
+
         Local tempCipherLocal = Jimple.v().newLocal("tempCipher", cipherField.getType());
         constructorBody.getLocals().add(tempCipherLocal);
         StaticInvokeExpr invokeCipherInit = Jimple.v().newStaticInvokeExpr(initMethod.makeRef());
         AssignStmt assignToTempCipher = Jimple.v().newAssignStmt(tempCipherLocal, invokeCipherInit);
         units.add(assignToTempCipher);
-        
+
         AssignStmt cipherImplAssign = Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(thisLocal, cipherField.makeRef()),
                 tempCipherLocal);
         units.add(cipherImplAssign);
-        
+
         ReturnVoidStmt retStmt = Jimple.v().newReturnVoidStmt();
         GotoStmt gotoStmt = Jimple.v().newGotoStmt(retStmt);
         units.add(gotoStmt);
@@ -138,10 +144,10 @@ public class Wrapper {
 
         return newConstructor;
     }
-    
+
     protected void expandConstructorSurface(SootMethod construct, SootField streamField, SootMethod streamGetter,
                                             SootMethod cipherInit, SootMethod streamWrap) {
-        
+
         JimpleBody constructBody = (JimpleBody) construct.getActiveBody();
         Chain<Unit> units = constructBody.getUnits();
         Local thisLocal = constructBody.getThisLocal();
@@ -154,10 +160,10 @@ public class Wrapper {
                 break;
             }
         }
-        
+
         Chain<Trap> traps = constructBody.getTraps();
         Trap mainTrap = traps.getFirst();
-        
+
         Unit firstTrapUnit = mainTrap.getBeginUnit();
 
         Local streamImplLocal = Jimple.v().newLocal("streamImpl", streamField.getType());
@@ -173,11 +179,11 @@ public class Wrapper {
         AssignStmt wrappedStreamAssign = Jimple.v().newAssignStmt(streamImplLocal, wrapExpression);
         units.insertAfter(wrappedStreamAssign, streamImplAssign);
 
-        AssignStmt wrappedStreamToFieldAssign = Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(thisLocal, 
+        AssignStmt wrappedStreamToFieldAssign = Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(thisLocal,
                 streamField.makeRef()), streamImplLocal);
         units.insertAfter(wrappedStreamToFieldAssign, wrappedStreamAssign);
     }
-    
+
     protected SootMethod createGetStreamImplMethod(SootClass wrapperClass) {
 
         List<Type> parameterTypes = new ArrayList<>();
@@ -213,9 +219,9 @@ public class Wrapper {
 
 
     protected SootMethod createStreamAugmentationMethod(SootClass streamAugmentationClass, SootClass wrapperClass) {
-        
+
         SootClass streamClass = Scene.v().getSootClass(this.streamType);
-        
+
         List<Type> parameterTypes = new ArrayList<>();
         parameterTypes.add(streamClass.getType());
         parameterTypes.add(streamAugmentationClass.getType());
@@ -226,14 +232,14 @@ public class Wrapper {
 
         SootMethod streamAugmentationMethod = new SootMethod("wrap" + streamClass.getShortName(),
                 parameterTypes, streamClass.getType(), Modifier.PUBLIC | Modifier.STATIC, exceptionClasses);
-        
+
         wrapperClass.addMethod(streamAugmentationMethod);
         JimpleBody wrapBody = Jimple.v().newBody(streamAugmentationMethod);
         wrapBody.insertIdentityStmts();
         streamAugmentationMethod.setActiveBody(wrapBody);
-        
+
         SootClass runtimeExceptionClass = Scene.v().getSootClass("java.lang.Exception");
-        
+
         RefType exceptionType = RefType.v(runtimeExceptionClass);
         SootMethod exceptionInitMethod = runtimeExceptionClass.getMethod("void <init>(java.lang.String)");
 
@@ -248,16 +254,63 @@ public class Wrapper {
         return streamAugmentationMethod;
     }
 
-
-    protected SootMethod createCipherInitializationMethod(SootClass newClass, SootClass cipherImplClass) {
-        
+    public static void createCipherInitMethodWithBody(SootClass augmentedClass, SootClass cipherImpl,
+                                                      List<ConfigurationBinding> configurationVariables) throws InstantiationException, IllegalAccessException {
         List<Type> parameterTypes = new ArrayList<>();
 
         SootClass exceptionClass = Scene.v().getSootClass(
                 "java.lang.Exception");
         List<SootClass> exceptionClasses = new ArrayList<>();
         exceptionClasses.add(exceptionClass);
-        
+
+        SootMethod initMethod = new SootMethod("initCipherImpl", parameterTypes, cipherImpl.getType(),
+                Modifier.PUBLIC | Modifier.STATIC, exceptionClasses);
+        augmentedClass.addMethod(initMethod);
+        JimpleBody newBody = Jimple.v().newBody(initMethod);
+        SootMethod cipherConstructor = cipherImpl.getMethod("void <init>()");
+        SootMethod cipherConfigure = cipherImpl.getMethod(
+                "void configure(java.lang.String,int,java.lang.String," +
+                        "java.lang.String,java.lang.String,java.lang.String)");
+        List<Value> paramsForConfig = new ArrayList<>();
+        for (ConfigurationBinding configurationVariable : configurationVariables) {
+            paramsForConfig.add(parseConfigVariable(configurationVariable));
+        }
+        Local cipherImplLocal = Jimple.v().newLocal("r1", cipherImpl.getType());
+        newBody.getLocals().add(cipherImplLocal);
+        initMethod.setActiveBody(newBody);
+        newBody.insertIdentityStmts();
+        newBody.getUnits().add(Jimple.v().newAssignStmt(cipherImplLocal, Jimple.v().newNewExpr(cipherImpl.getType())));
+        newBody.getUnits().add(Jimple.v().newInvokeStmt(Jimple.v().newSpecialInvokeExpr(cipherImplLocal, cipherConstructor.makeRef())));
+        newBody.getUnits().add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(cipherImplLocal, cipherConfigure.makeRef(),
+                paramsForConfig)));
+        newBody.getUnits().add(Jimple.v().newReturnStmt(cipherImplLocal));
+
+        newBody.validate();
+    }
+
+    private static Local generateFreshLocal(Body b, Type type){
+        LocalGenerator lg = new LocalGenerator(b);
+        return lg.generateLocal(type);
+    }
+
+    public static Value parseConfigVariable(ConfigurationBinding configurationBinding) throws IllegalAccessException, InstantiationException {
+        Class<? extends DataType> configSemanticType = configurationBinding.getSemanticType();
+        if (CipherKeyLength.class.isInstance(configSemanticType.newInstance())) {
+            return IntConstant.v(Integer.parseInt(configurationBinding.getBinding()));
+        } else {
+            return StringConstant.v(configurationBinding.getBinding());
+        }
+    }
+
+    public static SootMethod createCipherInitializationMethod(SootClass newClass, SootClass cipherImplClass) {
+
+        List<Type> parameterTypes = new ArrayList<>();
+
+        SootClass exceptionClass = Scene.v().getSootClass(
+                "java.lang.Exception");
+        List<SootClass> exceptionClasses = new ArrayList<>();
+        exceptionClasses.add(exceptionClass);
+
         SootMethod initMethod = new SootMethod("initCipherImpl", parameterTypes, cipherImplClass.getType(),
                 Modifier.PUBLIC | Modifier.STATIC, exceptionClasses);
         newClass.addMethod(initMethod);
@@ -267,19 +320,19 @@ public class Wrapper {
 
         SootClass runtimeExceptionClass = Scene.v().getSootClass(
                 "java.lang.RuntimeException");
-        
+
         RefType exceptionType = RefType.v(runtimeExceptionClass);
         SootMethod exceptionInitMethod = runtimeExceptionClass.getMethod("void <init>(java.lang.String)");
 
         Local exceptionLocal = Jimple.v().newLocal("exceptionLocal", exceptionType);
         initBody.getLocals().add(exceptionLocal);
-        
+
         initBody.getUnits().add(Jimple.v().newAssignStmt(exceptionLocal, Jimple.v().newNewExpr(exceptionType)));
         initBody.getUnits().add(Jimple.v().newInvokeStmt(Jimple.v().newSpecialInvokeExpr(exceptionLocal,
                 exceptionInitMethod.makeRef(), StringConstant.v("This method needs to be written by the user with " +
                         "configurations of their choosing."))));
         initBody.getUnits().add(Jimple.v().newThrowStmt(exceptionLocal));
-        
+
         return initMethod;
     }
 
@@ -309,7 +362,7 @@ public class Wrapper {
             constructors.add(abstractMethod);
             return;
         }
-        
+
         concreteMethod.setExceptions(abstractMethod.getExceptions());
         JimpleBody methodBody = Jimple.v().newBody(concreteMethod);
         newClass.addMethod(concreteMethod);
@@ -345,7 +398,7 @@ public class Wrapper {
             units.add(Jimple.v().newReturnStmt(resultLocal));
         }
     }
-    
+
     private SootMethodRef findSuperParamForComplexWrap(Type superParamType, SootClass wrapperClass) {
         SootMethodRef sootMethodRef = null;
         while (sootMethodRef == null) {
@@ -365,20 +418,20 @@ public class Wrapper {
         }
         return sootMethodRef;
     }
-    
+
     protected InvokeStmt getSuperCall(SootMethod oldClassConstructor, Local thisLocal, SootClass newClass, JimpleBody methodBody,
                                       Chain units, Local delegateLocal) {
-        
+
         SootMethod superConstruct = getCorrespondingSuperConstruct(oldClassConstructor.getDeclaringClass(),
                 oldClassConstructor.getParameterTypes());
-        
+
         if (superConstruct == null) {
             System.out.println("Corresponding constructor was not found!");
         }
-        
+
         List<Value> params = new ArrayList<>();
         for (Type type : superConstruct.getParameterTypes()) {
-            
+
             if (type.equals(ShortType.v())) {
                 params.add(IntConstant.v(0));
             } else if (type.equals(ByteType.v())) {
@@ -390,7 +443,7 @@ public class Wrapper {
             } else if (type.equals(IntType.v())) {
                 params.add(IntConstant.v(-1));
             } else {
-                
+
                 //TODO -> This is really bad... come up with more intelligent mechanism soon plz
                 if (newClass.getName().contains("WrapperSocketChannel")) {
                     SootMethodRef methodRef = findSuperParamForComplexWrap(type, newClass);
@@ -405,7 +458,7 @@ public class Wrapper {
                 params.add(NullConstant.v());
             }
         }
-        
+
         SpecialInvokeExpr callSuperConstruct;
         if (params.isEmpty()) {
             callSuperConstruct = Jimple.v().newSpecialInvokeExpr(thisLocal, Scene.v().makeConstructorRef(newClass.getSuperclass(),
@@ -414,18 +467,18 @@ public class Wrapper {
             callSuperConstruct = Jimple.v().newSpecialInvokeExpr(thisLocal, Scene.v().makeConstructorRef(newClass.getSuperclass(),
                     superConstruct.getParameterTypes()), params);
         }
-        
+
         return Jimple.v().newInvokeStmt(callSuperConstruct);
     }
-    
+
     public void introduceMediationMethods(List<CodeSpec> codeSpecs, GradleTaskHelper taskHelper) {
-        
+
         for (CodeSpec codeSpec : codeSpecs) {
-            
+
             if (taskHelper.checkForPreviousAugmentation(codeSpec)) {
                 continue;
             }
-            
+
             String methodSignature = codeSpec.getMethodSignature();
 
             String parametersString = methodSignature.substring(methodSignature.indexOf("(") + 1, methodSignature.indexOf(")"));
@@ -437,15 +490,11 @@ public class Wrapper {
                     parseType(parameter.trim(), parameterTypes);
                 }
             }
-            
-            SootClass exceptionClass = Scene.v().getSootClass(
-                    "java.lang.Exception");
+
             List<SootClass> exceptionClasses = new ArrayList<>();
-            exceptionClasses.add(exceptionClass);
-            
             SootMethod newMediationMethod = new SootMethod(methodSignature.substring(0, methodSignature.indexOf("(")),
                     parameterTypes, getMediationMethodReturnType(codeSpec), Modifier.PUBLIC, exceptionClasses);
-            
+
             this.wrapperClass.addMethod(newMediationMethod);
             JimpleBody wrapBody = Jimple.v().newBody(newMediationMethod);
             wrapBody.insertIdentityStmts();
@@ -483,54 +532,48 @@ public class Wrapper {
                 parameterTypes.add(BooleanType.v());
                 break;
             default:
+                if (parameter.charAt(0) == 'L') {
+                    parameter = parameter.substring(1);
+                }
                 SootClass paramClass = Scene.v().loadClassAndSupport(parameter.replace("/", "."));
                 parameterTypes.add(paramClass.getType());
         }
     }
 
-    private RefType getMediationMethodReturnType(CodeSpec codeSpec) {
+    private Type getMediationMethodReturnType(CodeSpec codeSpec) {
         String returnType = codeSpec.getMethodSignature().substring(codeSpec.getMethodSignature().lastIndexOf(")") + 1);
         switch (returnType.charAt(0)) {
             case 'Z':
-                returnType = "boolean";
-                break;
+                return BooleanType.v();
             case 'B':
-                returnType = "byte";
-                break;
+                return ByteType.v();
             case 'C':
-                returnType = "char";
-                break;
+                return CharType.v();
             case 'S':
-                returnType = "short";
-                break;
+                return ShortType.v();
             case 'I':
-                returnType = "int";
-                break;
+                return IntType.v();
             case 'J':
-                returnType = "long";
-                break;
+                return LongType.v();
             case 'F':
-                returnType = "float";
-                break;
+                return FloatType.v();
             case 'D':
-                returnType = "double";
-                break;
+                return DoubleType.v();
             case 'L':
                 returnType = returnType.substring(1);
                 break;
             case 'V':
-                returnType = "void";
-                break;
+                return VoidType.v();
             default:
                 break;
         }
-        
+
         SootClass returnTypeClass = Scene.v().loadClassAndSupport(returnType.replace("/", "."));
         return returnTypeClass.getType();
     }
 
     protected SootMethod getCorrespondingSuperConstruct(SootClass superClass, List<Type> paramTypes) {
-        
+
         for (SootMethod method : superClass.getMethods()) {
             if (method.getName().contains("<init>") &&
                     method.getParameterTypes().equals(paramTypes)) {
@@ -543,11 +586,11 @@ public class Wrapper {
     public SootClass getWrappedClass() {
         return wrappedClass;
     }
-    
+
     public void setWrapperClass(SootClass wrapperClass) {
         this.wrapperClass = wrapperClass;
     }
-    
+
     public SootClass getWrapperClass() {
         return wrapperClass;
     }
@@ -560,19 +603,19 @@ public class Wrapper {
         this.streamType = streamType;
     }
 
-    public Optional<String> getConfigurationParameters() {
-        return configurationParameters;
-    }
-
-    public void setConfigurationParameters(Optional<String> configurationParameters) {
-        this.configurationParameters = configurationParameters;
-    }
-
     public List<FunctionalAspect> getAspectsAdapted() {
         return aspectsAdapted;
     }
 
     public void setAspectsAdapted(List<FunctionalAspect> aspectsAdapted) {
         this.aspectsAdapted = aspectsAdapted;
+    }
+
+    public CipherInfo getCipherInfo() {
+        return cipherInfo;
+    }
+
+    public void setCipherInfo(CipherInfo cipherInfo) {
+        this.cipherInfo = cipherInfo;
     }
 }

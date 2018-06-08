@@ -1,6 +1,5 @@
 package mil.darpa.immortals.core.das.adaptationmodules.hddrass;
 
-import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.api.TestCaseReport;
 import mil.darpa.immortals.core.api.TestCaseReportSet;
 import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetails;
@@ -105,23 +104,16 @@ public class HddRassAdapter implements IAdaptationModule {
 
     @Override
     public void apply(DasAdaptationContext context) throws Exception {
-        // TODO: Agree on universal URIs for applications and libraries
-        if (ImmortalsConfig.getInstance().debug.isUseMockExtensionHddRass()) {
-            mockApply(context);
-            return;
-        }
-
         for (DetermineHddRassApplicability.HddRassApplicabilityDetails deploymentModelApplicabilityDetails : applicabilityDetails) {
             // For each requested upgrade
 
             // Collect all tests from the application
             List<TestCaseReport> appTests = allTests.stream().filter(t -> t.getTestCaseTarget().equals(deploymentModelApplicabilityDetails.getAdaptationTarget())).collect(Collectors.toList());
-            
+
             // Collect all failed tests from the application
             List<TestCaseReport> appFailedTests = failedTests.stream().filter(t -> t.getTestCaseTarget().equals(deploymentModelApplicabilityDetails.getAdaptationTarget())).collect(Collectors.toList());
 
-            
-            
+
             // Copy the failed tests to an optional tests variable
             List<TestCaseReport> optionalTests = new LinkedList<>();
 
@@ -176,27 +168,6 @@ public class HddRassAdapter implements IAdaptationModule {
                     context.getAdaptationIdentifer()
             );
             context.submitAdaptationStatus(update);
-        }
-    }
-
-    void mockApply(DasAdaptationContext context) {
-        try {
-            AdaptationDetails starting = new AdaptationDetails(
-                    getClass().getName(),
-                    DasOutcome.RUNNING,
-                    context.getAdaptationIdentifer()
-            );
-            context.submitAdaptationStatus(starting);
-            Thread.sleep(1000);
-
-            LinkedList<String> detailMessages = new LinkedList<>();
-            detailMessages.add("Mock Success!");
-
-            AdaptationDetails update = starting.produceUpdate(DasOutcome.SUCCESS, new LinkedList<>(), detailMessages);
-            context.submitAdaptationStatus(update);
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 }

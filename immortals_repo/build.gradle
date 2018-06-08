@@ -1,5 +1,4 @@
 import mil.darpa.immortals.config.ImmortalsConfig
-import mil.darpa.immortals.das.ImmortalsServiceManifest
 
 import java.nio.file.Paths
 
@@ -78,13 +77,6 @@ def buildKnowledgeRepo = task('buildKnowledgeRepo', type: Exec) {
     args = ['-DskipTests', 'install']
 }
 
-def buildHddRass = task('buildHddRass', type: GradleBuild) {
-    group = 'IMMoRTALS Deploy'
-    description = 'Builds the hddRASS binary file'
-    buildFile = IMMORTALS_ROOT.resolve(ImmortalsConfig.instance.extensions.hddrass.gradleBuildFile).toString()
-    tasks = ['clean', 'jar']
-}
-
 // Various tasks to provide build/clean functionality of external projects
 def dslSetup = task('dslSetup', type: Exec) {
     workingDir = IMMORTALS_ROOT.resolve('dsl/resource-dsl').toString()
@@ -127,75 +119,16 @@ def buildPublishClitak = task('buildPublishClitak', type: GradleBuild) {
 
 def buildMarti = task('buildMarti', type: GradleBuild) {
     buildFile = "${rootDir}/applications/server/Marti/build.gradle"
+    dir = "${rootDir}/applications/server/Marti/"
     tasks = ['build']
     dependsOn(publish, buildPublishClitak)
 }
 
 def buildAtakLite = task('buildAtakLite', type: GradleBuild) {
     buildFile = "${rootDir}/applications/client/ATAKLite/build.gradle"
+    dir = "${rootDir}/applications/client/ATAKLite/"
     tasks = ['build']
     dependsOn(publish)
-}
-
-def setupExtensions = task("setupExtensions") {
-    afterEvaluate {
-        doLast {
-            try {
-                ImmortalsServiceManifest.deploy()
-            } catch (Exception e) {
-                println(e.getMessage())
-            }
-        }
-    }
-}
-
-def immortalize = task('immortalize') {
-    group = "IMMoRTALS Deploy"
-    description = "Executes the analysis of all relevant files. If this is run without cleaning the target artifact directory you will likely encounter unexpected errors!"
-
-    if (System.env['ANDROID_HOME'] == null) {
-        dependsOn(
-                build,
-                task('immortalizeMarti', type: GradleBuild) {
-                    buildFile = "${rootDir}/applications/server/Marti/build.gradle"
-                    tasks = ['immortalize']
-                }
-        )
-        afterEvaluate {
-            finalizedBy(
-                    task('printImmortalizeDetails') {
-                        doLast {
-                            if (!isEnvVarSet('ANDROID_HOME')) {
-                                System.err.println('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-                                System.err.println('ATAKLite was not build or analyzed due to ANDROID_HOME not being set to an      ')
-                                System.err.println('Anrdoid SDK! If you need to include ATAKLite please see harness/README-setup.md ')
-                                System.err.println('or https://developer.android.com/studio/releases/platform-tools.html.           ')
-                                System.err.println('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-                            }
-                        }
-                    }
-            )
-        }
-    } else {
-        dependsOn(
-                task('immortalizeAtakLite', type: GradleBuild) {
-                    buildFile = "${rootDir}/applications/client/ATAKLite/build.gradle"
-                    tasks = ['immortalize']
-                },
-                task('immortalizeMarti', type: GradleBuild) {
-                    buildFile = "${rootDir}/applications/server/Marti/build.gradle"
-                    tasks = ['immortalize']
-                }
-        )
-    }
-
-    subprojects.each {
-        it.afterEvaluate {
-            if (it.tasks.findByName('immortalize')) {
-                dependsOn("${it.path}:immortalize")
-            }
-        }
-    }
 }
 
 // TODO: This should probably be part of the ImmortalsServiceManifest "deploy" method and "setupExtensions"...
@@ -218,7 +151,7 @@ def buildknowledge = task('buildknowledge', type: Exec) {
     workingDir = IMMORTALS_ROOT.resolve('das/das-service/').toString()
     commandLine = ['java', '-jar', 'das.jar', '--analyze']
 
-    dependsOn(setupdb, immortalize)
+    dependsOn(setupdb)
 }
 
 // TODO: Make this a task definition once you remove applying java
@@ -247,7 +180,7 @@ build {
                     }
             )
         } else {
-            build.finalizedBy(buildPublishClitak, buildMarti, buildAtakLite)
+            finalizedBy(buildPublishClitak, buildMarti, buildAtakLite)
         }
 
         subprojects.each {
@@ -281,7 +214,7 @@ def deploy = task('deploy') {
     }
 
     dependsOn(build)
-    finalizedBy(buildKnowledgeRepo, setupdb, immortalize, setupExtensions, buildknowledge, buildHddRass)
+    finalizedBy(buildKnowledgeRepo, setupdb, ':extensions:deploy', buildknowledge)
 }
 
 def redeploy = task('redeploy') {
@@ -298,5 +231,5 @@ def redeploy = task('redeploy') {
     }
 
     dependsOn(build)
-    finalizedBy(buildKnowledgeRepo, immortalize, setupExtensions, buildknowledge, buildHddRass)
+    finalizedBy(buildKnowledgeRepo, ':extensions:deploy', buildknowledge)
 }

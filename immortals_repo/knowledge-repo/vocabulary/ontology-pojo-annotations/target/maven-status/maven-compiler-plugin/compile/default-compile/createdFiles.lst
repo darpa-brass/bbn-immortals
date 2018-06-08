@@ -1,0 +1,15 @@
+com/securboration/immortals/ontology/annotations/RdfsLabel.class
+com/securboration/immortals/ontology/annotations/triples/Triples.class
+com/securboration/immortals/ontology/annotations/etc/Constants.class
+com/securboration/immortals/ontology/annotations/triples/Triple.class
+com/securboration/immortals/ontology/annotations/etc/Constants$UndefinedClass.class
+com/securboration/immortals/ontology/annotations/RdfProperty.class
+com/securboration/immortals/ontology/pojos/markup/Ignore.class
+com/securboration/immortals/ontology/annotations/triples/Literal.class
+com/securboration/immortals/ontology/annotations/OwlClass.class
+com/securboration/immortals/ontology/pojos/markup/ConceptInstance.class
+com/securboration/immortals/ontology/annotations/RdfsComment.class
+com/securboration/immortals/ontology/pojos/markup/GenerateAnnotation.class
+com/securboration/immortals/ontology/pojos/markup/PojoProperty.class
+com/securboration/immortals/ontology/annotations/triples/FieldReference.class
+com/securboration/immortals/ontology/annotations/RdfsClass.class

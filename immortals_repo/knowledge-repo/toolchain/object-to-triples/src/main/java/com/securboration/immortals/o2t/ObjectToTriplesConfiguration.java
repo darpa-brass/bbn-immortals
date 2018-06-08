@@ -79,6 +79,8 @@ public class ObjectToTriplesConfiguration {
     private final Collection<Field> ignoredFields = new HashSet<>();
     
     private boolean enforceUriSymmetry = false;
+    
+    private boolean diveIntoConceptInstances = false;
 
     public Logger getLog() {
         return log;
@@ -335,6 +337,16 @@ public class ObjectToTriplesConfiguration {
         }
         
         return c;
+    }
+
+    
+    public boolean isDiveIntoConceptInstances() {
+        return diveIntoConceptInstances;
+    }
+
+    
+    public void setDiveIntoConceptInstances(boolean diveIntoConceptInstances) {
+        this.diveIntoConceptInstances = diveIntoConceptInstances;
     }
 
 }

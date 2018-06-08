@@ -4,6 +4,7 @@ from pymmortals.generated.mil.darpa.immortals.config.extensions.castorconfigurat
 from pymmortals.generated.mil.darpa.immortals.config.extensions.hddrassconfiguration import HddRassConfiguration
 from pymmortals.generated.mil.darpa.immortals.config.extensions.immortalizerconfiguration import ImmortalizerConfiguration
 from pymmortals.generated.mil.darpa.immortals.config.extensions.knowledgerepogradlepluginconfiguration import KnowledgeRepoGradlePluginConfiguration
+from pymmortals.generated.mil.darpa.immortals.config.extensions.partiallibraryupdatesconfiguration import PartialLibraryUpdatesConfiguration
 from pymmortals.generated.mil.darpa.immortals.config.extensions.voltdbconfiguration import VoltDBConfiguration
 
 
@@ -19,6 +20,7 @@ class ExtensionsConfiguration(Serializable):
                  hddrass: HddRassConfiguration = None,
                  immortalizer: ImmortalizerConfiguration = None,
                  krgp: KnowledgeRepoGradlePluginConfiguration = None,
+                 partiallibraryupgrade: PartialLibraryUpdatesConfiguration = None,
                  producedTtlOutputDirectory: str = None,
                  voltdb: VoltDBConfiguration = None):
         super().__init__()
@@ -27,5 +29,6 @@ class ExtensionsConfiguration(Serializable):
         self.hddrass = hddrass
         self.immortalizer = immortalizer
         self.krgp = krgp
+        self.partiallibraryupgrade = partiallibraryupgrade
         self.producedTtlOutputDirectory = producedTtlOutputDirectory
         self.voltdb = voltdb

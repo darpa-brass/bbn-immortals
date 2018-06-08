@@ -13,12 +13,14 @@ public class ImmortalizerConfiguration {
     private final String identifier = "immortalizer";
 
     private boolean performBuildFileAnalysis = true;
-    
+
     private boolean performKrgpBytecodeAnalysis = true;
 
     private boolean performKrgpCompleteGradleTaskAnalysis = true;
-    
+
     private boolean performTestCoverageAnalysis = true;
+
+    private boolean performSchemaAnalysis = true;
 
     public String getIdentifier() {
         return identifier;
@@ -33,16 +35,20 @@ public class ImmortalizerConfiguration {
     public Path getProducedDataTargetFile() {
         return Paths.get(producedDataTargetFile);
     }
-    
+
     public boolean isPerformKrgpBytecodeAnalysis() {
         return performKrgpBytecodeAnalysis;
     }
-    
+
     public boolean isPerformKrgpCompleteGradleTaskAnalysis() {
         return performKrgpCompleteGradleTaskAnalysis;
     }
 
     public boolean isPerformTestCoverageAnalysis() {
         return performTestCoverageAnalysis;
+    }
+
+    public boolean isPerformSchemaAnalysis() {
+        return performSchemaAnalysis;
     }
 }

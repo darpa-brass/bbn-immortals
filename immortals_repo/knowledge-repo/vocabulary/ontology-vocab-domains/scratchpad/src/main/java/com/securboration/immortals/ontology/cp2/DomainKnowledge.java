@@ -246,14 +246,14 @@ public class DomainKnowledge {
 //            imageReaderDfu.setClassName(
 //                "com.bbn.immortals.ImageReader"
 //                );
-//            imageReaderDfu.setMethodName("getImage(File imageFile)");
+//            imageReaderDfu.setMethodSignature("getImage(File imageFile)");
 //            imageReaderDfu.setRelevantFunctionalAspect(AspectReadImage.class);
 //            imageReaderDfu.setRelevantFunctionality(ImageFileIO.class);
 //        }
 //        
 //        private static final CodeUnitPointer networkSender = new CodeUnitPointer();static{
 //            networkSender.setClassName("com.bbn.immortals.ClientImpl");
-//            networkSender.setMethodName("sendSaData(byte[])");
+//            networkSender.setMethodSignature("sendSaData(byte[])");
 //        }
 //    }
 //    

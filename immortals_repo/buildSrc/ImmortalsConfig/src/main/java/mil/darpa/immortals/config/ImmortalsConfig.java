@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * Created by awellman@bbn.com on 9/29/17.
@@ -26,6 +27,21 @@ public class ImmortalsConfig {
     public final DebugConfiguration debug = new DebugConfiguration();
     public final ExtensionsConfiguration extensions = new ExtensionsConfiguration();
     public final DeploymentEnvironmentConfiguration deploymentEnvironment = new DeploymentEnvironmentConfiguration();
+
+    private String[] targetApplicationUris = new String[]{
+            GlobalsConfig.staticImmortalsRoot.resolve("shared/modules/core").toString(),
+            GlobalsConfig.staticImmortalsRoot.resolve("shared/modules/dfus/ElevationApi-1").toString(),
+            GlobalsConfig.staticImmortalsRoot.resolve("shared/modules/dfus/ElevationApi-2").toString(),
+            GlobalsConfig.staticImmortalsRoot.resolve("shared/modules/dfus/TakServerDataManager").toString(),
+            GlobalsConfig.staticImmortalsRoot.resolve("applications/server/Marti").toString(),
+            GlobalsConfig.staticImmortalsRoot.resolve("applications/client/ATAKLite").toString(),
+            GlobalsConfig.staticImmortalsRoot.resolve("applications/examples/ThirdPartyLibAnalysisAndroidApp").toString(),
+            GlobalsConfig.staticImmortalsRoot.resolve("applications/examples/ThirdPartyLibAnalysisJavaApp").toString()
+    };
+
+    public String[] getTargetApplicationUris() {
+        return Arrays.copyOf(targetApplicationUris, targetApplicationUris.length);
+    }
 
     ImmortalsConfig() {
     }
@@ -50,7 +66,7 @@ public class ImmortalsConfig {
         }
         return configuration;
     }
-    
+
     public static synchronized String getInstanceAsJsonString() {
         return StaticHelper.gson.toJson(getInstance());
     }

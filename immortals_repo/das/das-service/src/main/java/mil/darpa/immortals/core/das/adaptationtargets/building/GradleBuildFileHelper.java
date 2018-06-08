@@ -17,6 +17,7 @@ import java.util.*;
 public class GradleBuildFileHelper {
 
     private final Map<String, String> dependencyReplacementMap = new HashMap<>();
+    private final Map<String, Path> dependencyReplacementFileMap = new HashMap<>();
 
     private final List<String> newDependencies = new LinkedList<>();
 
@@ -36,7 +37,21 @@ public class GradleBuildFileHelper {
             Files.copy(buildFile, originalFile);
         }
 
-        List<String> lines = Files.readAllLines(originalFile);
+        List<String> originallines = Files.readAllLines(originalFile);
+        
+        List<String> lines = new LinkedList<>();
+        
+        // TODO: Replace this with proper substitution. It won't let me substitute with a file for some reason...
+        for (String line : originallines) {
+            if (dependencyReplacementFileMap.isEmpty()) {
+                lines = originallines;
+            } else {
+                for (Map.Entry<String, Path> entry : dependencyReplacementFileMap.entrySet()) {
+                    line = line.replaceAll("compile " + "'" + entry.getKey() + "'", "compile files('" + entry.getValue().toString() + "')");
+                    lines.add(line);
+                }
+            }
+        }
 
         // Add dependency substitutions
         if (dependencyReplacementMap.size() > 0) {
@@ -48,6 +63,7 @@ public class GradleBuildFileHelper {
                 lines.add("            substitute module('" + entry.getKey() + "') with module('" + entry.getValue() + "')");
 
             }
+            
             lines.add("        }");
             lines.add("    }");
             lines.add("}");
@@ -76,10 +92,17 @@ public class GradleBuildFileHelper {
 
     public synchronized void replaceDependency(String originalDependency, String newDependency) throws IOException {
         dependencyReplacementMap.put(originalDependency, newDependency);
+        hasBeenSaved = false;
+    }
+    
+    public synchronized void replaceDependency(String originalDependencyCoordinates, Path newDependencyFilepath) {
+        dependencyReplacementFileMap.put(originalDependencyCoordinates, newDependencyFilepath);
+        hasBeenSaved = false;
     }
 
     public synchronized void addDependency(String dependency) {
         newDependencies.add(dependency);
+        hasBeenSaved = false;
     }
 
     private synchronized boolean executeCommand(String[] cmd) throws IOException, InterruptedException {

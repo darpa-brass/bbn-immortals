@@ -1,5 +1,7 @@
 package mil.darpa.immortals.core.das.sparql.deploymentmodel;
 
+import mil.darpa.immortals.config.ImmortalsConfig;
+import mil.darpa.immortals.core.das.adaptationmodules.hddrass.Hacks;
 import mil.darpa.immortals.core.das.sparql.SparqlQuery;
 import mil.darpa.immortals.das.context.ContextManager;
 import mil.darpa.immortals.das.context.DasAdaptationContext;
@@ -40,7 +42,7 @@ public class DetermineTargets extends SparqlQuery {
 
         while (resultSet.hasNext()) {
             QuerySolution qs = resultSet.next();
-            targets.add(qs.getLiteral("artifactIdentifiers").toString());
+            targets.add(Hacks.normnalizeIdentifier(qs.getLiteral("artifactIdentifiers").toString()));
         }
         return targets;
     }

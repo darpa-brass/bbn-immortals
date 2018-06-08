@@ -1,0 +1,2162 @@
+@prefix IMMoRTALS_pattern_spec: <http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#> .
+@prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_functionality_datatype: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_cp: <http://darpa.mil/immortals/ontology/r2.0.0/cp#> .
+@prefix IMMoRTALS_resources_network: <http://darpa.mil/immortals/ontology/r2.0.0/resources/network#> .
+@prefix IMMoRTALS_resources_logical: <http://darpa.mil/immortals/ontology/r2.0.0/resources/logical#> .
+@prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#> .
+@prefix IMMoRTALS_android: <http://darpa.mil/immortals/ontology/r2.0.0/android#> .
+@prefix IMMoRTALS_core: <http://darpa.mil/immortals/ontology/r2.0.0/core#> .
+@prefix IMMoRTALS_functionality_aspects: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#> .
+@prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> .
+@prefix IMMoRTALS_resources_gps_properties: <http://darpa.mil/immortals/ontology/r2.0.0/resources/gps/properties#> .
+@prefix IMMoRTALS_functionality_locationprovider: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/locationprovider#> .
+@prefix IMMoRTALS_cp3: <http://darpa.mil/immortals/ontology/r2.0.0/cp3#> .
+@prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#> .
+@prefix IMMoRTALS_cp1: <http://darpa.mil/immortals/ontology/r2.0.0/cp1#> .
+@prefix IMMoRTALS_functionality_imageprocessor: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/imageprocessor#> .
+@prefix IMMoRTALS_resource_containment: <http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#> .
+@prefix IMMoRTALS_resources_gps: <http://darpa.mil/immortals/ontology/r2.0.0/resources/gps#> .
+@prefix IMMoRTALS_database: <http://darpa.mil/immortals/ontology/r2.0.0/database#> .
+@prefix IMMoRTALS_measurement: <http://darpa.mil/immortals/ontology/r2.0.0/measurement#> .
+@prefix IMMoRTALS_spec: <http://darpa.mil/immortals/ontology/r2.0.0/spec#> .
+@prefix IMMoRTALS_functionality_compression: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/compression#> .
+@prefix IMMoRTALS_functionality_imagecapture: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/imagecapture#> .
+@prefix IMMoRTALS_property_impact: <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#> .
+@prefix IMMoRTALS_functionality_dataproperties: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#> .
+@prefix IMMoRTALS_measurement_cp1cp2: <http://darpa.mil/immortals/ontology/r2.0.0/measurement/cp1cp2#> .
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix IMMoRTALS_metrics: <http://darpa.mil/immortals/ontology/r2.0.0/metrics#> .
+@prefix IMMoRTALS_connectivity: <http://darpa.mil/immortals/ontology/r2.0.0/connectivity#> .
+@prefix IMMoRTALS_functionality_imagescaling: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/imagescaling#> .
+@prefix IMMoRTALS_server: <http://darpa.mil/immortals/ontology/r2.0.0/server#> .
+@prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#> .
+@prefix IMMoRTALS_functionality_alg_encryption: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#> .
+@prefix IMMoRTALS_functionality_alg_encryption_aes: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption/aes#> .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-cdf816ee-2e29-47a2-9791-f6edd7f63514
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the good library instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources:SoftwareLibrary-f0fb0181-4de9-4fca-aab1-b6c30b67aeca .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-4cc47711-aea0-48c0-8c93-965bdcd74f00
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "12.0"^^xsd:double .
+
+IMMoRTALS_cp2:Analysis.DataflowGraph1
+        a                            IMMoRTALS_analysis:DataflowGraph ;
+        IMMoRTALS:hasEdges           IMMoRTALS_analysis:DataflowEdge-f8f8b669-8c7a-43a4-a926-f28683a83b19 , IMMoRTALS_analysis:DataflowEdge-5f389d68-4c67-48f4-bb3e-3505e8a668cd , IMMoRTALS_analysis:DataflowEdge-9feea703-098b-4255-b12d-1e5a6924deae ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Describes a dataflow in which ATAK reads an image from a local device file and transmits it to a remote MARTI server process" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$DataflowGraph1" .
+
+IMMoRTALS_resources_gps:GpsSatelliteConstellation-a9cc79e4-877b-40a5-a422-ea2988cd1867
+        a                               IMMoRTALS_resources_gps:GpsSatelliteConstellation ;
+        IMMoRTALS:hasConstellationName  "GPS" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a constellation of satellites" .
+
+IMMoRTALS_analysis:DataflowEdge-5f389d68-4c67-48f4-bb3e-3505e8a668cd
+        a                      IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasCommunicationChannelTemplate
+                IMMoRTALS_cp2:Analysis.Atak.AtakSoftware ;
+        IMMoRTALS:hasConsumer  IMMoRTALS_cp2:Analysis.AtakSendSaDataNode ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:Image ;
+        IMMoRTALS:hasHumanReadableDescription
+                "ATAK passes the image to a non-DFU method that transmits the image to MARTI" ;
+        IMMoRTALS:hasProducer  IMMoRTALS_cp2:Analysis.AtakReadImageNode .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-f5085212-d291-4390-9482-a5e774df8317
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "6.0"^^xsd:double .
+
+IMMoRTALS_gmei:DeploymentModel
+        a                            owl:Class ;
+        rdfs:label                   "DeploymentModel" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_resources:ResourceMigrationTarget ;
+                                       owl:onProperty     IMMoRTALS:hasResourceMigrationTargets
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSessionIdentifier
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasSessionIdentifier
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_property_impact:CauseEffectAssertion ;
+                                       owl:onProperty     IMMoRTALS:hasCauseEffectAssertions
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResourceContainmentModel
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDescription
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasAvailableResources
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResourceMigrationTargets
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasFunctionalitySpec
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasHumanReadableDescription
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasCauseEffectAssertions
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_core:Resource ;
+                                       owl:onProperty     IMMoRTALS:hasAvailableResources
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasHumanReadableDescription
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResourceContainmentModel
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_cp:FunctionalitySpec ;
+                                       owl:onProperty     IMMoRTALS:hasFunctionalitySpec
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_resource_containment:ResourceContainmentModel ;
+                                       owl:onProperty     IMMoRTALS:hasResourceContainmentModel
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasSessionIdentifier
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.gmei.DeploymentModel" .
+
+IMMoRTALS_cp2:Analysis.RemoteMartiSoftwareNode
+        a                              IMMoRTALS_analysis:NetworkIODataflowNode ;
+        IMMoRTALS:hasContextTemplate   IMMoRTALS_cp2:Analysis.Marti.MartiServer ;
+        IMMoRTALS:hasPojoProvenance    "com.securboration.immortals.ontology.cp2.Analysis$RemoteMartiSoftwareNode" ;
+        IMMoRTALS:hasResourceTemplate  IMMoRTALS_cp2:Analysis.Marti.MartiSoftware .
+
+IMMoRTALS_spec:SpecExample.Init
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "init" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "1" ;
+        IMMoRTALS:hasOrdering        "1"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$Init" .
+
+IMMoRTALS_cp2:DomainKnowledge.BandwidthConsumptionExceededMitigationStrategy
+        a                            IMMoRTALS_property_impact:PrescriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:ConstraintViolationCriterion-131aa9bd-e5e7-4e21-852a-569f5d542514 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "when bandwidth consumption limit is overshot, one remedy is to reduce network bandwidth consumption by reducing the memory footprint of the data " ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:RemediationImpact-bd2b7ff6-0fcb-4c3f-ab0f-d4e136ba0463 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.DomainKnowledge$BandwidthConsumptionExceededMitigationStrategy" .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-e0ca0bd3-7155-443a-ac33-d00c1396562d
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-72548151-603b-484a-8609-4eff22cfaa12 , IMMoRTALS_resource_containment:ConcreteResourceNode-f373641e-f777-4872-9b38-0e75e44d6d9b ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the marti database instance. Also contains two schema resource nodes." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources:DataBase-3d949738-3111-41b0-bf50-fa8131be395d .
+
+IMMoRTALS_functionality_dataproperties:Compressed-7c484846-b0e6-44c4-bf4b-05e0a5dbb4d5
+        a                    IMMoRTALS_functionality_dataproperties:Compressed ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_server:ServerPlatform-3b9a25d0-8da0-4ae6-94db-e39745284092
+        a       IMMoRTALS_server:ServerPlatform .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-a4af5182-cc38-4cda-bad8-75ee651dc8b8
+        a                             IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-8763d6fd-eecd-4f9f-9808-5c6645adbfbd ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasFrameProperties  IMMoRTALS_functionality_dataproperties:Compressed-312cf974-ff0e-4016-af9d-5c8bef958d96 .
+
+IMMoRTALS_functionality_imagescaling:ShrinkImage
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.imagescaling.ShrinkImage" .
+
+IMMoRTALS_spec:SpecExample.4-dafe40cd-e3f6-4fe1-a5be-46229569978f
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage
+                IMMoRTALS_spec:SpecExample.Cleanup ;
+        IMMoRTALS:hasDurableId  "example1-cleanup" ;
+        IMMoRTALS:hasSpec       "cipher$2215879.cleanup();" .
+
+IMMoRTALS_gmei:GmeInterchangeFormatExample
+        a                               IMMoRTALS_cp:GmeInterchangeFormat ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_android:AndroidPlatform-0722d965-2a7c-4dbd-b3a2-8675a9331a7d , IMMoRTALS_android:AndroidPlatform-a2ba7f5d-d4e7-4864-8d5f-3fb0335e7a0f , IMMoRTALS_server:ServerPlatform-41c68a32-56d8-429c-8166-483ed259af4f ;
+        IMMoRTALS:hasFunctionalitySpec  IMMoRTALS_cp:FunctionalitySpec-1285f6d9-c966-4d0f-9d28-5642011e059f ;
+        IMMoRTALS:hasMissionSpec        IMMoRTALS_cp:MissionSpec-bf9735cf-4d3a-4c36-bf0c-e09ab041dc8d , IMMoRTALS_cp:MissionSpec-17332363-3730-403f-80fe-fc179651c2ed , IMMoRTALS_cp:MissionSpec-f6b59c7c-1b40-40cf-a893-8c8874f46eb1 , IMMoRTALS_cp:MissionSpec-81241767-9c14-4cf9-9499-701a652eb682 ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.GmeInterchangeFormatExample" .
+
+IMMoRTALS_spec:SpecExample.4
+        a                            owl:Class ;
+        rdfs:label                   "" ;
+        rdfs:subClassOf              IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$4" .
+
+IMMoRTALS_pattern_spec:SpecComponent
+        a       owl:Class .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-2e6ae730-31b9-4cf1-b16e-579a35abca69
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.25"^^xsd:double .
+
+IMMoRTALS_resources_network:NetworkConnection-b0fc2545-64db-43f8-96ec-b5442407c45c
+        a                          IMMoRTALS_resources_network:NetworkConnection ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a bidirectional connection between a MARTI server and ATAK client" ;
+        IMMoRTALS:hasIsOneWay      false ;
+        IMMoRTALS:hasLocalDevice   IMMoRTALS_android:AndroidPlatform-37b0f83f-52cd-404f-8075-4394b64f9053 ;
+        IMMoRTALS:hasRemoteDevice  IMMoRTALS_server:ServerPlatform-3b9a25d0-8da0-4ae6-94db-e39745284092 .
+
+IMMoRTALS_property_impact:ConstraintViolationImpact-94f10d2d-2e61-4a9d-9739-e1ad479c8c1b
+        a                              IMMoRTALS_property_impact:ConstraintViolationImpact ;
+        IMMoRTALS:hasConstraintViolationType
+                "HARD_CONSTRAINT_VIOLATION" ;
+        IMMoRTALS:hasDirectionOfViolation
+                "OVERSHOOT" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "hard constraint violation" ;
+        IMMoRTALS:hasImpactedResource  IMMoRTALS_resources_network:NetworkBandwidth ;
+        IMMoRTALS:hasViolationMessage  "exceeded a hard limit on the network bandwidth consumption" .
+
+IMMoRTALS_property_impact:PropertyImpact-5283e111-5836-4a0e-b55d-6c27bafaddab
+        a                              IMMoRTALS_property_impact:PropertyImpact ;
+        IMMoRTALS:hasHumanReadableDescription
+                "decreases the bandwidth consumed" ;
+        IMMoRTALS:hasImpactOnProperty  "PROPERTY_DECREASES" ;
+        IMMoRTALS:hasImpactedProperty  IMMoRTALS_connectivity:BandwidthKiloBitsPerSecond .
+
+IMMoRTALS_spec:SpecExample.Declare
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "declare" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "1" ;
+        IMMoRTALS:hasOrdering        "0"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$Declare" .
+
+IMMoRTALS_measurement:MetricProfile-99035a03-a73a-4ceb-aca7-03e16492720a
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 8.00MP, an output image of size 2.00MP was produced (scaling factor = 0.25)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-cbcc294d-81f4-4b27-a4de-8d4f9a40a07c , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-176c8ab4-42a0-4f65-98e6-b80eae775b39 , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-2e6ae730-31b9-4cf1-b16e-579a35abca69 .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-582798d8-9f92-40cb-b408-7bc477d89ccd
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "4.0"^^xsd:double .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ImpactOfEncryptingData
+        a                            IMMoRTALS_property_impact:PredictiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:AbstractPropertyCriterion-cfa407a2-c71b-4653-8357-82a8c12ffaaf ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:PropertyImpact-b7c7f259-2a2e-4c20-82fe-6198358fb64e ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ImpactOfEncryptingData" .
+
+IMMoRTALS_metrics:Metric-357d68eb-e970-41dd-b12f-8fbac13ac507
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_resources_network:NetworkConnection ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.BandwidthMeasurementType ;
+        IMMoRTALS:hasUnit             "kb/s" ;
+        IMMoRTALS:hasValue            "25" .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-90ea5635-cec7-49a1-8385-becd1d58abba
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-e0ca0bd3-7155-443a-ac33-d00c1396562d ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the marti server instance. Also contains a database resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.MartiServer .
+
+IMMoRTALS_functionality_dataproperties:Compressed-dbae5a77-ca55-4d90-9aaa-6b6ffce46e7f
+        a                    IMMoRTALS_functionality_dataproperties:Compressed ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_cp2:Analysis.Atak.AtakPhoneFileSystem
+        a                            IMMoRTALS_resources:FileSystemResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a file system" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Atak$AtakPhoneFileSystem" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.MartiServer
+        a                            IMMoRTALS_resources:Server ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$MartiServer" .
+
+IMMoRTALS_gmei:DeploymentModelCP2
+        a                               IMMoRTALS_gmei:DeploymentModel ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 , IMMoRTALS_cp2:ClientServerEnvironment.MartiServer , IMMoRTALS_cp2:ClientServerEnvironment.FileSystem1 , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 , IMMoRTALS_cp2:ClientServerEnvironment.FileSystem2 , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 ;
+        IMMoRTALS:hasCauseEffectAssertions
+                IMMoRTALS_cp2:ClientServerEnvironment.DataSafetyConstraint ;
+        IMMoRTALS:hasHumanReadableDescription
+                "This describes a server and several client devices, along with some file systems and software, on the devices.There is a constraint placed on any data transmitted between client and server devices mandating it be confidential somehow." ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.DeploymentModelCP2" ;
+        IMMoRTALS:hasResourceContainmentModel
+                IMMoRTALS_resource_containment:ResourceContainmentModel-6113fa93-e3e8-4c59-a2be-6a7237b73719 ;
+        IMMoRTALS:hasSessionIdentifier  "CP2DataflowManagement" .
+
+IMMoRTALS_measurement:MetricProfile-f0901f9a-ce27-43e0-bde6-64316954bd3c
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 16.00MP, an output image of size 8.00MP was produced (scaling factor = 0.50)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-3d9b36cd-b576-472d-8894-bae4b28e99b7 , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-3d543808-21ab-4726-9f57-9cf5a119b4da , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-3d4da1dd-328e-43eb-9292-a2e8b52c180f .
+
+IMMoRTALS_measurement:MetricProfile-2d90c0d8-0b39-4ba9-a3ee-5276f1232971
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 12.00MP, an output image of size 9.00MP was produced (scaling factor = 0.75)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-4cc47711-aea0-48c0-8c93-965bdcd74f00 , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-bab25b42-b1c9-41cf-96ee-40132b693e51 , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-17681b0a-0dbb-4b53-b789-1242f2b83368 .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-b0f1df91-fda0-4c78-892b-0f246dec0ea6
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.5"^^xsd:double .
+
+IMMoRTALS_functionality_dataproperties:Compressed-3121b413-f2fa-4d5f-a54c-6808164c8a60
+        a                    IMMoRTALS_functionality_dataproperties:Compressed ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-484e20c7-85f3-43c5-9f2a-c841fc599203
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "3.75"^^xsd:double .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-c8268e49-1ac6-4df9-acbc-b13c3f0cba74
+        a                             IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-ef54fcf9-6429-427c-a718-8584c612de3e ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasFrameProperties  IMMoRTALS_functionality_dataproperties:Compressed-7c484846-b0e6-44c4-bf4b-05e0a5dbb4d5 .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-2c28caf9-055f-4922-92be-74554d185e26
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.25"^^xsd:double .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowEdge3
+        a                            IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode4 ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-c8268e49-1ac6-4df9-acbc-b13c3f0cba74 ;
+        IMMoRTALS:hasEdgeProperties  IMMoRTALS_functionality_dataproperties:Compressed-4601d31d-fbde-4a0f-b956-ba5e09640997 , IMMoRTALS_functionality_imagescaling:NumberOfPixels-ce8b92ac-74d7-4451-aaf9-379373ffd5e1 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowEdge3" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode3 .
+
+IMMoRTALS_property_impact:AbstractPropertyCriterion-130b9227-ab20-41ca-8966-4b42b81a67cd
+        a                       IMMoRTALS_property_impact:AbstractPropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_ABSENT" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "This criterion specifies a situation where a confidential property is absent." ;
+        IMMoRTALS:hasProperty   IMMoRTALS_functionality:ConfidentialProperty .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-8c24cf5e-8872-4039-8c39-117158ed2155
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "5.0"^^xsd:double .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-24474d13-d41b-4c83-9646-36160dbd1523
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-80263362-e966-47c7-82c6-6217714eb31c ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #3. Also contains a software library resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ATAKMartiFunctionalitySpecInflate
+        a                            IMMoRTALS_cp:FunctionalitySpec ;
+        IMMoRTALS:hasFunctionalityPerformed
+                IMMoRTALS_functionality_compression:Compressor ;
+        IMMoRTALS:hasFunctionalityProvided
+                IMMoRTALS_functionality_compression:AspectInflate ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ATAKMartiFunctionalitySpecInflate" .
+
+IMMoRTALS_property_impact:PropertyImpact-d587fecb-781a-46ce-8963-9ca04e131f93
+        a                              IMMoRTALS_property_impact:PropertyImpact ;
+        IMMoRTALS:hasImpactOnProperty  "PROPERTY_INCREASES" ;
+        IMMoRTALS:hasImpactedProperty  IMMoRTALS_resources_logical:Version .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ConfidentialDataImplementationStrategy
+        a                            IMMoRTALS_property_impact:PrescriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:ConstraintViolationCriterion-c733f4c3-6045-4f2c-9703-336774c30705 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "When the DataSafetyConstraint is \"hard\" violated, this strategy can mitigate the violation, while at the same time introducing ImpactOfEncryptingData." ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:RemediationImpact-9f6073a0-c060-4155-ae10-ad15d482e40e ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ConfidentialDataImplementationStrategy" .
+
+IMMoRTALS:hasHumanReadableDescription
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_gmei:DeploymentModel ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_measurement:MetricProfile-a0586d58-a075-4db0-9c0a-57ed9743edda
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 5.00MP, an output image of size 3.75MP was produced (scaling factor = 0.75)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-03986ec0-2e3b-4682-8e69-67db58cf2cde , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-484e20c7-85f3-43c5-9f2a-c841fc599203 , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-2ddf7903-4862-4e3c-81a0-cc428513f9b0 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-72548151-603b-484a-8609-4eff22cfaa12
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the old schema instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources_logical:DBSchema-d4c02a88-6dca-431e-bc36-61c16091c2a1 .
+
+IMMoRTALS_resources_logical:Version-edb41928-5eaf-4b78-a84e-6a55d15db435
+        a                   IMMoRTALS_resources_logical:Version ;
+        IMMoRTALS:hasMajor  "2"^^xsd:int ;
+        IMMoRTALS:hasMinor  "0"^^xsd:int ;
+        IMMoRTALS:hasPatch  "0"^^xsd:int .
+
+IMMoRTALS_android:AndroidPlatform-37b0f83f-52cd-404f-8075-4394b64f9053
+        a                               IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasAndroidPlatformVersion
+                "6.0.1 Marshmallow" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Marshmallow device with the following hardware: a USB port, a Bluetooth transceiver, a physical UI, an embedded GPS receiver, a network connection" ;
+        IMMoRTALS:hasPlatformResources  IMMoRTALS_resources:UsbResource-2c587afd-875e-402d-82c1-1d8e2e30951b , IMMoRTALS_resources:BluetoothResource-0f7b468c-6216-43f4-bc54-aebbad26586b , IMMoRTALS_resources:UserInterface-dd3a8804-a37f-49d1-a9d8-302aa034e50f , IMMoRTALS_resources_gps:GpsReceiverEmbedded-63d845ae-73c7-4ae0-bb8e-61a17b9325a2 , IMMoRTALS_resources_network:NetworkConnection-b0fc2545-64db-43f8-96ec-b5442407c45c .
+
+IMMoRTALS_cp2:Analysis.Atak.AtakPhone
+        a                            IMMoRTALS_resources:AndroidPhone ;
+        IMMoRTALS:hasHumanReadableDescription
+                "A phone with a file system connected to a network and running ATAK." ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Atak$AtakPhone" ;
+        IMMoRTALS:hasResources       IMMoRTALS_cp2:Analysis.Atak.AtakPhoneFileSystem , IMMoRTALS_cp2:Analysis.Shared.SaNetwork , IMMoRTALS_cp2:Analysis.Atak.AtakSoftware .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-fa047b95-f930-42e8-a42f-bf46ef6e09fa
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-cdf816ee-2e29-47a2-9791-f6edd7f63514 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #2. Also contains a software library resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode6
+        a                              IMMoRTALS_analysis:DataflowNode ;
+        IMMoRTALS:hasPojoProvenance    "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowNode6" ;
+        IMMoRTALS:hasResourceTemplate  IMMoRTALS_cp2:ClientServerEnvironment.FileSystem2 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-e58b110a-742c-4550-8fb6-c77b193f8a97
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-9ca1f7d3-ddc4-4d04-bf16-755337fdfdd0 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #1. Also contains a file system resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 .
+
+IMMoRTALS_cp1:MartiDBEnvironment.ImpactOfSchemaMigration
+        a                            IMMoRTALS_property_impact:PredictiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:ResourceCriterion-0133745e-b78b-40eb-bcc1-30ab7d989835 ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:PropertyImpact-f6128f36-6485-41cb-b26f-2ca80a0c7937 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp1.MartiDBEnvironment$ImpactOfSchemaMigration" .
+
+IMMoRTALS_property_impact:RemediationImpact-ef5e0bb1-a198-44aa-98b9-188e2071fdca
+        a       IMMoRTALS_property_impact:RemediationImpact ;
+        IMMoRTALS:hasRemediationStrategy
+                IMMoRTALS_cp1:MartiDBEnvironment.ImpactOfSchemaMigration .
+
+IMMoRTALS_resources_gps:L5
+        a                               IMMoRTALS_resources:RadioChannel ;
+        IMMoRTALS:hasCenterFrequencyHertz
+                1.17645E9 ;
+        IMMoRTALS:hasChannelName        "L5" ;
+        IMMoRTALS:hasMaxFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasMinFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasModulationStrategy
+                "BPSK" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.resources.gps.L5" .
+
+IMMoRTALS_cp2:MeasurementTypes.LocationAccuracyMeasurementType
+        a                             IMMoRTALS_metrics:MeasurementType ;
+        IMMoRTALS:hasCorrespondingProperty
+                IMMoRTALS_connectivity:LocationAccuracy ;
+        IMMoRTALS:hasMeasurementType  "Location accuracy measurement" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.MeasurementTypes$LocationAccuracyMeasurementType" .
+
+IMMoRTALS_cp:MissionSpec-f6b59c7c-1b40-40cf-a893-8c8874f46eb1
+        a                               IMMoRTALS_cp:MissionSpec ;
+        IMMoRTALS:hasAssertionCriterion
+                "VALUE_GREATER_THAN_EXCLUSIVE" ;
+        IMMoRTALS:hasHumanReadableForm  "the client must issue > 10 PLI messages per minute" ;
+        IMMoRTALS:hasRightValue         IMMoRTALS_metrics:Metric-09d01b1d-f914-42fd-9b7a-b3d18602c81e .
+
+IMMoRTALS_resources_gps:L1_C
+        a                               IMMoRTALS_resources:RadioChannel ;
+        IMMoRTALS:hasCenterFrequencyHertz
+                1.57542E9 ;
+        IMMoRTALS:hasChannelName        "L1_C" ;
+        IMMoRTALS:hasMaxFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasMinFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasModulationStrategy
+                "MBOC" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.resources.gps.L1_C" .
+
+IMMoRTALS_cp2:Analysis.AtakImageSourceNode
+        a                              IMMoRTALS_analysis:DiskIODataflowNode ;
+        IMMoRTALS:hasContextTemplate   IMMoRTALS_cp2:Analysis.Atak.AtakPhone ;
+        IMMoRTALS:hasPojoProvenance    "com.securboration.immortals.ontology.cp2.Analysis$AtakImageSourceNode" ;
+        IMMoRTALS:hasResourceTemplate  IMMoRTALS_cp2:Analysis.Atak.AtakPhoneFileSystem .
+
+IMMoRTALS_server:ServerPlatform-41c68a32-56d8-429c-8166-483ed259af4f
+        a       IMMoRTALS_server:ServerPlatform .
+
+IMMoRTALS_functionality_imagescaling:NumberOfPixels-ce8b92ac-74d7-4451-aaf9-379373ffd5e1
+        a                          IMMoRTALS_functionality_imagescaling:NumberOfPixels ;
+        IMMoRTALS:hasHeightPixels  "0"^^xsd:int ;
+        IMMoRTALS:hasHidden        false ;
+        IMMoRTALS:hasTotalPixels   "0"^^xsd:int ;
+        IMMoRTALS:hasWidthPixels   "0"^^xsd:int .
+
+IMMoRTALS_cp:MissionSpec-785cbc2b-ad13-4fc3-8acb-9baaed5e5241
+        a                               IMMoRTALS_cp:MissionSpec ;
+        IMMoRTALS:hasAssertionCriterion
+                "VALUE_GREATER_THAN_INCLUSIVE" ;
+        IMMoRTALS:hasHumanReadableForm  "the software must provide at least 1 image updates per minute" ;
+        IMMoRTALS:hasRightValue         IMMoRTALS_metrics:Metric-c65c1c59-4273-406d-bc3e-798d357aa3fe .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-8274ff29-019a-4b83-97f2-05efe893b400
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.5"^^xsd:double .
+
+IMMoRTALS_functionality_dataproperties:Compressed-312cf974-ff0e-4016-af9d-5c8bef958d96
+        a                    IMMoRTALS_functionality_dataproperties:Compressed ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-7d699eec-8323-4a12-bede-772c3e864911
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing file system instance #2." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.FileSystem2 .
+
+IMMoRTALS_resources:UsbResource-742f5716-eea2-43d0-8214-5b163c4afe16
+        a       IMMoRTALS_resources:UsbResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a USB port" .
+
+IMMoRTALS:hasCauseEffectAssertions
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_gmei:DeploymentModel ;
+        rdfs:range   IMMoRTALS_property_impact:CauseEffectAssertion .
+
+IMMoRTALS_measurement:MetricProfile-516ac6b0-fe8e-4b12-a7eb-586fe303572e
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 24.00MP, an output image of size 6.00MP was produced (scaling factor = 0.25)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-bf2d2115-44c6-456d-b62a-e775691a4d46 , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-a9b7e336-191e-47ba-a7a6-81b1979c5868 , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-2c28caf9-055f-4922-92be-74554d185e26 .
+
+IMMoRTALS_analysis:DataflowEdge-9feea703-098b-4255-b12d-1e5a6924deae
+        a                      IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasCommunicationChannelTemplate
+                IMMoRTALS_cp2:Analysis.Shared.SaNetwork ;
+        IMMoRTALS:hasConsumer  IMMoRTALS_cp2:Analysis.RemoteMartiSoftwareNode ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:Image ;
+        IMMoRTALS:hasHumanReadableDescription
+                "ATAK transmits the image to a MARTI server via network IO" ;
+        IMMoRTALS:hasProducer  IMMoRTALS_cp2:Analysis.AtakSendSaDataNode .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-61e5141c-d162-466e-bd25-7cf3d08b09ba
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.75"^^xsd:double .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-13dc9a23-74ef-4f52-876f-3fbea8539fe4
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "16.0"^^xsd:double .
+
+IMMoRTALS_property_impact:ConstraintViolationImpact-9d8c3876-b3f4-4c76-94e8-07a34ab86bd3
+        a       IMMoRTALS_property_impact:ConstraintViolationImpact ;
+        IMMoRTALS:hasConstraintViolationType
+                "HARD_CONSTRAINT_VIOLATION" ;
+        IMMoRTALS:hasDirectionOfViolation
+                "UNDERSHOOT" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataSafetyConstraint
+        a                            IMMoRTALS_property_impact:ProscriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasApplicableDataType
+                IMMoRTALS_functionality_datatype:DataType ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:AbstractPropertyCriterion-130b9227-ab20-41ca-8966-4b42b81a67cd ;
+        IMMoRTALS:hasHumanReadableDescription
+                "All data being transmitted between MobileAndroidDevices and FileSystemResources must be confidential" ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:ConstraintViolationImpact-9d8c3876-b3f4-4c76-94e8-07a34ab86bd3 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataSafetyConstraint" .
+
+IMMoRTALS_measurement:MetricProfile-6b6d8504-9797-4422-bc69-14d2d355de30
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 16.00MP, an output image of size 4.00MP was produced (scaling factor = 0.25)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-13dc9a23-74ef-4f52-876f-3fbea8539fe4 , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-a5c0f195-705a-4156-97e2-baad6c1025e8 , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-6a46a43f-75ef-4378-9029-883beaf18908 .
+
+IMMoRTALS_property_impact:InvocationCriterion-a54c1c10-bd14-478c-b272-7648c2e8586a
+        a                           IMMoRTALS_property_impact:InvocationCriterion ;
+        IMMoRTALS:hasCriterion      "AFTER_INVOKING" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "after invoking the ShrinkImage aspect of the ImageResizer functional spec" ;
+        IMMoRTALS:hasInvokedAspect  IMMoRTALS_functionality_imagescaling:ShrinkImage .
+
+IMMoRTALS_cp2:MeasurementTypes.ScalingFactorMeasurementType
+        a                             IMMoRTALS_metrics:MeasurementType ;
+        IMMoRTALS:hasCorrespondingProperty
+                IMMoRTALS_functionality_dataproperties:Compressed ;
+        IMMoRTALS:hasMeasurementType  "Scaling factor" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.MeasurementTypes$ScalingFactorMeasurementType" .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-8c448237-f465-47b8-9f80-728da4aa9a73
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "1.25"^^xsd:double .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-76a0aac1-38b0-4749-bb9b-f813987a10c0
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-7d699eec-8323-4a12-bede-772c3e864911 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #3. Also contains a file system resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 .
+
+IMMoRTALS_bytecode:BytecodeArtifactCoordinate-dbbe8121-0c34-4011-803c-8392ccff7c8f
+        a                           IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+        IMMoRTALS:hasArtifactId     "immortals-examples-cipher" ;
+        IMMoRTALS:hasCoordinateTag  "com.securboration:immortals-examples-cipher:0.0.1" ;
+        IMMoRTALS:hasGroupId        "com.securboration" ;
+        IMMoRTALS:hasVersion        "0.0.1" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ATAKSoftware
+        a                               IMMoRTALS_cp2:Analysis.Atak.AtakSoftware ;
+        IMMoRTALS:hasApplicationName    "ATAK" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "An instance of the ATAK project" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ATAKSoftware" ;
+        IMMoRTALS:hasSoftwareCoordinate
+                "com.bbn.ataklite" ;
+        IMMoRTALS:hasVersionControlUrl  "https://dsl-external.bbn.com/svn/immortals/trunk/applications/client/ATAKLite" .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-f373641e-f777-4872-9b38-0e75e44d6d9b
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the new schema instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources_logical:DBSchema-3ab65cc1-c7df-4ad6-a867-eb3d51e595a0 .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode1
+        a                               IMMoRTALS_analysis:InterMethodDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com.sec.Client1" ;
+        IMMoRTALS:hasJavaMethodName     "M1" ;
+        IMMoRTALS:hasJavaMethodPointer  "12345" ;
+        IMMoRTALS:hasLineNumber         "0"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowNode1" ;
+        IMMoRTALS:hasResourceTemplate   IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 .
+
+IMMoRTALS_property_impact:PropertyImpact-2c7d3cc3-7dc3-47db-a2c5-633bdfde5ebc
+        a                              IMMoRTALS_property_impact:PropertyImpact ;
+        IMMoRTALS:hasHumanReadableDescription
+                "at the cost of irreversible data loss in the image" ;
+        IMMoRTALS:hasImpactOnProperty  "ADDS" ;
+        IMMoRTALS:hasImpactedProperty  IMMoRTALS_functionality_compression:LossyTransformation .
+
+IMMoRTALS_android:AndroidPlatform-0722d965-2a7c-4dbd-b3a2-8675a9331a7d
+        a                               IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasAndroidPlatformVersion
+                "6.0.1 Marshmallow" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Marshmallow device with BlueTooth, USB, and a SASM GPS module" ;
+        IMMoRTALS:hasPlatformResources  IMMoRTALS_resources_gps:GpsReceiverSaasm-eb0b53c0-f873-4c52-bfd5-7fd05aea7c6f , IMMoRTALS_resources:BluetoothResource-07b84dc0-d4ec-42f7-946c-93e28e2ab1f8 , IMMoRTALS_resources:UsbResource-d2db87c3-6a61-441d-8c5d-c6f337be39f7 , IMMoRTALS_resources:FileSystemResource-459ddcdc-5ad2-47bf-84bb-8c741fe42078 , IMMoRTALS_resources_network:NetworkConnection-fef421d4-fee5-4f91-bc48-3511fbf45587 .
+
+IMMoRTALS_resources_gps:GpsSatellite-742f1169-2790-4734-94fb-a6f8600d027f
+        a                         IMMoRTALS_resources_gps:GpsSatellite ;
+        IMMoRTALS:hasHasFineGrainedEncryptedLocation
+                true ;
+        IMMoRTALS:hasSatelliteId  "OPS 5110" .
+
+IMMoRTALS_resources_gps:GpsSatellite-b6d6141b-651f-4749-9485-c309001f14d0
+        a                         IMMoRTALS_resources_gps:GpsSatellite ;
+        IMMoRTALS:hasHasFineGrainedEncryptedLocation
+                true ;
+        IMMoRTALS:hasSatelliteId  "OPS 5112" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-9d6c89a8-a486-4dc5-bbd5-3f43c58def69
+        a                             IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasFrameProperties  IMMoRTALS_functionality_dataproperties:Compressed-dbae5a77-ca55-4d90-9aaa-6b6ffce46e7f .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-7323f6cf-fff5-4d74-a3c2-0d6cc37eda44
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "12.0"^^xsd:double .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-8763d6fd-eecd-4f9f-9808-5c6645adbfbd
+        a                             IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasFrameProperties  IMMoRTALS_functionality_imagescaling:NumberOfPixels-130b0f0c-412f-41d0-8672-7a16f0d2d118 .
+
+IMMoRTALS_resource_containment:ResourceContainmentModel-bc6c11c2-3bfe-4f58-a84e-d38fd6112c6d
+        a                           IMMoRTALS_resource_containment:ResourceContainmentModel ;
+        IMMoRTALS:hasResourceModel  IMMoRTALS_resource_containment:ConcreteResourceNode-90ea5635-cec7-49a1-8385-becd1d58abba .
+
+IMMoRTALS_resources:SoftwareLibrary-f0fb0181-4de9-4fca-aab1-b6c30b67aeca
+        a                             IMMoRTALS_resources:SoftwareLibrary ;
+        IMMoRTALS:hasApplicationName  "currentCommonsIO" ;
+        IMMoRTALS:hasVersion          IMMoRTALS_resources_logical:Version-edb41928-5eaf-4b78-a84e-6a55d15db435 .
+
+IMMoRTALS_spec:SpecExample.3-321ef642-d4ac-4b53-af92-8afc45fe2532
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage
+                IMMoRTALS_spec:SpecExample.DoWork ;
+        IMMoRTALS:hasDurableId  "example1-doWork" ;
+        IMMoRTALS:hasSpec       "output$127997 = cipher$2215879.encrypt(input$0876887);" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-ee36efc9-5024-4d51-9f8f-0ae7706ee2b5
+        a                             IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-604e4c98-7c88-472e-8a3e-8528dc54fcae ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasFrameProperties  IMMoRTALS_functionality_dataproperties:Compressed-e68e4d8f-fd7c-4e38-9ea7-fa793858d2a8 .
+
+IMMoRTALS_cp2:DomainKnowledge.BandwidthConstraint
+        a                            IMMoRTALS_property_impact:ProscriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasApplicableDataType
+                IMMoRTALS_functionality_datatype:DataType ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:PropertyCriterion-fda84b10-5647-415d-88c2-bc028c19ca3a ;
+        IMMoRTALS:hasHumanReadableDescription
+                "The maximum observed bandwidth is 1000kbps" ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:ConstraintViolationImpact-94f10d2d-2e61-4a9d-9739-e1ad479c8c1b ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.DomainKnowledge$BandwidthConstraint" .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-b3e71363-8410-4912-ae35-c43442cbc57f
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "8.0"^^xsd:double .
+
+IMMoRTALS_property_impact:PropertyConstraint-0bee1c3c-03e7-47b1-a8a8-dc88180f4c73
+        a                               IMMoRTALS_property_impact:PropertyConstraint ;
+        IMMoRTALS:hasConstrainedProperty
+                IMMoRTALS_resources_gps_properties:TrustedProperty-2b660ff9-e0bf-4ef5-bad5-2e14b140e911 ;
+        IMMoRTALS:hasConstraintCriterion
+                "PROPERTY_PRESENT" ;
+        IMMoRTALS:hasHumanReadableForm  "the implementer must possess TrustedProperty" .
+
+IMMoRTALS_gmei:DeploymentModelCP3
+        a                               IMMoRTALS_gmei:DeploymentModel ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_resources:SoftwareLibrary-d2730ff0-75a0-42ef-b69d-e74f4eeabd59 , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 , IMMoRTALS_resources:SoftwareLibrary-f0fb0181-4de9-4fca-aab1-b6c30b67aeca , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Describes ATAK mobile devices utilizing various versions of a library, and a target version that should upgraded to." ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.DeploymentModelCP3" ;
+        IMMoRTALS:hasResourceContainmentModel
+                IMMoRTALS_resource_containment:ResourceContainmentModel-d03b1cd5-3b1a-46f9-be29-19b0d24e980b ;
+        IMMoRTALS:hasResourceMigrationTargets
+                IMMoRTALS_resources:ResourceMigrationTarget-814bbd67-944f-4628-8dcc-4c41c15dff4f ;
+        IMMoRTALS:hasSessionIdentifier  "CP3ATAKDevicesLibraries" .
+
+IMMoRTALS_functionality_compression:AspectInflate
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.compression.AspectInflate" .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-91e40a37-098e-4094-8ca3-87475052d944
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "12.0"^^xsd:double .
+
+IMMoRTALS_resources:UsbResource-d2db87c3-6a61-441d-8c5d-c6f337be39f7
+        a       IMMoRTALS_resources:UsbResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a USB port" .
+
+IMMoRTALS_resources_gps:GpsSatellite-72dd98f1-7d69-4e22-bf4d-2141c402e728
+        a                         IMMoRTALS_resources_gps:GpsSatellite ;
+        IMMoRTALS:hasHasFineGrainedEncryptedLocation
+                true ;
+        IMMoRTALS:hasSatelliteId  "OPS 5111" .
+
+IMMoRTALS_cp3:ImmortalsSystemLibraryEnv.ImpactOfLibraryUpgrade
+        a                            IMMoRTALS_property_impact:PredictiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:ResourceCriterion-2c49d137-a755-4746-a7c2-337198cd45e7 ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:PropertyImpact-d587fecb-781a-46ce-8963-9ca04e131f93 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp3.ImmortalsSystemLibraryEnv$ImpactOfLibraryUpgrade" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowEdge4
+        a                            IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode5 ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-a4af5182-cc38-4cda-bad8-75ee651dc8b8 ;
+        IMMoRTALS:hasEdgeProperties  IMMoRTALS_functionality_dataproperties:Compressed-af82f026-6417-4a61-8c32-9ee45bc6a172 , IMMoRTALS_functionality_dataproperties:Encrypted-9de219b8-a95e-44bd-96cc-a82f12cab38f ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowEdge4" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode1 .
+
+IMMoRTALS_resources_network:NetworkConnection-27ff6aaf-554c-4b79-a391-cbce82ec16d2
+        a                          IMMoRTALS_resources_network:NetworkConnection ;
+        IMMoRTALS:hasIsOneWay      false ;
+        IMMoRTALS:hasLocalDevice   IMMoRTALS_android:AndroidPlatform-a2ba7f5d-d4e7-4864-8d5f-3fb0335e7a0f ;
+        IMMoRTALS:hasRemoteDevice  IMMoRTALS_server:ServerPlatform-41c68a32-56d8-429c-8166-483ed259af4f .
+
+IMMoRTALS_resources:FileSystemResource-670d01c5-0407-437e-aff0-69ad687e8ecc
+        a       IMMoRTALS_resources:FileSystemResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a device file system" .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-cbcc294d-81f4-4b27-a4de-8d4f9a40a07c
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "8.0"^^xsd:double .
+
+IMMoRTALS_property_impact:PropertyImpact-77f9d2e9-1dde-4901-a399-9cece4aa05a7
+        a                              IMMoRTALS_property_impact:PropertyImpact ;
+        IMMoRTALS:hasHumanReadableDescription
+                "decreases the # of pixels in the image" ;
+        IMMoRTALS:hasImpactOnProperty  "PROPERTY_DECREASES" ;
+        IMMoRTALS:hasImpactedProperty  IMMoRTALS_functionality_imagescaling:NumberOfPixels .
+
+IMMoRTALS_cp3:ImmortalsSystemLibraryEnv.LibraryUpdateStrategy
+        a                            IMMoRTALS_property_impact:PrescriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:ConstraintViolationCriterion-347c092e-9f53-4b46-9db8-a992eb7a6659 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "When a database isn't at the most current version, this strategy mitigatesthe constraint by applying the impact of schema migration." ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:RemediationImpact-b43b5e80-5793-440c-9126-b05f9ddb0c31 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp3.ImmortalsSystemLibraryEnv$LibraryUpdateStrategy" .
+
+IMMoRTALS_metrics:Metric-5e247d7d-674c-4f34-a5d1-b67c06cfe7e4
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.ImageReportRateMeasurementType ;
+        IMMoRTALS:hasUnit             "images/minute" ;
+        IMMoRTALS:hasValue            "1" .
+
+IMMoRTALS_functionality_compression:Compressor
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.compression.Compressor" .
+
+IMMoRTALS_property_impact:PropertyConstraint-078795a1-c866-406a-9882-9c4c3d9d005c
+        a                               IMMoRTALS_property_impact:PropertyConstraint ;
+        IMMoRTALS:hasConstrainedProperty
+                IMMoRTALS_resources_gps_properties:TrustedProperty-ef2174f3-d3dd-4093-bcbb-f04c06d75759 ;
+        IMMoRTALS:hasConstraintCriterion
+                "PROPERTY_PRESENT" ;
+        IMMoRTALS:hasHumanReadableForm  "the implementer must possess TrustedProperty" .
+
+IMMoRTALS_metrics:Metric-de212813-a548-4951-ac7b-0bb171a31725
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_server:ServerPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.NumClientsMeasurementType ;
+        IMMoRTALS:hasUnit             "count" ;
+        IMMoRTALS:hasValue            "25" .
+
+IMMoRTALS_resources_logical:Table-441fab3e-cf7c-4829-a778-67fe41766268
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-60e92468-8e74-45c6-9aaa-d46d60d53bd3 .
+
+IMMoRTALS_property_impact:RemediationImpact-9f6073a0-c060-4155-ae10-ad15d482e40e
+        a       IMMoRTALS_property_impact:RemediationImpact ;
+        IMMoRTALS:hasRemediationStrategy
+                IMMoRTALS_cp2:ClientServerEnvironment.ImpactOfEncryptingData .
+
+IMMoRTALS_metrics:Metric-09d01b1d-f914-42fd-9b7a-b3d18602c81e
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.PliReportRateMeasurementType ;
+        IMMoRTALS:hasUnit             "messages/minute" ;
+        IMMoRTALS:hasValue            "10" .
+
+IMMoRTALS_cp2:Analysis.Marti.MartiFileSystem
+        a                            IMMoRTALS_resources:FileSystemResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a file system" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Marti$MartiFileSystem" .
+
+IMMoRTALS_android:AndroidPlatform-a2ba7f5d-d4e7-4864-8d5f-3fb0335e7a0f
+        a                               IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasAndroidPlatformVersion
+                "6.0.1 Marshmallow" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Marshmallow device with BlueTooth, USB, and a SASM GPS module" ;
+        IMMoRTALS:hasPlatformResources  IMMoRTALS_resources_gps:GpsReceiverSaasm-2cddbf8b-e94b-4875-aa92-0db9b2b40ff8 , IMMoRTALS_resources:BluetoothResource-820a01cb-c9c0-4184-8151-d8d222746a32 , IMMoRTALS_resources:UsbResource-742f5716-eea2-43d0-8214-5b163c4afe16 , IMMoRTALS_resources:FileSystemResource-670d01c5-0407-437e-aff0-69ad687e8ecc , IMMoRTALS_resources_network:NetworkConnection-27ff6aaf-554c-4b79-a391-cbce82ec16d2 .
+
+IMMoRTALS_property_impact:ConstraintViolationImpact-2e13c5e9-0fd1-44d5-80a4-79e21231693f
+        a       IMMoRTALS_property_impact:ConstraintViolationImpact ;
+        IMMoRTALS:hasConstraintViolationType
+                "HARD_CONSTRAINT_VIOLATION" .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-a0de3660-af93-4b61-8ed6-54b146c34bea
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.5"^^xsd:double .
+
+IMMoRTALS_cp:MissionSpec-17332363-3730-403f-80fe-fc179651c2ed
+        a                               IMMoRTALS_cp:MissionSpec ;
+        IMMoRTALS:hasAssertionCriterion
+                "VALUE_LESS_THAN_INCLUSIVE" ;
+        IMMoRTALS:hasHumanReadableForm  "the link must never see > 25kbps in traffic" ;
+        IMMoRTALS:hasRightValue         IMMoRTALS_metrics:Metric-357d68eb-e970-41dd-b12f-8fbac13ac507 .
+
+IMMoRTALS_property_impact:ConstraintViolationImpact-5d8360f3-a2a9-42c2-a15e-d59976dbc93a
+        a       IMMoRTALS_property_impact:ConstraintViolationImpact ;
+        IMMoRTALS:hasConstraintViolationType
+                "HARD_CONSTRAINT_VIOLATION" .
+
+IMMoRTALS_resources_gps:L2_CA
+        a                               IMMoRTALS_resources:RadioChannel ;
+        IMMoRTALS:hasCenterFrequencyHertz
+                1.2276E9 ;
+        IMMoRTALS:hasChannelName        "L2_CA" ;
+        IMMoRTALS:hasMaxFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasMinFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasModulationStrategy
+                "BPSK" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.resources.gps.L2_CA" .
+
+IMMoRTALS_cp2:MeasurementTypes.BandwidthMeasurementType
+        a                             IMMoRTALS_metrics:MeasurementType ;
+        IMMoRTALS:hasCorrespondingProperty
+                IMMoRTALS_connectivity:BandwidthKiloBitsPerSecond ;
+        IMMoRTALS:hasMeasurementType  "EWMA bandwidth consumption" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.MeasurementTypes$BandwidthMeasurementType" .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-5d8dfa6f-0962-4b74-a0dc-e0b9d6b84ee2
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "16.0"^^xsd:double .
+
+IMMoRTALS_resources:ResourceMigrationTarget
+        a       owl:Class .
+
+IMMoRTALS_resources_gps:L2_PY
+        a                               IMMoRTALS_resources:RadioChannel ;
+        IMMoRTALS:hasCenterFrequencyHertz
+                1.2276E9 ;
+        IMMoRTALS:hasChannelName        "L2_PY" ;
+        IMMoRTALS:hasChannelProperties  IMMoRTALS_resources_gps_properties:JammerResistantProperty , IMMoRTALS_resources_gps_properties:TrustedProperty , IMMoRTALS_resources_gps_properties:HighAccuracyProperty ;
+        IMMoRTALS:hasMaxFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasMinFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasModulationStrategy
+                "BPSK" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.resources.gps.L2_PY" .
+
+IMMoRTALS_measurement:MetricProfile-61a0e104-adfe-42b1-b3ce-edde7c5942cd
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 24.00MP, an output image of size 12.00MP was produced (scaling factor = 0.50)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-eb8abbeb-4fdd-4671-b24c-0c06121a63bb , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-a5900427-fa78-4456-9410-e9ffb0dc6b8c , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-8274ff29-019a-4b83-97f2-05efe893b400 .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-99ae87ef-bf4e-4088-af9d-25a441e68fa2
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "8.0"^^xsd:double .
+
+IMMoRTALS_resources:BluetoothResource-820a01cb-c9c0-4184-8151-d8d222746a32
+        a       IMMoRTALS_resources:BluetoothResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a Bluetooth transceiver" .
+
+IMMoRTALS_spec:SpecExample.1-2f71da40-caa2-48b9-9ee4-337094583151
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage
+                IMMoRTALS_spec:SpecExample.Declare ;
+        IMMoRTALS:hasDurableId  "example1-declare" ;
+        IMMoRTALS:hasSpec       "{com.securboration.example.Cipher cipher$2215879;}" .
+
+IMMoRTALS_cp3:ImmortalsSystemLibraryEnv.LibraryVersionConstraint
+        a                            IMMoRTALS_property_impact:ProscriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasApplicableDataType
+                IMMoRTALS_resources_logical:VersioningInfo ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:MeasurementCriterion-768ede7a-cc91-444e-97b6-76283805234f ;
+        IMMoRTALS:hasHumanReadableDescription
+                "All commons-IO libraries must reach version 2.0.0" ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:ConstraintViolationImpact-5d8360f3-a2a9-42c2-a15e-d59976dbc93a ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp3.ImmortalsSystemLibraryEnv$LibraryVersionConstraint" .
+
+IMMoRTALS_property_impact:RemediationImpact-bd2b7ff6-0fcb-4c3f-ab0f-d4e136ba0463
+        a       IMMoRTALS_property_impact:RemediationImpact ;
+        IMMoRTALS:hasHumanReadableDescription
+                "one mitigation strategy is to reduce the memory footprint, which in turn reduces the bandwidth consumed" ;
+        IMMoRTALS:hasRemediationStrategy
+                IMMoRTALS_cp2:DomainKnowledge.ImpactOfReducingMemoryFootprintOnBandwidth .
+
+IMMoRTALS_resources_logical:Version-a89e1b93-6579-4b67-ac10-0d04024fd6fa
+        a                   IMMoRTALS_resources_logical:Version ;
+        IMMoRTALS:hasMajor  "1"^^xsd:int ;
+        IMMoRTALS:hasMinor  "4"^^xsd:int ;
+        IMMoRTALS:hasPatch  "9"^^xsd:int .
+
+IMMoRTALS_resources_gps_properties:TrustedProperty-2b660ff9-e0bf-4ef5-bad5-2e14b140e911
+        a       IMMoRTALS_resources_gps_properties:TrustedProperty .
+
+IMMoRTALS_functionality_imagecapture:AspectReadImage
+        a                            IMMoRTALS_functionality_aspects:DefaultAspectBase ;
+        IMMoRTALS:hasAspectId        "readImage" ;
+        IMMoRTALS:hasInputs          IMMoRTALS_functionality:Input-5b433ce1-ac4a-46e7-ae56-54969f618a07 ;
+        IMMoRTALS:hasOutputs         IMMoRTALS_functionality:Output-3e39fa9a-3d66-4092-a096-2e5aba052f99 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.imagecapture.AspectReadImage" .
+
+IMMoRTALS_resources_logical:Column-60e92468-8e74-45c6-9aaa-d46d60d53bd3
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode2
+        a                               IMMoRTALS_analysis:InterMethodDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com.sec.Client2" ;
+        IMMoRTALS:hasJavaMethodName     "M2" ;
+        IMMoRTALS:hasJavaMethodPointer  "67890" ;
+        IMMoRTALS:hasLineNumber         "0"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowNode2" ;
+        IMMoRTALS:hasResourceTemplate   IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 .
+
+IMMoRTALS_measurement:MetricProfile-d9b7b186-d2bc-4753-9508-518d79d1416b
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 5.00MP, an output image of size 1.25MP was produced (scaling factor = 0.25)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-171b71a1-b4e3-4b78-8aed-7de83b95cf0c , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-8c448237-f465-47b8-9f80-728da4aa9a73 , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-c972afd1-fe4d-43bb-b108-0ec6dbb80a8c .
+
+IMMoRTALS_property_impact:ConstraintViolationCriterion-17e9053f-a789-40f5-9020-33c74c7c4e2b
+        a                        IMMoRTALS_property_impact:ConstraintViolationCriterion ;
+        IMMoRTALS:hasConstraint  IMMoRTALS_cp1:MartiDBEnvironment.MostCurrentSchemaConstraint ;
+        IMMoRTALS:hasTriggeringConstraintCriterion
+                "WHEN_HARD_VIOLATED" .
+
+IMMoRTALS_cp2:Analysis.Marti.MartiSoftware
+        a                               IMMoRTALS_resources:CompiledSoftware ;
+        IMMoRTALS:hasApplicationName    "MARTI" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "An instance of the MARTI project" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.Analysis$Marti$MartiSoftware" ;
+        IMMoRTALS:hasSoftwareCoordinate
+                "mil.darpa.immortals:Marti-immortals:2.0-LOCAL" ;
+        IMMoRTALS:hasVersionControlUrl  "https://dsl-external.bbn.com/svn/immortals/trunk/applications/server/Marti" .
+
+IMMoRTALS_functionality_dataproperties:Encrypted-9de219b8-a95e-44bd-96cc-a82f12cab38f
+        a                    IMMoRTALS_functionality_dataproperties:Encrypted ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_cp:FunctionalitySpec-1285f6d9-c966-4d0f-9d28-5642011e059f
+        a       IMMoRTALS_cp:FunctionalitySpec ;
+        IMMoRTALS:hasFunctionalityPerformed
+                IMMoRTALS_functionality_locationprovider:LocationProvider ;
+        IMMoRTALS:hasPropertyConstraint
+                IMMoRTALS_property_impact:PropertyConstraint-078795a1-c866-406a-9882-9c4c3d9d005c .
+
+IMMoRTALS:hasSessionIdentifier
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_gmei:DeploymentModel ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1
+        a                            IMMoRTALS_resources:MobileAndroidDevice ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice1" .
+
+IMMoRTALS_measurement:MetricProfile-d21f11c0-84da-4873-b3ce-7dde7e72db84
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 16.00MP, an output image of size 12.00MP was produced (scaling factor = 0.75)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-5d8dfa6f-0962-4b74-a0dc-e0b9d6b84ee2 , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-91e40a37-098e-4094-8ca3-87475052d944 , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-61e5141c-d162-466e-bd25-7cf3d08b09ba .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-3d9b36cd-b576-472d-8894-bae4b28e99b7
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "16.0"^^xsd:double .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-c972afd1-fe4d-43bb-b108-0ec6dbb80a8c
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.25"^^xsd:double .
+
+IMMoRTALS_cp2:Measurements.InsufficientPliReportRateMeasurement1
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.PliReportRateMeasurementType ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.Measurements$InsufficientPliReportRateMeasurement1" ;
+        IMMoRTALS:hasUnit             "messages/minute" ;
+        IMMoRTALS:hasValue            "5" .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-9a5842ce-5bd2-40a6-a853-b9f3b2c12609
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "2.5"^^xsd:double .
+
+IMMoRTALS_cp2:Measurements.InsufficientPliReportRatemeasurement3
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.PliReportRateMeasurementType ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.Measurements$InsufficientPliReportRatemeasurement3" ;
+        IMMoRTALS:hasUnit             "messages/minute" ;
+        IMMoRTALS:hasValue            "10" .
+
+IMMoRTALS_spec:SpecExample.Cleanup
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "cleanup" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "1" ;
+        IMMoRTALS:hasOrdering        "3"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$Cleanup" .
+
+IMMoRTALS_resources_gps_properties:TrustedProperty-a5a115ae-c1c9-4e79-8d48-b0ea0e3e24ac
+        a       IMMoRTALS_resources_gps_properties:TrustedProperty .
+
+IMMoRTALS_cp2:ClientServerEnvironment.FileSystem1
+        a                            IMMoRTALS_resources:FileSystemResource ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$FileSystem1" .
+
+IMMoRTALS_cp2:MeasurementTypes.ImageReportRateMeasurementType
+        a                             IMMoRTALS_metrics:MeasurementType ;
+        IMMoRTALS:hasCorrespondingProperty
+                IMMoRTALS_connectivity:ImageReportRate ;
+        IMMoRTALS:hasMeasurementType  "Image report rate" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.MeasurementTypes$ImageReportRateMeasurementType" .
+
+IMMoRTALS_functionality_dataproperties:CompressedLossless-00714b79-da6d-4cd7-8dac-0c5c074dc155
+        a                    IMMoRTALS_functionality_dataproperties:CompressedLossless ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowEdge5
+        a                            IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode6 ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-ee36efc9-5024-4d51-9f8f-0ae7706ee2b5 ;
+        IMMoRTALS:hasEdgeProperties  IMMoRTALS_functionality_dataproperties:Compressed-3121b413-f2fa-4d5f-a54c-6808164c8a60 , IMMoRTALS_functionality_dataproperties:CompressedLossless-0f5089d2-08c4-4090-91da-3ff86fff180f ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowEdge5" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode3 .
+
+IMMoRTALS_cp:MissionSpec-104cfa16-6be5-4998-b896-4b6cab36c4d4
+        a                               IMMoRTALS_cp:MissionSpec ;
+        IMMoRTALS:hasAssertionCriterion
+                "VALUE_GREATER_THAN_EXCLUSIVE" ;
+        IMMoRTALS:hasHumanReadableForm  "the client must issue > 10 PLI messages per minute" ;
+        IMMoRTALS:hasRightValue         IMMoRTALS_metrics:Metric-af374d36-8770-4070-bb82-ec560fd34ebe .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-5fa01cb3-fd26-43aa-aacc-13659c0f2b75
+        a                             IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasFrameProperties  IMMoRTALS_functionality_dataproperties:Compressed-7607e396-1392-45e1-bc79-53e02372f355 .
+
+IMMoRTALS_cp2:Analysis.Shared.SaNetwork
+        a                            IMMoRTALS_resources:NetworkResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a network for communicating SA data" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Shared$SaNetwork" .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-fa34e18f-f6d7-495d-b95a-eec677341fac
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "24.0"^^xsd:double .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-cbaf91f8-de94-43e1-a5d7-8023206d04ab
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "18.0"^^xsd:double .
+
+IMMoRTALS_property_impact:MeasurementCriterion-768ede7a-cc91-444e-97b6-76283805234f
+        a                              IMMoRTALS_property_impact:MeasurementCriterion ;
+        IMMoRTALS:hasCriterion         "VALUE_LESS_THAN_EXCLUSIVE" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Every commons-IO library must reach version 2.0.0" ;
+        IMMoRTALS:hasVersioningMetric  IMMoRTALS_metrics:VersioningMetric-bd40a392-a75c-4980-8253-803536c0847f .
+
+IMMoRTALS_resources_logical:Table-361efb76-49dd-4be8-99eb-0bd555da0579
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-198f735e-332a-416f-ad71-870fbc423402 .
+
+IMMoRTALS_spec:SpecExample.CipherLibrary1
+        a                            IMMoRTALS_bytecode:JarArtifact ;
+        IMMoRTALS:hasBinaryForm      "" ;
+        IMMoRTALS:hasCoordinate      IMMoRTALS_bytecode:BytecodeArtifactCoordinate-63b17785-39ca-41cd-80ed-4f93f4f0dd83 ;
+        IMMoRTALS:hasHash            "hashValueGoesHere" ;
+        IMMoRTALS:hasName            "CipherLibrary1" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$CipherLibrary1" .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-a5900427-fa78-4456-9410-e9ffb0dc6b8c
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "12.0"^^xsd:double .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-9ca1f7d3-ddc4-4d04-bf16-755337fdfdd0
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing file system instance #1." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.FileSystem1 .
+
+IMMoRTALS_spec:SpecExample.1
+        a                            owl:Class ;
+        rdfs:label                   "" ;
+        rdfs:subClassOf              IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$1" .
+
+IMMoRTALS_metrics:Metric-e8baa6de-6c01-4b12-a394-333771fff9e4
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_resources_network:NetworkConnection ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.BandwidthMeasurementType ;
+        IMMoRTALS:hasUnit             "kb/s" ;
+        IMMoRTALS:hasValue            "25" .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-8d197a78-09bf-493c-868f-52bed3a17465
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "12.0"^^xsd:double .
+
+IMMoRTALS_property_impact:RemediationImpact-b43b5e80-5793-440c-9126-b05f9ddb0c31
+        a       IMMoRTALS_property_impact:RemediationImpact ;
+        IMMoRTALS:hasRemediationStrategy
+                IMMoRTALS_cp3:ImmortalsSystemLibraryEnv.ImpactOfLibraryUpgrade .
+
+IMMoRTALS_cp2:Analysis.Marti.MartiServer
+        a                            IMMoRTALS_resources:Server ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a server running MARTI" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Marti$MartiServer" ;
+        IMMoRTALS:hasResources       IMMoRTALS_cp2:Analysis.Marti.MartiSoftware , IMMoRTALS_cp2:Analysis.Marti.MartiFileSystem , IMMoRTALS_cp2:Analysis.Shared.SaNetwork .
+
+IMMoRTALS_resources_gps:GpsReceiverEmbedded-63d845ae-73c7-4ae0-bb8e-61a17b9325a2
+        a                         IMMoRTALS_resources_gps:GpsReceiverEmbedded ;
+        IMMoRTALS:hasHumanReadableDescription
+                "an embedded GPS receiver" ;
+        IMMoRTALS:hasNumChannels  "0"^^xsd:int .
+
+IMMoRTALS_cp:MissionSpec-81241767-9c14-4cf9-9499-701a652eb682
+        a                               IMMoRTALS_cp:MissionSpec ;
+        IMMoRTALS:hasAssertionCriterion
+                "VALUE_GREATER_THAN_INCLUSIVE" ;
+        IMMoRTALS:hasHumanReadableForm  "the software must provide at least 1 image updates per minute" ;
+        IMMoRTALS:hasRightValue         IMMoRTALS_metrics:Metric-5e247d7d-674c-4f34-a5d1-b67c06cfe7e4 .
+
+IMMoRTALS_resources:DataBase-3d949738-3111-41b0-bf50-fa8131be395d
+        a                             IMMoRTALS_resources:DataBase ;
+        IMMoRTALS:hasDataBaseSchemas  IMMoRTALS_resources_logical:DBSchema-d4c02a88-6dca-431e-bc36-61c16091c2a1 , IMMoRTALS_resources_logical:DBSchema-3ab65cc1-c7df-4ad6-a867-eb3d51e595a0 .
+
+IMMoRTALS_bytecode:BytecodeArtifactCoordinate-63b17785-39ca-41cd-80ed-4f93f4f0dd83
+        a                           IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+        IMMoRTALS:hasArtifactId     "lib-cipher" ;
+        IMMoRTALS:hasCoordinateTag  "org.third.party:lib-cipher:1.2.3" ;
+        IMMoRTALS:hasGroupId        "org.third.party" ;
+        IMMoRTALS:hasVersion        "1.2.3" .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-176c8ab4-42a0-4f65-98e6-b80eae775b39
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "2.0"^^xsd:double .
+
+IMMoRTALS_property_impact:AbstractPropertyCriterion-37a7e8a5-a048-4bdf-9351-eea1d9566f0e
+        a                       IMMoRTALS_property_impact:AbstractPropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_ABSENT" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "This criterion specifies a situation where a schema is not the most current version." ;
+        IMMoRTALS:hasProperty   IMMoRTALS_database:MostCurrentVersion .
+
+IMMoRTALS_resources_gps:L1_CA
+        a                               IMMoRTALS_resources:RadioChannel ;
+        IMMoRTALS:hasCenterFrequencyHertz
+                1.57542E9 ;
+        IMMoRTALS:hasChannelName        "L1_CA" ;
+        IMMoRTALS:hasMaxFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasMinFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasModulationStrategy
+                "MBOC" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.resources.gps.L1_CA" .
+
+IMMoRTALS_property_impact:PropertyCriterion-fda84b10-5647-415d-88c2-bc028c19ca3a
+        a                       IMMoRTALS_property_impact:PropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_GREATER_THAN_EXCLUSIVE" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "when bandwidth > 1Mbps" ;
+        IMMoRTALS:hasProperty   IMMoRTALS_connectivity:BandwidthKiloBitsPerSecond-1f861343-6a4f-4a4b-b1d6-3c87c2f843e7 .
+
+IMMoRTALS_cp2:MeasurementTypes.LocationReportRateMeasurementType
+        a                             IMMoRTALS_metrics:MeasurementType ;
+        IMMoRTALS:hasCorrespondingProperty
+                IMMoRTALS_connectivity:LocationReportRate ;
+        IMMoRTALS:hasMeasurementType  "Location report rate" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.MeasurementTypes$LocationReportRateMeasurementType" .
+
+IMMoRTALS_metrics:MeasurementType-e538bb97-8d4a-4d90-9bbb-9aec7fde13fd
+        a                             IMMoRTALS_metrics:MeasurementType ;
+        IMMoRTALS:hasCorrespondingProperty
+                IMMoRTALS_resources_logical:Version ;
+        IMMoRTALS:hasMeasurementType  "We are measuring the version numbers" .
+
+IMMoRTALS_functionality_dataproperties:Compressed-e68e4d8f-fd7c-4e38-9ea7-fa793858d2a8
+        a                    IMMoRTALS_functionality_dataproperties:Compressed ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-cc358f67-045e-4b68-85f8-4769d854232d
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "6.0"^^xsd:double .
+
+IMMoRTALS_resources_gps:L1_PY
+        a                               IMMoRTALS_resources:RadioChannel ;
+        IMMoRTALS:hasCenterFrequencyHertz
+                1.57542E9 ;
+        IMMoRTALS:hasChannelName        "L1_PY" ;
+        IMMoRTALS:hasChannelProperties  IMMoRTALS_resources_gps_properties:JammerResistantProperty , IMMoRTALS_resources_gps_properties:TrustedProperty , IMMoRTALS_resources_gps_properties:HighAccuracyProperty ;
+        IMMoRTALS:hasMaxFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasMinFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasModulationStrategy
+                "MBOC" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.resources.gps.L1_PY" .
+
+IMMoRTALS_resources_gps:GpsReceiverSaasm-eb0b53c0-f873-4c52-bfd5-7fd05aea7c6f
+        a                              IMMoRTALS_resources_gps:GpsReceiverSaasm ;
+        IMMoRTALS:hasConstellation     IMMoRTALS_resources_gps:GpsSatelliteConstellation-cf925f14-79f2-4110-ade6-a043480aec08 ;
+        IMMoRTALS:hasNumChannels       "5"^^xsd:int ;
+        IMMoRTALS:hasReceivableSpectrum
+                IMMoRTALS_resources_gps:L1_PY , IMMoRTALS_resources_gps:L1_CA , IMMoRTALS_resources_gps:L2_CA , IMMoRTALS_resources_gps:L2_C , IMMoRTALS_resources_gps:L1_C , IMMoRTALS_resources_gps:L2_PY , IMMoRTALS_resources_gps:L5 ;
+        IMMoRTALS:hasResourceProperty  IMMoRTALS_resources_gps_properties:TrustedProperty-a5a115ae-c1c9-4e79-8d48-b0ea0e3e24ac .
+
+IMMoRTALS_functionality_dataproperties:Encrypted-9fe1e3e4-f9c7-40f5-bfed-c4fca2d70ead
+        a                    IMMoRTALS_functionality_dataproperties:Encrypted ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-171b71a1-b4e3-4b78-8aed-7de83b95cf0c
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "5.0"^^xsd:double .
+
+IMMoRTALS:hasFunctionalitySpec
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_gmei:DeploymentModel ;
+        rdfs:range   IMMoRTALS_cp:FunctionalitySpec .
+
+IMMoRTALS_cp:FunctionalitySpec
+        a       owl:Class .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-2ddf7903-4862-4e3c-81a0-cc428513f9b0
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.75"^^xsd:double .
+
+IMMoRTALS_resource_containment:ResourceContainmentModel-6113fa93-e3e8-4c59-a2be-6a7237b73719
+        a                           IMMoRTALS_resource_containment:ResourceContainmentModel ;
+        IMMoRTALS:hasResourceModel  IMMoRTALS_resource_containment:ConcreteResourceNode-e58b110a-742c-4550-8fb6-c77b193f8a97 , IMMoRTALS_resource_containment:ConcreteResourceNode-06cf4f61-c1b4-4422-ad6b-1a1f7ceeb55a , IMMoRTALS_resource_containment:ConcreteResourceNode-76a0aac1-38b0-4749-bb9b-f813987a10c0 .
+
+IMMoRTALS_resources_logical:DBSchema-d4c02a88-6dca-431e-bc36-61c16091c2a1
+        a                     IMMoRTALS_resources_logical:DBSchema ;
+        IMMoRTALS:hasName     "OldSchema" ;
+        IMMoRTALS:hasTables   IMMoRTALS_resources_logical:Table-441fab3e-cf7c-4829-a778-67fe41766268 , IMMoRTALS_resources_logical:Table-f63cfcbe-ed86-42af-9fba-9537591402ec ;
+        IMMoRTALS:hasVersion  "oldVersion" .
+
+IMMoRTALS_cp2:ScalingFactorMeasurements.MetricSet1
+        a                            IMMoRTALS_measurement:MetricSet ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ScalingFactorMeasurements$MetricSet1" ;
+        IMMoRTALS:hasProfiles        IMMoRTALS_measurement:MetricProfile-f0901f9a-ce27-43e0-bde6-64316954bd3c , IMMoRTALS_measurement:MetricProfile-d21f11c0-84da-4873-b3ce-7dde7e72db84 , IMMoRTALS_measurement:MetricProfile-2a242865-d971-4adc-81fc-b5329ec18689 , IMMoRTALS_measurement:MetricProfile-d9b7b186-d2bc-4753-9508-518d79d1416b , IMMoRTALS_measurement:MetricProfile-6b6d8504-9797-4422-bc69-14d2d355de30 , IMMoRTALS_measurement:MetricProfile-99035a03-a73a-4ceb-aca7-03e16492720a , IMMoRTALS_measurement:MetricProfile-1bc6f596-7483-491d-b305-7215691fb84c , IMMoRTALS_measurement:MetricProfile-8d542bce-90b9-4180-9641-7a6091ae50f5 , IMMoRTALS_measurement:MetricProfile-a0586d58-a075-4db0-9c0a-57ed9743edda , IMMoRTALS_measurement:MetricProfile-54e1d698-d6a5-4870-818c-ba00fc562778 , IMMoRTALS_measurement:MetricProfile-61a0e104-adfe-42b1-b3ce-edde7c5942cd , IMMoRTALS_measurement:MetricProfile-3b0a3a65-a2ff-4b7a-b19e-d0f9b91f013b , IMMoRTALS_measurement:MetricProfile-372d3d46-dfd1-4a55-a7f1-3b0cd5ae080b , IMMoRTALS_measurement:MetricProfile-516ac6b0-fe8e-4b12-a7eb-586fe303572e , IMMoRTALS_measurement:MetricProfile-2d90c0d8-0b39-4ba9-a3ee-5276f1232971 .
+
+IMMoRTALS_property_impact:AbstractPropertyCriterion-44eda9a1-ca90-426f-855c-48da82297ab3
+        a                       IMMoRTALS_property_impact:AbstractPropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_DECREASES" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "reducing the memory footprint" ;
+        IMMoRTALS:hasProperty   IMMoRTALS_functionality_dataproperties:MemoryFootprint .
+
+IMMoRTALS_functionality_dataproperties:Compressed-7607e396-1392-45e1-bc79-53e02372f355
+        a                    IMMoRTALS_functionality_dataproperties:Compressed ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_resources_gps_properties:TrustedProperty-d146f3fc-5034-48db-876e-a41c24b9515d
+        a       IMMoRTALS_resources_gps_properties:TrustedProperty .
+
+IMMoRTALS_property_impact:ConstraintViolationCriterion-131aa9bd-e5e7-4e21-852a-569f5d542514
+        a                        IMMoRTALS_property_impact:ConstraintViolationCriterion ;
+        IMMoRTALS:hasConstraint  IMMoRTALS_cp2:DomainKnowledge.BandwidthConstraint ;
+        IMMoRTALS:hasHumanReadableDescription
+                "when BandwidthConstraint is violated (ie when max bandwidth consumption is overshot)" ;
+        IMMoRTALS:hasTriggeringConstraintCriterion
+                "WHEN_HARD_VIOLATED" .
+
+IMMoRTALS_functionality_dataproperties:CompressedLossless-c042c4c4-dad3-41aa-956f-677afa182326
+        a                    IMMoRTALS_functionality_dataproperties:CompressedLossless ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode3
+        a                               IMMoRTALS_analysis:InterMethodDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com.sec.Client3" ;
+        IMMoRTALS:hasJavaMethodName     "M3" ;
+        IMMoRTALS:hasJavaMethodPointer  "13579" ;
+        IMMoRTALS:hasLineNumber         "0"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowNode3" ;
+        IMMoRTALS:hasResourceTemplate   IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 .
+
+IMMoRTALS_functionality_imagescaling:NumberOfPixels-130b0f0c-412f-41d0-8672-7a16f0d2d118
+        a                          IMMoRTALS_functionality_imagescaling:NumberOfPixels ;
+        IMMoRTALS:hasHeightPixels  "0"^^xsd:int ;
+        IMMoRTALS:hasHidden        false ;
+        IMMoRTALS:hasTotalPixels   "0"^^xsd:int ;
+        IMMoRTALS:hasWidthPixels   "0"^^xsd:int .
+
+IMMoRTALS_measurement:MetricProfile-1bc6f596-7483-491d-b305-7215691fb84c
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 12.00MP, an output image of size 6.00MP was produced (scaling factor = 0.50)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-8d197a78-09bf-493c-868f-52bed3a17465 , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-cc358f67-045e-4b68-85f8-4769d854232d , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-b0f1df91-fda0-4c78-892b-0f246dec0ea6 .
+
+IMMoRTALS_functionality_imagescaling:NumberOfPixels-edfb2710-3e17-4730-bc95-0054437c3bbb
+        a                          IMMoRTALS_functionality_imagescaling:NumberOfPixels ;
+        IMMoRTALS:hasHeightPixels  "0"^^xsd:int ;
+        IMMoRTALS:hasHidden        false ;
+        IMMoRTALS:hasTotalPixels   "0"^^xsd:int ;
+        IMMoRTALS:hasWidthPixels   "0"^^xsd:int .
+
+IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7
+        a                        IMMoRTALS_measurement:DfuPointer ;
+        IMMoRTALS:hasClassName   "com.bbn.immortals.ImageScalingClass" ;
+        IMMoRTALS:hasMethodName  "processImage(byte[] image)" ;
+        IMMoRTALS:hasRelevantFunctionalAspect
+                IMMoRTALS_functionality_imagescaling:ShrinkImage ;
+        IMMoRTALS:hasRelevantFunctionality
+                IMMoRTALS_functionality_imageprocessor:ImageProcessor .
+
+IMMoRTALS_spec:SpecExample.ParadigmExample
+        a                            IMMoRTALS_pattern_spec:AbstractUsageParadigm ;
+        IMMoRTALS:hasComponent       IMMoRTALS_spec:SpecExample.Declare , IMMoRTALS_spec:SpecExample.Init , IMMoRTALS_spec:SpecExample.DoWork , IMMoRTALS_spec:SpecExample.Cleanup ;
+        IMMoRTALS:hasDurableId       "ParadigmExample-declare-init-doWork-cleanup" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$ParadigmExample" .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-84cd03fa-785a-4cd6-8baa-18a8a660dc04
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "3.0"^^xsd:double .
+
+IMMoRTALS_core:Resource
+        a             owl:Class ;
+        rdfs:comment  "A description of something upon which software might depend  E.g., a library (code dependency), a platform architecture (embedded linux, windows, ...), compute resources (CPU, GPU, ...), an external resource accessed via IO (network, disk, ...)  @author jstaples " .
+
+IMMoRTALS_cp2:Analysis.AtakReadImageNode
+        a                               IMMoRTALS_analysis:FunctionalAspectInvocationDataflowNode ;
+        IMMoRTALS:hasAspectImplemented  IMMoRTALS_functionality_imagecapture:AspectReadImage ;
+        IMMoRTALS:hasContextTemplate    IMMoRTALS_cp2:Analysis.Atak.AtakPhone ;
+        IMMoRTALS:hasJavaClassName      "com.bbn.ImageGetter" ;
+        IMMoRTALS:hasJavaMethodName     "readImage(File f)" ;
+        IMMoRTALS:hasLineNumber         "0"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.Analysis$AtakReadImageNode" ;
+        IMMoRTALS:hasResourceTemplate   IMMoRTALS_cp2:Analysis.Atak.AtakPhoneFileSystem .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2
+        a                            IMMoRTALS_resources:MobileAndroidDevice ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice2" .
+
+IMMoRTALS_spec:SpecExample.SpecExample1
+        a                            IMMoRTALS_pattern_spec:LibraryFunctionalAspectSpec ;
+        IMMoRTALS:hasAspect          IMMoRTALS_functionality_alg_encryption:AspectCipherEncrypt ;
+        IMMoRTALS:hasComponent       IMMoRTALS_spec:SpecExample.4-dafe40cd-e3f6-4fe1-a5be-46229569978f , IMMoRTALS_spec:SpecExample.1-2f71da40-caa2-48b9-9ee4-337094583151 , IMMoRTALS_spec:SpecExample.2-fbc7a95f-ef7a-4085-880c-92bc03d694e7 , IMMoRTALS_spec:SpecExample.3-321ef642-d4ac-4b53-af92-8afc45fe2532 ;
+        IMMoRTALS:hasDurableId       "SpecExample-1" ;
+        IMMoRTALS:hasFunctionality   IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasLibraryCoordinateTag
+                "org.third.party:lib-cipher:1.2.3" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$SpecExample1" ;
+        IMMoRTALS:hasUsageParadigm   IMMoRTALS_spec:SpecExample.ParadigmExample .
+
+IMMoRTALS_resources:UserInterface-dd3a8804-a37f-49d1-a9d8-302aa034e50f
+        a       IMMoRTALS_resources:UserInterface ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a user interface" .
+
+IMMoRTALS_resources_network:NetworkConnection-fef421d4-fee5-4f91-bc48-3511fbf45587
+        a                          IMMoRTALS_resources_network:NetworkConnection ;
+        IMMoRTALS:hasIsOneWay      false ;
+        IMMoRTALS:hasLocalDevice   IMMoRTALS_android:AndroidPlatform-0722d965-2a7c-4dbd-b3a2-8675a9331a7d ;
+        IMMoRTALS:hasRemoteDevice  IMMoRTALS_server:ServerPlatform-41c68a32-56d8-429c-8166-483ed259af4f .
+
+IMMoRTALS_cp2:ClientServerEnvironment.MartiSoftware
+        a                               IMMoRTALS_cp2:Analysis.Marti.MartiSoftware ;
+        IMMoRTALS:hasApplicationName    "MARTI" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "An instance of the MARTI project" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$MartiSoftware" ;
+        IMMoRTALS:hasSoftwareCoordinate
+                "mil.darpa.immortals:Marti-immortals:2.0-LOCAL" ;
+        IMMoRTALS:hasVersionControlUrl  "https://dsl-external.bbn.com/svn/immortals/trunk/applications/server/Marti" .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-efc15e17-717e-4e28-93c4-9146585707ce
+        a                             IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-5fa01cb3-fd26-43aa-aacc-13659c0f2b75 ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasFrameProperties  IMMoRTALS_functionality_dataproperties:CompressedLossless-c042c4c4-dad3-41aa-956f-677afa182326 .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-ef54fcf9-6429-427c-a718-8584c612de3e
+        a                             IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasFrameProperties  IMMoRTALS_functionality_imagescaling:NumberOfPixels-2104ec12-3200-457f-a771-352d7eef5879 .
+
+IMMoRTALS_cp2:Measurements.InsufficientPliReportRateMeasurement2
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.PliReportRateMeasurementType ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.Measurements$InsufficientPliReportRateMeasurement2" ;
+        IMMoRTALS:hasUnit             "messages/minute" ;
+        IMMoRTALS:hasValue            "0" .
+
+IMMoRTALS_cp:MissionSpec-bf9735cf-4d3a-4c36-bf0c-e09ab041dc8d
+        a                               IMMoRTALS_cp:MissionSpec ;
+        IMMoRTALS:hasAssertionCriterion
+                "VALUE_GREATER_THAN_INCLUSIVE" ;
+        IMMoRTALS:hasHumanReadableForm  "the software must support at least 25 concurrent clients" ;
+        IMMoRTALS:hasRightValue         IMMoRTALS_metrics:Metric-9a1a3abd-660a-434a-980d-5c1bd14b6453 .
+
+IMMoRTALS_cp:MissionSpec-ac749093-40f0-4c1e-8f18-675178b5a505
+        a                               IMMoRTALS_cp:MissionSpec ;
+        IMMoRTALS:hasAssertionCriterion
+                "VALUE_GREATER_THAN_INCLUSIVE" ;
+        IMMoRTALS:hasHumanReadableForm  "the software must support at least 25 concurrent clients" ;
+        IMMoRTALS:hasRightValue         IMMoRTALS_metrics:Metric-de212813-a548-4951-ac7b-0bb171a31725 .
+
+IMMoRTALS_measurement:MetricProfile-3b0a3a65-a2ff-4b7a-b19e-d0f9b91f013b
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 12.00MP, an output image of size 3.00MP was produced (scaling factor = 0.25)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-7323f6cf-fff5-4d74-a3c2-0d6cc37eda44 , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-84cd03fa-785a-4cd6-8baa-18a8a660dc04 , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-ebc74133-56e4-49b7-af58-72311be2d2c5 .
+
+IMMoRTALS_cp2:Analysis.Atak.AtakSoftware
+        a                               IMMoRTALS_resources:CompiledSoftware ;
+        IMMoRTALS:hasApplicationName    "ATAK" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "An instance of the ATAK project" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.Analysis$Atak$AtakSoftware" ;
+        IMMoRTALS:hasSoftwareCoordinate
+                "com.bbn.ataklite" ;
+        IMMoRTALS:hasVersionControlUrl  "https://dsl-external.bbn.com/svn/immortals/trunk/applications/client/ATAKLite" .
+
+IMMoRTALS_functionality_dataproperties:Compressed-4601d31d-fbde-4a0f-b956-ba5e09640997
+        a                    IMMoRTALS_functionality_dataproperties:Compressed ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_property_impact:AbstractPropertyCriterion-5cdcb60c-1480-47be-8b02-eb5d4cd55520
+        a                       IMMoRTALS_property_impact:AbstractPropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_DECREASES" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "reducing the number of pixels" ;
+        IMMoRTALS:hasProperty   IMMoRTALS_functionality_imagescaling:NumberOfPixels .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-17681b0a-0dbb-4b53-b789-1242f2b83368
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.75"^^xsd:double .
+
+IMMoRTALS_cp2:ClientServerEnvironment.FileSystem2
+        a                            IMMoRTALS_resources:FileSystemResource ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$FileSystem2" .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-6a618410-c4be-49c0-8df5-2c9a0470143d
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-cdf816ee-2e29-47a2-9791-f6edd7f63514 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #1. Also contains a software library resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 .
+
+IMMoRTALS_resource_containment:ResourceContainmentModel
+        a       owl:Class .
+
+IMMoRTALS_property_impact:PropertyImpact-89a634ef-3e6a-494a-8b91-ee5b5fe829c0
+        a                              IMMoRTALS_property_impact:PropertyImpact ;
+        IMMoRTALS:hasHumanReadableDescription
+                "decreases the memory footprint" ;
+        IMMoRTALS:hasImpactOnProperty  "PROPERTY_DECREASES" ;
+        IMMoRTALS:hasImpactedProperty  IMMoRTALS_functionality_dataproperties:MemoryFootprint .
+
+IMMoRTALS_measurement:MetricProfile-54e1d698-d6a5-4870-818c-ba00fc562778
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 24.00MP, an output image of size 18.00MP was produced (scaling factor = 0.75)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-fa34e18f-f6d7-495d-b95a-eec677341fac , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-cbaf91f8-de94-43e1-a5d7-8023206d04ab , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-51d238b6-d91c-47f1-8d48-ead04ea53c50 .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-0c40ff6b-6d7e-46d1-a194-08b34c2384b8
+        a                             IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameChild
+                IMMoRTALS_analysis:DataflowAnalysisFrame-9d6c89a8-a486-4dc5-bbd5-3f43c58def69 ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasFrameProperties  IMMoRTALS_functionality_dataproperties:Encrypted-9fe1e3e4-f9c7-40f5-bfed-c4fca2d70ead .
+
+IMMoRTALS_resources:ResourceMigrationTarget-37c52f11-42fe-48f3-8cd5-6525a5f12fc0
+        a                            IMMoRTALS_resources:ResourceMigrationTarget ;
+        IMMoRTALS:hasRationale       "Need to upgrade schema to support new operations" ;
+        IMMoRTALS:hasTargetResource  IMMoRTALS_resources_logical:DBSchema-3ab65cc1-c7df-4ad6-a867-eb3d51e595a0 .
+
+IMMoRTALS_property_impact:PropertyImpact-b7c7f259-2a2e-4c20-82fe-6198358fb64e
+        a                              IMMoRTALS_property_impact:PropertyImpact ;
+        IMMoRTALS:hasImpactOnProperty  "ADDS" ;
+        IMMoRTALS:hasImpactedProperty  IMMoRTALS_functionality:ConfidentialProperty .
+
+IMMoRTALS_resources:SoftwareLibrary-d2730ff0-75a0-42ef-b69d-e74f4eeabd59
+        a                             IMMoRTALS_resources:SoftwareLibrary ;
+        IMMoRTALS:hasApplicationName  "oldCommonsIO" ;
+        IMMoRTALS:hasVersion          IMMoRTALS_resources_logical:Version-a89e1b93-6579-4b67-ac10-0d04024fd6fa .
+
+IMMoRTALS_spec:SpecExample.CipherLibrary2
+        a                            IMMoRTALS_bytecode:JarArtifact ;
+        IMMoRTALS:hasBinaryForm      "" ;
+        IMMoRTALS:hasCoordinate      IMMoRTALS_bytecode:BytecodeArtifactCoordinate-dbbe8121-0c34-4011-803c-8392ccff7c8f ;
+        IMMoRTALS:hasHash            "hashValueGoesHere" ;
+        IMMoRTALS:hasName            "CipherLibrary2" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$CipherLibrary2" .
+
+IMMoRTALS_spec:SpecExample.2
+        a                            owl:Class ;
+        rdfs:label                   "" ;
+        rdfs:subClassOf              IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$2" .
+
+IMMoRTALS_cp2:MeasurementTypes.OutputMegapixelsMeasurementType
+        a                             IMMoRTALS_metrics:MeasurementType ;
+        IMMoRTALS:hasCorrespondingProperty
+                IMMoRTALS_functionality_imagescaling:NumberOfPixels ;
+        IMMoRTALS:hasMeasurementType  "Output megapixels" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.MeasurementTypes$OutputMegapixelsMeasurementType" .
+
+IMMoRTALS:ImmortalsBaseClass
+        a       owl:Class .
+
+IMMoRTALS_functionality_imagecapture:ImageFileIO
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.imagecapture.ImageFileIO" .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-bab25b42-b1c9-41cf-96ee-40132b693e51
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "9.0"^^xsd:double .
+
+IMMoRTALS_cp2:DomainKnowledge.ImpactOfShrinkingOnNumPixels
+        a                            IMMoRTALS_property_impact:PredictiveCauseEffectAssertion ;
+        IMMoRTALS:hasApplicableDataType
+                IMMoRTALS_functionality_datatype:Bitmap ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:InvocationCriterion-a54c1c10-bd14-478c-b272-7648c2e8586a ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Shrinking an image lossily reduces the number of pixels it contains" ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:PropertyImpact-77f9d2e9-1dde-4901-a399-9cece4aa05a7 , IMMoRTALS_property_impact:PropertyImpact-2c7d3cc3-7dc3-47db-a2c5-633bdfde5ebc ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.DomainKnowledge$ImpactOfShrinkingOnNumPixels" .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-03986ec0-2e3b-4682-8e69-67db58cf2cde
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "5.0"^^xsd:double .
+
+IMMoRTALS_resources_logical:Column-198f735e-332a-416f-ad71-870fbc423402
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_functionality_dataproperties:Compressed-b95c5cc8-8ede-43ea-85b0-040005ea4703
+        a                    IMMoRTALS_functionality_dataproperties:Compressed ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_spec:SpecExample.DoWork
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "doWork" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "[0,inf]" ;
+        IMMoRTALS:hasOrdering        "2"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$DoWork" .
+
+IMMoRTALS_property_impact:CauseEffectAssertion
+        a             owl:Class ;
+        rdfs:comment  "Models cause-effect relationships as a criterion attached to zero or more  impact specifications  @author jstaples " .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-a5c0f195-705a-4156-97e2-baad6c1025e8
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "4.0"^^xsd:double .
+
+IMMoRTALS_functionality_imagescaling:NumberOfPixels-2104ec12-3200-457f-a771-352d7eef5879
+        a                          IMMoRTALS_functionality_imagescaling:NumberOfPixels ;
+        IMMoRTALS:hasHeightPixels  "0"^^xsd:int ;
+        IMMoRTALS:hasHidden        false ;
+        IMMoRTALS:hasTotalPixels   "0"^^xsd:int ;
+        IMMoRTALS:hasWidthPixels   "0"^^xsd:int .
+
+IMMoRTALS_cp2:Measurements.ExcessiveBandwidthMeasurement
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_resources_network:NetworkConnection ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.BandwidthMeasurementType ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.Measurements$ExcessiveBandwidthMeasurement" ;
+        IMMoRTALS:hasUnit             "kb/s" ;
+        IMMoRTALS:hasValue            "45" .
+
+IMMoRTALS_metrics:VersioningMetric-bd40a392-a75c-4980-8253-803536c0847f
+        a                             IMMoRTALS_metrics:VersioningMetric ;
+        IMMoRTALS:hasLibraryName      "commons-IO" ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_metrics:MeasurementType-e538bb97-8d4a-4d90-9bbb-9aec7fde13fd ;
+        IMMoRTALS:hasValue            "2.0.0" .
+
+IMMoRTALS_cp1:MartiDBEnvironment.MostCurrentSchemaConstraint
+        a                            IMMoRTALS_property_impact:ProscriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:AbstractPropertyCriterion-37a7e8a5-a048-4bdf-9351-eea1d9566f0e ;
+        IMMoRTALS:hasHumanReadableDescription
+                "All database schemas most be the must current version" ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:ConstraintViolationImpact-2e13c5e9-0fd1-44d5-80a4-79e21231693f ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp1.MartiDBEnvironment$MostCurrentSchemaConstraint" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowEdge1
+        a                            IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode4 ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-0c40ff6b-6d7e-46d1-a194-08b34c2384b8 ;
+        IMMoRTALS:hasEdgeProperties  IMMoRTALS_functionality_dataproperties:CompressedLossless-00714b79-da6d-4cd7-8dac-0c5c074dc155 , IMMoRTALS_functionality_dataproperties:Compressed-b95c5cc8-8ede-43ea-85b0-040005ea4703 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowEdge1" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode1 .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-6a46a43f-75ef-4378-9029-883beaf18908
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.25"^^xsd:double .
+
+IMMoRTALS_resources_gps:L2_C
+        a                               IMMoRTALS_resources:RadioChannel ;
+        IMMoRTALS:hasCenterFrequencyHertz
+                1.2276E9 ;
+        IMMoRTALS:hasChannelName        "L2_C" ;
+        IMMoRTALS:hasMaxFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasMinFrequencyHertz  "0.0"^^xsd:double ;
+        IMMoRTALS:hasModulationStrategy
+                "BPSK" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.resources.gps.L2_C" .
+
+IMMoRTALS_functionality_compression:AspectDeflate
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.compression.AspectDeflate" .
+
+IMMoRTALS_measurement:MetricProfile-8d542bce-90b9-4180-9641-7a6091ae50f5
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 8.00MP, an output image of size 4.00MP was produced (scaling factor = 0.50)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-b3e71363-8410-4912-ae35-c43442cbc57f , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-582798d8-9f92-40cb-b408-7bc477d89ccd , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-5f82faf3-7c27-427d-a05f-b4eb28409917 .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-ebc74133-56e4-49b7-af58-72311be2d2c5
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.25"^^xsd:double .
+
+IMMoRTALS_cp2:Measurements.InsufficientImageReportRateMeasurement
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.ImageReportRateMeasurementType ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.Measurements$InsufficientImageReportRateMeasurement" ;
+        IMMoRTALS:hasUnit             "images/minute" ;
+        IMMoRTALS:hasValue            "0.1" .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-51d238b6-d91c-47f1-8d48-ead04ea53c50
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.75"^^xsd:double .
+
+IMMoRTALS_functionality:Output-3e39fa9a-3d66-4092-a096-2e5aba052f99
+        a                  IMMoRTALS_functionality:Output ;
+        IMMoRTALS:hasType  IMMoRTALS_functionality_datatype:Image .
+
+IMMoRTALS_gmei:GmeInterchangeFormatUberExample
+        a                               IMMoRTALS_cp:GmeInterchangeFormat ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_server:ServerPlatform-3b9a25d0-8da0-4ae6-94db-e39745284092 , IMMoRTALS_resources_gps:GpsSatelliteConstellation-a9cc79e4-877b-40a5-a422-ea2988cd1867 , IMMoRTALS_android:AndroidPlatform-37b0f83f-52cd-404f-8075-4394b64f9053 ;
+        IMMoRTALS:hasFunctionalitySpec  IMMoRTALS_cp:FunctionalitySpec-2b822f83-17fe-4c37-b4f3-f0200d4d0e13 ;
+        IMMoRTALS:hasMissionSpec        IMMoRTALS_cp:MissionSpec-ac749093-40f0-4c1e-8f18-675178b5a505 , IMMoRTALS_cp:MissionSpec-104cfa16-6be5-4998-b896-4b6cab36c4d4 , IMMoRTALS_cp:MissionSpec-48ba57e0-7b25-4bbf-92e8-7b9a555d2b3d , IMMoRTALS_cp:MissionSpec-785cbc2b-ad13-4fc3-8acb-9baaed5e5241 ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.GmeInterchangeFormatUberExample" ;
+        IMMoRTALS:hasSessionIdentifier  "session-1234" .
+
+IMMoRTALS_cp2:DomainKnowledge.ImpactOfReducingNumPixelsOnMemoryFootprint
+        a                            IMMoRTALS_property_impact:PredictiveCauseEffectAssertion ;
+        IMMoRTALS:hasApplicableDataType
+                IMMoRTALS_functionality_datatype:Bitmap ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:AbstractPropertyCriterion-5cdcb60c-1480-47be-8b02-eb5d4cd55520 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Reducing the number of pixels in an image reduces its memory footprint" ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:PropertyImpact-89a634ef-3e6a-494a-8b91-ee5b5fe829c0 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.DomainKnowledge$ImpactOfReducingNumPixelsOnMemoryFootprint" .
+
+IMMoRTALS_cp1:MartiDBEnvironment.SchemaUpdateStretegy
+        a                            IMMoRTALS_property_impact:PrescriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:ConstraintViolationCriterion-17e9053f-a789-40f5-9020-33c74c7c4e2b ;
+        IMMoRTALS:hasHumanReadableDescription
+                "When a database isn't at the most current version, this strategy mitigatesthe constraint by applying the impact of schema migration." ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:RemediationImpact-ef5e0bb1-a198-44aa-98b9-188e2071fdca ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp1.MartiDBEnvironment$SchemaUpdateStretegy" .
+
+IMMoRTALS_cp2:Measurements.AcceptablePliReportRateMeasurement
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.PliReportRateMeasurementType ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.Measurements$AcceptablePliReportRateMeasurement" ;
+        IMMoRTALS:hasUnit             "messages/minute" ;
+        IMMoRTALS:hasValue            "15" .
+
+IMMoRTALS:hasAvailableResources
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_gmei:DeploymentModel ;
+        rdfs:range   IMMoRTALS_core:Resource .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode4
+        a                               IMMoRTALS_analysis:InterMethodDataflowNode ;
+        IMMoRTALS:hasJavaClassName      "com.sec.Server1" ;
+        IMMoRTALS:hasJavaMethodName     "M4" ;
+        IMMoRTALS:hasJavaMethodPointer  "24680" ;
+        IMMoRTALS:hasLineNumber         "0"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowNode4" ;
+        IMMoRTALS:hasResourceTemplate   IMMoRTALS_cp2:ClientServerEnvironment.MartiServer .
+
+IMMoRTALS_resources_gps:GpsSatelliteConstellation-cf925f14-79f2-4110-ade6-a043480aec08
+        a                               IMMoRTALS_resources_gps:GpsSatelliteConstellation ;
+        IMMoRTALS:hasConstellationName  "GPS" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a constellation of satellites" ;
+        IMMoRTALS:hasSatellites         IMMoRTALS_resources_gps:GpsSatellite-742f1169-2790-4734-94fb-a6f8600d027f , IMMoRTALS_resources_gps:GpsSatellite-72dd98f1-7d69-4e22-bf4d-2141c402e728 , IMMoRTALS_resources_gps:GpsSatellite-b6d6141b-651f-4749-9485-c309001f14d0 .
+
+IMMoRTALS_cp2:DomainKnowledge.ImpactOfReducingMemoryFootprintOnBandwidth
+        a                            IMMoRTALS_property_impact:PredictiveCauseEffectAssertion ;
+        IMMoRTALS:hasApplicableDataType
+                IMMoRTALS_functionality_datatype:DataType ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:AbstractPropertyCriterion-44eda9a1-ca90-426f-855c-48da82297ab3 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Reducing the memory footprint of a datatype reduces the bandwidth consumed when sending it across network" ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:PropertyImpact-5283e111-5836-4a0e-b55d-6c27bafaddab ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.DomainKnowledge$ImpactOfReducingMemoryFootprintOnBandwidth" .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-067174d9-1c9b-47ae-880a-70c14c4fee96
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.75"^^xsd:double .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3
+        a                            IMMoRTALS_resources:MobileAndroidDevice ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice3" .
+
+IMMoRTALS_spec:SpecExample.SpecExample2
+        a                            IMMoRTALS_pattern_spec:LibraryFunctionalAspectSpec ;
+        IMMoRTALS:hasAspect          IMMoRTALS_functionality_alg_encryption:AspectCipherEncrypt ;
+        IMMoRTALS:hasDurableId       "SpecExample-2 (incomplete)" ;
+        IMMoRTALS:hasFunctionality   IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasLibraryCoordinateTag
+                "com.securboration:immortals-examples-cipher:0.0.1" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$SpecExample2" .
+
+IMMoRTALS_resources:BluetoothResource-07b84dc0-d4ec-42f7-946c-93e28e2ab1f8
+        a       IMMoRTALS_resources:BluetoothResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a Bluetooth transceiver" .
+
+IMMoRTALS_cp:FunctionalitySpec-2b822f83-17fe-4c37-b4f3-f0200d4d0e13
+        a       IMMoRTALS_cp:FunctionalitySpec ;
+        IMMoRTALS:hasFunctionalityPerformed
+                IMMoRTALS_functionality_locationprovider:LocationProvider ;
+        IMMoRTALS:hasPropertyConstraint
+                IMMoRTALS_property_impact:PropertyConstraint-0bee1c3c-03e7-47b1-a8a8-dc88180f4c73 .
+
+IMMoRTALS_resources_logical:Table-f63cfcbe-ed86-42af-9fba-9537591402ec
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-75a45716-95c9-48c9-b79f-fe0ef8eaae8b .
+
+IMMoRTALS_functionality_dataproperties:Encrypted-6ba60303-07be-44c3-a27f-070854990d6f
+        a                    IMMoRTALS_functionality_dataproperties:Encrypted ;
+        IMMoRTALS:hasEncryptionAlgorithm
+                IMMoRTALS_functionality_alg_encryption_aes:AES_128 ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_functionality:Input-5b433ce1-ac4a-46e7-ae56-54969f618a07
+        a                  IMMoRTALS_functionality:Input ;
+        IMMoRTALS:hasType  IMMoRTALS_functionality_imagecapture:FileHandle .
+
+IMMoRTALS_property_impact:AbstractPropertyCriterion-cfa407a2-c71b-4653-8357-82a8c12ffaaf
+        a                       IMMoRTALS_property_impact:AbstractPropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_ADDED" ;
+        IMMoRTALS:hasProperty   IMMoRTALS_functionality_dataproperties:Encrypted .
+
+IMMoRTALS_cp2:Measurements.AcceptableImageReportRateMeasurement
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.ImageReportRateMeasurementType ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.Measurements$AcceptableImageReportRateMeasurement" ;
+        IMMoRTALS:hasUnit             "images/minute" ;
+        IMMoRTALS:hasValue            "3" .
+
+IMMoRTALS_spec:SpecExample.2-fbc7a95f-ef7a-4085-880c-92bc03d694e7
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage
+                IMMoRTALS_spec:SpecExample.Init ;
+        IMMoRTALS:hasDurableId  "example1-init" ;
+        IMMoRTALS:hasSpec       "cipher$2215879 = new com.securboration.example.Cipher();cipher$2215879.setMode(\"ENCRYPT\");" .
+
+IMMoRTALS:hasResourceContainmentModel
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_gmei:DeploymentModel ;
+        rdfs:range   IMMoRTALS_resource_containment:ResourceContainmentModel .
+
+IMMoRTALS_resources:FileSystemResource-459ddcdc-5ad2-47bf-84bb-8c741fe42078
+        a       IMMoRTALS_resources:FileSystemResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a device file system" .
+
+IMMoRTALS_cp2:Analysis.AtakSendSaDataNode
+        a                              IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasContextTemplate   IMMoRTALS_cp2:Analysis.Atak.AtakPhone ;
+        IMMoRTALS:hasJavaClassName     "com.bbn.SaDataTransmitter" ;
+        IMMoRTALS:hasJavaMethodName    "writeSaDataToNetwork(byte[] data)" ;
+        IMMoRTALS:hasLineNumber        "0"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance    "com.securboration.immortals.ontology.cp2.Analysis$AtakSendSaDataNode" ;
+        IMMoRTALS:hasResourceTemplate  IMMoRTALS_cp2:Analysis.Atak.AtakSoftware .
+
+IMMoRTALS_functionality_dataproperties:CompressedLossless-0f5089d2-08c4-4090-91da-3ff86fff180f
+        a                    IMMoRTALS_functionality_dataproperties:CompressedLossless ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_cp2:Measurements.NumClientsMeasurement
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_server:ServerPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.ImageReportRateMeasurementType ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.Measurements$NumClientsMeasurement" ;
+        IMMoRTALS:hasUnit             "count" ;
+        IMMoRTALS:hasValue            "6" .
+
+IMMoRTALS_resource_containment:ResourceContainmentModel-d03b1cd5-3b1a-46f9-be29-19b0d24e980b
+        a                           IMMoRTALS_resource_containment:ResourceContainmentModel ;
+        IMMoRTALS:hasResourceModel  IMMoRTALS_resource_containment:ConcreteResourceNode-6a618410-c4be-49c0-8df5-2c9a0470143d , IMMoRTALS_resource_containment:ConcreteResourceNode-fa047b95-f930-42e8-a42f-bf46ef6e09fa , IMMoRTALS_resource_containment:ConcreteResourceNode-24474d13-d41b-4c83-9646-36160dbd1523 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-80263362-e966-47c7-82c6-6217714eb31c
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the bad library instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources:SoftwareLibrary-d2730ff0-75a0-42ef-b69d-e74f4eeabd59 .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ATAKMartiFunctionalitySpecDeflate
+        a                            IMMoRTALS_cp:FunctionalitySpec ;
+        IMMoRTALS:hasFunctionalityPerformed
+                IMMoRTALS_functionality_compression:Compressor ;
+        IMMoRTALS:hasFunctionalityProvided
+                IMMoRTALS_functionality_compression:AspectDeflate ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ATAKMartiFunctionalitySpecDeflate" .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-3d543808-21ab-4726-9f57-9cf5a119b4da
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "8.0"^^xsd:double .
+
+IMMoRTALS_functionality_alg_encryption:Cipher
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.alg.encryption.Cipher" .
+
+IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-a9b7e336-191e-47ba-a7a6-81b1979c5868
+        a                           IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "6.0"^^xsd:double .
+
+IMMoRTALS_resources:BluetoothResource-0f7b468c-6216-43f4-bc54-aebbad26586b
+        a       IMMoRTALS_resources:BluetoothResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a Bluetooth transceiver" .
+
+IMMoRTALS_metrics:Metric-af374d36-8770-4070-bb82-ec560fd34ebe
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.PliReportRateMeasurementType ;
+        IMMoRTALS:hasUnit             "messages/minute" ;
+        IMMoRTALS:hasValue            "10" .
+
+IMMoRTALS_cp2:Measurements.AcceptableBandwidthMeasurement
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_resources_network:NetworkConnection ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.BandwidthMeasurementType ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.Measurements$AcceptableBandwidthMeasurement" ;
+        IMMoRTALS:hasUnit             "kb/s" ;
+        IMMoRTALS:hasValue            "0.5" .
+
+IMMoRTALS_functionality_imageprocessor:ImageProcessor
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.imageprocessor.ImageProcessor" .
+
+IMMoRTALS_functionality_imagecapture:AspectWriteImage
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.imagecapture.AspectWriteImage" .
+
+IMMoRTALS_spec:SpecExample.3
+        a                            owl:Class ;
+        rdfs:label                   "" ;
+        rdfs:subClassOf              IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$3" .
+
+IMMoRTALS:hasResourceMigrationTargets
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_gmei:DeploymentModel ;
+        rdfs:range   IMMoRTALS_resources:ResourceMigrationTarget .
+
+IMMoRTALS_functionality_locationprovider:LocationProvider
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.locationprovider.LocationProvider" .
+
+IMMoRTALS_metrics:Metric-c65c1c59-4273-406d-bc3e-798d357aa3fe
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_android:AndroidPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.ImageReportRateMeasurementType ;
+        IMMoRTALS:hasUnit             "images/minute" ;
+        IMMoRTALS:hasValue            "1" .
+
+IMMoRTALS_cp2:MeasurementTypes.NumClientsMeasurementType
+        a                             IMMoRTALS_metrics:MeasurementType ;
+        IMMoRTALS:hasCorrespondingProperty
+                IMMoRTALS_connectivity:NumClients ;
+        IMMoRTALS:hasMeasurementType  "Number of clients" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.MeasurementTypes$NumClientsMeasurementType" .
+
+IMMoRTALS_metrics:Metric-9a1a3abd-660a-434a-980d-5c1bd14b6453
+        a                             IMMoRTALS_metrics:Metric ;
+        IMMoRTALS:hasApplicableResourceType
+                IMMoRTALS_server:ServerPlatform ;
+        IMMoRTALS:hasMeasurementType  IMMoRTALS_cp2:MeasurementTypes.NumClientsMeasurementType ;
+        IMMoRTALS:hasUnit             "count" ;
+        IMMoRTALS:hasValue            "25" .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-eb8abbeb-4fdd-4671-b24c-0c06121a63bb
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "24.0"^^xsd:double .
+
+IMMoRTALS_cp:MissionSpec-48ba57e0-7b25-4bbf-92e8-7b9a555d2b3d
+        a                               IMMoRTALS_cp:MissionSpec ;
+        IMMoRTALS:hasAssertionCriterion
+                "VALUE_LESS_THAN_INCLUSIVE" ;
+        IMMoRTALS:hasHumanReadableForm  "the link must never see > 25kbps in traffic" ;
+        IMMoRTALS:hasRightValue         IMMoRTALS_metrics:Metric-e8baa6de-6c01-4b12-a394-333771fff9e4 .
+
+IMMoRTALS_resources_logical:Table-73312942-af7c-401a-8678-cca228ea1bfe
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-709aebd3-49d0-48d0-9d0c-29cf1aa24533 .
+
+IMMoRTALS_functionality_dataproperties:Compressed-af82f026-6417-4a61-8c32-9ee45bc6a172
+        a                    IMMoRTALS_functionality_dataproperties:Compressed ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_resources_logical:DBSchema-3ab65cc1-c7df-4ad6-a867-eb3d51e595a0
+        a                     IMMoRTALS_resources_logical:DBSchema ;
+        IMMoRTALS:hasName     "CurrentSchema" ;
+        IMMoRTALS:hasTables   IMMoRTALS_resources_logical:Table-361efb76-49dd-4be8-99eb-0bd555da0579 , IMMoRTALS_resources_logical:Table-73312942-af7c-401a-8678-cca228ea1bfe ;
+        IMMoRTALS:hasVersion  "currentVersion" .
+
+IMMoRTALS_gmei:DeploymentModelCP1
+        a                               IMMoRTALS_gmei:DeploymentModel ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_resources_logical:DBSchema-3ab65cc1-c7df-4ad6-a867-eb3d51e595a0 , IMMoRTALS_cp2:ClientServerEnvironment.MartiServer , IMMoRTALS_resources:DataBase-3d949738-3111-41b0-bf50-fa8131be395d , IMMoRTALS_resources_logical:DBSchema-d4c02a88-6dca-431e-bc36-61c16091c2a1 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Describes a marti database in need of upgrading schema versions to the specified target." ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.DeploymentModelCP1" ;
+        IMMoRTALS:hasResourceContainmentModel
+                IMMoRTALS_resource_containment:ResourceContainmentModel-bc6c11c2-3bfe-4f58-a84e-d38fd6112c6d ;
+        IMMoRTALS:hasResourceMigrationTargets
+                IMMoRTALS_resources:ResourceMigrationTarget-37c52f11-42fe-48f3-8cd5-6525a5f12fc0 ;
+        IMMoRTALS:hasSessionIdentifier  "CP1MartiDatabaseSchemas" .
+
+IMMoRTALS_measurement:MetricProfile-2a242865-d971-4adc-81fc-b5329ec18689
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 5.00MP, an output image of size 2.50MP was produced (scaling factor = 0.50)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-8c24cf5e-8872-4039-8c39-117158ed2155 , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-9a5842ce-5bd2-40a6-a853-b9f3b2c12609 , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-a0de3660-af93-4b61-8ed6-54b146c34bea .
+
+IMMoRTALS_analysis:DataflowEdge-f8f8b669-8c7a-43a4-a926-f28683a83b19
+        a                      IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasCommunicationChannelTemplate
+                IMMoRTALS_cp2:Analysis.Atak.AtakPhoneFileSystem ;
+        IMMoRTALS:hasConsumer  IMMoRTALS_cp2:Analysis.AtakReadImageNode ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:Image ;
+        IMMoRTALS:hasHumanReadableDescription
+                "ATAK reads an image via local disk IO.  The image is passed to a ReadImage functional aspect." ;
+        IMMoRTALS:hasProducer  IMMoRTALS_cp2:Analysis.AtakImageSourceNode .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ATAKMartiFunctionalitySpecWriteImage
+        a                            IMMoRTALS_cp:FunctionalitySpec ;
+        IMMoRTALS:hasFunctionalityPerformed
+                IMMoRTALS_functionality_imagecapture:ImageFileIO ;
+        IMMoRTALS:hasFunctionalityProvided
+                IMMoRTALS_functionality_imagecapture:AspectWriteImage ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ATAKMartiFunctionalitySpecWriteImage" .
+
+IMMoRTALS_property_impact:ConstraintViolationCriterion-c733f4c3-6045-4f2c-9703-336774c30705
+        a                        IMMoRTALS_property_impact:ConstraintViolationCriterion ;
+        IMMoRTALS:hasConstraint  IMMoRTALS_cp2:ClientServerEnvironment.DataSafetyConstraint ;
+        IMMoRTALS:hasTriggeringConstraintCriterion
+                "WHEN_HARD_VIOLATED" .
+
+IMMoRTALS_property_impact:ConstraintViolationCriterion-347c092e-9f53-4b46-9db8-a992eb7a6659
+        a                        IMMoRTALS_property_impact:ConstraintViolationCriterion ;
+        IMMoRTALS:hasConstraint  IMMoRTALS_cp3:ImmortalsSystemLibraryEnv.LibraryVersionConstraint ;
+        IMMoRTALS:hasTriggeringConstraintCriterion
+                "WHEN_HARD_VIOLATED" .
+
+IMMoRTALS_cp2:MeasurementTypes.PliReportRateMeasurementType
+        a                             IMMoRTALS_metrics:MeasurementType ;
+        IMMoRTALS:hasCorrespondingProperty
+                IMMoRTALS_connectivity:PliReportRate ;
+        IMMoRTALS:hasMeasurementType  "PLI report rate" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.MeasurementTypes$PliReportRateMeasurementType" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowEdge2
+        a                            IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasConsumer        IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode4 ;
+        IMMoRTALS:hasDataflowAnalysisFrame
+                IMMoRTALS_analysis:DataflowAnalysisFrame-efc15e17-717e-4e28-93c4-9146585707ce ;
+        IMMoRTALS:hasEdgeProperties  IMMoRTALS_functionality_dataproperties:CompressedLossless-a24a4022-8a74-4ff3-b6e8-7da9ba1ee4bc , IMMoRTALS_functionality_dataproperties:Encrypted-6ba60303-07be-44c3-a27f-070854990d6f ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowEdge2" ;
+        IMMoRTALS:hasProducer        IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode2 .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-3d4da1dd-328e-43eb-9292-a2e8b52c180f
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.5"^^xsd:double .
+
+IMMoRTALS_connectivity:BandwidthKiloBitsPerSecond-1f861343-6a4f-4a4b-b1d6-3c87c2f843e7
+        a       IMMoRTALS_connectivity:BandwidthKiloBitsPerSecond ;
+        IMMoRTALS:hasKiloBytesPerSecond
+                "1000"^^xsd:long .
+
+IMMoRTALS_cp2:MeasurementTypes.InputMegapixelsMeasurementType
+        a                             IMMoRTALS_metrics:MeasurementType ;
+        IMMoRTALS:hasCorrespondingProperty
+                IMMoRTALS_functionality_imagescaling:NumberOfPixels ;
+        IMMoRTALS:hasMeasurementType  "Input megapixels" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.cp2.MeasurementTypes$InputMegapixelsMeasurementType" .
+
+IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-bf2d2115-44c6-456d-b62a-e775691a4d46
+        a                           IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels ;
+        IMMoRTALS:hasNumMegapixels  "24.0"^^xsd:double .
+
+IMMoRTALS_functionality_imagescaling:ImageScalingFactor-5f82faf3-7c27-427d-a05f-b4eb28409917
+        a                           IMMoRTALS_functionality_imagescaling:ImageScalingFactor ;
+        IMMoRTALS:hasScalingFactor  "0.5"^^xsd:double .
+
+IMMoRTALS_functionality_alg_encryption:AspectCipherEncrypt
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.alg.encryption.AspectCipherEncrypt" .
+
+IMMoRTALS_property_impact:ResourceCriterion-0133745e-b78b-40eb-bcc1-30ab7d989835
+        a                       IMMoRTALS_property_impact:ResourceCriterion ;
+        IMMoRTALS:hasCriterion  "WHEN_RESOURCE_ALTERED" ;
+        IMMoRTALS:hasResource   IMMoRTALS_database:SchemaLogic .
+
+IMMoRTALS_measurement:MetricProfile-372d3d46-dfd1-4a55-a7f1-3b0cd5ae080b
+        a                               IMMoRTALS_measurement:MetricProfile ;
+        IMMoRTALS:hasCodeUnit           IMMoRTALS_measurement:DfuPointer-99adf436-20eb-4fa4-8b75-336880d3e7d7 ;
+        IMMoRTALS:hasHumanReadableDesc  "An observation that for input image size 8.00MP, an output image of size 6.00MP was produced (scaling factor = 0.75)" ;
+        IMMoRTALS:hasMeasuredProperty   IMMoRTALS_measurement_cp1cp2:InputImageSizeMegapixels-99ae87ef-bf4e-4088-af9d-25a441e68fa2 , IMMoRTALS_measurement_cp1cp2:OutputImageSizeMegapixels-f5085212-d291-4390-9482-a5e774df8317 , IMMoRTALS_functionality_imagescaling:ImageScalingFactor-067174d9-1c9b-47ae-880a-70c14c4fee96 .
+
+IMMoRTALS_functionality_alg_encryption_aes:AES_128
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.alg.encryption.aes.AES_128" .
+
+IMMoRTALS_resources:UsbResource-2c587afd-875e-402d-82c1-1d8e2e30951b
+        a       IMMoRTALS_resources:UsbResource ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a USB port" .
+
+IMMoRTALS_functionality_dataproperties:CompressedLossless-a24a4022-8a74-4ff3-b6e8-7da9ba1ee4bc
+        a                    IMMoRTALS_functionality_dataproperties:CompressedLossless ;
+        IMMoRTALS:hasHidden  true .
+
+IMMoRTALS_resources_gps_properties:TrustedProperty-ef2174f3-d3dd-4093-bcbb-f04c06d75759
+        a       IMMoRTALS_resources_gps_properties:TrustedProperty .
+
+IMMoRTALS_property_impact:PropertyImpact-f6128f36-6485-41cb-b26f-2ca80a0c7937
+        a                              IMMoRTALS_property_impact:PropertyImpact ;
+        IMMoRTALS:hasImpactOnProperty  "ADDS" ;
+        IMMoRTALS:hasImpactedProperty  IMMoRTALS_database:MostCurrentVersion .
+
+IMMoRTALS_resources_gps:GpsReceiverSaasm-2cddbf8b-e94b-4875-aa92-0db9b2b40ff8
+        a                              IMMoRTALS_resources_gps:GpsReceiverSaasm ;
+        IMMoRTALS:hasConstellation     IMMoRTALS_resources_gps:GpsSatelliteConstellation-cf925f14-79f2-4110-ade6-a043480aec08 ;
+        IMMoRTALS:hasNumChannels       "5"^^xsd:int ;
+        IMMoRTALS:hasReceivableSpectrum
+                IMMoRTALS_resources_gps:L2_PY , IMMoRTALS_resources_gps:L1_CA , IMMoRTALS_resources_gps:L1_C , IMMoRTALS_resources_gps:L1_PY , IMMoRTALS_resources_gps:L5 , IMMoRTALS_resources_gps:L2_CA , IMMoRTALS_resources_gps:L2_C ;
+        IMMoRTALS:hasResourceProperty  IMMoRTALS_resources_gps_properties:TrustedProperty-d146f3fc-5034-48db-876e-a41c24b9515d .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataflowNode5
+        a                              IMMoRTALS_analysis:DataflowNode ;
+        IMMoRTALS:hasPojoProvenance    "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataflowNode5" ;
+        IMMoRTALS:hasResourceTemplate  IMMoRTALS_cp2:ClientServerEnvironment.FileSystem1 .
+
+IMMoRTALS_resources_logical:Column-709aebd3-49d0-48d0-9d0c-29cf1aa24533
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_resources_logical:Column-75a45716-95c9-48c9-b79f-fe0ef8eaae8b
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-06cf4f61-c1b4-4422-ad6b-1a1f7ceeb55a
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #2." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 .
+
+IMMoRTALS_analysis:DataflowAnalysisFrame-604e4c98-7c88-472e-8a3e-8528dc54fcae
+        a                             IMMoRTALS_analysis:DataflowAnalysisFrame ;
+        IMMoRTALS:hasAnalysisFrameDataType
+                IMMoRTALS_functionality_datatype:BinaryData ;
+        IMMoRTALS:hasFrameProperties  IMMoRTALS_functionality_imagescaling:NumberOfPixels-edfb2710-3e17-4730-bc95-0054437c3bbb .
+
+IMMoRTALS_property_impact:ResourceCriterion-2c49d137-a755-4746-a7c2-337198cd45e7
+        a                       IMMoRTALS_property_impact:ResourceCriterion ;
+        IMMoRTALS:hasCriterion  "WHEN_RESOURCE_ALTERED" ;
+        IMMoRTALS:hasResource   IMMoRTALS_resources:SoftwareLibrary .
+
+IMMoRTALS_resources:ResourceMigrationTarget-814bbd67-944f-4628-8dcc-4c41c15dff4f
+        a                            IMMoRTALS_resources:ResourceMigrationTarget ;
+        IMMoRTALS:hasRationale       "Need to upgrade library version to avoid discovered exploit" ;
+        IMMoRTALS:hasTargetResource  IMMoRTALS_resources:SoftwareLibrary-f0fb0181-4de9-4fca-aab1-b6c30b67aeca .

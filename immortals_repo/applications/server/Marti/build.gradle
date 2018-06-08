@@ -25,7 +25,6 @@ repositories {
 apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'mil.darpa.immortals'
-apply plugin: 'jacoco'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -84,12 +83,6 @@ test {
     }
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled true
-    }
-}
-
 dependencies {
     compile('mil.darpa.immortals:core:+')
     compile('mil.darpa.immortals.dfus:TakServerDataManager:+')
@@ -108,8 +101,6 @@ dependencies {
     testCompile('com.bbn.ataklite:CLITAK:+')
     testCompile('org.jmockit:jmockit:1.39')
 }
-
-
 
 if (System.properties["mil.darpa.immortals.mock"] != null) {
     // If mock is set, add it to the tests

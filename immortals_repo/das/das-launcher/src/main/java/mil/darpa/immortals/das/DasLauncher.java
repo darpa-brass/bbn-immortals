@@ -70,7 +70,7 @@ public class DasLauncher {
 
     private final Verbosity verbosity;
 
-    private final ImmortalsServiceManifest stdTarget;
+    private final String stdTargetIdentifier;
 
     private final boolean deleteExistingLogs;
 
@@ -116,7 +116,7 @@ public class DasLauncher {
                         }
                         keyLine = currentLine;
                         statementLines.add(currentLine);
-                        
+
                     } else {
                         // Otherwise, check that it is not a properly formatted key line and add it
                         if (currentLineMatches) {
@@ -196,7 +196,7 @@ public class DasLauncher {
     private DasLauncher(@Nonnull Verbosity verbosity, @Nullable ImmortalsServiceManifest stdTarget, boolean deleteExistingLogs) {
         this.logger = LoggerFactory.getLogger("mil.darpa.immortals.DasLauncher");
         this.verbosity = verbosity;
-        this.stdTarget = stdTarget;
+        this.stdTargetIdentifier = stdTarget == null ? null : stdTarget.getConfig().getIdentifier();
         this.deleteExistingLogs = deleteExistingLogs;
     }
 
@@ -206,20 +206,29 @@ public class DasLauncher {
         }
 
         long startTime = System.currentTimeMillis();
+        
+        List<String> probableErrors = new LinkedList<>();
 
         for (ImmortalsServiceManifest service : ImmortalsServiceManifest.values()) {
             synchronized (shuttingDown) {
                 if (!shuttingDown.get()) {
+                    if (service.getConfig() instanceof AppConfigInterface) {
+                        AppConfigInterface cfg = (AppConfigInterface) service.getConfig();
 
-                    if (service.useMock()) {
-                        System.out.println("Skipping startup of '" + service.name() + "' since it is flagged for mocking in the debug configuration.");
+                        if (service.useMock()) {
+                            System.out.println("Skipping startup of '" + service.name() + "' since it is flagged for mocking in the debug configuration.");
 
-                    } else if (service.getConfig().isUserManaged()) {
-                        System.out.println("Please start '" + service.getConfig().getIdentifier() + "' and press any key to continue.");
-                        System.in.read();
 
-                    } else {
-                        startService(service);
+                        } else if (cfg.isUserManaged()) {
+                            System.out.println("Please start '" + service.getConfig().getIdentifier() + "' and press any key to continue.");
+                            System.in.read();
+
+                        } else {
+                            String probableErrorMessage = startService(cfg);
+                            if (probableErrorMessage != null) {
+                                probableErrors.add(probableErrorMessage);
+                            }
+                        }
                     }
                 }
             }
@@ -227,7 +236,11 @@ public class DasLauncher {
 
         if (!shuttingDown.get()) {
             String duration = Long.toString(System.currentTimeMillis() - startTime);
-            System.out.println("The DAS has finished starting up (" + duration + "ms). Press Ctrl-C to terminate (this may take up to ten seconds)");
+            if (probableErrors.isEmpty()) {
+                System.out.println("The DAS has finished starting up (" + duration + "ms). Press Ctrl-C to terminate (this may take up to ten seconds)");
+            } else {
+                System.out.println("The DAS has finished starting up (" + duration + "ms) WITH SERVICE STARTUP TIMEOUTS and likely will not work properly! Press Ctrl-C to terminate (this may take up to ten seconds)");
+            }
         }
     }
 
@@ -260,9 +273,8 @@ public class DasLauncher {
         }
     }
 
-    private ProcessBuilder prepareProcess(ImmortalsServiceManifest service) throws IOException {
-        AppConfigInterface appConfig = service.getConfig();
-        
+    private ProcessBuilder prepareProcess(AppConfigInterface appConfig) throws IOException {
+
         Path templateFolder = appConfig.getWorkingDirectoryTemplateFolder();
         if (templateFolder != null) {
             FileUtils.copyDirectory(templateFolder.toFile(), new File(appConfig.getWorkingDirectory()));
@@ -345,14 +357,14 @@ public class DasLauncher {
         return pb;
     }
 
-    private void startService(@Nonnull ImmortalsServiceManifest service) throws IOException {
-        AppConfigInterface appConfig = service.getConfig();
+    private String startService(@Nonnull AppConfigInterface appConfig) throws IOException {
+        String probableErrorMessage = null;
         Process p;
         BufferedReader reader = null;
 
         try {
             // Create a process builder instance all set up
-            ProcessBuilder pb = prepareProcess(service);
+            ProcessBuilder pb = prepareProcess(appConfig);
 
             // Get the stdout file for monitoring
             File stdoutFile = pb.redirectOutput().file();
@@ -391,13 +403,13 @@ public class DasLauncher {
                         // Shouldn't be possible
                     }
                     durationMS += 200;
-                    if (service != stdTarget) {
+                    if (!appConfig.getIdentifier().equals(stdTargetIdentifier)) {
                         if (durationMS % 1600 == 0) {
                             System.out.print(".");
                         }
                     }
                 } else {
-                    if (service == stdTarget) {
+                    if (appConfig.getIdentifier().equals(stdTargetIdentifier)) {
                         System.out.println(line);
                     }
                     if (line.matches(regexMatch)) {
@@ -409,8 +421,9 @@ public class DasLauncher {
 
             if (durationMS >= timeoutMS) {
                 System.err.println("TIMEOUT!");
-                System.err.println("PROBABLE ERROR! Startup of '" + appConfig.getIdentifier() + "' hit its timeout of "
-                        + Long.toString(appConfig.getStartupTimeMS()) + " ms!");
+                probableErrorMessage = "PROBABLE ERROR! Startup of '" + appConfig.getIdentifier() + "' hit its timeout of "
+                        + Long.toString(appConfig.getStartupTimeMS()) + " ms!";
+                System.err.println(probableErrorMessage);
 
             } else if (isShuttingDown) {
                 System.err.println("INTERRUPTED!");
@@ -427,7 +440,7 @@ public class DasLauncher {
                 shutdown();
             }
         } finally {
-            if (service == stdTarget) {
+            if (appConfig.getIdentifier().equals(stdTargetIdentifier)) {
                 BufferedReader r = reader;
                 stdListenThread = new Thread(new Runnable() {
                     @Override
@@ -446,7 +459,7 @@ public class DasLauncher {
                         }
                     }
                 });
-                
+
                 stdListenThread.setDaemon(true);
                 stdListenThread.start();
 
@@ -457,6 +470,7 @@ public class DasLauncher {
                 }
             }
         }
+        return probableErrorMessage;
     }
 
 

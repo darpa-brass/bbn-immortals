@@ -18,6 +18,83 @@ public class HddRassInitializationObject {
     private final String buildToolPath;
     private final String buildToolBuildParameter;
     private final String buildToolValidationParameters;
+
+    public LinkedList<String> getRequiredValidators() {
+        return new LinkedList<>(requiredValidators);
+    }
+
+    public String getBuildTool() {
+        return buildTool;
+    }
+
+    public Path getBuildToolPath() {
+        return Paths.get(buildToolPath);
+    }
+
+    public String getBuildToolBuildParameter() {
+        return buildToolBuildParameter;
+    }
+
+    public String getBuildToolValidationParameters() {
+        return buildToolValidationParameters;
+    }
+
+    public Path getApplicationPath() {
+        return Paths.get(applicationPath);
+    }
+
+    public String getSourceSubpath() {
+        return sourceSubpath;
+    }
+
+    public Path getBuildFilePath() {
+        return Paths.get(buildFilePath);
+    }
+
+    public Path getTestResultPath() {
+        return Paths.get(testResultPath);
+    }
+
+    public String getTestFileRegex() {
+        return testFileRegex;
+    }
+
+    public String getBUILD_SUCCESS_STRING() {
+        return BUILD_SUCCESS_STRING;
+    }
+
+    public String getRUN_SUCCESS_STRING() {
+        return RUN_SUCCESS_STRING;
+    }
+
+    public String getPACKAGE_NAME() {
+        return PACKAGE_NAME;
+    }
+
+    public Path getTEST_RESULT_PATH() {
+        return Paths.get(TEST_RESULT_PATH);
+    }
+
+    public String getTEST_FILE_REGEX() {
+        return TEST_FILE_REGEX;
+    }
+
+    public Path getINTERMEDIATE_TEST_RESULT_OUTPUTPATH() {
+        return Paths.get(INTERMEDIATE_TEST_RESULT_OUTPUTPATH);
+    }
+
+    public Path getINTERMEDIATE_COMPILE_OUTPUT_PATH() {
+        return Paths.get(INTERMEDIATE_COMPILE_OUTPUT_PATH);
+    }
+
+    public boolean isStopOnSuccess() {
+        return stopOnSuccess;
+    }
+
+    public LinkedList<String> getPrioritizedClasses() {
+        return prioritizedClasses;
+    }
+
     private final String applicationPath;
     private final String sourceSubpath;
     private final String buildFilePath;

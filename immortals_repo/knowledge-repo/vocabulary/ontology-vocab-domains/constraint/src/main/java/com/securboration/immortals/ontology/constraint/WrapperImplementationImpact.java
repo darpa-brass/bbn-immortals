@@ -3,6 +3,7 @@ package com.securboration.immortals.ontology.constraint;
 import com.securboration.immortals.ontology.analysis.DataflowNode;
 import com.securboration.immortals.ontology.functionality.FunctionalAspect;
 import com.securboration.immortals.ontology.lang.SourceFile;
+import com.securboration.immortals.ontology.property.impact.AnalysisImpact;
 
 public class WrapperImplementationImpact extends AnalysisImpact {
     

@@ -74,6 +74,12 @@ public class DASEndpoint {
             String knowledgeRepoGraphUri = am.initializeKnowledgeRepo();
 
             String adaptationIdentifier = SessionIdentifier.select(knowledgeRepoGraphUri);
+            
+            // Also save the RDF in logs for debugging
+            rdfPath = 
+                    ImmortalsConfig.getInstance().globals.getAdaptationLogDirectory(adaptationIdentifier).resolve("deploymentModel.ttl");
+            Files.write(rdfPath, rdf.getBytes());
+
             DasAdaptationContext dac = ContextManager.getContext(adaptationIdentifier,
                     knowledgeRepoGraphUri, knowledgeRepoGraphUri);
 
@@ -118,6 +124,11 @@ public class DASEndpoint {
             String adaptationIdentifier = SessionIdentifier.select(knowledgeRepoGraphUri);
             DasAdaptationContext dac = ContextManager.getContext(adaptationIdentifier,
                     knowledgeRepoGraphUri, knowledgeRepoGraphUri);
+
+            // Also save the RDF in logs for debugging
+            rdfPath =
+                    ImmortalsConfig.getInstance().globals.getAdaptationLogDirectory(adaptationIdentifier).resolve("deploymentModel.ttl");
+            Files.write(rdfPath, rdf.getBytes());
             
             // TODO: This should probably match with the AdaptationManager...
             LibraryUpgradeModule lum = new LibraryUpgradeModule();

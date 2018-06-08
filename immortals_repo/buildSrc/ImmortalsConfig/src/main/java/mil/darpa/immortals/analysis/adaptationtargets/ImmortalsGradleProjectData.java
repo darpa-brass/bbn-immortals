@@ -3,6 +3,7 @@ package mil.darpa.immortals.analysis.adaptationtargets;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import mil.darpa.immortals.config.GlobalsConfig;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.api.TestCaseReport;
 import mil.darpa.immortals.core.das.adaptationtargets.testing.ClassFileCoverageSet;
@@ -15,6 +16,7 @@ public class ImmortalsGradleProjectData {
 
     private static transient Map<String, ImmortalsGradleProjectData> immortalsGradleProjectData;
 
+    private final String targetUid;
     private final String targetName;
     private final String targetGroup;
     private final String targetVersion;
@@ -32,7 +34,8 @@ public class ImmortalsGradleProjectData {
     private final HashMap<String, ClassFileCoverageSet> baseTestClassFileCoverage;
     private final HashSet<TestCaseReport> baseTestCaseReports;
 
-    public ImmortalsGradleProjectData(String targetName,
+    public ImmortalsGradleProjectData(String targetUid,
+                                      String targetName,
                                       String targetGroup,
                                       String targetVersion,
                                       DeploymentTarget deploymentTarget,
@@ -48,6 +51,7 @@ public class ImmortalsGradleProjectData {
                                       ImmortalsGradleExecutionData executionData,
                                       HashMap<String, ClassFileCoverageSet> baseTestClassFileCoverage,
                                       Collection<TestCaseReport> baseTestCaseReports) {
+        this.targetUid = targetUid;
         this.targetName = targetName;
         this.targetGroup = targetGroup;
         this.targetVersion = targetVersion;
@@ -73,48 +77,45 @@ public class ImmortalsGradleProjectData {
 
         HashMap<String, String> deploymentFileMap = new HashMap<>();
 
-        switch (identifier) {
-            case "ATAKLite":
-                deploymentFileMap.put(ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(
-                        "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/ATAKLite-Config.json").toString(),
-                        "/sdcard/ataklite/ATAKLite-Config.json");
-                deploymentFileMap.put(ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(
-                        "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/sample_image.jpg").toString(),
-                        "/sdcard/ataklite/sample_image.jpg");
-                deploymentFileMap.put(ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(
-                        "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/env.json").toString(),
-                        "/sdcard/ataklite/env.json");
+        // TODO: Somehow not hard-code these?
+        if (identifier.equals(GlobalsConfig.staticImmortalsRoot.resolve("applications/client/ATAKLite").toString())) {
+            deploymentFileMap.put(ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(
+                    "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/ATAKLite-Config.json").toString(),
+                    "/sdcard/ataklite/ATAKLite-Config.json");
+            deploymentFileMap.put(ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(
+                    "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/sample_image.jpg").toString(),
+                    "/sdcard/ataklite/sample_image.jpg");
+            deploymentFileMap.put(ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(
+                    "harness/pymmortals/resources/applications/ataklite_baseline/sdcard/ataklite/env.json").toString(),
+                    "/sdcard/ataklite/env.json");
 
-                this.execution = new ImmortalsGradleExecutionData(
-                        executionData.getExecutionStartSettleTimeMS(),
-                        executionData.getExecutableFilename(),
-                        deploymentFileMap,
-                        executionData.getExecutionPackageIdentifier(),
-                        executionData.getExecutionMainMethodClasspath()
-                );
-                break;
+            this.execution = new ImmortalsGradleExecutionData(
+                    executionData.getExecutionStartSettleTimeMS(),
+                    executionData.getExecutableFilename(),
+                    deploymentFileMap,
+                    executionData.getExecutionPackageIdentifier(),
+                    executionData.getExecutionMainMethodClasspath()
+            );
 
-            case "Marti":
-                deploymentFileMap.put("Marti-Config.json", "Marti-Config.json");
+        } else if (identifier.equals(GlobalsConfig.staticImmortalsRoot.resolve("applications/server/Marti").toString())) {
 
-                this.execution = new ImmortalsGradleExecutionData(
-                        executionData.getExecutionStartSettleTimeMS(),
-                        executionData.getExecutableFilename(),
-                        deploymentFileMap,
-                        executionData.getExecutionPackageIdentifier(),
-                        executionData.getExecutionMainMethodClasspath()
-                );
+            deploymentFileMap.put("Marti-Config.json", "Marti-Config.json");
 
-                break;
+            this.execution = new ImmortalsGradleExecutionData(
+                    executionData.getExecutionStartSettleTimeMS(),
+                    executionData.getExecutableFilename(),
+                    deploymentFileMap,
+                    executionData.getExecutionPackageIdentifier(),
+                    executionData.getExecutionMainMethodClasspath()
+            );
 
-            default:
+        } else {
                 this.execution = executionData;
-
         }
     }
 
     public String getIdentifier() {
-        return getTargetGroup() + ":" + getTargetName() + ":" + getTargetVersion();
+        return targetUid;
     }
 
     public static Map<String, ImmortalsGradleProjectData> getDataFromFile() throws Exception {

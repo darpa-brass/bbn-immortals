@@ -19,13 +19,25 @@
         "martiAddress": "10.0.2.2",
         "androidEnvironments": [
             {
+                "adbIdentifier": "emulator-5554",
+                "adbPort": 5554,
+                "adbUrl": "127.0.0.1",
+                "environmentDetails": {
+                  "androidVersion": 21,
+                  "externallyAccessibleUrls": [
+                    "dropbox.com:443",
+                    "dropbox.com:80"
+                  ],
+                  "uploadBandwidthLimitKilobitsPerSecond": 800
+                }
+            },
+            {
                 "adbPort": 5580,
                 "adbUrl": "127.0.0.1",
                 "adbIdentifier": "emulator-5580",
                 "environmentDetails": {
                     "androidVersion": 21,
                     "externallyAccessibleUrls": [],
-                    "superuserAccess": false,
                     "uploadBandwidthLimitKilobitsPerSecond": null
                 }
             },

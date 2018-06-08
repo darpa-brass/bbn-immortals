@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bbn.marti.Tests" tests="6" skipped="0" failures="0" errors="0" timestamp="2018-06-01T18:07:40" hostname="dhcp89-77-152.bbn.com" time="4.029">
+  <properties/>
+  <testcase name="testCotByteBufferPipe" classname="com.bbn.marti.Tests" time="1.94"/>
+  <testcase name="testDbIntegration" classname="com.bbn.marti.Tests" time="0.295"/>
+  <testcase name="testElevationAccuracyEnhancement" classname="com.bbn.marti.Tests" time="0.08"/>
+  <testcase name="testImageSave" classname="com.bbn.marti.Tests" time="1.675"/>
+  <testcase name="testImageTransmission" classname="com.bbn.marti.Tests" time="0.005"/>
+  <testcase name="testLatestSaTransmission" classname="com.bbn.marti.Tests" time="0.0"/>
+  <system-out><![CDATA[Registering new Analytics instance for thread 12
+STARTING: 1527876463
+Registering new Analytics instance for thread 31
+Registering Analytics instance from thread 31 to thread 32
+Registering Analytics instance from thread 31 to thread 33
+Registering Analytics instance from thread 31 to thread 34
+Registering Analytics instance from thread 31 to thread 35
+Automatically sending Images every 1000 milliseconds.
+Registering new Analytics instance for thread 36
+Registering Analytics instance from thread 36 to thread 37
+Registering Analytics instance from thread 36 to thread 38
+Registering Analytics instance from thread 36 to thread 39
+Registering Analytics instance from thread 36 to thread 40
+Automatically sending Images every 1000 milliseconds.
+Registering new Analytics instance for thread 41
+Registering Analytics instance from thread 41 to thread 42
+Registering Analytics instance from thread 41 to thread 43
+Registering Analytics instance from thread 41 to thread 44
+Registering Analytics instance from thread 41 to thread 45
+Automatically sending Images every 1000 milliseconds.
+#WAITING: 1527876463
+Sending location: (64.32367808569754, 90.85660237517986)
+Sending location: (64.32367808569754, 90.85660237517986)
+Sending location: (64.32367808569754, 90.85660237517986)
+Received Client1's location (64.32367808569754, 90.85660237517986)
+Received Client2's location (64.32367808569754, 90.85660237517986)
+Received Client2's location (64.32367808569754, 90.85660237517986)
+Sending location: (64.32267808569753, 90.85660237517986)
+Sending location: (64.32267808569753, 90.85660237517986)
+Sending location: (64.32267808569753, 90.85660237517986)
+Received Client1's location (64.32267808569753, 90.85660237517986)
+Received Client1's location (64.32267808569753, 90.85660237517986)
+Received Client2's location (64.32267808569753, 90.85660237517986)
+Received Client0's location (64.32267808569753, 90.85660237517986)
+Received Client2's location (64.32267808569753, 90.85660237517986)
+Received Client0's location (64.32267808569753, 90.85660237517986)
+Sending Image sample_image.jpg with location (64.32367808569754, 90.85660237517986)
+Sending Image sample_image.jpg with location (64.32367808569754, 90.85660237517986)
+Sending Image sample_image.jpg with location (64.32367808569754, 90.85660237517986)
+Wrote image to '/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/applications/server/Marti/build/test-temp/martiStorageDirectory/image-1.jpg'.
+Wrote image to '/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/applications/server/Marti/build/test-temp/martiStorageDirectory/image-2.jpg'.
+Wrote image to '/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/applications/server/Marti/build/test-temp/martiStorageDirectory/image-0.jpg'.
+Received Client1's image Client1-1527876464541.jpg with location (64.32367808569754, 90.85660237517986)
+Received Client1's image Client1-1527876464541.jpg with location (64.32367808569754, 90.85660237517986)
+Received Client2's image Client2-1527876464553.jpg with location (64.32367808569754, 90.85660237517986)
+Received Client2's image Client2-1527876464553.jpg with location (64.32367808569754, 90.85660237517986)
+Received Client0's image Client0-1527876464571.jpg with location (64.32367808569754, 90.85660237517986)
+ValidatorManager: Shutdown
+#ResultsGotten: 1527876464
+Received Client0's image Client0-1527876464575.jpg with location (64.32367808569754, 90.85660237517986)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

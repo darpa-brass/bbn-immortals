@@ -12,7 +12,7 @@ import java.util.List;
 public class DetermineTargetDependencyCoordinates extends SparqlQuery {
 
     public static List<String> select(@Nonnull DasAdaptationContext dac, @Nonnull AdaptationTargetInterface buildInstance) {
-        return select(dac, buildInstance.getTargetName());
+        return select(dac, buildInstance.getTargetIdentifier());
    }
 
     public static List<String> select(@Nonnull DasAdaptationContext dac, @Nonnull String targetIdentifier) {
@@ -23,8 +23,8 @@ public class DetermineTargetDependencyCoordinates extends SparqlQuery {
                 "WHERE { " +
                 "  GRAPH <" + dac.getKnowldgeUri() + "> { " +
                 "    ?project a IMMoRTALS_java_project:JavaProject . " +
-                "    ?project IMMoRTALS:hasCoordinate ?projectCoordinate . " +
-                "    ?projectCoordinate IMMoRTALS:hasArtifactId \"" + targetIdentifier + "\" . " +
+                "    ?project IMMoRTALS:hasVcsCoordinate ?vcsCoordinate . " +
+                "    ?vcsCoordinate IMMoRTALS:hasVersionControlUrl \"" + targetIdentifier + "\" . " +
                 "    ?project IMMoRTALS:hasClasspaths ?classpaths . " +
                 "    ?classpaths IMMoRTALS:hasElementHashValues ?classpathsHash . " +
                 "    ?jarArtifact IMMoRTALS:hasHash ?classpathsHash . " +

@@ -12,9 +12,9 @@ import com.securboration.immortals.ontology.functionality.aspects.AspectConfigur
 import com.securboration.immortals.ontology.functionality.datatype.DataType;
 import com.securboration.immortals.ontology.lang.AugmentedMethodInvocation;
 import com.securboration.immortals.ontology.lang.AugmentedUserSourceFile;
-import com.securboration.immortals.ontology.lang.ProgrammingLanguage;
 import com.securboration.immortals.ontology.lang.WrapperSourceFile;
 import com.securboration.immortals.ontology.pattern.spec.CodeSpec;
+import com.securboration.immortals.ontology.property.impact.AnalysisImpact;
 import com.securboration.immortals.utility.Decompiler;
 import com.securboration.immortals.utility.GradleTaskHelper;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
@@ -172,7 +172,7 @@ public class AnalysisFrameAssessment {
             } else if (numOfTraces == 0) {
                 callTrace.setCallSteps(tempNodes.toArray(new DataflowNode[tempNodes.size()]));
                 callTrace.setCallStepUUIDs(tempUUIDs.toArray(new String[tempUUIDs.size()]));
-                
+
                 callTraces.add(callTrace);
                 return callTraces;
             } else {
@@ -214,7 +214,7 @@ public class AnalysisFrameAssessment {
             tempUUIDs.add(startNode);
         }
         callTrace = new CallTrace(callTrace);
-        
+
         ObjectToTriples.convert(config, frame);
         String dataTypeURI = config.getNamingContext().getNameForObject(frame.getAnalysisFrameDataType());
 
@@ -247,17 +247,17 @@ public class AnalysisFrameAssessment {
                     String nodeUUID = traceSolutions.getSolutions().get(i).get("nodes");
                     tempNodes.add(pojofyNode(nodeUUID, taskHelper, config));
                     tempUUIDs.add(nodeUUID);
-                    
+
                     callTrace.setCallSteps(tempNodes.toArray(new DataflowNode[tempNodes.size()]));
                     callTrace.setCallStepUUIDs(tempUUIDs.toArray(new String[tempUUIDs.size()]));
-                    callTraces.addAll(getAllCallTraces(taskHelper, nodeUUID, callTrace, 
+                    callTraces.addAll(getAllCallTraces(taskHelper, nodeUUID, callTrace,
                             taskHelper.isAspectInstance(nodeUUID) ? frame.getAnalysisFrameChild()
-                            : frame, config));
-                    
+                                    : frame, config));
+
                     int indexToRemove = tempUUIDs.indexOf(nodeUUID);
                     tempNodes.remove(indexToRemove);
                     tempUUIDs.remove(indexToRemove);
-                    
+
                     callTrace.setCallSteps(tempNodes.toArray(new DataflowNode[tempNodes.size()]));
                     callTrace.setCallStepUUIDs(tempUUIDs.toArray(new String[tempUUIDs.size()]));
                 }
@@ -265,9 +265,9 @@ public class AnalysisFrameAssessment {
             } else if (numOfTraces == 0) {
                 callTrace.setCallSteps(tempNodes.toArray(new DataflowNode[tempNodes.size()]));
                 callTrace.setCallStepUUIDs(tempUUIDs.toArray(new String[tempUUIDs.size()]));
-                
+
                 callTraces.add(callTrace);
-              
+
                 return callTraces;
             } else {
                 String nodeUUID = traceSolutions.getSolutions().get(0).get("nodes");
@@ -275,23 +275,23 @@ public class AnalysisFrameAssessment {
                 tempUUIDs.add(nodeUUID);
                 callTrace.setCallSteps(tempNodes.toArray(new DataflowNode[tempNodes.size()]));
                 callTrace.setCallStepUUIDs(tempUUIDs.toArray(new String[tempUUIDs.size()]));
-                
+
                 traceSolutions.getSolutions().remove(0);
 
                 if (taskHelper.isAspectInstance(nodeUUID)) {
                     frame = frame.getAnalysisFrameChild();
-                    
+
                     if (frame == null) {
                         callTraces.add(callTrace);
                         break;
                     }
-                    
+
                     ObjectToTriples.convert(config, frame);
                     dataTypeURI = config.getNamingContext().getNameForObject(frame.getAnalysisFrameDataType());
                 }
-                
+
                 taskHelper.getClient().executeSelectQuery(getCalledNodes.replace("???GRAPH_NAME???", taskHelper.getGraphName())
-                                .replace("???NODE???", nodeUUID).replace("???DATA???", dataTypeURI), traceSolutions);
+                        .replace("???NODE???", nodeUUID).replace("???DATA???", dataTypeURI), traceSolutions);
             }
         }
         return callTraces;
@@ -625,7 +625,7 @@ public class AnalysisFrameAssessment {
         }*/
         return resultTraces;
     }
-    
+
 
     private static DataflowNode pojofyNode(String nodeUUID, GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config) throws Exception {
 
@@ -645,7 +645,7 @@ public class AnalysisFrameAssessment {
         }
         return node;
     }
-    
+
     private static LinkedBlockingQueue<UnWrapper> constructUnwrappers(DataflowAnalysisFrame frame, PrintWriter pw) {
 
         LinkedBlockingQueue<UnWrapper> unWrappers = new LinkedBlockingQueue<>();
@@ -674,11 +674,11 @@ public class AnalysisFrameAssessment {
         }
         return unWrappers;
     }
-    
+
     private static void printCallTrace(GradleTaskHelper taskHelper, CallTrace callTrace) {
-        
+
         taskHelper.getPw().print("Beginning of trace \n-> ");
-        
+
         for (DataflowNode dataflowNode : callTrace.getCallSteps()) {
             if (dataflowNode instanceof InterMethodDataflowNode) {
                 InterMethodDataflowNode interMethodDataflowNode = (InterMethodDataflowNode) dataflowNode;
@@ -688,10 +688,10 @@ public class AnalysisFrameAssessment {
                 taskHelper.getPw().write(methodInvocationDataflowNode.getJavaMethodName() + " -> ");
             }
         }
-        
+
         taskHelper.getPw().println("\nEnd of trace");
     }
-    
+
     private static ArrayList<FunctionalAspectInstance> getInstancesWithMultipleImpacts(List<Property> propertiesHidingData, GradleTaskHelper taskHelper,
                                                                                        ObjectToTriplesConfiguration config) throws Exception {
         ArrayList<ImpactStatement> impactStatements = new ArrayList<>();
@@ -703,21 +703,20 @@ public class AnalysisFrameAssessment {
             impactStatements.add(propertyImpact);
         }
 
-       return taskHelper.getInstanceWithMultipleImpacts(
+        return taskHelper.getInstanceWithMultipleImpacts(
                 impactStatements.toArray(new ImpactStatement[impactStatements.size()]), config);
     }
-    
+
     public static Wrapper constructWrapperFoundation(FunctionalAspectInstance aspectInstance, InterMethodDataflowNode node,
-                                                    Set<File> dependencies, GradleTaskHelper taskHelper,
-                                                    ObjectToTriplesConfiguration config, WrapperImplementationImpact impact,
+                                                     Set<File> dependencies, GradleTaskHelper taskHelper,
+                                                     ObjectToTriplesConfiguration config, WrapperImplementationImpact impact,
                                                      String cipherImpl) throws Exception {
-        
+
         boolean previouslyAugmented = false;
         FunctionalAspect functionalAspect = aspectInstance.getAbstractAspect().newInstance();
         impact.setAspectImplemented(functionalAspect.getClass());
         String applicableStreamObject = AnalysisFrameAssessment.getStreamObject(functionalAspect);
-        AssertableSolutionSet traceSolutions = findStreamImplementationInUsersCode(node, taskHelper, config, 
-                applicableStreamObject);
+        AssertableSolutionSet traceSolutions = findStreamImplementationInUsersCode(node, taskHelper, applicableStreamObject);
 
         if (traceSolutions.getSolutions().isEmpty()) {
             taskHelper.getPw().println("No streams found; stream cipher implementation can not be inserted.");
@@ -727,14 +726,14 @@ public class AnalysisFrameAssessment {
 
             ArrayList<CallTrace> callTraces = findWrapperInsertionSite(taskHelper, config, traceSolutions);
             CallTrace streamCallTrace = callTraces.get(0);
-            MethodInvocationDataflowNode streamInitializationNode = (MethodInvocationDataflowNode) 
+            MethodInvocationDataflowNode streamInitializationNode = (MethodInvocationDataflowNode)
                     streamCallTrace.getCallSteps()[streamCallTrace.getCallSteps().length - 1];
 
             taskHelper.getPw().println("Found where stream is initialized, getting environment information to correctly specify where to implement new wrapper" +
                     " class...");
 
             AssertableSolutionSet initCallInfoSolution = getInitializationData(taskHelper, config, streamInitializationNode);
-            
+
             String initCallOwnerName = initCallInfoSolution.getSolutions().get(0).get("methodName");
             String initCallOwnerOwner = initCallInfoSolution.getSolutions().get(0).get("class");
             String initCallOwnerOwnerName = initCallInfoSolution.getSolutions().get(0).get("className");
@@ -752,7 +751,7 @@ public class AnalysisFrameAssessment {
                     (streamInitializationNode.getJavaClassName()));
 
             AssertableSolutionSet ownerSourceSolutions = getWrapperInsertionSiteContext(taskHelper, initCallOwnerOwnerName);
-            
+
             String applicationSourceFileName = "fileNameNotFound.java";
             String applicationSource;
             List<String> applicationSourceLines = new ArrayList<>();
@@ -777,7 +776,7 @@ public class AnalysisFrameAssessment {
             taskHelper.getClient().executeSelectQuery(getDependentFiles, dependentFileSolutions);
 
             taskHelper.getPw().println("Precise location of initialization found, can now proceed to create wrapper class...");
-            
+
             Set<String> dependentFiles = sanitizeDependencyPaths(dependentFileSolutions);
             List<String> dependencyPaths = new ArrayList<>();
             for (File dependency : dependencies) {
@@ -795,17 +794,18 @@ public class AnalysisFrameAssessment {
                     wrapperFactory = new WrapperFactory();
                     wrapper = initializeWrapper(streamInitializationNode, dependentFiles, dependencyPaths,
                             wrapperFactory, "java.io.OutputStream");
-                    
+
                     previouslyAugmented = wrapperFactory.wrapWithCipher(wrapper, cipherImpl, producedSourceFiles,
                             taskHelper, plugin, methodNodes);
-                    
+                    wrapper.getCipherInfo().setCipherClassName(cipherImpl.substring(cipherImpl.lastIndexOf(".") + 1));
+
                     augmentUserApplication(methodNodes, taskHelper, initializerNode, applicationSourceLines,
                             wrapper, initCallOwnerOwnerName);
-                    
+
                     checkForImplementationSpecificMethods(taskHelper, wrapper);
                     break;
                 }
-                
+
                 case "cipherDecrypt": {
 
                     wrapperFactory = new WrapperFactory();
@@ -814,10 +814,11 @@ public class AnalysisFrameAssessment {
 
                     previouslyAugmented = wrapperFactory.wrapWithCipher(wrapper, cipherImpl, producedSourceFiles,
                             taskHelper, plugin, methodNodes);
-                    
+                    wrapper.getCipherInfo().setCipherClassName(cipherImpl.substring(cipherImpl.lastIndexOf(".") + 1));
+
                     augmentUserApplication(methodNodes, taskHelper, initializerNode, applicationSourceLines,
                             wrapper, initCallOwnerOwnerName);
-                    
+
                     checkForImplementationSpecificMethods(taskHelper, wrapper);
                 }
             }
@@ -832,7 +833,7 @@ public class AnalysisFrameAssessment {
                 File javaSource = decompileWrapperFoundation(taskHelper, wrapper, plugin,
                         classFileLocation);
                 String source = FileUtils.readFileToString(javaSource);
-                
+
                 WrapperSourceFile wrapperSourceFile = new WrapperSourceFile();
                 wrapperSourceFile.setSource(source);
                 wrapperSourceFile.setFileSystemPath(javaSource.getAbsolutePath());
@@ -842,7 +843,7 @@ public class AnalysisFrameAssessment {
                 impact.setAugmentedUserFile(augmentedUserSourceFile);
                 impact.setInitializationNode(streamInitializationNode);
                 taskHelper.getClient().addToModel(ObjectToTriples.convert(config, impact), taskHelper.getGraphName());
-                
+
                 wrapper.getAspectsAdapted().add(functionalAspect);
                 return wrapper;
             } else {
@@ -851,9 +852,9 @@ public class AnalysisFrameAssessment {
         }
         return null;
     }
-    
-    public static AspectConfigureRequest generateConfigurationRequest(FunctionalAspectInstance aspectInstance, GradleTaskHelper taskHelper, 
-                                                     ObjectToTriplesConfiguration config) throws Exception{
+
+    public static AspectConfigureRequest generateConfigurationRequest(FunctionalAspectInstance aspectInstance, GradleTaskHelper taskHelper,
+                                                                      ObjectToTriplesConfiguration config) throws Exception{
         String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
         AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
 
@@ -907,46 +908,50 @@ public class AnalysisFrameAssessment {
         List<DfuInstance> dfuInstances = new ArrayList<>(dfuInstanceStringMap.keySet());
         DfuInstance[] dfuInstanceArr = new DfuInstance[dfuInstances.size()];
         for (int i = 0; i < dfuInstanceArr.length; i++) {
-            dfuInstanceArr[i] = dfuInstances.get(i);
+            DfuInstance dfuInstance = dfuInstances.get(i);
+            dfuInstance.setFunctionalAspects(null);
+            dfuInstanceArr[i] = dfuInstance;
         }
 
         configureRequest.setConfigurationUnknowns(dataTypeArr);
         configureRequest.setCandidateImpls(dfuInstanceArr);
         configureRequest.setRequiredFunctionality(functionality.getClass());
+
+        //TODO parse ontology for minimum config solution instead of manually generating it
+        /*AspectConfigureSolution minimumConfigurationSolution = new AspectConfigureSolution();
+        ConfigurationBinding configurationBinding = new ConfigurationBinding();
+        configurationBinding.setBinding("16");
+        configurationBinding.setSemanticType(CipherKeyLength.class);
+        minimumConfigurationSolution.setConfigurationBindings(new ConfigurationBinding[]{configurationBinding});
         
+        configureRequest.setMinimumConfigurationSolution(minimumConfigurationSolution);*/
         return configureRequest;
     }
-    
-    public static AspectConfigureSolution retrieveConfigurationSolution(DfuInstance dfuInstance) {
-        
-        ConfigurationBinding[] tempConfigurationBindings = new ConfigurationBinding[5];
 
-        ConfigurationBinding configurationBinding0 = new ConfigurationBinding();
-        configurationBinding0.setSemanticType(CipherAlgorithm.class);
-        configurationBinding0.setBinding("AES");
-        ConfigurationBinding configurationBinding1 = new ConfigurationBinding();
-        configurationBinding1.setSemanticType(CipherKeyLength.class);
-        configurationBinding1.setBinding("16");
-        ConfigurationBinding configurationBinding2 = new ConfigurationBinding();
-        configurationBinding2.setSemanticType(CipherBlockSize.class);
-        configurationBinding2.setBinding("256");
-        ConfigurationBinding configurationBinding3 = new ConfigurationBinding();
-        configurationBinding3.setSemanticType(CipherChainingMode.class);
-        configurationBinding3.setBinding("CBC");
-        ConfigurationBinding configurationBinding4 = new ConfigurationBinding();
-        configurationBinding4.setSemanticType(PaddingScheme.class);
-        configurationBinding4.setBinding("PKCS5Padding");
-        tempConfigurationBindings[0] = configurationBinding0;
-        tempConfigurationBindings[1] = configurationBinding1;
-        tempConfigurationBindings[2] = configurationBinding2;
-        tempConfigurationBindings[3] = configurationBinding3;
-        tempConfigurationBindings[4] = configurationBinding4;
+    public static List<AspectConfigureSolution> retrieveConfigurationSolutions(GradleTaskHelper taskHelper) throws Exception{
 
-        AspectConfigureSolution configureSolution = new AspectConfigureSolution();
-        configureSolution.setChosenInstance(dfuInstance);
-        configureSolution.setConfigurationBindings(tempConfigurationBindings);
+        String getConfigurationSolution = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_functionality_aspects: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#>\n" +
+                "\n" +
+                "select ?configureSolution where {\n" +
+                "\t\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\n" +
+                "\t\t?configureSolution a IMMoRTALS_functionality_aspects:AspectConfigureSolution.\n" +
+                "\t\n" +
+                "\t}\n" +
+                "}";
+        getConfigurationSolution = getConfigurationSolution.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+        AssertableSolutionSet configureSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getConfigurationSolution, configureSolutions);
+
+        List<AspectConfigureSolution> configureSolutionList = new ArrayList<>();
+        for (Solution configureSolution : configureSolutions.getSolutions()) {
+            String aspectSolutionUUID = configureSolution.get("configureSolution");
+            configureSolutionList.add((AspectConfigureSolution) TriplesToPojo.convert(taskHelper.getGraphName(), aspectSolutionUUID, taskHelper.getClient()));
+        }
         
-        return configureSolution;
+        return configureSolutionList;
     }
 
     private static void recordAspectAdaptation(GradleTaskHelper taskHelper, FunctionalAspect functionalAspect, Wrapper wrapper) {
@@ -992,14 +997,14 @@ public class AnalysisFrameAssessment {
         List<CodeSpec> codeSpecs = new ArrayList<>();
 
         for (Solution necessaryImplementationSolution : necessaryImplementationSolutionSet.getSolutions()) {
-            
+
             CodeSpec codeSpec = new CodeSpec();
             codeSpec.setClassName(wrappedClassName);
             codeSpec.setMethodSignature(necessaryImplementationSolution.get("codeSpecSig"));
             codeSpec.setCode(necessaryImplementationSolution.get("codeSpecCode"));
             codeSpecs.add(codeSpec);
         }
-        
+
         wrapper.introduceMediationMethods(codeSpecs, taskHelper);
     }
 
@@ -1010,7 +1015,7 @@ public class AnalysisFrameAssessment {
     }
 
     private static File decompileWrapperFoundation(GradleTaskHelper taskHelper, Wrapper wrapper, boolean plugin,
-                                            String classFileLocation) throws IOException {
+                                                   String classFileLocation) throws IOException {
         Decompiler decompiler = new Decompiler();
         File javaSource;
         if (plugin) {
@@ -1021,13 +1026,13 @@ public class AnalysisFrameAssessment {
                     classFileLocation.substring(0, classFileLocation.lastIndexOf("/"))
                             + "/Wrapper" + wrapper.getWrappedClass().getShortName() + ".java", plugin);
         }
-        
+
         return javaSource;
     }
-    
+
     public static void performWrapperCodeInsertions(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config) throws Exception {
-        
-        
+
+
         for (Wrapper wrapper : taskHelper.getWrappers()) {
             String wrappedClassFileName = wrapper.getWrapperClass().getShortName() + ".java";
 
@@ -1046,13 +1051,13 @@ public class AnalysisFrameAssessment {
                     source = sourceWithAbstractMethodsImplemented.get();
                 }
             }
-            
+
             Optional<String> sourceWithAugmentationSurfaceMethods = taskHelper.augmentAdaptationSurfaceMethods(
                     wrapper.getWrappedClass().getName(), source, null, wrapper);
             if (sourceWithAugmentationSurfaceMethods.isPresent()) {
                 source = sourceWithAugmentationSurfaceMethods.get();
             }
-            
+
             WrapperSourceFile sourceFile = (WrapperSourceFile) TriplesToPojo.convert(taskHelper.getGraphName(),
                     sourceFileName, taskHelper.getClient());
             sourceFile.setSource(source);
@@ -1099,6 +1104,28 @@ public class AnalysisFrameAssessment {
         return getUsageParadigmMagicString;
     }
 
+    private static String getFunctionalAspectUUID(GradleTaskHelper taskHelper, String aspectInstancePointer) {
+
+        String getAspectUUID = "prefix IMMoRTALS_dfu_instance: <http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#> \n" +
+                "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\n" +
+                "select ?aspectUUID where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t?aspectUUID a IMMoRTALS_dfu_instance:FunctionalAspectInstance\n" +
+                "\t\t; IMMoRTALS:hasMethodPointer \"???METHOD_POINTER???\" .\n" +
+                "\t}\n" +
+                "}";
+        getAspectUUID = getAspectUUID.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???METHOD_POINTER???", aspectInstancePointer);
+        AssertableSolutionSet aspectUUIDSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getAspectUUID, aspectUUIDSolutions);
+
+        if (!aspectUUIDSolutions.getSolutions().isEmpty()) {
+            String aspectUUID = aspectUUIDSolutions.getSolutions().get(0).get("aspectUUID");
+            return aspectUUID;
+        }
+        return null;
+    }
+
     public static String retrieveChosenDfuImpl(FunctionalAspectInstance aspectInstance, GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config) {
         String getCipherImpl = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
                 "select ?cipherImpl ?dfu ?dfuFunctionality where {\n" +
@@ -1113,7 +1140,7 @@ public class AnalysisFrameAssessment {
                 "\t}\n" +
                 "}";
         getCipherImpl = getCipherImpl.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???ASPECT_INSTANCE???"
-                , config.getNamingContext().getNameForObject(aspectInstance));
+                , getFunctionalAspectUUID(taskHelper, aspectInstance.getMethodPointer()));
         return getCipherImpl;
     }
 
@@ -1195,13 +1222,41 @@ public class AnalysisFrameAssessment {
     }
 
     private static AssertableSolutionSet findStreamImplementationInUsersCode(InterMethodDataflowNode node, GradleTaskHelper taskHelper,
-                                                                             ObjectToTriplesConfiguration config, 
                                                                              String applicableStreamObject) {
-        
-        String headOfTraceUUID = config.getNamingContext().getNameForObject(node);
+
+        String headOfTraceUUID = getInterMethodNodeUUID(taskHelper, node);
+        //TODO wednesday, can't use getNameForObject anymore so compare using discriminate characteristics like pointer
         AssertableSolutionSet traceSolutions = new AssertableSolutionSet();
         getStreamImplementation(taskHelper, applicableStreamObject, headOfTraceUUID, traceSolutions);
         return traceSolutions;
+    }
+
+    private static String getInterMethodNodeUUID(GradleTaskHelper taskHelper, InterMethodDataflowNode node) {
+
+        String getNodeUUID = "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#>\n" +
+                "prefix xsd:   <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "SELECT ?node WHERE {\n" +
+                "\tGRAPH <http://localhost:3030/ds/data/???GRAPH_NAME???> { \n" +
+                "\t\t?node a IMMoRTALS_analysis:InterMethodDataflowNode\n" +
+                "\t\t; IMMoRTALS:hasJavaMethodPointer \"???METHOD_POINTER???\"\n" +
+                "\t\t; IMMoRTALS:hasJavaMethodName \"???METHOD_NAME???\"\n" +
+                "\t\t; IMMoRTALS:hasJavaClassName \"???CLASS_NAME???\"\n" +
+                "\t\t; IMMoRTALS:hasLineNumber \"???LINE_NUMBER???\"^^xsd:int .\n" +
+                "\t\t}\n" +
+                "\t}\n" +
+                "";
+        getNodeUUID = getNodeUUID.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???METHOD_POINTER???",
+                node.getJavaMethodPointer()).replace("???METHOD_NAME???", node.getJavaMethodName()).replace("???CLASS_NAME???",
+                node.getJavaClassName()).replace("???LINE_NUMBER???", String.valueOf(node.getLineNumber()));
+        AssertableSolutionSet nodeUUIDSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getNodeUUID, nodeUUIDSolutions);
+
+        if (!nodeUUIDSolutions.getSolutions().isEmpty()) {
+            return nodeUUIDSolutions.getSolutions().get(0).get("node");
+        }
+        return null;
     }
 
     private static void getStreamImplementation(GradleTaskHelper taskHelper, String applicableStreamObject, String headOfTraceUUID,
@@ -1209,7 +1264,6 @@ public class AnalysisFrameAssessment {
         final String getCalledNodes = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#> \n" +
                 "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "\n" +
                 "\n" +
                 "select ?nodes ?edge where {\n" +
                 "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
@@ -1249,7 +1303,7 @@ public class AnalysisFrameAssessment {
                 "}";
         getInformationAboutInitMethodCall = getInformationAboutInitMethodCall.replace("???GRAPH_NAME???", taskHelper.getGraphName())
                 .replace("???SEMANTIC_LINK???", config.getNamingContext().getNameForObject(streamInitializationNode));
-        taskHelper.getPw().println("Getting surrounding semantic information of method call node using query:\n\n" 
+        taskHelper.getPw().println("Getting surrounding semantic information of method call node using query:\n\n"
                 + getInformationAboutInitMethodCall + "\n\n");
         AssertableSolutionSet initCallInfoSolution = new AssertableSolutionSet();
 
@@ -1263,11 +1317,11 @@ public class AnalysisFrameAssessment {
     }
 
     public static String generateMagicString(GradleTaskHelper taskHelper, String magicString, AspectConfigureSolution configureSolution,
-                                            AssertableSolutionSet usageParadigmSolutions) throws ClassNotFoundException,
+                                             AssertableSolutionSet usageParadigmSolutions) throws ClassNotFoundException,
             InstantiationException, IllegalAccessException, NoSuchFieldException {
-        
+
         for (Solution usageParadigmSolution : usageParadigmSolutions.getSolutions()) {
-            
+
             String configurationVarUUID = usageParadigmSolution.get("configVars");
             Object configurationVarObject = TriplesToPojo.convert(taskHelper.getGraphName(), configurationVarUUID,
                     taskHelper.getClient());
@@ -1275,14 +1329,14 @@ public class AnalysisFrameAssessment {
                 DfuConfigurationVariable dfuConfigurationVariable = (DfuConfigurationVariable) configurationVarObject;
                 Optional<ConfigurationBinding> configurationBindingOption = Arrays.stream(configureSolution.getConfigurationBindings())
                         .filter(binding -> binding.getSemanticType().equals(dfuConfigurationVariable.getSemanticType())).findFirst();
-                
+
                 if (configurationBindingOption.isPresent()) {
                     ConfigurationBinding configurationBinding = configurationBindingOption.get();
                     magicString = magicString.replace(dfuConfigurationVariable.getMagicStringVar(), configurationBinding.getBinding());
                 }
             }
         }
-        
+
         return magicString;
     }
 
@@ -1294,7 +1348,7 @@ public class AnalysisFrameAssessment {
             String cipherImplName = cipherImplSolution.get("cipherImpl");
             String dfuInstanceUUID = cipherImplSolution.get("dfu");
             Object dfuInstanceObject = TriplesToPojo.convert(taskHelper.getGraphName(), dfuInstanceUUID, taskHelper.getClient());
-            
+
             if (dfuInstanceObject instanceof DfuInstance) {
                 Pair<String, String> dfuUUIDAndCipherImpl = new Pair<>(dfuInstanceUUID, cipherImplName);
                 dfuInstanceStringMap.put((DfuInstance) dfuInstanceObject, dfuUUIDAndCipherImpl);
@@ -1302,18 +1356,18 @@ public class AnalysisFrameAssessment {
         }
         return dfuInstanceStringMap;
     }
-    
+
     private static void getEveryStepsImpact(GradleTaskHelper taskHelper, CallTrace callTrace) {
-        
+
         callTrace.setCallSteps(Arrays.copyOfRange(callTrace.getCallSteps(), 1, callTrace.getCallSteps().length));
         callTrace.setCallStepUUIDs(Arrays.copyOfRange(callTrace.getCallStepUUIDs(), 1, callTrace.getCallStepUUIDs().length));
-        
+
         for (DataflowNode dataflowNode : callTrace.getCallSteps()) {
-            
+
             if (dataflowNode instanceof MethodInvocationDataflowNode) {
-                
+
                 MethodInvocationDataflowNode methodInvocationDataflowNode = (MethodInvocationDataflowNode) dataflowNode;
-                
+
                 String getInvokeNodeInfo = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                         "\t\t\n" +
                         "select * where {\n" +
@@ -1332,13 +1386,13 @@ public class AnalysisFrameAssessment {
                         .replace("???METHOD_NAME???", methodInvocationDataflowNode.getJavaMethodName()).replace("???OWNER_NAME???",
                                 methodInvocationDataflowNode.getJavaClassName());
                 AssertableSolutionSet invokeNodeInfoSolution = new AssertableSolutionSet();
-                
+
                 taskHelper.getClient().executeSelectQuery(getInvokeNodeInfo, invokeNodeInfoSolution);
-                
+
                 taskHelper.getPw().println("Found affected code segment in method call to: " + methodInvocationDataflowNode.getJavaMethodName()
-                + " in method: " + invokeNodeInfoSolution.getSolutions().get(0).get("methodName") + "in class: " 
-                + invokeNodeInfoSolution.getSolutions().get(0).get("className"));
-                
+                        + " in method: " + invokeNodeInfoSolution.getSolutions().get(0).get("methodName") + "in class: "
+                        + invokeNodeInfoSolution.getSolutions().get(0).get("className"));
+
             } else if (dataflowNode instanceof InterMethodDataflowNode) {
                 InterMethodDataflowNode interMethodDataflowNode = (InterMethodDataflowNode) dataflowNode;
 
@@ -1369,19 +1423,19 @@ public class AnalysisFrameAssessment {
             }
         }
     }
-    
+
     private static void augmentUserApplication(List<MethodInvocationDataflowNode> affectedNodes, GradleTaskHelper taskHelper,
-                                        MethodInvocationDataflowNode initializerNode, List<String> applicationLines, 
-                                        Wrapper wrapper, String initCallOwnerOwnerName) throws IOException {
+                                               MethodInvocationDataflowNode initializerNode, List<String> applicationLines,
+                                               Wrapper wrapper, String initCallOwnerOwnerName) throws IOException {
 
         String streamIdentifier = augmentInitializationNode(initializerNode, applicationLines,
-                    wrapper.getWrapperClass().getShortName());
-        
+                wrapper.getWrapperClass().getShortName());
+
         if (streamIdentifier == null) {
             // no assignment performed, so no stream identifier
             return;
         }
-        
+
         if (!affectedNodes.isEmpty()) {
             for (MethodInvocationDataflowNode nodeToAugment : affectedNodes) {
                 augmentInaccessibleInheritedMethods(nodeToAugment, applicationLines, streamIdentifier);
@@ -1399,20 +1453,20 @@ public class AnalysisFrameAssessment {
     }
 
     public static void expandAdaptationSurface(GradleTaskHelper taskHelper, Optional<String> ownerNameOption,
-                                                Optional<String> fileNameOption, String newSource, boolean userCode) throws IOException {
-        
+                                               Optional<String> fileNameOption, String newSource, boolean userCode) throws IOException {
+
         if (userCode) {
 
             String initCallOwnerOwnerName = null;
             if (ownerNameOption.isPresent()) {
                 initCallOwnerOwnerName = ownerNameOption.get();
             }
-            
+
             String sourceCodeRepoSafeName = initCallOwnerOwnerName.replaceAll("/", ".");
             if (sourceCodeRepoSafeName.contains("$")) {
                 sourceCodeRepoSafeName = sourceCodeRepoSafeName.substring(0, sourceCodeRepoSafeName.indexOf("$"));
             }
-            
+
             String replaceCurrentApplicationSource = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                     "\n" +
                     "WITH <http://localhost:3030/ds/data/???GRAPH_NAME???>\n" +
@@ -1438,7 +1492,7 @@ public class AnalysisFrameAssessment {
                     .replace("???CLASS_NAME_URL???", initCallOwnerOwnerName)
                     .replace("???NEW_SOURCE???", newSource.replaceAll("\"", "\\\\\""));
             taskHelper.getClient().executeUpdate(replaceCurrentApplicationSource);
-            
+
             String getActualSourceFile = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                     "select ?path where {" +
                     "\t\t graph<http://localhost:3030/ds/data/???GRAPH_NAME???> {" +
@@ -1509,24 +1563,24 @@ public class AnalysisFrameAssessment {
         }
     }
 
-    private static String augmentInitializationNode(MethodInvocationDataflowNode methodNode, List<String> applicationSourceLines, 
+    private static String augmentInitializationNode(MethodInvocationDataflowNode methodNode, List<String> applicationSourceLines,
                                                     String wrapperClassName) {
-        
+
         String identifier = null;
         int initializationLineNumber = methodNode.getLineNumber() - 1;
         String initializationLine = applicationSourceLines.get(initializationLineNumber);
-        
+
         String[] sidesOfExpression = initializationLine.split("=");
-        
+
         if (sidesOfExpression.length == 1) {
-            
+
             Pattern p = Pattern.compile("(.[a-zA-Z0-9_.-]+\\." + methodNode.getJavaMethodName() + ")");
             Matcher m = p.matcher(initializationLine);
-            
+
             if (m.find()) {
                 int indexOfInit = initializationLine.indexOf(m.group());
                 String restOfLine = initializationLine.substring(indexOfInit);
-                
+
                 int resolvedInitMethod = 1;
                 int currentIndex = 0;
                 for (char c : restOfLine.toCharArray()) {
@@ -1550,8 +1604,13 @@ public class AnalysisFrameAssessment {
 
             String[] leftSideOfExpression = sidesOfExpression[0].trim().split(" ");
             if (leftSideOfExpression.length > 1) {
-                // new var assignment    
-                identifier = leftSideOfExpression[1];
+                // new var assignment
+                if (initializationLine.contains(" final ")) {
+                    // streaming abstraction is declared final
+                    identifier = leftSideOfExpression[2];
+                } else {
+                    identifier = leftSideOfExpression[1];
+                }
             } else {
                 // existing field assignment
                 identifier = leftSideOfExpression[0];
@@ -1567,10 +1626,10 @@ public class AnalysisFrameAssessment {
 
             applicationSourceLines.set(initializationLineNumber, sb.toString());
         }
-        
+
         return identifier;
     }
-    
+
     private static AugmentedMethodInvocation[] recordAugmentedUserCode(MethodInvocationDataflowNode initializerNode,
                                                                        List<MethodInvocationDataflowNode> methodNodes) {
 
@@ -1579,48 +1638,52 @@ public class AnalysisFrameAssessment {
         augmentedInitializer.setMethodName(initializerNode.getJavaMethodName());
 
         AugmentedMethodInvocation[] augmentedUserNodes = new AugmentedMethodInvocation[methodNodes.size() + 1];
-        
+
         for (int i = 0; i < methodNodes.size(); i++) {
-            
+
             MethodInvocationDataflowNode methodInvocationDataflowNode = methodNodes.get(i);
-            
+
             AugmentedMethodInvocation augmentedMethodInvocation = new AugmentedMethodInvocation();
             augmentedMethodInvocation.setLineNumber(methodInvocationDataflowNode.getLineNumber());
             augmentedMethodInvocation.setMethodName(methodInvocationDataflowNode.getJavaMethodName());
-            
+
             augmentedUserNodes[i] = augmentedMethodInvocation;
         }
-        
+
         if (methodNodes.size() != 0) {
             augmentedUserNodes[methodNodes.size() - 1] = augmentedInitializer;
         } else {
             augmentedUserNodes[0] = augmentedInitializer;
         }
-        
+
         return augmentedUserNodes;
     }
-    
+
     private static void augmentInaccessibleInheritedMethods(MethodInvocationDataflowNode methodNode, List<String> applicationSourceLines,
                                                             String streamIdentifier) {
         int methodLineNumber = methodNode.getLineNumber() - 1;
         String methodLine = applicationSourceLines.get(methodLineNumber);
-        
+
+        if (methodLine.contains(methodNode.getJavaMethodName() + "Wrapped")) {
+            return;
+        }
+
         StringBuilder sb = new StringBuilder(methodLine);
         int indexToAugment = sb.indexOf(streamIdentifier + "." + methodNode.getJavaMethodName());
         sb.insert(indexToAugment + streamIdentifier.length() + 1 + methodNode.getJavaMethodName().length(), "Wrapped");
-        
+
         applicationSourceLines.set(methodLineNumber, sb.toString());
-        
+
     }
-    
+
     public static AspectConfigureSolution checkForUnknownConfigurations(FunctionalAspectInstance aspectInstance,
-                                                                         Map<DfuInstance, Pair<String, String>> candidateImpls, 
-                                                                         Functionality functionality) {
-        
+                                                                        Map<DfuInstance, Pair<String, String>> candidateImpls,
+                                                                        Functionality functionality) {
+
         AspectConfigureRequest configureRequest = new AspectConfigureRequest();
         List<DataType> typesOfParameters = new ArrayList<>();
         Class<? extends FunctionalAspect> abstractAspect = aspectInstance.getAbstractAspect();
-        
+
         FunctionalAspect instantiateAspect = null;
         try {
             instantiateAspect = abstractAspect.newInstance();
@@ -1635,7 +1698,7 @@ public class AnalysisFrameAssessment {
                 try {
                     Object obj = clazz.newInstance();
                     if (obj instanceof FunctionalAspect) {
-                        
+
                         FunctionalAspect functionalAspect = (FunctionalAspect) obj;
                         aspectDependencies.add(functionalAspect);
                         for (Input in : functionalAspect.getInputs()) {
@@ -1650,28 +1713,28 @@ public class AnalysisFrameAssessment {
         } else {
             return null;
         }
-        
+
         DataType[] dataTypeArr = new DataType[typesOfParameters.size()];
         for (int i = 0; i < dataTypeArr.length; i++) {
             dataTypeArr[i] = typesOfParameters.get(i);
         }
-        
-        
+
+
         List<DfuInstance> dfuInstances = new ArrayList<>(candidateImpls.keySet());
         DfuInstance[] dfuInstanceArr = new DfuInstance[dfuInstances.size()];
         for (int i = 0; i < dfuInstanceArr.length; i++) {
             dfuInstanceArr[i] = dfuInstances.get(i);
         }
-        
+
         configureRequest.setConfigurationUnknowns(dataTypeArr);
         configureRequest.setCandidateImpls(dfuInstanceArr);
         configureRequest.setRequiredFunctionality(functionality.getClass());
-        
+
         //TODO doesn't do anything yet, for right now we will just fabricate a solution
         getConfigureSolution(configureRequest);
 
         ConfigurationBinding[] tempConfigurationBindings = new ConfigurationBinding[5];
-        
+
         ConfigurationBinding configurationBinding0 = new ConfigurationBinding();
         configurationBinding0.setSemanticType(CipherAlgorithm.class);
         configurationBinding0.setBinding("AES");
@@ -1692,183 +1755,159 @@ public class AnalysisFrameAssessment {
         tempConfigurationBindings[2] = configurationBinding2;
         tempConfigurationBindings[3] = configurationBinding3;
         tempConfigurationBindings[4] = configurationBinding4;
-        
+
         AspectConfigureSolution tempConfigureSolution = new AspectConfigureSolution();
         tempConfigureSolution.setChosenInstance(dfuInstanceArr[0]);
         tempConfigureSolution.setConfigurationBindings(tempConfigurationBindings);
 
         return tempConfigureSolution;
     }
-    
+
     private static AspectConfigureSolution getConfigureSolution(AspectConfigureRequest aspectConfigureRequest) {
         return null;
     }
-    
+
     public static AnalysisImpact repairConsumer(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config,
-                                      InterMethodDataflowNode consumer, PropertyImpact propertyImpact, Set<File> dependencies,
-                                                            DesignPattern flowDesign) throws Exception {
-        
+                                                InterMethodDataflowNode consumer, Set<File> dependencies,
+                                                DesignPattern flowDesign, FunctionalAspectInstance aspectInstance,
+                                                AspectConfigureSolution solution) throws Exception {
+
         WrapperImplementationImpact analysisImpact = new WrapperImplementationImpact();
         taskHelper.getPw().println("Finding instances that implement the required functional aspect...");
-        FunctionalAspectInstance[] aspectInstances = taskHelper.getInstancesFromImpactStatement(propertyImpact, config);
 
-        if (aspectInstances.length == 0) {
-            taskHelper.getPw().println("Unable to find instance(s) required for repairing system, implement instance and re-run analysis.");
-            return analysisImpact;
-        }
+        String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
+        AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
 
-        List<AspectConfigureRequest> aspectConfigureRequests = new ArrayList<>();
-        for (FunctionalAspectInstance aspectInstance : aspectInstances) {
-            aspectConfigureRequests.add(AnalysisFrameAssessment.generateConfigurationRequest(aspectInstance,
-                    taskHelper, config));
-        }
-        
-        for (FunctionalAspectInstance aspectInstance : aspectInstances) {
-            String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
-            AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
 
-            taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
+        Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
+                cipherImplSolutions);
 
-            Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
-                    cipherImplSolutions);
+        String cipherImpl = null;
+        String magicString = null;
+        if (solution != null) {
 
-            AspectConfigureSolution aspectConfigureSolution = AnalysisFrameAssessment.retrieveConfigurationSolution(
-                    dfuInstanceStringMap.keySet().iterator().next());            
-            String cipherImpl = null;
-            String magicString = null;
-            if (aspectConfigureSolution != null) {
-
-                DfuInstance chosenInstance = aspectConfigureSolution.getChosenInstance();
-
-                Pair<String, String> dfuUUIDToCipherImpl = dfuInstanceStringMap.get(chosenInstance);
-
-                String getUsageParadigmMagicString = getImplementationSpecificStrings(taskHelper,
-                        dfuUUIDToCipherImpl.getLeft());
-                AssertableSolutionSet usageParadigmSolutions = new AssertableSolutionSet();
-                taskHelper.getClient().executeSelectQuery(getUsageParadigmMagicString, usageParadigmSolutions);
-
-                magicString = usageParadigmSolutions.getSolutions().get(0).get("magicString");
-                magicString = generateMagicString(taskHelper, magicString, aspectConfigureSolution, usageParadigmSolutions);
-                cipherImpl = dfuUUIDToCipherImpl.getRight();
+            DfuInstance chosenInstance = solution.getChosenInstance();
+            Pair<String, String> dfuUUIDToCipherImpl = null;
+            for (DfuInstance dfuInstance : dfuInstanceStringMap.keySet()) {
+                if (chosenInstance.getClassPointer().equals(dfuInstance.getClassPointer())) {
+                    dfuUUIDToCipherImpl = dfuInstanceStringMap.get(dfuInstance);
+                }
             }
-            
-            taskHelper.getPw().println("Instance found. Determining its design pattern...");
-            switch (flowDesign) {
-                case FUNCTIONAL:
-                    taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a block design " +
-                            "pattern. Repairs will occur immediately adjacent to the inter-process boundary...");
-                    
-                    break;
-                case STREAM:
-                    taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a stream design pattern." +
-                            " Repairs will vary based on the code system's stream implementation. Immortals will begin " +
-                            "the process of wrapping the stream implementation in a custom class...");
-                    
-                    Wrapper wrapper = constructWrapperFoundation(aspectInstance, consumer, dependencies, taskHelper,
-                            config, analysisImpact, cipherImpl.replace("/", "."));
 
-                    if (wrapper!= null) {
-                        if (magicString != null) {
-                            // user specified configuration parameters, pass to code insertion stage
-                            wrapper.setConfigurationParameters(Optional.of(magicString));
-                        } else {
-                            wrapper.setConfigurationParameters(Optional.empty());
-                        }
-                        taskHelper.getWrappers().add(wrapper);
+            String getUsageParadigmMagicString = getImplementationSpecificStrings(taskHelper,
+                    dfuUUIDToCipherImpl.getLeft());
+            AssertableSolutionSet usageParadigmSolutions = new AssertableSolutionSet();
+            taskHelper.getClient().executeSelectQuery(getUsageParadigmMagicString, usageParadigmSolutions);
+
+            magicString = usageParadigmSolutions.getSolutions().get(0).get("magicString");
+            magicString = generateMagicString(taskHelper, magicString, solution, usageParadigmSolutions);
+            cipherImpl = dfuUUIDToCipherImpl.getRight();
+        }
+
+        taskHelper.getPw().println("Instance found. Determining its design pattern...");
+        switch (flowDesign) {
+            case FUNCTIONAL:
+                taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a block design " +
+                        "pattern. Repairs will occur immediately adjacent to the inter-process boundary...");
+
+                break;
+            case STREAM:
+                taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a stream design pattern." +
+                        " Repairs will vary based on the code system's stream implementation. Immortals will begin " +
+                        "the process of wrapping the stream implementation in a custom class...");
+
+                Wrapper wrapper = constructWrapperFoundation(aspectInstance, consumer, dependencies, taskHelper,
+                        config, analysisImpact, cipherImpl.replace("/", "."));
+
+                if (wrapper!= null) {
+                    if (magicString != null) {
+                        // user specified configuration parameters, pass to code insertion stage
+                        wrapper.getCipherInfo().setConfigurationParameters(Optional.of(magicString));
+                    } else {
+                        wrapper.getCipherInfo().setConfigurationParameters(Optional.empty());
                     }
-                    break;
-                default:
-                    break;
-            }
+                    taskHelper.getWrappers().add(wrapper);
+                }
+                break;
+            default:
+                break;
         }
-       return analysisImpact;
+
+        return analysisImpact;
     }
 
 
     public static AnalysisImpact repairProducer(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config,
-                                                            InterMethodDataflowNode producer, PropertyImpact propertyImpact, Set<File> dependencies,
-                                                            DesignPattern flowDesign) throws Exception {
-        
+                                                InterMethodDataflowNode producer, Set<File> dependencies,
+                                                DesignPattern flowDesign, AspectConfigureSolution solution,
+                                                FunctionalAspectInstance aspectInstance) throws Exception {
+
         WrapperImplementationImpact analysisImpact = new WrapperImplementationImpact();
-        taskHelper.getPw().println("Finding instances that implement the required functional aspect...\n\n");
-        FunctionalAspectInstance[] aspectInstances = taskHelper.getInstancesFromImpactStatement(propertyImpact, config);
-
-        if (aspectInstances.length == 0) {
-            taskHelper.getPw().println("Unable to find instance(s) required for repairing system, implement instance and re-run analysis.");
-            return analysisImpact;
-        }
-
-        List<AspectConfigureRequest> aspectConfigureRequests = new ArrayList<>();
-        for (FunctionalAspectInstance aspectInstance : aspectInstances) {
-            aspectConfigureRequests.add(AnalysisFrameAssessment.generateConfigurationRequest(aspectInstance,
-                    taskHelper, config));
-        }
-
         //TODO should be only one
         taskHelper.getPw().println("Instances found. Determining their design pattern...");
-        for (FunctionalAspectInstance aspectInstance : aspectInstances) {
 
-            String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
-            AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
+        String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
+        AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
 
-            taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
+        taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
 
-            Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
-                    cipherImplSolutions);
-            
-            AspectConfigureSolution aspectConfigureSolution = AnalysisFrameAssessment.retrieveConfigurationSolution(
-                    dfuInstanceStringMap.keySet().iterator().next());
-            String cipherImpl = null;
-            String magicString = null;
-            if (aspectConfigureSolution != null) {
+        Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
+                cipherImplSolutions);
 
-                DfuInstance chosenInstance = aspectConfigureSolution.getChosenInstance();
+        String cipherImpl = null;
+        String magicString = null;
+        if (solution != null) {
 
-                Pair<String, String> dfuUUIDToCipherImpl = dfuInstanceStringMap.get(chosenInstance);
-
-                String getUsageParadigmMagicString = getImplementationSpecificStrings(taskHelper,
-                        dfuUUIDToCipherImpl.getLeft());
-                AssertableSolutionSet usageParadigmSolutions = new AssertableSolutionSet();
-                taskHelper.getClient().executeSelectQuery(getUsageParadigmMagicString, usageParadigmSolutions);
-
-                magicString = usageParadigmSolutions.getSolutions().get(0).get("magicString");
-                magicString = generateMagicString(taskHelper, magicString, aspectConfigureSolution, usageParadigmSolutions);
-                cipherImpl = dfuUUIDToCipherImpl.getRight();
+            DfuInstance chosenInstance = solution.getChosenInstance();
+            Pair<String, String> dfuUUIDToCipherImpl = null;
+            for (DfuInstance dfuInstance : dfuInstanceStringMap.keySet()) {
+                if (chosenInstance.getClassPointer().equals(dfuInstance.getClassPointer())) {
+                    dfuUUIDToCipherImpl = dfuInstanceStringMap.get(dfuInstance);
+                }
             }
-            
-            switch (flowDesign) {
-                case FUNCTIONAL:
-                    taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a block design " +
-                            "pattern.");
-                    taskHelper.constructAspectImpact(aspectInstance, producer,
-                            AspectAugmentationSpecification.AUGMENT_ONE, producer.getLineNumber() - 1, config);
-                    break;
-                case STREAM:
-                    taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a stream design pattern." +
-                            " Immortals will begin the process of wrapping the stream implementation in a custom class...");
-                    //analysisImpact = developInstanceStreamSolution(aspectInstance, producer, dependencies, taskHelper,
-                            //config);
-                    Wrapper wrapper = constructWrapperFoundation(aspectInstance, producer, dependencies, taskHelper,
-                            config, analysisImpact, cipherImpl.replace("/", "."));
-                    if (wrapper!= null) {
-                        if (magicString != null) {
-                            // user specified configuration parameters, pass to code insertion stage
-                            wrapper.setConfigurationParameters(Optional.of(magicString));
-                        } else {
-                            wrapper.setConfigurationParameters(Optional.empty());
-                        }
-                        taskHelper.getWrappers().add(wrapper);
+
+            String getUsageParadigmMagicString = getImplementationSpecificStrings(taskHelper,
+                    dfuUUIDToCipherImpl.getLeft());
+            AssertableSolutionSet usageParadigmSolutions = new AssertableSolutionSet();
+            taskHelper.getClient().executeSelectQuery(getUsageParadigmMagicString, usageParadigmSolutions);
+
+            magicString = usageParadigmSolutions.getSolutions().get(0).get("magicString");
+            magicString = generateMagicString(taskHelper, magicString, solution, usageParadigmSolutions);
+            cipherImpl = dfuUUIDToCipherImpl.getRight();
+        }
+
+        switch (flowDesign) {
+            case FUNCTIONAL:
+                taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a block design " +
+                        "pattern.");
+                taskHelper.constructAspectImpact(aspectInstance, producer,
+                        AspectAugmentationSpecification.AUGMENT_ONE, producer.getLineNumber() - 1, config);
+                break;
+            case STREAM:
+                taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a stream design pattern." +
+                        " Immortals will begin the process of wrapping the stream implementation in a custom class...");
+                Wrapper wrapper = constructWrapperFoundation(aspectInstance, producer, dependencies, taskHelper,
+                        config, analysisImpact, cipherImpl.replace("/", "."));
+
+                if (wrapper!= null) {
+                    if (magicString != null) {
+                        // user specified configuration parameters, pass to code insertion stage
+                        wrapper.getCipherInfo().setConfigurationParameters(Optional.of(magicString));
+                    } else {
+                        wrapper.getCipherInfo().setConfigurationParameters(Optional.empty());
                     }
-                    break;
-                default:
-                    break;
-            }
+                    taskHelper.getWrappers().add(wrapper);
+                }
+                break;
+            default:
+                break;
         }
         return analysisImpact;
     }
 
     private static String getChosenInstanceUUID(DfuInstance chosenInstance, GradleTaskHelper taskHelper) {
-        
+
         String getInstanceUUID = "prefix IMMoRTALS_dfu_instance: <http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#> \n" +
                 "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "\n" +
@@ -1882,7 +1921,7 @@ public class AnalysisFrameAssessment {
                 .replace("???CLASS_POINTER???", chosenInstance.getClassPointer());
         AssertableSolutionSet assertableSolutionSet = new AssertableSolutionSet();
         taskHelper.getClient().executeSelectQuery(getInstanceUUID, assertableSolutionSet);
-        
+
         if (!assertableSolutionSet.getSolutions().isEmpty()) {
             return assertableSolutionSet.getSolutions().get(0).get("uuid");
         } else {

@@ -34,7 +34,8 @@ public class CipherImplJavaxCrypto implements CipherImplApi{
     private String paddingScheme;
 
     private SecretKeySpec keySpec;
-    private IvParameterSpec initVectorSpec;
+    
+    private String ivGeneratorString;
 
     public CipherImplJavaxCrypto(){}
     
@@ -82,16 +83,6 @@ public class CipherImplJavaxCrypto implements CipherImplApi{
         return keySpec;
     }
 
-    private IvParameterSpec getInitVectorSpec(
-            final String initVectorPhrase,
-            final int lengthBytes
-    ) throws NoSuchAlgorithmException{
-        return new IvParameterSpec(
-            hash(initVectorPhrase,lengthBytes)
-            );
-        
-    }
-
     //streaming cipher API
     
     @Override
@@ -99,184 +90,58 @@ public class CipherImplJavaxCrypto implements CipherImplApi{
 
         try{
             Cipher cipher = getCipher();
-    
-            cipher.init(
+            final IvParameterSpec iv = getIv(cipher);
+            
+            if(iv != null){
+                cipher.init(
                     Cipher.ENCRYPT_MODE,
                     keySpec,
-                    initVectorSpec
-            );
+                    iv
+                    );
+            } else {
+                cipher.init(
+                        Cipher.ENCRYPT_MODE,
+                        keySpec
+                );
+            }
             
             return new CipherOutputStream(o,cipher);
         } catch(Exception e){
             throw new RuntimeException(e);
         }
     }
-
-//    @Override
-//    public CipherInputStream acquire(InputStream i) {
-//
-//        try{
-//            Cipher cipher = getCipher();
-//    
-//            cipher.init(
-//                    Cipher.DECRYPT_MODE,
-//                    keySpec,
-//                    initVectorSpec
-//            );
-//    
-//            return new CipherInputStream(i,cipher);
-//        } catch(Exception e){
-//            throw new RuntimeException(e);
-//        }
-//    }
+    
+    private IvParameterSpec getIv(Cipher cipher) throws NoSuchAlgorithmException{
+        if(ivGeneratorString == null){
+            return null;
+        }
+        
+        return new IvParameterSpec(
+            hash(ivGeneratorString,cipher.getBlockSize())
+            );
+    }
     
     @Override
     public CipherInputStream acquire(final InputStream in) {
 
         try{
             final Cipher cipher = getCipher();
+            final IvParameterSpec iv = getIv(cipher);
     
-            cipher.init(
+            if(iv != null){
+                cipher.init(
                     Cipher.DECRYPT_MODE,
                     keySpec,
-                    initVectorSpec
-            );
+                    iv
+                    );
+            } else {
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        keySpec
+                );
+            }
     
-            return new CipherInputStream(in,cipher)
-//            {
-//
-//                private void $(String format, Object...args){
-//                    System.out.printf(
-//                        "  $[thread %s] : %s", 
-//                        Thread.currentThread().getName(),
-//                        String.format(format, args)
-//                        );
-//                }
-//                
-//                @Override
-//                public int available() throws IOException {
-//                    final int a = super.available();
-//                    
-//                    $("available() about to return %d\n",a);
-//                    
-//                    return a;
-//                }
-//
-//                @Override
-//                public void close() throws IOException {
-//                    $("close() about to be called\n");
-//                    super.close();
-//                    $("close() called\n");
-//                }
-//
-//                @Override
-//                public boolean markSupported() {
-//                    final boolean m = super.markSupported();
-//                    $("markSupported() about to return %s\n",m);
-//                    return m;
-//                }
-//
-//                @Override
-//                public int read() throws IOException {
-//                    final int read = super.read();
-//                    $("read() about to return %d\n",read);
-//                    return read;
-//                }
-//
-//                @Override
-//                public int read(byte[] b, int off, int len) throws IOException {
-//                    final int read = super.read(b, off, len);
-//                    
-//                    $("read([%d],off=%d,len=%d) about to return %d\n",b.length,off,len,read);
-//                    
-//                    return read;
-//                }
-//
-//                @Override
-//                public int read(byte[] b) throws IOException {
-//                    final int read = super.read(b);
-//                    
-//                    $("read([%d]) about to return %d\n",b.length,read);
-//                    
-//                    return read;
-//                }
-//
-//                @Override
-//                public long skip(long n) throws IOException {
-//                    final long skip = skip(n);
-//                    
-//                    $("skip(%d) about to return %d\n",n,skip);
-//                    
-//                    return skip;
-//                }
-//
-//                @Override
-//                public synchronized void mark(int readlimit) {
-//                    super.mark(readlimit);
-//                    
-//                    $("mark(%d) about to return\n",readlimit);
-//                }
-//
-//                @Override
-//                public synchronized void reset() throws IOException {
-//                    super.reset();
-//                    
-//                    $("reset() about to return\n");
-//                }
-//                
-//            }
-//            
-//            {
-//                
-//                private boolean eosMode = false;
-//                private byte[] lastChunk = null;
-//                private boolean noMoreData = false;
-//
-//                @Override
-//                public int available() throws IOException {
-//                    return in.available();
-//                }
-//
-//                @Override
-//                public void close() throws IOException {
-//                    try {
-//                        lastChunk = cipher.doFinal();
-//                    } catch (IllegalBlockSizeException
-//                            | BadPaddingException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                    eosMode = true;
-//                    in.close();
-//                }
-//
-//                @Override
-//                public boolean markSupported() {
-//                    return in.markSupported();
-//                }
-//
-//                @Override
-//                public int read() throws IOException {
-//                    return in.read();
-//                }
-//
-//                @Override
-//                public int read(byte[] arg0, int arg1, int arg2)
-//                        throws IOException {
-//                    return in.read(arg0, arg1, arg2);
-//                }
-//
-//                @Override
-//                public int read(byte[] arg0) throws IOException {
-//                    return in.read(arg0);
-//                }
-//
-//                @Override
-//                public long skip(long arg0) throws IOException {
-//                    return in.skip(arg0);
-//                }
-//                
-//            }
-            ;
+            return new CipherInputStream(in,cipher);
         } catch(Exception e){
             throw new RuntimeException(e);
         }
@@ -286,68 +151,19 @@ public class CipherImplJavaxCrypto implements CipherImplApi{
 
     @Override
     public byte[] encrypt(byte[] data) {
-        try{
-            Cipher cipher = getCipher();
-            cipher.init(
-                    Cipher.ENCRYPT_MODE,
-                    keySpec,
-                    initVectorSpec
-            );
-    
-            return cipher.doFinal(data);
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
+        throw new RuntimeException("no impl");
     }
 
     @Override
     @FunctionalAspectAnnotation(aspect = AspectCipherEncrypt.class)
     public byte[] encryptChunk(byte[] data) {
-        try{
-            Cipher cipher;
-    
-            if(this.encryptionCipher != null) {
-                cipher = this.encryptionCipher;
-            } else {
-                cipher = getCipher();
-                cipher.init(
-                        Cipher.ENCRYPT_MODE,
-                        keySpec,
-                        initVectorSpec
-                );
-    
-                this.encryptionCipher = cipher;
-            }
-    
-            return cipher.update(data);
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
+        throw new RuntimeException("no impl");
     }
 
     @Override
     @FunctionalAspectAnnotation(aspect = AspectCipherDecrypt.class)
     public byte[] decryptChunk(byte[] data) {
-        try{
-            Cipher cipher;
-    
-            if(this.decryptionCipher != null) {
-                cipher = this.decryptionCipher;
-            } else {
-                cipher = getCipher();
-                cipher.init(
-                        Cipher.DECRYPT_MODE,
-                        keySpec,
-                        initVectorSpec
-                );
-    
-                this.decryptionCipher = cipher;
-            }
-    
-            return cipher.update(data);
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
+        throw new RuntimeException("no impl");
     }
 
     
@@ -360,11 +176,21 @@ public class CipherImplJavaxCrypto implements CipherImplApi{
                 cipher = this.encryptionCipher;
             } else {
                 cipher = getCipher();
-                cipher.init(
+                
+                final IvParameterSpec iv = getIv(cipher);
+                
+                if(iv != null){
+                    cipher.init(
                         Cipher.ENCRYPT_MODE,
                         keySpec,
-                        initVectorSpec
-                );
+                        iv
+                        );
+                } else {
+                    cipher.init(
+                        Cipher.ENCRYPT_MODE, 
+                        keySpec
+                        );
+                }
     
                 this.encryptionCipher = cipher;
             }
@@ -386,27 +212,7 @@ public class CipherImplJavaxCrypto implements CipherImplApi{
 
     @Override
     public byte[] decrypt(byte[] data) {
-        
-        try{
-            Cipher cipher = getCipher();
-            cipher.init(
-                    Cipher.DECRYPT_MODE,
-                    keySpec,
-                    initVectorSpec
-            );
-    
-            byte[] result = cipher.doFinal(data);
-    
-            {//TODO: this feels janky
-                byte[] trimmed = new byte[result.length - 16];
-                System.arraycopy(result, 0, trimmed, 0, trimmed.length);
-                result = trimmed;
-            }
-    
-            return result;
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
+        throw new RuntimeException("no impl");
     }
 
     @Override
@@ -424,7 +230,8 @@ public class CipherImplJavaxCrypto implements CipherImplApi{
 
         try{
             this.keySpec = getKeySpec(keyPhrase,algorithm,keyLengthBytes);
-            this.initVectorSpec = getInitVectorSpec(initVectorPhrase,keyLengthBytes);
+            
+            this.ivGeneratorString = initVectorPhrase;
         } catch(Exception e){
             throw new RuntimeException(e);
         }

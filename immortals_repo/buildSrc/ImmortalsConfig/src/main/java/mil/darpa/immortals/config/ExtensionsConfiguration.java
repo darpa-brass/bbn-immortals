@@ -20,6 +20,7 @@ public class ExtensionsConfiguration {
     public final VoltDBConfiguration voltdb = new VoltDBConfiguration();
     public final AqlBrassConfiguration aqlbrass = new AqlBrassConfiguration();
     public final ImmortalizerConfiguration immortalizer = new ImmortalizerConfiguration();
+    public final PartialLibraryUpdatesConfiguration partiallibraryupgrade = new PartialLibraryUpdatesConfiguration();
 
     private String producedTtlOutputDirectory = staticProducedTtlOutputDirectory.toString();
 

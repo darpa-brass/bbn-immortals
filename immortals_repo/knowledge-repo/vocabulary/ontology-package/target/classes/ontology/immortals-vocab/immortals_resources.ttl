@@ -1,0 +1,342 @@
+@prefix IMMoRTALS_domains_resources_accel: <http://darpa.mil/immortals/ontology/r2.0.0/domains/resources/accel#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_core: <http://darpa.mil/immortals/ontology/r2.0.0/core#> .
+@prefix IMMoRTALS_domains_resources: <http://darpa.mil/immortals/ontology/r2.0.0/domains/resources#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+IMMoRTALS:ImmortalsBaseClass
+        a       owl:Class .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.MMX_EXT
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "extended MMX SIMD instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$MMX_EXT" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SMM
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "System management mode instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SMM" .
+
+IMMoRTALS:hasMethodOwner
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_domains_resources:MethodResourceTypeDependencyAssertion ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SSE4_1
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "streaming SIMD extensions 4, Penryn subset (47 instructions)" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SSE4_1" .
+
+IMMoRTALS:hasResourceConsumed
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_domains_resources:MethodResourceInstanceDependencyAssertion ;
+        rdfs:range   IMMoRTALS_core:Resource .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.AES_NI
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Advanced Encryption Standard instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$AES_NI" .
+
+IMMoRTALS:hasConsumerPointer
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_domains_resources:MethodResourceInstanceDependencyAssertion ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_domains_resources:MethodResourceInstanceDependencyAssertion
+        a                            owl:Class ;
+        rdfs:label                   "MethodResourceInstanceDependencyAssertion" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOriginAssertion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasConsumerPointer
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOriginAssertion
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResourceConsumed
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasConsumerPointer
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDependencyAssurance
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_domains_resources:MethodResourceInstanceDependencyAssertion ;
+                                       owl:onProperty     IMMoRTALS:hasOriginAssertion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_core:Resource ;
+                                       owl:onProperty     IMMoRTALS:hasResourceConsumed
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResourceConsumed
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasDependencyAssurance
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasConsumerPointer
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDependencyAssurance
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.MethodResourceInstanceDependencyAssertion" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.AMD
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "AMD-specific instructions (older than K6)" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$AMD" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.MMX
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "MMX SIMD instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$MMX" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SSE5
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "streaming SIMD extensions 5 (170 instructions)" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SSE5" .
+
+IMMoRTALS:hasMethodName
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_domains_resources:MethodResourceTypeDependencyAssertion ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.X86
+        a                            IMMoRTALS_domains_resources_accel:InstructionSet , owl:Class ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Intel's fully backward compatible microprocessor instruction set originating with the 8086" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$X86" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SSE4
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "All streaming SIMD extensions 4 instructions (both SSE4.1 and SSE4.2)" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SSE4" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.XSAVE
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "XSAVE instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$XSAVE" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.FMA
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "fused multiply-add instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$FMA" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SSE4A
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "streaming SIMD extensions 4a (AMD)" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SSE4A" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.Cyrix
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Cyrix-specific instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$Cyrix" .
+
+IMMoRTALS_core:Resource
+        a             owl:Class ;
+        rdfs:comment  "A description of something upon which software might depend  E.g., a library (code dependency), a platform architecture (embedded linux, windows, ...), compute resources (CPU, GPU, ...), an external resource accessed via IO (network, disk, ...)  @author jstaples " .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.X64
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "64-bit extensions to x86" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$X64" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.AVX
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "advanced vector extensions instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$AVX" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SSE3
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "streaming SIMD extensions 3 instructions (13 new instructions)" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SSE3" .
+
+IMMoRTALS_resources:ComputeResource
+        a             owl:Class ;
+        rdfs:comment  "A type of resource that performs computation  E.g., FPGA, CPU, GPU   @author jstaples " .
+
+IMMoRTALS:hasDependencyAssurance
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_domains_resources:MethodResourceTypeDependencyAssertion , IMMoRTALS_domains_resources:MethodResourceInstanceDependencyAssertion ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SSE
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "streaming SIMD extensions (SSE) instructions (70 instructions)" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SSE" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.FPU
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "x87 Floating-point-unit (FPU) instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$FPU" .
+
+IMMoRTALS:hasOriginAssertion
+        a            owl:ObjectProperty ;
+        rdfs:domain  IMMoRTALS_domains_resources:MethodResourceTypeDependencyAssertion , IMMoRTALS_domains_resources:MethodResourceInstanceDependencyAssertion ;
+        rdfs:range   IMMoRTALS_domains_resources:MethodResourceTypeDependencyAssertion , IMMoRTALS_domains_resources:MethodResourceInstanceDependencyAssertion .
+
+IMMoRTALS_domains_resources:MethodResourceTypeDependencyAssertion
+        a                            owl:Class ;
+        rdfs:label                   "MethodResourceTypeDependencyAssertion" ;
+        rdfs:subClassOf              IMMoRTALS:ImmortalsBaseClass ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasDependencyAssurance
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDependencyAssurance
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_domains_resources:MethodResourceTypeDependencyAssertion ;
+                                       owl:onProperty     IMMoRTALS:hasOriginAssertion
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResourceUtilized
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasResourceUtilized
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodOwner
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasMethodName
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasDependencyAssurance
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasMethodDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodOwner
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOriginAssertion
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  xsd:string ;
+                                       owl:onProperty     IMMoRTALS:hasMethodOwner
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:maxCardinality  "1"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasMethodDesc
+                                     ] ;
+        rdfs:subClassOf              [ a                  owl:Restriction ;
+                                       owl:allValuesFrom  IMMoRTALS_core:Resource ;
+                                       owl:onProperty     IMMoRTALS:hasResourceUtilized
+                                     ] ;
+        rdfs:subClassOf              [ a                   owl:Restriction ;
+                                       owl:minCardinality  "0"^^xsd:int ;
+                                       owl:onProperty      IMMoRTALS:hasOriginAssertion
+                                     ] ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.MethodResourceTypeDependencyAssertion" .
+
+IMMoRTALS:hasResourceUtilized
+        a            rdf:Property ;
+        rdfs:domain  IMMoRTALS_domains_resources:MethodResourceTypeDependencyAssertion ;
+        rdfs:range   IMMoRTALS_core:Resource .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SSE2
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "streaming SIMD extensions 2 instructions (144 new instructions)" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SSE2" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SSSE3
+        a                            owl:Class ;
+        rdfs:label                   "SSSE3" ;
+        rdfs:subClassOf              IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SSSE3" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SSE4_2
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "streaming SIMD extensions 4, Nehalem subset (7 instructions)" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SSE4_2" .
+
+IMMoRTALS_domains_resources_accel:InstructionSet
+        a                            owl:Class ;
+        rdfs:label                   "InstructionSet" ;
+        rdfs:subClassOf              IMMoRTALS_resources:ComputeResource ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSet" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.PadLock
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "VIA PadLock instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$PadLock" .
+
+IMMoRTALS:hasMethodDesc
+        a            owl:DatatypeProperty ;
+        rdfs:domain  IMMoRTALS_domains_resources:MethodResourceTypeDependencyAssertion ;
+        rdfs:range   xsd:string .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.SVM
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Secure virtual machine instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$SVM" .
+
+IMMoRTALS_domains_resources_accel:InstructionSets.CLMUL
+        a                            IMMoRTALS_domains_resources_accel:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Carry-less mtiply (PCLMULQDQ) instruction" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.domains.resources.accel.InstructionSets$CLMUL" .

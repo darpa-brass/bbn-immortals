@@ -244,6 +244,10 @@ class ImmortalsRootDeploymentTester:
                         'applications/server/Marti/Marti-immortals.jar',
                         'applications/client/ATAKLite/ATAKLite-debug.apk'
                     ],
+                    "extensions": [
+                        'extensions/vanderbilt/aql-brass-server-aql-brass-server.jar',
+                        'extensions/ucr/thirdPartyLibAnalysis/yuesLib.py'
+                    ],
                     "database": [
                         'database/server/data/source.csv',
                         'database/server/data/cot_event.csv',

@@ -1,0 +1,50 @@
+/// DfuCompositionConfiguration
+{
+    "sessionIdentifier": "deadbeef",
+    "targetPlatform" : "Android",
+    "controlPointUuid": "A08F0747-8EDF-4933-8BDA-BDB20825344A",
+    "applicationIdentifier": "Client_ConsumingPipeRunner",
+    "originalDfu": {
+        "dependencyString": "mil.darpa.immortals.dfus:ImageUtilsAndroid:+",
+        "consumingPipeSpecification": {
+            "classPackageIdentifier": "mil.darpa.immortals.dfus.images.BitmapReader",
+            "constructorParameters": [
+                {
+                    "providedByApplication": true,
+                    "classType": "mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe<android.graphics.Bitmap>"
+                }
+            ]
+        }
+    },
+    "dfuCompositionSequence": [
+        {
+            "dependencyString": "mil.darpa.immortals.dfus:ImageUtilsAndroid:+",
+            "consumingPipeSpecification": {
+                "classPackageIdentifier": "mil.darpa.immortals.dfus.images.BitmapReader",
+                "constructorParameters": [
+                    {
+                        "providedByApplication": true,
+                        "classType": "mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe<android.graphics.Bitmap>"
+                    }
+                ]
+            }
+        },
+        {
+            "dependencyString": "mil.darpa.immortals.dfus:ImageUtilsAndroid:+",
+            "consumingPipeSpecification": {
+                "classPackageIdentifier": "mil.darpa.immortals.dfus.images.BitmapScaler",
+                "constructorParameters": [
+                    {
+                        "providedByApplication": false,
+                        "classType": "java.lang.Integer",
+                        "value": "0.85"
+                    },
+                    {
+                        "providedByApplication": true,
+                        "classType": "mil.darpa.immortals.core.synthesis.interfaces.ConsumingPipe<android.graphics.Bitmap>"
+                    }
+                ]
+            }
+        }
+    ]
+}

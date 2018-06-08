@@ -1,7 +1,7 @@
 package mil.darpa.immortals.core.das.sparql.deploymentmodel;
 
-import mil.darpa.immortals.core.das.adaptationmodules.hddrass.Hacks;
 import mil.darpa.immortals.core.das.sparql.SparqlQuery;
+import mil.darpa.immortals.das.context.ContextManager;
 import mil.darpa.immortals.das.context.DasAdaptationContext;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
@@ -15,18 +15,18 @@ import java.util.*;
 public class DetermineHddRassApplicability extends SparqlQuery {
 
     public static class HddRassApplicabilityDetails {
-        final String adaptationTarget;
+        final String adaptationTargetUid;
         final HashMap<String, String> libraryUpgrades;
         HashSet<String> requiredTargetFunctionality;
 
-        public HddRassApplicabilityDetails(@Nonnull String adaptationTarget, @Nonnull HashMap<String, String> libraryUpgrades, @Nonnull Set<String> requiredTargetFunctionality) {
-            this.adaptationTarget = adaptationTarget;
+        public HddRassApplicabilityDetails(@Nonnull String adaptationTargetUid, @Nonnull HashMap<String, String> libraryUpgrades, @Nonnull Set<String> requiredTargetFunctionality) {
+            this.adaptationTargetUid = adaptationTargetUid;
             this.libraryUpgrades = libraryUpgrades;
             this.requiredTargetFunctionality = new HashSet(requiredTargetFunctionality);
         }
 
         public String getAdaptationTarget() {
-            return adaptationTarget;
+            return adaptationTargetUid;
         }
 
         public HashMap<String, String> getLibraryUpgradeMap() {
@@ -47,7 +47,8 @@ public class DetermineHddRassApplicability extends SparqlQuery {
                         "prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#>  " +
                         "prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> " +
                         "prefix IMMoRTALS_java_testing_instance: <http://darpa.mil/immortals/ontology/r2.0.0/java/testing/instance#> " +
-                        "SELECT ?targetResource ?requiredFunctionality ?originalDependencyCoordinates ?upgradedDependencyCoordinates " +
+                        "prefix IMMoRTALS_mil_darpa_immortals_ontology: <http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#> " +
+                        "SELECT ?artifactIdentifier ?requiredFunctionality ?originalDependencyCoordinates ?upgradedDependencyCoordinates " +
                         "WHERE { " +
                         "    GRAPH <" + dac.getKnowldgeUri() + "> { " +
                         "    ?aDeploymentModel a IMMoRTALS_gmei:DeploymentModel .  " +
@@ -67,14 +68,8 @@ public class DetermineHddRassApplicability extends SparqlQuery {
                         "    ?aConcreteResourceNode IMMoRTALS:hasContainedNode ?containedLibraryNode . " +
                         "    ?containedLibraryNode IMMoRTALS:hasResource ?containedLibraryResource . " +
                         "    ?containedLibraryResource  IMMoRTALS_mil_darpa_immortals_ontology:hasDependencyCoordinates ?originalDependencyCoordinates . " +
-                        "    ?containedLibraryResource IMMoRTALS:hasArtifactId ?artifactId . " +
-                        "    ?containedLibraryResource IMMoRTALS:hasGroupId ?groupId . " +
-                        "        ?containedLibraryResource  IMMoRTALS_mil_darpa_immortals_ontology:hasDependencyCoordinates ?availableArtifactIdentifiers . " +
                         "    ?aConcreteResourceNode IMMoRTALS:hasResource ?targetResource . " +
-                        "    ?aProject a IMMoRTALS_java_project:JavaProject . " +
-                        "    ?aProject IMMoRTALS:hasCoordinate ?projectCoordinate . " +
-                        "    ?projectCoordinate IMMoRTALS:hasArtifactId ?artifactId . " +
-                        "    ?projectCoordinate IMMoRTALS:hasGroupId ?groupId . " +
+                        "    ?targetResource IMMoRTALS_mil_darpa_immortals_ontology:hasArtifactIdentifier ?artifactIdentifier . " +
                         "  }  " +
                         "} ";
 
@@ -86,7 +81,7 @@ public class DetermineHddRassApplicability extends SparqlQuery {
         while (resultSet.hasNext()) {
             QuerySolution qs = resultSet.next();
 
-            String targetResource = Hacks.deploymentModelIdentifierToAbsoluteIdentifier(qs.getResource("targetResource").toString());
+            String targetResource = qs.getLiteral("artifactIdentifier").toString();
             String requiredFunctionality = qs.getResource("requiredFunctionality").toString();
             String originalDependencyCoordinates = qs.getLiteral("originalDependencyCoordinates").getString();
             String upgradedDependencyCoordinates = qs.getLiteral("upgradedDependencyCoordinates").getString();

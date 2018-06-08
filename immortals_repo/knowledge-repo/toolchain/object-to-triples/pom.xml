@@ -76,8 +76,12 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
-		
+
+        <dependency>
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-ontologies-domains-java-project</artifactId>
+            <version>r2.0.0</version>
+        </dependency>
 	</dependencies>
 
 	<properties>

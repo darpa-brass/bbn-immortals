@@ -1,8 +1,17 @@
 package com.securboration.immortals.ontology.cp2;
 
-import com.securboration.immortals.ontology.analysis.*;
-import com.securboration.immortals.ontology.constraint.*;
+import com.securboration.immortals.ontology.analysis.DataflowAnalysisFrame;
+import com.securboration.immortals.ontology.analysis.DataflowEdge;
+import com.securboration.immortals.ontology.analysis.DataflowNode;
+import com.securboration.immortals.ontology.analysis.InterMethodDataflowNode;
+import com.securboration.immortals.ontology.constraint.ConstraintCriterionType;
+import com.securboration.immortals.ontology.constraint.ConstraintImpactType;
+import com.securboration.immortals.ontology.constraint.DirectionOfViolationType;
+import com.securboration.immortals.ontology.constraint.PropertyCriterionType;
+import com.securboration.immortals.ontology.constraint.PropertyImpactType;
 import com.securboration.immortals.ontology.cp.FunctionalitySpec;
+import com.securboration.immortals.ontology.cp.jvm.AndroidRuntimeEnvironment;
+import com.securboration.immortals.ontology.cp.jvm.JavaRuntimeEnvironment;
 import com.securboration.immortals.ontology.functionality.ConfidentialProperty;
 import com.securboration.immortals.ontology.functionality.alg.encryption.aes.AES_128;
 import com.securboration.immortals.ontology.functionality.compression.AspectDeflate;
@@ -19,9 +28,19 @@ import com.securboration.immortals.ontology.functionality.imagescaling.NumberOfP
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.ontology.pojos.markup.Ignore;
 import com.securboration.immortals.ontology.property.Property;
-import com.securboration.immortals.ontology.property.impact.*;
+import com.securboration.immortals.ontology.property.impact.AbstractDataflowBindingSite;
+import com.securboration.immortals.ontology.property.impact.AbstractPropertyCriterion;
+import com.securboration.immortals.ontology.property.impact.ConstraintViolationCriterion;
+import com.securboration.immortals.ontology.property.impact.ConstraintViolationImpact;
+import com.securboration.immortals.ontology.property.impact.ImpactStatement;
+import com.securboration.immortals.ontology.property.impact.PredictiveCauseEffectAssertion;
+import com.securboration.immortals.ontology.property.impact.PrescriptiveCauseEffectAssertion;
+import com.securboration.immortals.ontology.property.impact.PropertyImpact;
+import com.securboration.immortals.ontology.property.impact.ProscriptiveCauseEffectAssertion;
+import com.securboration.immortals.ontology.property.impact.RemediationImpact;
 import com.securboration.immortals.ontology.resources.FileSystemResource;
 import com.securboration.immortals.ontology.resources.MobileAndroidDevice;
+import com.securboration.immortals.ontology.resources.PlatformResource;
 import com.securboration.immortals.ontology.resources.Server;
 
 /**
@@ -148,24 +167,50 @@ public class ClientServerEnvironment {
     @ConceptInstance
     public static class ClientDevice1 extends MobileAndroidDevice {
         public ClientDevice1() {
+            this.setResources(
+                new PlatformResource[]{
+                        art("Oreo 8.0",false)
+                    }
+                );
+        }
+        
+        @Override
+        public void setResources(PlatformResource[] resources){
+            super.setResources(resources);
         }
     }
 
     @ConceptInstance
     public static class ClientDevice2 extends MobileAndroidDevice {
         public ClientDevice2() {
+            this.setResources(
+                new PlatformResource[]{
+                        art("Oreo 8.1",true)
+                    }
+                );
         }
     }
 
     @ConceptInstance
     public static class ClientDevice3 extends MobileAndroidDevice {
         public ClientDevice3() {
+            this.setResources(
+                new PlatformResource[]{
+                        art("Nougat 7.1.2",false),
+                        art("Nougat 7.1.3",false)
+                    }
+                );
         }
     }
     
     @ConceptInstance
     public static class MartiServer extends Server {
         public MartiServer() {
+            this.setResources(
+                new PlatformResource[]{
+                        jvm("usr/local/jdk1.8.1_71","Oracle Java 8u171",false)
+                    }
+                );
         }
     }
     
@@ -339,5 +384,33 @@ public class ClientServerEnvironment {
             this.setConsumer(new DataflowNode6());
             this.setProducer(new DataflowNode3());
         }
+    }
+    
+    
+    
+    private static AndroidRuntimeEnvironment art(
+            String desc,
+            boolean unlimitedCrypto
+            ){
+        AndroidRuntimeEnvironment art = new AndroidRuntimeEnvironment();
+        
+        art.setHumanReadableDescription(desc);
+        art.setUnlimitedCryptoStrengh(unlimitedCrypto);
+        
+        return art;
+    }
+    
+    private static JavaRuntimeEnvironment jvm(
+            String path, 
+            String desc,
+            boolean unlimitedCrypto
+            ){
+        JavaRuntimeEnvironment jvm = new JavaRuntimeEnvironment();
+        
+        jvm.setHumanReadableDescription(desc);
+        jvm.setJavaHomePath(path);
+        jvm.setUnlimitedCryptoStrengh(unlimitedCrypto);
+        
+        return jvm;
     }
 }

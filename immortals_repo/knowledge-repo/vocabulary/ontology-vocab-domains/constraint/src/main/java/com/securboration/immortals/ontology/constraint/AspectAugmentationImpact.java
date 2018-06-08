@@ -3,6 +3,7 @@ package com.securboration.immortals.ontology.constraint;
 import com.securboration.immortals.ontology.analysis.DataflowEdge;
 import com.securboration.immortals.ontology.analysis.DataflowNode;
 import com.securboration.immortals.ontology.dfu.instance.FunctionalAspectInstance;
+import com.securboration.immortals.ontology.property.impact.AnalysisImpact;
 
 public class AspectAugmentationImpact extends AnalysisImpact {
     

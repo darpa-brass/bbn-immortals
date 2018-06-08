@@ -25,21 +25,20 @@ __Description__: Describes preconfiguration required prior to evaluating the DAS
 __Type__: JSON Object  
 __Description__: Indicates the requirements for proper evaluation of a challenge problem  
 
-| Field               | Type                               | Description                                                                 |  
-| ------------------- | ---------------------------------- | --------------------------------------------------------------------------- |  
-| androidEmulators    | List\[AndroidEmulatorRequirement\] | A set of android emulators that must be available for use by the DAS or SUT |  
-| challengeProblemUrl | str                                | The corresponding Test Adapter URL for convenience                          |  
+| Field               | Type                             | Description                                                                 |  
+| ------------------- | -------------------------------- | --------------------------------------------------------------------------- |  
+| androidEmulators    | List[AndroidEmulatorRequirement] | A set of android emulators that must be available for use by the DAS or SUT |  
+| challengeProblemUrl | str                              | The corresponding Test Adapter URL for convenience                          |  
 
 #### AndroidEmulatorRequirement  
 __Type__: JSON Object  
 __Description__: Defines the requirement that the described Android emulator be available for use by the DAS or SUT  
 
-| Field                                 | Type        | Description                                                                                                                 |  
-| ------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------- |  
-| androidVersion                        | int         | The android version that the android emulator must be running                                                               |  
-| externallyAccessibleUrls              | List\[str\] | Urls that must be accessible by the emulator. Assume all subdomains are valid and all values with contain a port at the end |  
-| superuserAccess                       | bool        | Whether or not the applications on the emulator must be granted the ability to use 'su'                                     |  
-| uploadBandwidthLimitKilobitsPerSecond | int         | The upload limit that must be applied to the emulator to ensure consistent results                                          |  
+| Field                                 | Type      | Description                                                                                                                 |  
+| ------------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------- |  
+| androidVersion                        | int       | The android version that the android emulator must be running                                                               |  
+| externallyAccessibleUrls              | List[str] | Urls that must be accessible by the emulator. Assume all subdomains are valid and all values with contain a port at the end |  
+| uploadBandwidthLimitKilobitsPerSecond | int       | The upload limit that must be applied to the emulator to ensure consistent results                                          |  
 
 
 ## Prerequisites Required by DAS

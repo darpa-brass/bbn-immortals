@@ -23,16 +23,26 @@ public class DeploymentEnvironmentConfiguration {
     }
 
     public static class AndroidEmulatorRequirement {
+        public int getAndroidVersion() {
+            return androidVersion;
+        }
+
+        public Integer getUploadBandwidthLimitKilobitsPerSecond() {
+            return uploadBandwidthLimitKilobitsPerSecond;
+        }
+
+        public String[] getExternallyAccessibleUrls() {
+            return Arrays.copyOf(externallyAccessibleUrls, externallyAccessibleUrls.length);
+        }
+
         private final int androidVersion;
         private final Integer uploadBandwidthLimitKilobitsPerSecond;
         private final String[] externallyAccessibleUrls;
-        private final boolean superuserAccess;
 
-        public AndroidEmulatorRequirement(int androidVersion, @Nullable Integer uploadBandwidthLimitKilobitsPerSecond, boolean superuserAccess,
+        public AndroidEmulatorRequirement(int androidVersion, @Nullable Integer uploadBandwidthLimitKilobitsPerSecond,
                                           @Nullable String[] externallyAccessibleUrls) {
             this.androidVersion = androidVersion;
             this.uploadBandwidthLimitKilobitsPerSecond = uploadBandwidthLimitKilobitsPerSecond;
-            this.superuserAccess = superuserAccess;
             this.externallyAccessibleUrls = externallyAccessibleUrls == null ? new String[0] :
                     Arrays.copyOf(externallyAccessibleUrls, externallyAccessibleUrls.length);
         }
@@ -55,7 +65,7 @@ public class DeploymentEnvironmentConfiguration {
         public String getAdbIdentifier() {
             return adbIdentifier;
         }
-        
+
         public AndroidEmulatorRequirement getEnvironmentDetails() {
             return environmentDetails;
         }

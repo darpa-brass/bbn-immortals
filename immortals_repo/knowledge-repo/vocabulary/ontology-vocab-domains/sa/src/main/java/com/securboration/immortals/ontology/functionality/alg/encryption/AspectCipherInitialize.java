@@ -13,7 +13,6 @@ public class AspectCipherInitialize extends InitAspectBase {
                 Input.getInput(CipherAlgorithm.class),
                 Input.getInput(CipherChainingMode.class),
                 Input.getInput(CipherKeyLength.class),
-                Input.getInput(CipherBlockSize.class),
                 Input.getInput(PaddingScheme.class)
                 });
         super.setOutputs(new Output[]{

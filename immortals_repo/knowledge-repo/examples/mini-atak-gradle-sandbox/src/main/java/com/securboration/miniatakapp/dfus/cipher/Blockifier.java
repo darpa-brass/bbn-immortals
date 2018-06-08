@@ -13,7 +13,7 @@ public class Blockifier {
     public static String hash(byte[] data) {
         MessageDigest md;
         try {
-            md = MessageDigest.getInstance("SHA-256");
+            md = MessageDigest.getInstance("MD5");
             md.update(data);
 
             return Base64.getEncoder().encodeToString(md.digest());

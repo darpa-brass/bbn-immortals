@@ -24,6 +24,7 @@ public class DAS {
 	private DAS() {}
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
 	    // Necessary for jena to work..
         ARQ.init();
     	

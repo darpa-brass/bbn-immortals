@@ -217,7 +217,10 @@ _deploymentPlatformVersion_ attribute to introduce an additional form of library
  - The valid _atakLiteClientModel_ _partialLibraryUpgrade_ values are defined in the **ClientPartialUpgradeLibrary** object
  - The valid _martiServerModel_ _libraryUpgrade_ values are defined in the **ServerUpgradeLibrary** object
  - The valid _martiServerModel_ _partialLibraryUpgrade_ values are defined in the **ServerPartialUpgradeLibrary** object
- 
+
+Although defined to allow flexibility, not all of these enumerations will be used. If they are not used, the only available 
+value will be listed as "ToBeDetermined_X_X" or "NONE" and should not be submitted to the Test Adapter.
+
 ### Endpoint Usage
 __Endpoint Type__: POST  
 __Endpoint URL__: /action/libraryEvolution
@@ -291,9 +294,9 @@ __Description__: A client upgrade library that will cause a mutation
 __Type__: String Constant  
 __Description__: A client library upgrade that will cause a partial upgrade  
 
-| Values             | Description                                                    |  
-| ------------------ | -------------------------------------------------------------- |  
-| ToBeDetermined_X_X | Version of dropbox containing a resolution for a security flaw |  
+| Values        | Description                                                    |  
+| ------------- | -------------------------------------------------------------- |  
+| Dropbox_3_0_6 | Version of dropbox containing a resolution for a security flaw |  
 
 #### MartiSubmissionModel  
 __Type__: JSON Object  
@@ -316,14 +319,14 @@ __Description__: A requirement specification for a Marti server
 __Type__: String Constant  
 __Description__: A server upgrade library that will cause a mutation  
 
-| Values         | Description                                                                             |  
-| -------------- | --------------------------------------------------------------------------------------- |  
-| ElevationApi_2 | A library upgrade required that introduces external elevation calls that cannot be made |  
+| Values         | Description                                                                                        | NewDependencyCoordinates                          | OldDependencyCoordinates                          | RepositoryUrl         |  
+| -------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- | --------------------- |  
+| ElevationApi_2 | Elevation API that provides security fixes and improved accuracy but requires a network connection | mil.darpa.immortals.dfus:ElevationApi-2:2.0-LOCAL | mil.darpa.immortals.dfus:ElevationApi-1:2.0-LOCAL | shared/IMMORTALS_REPO |  
 
 #### ServerPartialUpgradeLibrary  
 __Type__: String Constant  
 __Description__: A server library upgrade that will cause a partial upgrade  
 
-| Values     | Description                  |  
-| ---------- | ---------------------------- |  
-| Dom4jCot_2 | Newer cot processing library |  
+| Values             | Description               |  
+| ------------------ | ------------------------- |  
+| ToBeDetermined_X_X | Libraries to be determined|  

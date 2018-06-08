@@ -4,7 +4,9 @@ import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.config.extensions.HddRassConfiguration;
 import mil.darpa.immortals.das.ImmortalsProcessBuilder;
+import mil.darpa.immortals.das.context.ContextManager;
 import mil.darpa.immortals.das.context.DasAdaptationContext;
+import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
 
 import javax.annotation.Nonnull;
 import java.io.FileWriter;
@@ -29,11 +31,11 @@ public class HddRassExecuter {
     }
 
     public Process execute() throws IOException {
+        if (ImmortalsConfig.getInstance().debug.isUseMockExtensionHddRass()) {
+            return mockExecute();
+        }
 
-
-        ImmortalsUtils.gson.toJson(initObject);
-
-        Path mutationScript = ImmortalsConfig.getInstance().extensions.hddrass.getExecutionWorkingDirectory(adaptationIdentifier).resolve("mutatescript.json");
+        Path mutationScript = configuration.getExecutionWorkingDirectory(adaptationIdentifier).resolve("mutatescript.json");
         FileWriter configFileWriter = new FileWriter(mutationScript.toFile());
         configFileWriter.write(ImmortalsUtils.nonHtmlEscapingGson.toJson(initObject));
         configFileWriter.flush();
@@ -43,7 +45,7 @@ public class HddRassExecuter {
         String[] cmd = {
                 ImmortalsConfig.getInstance().build.augmentations.getJavaExecutablePath(),
                 "-jar",
-                configuration.getJarPath().toString(),
+                configuration.getExePath(),
                 "-jsonFile",
                 mutationScript.toAbsolutePath().toString()
         };
@@ -54,6 +56,30 @@ public class HddRassExecuter {
                         configuration.getIdentifier());
 
         Process p = processBuilder.command(cmd).start();
+        return p;
+    }
+
+    private Process mockExecute() throws IOException {
+
+        ImmortalsErrorHandler.reportFatalError("Mock hddRASS being done! This should not happen unless you are debugging!");
+        
+        String[] cmd = {
+                "sed",
+                "-i",
+                "-e",
+                "s/cot\\.setElevationData(elevationApi\\.getElevation(cot\\.getLon(), cot\\.getLat()));//g",
+                initObject.getApplicationPath().resolve("src/com/bbn/marti/immortals/pipes/CotByteBufferPipe.java").toString()
+        };
+
+        ImmortalsProcessBuilder processBuilder =
+                new ImmortalsProcessBuilder(adaptationIdentifier, configuration.getIdentifier());
+
+        Process p = processBuilder.command(cmd).start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return p;
     }
 }

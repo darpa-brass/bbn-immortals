@@ -94,14 +94,23 @@ public class JarIngestor {
             
             final String jarPath = jar.getAbsolutePath();
             
-            final String pomPath = 
+            String pomPath = 
                     jarPath.substring(
                             0,
                             jarPath.lastIndexOf(".jar")
                             ) + ".pom";
             
             if(!new File(pomPath).exists()){
-                return;
+
+                final String findPomPath = jarPath.substring(
+                        0,
+                        jarPath.lastIndexOf(File.separatorChar));
+
+                Collection<File> possPoms = FileUtils.listFiles(new File(findPomPath).getParentFile(), new String[]{"pom"}, true);
+                if (possPoms.isEmpty()) {
+                    return;
+                }
+                pomPath = possPoms.iterator().next().getAbsolutePath();
             }
             
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -109,24 +118,42 @@ public class JarIngestor {
             Document document = builder.parse(new File(pomPath));
             XPath xPathFactory = XPathFactory.newInstance().newXPath();
             
-            final String groupId = 
+            String groupId = 
                     (String)xPathFactory.evaluate(
                             "/project/groupId",
                             document.getDocumentElement(),
                             XPathConstants.STRING
                             );
+            
+            if (groupId.equals("")) {
+                groupId = (String)xPathFactory.evaluate(
+                        "/project/parent/groupId",
+                        document.getDocumentElement(),
+                        XPathConstants.STRING
+                );
+            }
+            
             final String artifactId = 
                     (String)xPathFactory.evaluate(
                             "/project/artifactId",
                             document.getDocumentElement(),
                             XPathConstants.STRING
                             );
-            final String version = 
+            
+            String version = 
                     (String)xPathFactory.evaluate(
                             "/project/version",
                             document.getDocumentElement(),
                             XPathConstants.STRING
                             );
+            
+            if (version.equals("")) {
+                version = (String)xPathFactory.evaluate(
+                        "/project/parent/version",
+                        document.getDocumentElement(),
+                        XPathConstants.STRING
+                );
+            }
             
             c.setGroupId(groupId);
             c.setArtifactId(artifactId);

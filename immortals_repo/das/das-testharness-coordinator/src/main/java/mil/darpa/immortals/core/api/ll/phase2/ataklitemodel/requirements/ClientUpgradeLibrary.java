@@ -2,7 +2,11 @@ package mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements;
 
 import mil.darpa.immortals.core.api.annotations.Description;
 import mil.darpa.immortals.core.api.annotations.P2CP3;
+import mil.darpa.immortals.core.api.annotations.Unstable;
 import mil.darpa.immortals.core.api.ll.phase2.UpgradableLibraryInterface;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created by awellman@bbn.com on 9/14/17.
@@ -11,16 +15,19 @@ import mil.darpa.immortals.core.api.ll.phase2.UpgradableLibraryInterface;
 @Description("A client upgrade library that will cause a mutation")
 public enum ClientUpgradeLibrary implements UpgradableLibraryInterface {
     @P2CP3
-    ToBeDetermined_X_X("Libraries to be determined", "dummy:old:version", "dummy:new:version");
+    ToBeDetermined_X_X("Libraries to be determined", "dummy:old:version", "dummy:new:version", "http://central.maven.org/maven2/");
 
     public final String description;
     public final String oldDependencyCoordinates;
     public final String newDependencyCoordinates;
+    @Unstable
+    public final String repositoryUrl;
 
-    ClientUpgradeLibrary(String description, String oldDependencyCoordinates, String newDependencyCoordinates) {
+    ClientUpgradeLibrary(String description, String oldDependencyCoordinates, String newDependencyCoordinates, String repositoryUrl) {
         this.description = description;
         this.oldDependencyCoordinates = oldDependencyCoordinates;
         this.newDependencyCoordinates = newDependencyCoordinates;
+        this.repositoryUrl = repositoryUrl;
     }
 
     @Override
@@ -36,5 +43,17 @@ public enum ClientUpgradeLibrary implements UpgradableLibraryInterface {
     @Override
     public String getNewDependencyCoordinates() {
         return newDependencyCoordinates;
+    }
+
+    @Nonnull
+    @Override
+    public String getRepositoryUrl() {
+        return repositoryUrl;
+    }
+
+    @Nullable
+    @Override
+    public String[] getVulnerabilityIdentifiers() {
+        return null;
     }
 }

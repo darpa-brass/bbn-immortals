@@ -20,10 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by awellman@bbn.com on 1/25/18.
@@ -42,7 +39,7 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
 
     public AdaptationTargetBuildInstance(String adaptationIdentifier, AdaptationTargetBuildBase base) {
         this.adaptationIdentifier = adaptationIdentifier;
-        this.instanceIdentifier = base.getTargetName() + "=" + adaptationIdentifier;
+        this.instanceIdentifier = base.getTargetName() + "-" + adaptationIdentifier;
         this.base = base;
         this.gradleHelper = new GradleBuildFileHelper(this);
 
@@ -224,6 +221,10 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
         gradleHelper.replaceDependency(originalCoordinates, newCoordinates);
         gradleHelper.save();
     }
+    
+    public void updateBuildScriptDependency(@Nonnull String originalCoordinates, @Nonnull Path newJar) {
+        gradleHelper.replaceDependency(originalCoordinates, newJar);
+    }
 
     @Override
     public String getPublishDependencyCoordinates() {
@@ -282,7 +283,7 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
         if (rval == null) {
             return null;
         }
-        return XmlParser.getTestResultsFromFlatDirectory(getTestResultsPath().toFile(), base.getTargetName(), testFunctionalityMap);
+        return XmlParser.getTestResultsFromFlatDirectory(getTestResultsPath().toFile(), base.getTargetIdentifier(), testFunctionalityMap);
     }
     
     public ClassFileCoverageSet executeCleanTestAndGetCoverage(@Nullable Collection<String> testIdentifiers) throws Exception {
@@ -307,6 +308,11 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
     @Override
     public String getTargetName() {
         return base.getTargetName();
+    }
+    
+    @Override
+    public String getTargetIdentifier() {
+        return base.getTargetIdentifier();
     }
 
 

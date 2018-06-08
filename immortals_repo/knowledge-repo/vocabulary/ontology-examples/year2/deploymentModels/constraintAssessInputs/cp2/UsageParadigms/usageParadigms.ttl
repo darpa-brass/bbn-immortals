@@ -1,0 +1,536 @@
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> .
+@prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_functionality_wrapper: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/wrapper#> .
+@prefix IMMoRTALS_pattern_spec: <http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix IMMoRTALS_resources_streams: <http://darpa.mil/immortals/ontology/r2.0.0/resources/streams#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_spec: <http://darpa.mil/immortals/ontology/r2.0.0/spec#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_functionality_alg_encryption: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#> .
+@prefix IMMoRTALS_dfu_instance: <http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#> .
+
+IMMoRTALS_functionality:DfuConfigurationVariable-3b273db1-82fd-4903-be4f-f02722f7bb92
+        a                            IMMoRTALS_functionality:DfuConfigurationVariable ;
+        IMMoRTALS:hasMagicStringVar  "$KEY_LENGTH$" ;
+        IMMoRTALS:hasSemanticType    IMMoRTALS_functionality_alg_encryption:CipherKeyLength .
+
+IMMoRTALS_spec:SpecExample.CipherSpecExample
+        a                            IMMoRTALS_pattern_spec:LibraryFunctionalAspectSpec ;
+        IMMoRTALS:hasAspect          IMMoRTALS_functionality_alg_encryption:AspectCipherEncrypt ;
+        IMMoRTALS:hasComponent       IMMoRTALS_spec:SpecExample.14-4e31e4f9-4d87-43ab-954d-bb768f8c8e2c , IMMoRTALS_spec:SpecExample.15-c1438e03-04de-4611-8e68-0b2f0012046f ;
+        IMMoRTALS:hasDurableId       "CipherSpecExample" ;
+        IMMoRTALS:hasFunctionality   IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasLibraryCoordinateTag
+                "com.secur:cipher:1.2.3" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$CipherSpecExample" ;
+        IMMoRTALS:hasUsageParadigm   IMMoRTALS_spec:SpecExample.ParadigmCipherExample .
+
+IMMoRTALS_spec:SpecExample.9-bc513c0e-c4f0-4926-aded-28be7baf3515
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_functionality_alg_encryption:AspectCipherInitialize ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-ea363b7f-f82f-4789-bab7-241c8e2dcc53 ;
+        IMMoRTALS:hasDurableId  "cipher-init" .
+
+IMMoRTALS_pattern_spec:CodeSpec-ab7b3fc8-07c7-4325-8141-230694f17df6
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/net/Socket" ;
+        IMMoRTALS:hasCode             "\t\t{OutputStream outputStream = this.socket.getOutputStream();\n\t\treturn outputStream;}" ;
+        IMMoRTALS:hasMethodSignature  "getOutputStreamImpl()" .
+
+IMMoRTALS_spec:SpecExample.5-47fc8856-6a12-4091-aae6-8ad5665d0fa7
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_functionality_alg_encryption:AspectCipherInitialize ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-c03c8cb5-36db-4d41-93b9-43574d57e64a ;
+        IMMoRTALS:hasDurableId  "cipher-init" .
+
+IMMoRTALS_spec:SpecExample.InitStreamWrapper
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "initStreamWrapper" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "1" ;
+        IMMoRTALS:hasOrdering        "1"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$InitStreamWrapper" .
+
+IMMoRTALS_spec:SpecExample.Cleanup
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "cleanup" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "1" ;
+        IMMoRTALS:hasOrdering        "3"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$Cleanup" .
+
+IMMoRTALS_spec:SpecExample.ParadigmCipherExample
+        a                            IMMoRTALS_pattern_spec:AbstractUsageParadigm ;
+        IMMoRTALS:hasComponent       IMMoRTALS_spec:SpecExample.InitStreamWrapper , IMMoRTALS_spec:SpecExample.GetStreamImpl , IMMoRTALS_spec:SpecExample.InitWrap ;
+        IMMoRTALS:hasDurableId       "ParadigmCipherExample-initStreamWrapper-getStreamImpl-initWrap" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$ParadigmCipherExample" .
+
+IMMoRTALS_pattern_spec:CodeSpec-70132887-5c8e-43df-b40c-de6cfce1a505
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasCode             " {//create a temp buffer capable of reading AT MOST as many bytes\n        // as we have room to read in byteBuffer\n        final ByteBuffer tmpBuffer = ByteBuffer.wrap(new byte[bytebuffer.remaining()]);\n\n        //read encrypted bytes from the delegate stream\n        final int bytesReadFromStream = this.socketchannel.read(tmpBuffer);\n\n        if(bytesReadFromStream <= 0) {\n            //TODO: handle the EOS case, -1, e.g., call the decryptFinal method\n            return bytesReadFromStream;\n        }\n\n        //copy the encrypted contents of the buffer into an array\n        final byte[] encryptedBytes = new byte[bytesReadFromStream];\n        {\n            System.arraycopy(tmpBuffer.array(), 0, encryptedBytes, 0, bytesReadFromStream);\n        }\n\n        //decrypt the array of encrypted bytes\n        final byte[] decrypted;\n        {\n                  decrypted = ???CIPHER_CLASS_LOW???.decryptChunk(encryptedBytes);\n   }\n        //sanity check\n        {\n            if(decrypted.length > bytebuffer.remaining()) {\n                throw new RuntimeException(\n                        \"sanity check failed.  \"\n                                + \"decrypted info too large to fit into provided buffer \"\n                                + \"(needed \" + decrypted.length +\n                                \" and have \" + bytebuffer.remaining() + \")\");\n            }\n        }\n\n        //write the decrypted bytes to the parent buffer\n        bytebuffer.put(decrypted, 0, decrypted.length);\n\n        return decrypted.length;}" ;
+        IMMoRTALS:hasMethodSignature  "read(ByteBuffer)" .
+
+IMMoRTALS_spec:SpecExample.ParadigmCipherSocketExample
+        a                            IMMoRTALS_pattern_spec:AbstractUsageParadigm ;
+        IMMoRTALS:hasComponent       IMMoRTALS_spec:SpecExample.InitStreamWrapper , IMMoRTALS_spec:SpecExample.GetStreamImpl , IMMoRTALS_spec:SpecExample.InitWrap ;
+        IMMoRTALS:hasDurableId       "ParadigmCipherSocketExample-initStreamWrapper-getStreamImpl-initWrap" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$ParadigmCipherSocketExample" .
+
+IMMoRTALS_spec:SpecExample.CipherSpecSocketExample
+        a                            IMMoRTALS_pattern_spec:LibraryFunctionalAspectSpec ;
+        IMMoRTALS:hasAspect          IMMoRTALS_functionality_alg_encryption:AspectCipherDecrypt ;
+        IMMoRTALS:hasComponent       IMMoRTALS_spec:SpecExample.8-d36088f0-21f8-4dee-bb01-ba8727b56125 , IMMoRTALS_spec:SpecExample.5-47fc8856-6a12-4091-aae6-8ad5665d0fa7 , IMMoRTALS_spec:SpecExample.7-70c41e40-b0dd-42c8-80cb-1aeedf9af9bc , IMMoRTALS_spec:SpecExample.6-579c3e87-6b89-47b5-a7e8-8d101c77e63f ;
+        IMMoRTALS:hasDurableId       "CipherSpecSocketExample" ;
+        IMMoRTALS:hasFunctionality   IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasLibraryCoordinateTag
+                "com.secur:cipher:1.2.3" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$CipherSpecSocketExample" ;
+        IMMoRTALS:hasUsageParadigm   IMMoRTALS_spec:SpecExample.ParadigmCipherExample .
+
+IMMoRTALS_resources_streams:AspectRetrieveOutputStream
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resources.streams.AspectRetrieveOutputStream" .
+
+IMMoRTALS_functionality:DfuConfigurationVariable-2cf333a9-5c57-4095-a706-431b6b2c1cfd
+        a                            IMMoRTALS_functionality:DfuConfigurationVariable ;
+        IMMoRTALS:hasMagicStringVar  "$PADDING_SCHEME$" ;
+        IMMoRTALS:hasSemanticType    IMMoRTALS_functionality_alg_encryption:PaddingScheme .
+
+IMMoRTALS_functionality:DfuConfigurationVariable-fd69497b-b9a1-4787-a668-bc630f683138
+        a                            IMMoRTALS_functionality:DfuConfigurationVariable ;
+        IMMoRTALS:hasMagicStringVar  "$CHAINING_MODE$" ;
+        IMMoRTALS:hasSemanticType    IMMoRTALS_functionality_alg_encryption:CipherChainingMode .
+
+IMMoRTALS_spec:SpecExample.1-fe2bf413-7f03-47c7-93ae-8a06614a29db
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_functionality_alg_encryption:AspectCipherInitialize ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-3a9286be-1859-4a84-b385-73f797e2335a ;
+        IMMoRTALS:hasDurableId  "cipher-init" .
+
+IMMoRTALS_pattern_spec:CodeSpec-5d4a578b-0266-484d-9939-f8c726e63daf
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasCode             "{\t\ttry { \n\t\treturn (this.socketchannel).register(selector, n);} catch (Exception exc) {}\n\t\t return null;}" ;
+        IMMoRTALS:hasMethodSignature  "registerWrapped(Ljava/nio/channels/Selector, int)Ljava/nio/channels/SelectionKey" .
+
+IMMoRTALS_functionality:DfuConfigurationVariable-479bedc7-20ec-4ff5-b302-bfe22ef64b5c
+        a                            IMMoRTALS_functionality:DfuConfigurationVariable ;
+        IMMoRTALS:hasMagicStringVar  "$KEY_LENGTH$" ;
+        IMMoRTALS:hasSemanticType    IMMoRTALS_functionality_alg_encryption:CipherKeyLength .
+
+IMMoRTALS_spec:SpecExample.SpecExample2
+        a                            IMMoRTALS_pattern_spec:LibraryFunctionalAspectSpec ;
+        IMMoRTALS:hasAspect          IMMoRTALS_functionality_alg_encryption:AspectCipherEncrypt ;
+        IMMoRTALS:hasDurableId       "SpecExample-2 (incomplete)" ;
+        IMMoRTALS:hasFunctionality   IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasLibraryCoordinateTag
+                "com.securboration:immortals-examples-cipher:0.0.1" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$SpecExample2" .
+
+IMMoRTALS_spec:SpecExample.16-59ebff8b-a651-4c12-a4bc-722c85e50834
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage
+                IMMoRTALS_spec:SpecExample.Declare ;
+        IMMoRTALS:hasDurableId  "example1-declare" ;
+        IMMoRTALS:hasSpec       "{com.securboration.example.Cipher cipher$2215879;}" .
+
+IMMoRTALS_functionality_alg_encryption:AspectCipherInitialize
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.alg.encryption.AspectCipherInitialize" .
+
+IMMoRTALS_resources_streams:AspectRetrieveInputStream
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resources.streams.AspectRetrieveInputStream" .
+
+IMMoRTALS_resources_streams:WrapOutputStreamWithCipher
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resources.streams.WrapOutputStreamWithCipher" .
+
+IMMoRTALS_spec:SpecExample.6-579c3e87-6b89-47b5-a7e8-8d101c77e63f
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_resources_streams:AspectRetrieveInputStream ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-b178bbc0-2f9a-470a-8872-ff65354bf04d ;
+        IMMoRTALS:hasDurableId  "get-stream-impl" .
+
+IMMoRTALS_spec:SpecExample.17-e8955d63-4635-42fc-a639-628d5a3a19a2
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage
+                IMMoRTALS_spec:SpecExample.Init ;
+        IMMoRTALS:hasDurableId  "example1-init" ;
+        IMMoRTALS:hasSpec       "cipher$2215879 = new com.securboration.example.Cipher();cipher$2215879.setMode(\"ENCRYPT\");" .
+
+IMMoRTALS_bytecode:BytecodeArtifactCoordinate-e8432ff1-0348-48fe-af84-9c6b47be39c7
+        a                           IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+        IMMoRTALS:hasArtifactId     "lib-cipher" ;
+        IMMoRTALS:hasCoordinateTag  "org.third.party:lib-cipher:1.2.3" ;
+        IMMoRTALS:hasGroupId        "org.third.party" ;
+        IMMoRTALS:hasVersion        "1.2.3" .
+
+IMMoRTALS_spec:SpecExample.CipherSpecSocketExampleOuput
+        a                            IMMoRTALS_pattern_spec:LibraryFunctionalAspectSpec ;
+        IMMoRTALS:hasAspect          IMMoRTALS_functionality_alg_encryption:AspectCipherEncrypt ;
+        IMMoRTALS:hasComponent       IMMoRTALS_spec:SpecExample.1-fe2bf413-7f03-47c7-93ae-8a06614a29db , IMMoRTALS_spec:SpecExample.3-537e7204-7291-4d3d-b5e1-bc45afe116f4 , IMMoRTALS_spec:SpecExample.4-efeb9c31-b065-4a8b-ac98-ef9bdb67b1a7 , IMMoRTALS_spec:SpecExample.2-0cb3a87f-e534-476c-b69a-3be4bfc814d1 ;
+        IMMoRTALS:hasDurableId       "CipherSpecSocketExample" ;
+        IMMoRTALS:hasFunctionality   IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasLibraryCoordinateTag
+                "com.secur:cipher:1.2.3" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$CipherSpecSocketExampleOuput" ;
+        IMMoRTALS:hasUsageParadigm   IMMoRTALS_spec:SpecExample.ParadigmCipherExample .
+
+IMMoRTALS_pattern_spec:CodeSpec-ac24ce45-764a-4738-b650-6d0748612793
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/net/Socket" ;
+        IMMoRTALS:hasCode             "\t\t{outputstream = ???CIPHER_CLASS_LOW???.acquire(outputstream);\n\t\treturn outputstream;}" ;
+        IMMoRTALS:hasMethodSignature  "wrapOutputStream(Ljava/io/OutputStream, ???CIPHER_CLASS_UP???)" .
+
+IMMoRTALS_pattern_spec:CodeSpec-ea363b7f-f82f-4789-bab7-241c8e2dcc53
+        a                       IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName  "java/nio/channels/SocketChannel" ;
+		IMMoRTALS:hasMethodSignature "initCipherImpl()L???CIPHER_CLASS_UP???" ;
+        IMMoRTALS:hasCode       "this.setMagicInitString(\"{ ???CIPHER_CLASS_LOW??? cipherImpl = new ???CIPHER_CLASS_LOW???();\n\" +\n                    \"cipherImpl.configure(\"$ALG$\", $KEY_LENGTH$, \"$CHAINING_MODE$\", \"$PADDING_SCHEME$\", \"a test password\", \"an init vector\");\n\" +\n                    \"return cipherImpl; }\");" .
+
+IMMoRTALS_functionality_wrapper:AspectUtilizeDecryptedStream
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.wrapper.AspectUtilizeDecryptedStream" .
+
+IMMoRTALS_resources_streams:WrapInputStreamWithCipher
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resources.streams.WrapInputStreamWithCipher" .
+
+IMMoRTALS_spec:SpecExample.BouncyCastleCipherParadigm
+        a                             IMMoRTALS_pattern_spec:AbstractUsageParadigm ;
+        IMMoRTALS:hasConfigurationVariables
+                IMMoRTALS_functionality:DfuConfigurationVariable-0617670b-42d6-4b37-9f44-4d927974fd51 , IMMoRTALS_functionality:DfuConfigurationVariable-3b273db1-82fd-4903-be4f-f02722f7bb92 , IMMoRTALS_functionality:DfuConfigurationVariable-2be0db8f-0929-45f6-9977-a02d4f5de261 , IMMoRTALS_functionality:DfuConfigurationVariable-2b275100-fd11-4bc8-acd7-161cac7f1277 , IMMoRTALS_functionality:DfuConfigurationVariable-2cf333a9-5c57-4095-a706-431b6b2c1cfd ;
+        IMMoRTALS:hasDfuInstance      IMMoRTALS_dfu_instance:DfuInstance-BouncyCastleCipher ;
+        IMMoRTALS:hasMagicInitString  "{ CipherImplBouncyCrypto cipherImpl = new CipherImplBouncyCrypto();\ncipherImpl.configure(\"$ALG$\", $KEY_LENGTH$, \"$CHAINING_MODE$\", \"$PADDING_SCHEME$\", \"a test password\", \"an init vector\");\nreturn cipherImpl; }" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.spec.SpecExample$BouncyCastleCipherParadigm" .
+
+IMMoRTALS_spec:SpecExample.SpecExample1
+        a                            IMMoRTALS_pattern_spec:LibraryFunctionalAspectSpec ;
+        IMMoRTALS:hasAspect          IMMoRTALS_functionality_alg_encryption:AspectCipherEncrypt ;
+        IMMoRTALS:hasComponent       IMMoRTALS_spec:SpecExample.19-cfe7764a-a93b-4676-bf26-b7a5b1519401 , IMMoRTALS_spec:SpecExample.18-f0f05a82-cc93-401f-bdab-1835f48ab6c6 , IMMoRTALS_spec:SpecExample.17-e8955d63-4635-42fc-a639-628d5a3a19a2 , IMMoRTALS_spec:SpecExample.16-59ebff8b-a651-4c12-a4bc-722c85e50834 ;
+        IMMoRTALS:hasDurableId       "SpecExample-1" ;
+        IMMoRTALS:hasFunctionality   IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasLibraryCoordinateTag
+                "org.third.party:lib-cipher:1.2.3" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$SpecExample1" ;
+        IMMoRTALS:hasUsageParadigm   IMMoRTALS_spec:SpecExample.ParadigmExample .
+
+IMMoRTALS_spec:SpecExample.DoWork
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "doWork" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "[0,inf]" ;
+        IMMoRTALS:hasOrdering        "2"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$DoWork" .
+
+IMMoRTALS_spec:SpecExample.13-d7f78c3a-f99d-4901-9b31-3fb0f95cf6cf
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_functionality_wrapper:AspectRuntimeImplementation ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-f5229251-a4e9-4cc5-b26f-af0452177aab ;
+        IMMoRTALS:hasDurableId  "implClose" .
+		
+IMMoRTALS_spec:SpecExample.13-d7f78c3b-f99d-4901-9b31-3fb0f95cf6cf
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_functionality_wrapper:AspectRuntimeImplementation ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-f5229252-a4e9-4cc5-b26f-af0452177aab ;
+        IMMoRTALS:hasDurableId  "implConfigureBlocking" .
+		
+
+IMMoRTALS_spec:SpecExample.2-0cb3a87f-e534-476c-b69a-3be4bfc814d1
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_resources_streams:AspectRetrieveOutputStream ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-ab7b3fc8-07c7-4325-8141-230694f17df6 ;
+        IMMoRTALS:hasDurableId  "get-stream-impl" .
+
+IMMoRTALS_functionality:DfuConfigurationVariable-c672d985-0fa8-499c-8aa9-f8791e43c7c4
+        a                            IMMoRTALS_functionality:DfuConfigurationVariable ;
+        IMMoRTALS:hasMagicStringVar  "$PADDING_SCHEME$" ;
+        IMMoRTALS:hasSemanticType    IMMoRTALS_functionality_alg_encryption:PaddingScheme .
+
+IMMoRTALS_spec:SpecExample.CipherSpecExampleInput
+        a                            IMMoRTALS_pattern_spec:LibraryFunctionalAspectSpec ;
+        IMMoRTALS:hasAspect          IMMoRTALS_functionality_alg_encryption:AspectCipherDecrypt ;
+        IMMoRTALS:hasComponent       IMMoRTALS_spec:SpecExample.13-d7f78c3a-f99d-4901-9b31-3fb0f95cf6cf , IMMoRTALS_spec:SpecExample.10-72ecd9db-2db7-4585-8462-addfb10cc52b , IMMoRTALS_spec:SpecExample.9-bc513c0e-c4f0-4926-aded-28be7baf3515 , IMMoRTALS_spec:SpecExample.11-b33d2f4c-3c47-448d-b956-9d49a9a463c0 , IMMoRTALS_spec:SpecExample.12-aaacc4df-cf1a-403a-839e-a1b413a694be, IMMoRTALS_spec:SpecExample.13-d7f78c3b-f99d-4901-9b31-3fb0f95cf6cf ;
+        IMMoRTALS:hasDurableId       "CipherSpecExample" ;
+        IMMoRTALS:hasFunctionality   IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasLibraryCoordinateTag
+                "com.secur:cipher:1.2.3" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$CipherSpecExampleInput" ;
+        IMMoRTALS:hasUsageParadigm   IMMoRTALS_spec:SpecExample.ParadigmCipherExample .
+
+IMMoRTALS_spec:SpecExample.15-c1438e03-04de-4611-8e68-0b2f0012046f
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_resources_streams:AspectWriteMessage ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-84b5b4af-2608-4007-b791-972fe1c9129e ;
+        IMMoRTALS:hasDurableId  "write-message" .
+
+IMMoRTALS_spec:SpecExample.18-f0f05a82-cc93-401f-bdab-1835f48ab6c6
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage
+                IMMoRTALS_spec:SpecExample.DoWork ;
+        IMMoRTALS:hasDurableId  "example1-doWork" ;
+        IMMoRTALS:hasSpec       "output$127997 = cipher$2215879.encrypt(input$0876887);" .
+
+IMMoRTALS_pattern_spec:CodeSpec-eea847ca-fa14-468f-ab5f-da72a04a36f3
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasCode             "\t\t{ try {return (this.socketchannel).configureBlocking(b); }\n\t\t catch (Exception exc) {}\n\t\t return null;}" ;
+        IMMoRTALS:hasMethodSignature  "configureBlockingWrapped(boolean)Ljava/nio/channels/SelectableChannel" .
+
+IMMoRTALS_pattern_spec:CodeSpec-3a9286be-1859-4a84-b385-73f797e2335a
+        a                       IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName  "java/net/Socket" ;
+        IMMoRTALS:hasMethodSignature "initCipherImpl()L???CIPHER_CLASS_UP???" ;
+        IMMoRTALS:hasCode       "{ ???CIPHER_CLASS_UP??? cipherImpl = new ???CIPHER_CLASS_UP???();\n\" +\n                    \"cipherImpl.configure(\"$ALG$\", $KEY_LENGTH$, \"$CHAINING_MODE$\", \"$PADDING_SCHEME$\", \"a test password\", \"an init vector\");\n\" +\n                    \"return cipherImpl; }\");" .
+
+IMMoRTALS_spec:SpecExample.GetStreamImpl
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "GetStreamImpl" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "1" ;
+        IMMoRTALS:hasOrdering        "0"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$GetStreamImpl" .
+
+IMMoRTALS_resources_streams:AspectWriteMessage
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resources.streams.AspectWriteMessage" .
+
+IMMoRTALS_spec:SpecExample.7-70c41e40-b0dd-42c8-80cb-1aeedf9af9bc
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_resources_streams:WrapInputStreamWithCipher ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-3b7061c0-2d46-4da4-87fe-c01d88eaa2aa ;
+        IMMoRTALS:hasDurableId  "wrap-stream-with-cipher" .
+
+IMMoRTALS_functionality_alg_encryption:Cipher
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.alg.encryption.Cipher" .
+
+IMMoRTALS_functionality_wrapper:AspectUtilizeEncryptedStream
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.wrapper.AspectUtilizeEncryptedStream" .
+
+IMMoRTALS_spec:SpecExample.CipherLibrary2
+        a                            IMMoRTALS_bytecode:JarArtifact ;
+        IMMoRTALS:hasBinaryForm      "" ;
+        IMMoRTALS:hasCoordinate      IMMoRTALS_bytecode:BytecodeArtifactCoordinate-85ba605d-0a17-43b1-a100-f05f7a077574 ;
+        IMMoRTALS:hasHash            "hashValueGoesHere" ;
+        IMMoRTALS:hasName            "CipherLibrary2" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$CipherLibrary2" .
+
+IMMoRTALS_pattern_spec:CodeSpec-c03c8cb5-36db-4d41-93b9-43574d57e64a
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/net/Socket" ;
+        IMMoRTALS:hasMethodSignature  "initCipherImpl()" .
+
+IMMoRTALS_spec:SpecExample.14-4e31e4f9-4d87-43ab-954d-bb768f8c8e2c
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_functionality_alg_encryption:AspectCipherInitialize ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-07fa9ddb-282e-48e2-ad02-d86c8134344b ;
+        IMMoRTALS:hasDurableId  "cipher-init" .
+
+IMMoRTALS_spec:SpecExample.Declare
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "declare" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "1" ;
+        IMMoRTALS:hasOrdering        "0"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$Declare" .
+
+IMMoRTALS_spec:SpecExample.InitWrap
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "initWrap" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "1" ;
+        IMMoRTALS:hasOrdering        "0"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$InitWrap" .
+
+IMMoRTALS_pattern_spec:CodeSpec-037cdd0a-1fd0-44fa-b174-c88cb396da65
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/net/Socket" ;
+        IMMoRTALS:hasCode             "{return this.inputstream;}" ;
+        IMMoRTALS:hasMethodSignature  "getInputStream()" .
+
+IMMoRTALS_functionality:DfuConfigurationVariable-0617670b-42d6-4b37-9f44-4d927974fd51
+        a                            IMMoRTALS_functionality:DfuConfigurationVariable ;
+        IMMoRTALS:hasMagicStringVar  "$ALG$" ;
+        IMMoRTALS:hasSemanticType    IMMoRTALS_functionality_alg_encryption:CipherAlgorithm .
+
+IMMoRTALS_pattern_spec:CodeSpec-0bee8d52-3fd7-4e4f-91d6-059a3d66b12d
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/net/Socket" ;
+        IMMoRTALS:hasCode             "{return this.outputstream;}" ;
+        IMMoRTALS:hasMethodSignature  "getOutputStream()" .
+
+IMMoRTALS_spec:SpecExample.4-efeb9c31-b065-4a8b-ac98-ef9bdb67b1a7
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_functionality_wrapper:AspectUtilizeEncryptedStream ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-0bee8d52-3fd7-4e4f-91d6-059a3d66b12d ;
+        IMMoRTALS:hasDurableId  "wrapper-use-encrypt-stream" .
+
+IMMoRTALS_spec:SpecExample.10-72ecd9db-2db7-4585-8462-addfb10cc52b
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_resources_streams:AspectReadMessage ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-70132887-5c8e-43df-b40c-de6cfce1a505 ;
+        IMMoRTALS:hasDurableId  "read-message" .
+
+IMMoRTALS_spec:SpecExample.8-d36088f0-21f8-4dee-bb01-ba8727b56125
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_functionality_wrapper:AspectUtilizeDecryptedStream ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-037cdd0a-1fd0-44fa-b174-c88cb396da65 ;
+        IMMoRTALS:hasDurableId  "wrapper-use-decrypt-stream" .
+
+IMMoRTALS_spec:SpecExample.JavaxCryptoCipherParadigm
+        a                             IMMoRTALS_pattern_spec:AbstractUsageParadigm ;
+        IMMoRTALS:hasConfigurationVariables
+                IMMoRTALS_functionality:DfuConfigurationVariable-08729ee3-173e-4221-b870-3a44b1a7cb4e , IMMoRTALS_functionality:DfuConfigurationVariable-479bedc7-20ec-4ff5-b302-bfe22ef64b5c , IMMoRTALS_functionality:DfuConfigurationVariable-047f12db-3a80-4a05-afd8-84490155e559 , IMMoRTALS_functionality:DfuConfigurationVariable-fd69497b-b9a1-4787-a668-bc630f683138 , IMMoRTALS_functionality:DfuConfigurationVariable-c672d985-0fa8-499c-8aa9-f8791e43c7c4 ;
+        IMMoRTALS:hasDfuInstance      IMMoRTALS_dfu_instance:DfuInstance-JavaxCipher ;
+        IMMoRTALS:hasMagicInitString  "{ CipherImplJavaxCrypto cipherImpl = new CipherImplJavaxCrypto();\ncipherImpl.configure(\"$ALG$\", $KEY_LENGTH$, \"$CHAINING_MODE$\", \"$PADDING_SCHEME$\", \"a test password\", \"an init vector\");\nreturn cipherImpl; }" ;
+        IMMoRTALS:hasPojoProvenance   "com.securboration.immortals.ontology.spec.SpecExample$JavaxCryptoCipherParadigm" .
+
+IMMoRTALS_spec:SpecExample.12-aaacc4df-cf1a-403a-839e-a1b413a694be
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_functionality_wrapper:AspectRuntimeImplementation ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-5d4a578b-0266-484d-9939-f8c726e63daf ;
+        IMMoRTALS:hasDurableId  "register" .
+
+IMMoRTALS_functionality_alg_encryption:AspectCipherDecrypt
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.alg.encryption.AspectCipherDecrypt" .
+
+IMMoRTALS_spec:SpecExample.CipherLibrary1
+        a                            IMMoRTALS_bytecode:JarArtifact ;
+        IMMoRTALS:hasBinaryForm      "" ;
+        IMMoRTALS:hasCoordinate      IMMoRTALS_bytecode:BytecodeArtifactCoordinate-e8432ff1-0348-48fe-af84-9c6b47be39c7 ;
+        IMMoRTALS:hasHash            "hashValueGoesHere" ;
+        IMMoRTALS:hasName            "CipherLibrary1" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$CipherLibrary1" .
+
+IMMoRTALS_spec:SpecExample.ParadigmExample
+        a                            IMMoRTALS_pattern_spec:AbstractUsageParadigm ;
+        IMMoRTALS:hasComponent       IMMoRTALS_spec:SpecExample.Declare , IMMoRTALS_spec:SpecExample.Init , IMMoRTALS_spec:SpecExample.DoWork , IMMoRTALS_spec:SpecExample.Cleanup ;
+        IMMoRTALS:hasDurableId       "ParadigmExample-declare-init-doWork-cleanup" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$ParadigmExample" .
+
+IMMoRTALS_pattern_spec:CodeSpec-b178bbc0-2f9a-470a-8872-ff65354bf04d
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/net/Socket" ;
+        IMMoRTALS:hasCode             "\t\t{InputStream inputStream = this.socket.getInputStream();\n\t\treturn inputStream;}" ;
+        IMMoRTALS:hasMethodSignature  "getInputStreamImpl()" .
+
+IMMoRTALS_pattern_spec:CodeSpec-3b7061c0-2d46-4da4-87fe-c01d88eaa2aa
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/net/Socket" ;
+        IMMoRTALS:hasCode             "\t\t{inputstream = ???CIPHER_CLASS_LOW???.acquire(inputstream);\n\t\treturn inputstream;}" ;
+        IMMoRTALS:hasMethodSignature  "wrapInputStream(InputStream, ???CIPHER_CLASS_UP???)" .
+
+IMMoRTALS_spec:SpecExample.3-537e7204-7291-4d3d-b5e1-bc45afe116f4
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_resources_streams:WrapOutputStreamWithCipher ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-ac24ce45-764a-4738-b650-6d0748612793 ;
+        IMMoRTALS:hasDurableId  "wrap-stream-with-cipher" .
+
+IMMoRTALS_pattern_spec:CodeSpec-f5229251-a4e9-4cc5-b26f-af0452177aab
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasCode             "{throw new RuntimeException(\"This method needs to be written by the user with configurations of their choosing.\");}" ;
+        IMMoRTALS:hasMethodSignature  "implCloseSelectableChannel()V" .
+		
+IMMoRTALS_pattern_spec:CodeSpec-f5229252-a4e9-4cc5-b26f-af0452177aab
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasCode             "{throw new RuntimeException(\"This method needs to be written by the user with configurations of their choosing.\");}" ;
+        IMMoRTALS:hasMethodSignature  "implConfigureBlocking(boolean)V" .
+
+IMMoRTALS_functionality:DfuConfigurationVariable-047f12db-3a80-4a05-afd8-84490155e559
+        a                            IMMoRTALS_functionality:DfuConfigurationVariable ;
+        IMMoRTALS:hasMagicStringVar  "$BLOCK_SIZE$" ;
+        IMMoRTALS:hasSemanticType    IMMoRTALS_functionality_alg_encryption:CipherBlockSize .
+
+IMMoRTALS_functionality:DfuConfigurationVariable-2be0db8f-0929-45f6-9977-a02d4f5de261
+        a                            IMMoRTALS_functionality:DfuConfigurationVariable ;
+        IMMoRTALS:hasMagicStringVar  "$BLOCK_SIZE$" ;
+        IMMoRTALS:hasSemanticType    IMMoRTALS_functionality_alg_encryption:CipherBlockSize .
+
+IMMoRTALS_spec:SpecExample.19-cfe7764a-a93b-4676-bf26-b7a5b1519401
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAbstractComponentLinkage
+                IMMoRTALS_spec:SpecExample.Cleanup ;
+        IMMoRTALS:hasDurableId  "example1-cleanup" ;
+        IMMoRTALS:hasSpec       "cipher$2215879.cleanup();" .
+
+IMMoRTALS_functionality:DfuConfigurationVariable-2b275100-fd11-4bc8-acd7-161cac7f1277
+        a                            IMMoRTALS_functionality:DfuConfigurationVariable ;
+        IMMoRTALS:hasMagicStringVar  "$CHAINING_MODE$" ;
+        IMMoRTALS:hasSemanticType    IMMoRTALS_functionality_alg_encryption:CipherChainingMode .
+
+IMMoRTALS_functionality:DfuConfigurationVariable-08729ee3-173e-4221-b870-3a44b1a7cb4e
+        a                            IMMoRTALS_functionality:DfuConfigurationVariable ;
+        IMMoRTALS:hasMagicStringVar  "$ALG$" ;
+        IMMoRTALS:hasSemanticType    IMMoRTALS_functionality_alg_encryption:CipherAlgorithm .
+
+IMMoRTALS_spec:SpecExample.JavaxCryptoCipher
+        a                            IMMoRTALS_dfu_instance:DfuInstance ;
+        IMMoRTALS:hasClassPointer    "TODO" ;
+        IMMoRTALS:hasFunctionalityAbstraction
+                IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$JavaxCryptoCipher" .
+
+IMMoRTALS_pattern_spec:CodeSpec-07fa9ddb-282e-48e2-ad02-d86c8134344b
+        a                       IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName  "java/nio/channels/SocketChannel" ;
+		IMMoRTALS:hasMethodSignature "initCipherImpl()???CIPHER_CLASS_UP???" ;
+        IMMoRTALS:hasCode       "{???CIPHER_CLASS_UP??? cipherImpl = new ???CIPHER_CLASS_UP???();\n cipherImpl.configure(\"$ALG$\", $KEY_LENGTH$, \"$CHAINING_MODE$\", \"$PADDING_SCHEME$\", \"a test password\", \"an init vector\");\n return cipherImpl;}" .
+
+IMMoRTALS_pattern_spec:CodeSpec-84b5b4af-2608-4007-b791-972fe1c9129e
+        a                             IMMoRTALS_pattern_spec:CodeSpec ;
+        IMMoRTALS:hasClassName        "java/nio/channels/SocketChannel" ;
+        IMMoRTALS:hasCode             " {final ByteBuffer writeThis;\n\n        \n\t\twriteThis = ByteBuffer.wrap(???CIPHER_CLASS_LOW???.encryptChunk(bytebuffer.array()));\n\n        double diff;\n        if (bytebuffer.capacity() != writeThis.capacity()) {\n            diff = (double)bytebuffer.capacity() / (double)writeThis.capacity();\n        } else {\n            diff = 1.0;\n        }\n\n        int bytesWritten = (this.socketchannel.write(writeThis));\n\n        double compensationForSizeDiff = bytesWritten * diff;\n\n        bytebuffer.position(bytebuffer.position() + (int) compensationForSizeDiff);\n\n        return (int) compensationForSizeDiff;}" ;
+        IMMoRTALS:hasMethodSignature  "write(ByteBuffer)" .
+
+IMMoRTALS_spec:SpecExample.11-b33d2f4c-3c47-448d-b956-9d49a9a463c0
+        a                       IMMoRTALS_pattern_spec:SpecComponent ;
+        IMMoRTALS:hasAspectBeingPerformed
+                IMMoRTALS_functionality_wrapper:AspectRuntimeImplementation ;
+        IMMoRTALS:hasCodeSpec   IMMoRTALS_pattern_spec:CodeSpec-eea847ca-fa14-468f-ab5f-da72a04a36f3 ;
+        IMMoRTALS:hasDurableId  "configure-blocking" .
+
+IMMoRTALS_functionality_wrapper:AspectRuntimeImplementation
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.wrapper.AspectRuntimeImplementation" .
+
+IMMoRTALS_spec:SpecExample.BouncyCastleCipher
+        a                            IMMoRTALS_dfu_instance:DfuInstance ;
+        IMMoRTALS:hasClassPointer    "TODO" ;
+        IMMoRTALS:hasFunctionalityAbstraction
+                IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$BouncyCastleCipher" .
+
+IMMoRTALS_functionality_alg_encryption:AspectCipherEncrypt
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.alg.encryption.AspectCipherEncrypt" .
+
+IMMoRTALS_bytecode:BytecodeArtifactCoordinate-85ba605d-0a17-43b1-a100-f05f7a077574
+        a                           IMMoRTALS_bytecode:BytecodeArtifactCoordinate ;
+        IMMoRTALS:hasArtifactId     "immortals-examples-cipher" ;
+        IMMoRTALS:hasCoordinateTag  "com.securboration:immortals-examples-cipher:0.0.1" ;
+        IMMoRTALS:hasGroupId        "com.securboration" ;
+        IMMoRTALS:hasVersion        "0.0.1" .
+
+IMMoRTALS_spec:SpecExample.Init
+        a                            IMMoRTALS_pattern_spec:ParadigmComponent ;
+        IMMoRTALS:hasDurableId       "init" ;
+        IMMoRTALS:hasMultiplicityOperator
+                "1" ;
+        IMMoRTALS:hasOrdering        "1"^^xsd:int ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.spec.SpecExample$Init" .
+
+IMMoRTALS_resources_streams:AspectReadMessage
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resources.streams.AspectReadMessage" .

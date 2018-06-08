@@ -1,15 +1,15 @@
 package mil.darpa.immortals.core.das.sparql.adaptationtargets;
 
+import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.das.sparql.SparqlQuery;
+import mil.darpa.immortals.core.das.sparql.deploymentmodel.DetermineLibraryUpgrades;
+import mil.darpa.immortals.das.context.ContextManager;
 import mil.darpa.immortals.das.context.DasAdaptationContext;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class DetermineAllAnnotatedTestFunctionality extends SparqlQuery {
 
@@ -22,12 +22,16 @@ public class DetermineAllAnnotatedTestFunctionality extends SparqlQuery {
                 "prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#> " +
                 "prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#>  " +
                 "prefix IMMoRTALS_java_testing_instance: <http://darpa.mil/immortals/ontology/r2.0.0/java/testing/instance#> " +
+                "prefix IMMoRTALS_mil_darpa_immortals_ontology: <http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#> " +
                 "SELECT ?artifactIdentifier ?testIdentifier ?featureRequirement " +
                 "WHERE { " +
-                "    GRAPH <" + dac.getKnowldgeUri() + "> { " +
+                "      GRAPH <" + dac.getKnowldgeUri() + "> { " +
+                "    ?aDeploymentModel a IMMoRTALS_gmei:DeploymentModel . " +
+                "    ?aDeploymentModel IMMoRTALS:hasAvailableResources ?availableResources . " +
+                "    ?availableResources IMMoRTALS_mil_darpa_immortals_ontology:hasArtifactIdentifier ?artifactIdentifier . " +
                 "    ?aProject a IMMoRTALS_java_project:JavaProject . " +
-                "    ?aProject IMMoRTALS:hasCoordinate ?projectCoordinate . " +
-                "    ?projectCoordinate IMMoRTALS:hasArtifactId ?artifactIdentifier . " +
+                "    ?aProject IMMoRTALS:hasVcsCoordinate ?aVcsCoordinate . " +
+                "    ?aVcsCoordinate IMMoRTALS:hasVersionControlUrl ?artifactIdentifier . " +
                 "    ?aProject IMMoRTALS:hasCompiledSourceHash ?compiledSourceHashes . " +
                 "    ?compiledSourceFiles IMMoRTALS:hasHash ?compiledSourceHashes . " +
                 "    ?compiledSourceFiles IMMoRTALS:hasCorrespondingClass ?classArtifacts . " +

@@ -1,15 +1,14 @@
 package mil.darpa.immortals.core.das.sparql.adaptationtargets;
 
 import mil.darpa.immortals.core.das.adaptationtargets.building.AdaptationTargetInterface;
-import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
 import mil.darpa.immortals.core.das.sparql.SparqlQuery;
-import mil.darpa.immortals.das.context.ContextManager;
 import mil.darpa.immortals.das.context.DasAdaptationContext;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by awellman@bbn.com on 3/28/18.
@@ -25,7 +24,7 @@ public class DetermineProvidedFunctionalAspects extends SparqlQuery {
 
     public static Set<String> select(DasAdaptationContext dac, @Nonnull String publishGroupId, @Nonnull String publishArtifactId, @Nonnull String publishVersion) {
         Set<String> providedFunctionality = new HashSet<>();
-        
+
         String query =
                 "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> " +
                         "prefix IMMoRTALS_mil_darpa_immortals_ontology: <http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#> " +
@@ -49,9 +48,8 @@ public class DetermineProvidedFunctionalAspects extends SparqlQuery {
                         "} ";
 
 
-
         ResultSet resultSet = getResultSet(query);
-        
+
         while (resultSet.hasNext()) {
             QuerySolution qs = resultSet.next();
             providedFunctionality.add(qs.getResource("functionalAspect").toString());

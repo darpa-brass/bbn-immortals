@@ -238,6 +238,8 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
         
         Console.log("\nfound a DFU: " + cn.name);
         
+        String durableUri = checkForDurableUri(classAnnotations);
+        
         Map<String,Object> kvs = 
                 AnnotationHelper.getAnnotationKeyValues(dfuAnnotation);
         
@@ -315,12 +317,30 @@ public class AnnotationParser implements BytecodeArtifactVisitor {
             dfu.setTag(
                 (String)kvs.get(Keys.tag));
             
+            if (durableUri != null) {
+                dfu.setDurableUri(durableUri);
+            }
+            
             config.getMapper().registerObjectToSerialize(dfu);
         }
         
         visitMethods(classHash, bytecode);
     }
-    
+
+    private String checkForDurableUri(Collection<AnnotationNode> dfuAnnotations) {
+        String durableUri = null;
+        for (AnnotationNode dfuAnnotation : dfuAnnotations) {
+            Map<String,Object> kvs = AnnotationHelper.getAnnotationKeyValues(dfuAnnotation);
+            for (String key : kvs.keySet()) {
+                if (key.toLowerCase().contains("durableuri")) {
+                    durableUri = (String) kvs.get(key);
+                    break;
+                }
+            }
+        }
+        return durableUri;
+    }
+
     private Functionality instantiateFunctionality(Class<? extends Functionality> c){
         try {
             return c.newInstance();

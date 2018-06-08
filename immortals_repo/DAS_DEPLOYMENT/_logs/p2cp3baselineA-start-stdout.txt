@@ -1,0 +1,243 @@
+.immortalsrc found in home directory. Sourcing...
+==================================================
+    __
+   / /                               
+  / /_  _    _  _   __  __ _|_  _  | __
+ / // \/ \  / \/ \ |  ||    |   _| ||__
+/_// /\/\ \/ /\/\ \|__||    |  |_| | __|
+==================================================
+
+
+Using verbosity level 'ALL' (slf4j='TRACE', log4j='TRACE', java.logging='ALL').
+10:04:36.604 [main] DEBUG mil.darpa.immortals.DasLauncher - Loaded the following ImmortalsConfig:
+{
+  "globals": {
+    "immortalsRoot": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root",
+    "immortalsRepo": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/shared/IMMORTALS_REPO",
+    "globalApplicationDeploymentDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/APP_DEPLOYMENT",
+    "globalWorkingDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT",
+    "ttlIngestionDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/knowledge-repo/vocabulary/ontology-static/ontology",
+    "globalLogDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_logs",
+    "executionsDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT",
+    "executionsLogDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_logs",
+    "immortalsOntologyUriRoot": "http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#",
+    "immortalsOntologyUriPrefix": "IMMoRTALS_mil_darpa_immortals_ontology",
+    "headless": true
+  },
+  "dasService": {
+    "userManaged": false,
+    "startupTimeMS": 60000,
+    "identifier": "dasservice",
+    "port": 8080,
+    "protocol": "http",
+    "url": "127.0.0.1",
+    "exePath": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/das/das-service/das.jar",
+    "workingDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_dasservice",
+    "interpreterParameters": [],
+    "parameters": [],
+    "environmentVariables": {},
+    "readyStdoutLineRegexPattern": ".*(?\u003c\u003dThe DAS service located at).*(?\u003c\u003dis running.)$"
+  },
+  "testHarness": {
+    "protocol": "http",
+    "url": "127.0.0.1",
+    "port": 44444
+  },
+  "testAdapter": {
+    "userManaged": false,
+    "startupTimeMS": 20000,
+    "identifier": "testadapter",
+    "port": 55555,
+    "protocol": "http",
+    "url": "127.0.0.1",
+    "exePath": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/das/das-testharness-coordinator/build/libs/das-testharness-coordinator-2.0-LOCAL.jar",
+    "workingDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_testadapter",
+    "interpreterParameters": [],
+    "parameters": [],
+    "environmentVariables": {},
+    "websocketPort": 7878,
+    "readyStdoutLineRegexPattern": ".*(?\u003c\u003dStarted TestAdapter at URL \u0027).*(?\u003c\u003d\\.)$"
+  },
+  "fuseki": {
+    "userManaged": false,
+    "startupTimeMS": 20000,
+    "identifier": "fuseki",
+    "port": 3030,
+    "protocol": "http",
+    "url": "127.0.0.1",
+    "exePath": "/Users/awellman/.immortals/fuseki/fuseki-server.jar",
+    "workingDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_fuseki",
+    "interpreterParameters": [],
+    "parameters": [
+      "--update",
+      "--mem",
+      "--port\u003d3030",
+      "/ds"
+    ],
+    "environmentVariables": {
+      "FUSEKI_HOME": "/Users/awellman/.immortals/fuseki/",
+      "FUSEKI_RUN": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_fuseki/fuseki_run",
+      "FUSEKI_BASE": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_fuseki/fuseki_base"
+    },
+    "readyStdoutLineRegexPattern": ".*(?\u003c\u003dStarted).*(?\u003c\u003d on port ).*"
+  },
+  "knowledgeRepoService": {
+    "userManaged": false,
+    "startupTimeMS": 60000,
+    "identifier": "knowledgerepo",
+    "url": "127.0.0.1",
+    "protocol": "http",
+    "port": 9999,
+    "exePath": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/knowledge-repo/knowledge-repo/repository-service/target/immortals-repository-service-boot.war",
+    "workingDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_knowledgerepo",
+    "interpreterParameters": [
+      "-Djava.security.egd\u003dfile:/dev/urandom",
+      "-Dserver.address\u003d127.0.0.1",
+      "-Dserver.port\u003d9999"
+    ],
+    "readyStdoutLineRegexPattern": "^running ImmortalsRepositoryService$",
+    "parameters": [],
+    "environmentVariables": {}
+  },
+  "build": {
+    "das": {
+      "rootGroup": "mil.darpa.immortals",
+      "publishVersion": "2.0-LOCAL",
+      "javaVersionCompatibility": "1.8",
+      "slf4jVersion": "1.7.21",
+      "gradleVersion": "3.4.1"
+    },
+    "augmentations": {
+      "publishVersion": "2.0-LOCAL",
+      "javaVersionCompatibility": "1.7",
+      "androidBuildToolsVersion": "25.0.2",
+      "androidGradleToolsVersion": "2.3.3",
+      "androidCompileSdkVersion": 21,
+      "androidMinSdkVersion": 21,
+      "androidTargetSdkVersion": 21,
+      "javaHome": "/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home",
+      "androidSdkRoot": "/Users/awellman/Library/Android/sdk",
+      "mavenPublishRepo": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/shared/IMMORTALS_REPO"
+    }
+  },
+  "debug": {
+    "useMockFuseki": true,
+    "useMockKnowledgeRepository": true,
+    "useMockDas": true,
+    "useMockApplicationDeployment": true,
+    "useMockTestHarness": false,
+    "useMockTestAdapter": false,
+    "useMockAqlBrass": true,
+    "useMockExtensionHddRass": false,
+    "useMockExtensionSchemaEvolution": false,
+    "useMockTestCoordinators": true,
+    "logNetworkActivityToSeparateFile": true,
+    "shutdownGracePeriodMS": 10000,
+    "loggingConfigDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/das/das-launcher/logging_scripts/",
+    "haltTestingOnFailure": true
+  },
+  "extensions": {
+    "castor": {
+      "identifier": "castor"
+    },
+    "krgp": {
+      "identifier": "krgp",
+      "ttlTargetDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp"
+    },
+    "hddrass": {
+      "identifier": "hddrass",
+      "jarPath": "extensions/osu/hddrass/build/libs/hddRASS-1.0-SNAPSHOT.jar",
+      "gradleBuildFile": "extensions/osu/hddrass/build.gradle"
+    },
+    "voltdb": {
+      "userManaged": false,
+      "startupTimeMS": 20000,
+      "identifier": "voltdb",
+      "port": 21212,
+      "protocol": "http",
+      "url": "127.0.0.1",
+      "workingDirectoryTemplateFolder": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/castor/voltdb7",
+      "workingDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_voltdb",
+      "exePath": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_voltdb/build.xml",
+      "interpreterParameters": [
+        "-buildfile"
+      ],
+      "parameters": [
+        "clean",
+        "init",
+        "start"
+      ],
+      "environmentVariables": {},
+      "readyStdoutLineRegexPattern": " *\\[exec\\] Server completed initialization\\."
+    },
+    "aqlbrass": {
+      "userManaged": false,
+      "startupTimeMS": 20000,
+      "identifier": "aqlbrass",
+      "mavenRepositoryUrl": "https://nexus.isis.vanderbilt.edu/repository/maven-snapshots/",
+      "mavenGroupId": "aql-brass-server",
+      "mavenArtifactId": "aql-brass-server",
+      "mavenVersion": "2018.04.25-SNAPSHOT",
+      "mavenClassifier": "standalone",
+      "port": 9090,
+      "protocol": "http",
+      "url": "127.0.0.1",
+      "workingDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_aqlbrass",
+      "exePath": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/build/immortals_extensions/aql-brass-server.jar",
+      "interpreterParameters": [],
+      "parameters": [
+        "--hostname",
+        "127.0.0.1",
+        "--port",
+        "9090"
+      ],
+      "environmentVariables": {},
+      "readyStdoutLineRegexPattern": "^STATE:\\[RUNNING\\]$"
+    },
+    "immortalizer": {
+      "identifier": "immortalizer",
+      "performBuildFileAnalysis": true,
+      "performKrgpBytecodeAnalysis": true,
+      "performKrgpCompleteGradleTaskAnalysis": true,
+      "performTestCoverageAnalysis": true,
+      "producedDataTargetFile": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/ARTIFACT_DATA.json"
+    },
+    "producedTtlOutputDirectory": "/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS"
+  },
+  "deploymentEnvironment": {
+    "androidEnvironments": [
+      {
+        "adbPort": 5580,
+        "adbUrl": "127.0.0.1",
+        "adbIdentifier": "emulator-5580",
+        "environmentDetails": {
+          "androidVersion": 21,
+          "externallyAccessibleUrls": [],
+          "superuserAccess": false
+        }
+      },
+      {
+        "adbPort": 5578,
+        "adbUrl": "127.0.0.1",
+        "adbIdentifier": "emulator-5578",
+        "environmentDetails": {
+          "androidVersion": 21,
+          "externallyAccessibleUrls": [],
+          "superuserAccess": false
+        }
+      }
+    ],
+    "martiAddress": "10.0.2.2"
+  }
+}
+Skipping startup of 'fuseki' since it is flagged for mocking in the debug configuration.
+Skipping startup of 'knowledgerepo' since it is flagged for mocking in the debug configuration.
+10:04:36.635 [main] DEBUG mil.darpa.immortals.DasLauncher - EXEC: [ant -buildfile /Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_voltdb/build.xml clean init start]
+Starting 'voltdb' at 'http://127.0.0.1:21212'............Skipping startup of 'aqlbrass' since it is flagged for mocking in the debug configuration.
+Skipping startup of 'dasservice' since it is flagged for mocking in the debug configuration.
+10:04:56.952 [main] DEBUG mil.darpa.immortals.DasLauncher - EXEC: [/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/bin/java -Dlogback.configurationFile=/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/das/das-launcher/logging_scripts/logback-TRACE.xml -Djava.util.logging.config.file=/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/das/das-launcher/logging_scripts/java-ALL.properties -Dlog4j.configurationFile=/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/das/das-launcher/logging_scripts/log4j-TRACE.xml -jar /Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/das/das-testharness-coordinator/build/libs/das-testharness-coordinator-2.0-LOCAL.jar]
+Starting 'testadapter' at 'http://127.0.0.1:55555' Done (1200ms)
+The DAS has finished starting up (21567ms). Press Ctrl-C to terminate (this may take up to ten seconds)
+Shutting down.
+.Successfully shut down 'testadapter'.
+Combined network logs written to the file '/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_logs/network_combined.log'.

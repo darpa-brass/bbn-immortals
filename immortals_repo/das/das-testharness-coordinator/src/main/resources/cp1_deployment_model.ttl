@@ -63,7 +63,7 @@ IMMoRTALS_gmei:DeploymentModelCP1
 IMMoRTALS_cp2:ClientServerEnvironment.MartiServer
         a                            IMMoRTALS_resources:Server ;
         IMMoRTALS_mil_darpa_immortals_ontology:hasArtifactIdentifier
-                "mil.darpa.immortals:Marti:2.0-LOCAL" ;
+                "Marti" ;
         IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$MartiServer" .
 
 IMMoRTALS_resources_logical:Column-cc212d12-6f66-446f-8d57-ca53924e8b7a

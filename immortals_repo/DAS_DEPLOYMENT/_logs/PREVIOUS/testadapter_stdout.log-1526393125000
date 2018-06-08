@@ -1,0 +1,241 @@
+10:05:25.674 [main] DEBUG Jena - Jena initialization
+Started TestAdapter at URL 'http://127.0.0.1:55555/'.
+10:05:30.544 [main] DEBUG m.d.i.testadapter.SubmissionServices - Constructing TH Submitter with URL 'http://127.0.0.1:44444'.
+10:05:30.839 [grizzly-http-server-1] INFO  m.d.i.c.d.l.TestHarnessAdapterMediator - Adaptation programatically disabled. Assuming adaptation is NOT_APPLICABLE.
+10:05:30.845 [grizzly-http-server-1] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - STATE HAS BEEN SET WITH VALUE: 
+ChallengeProblem: P2CP3
+SubmissionModel: {
+  "sessionIdentifier": "I1526392905062BaselineB",
+  "martiServerModel": {
+    "requirements": {
+      "libraryUpgrade": "ElevationApi_2"
+    }
+  }
+}
+TestAdapterState: {
+  "sequence": -1,
+  "identifier": "I1526392905062BaselineB",
+  "adaptation": {
+    "adaptationStatus": "NOT_APPLICABLE"
+  },
+  "validation": {
+    "verdictOutcome": "PENDING",
+    "executedTests": []
+  }
+}
+
+10:05:30.845 [grizzly-http-server-1] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - Submission model has no perturbations.
+10:05:30.846 [grizzly-http-server-1] DEBUG m.d.i.d.t.DummyTestCoordinator - Submitting empty validation request.
+10:05:30.846 [grizzly-http-server-1] DEBUG m.d.i.testadapter.SubmissionServices - Using Mock DAS Submitter.
+10:05:31.876 [grizzly-http-server-2] TRACE m.d.i.c.d.l.TestHarnessAdapterMediator - innerUpdateValidatorStatus:state: 
+ChallengeProblem: P2CP3
+SubmissionModel: {
+  "sessionIdentifier": "I1526392905062BaselineB",
+  "martiServerModel": {
+    "requirements": {
+      "libraryUpgrade": "ElevationApi_2"
+    }
+  }
+}
+TestAdapterState: {
+  "sequence": -1,
+  "identifier": "I1526392905062BaselineB",
+  "adaptation": {
+    "adaptationStatus": "NOT_APPLICABLE"
+  },
+  "validation": {
+    "verdictOutcome": "PENDING",
+    "executedTests": []
+  }
+}
+testDetails: [
+  {
+    "errorMessages": [],
+    "detailMessages": [],
+    "testCaseReport": {
+      "testCaseTarget": "DummyTarget",
+      "testCaseIdentifier": "DummyTest",
+      "duration": 1.337,
+      "failureMessage": "FAILED",
+      "validatedFunctionality": [
+        "Functionality0",
+        "Functionality1"
+      ]
+    },
+    "timestamp": 1526393130849,
+    "currentState": "PENDING",
+    "testIdentifier": "DummyTest",
+    "adaptationIdentifier": "DummyAdaptationIdentifier",
+    "validatedFunctionality": [
+      "Functionality1",
+      "Functionality0"
+    ]
+  }
+]
+10:05:31.891 [grizzly-http-server-3] TRACE m.d.i.c.d.l.TestHarnessAdapterMediator - innerUpdateValidatorStatus:state: 
+ChallengeProblem: P2CP3
+SubmissionModel: {
+  "sessionIdentifier": "I1526392905062BaselineB",
+  "martiServerModel": {
+    "requirements": {
+      "libraryUpgrade": "ElevationApi_2"
+    }
+  }
+}
+TestAdapterState: {
+  "sequence": 0,
+  "identifier": "I1526392905062BaselineB",
+  "adaptation": {
+    "adaptationStatus": "NOT_APPLICABLE"
+  },
+  "validation": {
+    "verdictOutcome": "PENDING",
+    "executedTests": [
+      {
+        "testIdentifier": "DummyTest",
+        "intent": "Functionality1+Functionality0",
+        "desiredStatus": "COMPLETE_PASS",
+        "actualStatus": "PENDING",
+        "details": {
+          "errorMessages": [],
+          "detailMessages": [],
+          "testCaseReport": {
+            "testCaseTarget": "DummyTarget",
+            "testCaseIdentifier": "DummyTest",
+            "duration": 1.337,
+            "failureMessage": "FAILED",
+            "validatedFunctionality": [
+              "Functionality0",
+              "Functionality1"
+            ]
+          },
+          "timestamp": 1526393130849,
+          "currentState": "PENDING",
+          "testIdentifier": "DummyTest",
+          "adaptationIdentifier": "DummyAdaptationIdentifier",
+          "validatedFunctionality": [
+            "Functionality1",
+            "Functionality0"
+          ]
+        }
+      }
+    ]
+  }
+}
+testDetails: [
+  {
+    "errorMessages": [],
+    "detailMessages": [],
+    "testCaseReport": {
+      "testCaseTarget": "DummyTarget",
+      "testCaseIdentifier": "DummyTest",
+      "duration": 1.337,
+      "failureMessage": "FAILED",
+      "validatedFunctionality": [
+        "Functionality0",
+        "Functionality1"
+      ]
+    },
+    "timestamp": 1526393130849,
+    "currentState": "RUNNING",
+    "testIdentifier": "DummyTest",
+    "adaptationIdentifier": "DummyAdaptationIdentifier",
+    "validatedFunctionality": [
+      "Functionality1",
+      "Functionality0"
+    ]
+  }
+]
+10:05:31.894 [grizzly-http-server-3] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - ReceivedTests:
+	Error: 0
+	Invalid: 0
+	NotApplicable: 0
+	Pending: 0
+	Running: 1
+	Incomplete: 0
+	CompletePass: 0
+	CompleteDegraded: 0
+	CompleteFail: 0
+10:05:31.901 [grizzly-http-server-3] TRACE m.d.i.c.d.l.TestHarnessAdapterMediator - innerUpdateValidatorStatus:state: 
+ChallengeProblem: P2CP3
+SubmissionModel: {
+  "sessionIdentifier": "I1526392905062BaselineB",
+  "martiServerModel": {
+    "requirements": {
+      "libraryUpgrade": "ElevationApi_2"
+    }
+  }
+}
+TestAdapterState: {
+  "sequence": 1,
+  "identifier": "I1526392905062BaselineB",
+  "adaptation": {
+    "adaptationStatus": "NOT_APPLICABLE"
+  },
+  "validation": {
+    "verdictOutcome": "RUNNING",
+    "executedTests": [
+      {
+        "testIdentifier": "DummyTest",
+        "intent": "Functionality1+Functionality0",
+        "desiredStatus": "COMPLETE_PASS",
+        "actualStatus": "RUNNING",
+        "details": {
+          "errorMessages": [],
+          "detailMessages": [],
+          "testCaseReport": {
+            "testCaseTarget": "DummyTarget",
+            "testCaseIdentifier": "DummyTest",
+            "duration": 1.337,
+            "failureMessage": "FAILED",
+            "validatedFunctionality": [
+              "Functionality0",
+              "Functionality1"
+            ]
+          },
+          "timestamp": 1526393130849,
+          "currentState": "RUNNING",
+          "testIdentifier": "DummyTest",
+          "adaptationIdentifier": "DummyAdaptationIdentifier",
+          "validatedFunctionality": [
+            "Functionality1",
+            "Functionality0"
+          ]
+        }
+      }
+    ]
+  }
+}
+testDetails: [
+  {
+    "testCaseReport": {
+      "testCaseTarget": "DummyTarget",
+      "testCaseIdentifier": "DummyTest",
+      "duration": 1.337,
+      "failureMessage": "FAILED",
+      "validatedFunctionality": [
+        "Functionality0",
+        "Functionality1"
+      ]
+    },
+    "timestamp": 1526393130849,
+    "currentState": "COMPLETE_FAIL",
+    "testIdentifier": "DummyTest",
+    "adaptationIdentifier": "DummyAdaptationIdentifier",
+    "validatedFunctionality": [
+      "Functionality1",
+      "Functionality0"
+    ]
+  }
+]
+10:05:31.901 [grizzly-http-server-3] DEBUG m.d.i.c.d.l.TestHarnessAdapterMediator - ReceivedTests:
+	Error: 0
+	Invalid: 0
+	NotApplicable: 0
+	Pending: 0
+	Running: 0
+	Incomplete: 0
+	CompletePass: 0
+	CompleteDegraded: 0
+	CompleteFail: 1
+Shutting down TestAdapter...

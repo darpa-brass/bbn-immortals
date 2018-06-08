@@ -28,6 +28,10 @@ import org.postgresql.ds.PGPoolingDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonString;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import javax.ws.rs.client.ClientBuilder;
@@ -38,6 +42,7 @@ import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -94,10 +99,11 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
 
     private LearnedQuery learnQuery(DataLinkageMetadata dataLinkageMetadata, DasAdaptationContext dac) throws Exception {
 
-        LearnedQuery result = new LearnedQuery();
-
-        result.setDataLinkageMetadata(dataLinkageMetadata);
-
+    	LearnedQuery result = null;
+    	
+        LearnedQuery learnedQuery = new LearnedQuery();
+        learnedQuery.setDataLinkageMetadata(dataLinkageMetadata);
+        
         String learnedSql = null;
 
         // This gets the per-submission folder for Castor
@@ -130,60 +136,66 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
             learnedSql = null;
         } else {
             learnedSql = readCastorOutput(castorSubmissionFolder);
-        }
 
-        if (!dataLinkageMetadata.getSqlMetadata().isParameterized()) {
-            result.setLearnedSql(learnedSql);
-        } else {
-            //We need to replace literals in learned query with parameters
-            //Since order matters, this is a P(n,r) search space where n=number of parameters
-            //and r equals number of literals.
+            if (learnedSql != null && learnedSql.trim().length() > 0) {
+                learnedQuery.setLearnedSql(learnedSql);
 
-            //Things to keep in mind:
-            //**Original query may have literals and parameters mixed
-            //**Learned query may introduce new literals that are essential under the perturbed schema
-            //**In many cases, no assignment of parameters to literals in the learned query produces the correct data
-            //  because Castor has learned a query that is not semantically the equivalent to the original query
-
-            //Generate sql combinations, then we'll iterate the different parameter assignments for each combination
-            SQLMetadata learnedSQLMetadata = SQLMetadata.buildSqlMetadata(learnedSql);
-
-            if (learnedSQLMetadata.getLiteralReferencesInFilter().size() < dataLinkageMetadata.getSqlMetadata().getParameters().size()) {
-                logger.info("The learned query does not support parameter substitution); there are too few literals in filter.");
-                result = null;
-            } else {
-                SQLTransformer st = new SQLTransformer();
-                List<String> sqlCombinations = st.generateParameterizedCombinations(
-                        dataLinkageMetadata.getSqlMetadata().getParameters().size(),
-                        learnedSql, learnedSQLMetadata.getLiteralReferencesInFilter().size());
-
-                //For each parameterized statement, try different permutations of parameter assignments
-                List<Integer> correctPermutation = null;
-
-                for (String combination : sqlCombinations) {
-                    Set<List<Integer>> paramPermutations = st.generatePermutations(
-                            dataLinkageMetadata.getSqlMetadata().getParameters().size());
-                    for (List<Integer> permutation : paramPermutations) {
-                        String candidate = st.resolveParameters(combination, dataLinkageMetadata, permutation);
-                        //Does this candidate query produce the same training data as original
-                        String sampleSql = st.getStableSampleSQL(candidate,
-                                SchemaDependencyKnowledgeBuilder.POSITIVE_DATA_LIMIT);
-                        if (compareQueryToTrainingData(sampleSql, dataLinkageMetadata)) {
-                            correctPermutation = permutation;
-                            break;
-                        }
-                    }
-
-                    if (correctPermutation != null) {
-                        result.setLearnedSql(combination);
-                        result.setParameterOrder(correctPermutation);
-                        break;
-                    }
+                if (dataLinkageMetadata.getSqlMetadata().isParameterized()) {
+                	if (determineParameterOrder(dataLinkageMetadata, learnedQuery)) {
+                		result = learnedQuery;
+                	}
+                } else {
+                	result = learnedQuery;
                 }
             }
         }
 
         return result;
+    }
+    
+    private boolean determineParameterOrder(DataLinkageMetadata dataLinkageMetadata, LearnedQuery learnedQuery) throws Exception {
+    	
+    	boolean result = false;
+    	
+        //Generate sql combinations, then we'll iterate the different parameter assignments for each combination
+        SQLMetadata learnedSQLMetadata = SQLMetadata.buildSqlMetadata(learnedQuery.getLearnedSql());
+
+        if (learnedSQLMetadata.getLiteralReferencesInFilter().size() < dataLinkageMetadata.getSqlMetadata().getParameters().size()) {
+            logger.info("The learned query does not support parameter substitution); there are too few literals in filter.");
+        } else {
+            SQLTransformer st = new SQLTransformer();
+            List<String> sqlCombinations = st.generateParameterizedCombinations(
+                    dataLinkageMetadata.getSqlMetadata().getParameters().size(),
+                    learnedQuery.getLearnedSql(), learnedSQLMetadata.getLiteralReferencesInFilter().size());
+
+            //For each parameterized statement, try different permutations of parameter assignments
+            List<Integer> correctPermutation = null;
+
+            for (String combination : sqlCombinations) {
+                Set<List<Integer>> paramPermutations = st.generatePermutations(
+                        dataLinkageMetadata.getSqlMetadata().getParameters().size());
+                for (List<Integer> permutation : paramPermutations) {
+                    String candidate = st.resolveParameters(combination, dataLinkageMetadata, permutation);
+                    //Does this candidate query produce the same training data as original
+                    String sampleSql = st.getStableSampleSQL(candidate,
+                            SchemaDependencyKnowledgeBuilder.POSITIVE_DATA_LIMIT);
+                    if (compareQueryToTrainingData(sampleSql, dataLinkageMetadata)) {
+                        correctPermutation = permutation;
+                        break;
+                    }
+                }
+
+                if (correctPermutation != null) {
+                    learnedQuery.setLearnedSql(combination);
+                    learnedQuery.setParameterOrder(correctPermutation);
+                    result = true;
+                    break;
+                }
+            }
+        }
+        
+        return result;
+
     }
 
     private void build(DasAdaptationContext dac) throws Exception {
@@ -430,14 +442,9 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
 
         LinkedList<String> errorMessages = new LinkedList<>();
         LinkedList<String> detailMessages = new LinkedList<>();
+        Map<String, String> aqlProducedQueries = null;
 
         if (isApplicable(context)) {
-
-            try {
-            	getAqlQueries(context);
-            } catch (Exception e) {
-            	logger.error("AQL process invocation failed.", e);
-            }
 
             //Check each data DFU for impact
             //Impact is determined by executing the query with the same parameters used to create the training data
@@ -445,8 +452,14 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
             //the data DFU is deemed to be impacted by the schema change
 
             List<DataLinkageMetadata> dataLinkages = DataDFU.select(context.getKnowldgeUri());
-
+            
             if (dataLinkages != null && !dataLinkages.isEmpty()) {
+
+                try {
+                	aqlProducedQueries = getAqlQueries(context, dataLinkages);
+                } catch (Exception e) {
+                	logger.error("AQL process invocation failed.", e);
+                }
 
                 for (DataLinkageMetadata dataLinkageMetadata : dataLinkages) {
                     SQLTransformer sqlT = new SQLTransformer();
@@ -455,13 +468,35 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
                             SchemaDependencyKnowledgeBuilder.POSITIVE_DATA_LIMIT);
 
                     boolean sqlEquivalent = this.compareQueryToTrainingData(sampleSql, dataLinkageMetadata);
-
+                    
                     if (!sqlEquivalent) {
+                        boolean queryCanBeRepaired = false;
+
                         LearnedQuery learnedQuery = learnQuery(dataLinkageMetadata, context);
-                        if (learnedQuery == null || learnedQuery.getLearnedSql() == null ||
-                                learnedQuery.getLearnedSql().trim().length() == 0) {
-                            logger.info("Castor did not learn query for: " + dataLinkageMetadata.getClassName());
+                        if (learnedQuery == null) {
+                        	logger.info("Castor did not learn query for: " + dataLinkageMetadata.getClassName());
+                        	logger.info("Trying AQL-produced query.");
+                        	//Use query from aql if exists
+                        	if (aqlProducedQueries.containsKey(dataLinkageMetadata.getClassName())) {
+                        		learnedQuery = new LearnedQuery();
+                        		learnedQuery.setDataLinkageMetadata(dataLinkageMetadata);
+                        		learnedQuery.setLearnedSql(aqlProducedQueries.get(dataLinkageMetadata.getClassName()));
+                           		queryCanBeRepaired = true;
+                            	logger.info("Using aql produced query for: " + dataLinkageMetadata.getClassName());
+                        	} else {
+                        		//This is technically an error since AQL is a model driven approach (not learning based) that should
+                        		//produce a correct query for each case; if it doesn't, the model is wrong and should be fixed.
+                        		//This is an artifact of the evaluation process. If we are evaluating schema evolution, then
+                        		//we can use the best complement of both techniques, otherwise we can evaluate each method independently.
+                        		//Evaluating each method independently, however, requires true evaluation of the entire process used
+                        		//for the technique, not simply its results. This is something MIT LL is not doing.
+                        		logger.info("AQL did not produce query for: " + dataLinkageMetadata.getClassName());
+                        	}
                         } else {
+                        	queryCanBeRepaired = true;
+                        }
+                        
+                        if (queryCanBeRepaired) {
                             //Modify Java code with new sql
                             modifySourceCode(context, learnedQuery);
                             numberLearnedQueries++;
@@ -511,8 +546,10 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
         }
     }
         
-    public void getAqlQueries(DasAdaptationContext dac) throws Exception {
+    public Map<String, String> getAqlQueries(DasAdaptationContext dac, List<DataLinkageMetadata> dataLinkages) throws Exception {
 
+    	Map<String, String> results = new HashMap<String, String>();
+    	
         String queryMappings = null;
         
         Path submissionModel = ImmortalsConfig.getInstance().extensions.castor
@@ -533,7 +570,24 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
             //Don't throw exception for now
         } else {
         	//Convert queryMappings to native Java structure
+        	try(StringReader stringReader = new StringReader(queryMappings);
+        		JsonReader jsonReader = Json.createReader(stringReader)) {
+        		
+        		JsonObject queryResults = jsonReader.readObject().getJsonObject("query");
+        		for (DataLinkageMetadata dataLinkage : dataLinkages) {
+        			JsonObject query = queryResults.getJsonObject(dataLinkage.getClassName());
+        			if (query != null) {
+        				JsonString sql = query.getJsonObject("t1").getJsonString("sql");
+        				results.put(dataLinkage.getClassName(), sql.getString());
+        			}
+        		}
+        	} catch (Exception e) {
+        		
+        	} finally {
+        	}
         }
+        
+        return results;
     }
     
     

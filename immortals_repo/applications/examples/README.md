@@ -33,7 +33,7 @@ other validation such as a diff and description will be suitable.
 
 The Dropbox example has had validation of the successful patch implemented in the following file:
 
-`applications/examples/ThirdPartyLibAnalysisAndroidApp/app/src/androidTest/java/mil/darpa/immortals/examples/tests/DropboxInstrumentedTest.java`
+`applications/examples/ThirdPartyLibAnalysisAndroidApp/src/androidTest/java/mil/darpa/immortals/examples/tests/DropboxInstrumentedTest.java`
 
 The method `shouldPassWith003ButFailWith006` still needs to be filled in with a scenario that
 
@@ -65,10 +65,10 @@ We provide the following file as input:
 ```json
 {
     "currentlyUsedLibrary": {
-        "jarFilepath": "/IMMORTALS_ROOT/applications/examples/ThirdPartyLibAnalysisAndroidApp/app/libs/dropbox-core-sdk-3.0.3.jar"
+        "jarFilepath": "/IMMORTALS_ROOT/applications/examples/ThirdPartyLibAnalysisAndroidApp/libs/dropbox-core-sdk-3.0.3.jar"
     },
     "targetUpgradeLibrary": {
-        "jarFilepath": "/IMMORTALS_ROOT/applications/examples/ThirdPartyLibAnalysisAndroidApp/app/upgrade-targets/dropbox-core-sdk-3.0.6.jar"
+        "jarFilepath": "/IMMORTALS_ROOT/applications/examples/ThirdPartyLibAnalysisAndroidApp/upgrade-targets/dropbox-core-sdk-3.0.6.jar"
     },
     "targetApplications": [
         {
@@ -82,10 +82,10 @@ We provide the following file as input:
 ## Adding Evaluation Scenarios
 
 ### Adding An Android Library Upgrade Scenario
-1. Add the currently used library jar to `applications/examples/ThirdPartyLibAnalysisAndroidApp/app/libs`
-2. Add the newer jar to `applications/examples/ThirdPartyLibAnalysisAndroidApp/app/upgrade-targets`
+1. Add the currently used library jar to `applications/examples/ThirdPartyLibAnalysisAndroidApp/libs`
+2. Add the newer jar to `applications/examples/ThirdPartyLibAnalysisAndroidApp/upgrade-targets`
 3. In the directory 
-    `applications/examples/ThirdPartyLibAnalysisAndroidApp/app/src/androidTest/java/mil/darpa/immortals/examples/tests`,
+    `applications/examples/ThirdPartyLibAnalysisAndroidApp/src/androidTest/java/mil/darpa/immortals/examples/tests`,
     copy `DummyTest.java` to a new class for the partial library upgrade.
 4. Within the class, rename the class name to match the new file.
 5. Replace the contents of the two tests with tests that perform the purpose indicated by the comments for the partial 
@@ -93,10 +93,10 @@ We provide the following file as input:
 
 
 ### Adding A Java Library Upgrade Scenario
-1. Add the currently used library jar to `applications/examples/ThirdPartyLibAnalysisJavaApp/app/libs`
-2. Add the newer jar to `applications/examples/ThirdPartyLibAnalysisJavaApp/app/upgrade-targets`
+1. Add the currently used library jar to `applications/examples/ThirdPartyLibAnalysisJavaApp/libs`
+2. Add the newer jar to `applications/examples/ThirdPartyLibAnalysisJavaApp/upgrade-targets`
 3. In the directory 
-    `applications/examples/ThirdPartyLibAnalysisJavaApp/app/src/test/java/mil/darpa/immortals/examples/tests/`,
+    `applications/examples/ThirdPartyLibAnalysisJavaApp/src/test/java/mil/darpa/immortals/examples/tests/`,
     copy `DummyTest.java` to a new class for the partial library upgrade.
 4. Within the class, rename the class name to match the new file.
 5. Replace the contents of the two tests with tests that perform the purpose indicated by the comments for the partial 

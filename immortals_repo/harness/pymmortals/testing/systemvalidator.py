@@ -42,7 +42,7 @@ class SystemValidator:
         try:
             self.das_process = Popen([
                 'bash',
-                os.path.join(root_configuration.get_configuration().immortalsRoot, 'das/start.sh'), "-v", "ALL"],
+                os.path.join(root_configuration.get_configuration().immortalsRoot, 'das/start.sh'), "-v", "DEBUG"],
                 cwd=os.path.abspath(os.path.join(immortals_root, 'harness')),
                 stdin=PIPE,
                 stderr=self.das_stderr,

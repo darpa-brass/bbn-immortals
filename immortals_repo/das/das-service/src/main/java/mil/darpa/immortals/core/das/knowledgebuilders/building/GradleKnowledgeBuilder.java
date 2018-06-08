@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import mil.darpa.immortals.analysis.adaptationtargets.DeploymentTarget;
 import mil.darpa.immortals.analysis.adaptationtargets.ImmortalsGradleProjectData;
+import mil.darpa.immortals.config.GlobalsConfig;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.api.TestCaseReport;
 import mil.darpa.immortals.core.api.TestCaseReportSet;
@@ -22,8 +24,11 @@ import javax.annotation.Nullable;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +42,56 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
 
     private static final Map<String, AdaptationTargetBuildBase> adaptationBuildTargetsLong = new HashMap<>();
     private static final Map<String, AdaptationTargetBuildBase> adaptationBuildTargetsShort = new HashMap<>();
+    private static final Map<String, AdaptationTargetBuildBase> adaptationBuildTargetsCoordinates = new HashMap<>();
     private static final HashMap<String, AdaptationTargetBuildInstance> adaptationBuildInstances = new HashMap<>();
+
+    private static synchronized void performGradleAnalysis() {
+        String[] targets = ImmortalsConfig.getInstance().getTargetApplicationUris();
+        Process p = null;
+
+        for (String str : targets) {
+            Path projectPath;
+            
+            if (Files.exists(Paths.get(str))) {
+                projectPath = Paths.get(str);
+            } else {
+                projectPath = GlobalsConfig.staticImmortalsRoot.resolve(str);
+            }
+            
+            Path buildFilePath = projectPath.resolve("build.gradle");
+            if (!Files.exists(projectPath) || !Files.exists(buildFilePath)) {
+                throw new RuntimeException("No build.gradle found in the path '" + projectPath.toString() + "'!");
+
+            } else {
+                try {
+                    ProcessBuilder pb = new ProcessBuilder();
+                    String[] cmd = {
+                            ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("gradlew").toString(),
+                            "--build-file",
+                            buildFilePath.toString(),
+                            "clean",
+                            "build",
+                            "immortalize"
+                    };
+                    pb.command(cmd);
+                    pb.directory(projectPath.toFile());
+                    pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+                    pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                    p = pb.start();
+                    p.waitFor(300000, TimeUnit.MILLISECONDS);
+
+                    if (p.exitValue() != 0) {
+                        throw new RuntimeException("Immortalization did not behave as expected for '" + projectPath.toString() + "'!");
+                    }
+                } catch (IOException | InterruptedException e) {
+                    if (p != null) {
+                        p.destroyForcibly();
+                    }
+                    throw new RuntimeException("Immortalization did not behave as expected for '" + projectPath.toString() + "'!");
+                }
+            }
+        }
+    }
 
     private static synchronized void loadData() throws IOException {
         if (adaptationBuildTargetsLong.size() == 0) {
@@ -55,6 +109,9 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
 
                 adaptationBuildTargetsShort.put(projectData.getTargetName(), base);
                 adaptationBuildTargetsLong.put(projectData.getIdentifier(), base);
+                if (projectData.getPublishing() != null) {
+                    adaptationBuildTargetsCoordinates.put(projectData.getPublishing().getPublishCoordinates(), base);
+                }
             }
         }
     }
@@ -64,28 +121,33 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
         AdaptationTargetBuildBase base = new AdaptationTargetBuildBase(projectData);
 
         if (base.canTest()) {
-            logger.info("Collecting test coverage data for project '" + base.getTargetName() + "'.");
-            HashMap<String, ClassFileCoverageSet> artifactTestClasses = new HashMap<>();
-            Set<TestCaseReportSet> artifactTestReports = new HashSet<>();
+            // TODO: This probably shouldn't simply be disabled for android applications...
+            if (base.getDeploymentTarget() == DeploymentTarget.ANDROID) {
+                logger.info("Collection of test coverage data for android project '" + base.getTargetName() + "' not yet supported.");
+            
+            } else {
 
-            TestCaseReportSet allResults = base.executeCleanAndTest(null);
-            TestCaseReportSet tcrs = XmlParser.getTestResultsFromFlatDirectory(base.getTestResultsPath().toFile(), base.getTargetName(), null);
+                logger.info("Collecting test coverage data for project '" + base.getTargetName() + "'.");
+                HashMap<String, ClassFileCoverageSet> artifactTestClasses = new HashMap<>();
+                Set<TestCaseReportSet> artifactTestReports = new HashSet<>();
 
-            for (TestCaseReport report : allResults) {
-                List<String> tests = Arrays.asList(report.getTestCaseIdentifier());
-                ClassFileCoverageSet coverage = base.executeCleanTestAndGetCoverage(tests);
-                artifactTestClasses.put(report.getTestCaseIdentifier(), coverage);
+                TestCaseReportSet allResults = base.executeCleanAndTest(null);
+                TestCaseReportSet tcrs = XmlParser.getTestResultsFromFlatDirectory(base.getTestResultsPath().toFile(), base.getTargetName(), null);
 
+                for (TestCaseReport report : allResults) {
+                    List<String> tests = Arrays.asList(report.getTestCaseIdentifier());
+                    ClassFileCoverageSet coverage = base.executeCleanTestAndGetCoverage(tests);
+                    artifactTestClasses.put(report.getTestCaseIdentifier(), coverage);
+                }
 
+                JsonElement je = gson.toJsonTree(artifactTestClasses);
+                data.getAsJsonObject().add("baseTestClassFileCoverage", je);
+
+                je = gson.toJsonTree(tcrs);
+                data.getAsJsonObject().add("baseTestCaseReports", je);
+
+                logger.info("Collection of test coverage data for project '" + base.getTargetName() + "' done.");
             }
-
-            JsonElement je = gson.toJsonTree(artifactTestClasses);
-            data.getAsJsonObject().add("baseTestClassFileCoverage", je);
-
-            je = gson.toJsonTree(tcrs);
-            data.getAsJsonObject().add("baseTestCaseReports", je);
-
-            logger.info("Collection of test coverage data for project '" + base.getTargetName() + "' done.");
         } else {
             logger.debug("Project '" + base.getTargetName() + "' has no tests to collect coverage data for.");
         }
@@ -93,6 +155,8 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
 
     @Override
     public synchronized Model buildKnowledge(Map<String, Object> parameter) throws Exception {
+        
+        performGradleAnalysis();
 
         if (ImmortalsConfig.getInstance().extensions.immortalizer.isPerformTestCoverageAnalysis()) {
             logger.info("Executing test coverage.");
@@ -127,10 +191,15 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
 
         if (buildInstance == null) {
             AdaptationTargetBuildBase buildBase = adaptationBuildTargetsLong.get(baseApplicationIdentifier);
-            if (buildBase == null) {
-                buildBase = adaptationBuildTargetsShort.get(baseApplicationIdentifier);
-            }
             
+            if (buildBase == null) {
+                buildBase = adaptationBuildTargetsCoordinates.get(baseApplicationIdentifier);
+
+                if (buildBase == null) {
+                    buildBase = adaptationBuildTargetsShort.get(baseApplicationIdentifier);
+                }
+            }
+
             if (buildBase != null) {
                 buildInstance = new AdaptationTargetBuildInstance(adaptationIdentifier, buildBase);
                 buildInstance.getBuildRoot();
@@ -165,7 +234,7 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
 
     public static synchronized HashMap<String, Set<String>> getAllTargetTests() throws IOException {
         loadData();
-        HashMap<String, Set<String>> rval = new HashMap<> ();
+        HashMap<String, Set<String>> rval = new HashMap<>();
 
         for (Map.Entry<String, AdaptationTargetBuildBase> entry : adaptationBuildTargetsLong.entrySet()) {
             ImmortalsGradleProjectData rawData = entry.getValue().getRawBaseProjectData();

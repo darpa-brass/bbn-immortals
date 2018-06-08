@@ -3,6 +3,7 @@ package com.securboration.miniatakapp.dfus.cipher;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import com.securboration.immortals.ontology.functionality.alg.encryption.AspectCipherDecrypt;
 import com.securboration.immortals.ontology.functionality.alg.encryption.AspectCipherEncrypt;
@@ -23,28 +24,18 @@ public class CipherImplBogo implements CipherImplApi{
 
     public CipherImplBogo() {/* empty */}
     
-    private static int notIntAsByte(int data){
-        return ~data;
+    private static int notIntAsByte(final int data){
+        return ~data & 0xFF;
     }
     
-    private static byte notByte(byte data){
-        return (byte)~data;
+    private static byte notByte(final byte data){
+        return (byte)(~data);
     }
     
     private static void notByteArrayInSitu(byte[] data){
         for(int i=0;i<data.length;i++){
             data[i] = notByte(data[i]);
         }
-    }
-    
-    private static byte[] copyOf(byte[] data, int off, int len){
-        final byte[] copy = new byte[len];
-        
-        for(int i=0;i<len;i++){
-            copy[i] = data[i+off];
-        }
-        
-        return copy;
     }
     
     @Override
@@ -58,22 +49,20 @@ public class CipherImplBogo implements CipherImplApi{
                     int len
                     ) throws IOException {
                 
-                data = copyOf(data,off,len);
+                data = Arrays.copyOfRange(data,off,len);
                 
-                for(int i=off;i<len;i++){
-                    data[i] = notByte(data[i]);
-                }
+                notByteArrayInSitu(data);
                 
-                o.write(data,off,len);
+                o.write(data);
             }
 
             @Override
-            public void write(byte[] arg0) throws IOException {
-                arg0 = copyOf(arg0,0,arg0.length);
+            public void write(byte[] data) throws IOException {
+                data = Arrays.copyOf(data,data.length);
                 
-                notByteArrayInSitu(arg0);
+                notByteArrayInSitu(data);
                 
-                o.write(arg0);
+                o.write(data);
             }
 
             @Override
@@ -101,7 +90,13 @@ public class CipherImplBogo implements CipherImplApi{
             
             @Override
             public int read() throws IOException {
-                return notIntAsByte(i.read());
+                final int value = i.read();
+                
+                if(value == -1){
+                    return value;
+                }
+                
+                return notIntAsByte(value);
             }
             
             @Override

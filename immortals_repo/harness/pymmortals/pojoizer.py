@@ -12,7 +12,7 @@ import javalang
 from javalang.tree import EnumDeclaration, TypeDeclaration, ClassDeclaration, MethodDeclaration, ReferenceType, \
     FieldDeclaration, VariableDeclarator, TypeArgument, BasicType, ConstructorDeclaration, Literal, MemberReference, \
     FormalParameter, EnumConstantDeclaration, ClassReference, InterfaceDeclaration, Declaration, \
-    AnnotationDeclaration, ClassCreator, TryStatement
+    AnnotationDeclaration, ClassCreator, TryStatement, ArrayCreator
 
 
 class ConversionMethod(Enum):
@@ -188,6 +188,39 @@ def _java_to_python_type(input_type: ReferenceType) -> str:
         raise PojoizeException(type_name + ': ' + str(e)).with_traceback(sys.exc_info()[2])
 
 
+def _parse_param_value(param: object, param_identifier: str) -> str:
+    if param is None:
+        return 'None'
+
+    elif isinstance(param, Literal):
+        if param.value == 'null':
+            return 'None'
+        else:
+            return param.value
+
+    elif isinstance(param, MemberReference):
+        return param.qualifier + '.' + param.member
+
+    elif isinstance(param, ClassReference):
+        assert (isinstance(param.type, ReferenceType))
+        return _java_to_python_type(param.type)
+
+    elif isinstance(param, ClassCreator) and param.type.name == 'LinkedList':
+        _logger.warning(
+            'Ignoring default value for "' + param_identifier + '" with type "' + param.type.name + '"')
+        return 'None'
+
+    elif isinstance(param, ArrayCreator):
+        values = list()
+        ai = param # type: ArrayCreator
+        for val in ai.initializer.initializers:
+            values.append(_parse_param_value(val, param_identifier=param_identifier))
+
+        return '[' + "', '".join(values) + ']'
+
+    raise PojoizeException('Unsupported argument type ' + str(param))
+
+
 def _is_uuid(s: str) -> bool:
     """
     Determines if the specified String is a UUID
@@ -284,22 +317,11 @@ class FieldData:
                 unstable = _get_unstable(declaration=declaration)
 
                 initializer = declaration.declarators[0].initializer  # type: ClassCreator
-                if initializer is None or ignore_default_param_values:
+
+                if ignore_default_param_values:
                     field_value = None
-
-                elif isinstance(initializer, Literal):
-                    field_value = initializer.value
-
-                elif isinstance(initializer, MemberReference):
-                    field_value = initializer.qualifier + '.' + initializer.member
-
-                elif isinstance(initializer, ClassCreator) and initializer.type.name == 'LinkedList':
-                    _logger.warning(
-                        'Ignoring default value for "' + field_name + '" with type "' + initializer.type.name + '"')
-                    field_value = None
-
                 else:
-                    raise PojoizeException('Only Primitive and empty constructor initializers currently supported!')
+                    field_value = _parse_param_value(param=initializer, param_identifier=field_name)
 
                 assert (field_name is not None)
                 assert (field_type is not None)
@@ -789,23 +811,7 @@ class Pojoizer:
                         for idx in range(len(constant.arguments)):
                             arg = constant.arguments[idx]
                             instance_param_field = fields[param_names[idx]].clone()
-
-                            if isinstance(arg, Literal):
-                                if arg.value == 'null':
-                                    instance_param_field.value = 'None'
-                                else:
-                                    instance_param_field.value = arg.value
-
-                            elif isinstance(arg, MemberReference):
-                                instance_param_field.value = arg.qualifier + '.' + arg.member
-
-                            elif isinstance(arg, ClassReference):
-                                assert (isinstance(arg.type, ReferenceType))
-                                instance_param_field.value = _java_to_python_type(arg.type)
-
-                            else:
-                                raise PojoizeException('Unsupported argument type ' + arg)
-
+                            instance_param_field.value = _parse_param_value(arg, instance_name)
                             instance_field_values[instance_param_field.name] = instance_param_field
 
                         ordered_field_list = list()
@@ -1077,23 +1083,7 @@ class Pojoizer:
                         for idx in range(len(constant.arguments)):
                             arg = constant.arguments[idx]
                             instance_param_field = fields[field_index_remapping[idx]].clone()
-
-                            if isinstance(arg, Literal):
-                                if arg.value == 'null':
-                                    instance_param_field.value = 'None'
-                                else:
-                                    instance_param_field.value = arg.value
-
-                            elif isinstance(arg, MemberReference):
-                                instance_param_field.value = arg.qualifier + '.' + arg.member
-
-                            elif isinstance(arg, ClassReference):
-                                assert (isinstance(arg.type, ReferenceType))
-                                instance_param_field.value = _java_to_python_type(arg.type)
-
-                            else:
-                                raise PojoizeException('Unsupported argument type ' + arg)
-
+                            instance_param_field.value = _parse_param_value(arg, instance_name)
                             instance_field_values.append(instance_param_field)
 
                         instance_fields[instance_name] = instance_field_values
@@ -1188,6 +1178,7 @@ class Pojoizer:
 
     def _load_file_vars(self, filepath):
         # parse the ast
+        print("FILE: " + filepath)
         tree = javalang.parse.parse(open(filepath, 'r').read())
 
         if len(tree.types) == 0:
@@ -1239,45 +1230,53 @@ class Pojoizer:
             for k in self.path_classes.keys():
                 for config in self.path_classes[k]:
 
-                    # For each field in the class
-                    for field in config.fields:
-                        # Add the necessary import
-                        changed = config.add_imports_by_type_strings(field.all_types(), self.path_classnames) or changed
+                    try:
 
-                    # If it is a PojoEnumBuilder
-                    if isinstance(config, PojoEnumBuilderConfig):
-                        # And it has fields
-                        if len(config.fields) > 0:
-                            # Add FrozenSet since 'all_<field_name>' getters will be added for each field
-                            changed = config.add_imports_by_type_strings(['FrozenSet'], self.path_classnames) or changed
+                        # For each field in the class
+                        for field in config.fields:
+                            # Add the necessary import
+                            changed = config.add_imports_by_type_strings(field.all_types(),
+                                                                         self.path_classnames) or changed
 
-                            for values in config.instance_parameter_fields.values():
-                                for f in values:
-                                    if f.raw_type == 'Type':
-                                        if f.value is not 'None':
-                                            config.add_imports_by_type_strings([f.value], self.path_classnames)
-                                    elif '[Type' in f.raw_type or 'Type]' in f.raw_type:
-                                        raise PojoizeException(
-                                            config.class_name + ': Pojoizing of nested types currently not supported!')
+                        # If it is a PojoEnumBuilder
+                        if isinstance(config, PojoEnumBuilderConfig):
+                            # And it has fields
+                            if len(config.fields) > 0:
+                                # Add FrozenSet since 'all_<field_name>' getters will be added for each field
+                                changed = config.add_imports_by_type_strings(['FrozenSet'],
+                                                                             self.path_classnames) or changed
 
-                    # Otherwise, if it is a class builder
-                    elif isinstance(config, PojoClassBuilderConfig):
-                        # For each inherited class
-                        inherited_classnames = copy.deepcopy(config.inheritance)
-                        for inherited_classname in inherited_classnames:
-                            # If it is not the base serializable class
-                            if inherited_classname != 'Serializable':
-                                # Add it to the class. And if the class contins Serializable,
-                                # remove it to prevent abstraction conflicts
-                                if 'Serializable' in config.inheritance:
-                                    config.inheritance.remove('Serializable')
-                                changed = \
-                                    config.swallow_superclass_typename(superclass_name=inherited_classname,
-                                                                       path_classnames=self.path_classnames,
-                                                                       path_classes=self.path_classes) or changed
+                                for values in config.instance_parameter_fields.values():
+                                    for f in values:
+                                        if f.raw_type == 'Type':
+                                            if f.value is not 'None':
+                                                config.add_imports_by_type_strings([f.value], self.path_classnames)
+                                        elif '[Type' in f.raw_type or 'Type]' in f.raw_type:
+                                            raise PojoizeException(
+                                                config.class_name + ': Pojoizing of nested types currently not supported!')
 
-                    else:
-                        raise Exception("Unexpected config type provided!!")
+                        # Otherwise, if it is a class builder
+                        elif isinstance(config, PojoClassBuilderConfig):
+                            # For each inherited class
+                            inherited_classnames = copy.deepcopy(config.inheritance)
+                            for inherited_classname in inherited_classnames:
+                                # If it is not the base serializable class
+                                if inherited_classname != 'Serializable':
+                                    # Add it to the class. And if the class contins Serializable,
+                                    # remove it to prevent abstraction conflicts
+                                    if 'Serializable' in config.inheritance:
+                                        config.inheritance.remove('Serializable')
+                                    changed = \
+                                        config.swallow_superclass_typename(superclass_name=inherited_classname,
+                                                                           path_classnames=self.path_classnames,
+                                                                           path_classes=self.path_classes) or changed
+
+                        else:
+                            raise Exception("Unexpected config type provided!!")
+
+                    except PojoizeException as e:
+                        raise PojoizeException(k + '.' + config.class_name + ': ' + str(e)).with_traceback(
+                            sys.exc_info()[2])
 
         # Then sort the information within the builder configs
         for pc in self.path_classes.keys():

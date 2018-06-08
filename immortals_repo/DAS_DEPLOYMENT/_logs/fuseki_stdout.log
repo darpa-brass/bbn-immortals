@@ -1,0 +1,7 @@
+[2018-05-16 09:23:15] Server     INFO  Dataset: in-memory
+[2018-05-16 09:23:15] Server     INFO  Fuseki 2.3.1 2015-12-08T09:24:07+0000
+[2018-05-16 09:23:15] Config     INFO  FUSEKI_HOME=/Users/awellman/.immortals/fuseki
+[2018-05-16 09:23:15] Config     INFO  FUSEKI_BASE=/Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_fuseki/fuseki_base
+[2018-05-16 09:23:15] Servlet    INFO  Initializing Shiro environment
+[2018-05-16 09:23:15] Config     INFO  Shiro file: file:///Users/awellman/Documents/workspaces/clean/immortals/repo/staging/immortals_root/DAS_DEPLOYMENT/_fuseki/fuseki_base/shiro.ini
+[2018-05-16 09:23:15] Config     INFO  Template file: templates/config-mem

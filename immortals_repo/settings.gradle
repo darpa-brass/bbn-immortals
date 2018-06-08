@@ -30,6 +30,8 @@ def immortalsConfigTargets = [
         IMMORTALS_ROOT.resolve('applications/client/CLITAK/'),
         IMMORTALS_ROOT.resolve('applications/server/Marti/'),
         IMMORTALS_ROOT.resolve('applications/client/ATAKLite/'),
+        IMMORTALS_ROOT.resolve('applications/examples/ThirdPartyLibAnalysisAndroidApp/'),
+        IMMORTALS_ROOT.resolve('applications/examples/ThirdPartyLibAnalysisJavaApp/'),
         IMMORTALS_ROOT.resolve('harness/pymmortals/resources/')
 ]
 
@@ -69,6 +71,7 @@ include ':das:staging'
 include ':das:das-testharness-coordinator'
 include ':das:das-service'
 include ':das:das-launcher'
+include ':extensions'
 
 // Include the modules
 include ':shared:modules:core'

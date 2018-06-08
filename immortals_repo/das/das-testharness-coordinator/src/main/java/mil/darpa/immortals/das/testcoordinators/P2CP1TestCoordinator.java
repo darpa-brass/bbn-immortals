@@ -205,10 +205,11 @@ public class P2CP1TestCoordinator implements TestCoordinatorExecutionInterface {
         }
         
     	JsonObject jsonObject = Json.createObjectBuilder()
-    			.add("martiServerModel", Json.createObjectBuilder()
-    					.add("requirements", Json.createObjectBuilder()
-    							.add("postgresqlPerturbation", Json.createObjectBuilder()
-    									.add("tables", tab)))).build();
+    			.add("permutation", Json.createObjectBuilder()
+    					.add("martiServerModel", Json.createObjectBuilder()
+    							.add("requirements", Json.createObjectBuilder()
+    									.add("postgresqlPerturbation", Json.createObjectBuilder()
+    											.add("tables", tab))))).build();
     	
     	return jsonObject.toString();
     }

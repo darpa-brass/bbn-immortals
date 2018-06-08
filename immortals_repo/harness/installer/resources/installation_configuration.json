@@ -31,7 +31,14 @@
                 "python3-bottle",
                 "python3-cherrypy3",
                 "python3-requests",
-                "python3-pkg-resources"
+                "python3-pkg-resources",
+                // PLUG
+                "python-pip",
+                "python-networkx",
+                "cmake",
+                "pkg-config",
+                "libatlas-base-dev",
+                "libboost-python-dev"
             ]
         }
     },
@@ -111,6 +118,9 @@
             "linux": {
                 "ubuntu": {
                     "setupCommands": [
+                        // TODO: Move the pips!
+                        "pip install distance==0.1.3",
+                        "pip install dlib==19.13.1",
                         "sudo dpkg --add-architecture i386",
                         "sudo apt-get -y update",
                         "sudo apt-get -y install libc6:i386 qemu libncurses5:i386 libstdc++6:i386 lib32z1 libpulse0 libx11-6:i386 libx11-6 libgl1-mesa-glx",

@@ -273,6 +273,36 @@ public class TestHarness {
         return paddedStream;
     }
     
+    
+    private static OutputStream wrap(
+            CipherImplApi cipher,
+            OutputStream o
+            ){
+        OutputStream encryptingStream = 
+                cipher.acquire(o);
+        
+        OutputStream deBufferingStream = 
+                new DataPaddingOutputStream(
+                    PADDED_BLOCK_SIZE_BYTES,
+                    encryptingStream
+                    );
+        
+        return deBufferingStream;
+    }
+    
+    private static InputStream wrap(
+            CipherImplApi cipher,
+            InputStream i
+            ){
+        InputStream cipherStream = cipher.acquire(i);
+        InputStream deBufferingStream = new DataPaddingInputStream(
+            PADDED_BLOCK_SIZE_BYTES,
+            cipherStream
+            );
+        
+        return deBufferingStream;
+    }
+    
     private static byte[] toArray(List<Byte> list){
         byte[] data = new byte[list.size()];
         

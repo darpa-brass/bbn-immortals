@@ -1,20 +1,14 @@
 package com.securboration.immortals.test.example;
 
 import com.securboration.immortals.ontology.constraint.PropertyCriterionType;
-import com.securboration.immortals.ontology.constraint.PropertyImpactType;
-import com.securboration.immortals.ontology.constraint.ScopeOfRepairs;
 import com.securboration.immortals.repo.ontology.FusekiClient;
 import com.securboration.immortals.utility.GradleTaskHelper;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.apache.jena.base.Sys;
-import org.junit.Assert;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -182,14 +176,6 @@ public class TestIngestionWithAnalysis {
                             break;
                     }
                 }
-                String scopeOfRepairs = violationDataSolutions.getSolutions().get(0).get("scope");
-                System.out.print("The scope of repairs required were ");
-                switch (ScopeOfRepairs.valueOf(scopeOfRepairs)) {
-                    case INTER_PROCESS:
-                        System.out.println("inter-process, meaning the systems on both ends of the data flow in violation" +
-                                " were augmented to satisfy the constraint.");
-                }
-
                 String getAnalysisImpacts = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                         "\n" +
                         "select ?analysisImpacts where {\n" +

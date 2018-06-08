@@ -31,6 +31,7 @@ import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
 import com.securboration.immortals.o2t.etc.ExceptionWrapper;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
 import com.securboration.immortals.ontology.annotations.triples.Triple;
+import com.securboration.immortals.ontology.dfu.instance.DfuInstance;
 
 /**
  * Utility class that converts an object instance to triples
@@ -68,6 +69,10 @@ public class ObjectToTriples {
                     config.getNamingContext(),
                     uriGenerator
                     );
+        
+        if(config.isDiveIntoConceptInstances()){
+            analysisContext.diveIntoConceptInstances = true;
+        }
         
         config.getLog().info("about to analyze an object of type " + o.getClass().getName() + "...");
         
@@ -202,6 +207,14 @@ public class ObjectToTriples {
                 return objectsToNames.get(o);
             }
             
+            if (o instanceof DfuInstance) {
+                String durableUri = ((DfuInstance) o).getDurableUri();
+                if (durableUri != null) {
+                    objectsToNames.put(o, classUri + "-" + durableUri);
+                    return classUri + "-" + durableUri;
+                }
+            }
+            
             if(OntologyHelper.isConceptInstance(o.getClass())){
                 objectsToNames.put(o, classUri);
                 return classUri;
@@ -248,6 +261,8 @@ public class ObjectToTriples {
         private Map<Object,Resource> instancesToResources = new HashMap<>();
         
         private final ObjectUriGenerator uriGenerator;
+        
+        private boolean diveIntoConceptInstances = false;
         
         AnalysisContext(
             NamingContext namingContext,
@@ -744,6 +759,10 @@ public class ObjectToTriples {
             
             //if it's not a singleton concept, dive in
             if(!OntologyHelper.isConceptInstance(c)){
+                return true;
+            }
+            
+            if(analysisContext.diveIntoConceptInstances){
                 return true;
             }
             

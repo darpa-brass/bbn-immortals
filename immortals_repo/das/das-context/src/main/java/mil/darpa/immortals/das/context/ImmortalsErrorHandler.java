@@ -27,7 +27,7 @@ public class ImmortalsErrorHandler {
         }
     };
 
-    private interface TestHarnessErrorSubmissionInterface {
+    public interface TestHarnessErrorSubmissionInterface {
         @POST("/error")
         @Headers("Content-Type: text/plain")
         public Call<Void> error(@Body String value);
@@ -40,7 +40,10 @@ public class ImmortalsErrorHandler {
     private TestHarnessErrorSubmissionInterface submissionInterface;
 
     private ImmortalsErrorHandler() {
-        if (!ImmortalsConfig.getInstance().debug.isUseMockTestHarness()) {
+        if (ImmortalsConfig.getInstance().debug.isUseMockTestHarness()) {
+            submissionInterface = new MockServices.MockTestHarnessErrorSubmitter();
+            
+        } else {
             TestHarnessConfiguration thc = ImmortalsConfig.getInstance().testHarness;
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(thc.getProtocol() + "://" + thc.getUrl() + ":" + thc.getPort())
@@ -108,20 +111,17 @@ public class ImmortalsErrorHandler {
         System.err.println("################################################################################");
         logger.trace("Submitting Fatal Exception to TH");
 
-        if (!ImmortalsConfig.getInstance().debug.isUseMockTestHarness()) {
-            getInstance().submissionInterface.error(t.getMessage()).enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(@Nonnull Call<Void> call, @Nonnull Response<Void> response) {
-                    // Ignore
-                }
+        getInstance().submissionInterface.error(t.getMessage()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@Nonnull Call<Void> call, @Nonnull Response<Void> response) {
+                // Ignore
+            }
 
-                @Override
-                public void onFailure(@Nonnull Call<Void> call, @Nonnull Throwable t) {
-                    t.printStackTrace();
-                    System.err.println(t.getMessage());
-                }
-            });
-        }
-        getInstance().submissionInterface.error(t.getMessage());
+            @Override
+            public void onFailure(@Nonnull Call<Void> call, @Nonnull Throwable t) {
+                t.printStackTrace();
+                System.err.println(t.getMessage());
+            }
+        });
     }
 }

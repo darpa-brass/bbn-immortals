@@ -30,9 +30,9 @@ public class DeploymentModelCP2 extends DeploymentModel {
         this.setAvailableResources(new Resource[] {Instances.clientDevice1, Instances.clientDevice2, Instances.clientDevice3, Instances.martiServer,
         Instances.fileSystem1, Instances.fileSystem2});
         this.setCauseEffectAssertions(new CauseEffectAssertion[] {Instances.dataSafetyConstraint});
-
+        
         ResourceContainmentModel resourceContainmentModel = new ResourceContainmentModel();
-
+        
         ConcreteResourceNode client1Node = new ConcreteResourceNode();
         client1Node.setHumanReadableDesc("Resource node representing ATAK client device instance #1. Also contains a file system resource node.");
         client1Node.setResource(Instances.clientDevice1);

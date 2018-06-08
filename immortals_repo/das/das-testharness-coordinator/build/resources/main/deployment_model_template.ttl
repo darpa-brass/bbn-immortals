@@ -1,0 +1,310 @@
+@prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_functionality_datatype: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_property_impact: <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#> .
+@prefix IMMoRTALS_functionality_dataproperties: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#> .
+@prefix IMMoRTALS_resources_logical: <http://darpa.mil/immortals/ontology/r2.0.0/resources/logical#> .
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> .
+@prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#> .
+@prefix IMMoRTALS_resource_containment: <http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#> .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3
+        a                            IMMoRTALS_resources:MobileAndroidDevice ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice3" .
+
+IMMoRTALS_property_impact:ConstraintViolationCriterion-7934b6c5-0d49-4727-9c83-cb226660eee9
+        a                        IMMoRTALS_property_impact:ConstraintViolationCriterion ;
+        IMMoRTALS:hasConstraint  IMMoRTALS_cp2:ClientServerEnvironment.DataSafetyConstraint ;
+        IMMoRTALS:hasTriggeringConstraintCriterion
+                "WHEN_HARD_VIOLATED" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.MartiServer
+        a                            IMMoRTALS_resources:Server ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$MartiServer" .
+
+IMMoRTALS_resources:ResourceMigrationTarget-60b3cbb9-aa75-45ed-85fc-9b9fe3d24588
+        a                            IMMoRTALS_resources:ResourceMigrationTarget ;
+        IMMoRTALS:hasRationale       "Need to upgrade library version to avoid discovered exploit" ;
+        IMMoRTALS:hasTargetResource  IMMoRTALS_resources:SoftwareLibrary-babbc277-f57d-4b0a-b2c9-10e3f4aba862 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-e99721f6-87f9-4eaa-969c-27383ac3d9f6
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-61391a5a-2162-4c02-8742-fdfb546d3767 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #1. Also contains a software library resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-01a81d86-78d6-4024-ad28-141dada5cde0
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #2." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-6dbb0261-6084-4938-b013-faebe4db7067
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the old schema instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources_logical:DBSchema-54b0ee6f-270c-480b-9328-14a0b128b162 .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ImpactOfEncryptingData
+        a                            IMMoRTALS_property_impact:PredictiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:AbstractPropertyCriterion-f12f9485-e44a-43a1-af36-5954692ebd8b ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:PropertyImpact-6062974f-1c81-4182-be38-7a326a0872ca ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ImpactOfEncryptingData" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2
+        a                            IMMoRTALS_resources:MobileAndroidDevice ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice2" .
+
+IMMoRTALS_resource_containment:ResourceContainmentModel-823c7795-4f6f-4a54-8794-947c6b898d33
+        a                           IMMoRTALS_resource_containment:ResourceContainmentModel ;
+        IMMoRTALS:hasResourceModel  IMMoRTALS_resource_containment:ConcreteResourceNode-e99721f6-87f9-4eaa-969c-27383ac3d9f6 , IMMoRTALS_resource_containment:ConcreteResourceNode-2ccfbfcf-d197-446a-beb8-098cb132ff61 , IMMoRTALS_resource_containment:ConcreteResourceNode-edc4a90c-7b68-482b-bb6f-86cf24b8fe1b .
+
+IMMoRTALS_resources_logical:Table-97f467c5-e540-4dd9-8699-7dc6f3b2bc7b
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-81ed83d8-2a4e-480d-888a-5155fc35c189 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-bda79342-04c0-45ca-959d-f6f46de92191
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the bad library instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources:SoftwareLibrary-77b852b3-e1b1-4992-9b47-d6f4ac037369 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-edc4a90c-7b68-482b-bb6f-86cf24b8fe1b
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-bda79342-04c0-45ca-959d-f6f46de92191 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #3. Also contains a software library resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 .
+
+IMMoRTALS_resources_logical:Table-639a8d7a-f928-49c8-936e-1bf802d8b9ef
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-128a45fe-4fbb-4478-a866-838a01f39950 .
+
+IMMoRTALS_resource_containment:ResourceContainmentModel-f9c7af2f-ef79-4adf-b62b-47fb99167646
+        a                           IMMoRTALS_resource_containment:ResourceContainmentModel ;
+        IMMoRTALS:hasResourceModel  IMMoRTALS_resource_containment:ConcreteResourceNode-d2330139-afc1-4b20-a307-5ebcf7bfdae8 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-ce07ac33-9669-4402-8992-48a42b899904
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing file system instance #2." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.FileSystem2 .
+
+IMMoRTALS_gmei:DeploymentModelCP3
+        a                               IMMoRTALS_gmei:DeploymentModel ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 , IMMoRTALS_resources:SoftwareLibrary-77b852b3-e1b1-4992-9b47-d6f4ac037369 , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 , IMMoRTALS_resources:SoftwareLibrary-babbc277-f57d-4b0a-b2c9-10e3f4aba862 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Describes ATAK mobile devices utilizing various versions of a library, and a target version that should upgraded to." ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.DeploymentModelCP3" ;
+        IMMoRTALS:hasResourceContainmentModel
+                IMMoRTALS_resource_containment:ResourceContainmentModel-823c7795-4f6f-4a54-8794-947c6b898d33 ;
+        IMMoRTALS:hasResourceMigrationTargets
+                IMMoRTALS_resources:ResourceMigrationTarget-60b3cbb9-aa75-45ed-85fc-9b9fe3d24588 ;
+        IMMoRTALS:hasSessionIdentifier  "CP3ATAKDevicesLibraries" .
+
+IMMoRTALS_resources_logical:DBSchema-54b0ee6f-270c-480b-9328-14a0b128b162
+        a                     IMMoRTALS_resources_logical:DBSchema ;
+        IMMoRTALS:hasName     "OldSchema" ;
+        IMMoRTALS:hasTables   IMMoRTALS_resources_logical:Table-cc98edca-7acc-48c7-be71-4a35624237a3 , IMMoRTALS_resources_logical:Table-e03fccbb-33dd-4f46-881e-8e56bd341b5a ;
+        IMMoRTALS:hasVersion  "oldVersion" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1
+        a                            IMMoRTALS_resources:MobileAndroidDevice ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice1" .
+
+IMMoRTALS_property_impact:ConstraintViolationImpact-c877dfbd-75c5-4cfe-8c30-97fc9eda2744
+        a       IMMoRTALS_property_impact:ConstraintViolationImpact ;
+        IMMoRTALS:hasConstraintViolationType
+                "HARD_CONSTRAINT_VIOLATION" ;
+        IMMoRTALS:hasDirectionOfViolation
+                "UNDERSHOOT" .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-2db9b016-9293-4828-bf9f-64410ad077b8
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-6dbb0261-6084-4938-b013-faebe4db7067 , IMMoRTALS_resource_containment:ConcreteResourceNode-7238e69a-8ea1-4cfc-944f-466c638d7ecf ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the marti database instance. Also contains two schema resource nodes." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources:DataBase-bf286cf3-1bce-4dbd-b125-93576f02808b .
+
+IMMoRTALS_property_impact:AbstractPropertyCriterion-f12f9485-e44a-43a1-af36-5954692ebd8b
+        a                       IMMoRTALS_property_impact:AbstractPropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_ADDED" ;
+        IMMoRTALS:hasProperty   IMMoRTALS_functionality_dataproperties:Encrypted .
+
+IMMoRTALS_resources:SoftwareLibrary-77b852b3-e1b1-4992-9b47-d6f4ac037369
+        a                             IMMoRTALS_resources:SoftwareLibrary ;
+        IMMoRTALS:hasApplicationName  "oldCommonsIO" ;
+        IMMoRTALS:hasVersion          IMMoRTALS_resources_logical:Version-51ed3ca2-0bb9-4237-9950-5d9fe9d3518e .
+
+IMMoRTALS_gmei:DeploymentModelCP2
+        a                               IMMoRTALS_gmei:DeploymentModel ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 , IMMoRTALS_cp2:ClientServerEnvironment.MartiServer , IMMoRTALS_cp2:ClientServerEnvironment.FileSystem1 , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 , IMMoRTALS_cp2:ClientServerEnvironment.FileSystem2 , IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 ;
+        IMMoRTALS:hasCauseEffectAssertions
+                IMMoRTALS_cp2:ClientServerEnvironment.DataSafetyConstraint ;
+        IMMoRTALS:hasHumanReadableDescription
+                "This describes a server and several client devices, along with some file systems and software, on the devices.There is a constraint placed on any data transmitted between client and server devices mandating it be confidential somehow." ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.DeploymentModelCP2" ;
+        IMMoRTALS:hasResourceContainmentModel
+                IMMoRTALS_resource_containment:ResourceContainmentModel-681606a2-0695-4cef-ab0f-4157af9454db ;
+        IMMoRTALS:hasSessionIdentifier  "CP2DataflowManagement" .
+
+IMMoRTALS_resources:DataBase-bf286cf3-1bce-4dbd-b125-93576f02808b
+        a                             IMMoRTALS_resources:DataBase ;
+        IMMoRTALS:hasDataBaseSchemas  IMMoRTALS_resources_logical:DBSchema-54b0ee6f-270c-480b-9328-14a0b128b162 , IMMoRTALS_resources_logical:DBSchema-2e61119e-1f7b-488a-96a5-2b693c555784 .
+
+IMMoRTALS_property_impact:AbstractDataflowBindingSite-24d19413-84d4-4708-8947-a0f327d5eb9f
+        a                  IMMoRTALS_property_impact:AbstractDataflowBindingSite ;
+        IMMoRTALS:hasDest  IMMoRTALS_resources:Server ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Any data between an android mobile device and server" ;
+        IMMoRTALS:hasSrc   IMMoRTALS_resources:MobileAndroidDevice .
+
+IMMoRTALS_resources_logical:DBSchema-2e61119e-1f7b-488a-96a5-2b693c555784
+        a                     IMMoRTALS_resources_logical:DBSchema ;
+        IMMoRTALS:hasName     "CurrentSchema" ;
+        IMMoRTALS:hasTables   IMMoRTALS_resources_logical:Table-97f467c5-e540-4dd9-8699-7dc6f3b2bc7b , IMMoRTALS_resources_logical:Table-639a8d7a-f928-49c8-936e-1bf802d8b9ef ;
+        IMMoRTALS:hasVersion  "currentVersion" .
+
+IMMoRTALS_resources_logical:Column-fdc061e7-a924-410f-820b-08237392bc6a
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_resources:SoftwareLibrary-babbc277-f57d-4b0a-b2c9-10e3f4aba862
+        a                             IMMoRTALS_resources:SoftwareLibrary ;
+        IMMoRTALS:hasApplicationName  "currentCommonsIO" ;
+        IMMoRTALS:hasVersion          IMMoRTALS_resources_logical:Version-f8418853-0980-4b0d-a3a9-f5bb94213f4b .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-2ccfbfcf-d197-446a-beb8-098cb132ff61
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-61391a5a-2162-4c02-8742-fdfb546d3767 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #2. Also contains a software library resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice2 .
+
+IMMoRTALS_property_impact:AbstractPropertyCriterion-4d0acf8b-d6a4-48f9-ac6a-179af32b47d9
+        a                       IMMoRTALS_property_impact:AbstractPropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_ABSENT" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "This criterion specifies a situation where a confidential property is absent." ;
+        IMMoRTALS:hasProperty   IMMoRTALS_functionality:ConfidentialProperty .
+
+IMMoRTALS_resources_logical:Version-f8418853-0980-4b0d-a3a9-f5bb94213f4b
+        a                   IMMoRTALS_resources_logical:Version ;
+        IMMoRTALS:hasMajor  "2"^^xsd:int ;
+        IMMoRTALS:hasMinor  "0"^^xsd:int ;
+        IMMoRTALS:hasPatch  "0"^^xsd:int .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ConfidentialDataImplementationStrategy
+        a                            IMMoRTALS_property_impact:PrescriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:ConstraintViolationCriterion-7934b6c5-0d49-4727-9c83-cb226660eee9 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "When the DataSafetyConstraint is \"hard\" violated, this strategy can mitigate the violation, while at the same time introducing ImpactOfEncryptingData." ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:RemediationImpact-18c8aa9b-cc16-4a30-b3ef-5f488d808a79 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ConfidentialDataImplementationStrategy" .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-591db175-c70d-425c-87cb-b16ca91eb6aa
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing file system instance #1." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.FileSystem1 .
+
+IMMoRTALS_cp2:ClientServerEnvironment.FileSystem2
+        a                            IMMoRTALS_resources:FileSystemResource ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$FileSystem2" .
+
+IMMoRTALS_resources:ResourceMigrationTarget-26607d7e-2867-42cb-8384-46208e3a30db
+        a                            IMMoRTALS_resources:ResourceMigrationTarget ;
+        IMMoRTALS:hasRationale       "Need to upgrade schema to support new operations" ;
+        IMMoRTALS:hasTargetResource  IMMoRTALS_resources_logical:DBSchema-2e61119e-1f7b-488a-96a5-2b693c555784 .
+
+IMMoRTALS_gmei:DeploymentModelCP1
+        a                               IMMoRTALS_gmei:DeploymentModel ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_resources:DataBase-bf286cf3-1bce-4dbd-b125-93576f02808b , IMMoRTALS_cp2:ClientServerEnvironment.MartiServer , IMMoRTALS_resources_logical:DBSchema-2e61119e-1f7b-488a-96a5-2b693c555784 , IMMoRTALS_resources_logical:DBSchema-54b0ee6f-270c-480b-9328-14a0b128b162 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Describes a marti database in need of upgrading schema versions to the specified target." ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.DeploymentModelCP1" ;
+        IMMoRTALS:hasResourceContainmentModel
+                IMMoRTALS_resource_containment:ResourceContainmentModel-f9c7af2f-ef79-4adf-b62b-47fb99167646 ;
+        IMMoRTALS:hasResourceMigrationTargets
+                IMMoRTALS_resources:ResourceMigrationTarget-26607d7e-2867-42cb-8384-46208e3a30db ;
+        IMMoRTALS:hasSessionIdentifier  "CP1MartiDatabaseSchemas" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.DataSafetyConstraint
+        a                            IMMoRTALS_property_impact:ProscriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasApplicableDataType
+                IMMoRTALS_functionality_datatype:DataType ;
+        IMMoRTALS:hasAssertionBindingSite
+                IMMoRTALS_property_impact:AbstractDataflowBindingSite-24d19413-84d4-4708-8947-a0f327d5eb9f ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:AbstractPropertyCriterion-4d0acf8b-d6a4-48f9-ac6a-179af32b47d9 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "All data being transmitted between MobileAndroidDevices and FileSystemResources must be confidential" ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:ConstraintViolationImpact-c877dfbd-75c5-4cfe-8c30-97fc9eda2744 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$DataSafetyConstraint" .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-7238e69a-8ea1-4cfc-944f-466c638d7ecf
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the new schema instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources_logical:DBSchema-2e61119e-1f7b-488a-96a5-2b693c555784 .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-8b859bea-8d2b-4f5c-8153-6e35115b819b
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-ce07ac33-9669-4402-8992-48a42b899904 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #3. Also contains a file system resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice3 .
+
+IMMoRTALS_property_impact:RemediationImpact-18c8aa9b-cc16-4a30-b3ef-5f488d808a79
+        a       IMMoRTALS_property_impact:RemediationImpact ;
+        IMMoRTALS:hasRemediationStrategy
+                IMMoRTALS_cp2:ClientServerEnvironment.ImpactOfEncryptingData .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-61391a5a-2162-4c02-8742-fdfb546d3767
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the good library instance." ;
+        IMMoRTALS:hasResource           IMMoRTALS_resources:SoftwareLibrary-babbc277-f57d-4b0a-b2c9-10e3f4aba862 .
+
+IMMoRTALS_resources_logical:Column-128a45fe-4fbb-4478-a866-838a01f39950
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_resources_logical:Table-cc98edca-7acc-48c7-be71-4a35624237a3
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-fdc061e7-a924-410f-820b-08237392bc6a .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-7989e8b1-7df8-481c-bfa4-3bcab232d606
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-591db175-c70d-425c-87cb-b16ca91eb6aa ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing ATAK client device instance #1. Also contains a file system resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 .
+
+IMMoRTALS_resource_containment:ResourceContainmentModel-681606a2-0695-4cef-ab0f-4157af9454db
+        a                           IMMoRTALS_resource_containment:ResourceContainmentModel ;
+        IMMoRTALS:hasResourceModel  IMMoRTALS_resource_containment:ConcreteResourceNode-7989e8b1-7df8-481c-bfa4-3bcab232d606 , IMMoRTALS_resource_containment:ConcreteResourceNode-01a81d86-78d6-4024-ad28-141dada5cde0 , IMMoRTALS_resource_containment:ConcreteResourceNode-8b859bea-8d2b-4f5c-8153-6e35115b819b .
+
+IMMoRTALS_resources_logical:Column-81ed83d8-2a4e-480d-888a-5155fc35c189
+        a       IMMoRTALS_resources_logical:Column .
+
+IMMoRTALS_cp2:ClientServerEnvironment.FileSystem1
+        a                            IMMoRTALS_resources:FileSystemResource ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$FileSystem1" .
+
+IMMoRTALS_property_impact:PropertyImpact-6062974f-1c81-4182-be38-7a326a0872ca
+        a                              IMMoRTALS_property_impact:PropertyImpact ;
+        IMMoRTALS:hasImpactOnProperty  "ADDS" ;
+        IMMoRTALS:hasImpactedProperty  IMMoRTALS_functionality:ConfidentialProperty .
+
+IMMoRTALS_resources_logical:Table-e03fccbb-33dd-4f46-881e-8e56bd341b5a
+        a                     IMMoRTALS_resources_logical:Table ;
+        IMMoRTALS:hasColumns  IMMoRTALS_resources_logical:Column-cb8596b5-e2a3-4f61-a71a-c1f2bbe73316 .
+
+IMMoRTALS_resources_logical:Version-51ed3ca2-0bb9-4237-9950-5d9fe9d3518e
+        a                   IMMoRTALS_resources_logical:Version ;
+        IMMoRTALS:hasMajor  "1"^^xsd:int ;
+        IMMoRTALS:hasMinor  "4"^^xsd:int ;
+        IMMoRTALS:hasPatch  "9"^^xsd:int .
+
+IMMoRTALS_resource_containment:ConcreteResourceNode-d2330139-afc1-4b20-a307-5ebcf7bfdae8
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-2db9b016-9293-4828-bf9f-64410ad077b8 ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing the marti server instance. Also contains a database resource node." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.MartiServer .
+
+IMMoRTALS_resources_logical:Column-cb8596b5-e2a3-4f61-a71a-c1f2bbe73316
+        a       IMMoRTALS_resources_logical:Column .

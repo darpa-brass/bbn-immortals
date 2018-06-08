@@ -1,5 +1,6 @@
 package mil.darpa.immortals.config.extensions;
 
+import mil.darpa.immortals.config.ExtensionInterface;
 import mil.darpa.immortals.config.GlobalsConfig;
 import mil.darpa.immortals.config.ImmortalsConfig;
 
@@ -10,7 +11,7 @@ import java.nio.file.Paths;
 /**
  * Created by awellman@bbn.com on 1/30/18.
  */
-public class HddRassConfiguration {
+public class HddRassConfiguration implements ExtensionInterface {
 
     private final String identifier = "hddrass";
 
@@ -18,8 +19,13 @@ public class HddRassConfiguration {
     
     private final String gradleBuildFile = "extensions/osu/hddrass/build.gradle";
 
-    public Path getJarPath() {
-        return ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(jarPath);
+    public String getExePath() {
+        return ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve(jarPath).toString();
+    }
+
+    @Override
+    public Path getWorkingDirectoryTemplateFolder() {
+        return null;
     }
 
     public String getIdentifier() {

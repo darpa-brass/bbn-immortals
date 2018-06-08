@@ -21,7 +21,7 @@ class PerturbationScenario(ValuedEnum):
     # P2CP3LibraryOrPlatformUpgrade = TestAdapterEndpoint.CP3
 
     # P2CP3AndroidPlatform = TestAdapterEndpoint.CP3
-    # P2CP3AndroidLibraryUpgrade = TestAdapterEndpoint.CP3
+    P2CP3AndroidPartialLibraryUpgrade = TestAdapterEndpoint.CP3
     # P2CP3AndroidLibraryMutation = TestAdapterEndpoint.CP3
     # P2CP3JavaLibraryUpgrade = TestAdapterEndpoint.CP3
     P2CP3JavaLibraryMutation = TestAdapterEndpoint.CP3
