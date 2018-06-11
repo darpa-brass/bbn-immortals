@@ -1,7 +1,0 @@
-com/securboration/immortals/ontology/analysis/AnalysisReport.class
-com/securboration/immortals/ontology/analysis/profiling/properties/DynamicBytesConsumed.class
-com/securboration/immortals/ontology/analysis/cg/CallGraphEdge.class
-com/securboration/immortals/ontology/analysis/profiling/SimpleResourceDependencyAssertion.class
-com/securboration/immortals/ontology/analysis/profiling/properties/DynamicCallGraph.class
-com/securboration/immortals/ontology/analysis/profiling/properties/DynamicInstructionCount.class
-com/securboration/immortals/ontology/analysis/profiling/properties/MeasuredProperty.class

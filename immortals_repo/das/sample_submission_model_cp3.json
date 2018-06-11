@@ -1,8 +1,0 @@
-{
-    "sessionIdentifier": "1337Model",
-    "martiServerModel": {
-        "requirements": {
-            "libraryUpgrade": "ElevationApi_2"
-        }
-    }
-}

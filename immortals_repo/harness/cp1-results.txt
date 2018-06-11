@@ -1,1 +1,0 @@
-# TEST: P2CP1DatabaseSchema.p2cp1challenge

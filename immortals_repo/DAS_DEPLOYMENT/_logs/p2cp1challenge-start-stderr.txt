@@ -1,4 +1,0 @@
-TIMEOUT!
-PROBABLE ERROR! Startup of 'voltdb' hit its timeout of 20000 ms!
-INTERRUPTED!
-Start up of process 'fuseki' Interrupted!

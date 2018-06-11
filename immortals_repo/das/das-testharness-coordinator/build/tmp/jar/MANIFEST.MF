@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: IMMoRTALS-DAS-TestHarness-Coordinator
-Main-Class: mil.darpa.immortals.core.das.CoordinatorMain
-
