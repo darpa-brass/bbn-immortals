@@ -41,5 +41,5 @@ DIR=`pwd`
 
 export IMMORTALS_OVERRIDE_FILE="${DIR}/test_override_file.json"
 
-python3.6 tools.py orchestrate cp3hddrass.p2cp3challenge
-python3.6 tools.py orchestrate cp1.p2cp1challenge
+python3 tools.py orchestrate cp3hddrass.p2cp3challenge
+python3 tools.py orchestrate cp1.p2cp1challenge
