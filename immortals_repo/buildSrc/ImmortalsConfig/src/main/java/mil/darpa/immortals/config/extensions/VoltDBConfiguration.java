@@ -22,7 +22,7 @@ public class VoltDBConfiguration implements RestfulAppConfigInterface {
     private String workingDirectory = GlobalsConfig.mkworkingdir("_" + identifier);
     private String exePath = Paths.get(workingDirectory).resolve("build.xml").toString();
     private String[] interpreterParameters = { "-buildfile" };
-    private String[] parameters = {"clean", "init", "start"};
+    private String[] parameters = {};
     private HashMap<String, String> environmentVariables = new HashMap<>();
     private String readyStdoutLineRegexPattern = " *\\[exec\\] Server completed initialization\\.";
 
