@@ -108,6 +108,11 @@ afterEvaluate {
                 if (req.androidVersion == 21 && req.uploadBandwidthLimitKilobitsPerSecond == 800 &&
                         req.externallyAccessibleUrls.contains("dropbox.com:443") && req.externallyAccessibleUrls.contains("dropbox.com:80")) {
                     aec = conf
+                    // push the test file to the device
+                    exec {
+                        workingDir = project.rootDir
+                        commandLine = ['adb', 'connect', aec.adbUrl]
+                    }
                 }
             }
 
@@ -118,7 +123,7 @@ afterEvaluate {
             // push the test file to the device
             exec {
                 workingDir = project.rootDir
-                commandLine = ['adb', 'push', project.rootDir.toPath().resolve('moby_dick_x7.txt').toString(), '/storage/sdcard/file.txt']
+                commandLine = ['adb', '-s', aec.adbIdentifier, 'push', project.rootDir.toPath().resolve('moby_dick_x7.txt').toString(), '/storage/sdcard/file.txt']
             }
 
             // Copy the deployment configuration to a file and push it to the device
@@ -127,13 +132,13 @@ afterEvaluate {
             Files.write(configPath, configString.bytes)
             exec {
                 workingDir = project.rootDir
-                commandLine = ['adb', 'push', configPath.toString(), '/storage/sdcard/deployment_config.json']
+                commandLine = ['adb', '-s', aec.adbIdentifier, 'push', configPath.toString(), '/storage/sdcard/deployment_config.json']
             }
 
-            ProcessBuilder pb = new ProcessBuilder("adb", "shell", "svc", "data", "enable")
+            ProcessBuilder pb = new ProcessBuilder("adb", '-s', aec.adbIdentifier, "shell", "svc", "data", "enable")
             helperProcess = pb.start()
             helperProcess.waitFor()
-            pb = new ProcessBuilder("adb", "shell", "svc", "wifi", "enable")
+            pb = new ProcessBuilder("adb", '-s', aec.adbIdentifier, "shell", "svc", "wifi", "enable")
             helperProcess = pb.start()
             helperProcess.waitFor()
 
