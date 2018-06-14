@@ -35,7 +35,7 @@ public class LocalAndroidHelper {
         if (_androidHelperService == null) {
             Gson gson = new Gson();
 
-            FileReader fr = new FileReader(new File("/storage/sdcard/deployment_config.json"));
+            FileReader fr = new FileReader(new File("/sdcard/deployment_config.json"));
             JsonObject configData = gson.fromJson(fr, JsonObject.class);
 
             Retrofit retrofit = new Retrofit.Builder().baseUrl("http://" + configData.get("martiAddress").getAsString() + ":4567").build();
@@ -71,7 +71,7 @@ public class LocalAndroidHelper {
         int rval = -1;
 
         pb = new ProcessBuilder("su", "-c", "svc", "data", newStatus);
-        pb.directory(new File("/storage/sdcard"));
+        pb.directory(new File("/sdcard"));
         p = pb.start();
         rval = p.waitFor();
         if (rval != 0) {
@@ -79,7 +79,7 @@ public class LocalAndroidHelper {
         }
 
         pb = new ProcessBuilder("su", "-c", "svc", "wifi", newStatus);
-        pb.directory(new File("/storage/sdcard"));
+        pb.directory(new File("/sdcard"));
         p = pb.start();
         rval = p.waitFor();
         if (rval != 0) {
