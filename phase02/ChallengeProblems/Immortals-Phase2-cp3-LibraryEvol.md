@@ -219,7 +219,14 @@ _deploymentPlatformVersion_ attribute to introduce an additional form of library
  - The valid _martiServerModel_ _partialLibraryUpgrade_ values are defined in the **ServerPartialUpgradeLibrary** object
 
 Although defined to allow flexibility, not all of these enumerations will be used. If they are not used, the only available 
-value will be listed as "ToBeDetermined_X_X" or "NONE" and should not be submitted to the Test Adapter.
+value will be listed as "ToBeDetermined_X_X" or "NONE" and should not be submitted to the Test Adapter. In addition to this, 
+only one perturbation should be submitted at once. So only include __ONE__ of the following:
+
+ - _atakLiteClientModel_._requirements_._deploymentPlatformVersion_  
+ - _atakLiteClientModel_._requirements_._libraryUpgrade_  
+ - _atakLiteClientModel_._requirements_._partialLibraryUpgrade_  
+ - _martiServerModel_._requirements_._libraryUpgrade_  
+ - _martiServerModel_._requirements_._partialLibraryUpgrade_  
 
 ### Endpoint Usage
 __Endpoint Type__: POST  
@@ -232,13 +239,13 @@ __Endpoint URL__: /action/libraryEvolution
         "requirements": {
             "deploymentPlatformVersion": "Android23",
             "libraryUpgrade": "ToBeDetermined_X_X",
-            "partialLibraryUpgrade": "Dropbox_X_X"
+            "partialLibraryUpgrade": "Dropbox_3_0_6"
         }
     },
     "martiServerModel": {
         "requirements": {
-            "libraryUpgrade": "ImageSaverLibrary_2",
-            "partialLibraryUpgrade": "Dom4jCot_2"
+            "libraryUpgrade": "ElevationApi_2",
+            "partialLibraryUpgrade": "ToBeDetermined_X_X"
         }
     }
 }  
@@ -286,9 +293,9 @@ __Description__: Possible Android platforms to deploy on
 __Type__: String Constant  
 __Description__: A client upgrade library that will cause a mutation  
 
-| Values             | Description                |  
-| ------------------ | -------------------------- |  
-| ToBeDetermined_X_X | Libraries to be determined |  
+| Values             | Description                | NewDependencyCoordinates | OldDependencyCoordinates |  
+| ------------------ | -------------------------- | ------------------------ | ------------------------ |  
+| ToBeDetermined_X_X | Libraries to be determined | dummy:new:version        | dummy:old:version        |  
 
 #### ClientPartialUpgradeLibrary  
 __Type__: String Constant  
@@ -327,6 +334,6 @@ __Description__: A server upgrade library that will cause a mutation
 __Type__: String Constant  
 __Description__: A server library upgrade that will cause a partial upgrade  
 
-| Values             | Description               |  
-| ------------------ | ------------------------- |  
-| ToBeDetermined_X_X | Libraries to be determined|  
+| Values             | Description                |  
+| ------------------ | -------------------------- |  
+| ToBeDetermined_X_X | Libraries to be determined |  

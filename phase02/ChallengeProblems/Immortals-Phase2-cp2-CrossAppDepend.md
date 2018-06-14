@@ -482,6 +482,9 @@ augmentation. For this, a _securityStandard_ must be defined as an attribute for
 in the _globalPerturbation_. There are currently several candidate security standards being investigated and are listed in 
 the **SecurityStandard** section of the Data Dictionary to drive this challenge problem.
 
+In addition to the base _requirements_, you can optionally define one or more resources from the corresponding platform 
+resource enum within the _atakLiteClientModel_ or _martiServerModel_.
+
 ### Endpoint Usage
 __Endpoint Type__: POST  
 __Endpoint URL__: /action/crossApplicationDependencies
@@ -489,12 +492,24 @@ __Endpoint URL__: /action/crossApplicationDependencies
 #### Sample SubmissionModel value
 ```  
 {
+    "atakLiteClientModel": {
+        "resources": [
+            "HARWARE_AES",
+            "STRONG_CRYPTO"
+        ]
+    },
     "globalModel": {
         "requirements": {
             "dataInTransit": {
                 "securityStandard": "NIST800Dash171"
             }
         }
+    },
+    "martiServerModel": {
+        "resources": [
+            "HARWARE_AES",
+            "STRONG_CRYPTO"
+        ]
     }
 }  
 ```  
@@ -505,9 +520,28 @@ __Endpoint URL__: /action/crossApplicationDependencies
 __Type__: JSON Object  
 __Description__: The main submission model  
 
-| Field       | Type                  | Description             |  
-| ----------- | --------------------- | ----------------------- |  
-| globalModel | GlobalSubmissionModel | Global deployment model |  
+| Field               | Type                    | Description                      |  
+| ------------------- | ----------------------- | -------------------------------- |  
+| atakLiteClientModel | ATAKLiteSubmissionModel | ATAKLite client deployment model |  
+| globalModel         | GlobalSubmissionModel   | Global deployment model          |  
+| martiServerModel    | MartiSubmissionModel    | Marti server deployment model    |  
+
+#### ATAKLiteSubmissionModel  
+__Type__: JSON Object  
+__Description__: The model of adaptation for all ATAKLite Clients  
+
+| Field     | Type                  | Description                                                                         |  
+| --------- | --------------------- | ----------------------------------------------------------------------------------- |  
+| resources | List[AndroidResource] | Available Resources for all operating ATAKLite clients that may be empty or omitted |  
+
+#### AndroidResource  
+__Type__: String Constant  
+__Description__: Resources available to ATAKLite  
+
+| Values        | Description                           |  
+| ------------- | ------------------------------------- |  
+| HARWARE_AES   | Hardware accelerated AES cryptography |  
+| STRONG_CRYPTO | Support for strong cryptography       |  
 
 #### GlobalSubmissionModel  
 __Type__: JSON Object  
@@ -539,8 +573,23 @@ __Description__: Common security standards
 
 | Values         | Description                                            |  
 | -------------- | ------------------------------------------------------ |  
-| Nothing        | No security required                                   |  
 | FIPS140Dash1   | Obsolete less secure NIST government security standard |  
 | FIPS140Dash2   | Current secure NIST government security standard       |  
 | NIST800Dash171 | Recent governemnt contractor security standard         |  
- 
+
+#### MartiSubmissionModel  
+__Type__: JSON Object  
+__Description__: The model of adaptation for the Marti server  
+
+| Field     | Type               | Description                                                           |  
+| --------- | ------------------ | --------------------------------------------------------------------- |  
+| resources | List[JavaResource] | Available Resources for the Marti server that may be empty or omitted |  
+
+#### JavaResource  
+__Type__: String Constant  
+__Description__: Resources available to Marti Server  
+
+| Values        | Description                           |  
+| ------------- | ------------------------------------- |  
+| HARWARE_AES   | Hardware accelerated AES cryptography |  
+| STRONG_CRYPTO | Support for strong cryptography       |  
