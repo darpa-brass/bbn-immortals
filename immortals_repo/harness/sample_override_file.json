@@ -7,43 +7,45 @@
         "port": 55555,
         "url": "127.0.0.1"
     },
-    "androidEnvironments": [
-        {
-            "adbIdentifier": "emulator-5580",
-            "adbPort": 5580,
-            "adbUrl": "127.0.0.1",
-            "environmentDetails": {
-                "androidVersion": 21,
-                "externallyAccessibleUrls": [
-                    "dropbox.com:443",
-                    "dropbox.com:80"
-                ],
-                "superuserAccess": true,
-                "uploadBandwidthLimitKilobitsPerSecond": 800
+    "deploymentEnvironment": {
+        "androidEnvironments": [
+            {
+                "adbIdentifier": "emulator-5580",
+                "adbPort": 5580,
+                "adbUrl": "127.0.0.1",
+                "environmentDetails": {
+                    "androidVersion": 21,
+                    "externallyAccessibleUrls": [
+                        "dropbox.com:443",
+                        "dropbox.com:80"
+                    ],
+                    "superuserAccess": true,
+                    "uploadBandwidthLimitKilobitsPerSecond": 800
+                }
+            },
+            {
+                "adbIdentifier": "emulator-5578",
+                "adbPort": 5578,
+                "adbUrl": "127.0.0.1",
+                "environmentDetails": {
+                    "androidVersion": 21,
+                    "externallyAccessibleUrls": [],
+                    "superuserAccess": false,
+                    "uploadBandwidthLimitKilobitsPerSecond": null
+                }
+            },
+            {
+                "adbIdentifier": "emulator-5576",
+                "adbPort": 5576,
+                "adbUrl": "127.0.0.1",
+                "environmentDetails": {
+                    "androidVersion": 21,
+                    "externallyAccessibleUrls": [],
+                    "superuserAccess": false,
+                    "uploadBandwidthLimitKilobitsPerSecond": null
+                }
             }
-        },
-        {
-            "adbIdentifier": "emulator-5578",
-            "adbPort": 5578,
-            "adbUrl": "127.0.0.1",
-            "environmentDetails": {
-                "androidVersion": 21,
-                "externallyAccessibleUrls": [],
-                "superuserAccess": false,
-                "uploadBandwidthLimitKilobitsPerSecond": null
-            }
-        },
-        {
-            "adbIdentifier": "emulator-5576",
-            "adbPort": 5576,
-            "adbUrl": "127.0.0.1",
-            "environmentDetails": {
-                "androidVersion": 21,
-                "externallyAccessibleUrls": [],
-                "superuserAccess": false,
-                "uploadBandwidthLimitKilobitsPerSecond": null
-            }
-        }
-    ],
-    "martiAddress": "10.0.2.2"
+        ],
+        "martiAddress": "10.0.2.2"
+    }
 }
