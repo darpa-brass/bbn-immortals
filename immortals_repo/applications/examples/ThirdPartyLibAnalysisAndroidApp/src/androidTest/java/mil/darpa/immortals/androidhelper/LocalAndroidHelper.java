@@ -11,6 +11,7 @@ import retrofit2.http.POST;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,9 +50,11 @@ public class LocalAndroidHelper {
     private static final LinkedList<String> errors = new LinkedList<>();
 
     public static synchronized void disableNetwork() throws IOException, InterruptedException {
-        Response r = getAndroidHelperService().disableNetwork().execute();
-        if (!r.isSuccessful()) {
-            toggleNetworkStatus(false);
+        try {
+            // TODO: Add some sort of check so that this doesn't possibly create a false failure
+            Response r = getAndroidHelperService().disableNetwork().execute();
+        } catch (SocketException e) {
+            // Do nothing. It worked. You can't get a response after disabling the network.
         }
     }
 
