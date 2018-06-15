@@ -3,6 +3,7 @@ package mil.darpa.immortals.androidhelper;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+import spark.Spark;
 
 import java.io.IOException;
 
@@ -35,6 +36,8 @@ public class AndroidHelperServer {
     }
 
     public static void main(String[] args) {
+        Spark.ipAddress("0.0.0.0");
+
         post("/enableNetwork", new Route() {
             @Override
             public Object handle(Request request, Response response) throws Exception {
