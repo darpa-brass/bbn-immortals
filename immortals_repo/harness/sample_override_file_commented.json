@@ -1,4 +1,8 @@
 {
+    "globals": {
+        // Where the logs should be saved to. Will be actively written to while the DAS is running.
+        "globalLogDirectory": "/home/ubuntu/MyLogFolder"
+    },
     // Test harness configuration
     "testHarness": {
         // The HTTP REST port the test harness is listening on

@@ -54,7 +54,6 @@ public class GlobalsConfig {
     // You would think these should be paired together... But I want to keep it easy to configure logs and runtime
     // data to be put in two completely separate locations
     private String executionsDirectory = globalWorkingDirectory;
-    private String executionsLogDirectory = globalLogDirectory;
 
     private String immortalsOntologyUriRoot = "http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#";
     private String immortalsOntologyUriPrefix = "IMMoRTALS_mil_darpa_immortals_ontology";
@@ -106,7 +105,7 @@ public class GlobalsConfig {
     }
 
     public Path getAdaptationLogDirectory(String adaptationIdentifier) {
-        return StaticHelper.mkdir(Paths.get(executionsLogDirectory).resolve(adaptationIdentifier));
+        return StaticHelper.mkdir(Paths.get(globalLogDirectory).resolve(adaptationIdentifier));
     }
 
     public Path getTtlIngestionDirectory() {
