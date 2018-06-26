@@ -1,17 +1,22 @@
 package mil.darpa.immortals.core.das.sparql.adaptationtargets;
 
-import mil.darpa.immortals.config.ImmortalsConfig;
+import mil.darpa.immortals.core.das.adaptationmodules.hddrass.Hacks;
 import mil.darpa.immortals.core.das.sparql.SparqlQuery;
-import mil.darpa.immortals.core.das.sparql.deploymentmodel.DetermineLibraryUpgrades;
-import mil.darpa.immortals.das.context.ContextManager;
 import mil.darpa.immortals.das.context.DasAdaptationContext;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class DetermineAllAnnotatedTestFunctionality extends SparqlQuery {
+
+    private static Logger logger = LoggerFactory.getLogger(DetermineAllAnnotatedTestFunctionality.class.getName());
 
     /**
      * @return A map of target identifiers to a map of their test cases to a set of their annotated functionality
@@ -63,6 +68,9 @@ public class DetermineAllAnnotatedTestFunctionality extends SparqlQuery {
 
             functionalityValidated.add(featureRequirement);
         }
+
+        Hacks.injectMissingTestsAndFunctionality(artifactMap);
+
         return artifactMap;
     }
 }

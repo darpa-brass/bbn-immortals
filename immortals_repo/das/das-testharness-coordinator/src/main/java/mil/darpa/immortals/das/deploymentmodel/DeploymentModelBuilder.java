@@ -11,6 +11,7 @@ import mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.AtakliteRequirements
 import mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements.ClientPartialUpgradeLibrary;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiRequirements;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiSubmissionModel;
+import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.ServerUpgradeLibrary;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -94,7 +95,8 @@ public class DeploymentModelBuilder {
                         new MartiRequirements(
                                 submissionModel.martiServerModel.requirements.partialLibraryUpgrade,
                                 null,
-                                null)
+                                null),
+                        null
                 ));
             } else {
                 resourceSubmissionModels.put(res.martiServer(), submissionModel.martiServerModel);
@@ -109,7 +111,8 @@ public class DeploymentModelBuilder {
                         new AtakliteRequirements(
                                 null,
                                 submissionModel.atakLiteClientModel.requirements.partialLibraryUpgrade,
-                                null)
+                                null),
+                        null
                 ));
             } else {
                 resourceSubmissionModels.put(res.atakliteClient(), submissionModel.atakLiteClientModel);
@@ -201,31 +204,44 @@ public class DeploymentModelBuilder {
 
     public static void main(String args[]) {
         try {
-            SubmissionModel submissionModel = new SubmissionModel(
+
+            SubmissionModel cp2BaselineSubmissionModel = new SubmissionModel(
                     "1337Model",
-//                    new MartiSubmissionModel(
-//                            new MartiRequirements(
-//                                    null,
-//                                    ServerUpgradeLibrary.ElevationApi_2,
-//                                    null
-//                            )
-//                    ),
-//                    null,
+                    new MartiSubmissionModel(),
+                    new ATAKLiteSubmissionModel(),
+                    null
+            );
+            
+            SubmissionModel cp3HddrassSubmissionModel = new SubmissionModel(
+                    "1337Model",
+                    new MartiSubmissionModel(
+                            new MartiRequirements(
+                                    null,
+                                    ServerUpgradeLibrary.ElevationApi_2,
+                                    null
+                            ),
+                            null
+                    ),
+                    null,
+                    null
+            );
 
-
+            SubmissionModel cp3PlugSubmissionModel = new SubmissionModel(
+                    "1337Model",
                     null,
                     new ATAKLiteSubmissionModel(
                             new AtakliteRequirements(
                                     null,
                                     ClientPartialUpgradeLibrary.Dropbox_3_0_6,
                                     null
-                            )
+                            ),
+                            null
                     ),
-
-
                     null
             );
 
+            SubmissionModel submissionModel = cp2BaselineSubmissionModel;
+            
             String jsonValue = ImmortalsUtils.nonHtmlEscapingGson.toJson(submissionModel);
             System.out.println(jsonValue);
 

@@ -1,4 +1,4 @@
-package com.securboration.immortals.ontology.domains.resources.accel;
+package com.securboration.immortals.ontology.resources.compute;
 
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.ontology.pojos.markup.Ignore;

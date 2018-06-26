@@ -40,6 +40,10 @@ public class Cpu extends ComputeResource {
     @com.securboration.immortals.ontology.annotations.RdfsComment(
         "A model of the memory for this object")
     private MemoryResource memoryModel;
+    
+    @com.securboration.immortals.ontology.annotations.RdfsComment(
+            "The instruction set(s) supported by this processor")
+    private InstructionSet[] instructionSetArchitectureSupport;
 
     public int getNumCoresPhysical() {
         return numCoresPhysical;
@@ -63,6 +67,17 @@ public class Cpu extends ComputeResource {
 
     public void setMemoryModel(MemoryResource memoryModel) {
         this.memoryModel = memoryModel;
+    }
+
+    
+    public InstructionSet[] getInstructionSetArchitectureSupport() {
+        return instructionSetArchitectureSupport;
+    }
+
+    
+    public void setInstructionSetArchitectureSupport(
+            InstructionSet[] instructionSetArchitectureSupport) {
+        this.instructionSetArchitectureSupport = instructionSetArchitectureSupport;
     }
 
 }

@@ -159,7 +159,10 @@ public class TestHarnessAdapterMediator {
                 state.testAdapterState.validation.verdictOutcome = VerdictOutcome.INCONCLUSIVE;
                 if (sendUpdate) {
                     try {
-                        submissionInterface.done(state.testAdapterState).execute();
+                        retrofit2.Response res = submissionInterface.done(state.testAdapterState).execute();
+                        if (!ImmortalsConfig.getInstance().debug.isKeepRunningOnTestAdapterDoneSignal() && res.isSuccessful()) {
+                            System.exit(0);
+                        }
                     } catch (IOException e) {
                         ImmortalsErrorHandler.reportFatalException(e);
                     }
@@ -326,8 +329,18 @@ public class TestHarnessAdapterMediator {
             case ERROR:
                 if (sendUpdate) {
                     try {
-                        submissionInterface.done(state.testAdapterState).execute();
-                        state = null;
+                        if (state.testAdapterState.validation.executedTests.size() == 0 &&
+                                (vo == VerdictOutcome.PASS || vo == VerdictOutcome.FAIL || vo == VerdictOutcome.DEGRADED)) {
+                            String msg = "Detected terminal verdict state without any tests! Something is wrong!";
+                            logger.error(msg);
+                            submissionInterface.error(msg);
+                        } else {
+                            retrofit2.Response res = submissionInterface.done(state.testAdapterState).execute();
+                            state = null;
+                            if (!ImmortalsConfig.getInstance().debug.isKeepRunningOnTestAdapterDoneSignal() && res.isSuccessful()) {
+                                System.exit(0);
+                            }
+                        }
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

@@ -1,7 +1,6 @@
 package mil.darpa.immortals.config;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ public class KnowledgeRepoConfiguration implements RestfulAppConfigInterface {
 
     private String[] parameters = new String[0];
     private HashMap<String, String> environmentVariables = new HashMap<>();
+    private boolean shutdownEverythingOnTermination = false;
 
     @Override
     public boolean isUserManaged() {
@@ -86,7 +86,7 @@ public class KnowledgeRepoConfiguration implements RestfulAppConfigInterface {
 
     @Override
     public URI getFullUrl() {
-        return RestfulAppConfigInterface.toFullUrl(this);
+        return GlobalsConfig.toFullUrl(this);
     }
 
     @Override
@@ -98,5 +98,10 @@ public class KnowledgeRepoConfiguration implements RestfulAppConfigInterface {
     public Path getWorkingDirectoryTemplateFolder() {
         if (workingDirectoryTemplateFolder == null) return null;
         return Paths.get(workingDirectoryTemplateFolder);
+    }
+
+    @Override
+    public boolean isShutdownEverythingOnTermination() {
+        return shutdownEverythingOnTermination;
     }
 }

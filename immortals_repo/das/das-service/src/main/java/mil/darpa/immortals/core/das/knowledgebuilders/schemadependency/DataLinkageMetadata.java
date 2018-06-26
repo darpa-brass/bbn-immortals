@@ -8,7 +8,7 @@ public class DataLinkageMetadata {
 	
 	public DataLinkageMetadata(String uri, String className, boolean containsDisjunctiveFilter,
 			int sqlLineNumberStart, int sqlLineNumberEnd, String sqlVariableName, String originalSql,
-			String positiveTrainingDataTableName, String negativeTrainingDataTableName,
+			String positiveTrainingDataTableName, String negativeTrainingDataTableName, String validationDataTableName,
 			List<String> projection) {
 		
 		this.uri = uri;
@@ -21,6 +21,7 @@ public class DataLinkageMetadata {
 		this.originalSql = originalSql;
 		this.positiveTrainingDataTableName = positiveTrainingDataTableName;
 		this.negativeTrainingDataTableName = negativeTrainingDataTableName;
+		this.validationDataTableName = validationDataTableName;
 	}
 
 	public String getClassName() {
@@ -107,6 +108,14 @@ public class DataLinkageMetadata {
 	public void setNegativeTrainingDataTableName(String negativeTrainingDataTableName) {
 		this.negativeTrainingDataTableName = negativeTrainingDataTableName;
 	}
+	
+	public String getValidationDataTableName() {
+		return validationDataTableName;
+	}
+
+	public void setValidationDataTableName(String validationDataTableName) {
+		this.validationDataTableName = validationDataTableName;
+	}
 
 	private int sqlLineNumberStart = -1;
 	private int sqlLineNumberEnd = -1;
@@ -117,5 +126,6 @@ public class DataLinkageMetadata {
 	private String uri = null;
 	private String positiveTrainingDataTableName = null;
 	private String negativeTrainingDataTableName = null;
+	private String validationDataTableName = null;
 
 }

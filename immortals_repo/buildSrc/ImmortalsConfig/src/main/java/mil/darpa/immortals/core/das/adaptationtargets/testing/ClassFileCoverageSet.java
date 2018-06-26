@@ -47,6 +47,13 @@ public class ClassFileCoverageSet extends CopyOnWriteArraySet<ClassFileCoverage>
 
 
     public ClassFileCoverageSet getPartiallyOrFullyCovered() {
-        return new ClassFileCoverageSet(this.stream().filter(t -> t.getLinesCovered() > 0).collect(Collectors.toSet()));
+        ClassFileCoverageSet cfcs = new ClassFileCoverageSet();
+        
+        for (ClassFileCoverage cfc : this) {
+            if (cfc.getLinesCovered() > 0) {
+                cfcs.add(cfc);
+            }
+        }
+        return cfcs;
     }
 }

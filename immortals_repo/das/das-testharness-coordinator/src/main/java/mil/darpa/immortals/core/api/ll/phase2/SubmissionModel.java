@@ -21,10 +21,12 @@ public class SubmissionModel {
     public String sessionIdentifier;
 
     @P2CP1
+    @P2CP2
     @P2CP3
     @Description("Marti server deployment model")
     public MartiSubmissionModel martiServerModel;
 
+    @P2CP2
     @P2CP3
     @Description("ATAKLite client deployment model")
     public ATAKLiteSubmissionModel atakLiteClientModel;

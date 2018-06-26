@@ -6,6 +6,6 @@ package mil.darpa.immortals.core.api.applications;
 public enum AnalyticsTarget {
     DEFAULT,
     STDOUT,
-    NET_LOG4J,
-    LOCAL_JSON_CONSUMER
+    ZEROMQ,
+    LOCAL_JSON_CONSUMER;
 }

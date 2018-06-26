@@ -13,10 +13,10 @@ class ServerPartialUpgradeLibrary(Enum):
         self.repositoryUrl = repositoryUrl  # type: str
         self.vulnerabilityIdentifiers = vulnerabilityIdentifiers  # type: List[str]
 
-    Dom4jCot_2 = ("Dom4jCot_2",
-        "Newer cot processing library",
-        "NewLib",
-        "OldLib",
+    ToBeDetermined_X_X = ("ToBeDetermined_X_X",
+        "Libraries to be determined",
+        "dummy:new:version",
+        "dummy:old:version",
         "http://central.maven.org/maven2/",
         ["FakeVulnerability"])
 

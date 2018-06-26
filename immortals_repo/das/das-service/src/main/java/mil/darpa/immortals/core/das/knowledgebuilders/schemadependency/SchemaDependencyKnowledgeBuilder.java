@@ -99,18 +99,22 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 						dataLinkageMetadata.getSqlMetadata().getProjectedIdentifiers()
 							.stream().collect(Collectors.joining(",")));
 				
-				try (Connection conn = getDASConnection()) {
+				try (Connection conn = getDASConnection(true)) {
 					SQLTransformer sqlT = new SQLTransformer();
 
 					ResolvedQuery resolvedQuery = sqlT.getBoundQuery(dataLinkageMetadata, conn);
-					String sampleSql = sqlT.getStableSampleSQL(resolvedQuery.getResolvedQuery(), 
-							POSITIVE_DATA_LIMIT);
-					String positiveTrainingTable = sqlT.createTableForSQL(sampleSql, conn);
+					String sampleSql = sqlT.getRandomSampleSQL(resolvedQuery.getResolvedQuery(), POSITIVE_DATA_LIMIT);
+					int numberRows = sqlT.getNumberRows(sampleSql, conn);
+					int sampleSize = (int) Math.floor(POSITIVE_DATA_LIMIT_PERC * numberRows);					
+					String positiveTrainingTable = sqlT.createTableForSQL(sampleSql, conn, sampleSize);
 					dataLinkage.addLiteral(TRAINING_DATA_TABLE, positiveTrainingTable);
 					
+					String validationDataTable = sqlT.createTableForSQL(sampleSql, conn, -1);
+					dataLinkage.addLiteral(VALIDATION_DATA_TABLE, validationDataTable);
+
 					String complementSql = sqlT.getComplementQuery(resolvedQuery.getResolvedQuery());
-					String negativeSampleSql = sqlT.getStableSampleSQL(complementSql, NEGATIVE_DATA_LIMIT);
-					String negativeTrainingTable = sqlT.createTableForSQL(negativeSampleSql, conn);
+					String negativeSampleSql = sqlT.getRandomSampleSQL(complementSql, NEGATIVE_DATA_LIMIT);
+					String negativeTrainingTable = sqlT.createTableForSQL(negativeSampleSql, conn, -1);
 					dataLinkage.addLiteral(NEGATIVE_DATA_TABLE, negativeTrainingTable);
 					
 					int parameterIndex = 1;
@@ -131,7 +135,7 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 		return getModel();
 	}
 	
-	private Connection getDASConnection() throws SQLException {
+	private Connection getDASConnection(boolean setRandomSeed) throws SQLException {
 
 		Properties dbProps = new Properties();
 		dbProps.setProperty("user", DAS_DB_USER);
@@ -140,22 +144,18 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 		
 		Connection conn = DriverManager.getConnection(DAS_DB_URL, dbProps);
 		
-		Statement s = null;
-		try {
-			s = conn.createStatement();
-			s.executeQuery("select setseed(" + SEED + ")");
-		} finally {
-			if (s != null) {
-				s.close();
+		if (setRandomSeed) {
+			try (Statement s = conn.createStatement()) {
+				s.executeQuery("select setseed(" + SEED + ")");
 			}
 		}
 
 		return conn;
-	}
+	}	
 	
 	private void vacuumDASDB() throws SQLException {
 		
-		try (Connection conn = getDASConnection()) {
+		try (Connection conn = getDASConnection(false)) {
             conn.createStatement().execute("vacuum full analyze");			
 		}
 	}
@@ -168,7 +168,7 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 				"and table_schema = 'das' " + 
 				"and table_name like 'temp_%'";
 
-        try (Connection conn = getDASConnection(); ResultSet tables = conn.prepareStatement(getTablesSQL).executeQuery()) {
+        try (Connection conn = getDASConnection(false); ResultSet tables = conn.prepareStatement(getTablesSQL).executeQuery()) {
             while (tables.next()) {
                 conn.createStatement().execute("DROP TABLE IF EXISTS " + tables.getString("TABLE_NAME") + " CASCADE");
             }
@@ -180,7 +180,10 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 
 	public static final String PARAM_DATA_DFU_ROOT = "PARAM_DATA_DFU_ROOT";
 	public static final int NEGATIVE_DATA_LIMIT = 5000;
-	public static final int POSITIVE_DATA_LIMIT = 100_000;
+	public static final int POSITIVE_DATA_LIMIT = 10_000;
+	
+	public static final double POSITIVE_DATA_LIMIT_PERC = 0.7;
+	
 	public static final double SEED = 0.5;
 	
 	public static final Model vocabulary = ModelFactory.createDefaultModel();
@@ -197,6 +200,7 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 	public static final Property SQL_LINE_BEGIN = vocabulary.createProperty(AbstractKnowledgeBuilder.IMMORTALS_KNOWLEDGE_BUILDERS_NS + "startLineNumber");
 	public static final Property SQL_LINE_END = vocabulary.createProperty(AbstractKnowledgeBuilder.IMMORTALS_KNOWLEDGE_BUILDERS_NS + "endLineNumber");
 	public static final Property TRAINING_DATA_TABLE = vocabulary.createProperty(AbstractKnowledgeBuilder.IMMORTALS_KNOWLEDGE_BUILDERS_NS + "trainingDataTable");
+	public static final Property VALIDATION_DATA_TABLE = vocabulary.createProperty(AbstractKnowledgeBuilder.IMMORTALS_KNOWLEDGE_BUILDERS_NS + "validationDataTable");
 	public static final Property NEGATIVE_DATA_TABLE = vocabulary.createProperty(AbstractKnowledgeBuilder.IMMORTALS_KNOWLEDGE_BUILDERS_NS + "negativeDataTable");
 	public static final Property PARAMETER_VALUE = vocabulary.createProperty(AbstractKnowledgeBuilder.IMMORTALS_KNOWLEDGE_BUILDERS_NS + "hasParameterValue");
 	public static final Property PARAMETER_SQL_TYPE = vocabulary.createProperty(AbstractKnowledgeBuilder.IMMORTALS_KNOWLEDGE_BUILDERS_NS + "hasSQLType");

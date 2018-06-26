@@ -15,6 +15,7 @@ import mil.darpa.immortals.core.das.adaptationtargets.building.AdaptationTargetB
 import mil.darpa.immortals.core.das.exceptions.InvalidOrMissingParametersException;
 import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
 import mil.darpa.immortals.core.das.knowledgebuilders.schemadependency.DataLinkageMetadata;
+import mil.darpa.immortals.core.das.knowledgebuilders.schemadependency.Parameter;
 import mil.darpa.immortals.core.das.knowledgebuilders.schemadependency.SQLMetadata;
 import mil.darpa.immortals.core.das.knowledgebuilders.schemadependency.SQLTransformer;
 import mil.darpa.immortals.core.das.knowledgebuilders.schemadependency.SchemaDependencyKnowledgeBuilder;
@@ -48,6 +49,8 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -97,7 +100,7 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
         return (migrationTarget != null && migrationTarget.trim().length() > 0);
     }
 
-    private LearnedQuery learnQuery(DataLinkageMetadata dataLinkageMetadata, DasAdaptationContext dac) throws Exception {
+    private LearnedQuery learnQuery(DataLinkageMetadata dataLinkageMetadata, DasAdaptationContext dac, SQLTransformer sqlT) throws Exception {
 
     	LearnedQuery result = null;
     	
@@ -145,7 +148,11 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
                 		result = learnedQuery;
                 	}
                 } else {
-                	result = learnedQuery;
+                    String sampleSql = sqlT.getRandomSampleSQL(learnedSql,
+                            SchemaDependencyKnowledgeBuilder.POSITIVE_DATA_LIMIT);
+                    if (compareQueryToValidationData(sampleSql, dataLinkageMetadata)) {
+                    	result = learnedQuery;
+                    }
                 }
             }
         }
@@ -176,10 +183,10 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
                         dataLinkageMetadata.getSqlMetadata().getParameters().size());
                 for (List<Integer> permutation : paramPermutations) {
                     String candidate = st.resolveParameters(combination, dataLinkageMetadata, permutation);
-                    //Does this candidate query produce the same training data as original
-                    String sampleSql = st.getStableSampleSQL(candidate,
+                    //Does this candidate query produce the same validation data as original
+                    String sampleSql = st.getRandomSampleSQL(candidate,
                             SchemaDependencyKnowledgeBuilder.POSITIVE_DATA_LIMIT);
-                    if (compareQueryToTrainingData(sampleSql, dataLinkageMetadata)) {
+                    if (compareQueryToValidationData(sampleSql, dataLinkageMetadata)) {
                         correctPermutation = permutation;
                         break;
                     }
@@ -399,7 +406,8 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
         }
     }
 
-    private boolean compareQueryToTrainingData(String query, DataLinkageMetadata dataLinkageMetadata) {
+    @SuppressWarnings("unused")
+	private boolean compareQueryToTrainingData(String query, DataLinkageMetadata dataLinkageMetadata) {
 
         boolean result = false;
 
@@ -418,7 +426,38 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
 
         CachedRowSet rowset = null;
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = getDASConnection(true);
+             ResultSet rs = conn.prepareStatement(comparisonSQL.toString()).executeQuery()) {
+            rowset = RowSetProvider.newFactory().createCachedRowSet();
+            rowset.populate(rs);
+            result = !rowset.next();
+        } catch (Exception e) {
+            result = false;
+        }
+
+        return result;
+    }
+
+    private boolean compareQueryToValidationData(String query, DataLinkageMetadata dataLinkageMetadata) {
+
+        boolean result = false;
+
+        StringBuilder comparisonSQL = new StringBuilder();
+
+        //we can use sql itself to verify the two result sets are equivalent,
+        //though this is not the most efficient way to do this; also duplicate
+        //records in one set are not detected using this approach
+        comparisonSQL.append("(" + query + ") ");
+        comparisonSQL.append(" except ");
+        comparisonSQL.append(" (select * from " + dataLinkageMetadata.getValidationDataTableName() + ") ");
+        comparisonSQL.append(" union ");
+        comparisonSQL.append(" (select * from " + dataLinkageMetadata.getValidationDataTableName() + ") ");
+        comparisonSQL.append(" except ");
+        comparisonSQL.append("(" + query + ") ");
+
+        CachedRowSet rowset = null;
+
+        try (Connection conn = getDASConnection(true);
              ResultSet rs = conn.prepareStatement(comparisonSQL.toString()).executeQuery()) {
             rowset = RowSetProvider.newFactory().createCachedRowSet();
             rowset.populate(rs);
@@ -432,6 +471,7 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
 
     @Override
     public void apply(DasAdaptationContext context) throws Exception {
+    	
         if (ImmortalsConfig.getInstance().debug.isUseMockExtensionSchemaEvolution()) {
             mockApply(context);
             return;
@@ -458,53 +498,71 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
                 try {
                 	aqlProducedQueries = getAqlQueries(context, dataLinkages);
                 } catch (Exception e) {
+                	aqlProducedQueries.clear();
                 	logger.error("AQL process invocation failed.", e);
                 }
 
+                SQLTransformer sqlT = new SQLTransformer();
+                boolean adaptationRequired, castorValidation, aqlValidation;
+                LearnedQuery learnedQuery;
+                
                 for (DataLinkageMetadata dataLinkageMetadata : dataLinkages) {
-                    SQLTransformer sqlT = new SQLTransformer();
-
-                    String sampleSql = sqlT.getStableSampleSQL(dataLinkageMetadata.getResolvedQuery(),
+                    
+                	String sampleSql = sqlT.getRandomSampleSQL(dataLinkageMetadata.getResolvedQuery(),
                             SchemaDependencyKnowledgeBuilder.POSITIVE_DATA_LIMIT);
 
-                    boolean sqlEquivalent = this.compareQueryToTrainingData(sampleSql, dataLinkageMetadata);
+                    learnedQuery = null;
+                    adaptationRequired = castorValidation = aqlValidation = false;
+                    
+                    boolean sqlEquivalent = this.compareQueryToValidationData(sampleSql, dataLinkageMetadata);
                     
                     if (!sqlEquivalent) {
-                        boolean queryCanBeRepaired = false;
-
-                        LearnedQuery learnedQuery = learnQuery(dataLinkageMetadata, context);
+                    	adaptationRequired = true;
+                    	
+                        learnedQuery = learnQuery(dataLinkageMetadata, context, sqlT);
+                        
                         if (learnedQuery == null) {
                         	logger.info("Castor did not learn query for: " + dataLinkageMetadata.getClassName());
-                        	logger.info("Trying AQL-produced query.");
-                        	//Use query from aql if exists
-                        	if (aqlProducedQueries.containsKey(dataLinkageMetadata.getClassName())) {
-                        		learnedQuery = new LearnedQuery();
-                        		learnedQuery.setDataLinkageMetadata(dataLinkageMetadata);
-                        		learnedQuery.setLearnedSql(aqlProducedQueries.get(dataLinkageMetadata.getClassName()));
-                           		queryCanBeRepaired = true;
-                            	logger.info("Using aql produced query for: " + dataLinkageMetadata.getClassName());
-                        	} else {
-                        		//This is technically an error since AQL is a model driven approach (not learning based) that should
-                        		//produce a correct query for each case; if it doesn't, the model is wrong and should be fixed.
-                        		//This is an artifact of the evaluation process. If we are evaluating schema evolution, then
-                        		//we can use the best complement of both techniques, otherwise we can evaluate each method independently.
-                        		//Evaluating each method independently, however, requires true evaluation of the entire process used
-                        		//for the technique, not simply its results. This is something MIT LL is not doing.
-                        		logger.info("AQL did not produce query for: " + dataLinkageMetadata.getClassName());
-                        	}
                         } else {
-                        	queryCanBeRepaired = true;
-                        }
-                        
-                        if (queryCanBeRepaired) {
+                        	castorValidation = true;
                             //Modify Java code with new sql
                             modifySourceCode(context, learnedQuery);
                             numberLearnedQueries++;
                         }
+
+                		String aqlSQL = aqlProducedQueries.get(dataLinkageMetadata.getClassName());
+                		
+                        if (aqlSQL != null) {
+                    		if (dataLinkageMetadata.getSqlMetadata().isParameterized()) {
+                    			SQLMetadata aqlSqlMetadata = SQLMetadata.buildSqlMetadata(aqlSQL);
+                    			if (aqlSqlMetadata.isParameterized() &&
+                    					aqlSqlMetadata.getParameters().size() == dataLinkageMetadata.getSqlMetadata().getParameters().size()) {
+                    				for (Parameter p : dataLinkageMetadata.getSqlMetadata().getParameters()) {
+                    					aqlSQL = aqlSQL.replaceFirst("\\?", Parameter.formatToString(p));
+                    				}
+                    			} else {
+                    				aqlSQL = null;
+                    			}
+                    		}
+
+                    		if (aqlSQL != null) {
+	                    		sampleSql = sqlT.getRandomSampleSQL(aqlSQL,
+	                                    SchemaDependencyKnowledgeBuilder.POSITIVE_DATA_LIMIT);
+	                            if (compareQueryToValidationData(sampleSql, dataLinkageMetadata)) {
+	                            	aqlValidation = true;
+	                            }
+                    		}
+                    	}
+                    } else {
+                    	adaptationRequired = false;
                     }
+                    
+                    //Write results for castor and aql
+                    recordResultsCSV(dataLinkageMetadata, context, ((learnedQuery != null) ? learnedQuery.getLearnedSql() : null), 
+                    		aqlProducedQueries.get(dataLinkageMetadata.getClassName()),
+                    		castorValidation, aqlValidation, adaptationRequired);
                 }
             }
-            
 
             DasOutcome outcome;
 
@@ -524,6 +582,85 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
         }
     }
 
+    @SuppressWarnings("unused")
+	private void recordResults(DataLinkageMetadata metadata, DasAdaptationContext context, String castorQuery, 
+    		String aqlQuery, boolean castorValidation, boolean aqlValidation, boolean adaptationRequired) {
+    	
+    	Path submissionFolder = ImmortalsConfig.getInstance().globals.getAdaptationWorkingDirectory(context.getAdaptationIdentifer());
+        Path resultsPath = submissionFolder.resolve("schemaEvolutionResults_" + UUID.randomUUID().toString() + ".json");
+
+        FileWriter writer = null;
+        JsonReader jsonReader = null;
+        StringReader stringReader = null;
+        
+        try {
+        	writer = new FileWriter(resultsPath.toFile(), false);
+
+        	String submissionModelJson = getSchemaPerturbation(context);
+        	stringReader = new StringReader(submissionModelJson);
+        	jsonReader = Json.createReader(stringReader);
+
+        	JsonObject submissionModel = jsonReader.readObject();
+        
+    		JsonObject jsonObject = Json.createObjectBuilder()
+    			.add("submissionModel", submissionModel)
+    			.add("castorQuery", (castorQuery != null) ? castorQuery : "null")
+    			.add("aqlQuery", (aqlQuery != null) ? aqlQuery : "null")
+    			.add("castorValidation", castorValidation)
+    			.add("aqlValidation", aqlValidation)
+    			.add("adaptationRequired", adaptationRequired)
+    			.add("className",  metadata.getClassName())
+    			.add("originalQuery", metadata.getOriginalSql())
+    			.build();
+
+			writer.write(jsonObject.toString());
+	        writer.flush();
+        } catch (Exception e) {
+        	logger.error("Could not record schema evolution results.");
+        	//swallow exception for now (we could also fail the entire test)
+		} finally {
+			try {
+				if (writer != null) {
+					writer.close();
+				}
+				if (jsonReader != null) {
+					jsonReader.close();
+				}
+				if (stringReader != null) {
+					stringReader.close();
+				}
+			} catch (Exception e1) {
+				//Do nothing;releasing resources
+				logger.warn("Exception releasing json resources.");
+			}
+		}
+    }
+    
+    private void recordResultsCSV(DataLinkageMetadata metadata, DasAdaptationContext context, String castorQuery, 
+    		String aqlQuery, boolean castorValidation, boolean aqlValidation, boolean adaptationRequired) {
+    	
+    	Path submissionFolder = ImmortalsConfig.getInstance().globals.getAdaptationLogDirectory(context.getAdaptationIdentifer());
+        Path resultsPath = submissionFolder.resolve("schemaEvolutionResults.csv");
+
+        try (FileWriter writer = new FileWriter(resultsPath.toFile(), true)) {
+        	writer.append("\"" + getSchemaPerturbation(context).replace("\"", "\"\"") + "\",");
+        	writer.append("\"" + ((castorQuery != null) ? castorQuery : "null") + "\",");
+        	writer.append("\"" + ((aqlQuery != null) ? aqlQuery : "null") + "\",");
+        	writer.append("\"" + Boolean.toString(castorValidation) + "\",");
+        	writer.append("\"" + Boolean.toString(aqlValidation) + "\",");
+        	writer.append("\"" + Boolean.toString(adaptationRequired) + "\",");
+        	writer.append("\"" + metadata.getClassName() + "\",");
+        	writer.append("\"" + metadata.getOriginalSql() + "\",");
+        	writer.append("\"" + context.getAdaptationIdentifer() + "\"");
+        	writer.append(System.lineSeparator());
+	        writer.flush();
+		} catch (Exception e) {
+        	logger.error("Could not record schema evolution results.");
+        	//swallow exception for now (we could also fail the entire test)
+		}
+    }
+    
+    
     public void mockApply(DasAdaptationContext context) {
         try {
 
@@ -545,6 +682,17 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
             throw new RuntimeException(e);
         }
     }
+    
+    public String getSchemaPerturbation(DasAdaptationContext dac) throws Exception {
+    	
+        Path submissionModel = ImmortalsConfig.getInstance().extensions.castor
+        		.getExecutionWorkingDirectory(dac.getAdaptationIdentifer()).resolve("submissionModel.json");
+
+        String schemaPerturbation = new String(Files.readAllBytes(submissionModel));
+        
+        return schemaPerturbation;
+
+    }
         
     public Map<String, String> getAqlQueries(DasAdaptationContext dac, List<DataLinkageMetadata> dataLinkages) throws Exception {
 
@@ -552,10 +700,7 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
     	
         String queryMappings = null;
         
-        Path submissionModel = ImmortalsConfig.getInstance().extensions.castor
-        		.getExecutionWorkingDirectory(dac.getAdaptationIdentifer()).resolve("submissionModel.json");
-
-        String schemaPerturbation = new String(Files.readAllBytes(submissionModel));
+        String schemaPerturbation = getSchemaPerturbation(dac);
 
         logger.debug("Submitting schema perturbation to aql service.");
 
@@ -578,7 +723,13 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
         			JsonObject query = queryResults.getJsonObject(dataLinkage.getClassName());
         			if (query != null) {
         				JsonString sql = query.getJsonObject("t1").getJsonString("sql");
-        				results.put(dataLinkage.getClassName(), sql.getString());
+        				if (sql != null) {
+        					String sqlString = sql.getString().trim();
+        					if (sqlString.endsWith(";")) {
+        						sqlString = sqlString.substring(0, sqlString.length()-1);
+        					}
+            				results.put(dataLinkage.getClassName(), sqlString);
+        				}
         			}
         		}
         	} catch (Exception e) {
@@ -590,8 +741,21 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
         return results;
     }
     
-    
+	private Connection getDASConnection(boolean setRandomSeed) throws SQLException {
 
+		Connection conn = dataSource.getConnection();
+		
+		if (setRandomSeed) {
+			try (Statement s = conn.createStatement()) {
+				s.executeQuery("select setseed(" + SEED + ")");
+			}
+		}
+
+		return conn;
+	}
+
+
+	public static final double SEED = 0.5;
     private static WebTarget aqlService;
     private static final String AQL_SERVICE_CONTEXT_ROOT = ImmortalsConfig.getInstance().extensions.aqlbrass.getFullUrl().resolve("/brass/p2/c1/json").toString();
     

@@ -1,7 +1,6 @@
 package mil.darpa.immortals.config;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -23,6 +22,7 @@ public class DasServiceConfiguration implements RestfulAppConfigInterface {
     private String[] parameters = new String[0];
     private HashMap<String, String> environmentVariables = new HashMap<>();
     String readyStdoutLineRegexPattern = ".*(?<=The DAS service located at).*(?<=is running.)$";
+    private boolean shutdownEverythingOnTermination = false;
 
     DasServiceConfiguration() {
     }
@@ -59,7 +59,7 @@ public class DasServiceConfiguration implements RestfulAppConfigInterface {
 
     @Override
     public URI getFullUrl() {
-        return RestfulAppConfigInterface.toFullUrl(this);
+        return GlobalsConfig.toFullUrl(this);
     }
 
     @Override
@@ -96,5 +96,10 @@ public class DasServiceConfiguration implements RestfulAppConfigInterface {
     public Path getWorkingDirectoryTemplateFolder() {
         if (workingDirectoryTemplateFolder == null) return null;
         return Paths.get(workingDirectoryTemplateFolder);
+    }
+
+    @Override
+    public boolean isShutdownEverythingOnTermination() {
+        return shutdownEverythingOnTermination;
     }
 }

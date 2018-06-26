@@ -19,7 +19,7 @@ public class ValidatorManager implements AnalyticsEndpointInterface {
 
     public final HashSet<ValidatorInterface> validators = new HashSet<>();
 
-    private final Analytics analytics;
+//    private final Analytics analytics;
 
     private final boolean haltOnSuccessfulValidation;
 
@@ -56,9 +56,9 @@ public class ValidatorManager implements AnalyticsEndpointInterface {
     }
 
     public ValidatorManager(Collection<String> clientIdentifiers, Collection<String> validatorIdentifiers, boolean haltOnSuccessfulValidation) {
-        Analytics.registerCurrentThread();
+//        Analytics.registerCurrentThread();
         
-        analytics = Analytics.getInstance();
+//        analytics = Analytics.getInstance();
         this.haltOnSuccessfulValidation = haltOnSuccessfulValidation;
 
         if (validatorIdentifiers.contains("all")) {
@@ -128,7 +128,7 @@ public class ValidatorManager implements AnalyticsEndpointInterface {
 
     @Override
     public synchronized void log(AnalyticsEvent event) {
-        analytics.logEvent(event);
+//        analytics.logEvent(event);
         LinkedList<ValidatorInterface> validatorRemovalQueue = new LinkedList<>();
 
         for (ValidatorInterface validator : validators) {
@@ -157,7 +157,7 @@ public class ValidatorManager implements AnalyticsEndpointInterface {
             if (endpointSender != null) {
                 endpointSender.send(results);
             }
-            analytics.logEvent(Analytics.newEvent(AnalyticsEventType.Tooling_ValidationFinished, results));
+//            analytics.logEvent(Analytics.newEvent(AnalyticsEventType.Tooling_ValidationFinished, results));
         }
     }
     

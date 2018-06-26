@@ -18,7 +18,7 @@ public class ImmortalsGradleExecutionData {
                                         @Nonnull String executionPackageIdentifier, @Nonnull String executionMainMethodClasspath) {
         this.executionStartSettleTimeMS = executionStartSettleTimeMS;
         this.executableFilename = executableFilename;
-        this.executionFileMap = executionFileMap == null ? new HashMap<>() : executionFileMap;
+        this.executionFileMap = executionFileMap == null ? new HashMap<String,String>() : executionFileMap;
         this.executionPackageIdentifier = executionPackageIdentifier;
         this.executionMainMethodClasspath = executionMainMethodClasspath;
     }

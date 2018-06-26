@@ -242,7 +242,7 @@ public class Mock {
                 
                 TestDetailsList tdl0 = tdlX.producePendingList();
                 tdl0.sequence = 0;
-                TestDetailsList tdl1 = tdl0.produceRunningList();
+                TestDetailsList tdl1 = tdlX.produceRunningList();
                 tdl1.sequence = 1;
                 
                 TestDetailsList tdl2 = tdlX;

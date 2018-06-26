@@ -1,15 +1,13 @@
 package mil.darpa.immortals.core.das.adaptationmodules.hddrass;
 
 import mil.darpa.immortals.config.ImmortalsConfig;
-import mil.darpa.immortals.core.api.TestCaseReport;
-import mil.darpa.immortals.core.api.ll.phase2.result.TestDetails;
-import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
-import mil.darpa.immortals.core.das.sparql.deploymentmodel.DetermineTargets;
-import mil.darpa.immortals.das.context.DasAdaptationContext;
+import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
+import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -79,12 +77,39 @@ public class Hacks {
         return coordinatesToDeploymentModelMap.get(coordinates);
     }
 
-    public static void injectMissingTestFunctionalityCP3PLUGFirstValidation(DasAdaptationContext dac, Map<String, Map<String, Set<String>>> functionality) {
-        Set<String> targets = DetermineTargets.select(dac);
+    public static void injectMissingTestsAndFunctionality(Map<String, Map<String, Set<String>>> functionality) {
+        try {
+            Map<String, Set<String>> bbnDetectedTests = GradleKnowledgeBuilder.getAllTargetTests();
 
-        String app_path = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/examples/ThirdPartyLibAnalysisAndroidApp").toString();
+            for (String artifactIdentifier : bbnDetectedTests.keySet()) {
+                
+                Map<String, Set<String>> appFunctionality = functionality.get(artifactIdentifier);
+                if (appFunctionality == null) {
+                    logger.debug("'" + artifactIdentifier + "' not analyzed by KRGP! Falling back on BBN Coverage Analysis!");
+                    appFunctionality = new HashMap<>();
+                    functionality.put(artifactIdentifier, appFunctionality);
+                }
+                
+                for (String testIdentifier : bbnDetectedTests.get(artifactIdentifier)) {
+                    Set<String> testFunctionality = appFunctionality.get(testIdentifier);
+                    if (testFunctionality == null) {
+                        logger.debug("'" + artifactIdentifier + "' test '" + testIdentifier + "' not analyzed by KRGP! Falling back on BBN Coverage Analysis!");
+                        testFunctionality = new HashSet<>();
+                        appFunctionality.put(testIdentifier, testFunctionality);
+                        
+                        if (testIdentifier.equals("mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest")) {
+                            testFunctionality.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#VulnerabilityDropboxFunctionalAspect");
+                            
+                        } else {
+                            testFunctionality.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#BaselineFunctionalAspect");
+                        }
+                    }
+                }
 
-        if (targets.contains(app_path)) {
+            }
+            
+
+            String app_path = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/examples/ThirdPartyLibAnalysisAndroidApp").toString();
             Map<String, Set<String>> appFunctionality = functionality.get(app_path);
 
             if (appFunctionality == null) {
@@ -105,38 +130,48 @@ public class Hacks {
                 appFunctionality.put("mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest", dropboxUnitTestTags);
             }
             dropboxUnitTestTags.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#VulnerabilityDropboxFunctionalAspect");
+        } catch (IOException e) {
+            ImmortalsErrorHandler.reportFatalException(e);
+            throw new RuntimeException(e);
         }
     }
 
-    public static TestDetailsList getMissingExpectedTestsCP3PLUGFirstValidation(DasAdaptationContext dac) {
-        Set<String> targets = DetermineTargets.select(dac);
+//    public static TestDetailsList getMissingExpectedTestsCP3PLUGFirstValidation(DasAdaptationContext dac) {
+//        Set<String> targets = DetermineTargets.select(dac);
+//
+//        String app_path = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/examples/ThirdPartyLibAnalysisAndroidApp").toString();
+//
+//        if (targets.contains(app_path)) {
+//            List<String> funcs = new LinkedList<>();
+//            funcs.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#BaselineFunctionalAspect");
+//            TestCaseReport tcr = new TestCaseReport(
+//                    app_path,
+//                    "mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.shouldPassWith003ButFailWith006",
+//                    -1,
+//                    null,
+//                    funcs);
+//
+//            List<String> funcs2 = new LinkedList<>();
+//            funcs2.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#VulnerabilityDropboxFunctionalAspect");
+//            TestCaseReport tcr2 = new TestCaseReport(
+//                    app_path,
+//                    "mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest",
+//                    -1,
+//                    null,
+//                    funcs2);
+//
+//            TestDetailsList tdl = new TestDetailsList();
+//            tdl.add(new TestDetails(tcr, dac.getAdaptationIdentifer()));
+//            tdl.add(new TestDetails(tcr2, dac.getAdaptationIdentifer()));
+//            return tdl;
+//        }
+//
+//        app_path = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("shared/modules/dfus/TakServerDataManager").toString();
+//
+//        return null;
+//    }
 
-        String app_path = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/examples/ThirdPartyLibAnalysisAndroidApp").toString();
-
-        if (targets.contains(app_path)) {
-            List<String> funcs = new LinkedList<>();
-            funcs.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#BaselineFunctionalAspect");
-            TestCaseReport tcr = new TestCaseReport(
-                    app_path,
-                    "mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.shouldPassWith003ButFailWith006",
-                    -1,
-                    null,
-                    funcs);
-
-            List<String> funcs2 = new LinkedList<>();
-            funcs2.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#VulnerabilityDropboxFunctionalAspect");
-            TestCaseReport tcr2 = new TestCaseReport(
-                    app_path,
-                    "mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest",
-                    -1,
-                    null,
-                    funcs2);
-
-            TestDetailsList tdl = new TestDetailsList();
-            tdl.add(new TestDetails(tcr, dac.getAdaptationIdentifer()));
-            tdl.add(new TestDetails(tcr2, dac.getAdaptationIdentifer()));
-            return tdl;
-        }
-        return null;
-    }
+//    public static Map<String, Set<String>> getUnannotatedTests() {
+//        
+//    }
 }

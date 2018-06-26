@@ -40,7 +40,7 @@
             }
         },
         "expectedAdaptationResult": "NOT_APPLICABLE",
-        "expectedVerdictOutcome": "FAIL",
+        "expectedVerdictOutcome": "DEGRADED",
         "submissionFlow": "BaselineB",
         "perturbationScenario": "P2CP1DatabaseSchema"
     },
@@ -77,7 +77,7 @@
             }
         },
         "expectedAdaptationResult": "SUCCESS",
-        "expectedVerdictOutcome": "DEGRADED",
+        "expectedVerdictOutcome": "PASS",
         "submissionFlow": "Challenge",
         "perturbationScenario": "P2CP1DatabaseSchema"
     }

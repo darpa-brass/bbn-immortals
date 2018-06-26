@@ -66,7 +66,7 @@ public class Resources {
 
     public synchronized Resource atakliteClient() {
         if (ATAKLITE_CLIENT == null) {
-            ATAKLITE_CLIENT = model.createResource("com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice1");
+            ATAKLITE_CLIENT = model.createResource("http://darpa.mil/immortals/ontology/r2.0.0/cp2#ClientServerEnvironment.ClientDevice1");
             ATAKLITE_CLIENT.addLiteral(props.BBN_HAS_ARTIFACT_IDENTIFIER,
                     ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/client/ATAKLite").toString());
         }

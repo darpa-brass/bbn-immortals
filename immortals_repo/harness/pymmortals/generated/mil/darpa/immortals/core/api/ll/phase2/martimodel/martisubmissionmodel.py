@@ -1,5 +1,7 @@
 from pymmortals.datatypes.serializable import Serializable
+from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.javaresource import JavaResource
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.martirequirements import MartiRequirements
+from typing import List
 
 
 # noinspection PyPep8Naming
@@ -9,6 +11,8 @@ class MartiSubmissionModel(Serializable):
     _types = dict()
 
     def __init__(self,
-                 requirements: MartiRequirements = None):
+                 requirements: MartiRequirements = None,
+                 resources: List[JavaResource] = None):
         super().__init__()
         self.requirements = requirements
+        self.resources = resources

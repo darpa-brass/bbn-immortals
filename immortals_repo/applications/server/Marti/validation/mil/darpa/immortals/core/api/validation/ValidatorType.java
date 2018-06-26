@@ -5,5 +5,5 @@ package mil.darpa.immortals.core.api.validation;
  */
 public enum ValidatorType {
     JAVA,
-    PYTHON
+    PYTHON;
 }

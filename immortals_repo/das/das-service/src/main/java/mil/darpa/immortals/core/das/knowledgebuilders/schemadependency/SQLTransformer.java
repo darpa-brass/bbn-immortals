@@ -147,14 +147,23 @@ public class SQLTransformer {
 		return result;
 	}
 
-	public String createTableForSQL(String sql, Connection conn) throws SQLException {
+	public String createTableForSQL(String sql, Connection conn, int limit) throws SQLException {
 		
 		if (sql == null || sql.trim().length() == 0) {
 			throw new InvalidOrMissingParametersException();
 		}
 
 		String newTableName = "das.temp_" + UUID.randomUUID().toString().replaceAll("-", "");
-		String createDdl = "create table " + newTableName + " as (" + sql + ")";
+		
+		String sourceSQL = null;
+		
+		if (limit > 0) {
+			sourceSQL = "select * from (" + sql + ") as _t1 order by random() limit " + limit;
+		} else {
+			sourceSQL = sql;
+		}
+		
+		String createDdl = "create table " + newTableName + " as (" + sourceSQL + ")";
 		
 		try (java.sql.Statement stmt = conn.createStatement()) {
 			stmt.execute(createDdl);
@@ -163,16 +172,32 @@ public class SQLTransformer {
 		return newTableName;
 	}
 	
-	public String getStableSampleSQL(String sql, int sampleSize) {
+	public int getNumberRows(String sql, Connection conn) throws SQLException {
+		
+		int result = -1;
+		
+		if (sql == null || sql.trim().length() == 0 || conn == null) {
+			throw new InvalidOrMissingParametersException();
+		}
+
+		String countSql = "select count(*) from (" + sql + ") as _t1";
+
+		try (java.sql.Statement stmt = conn.createStatement();
+			 ResultSet rs = stmt.executeQuery(countSql);) {
+			if (rs.next()) {
+				result = rs.getInt(1);
+			}
+		}
+		
+		return result;
+		
+	}
+	
+	public String getRandomSampleSQL(String sql, int maximumNumberRows) {
 		
 		String result = null;
-		
-		//String ordinalSequence = IntStream.rangeClosed(1, dataLinkageMetadata.getSqlMetadata()
-		//		.getProjectedIdentifiers().size())
-		//		.mapToObj(n -> String.valueOf(n))
-		//		.collect(Collectors.joining(","));
-		
-		result = "select * from (" + sql + ") as _t1 order by random() limit " + sampleSize;
+
+		result = "select * from (" + sql + ") as _t1 order by random() limit " + maximumNumberRows;
 		
 		return result;
 	}

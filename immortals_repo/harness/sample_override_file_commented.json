@@ -30,7 +30,6 @@
                         "dropbox.com:443",
                         "dropbox.com:80"
                     ],
-                    "superuserAccess": true,
                     "uploadBandwidthLimitKilobitsPerSecond": 800
                 }
             },
@@ -41,7 +40,6 @@
                 "environmentDetails": {
                     "androidVersion": 21,
                     "externallyAccessibleUrls": [],
-                    "superuserAccess": false,
                     "uploadBandwidthLimitKilobitsPerSecond": null
                 }
             },
@@ -52,7 +50,6 @@
                 "environmentDetails": {
                     "androidVersion": 21,
                     "externallyAccessibleUrls": [],
-                    "superuserAccess": false,
                     "uploadBandwidthLimitKilobitsPerSecond": null
                 }
             }

@@ -20,7 +20,7 @@ public class ATAKLiteConfig {
     public enum AnalyticsTarget {
         DEFAULT,
         STDOUT,
-        NET_LOG4J,
+        ZEROMQ,
         LOCAL_JSON_CONSUMER
     }
 

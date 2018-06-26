@@ -855,11 +855,14 @@ public class AnalysisFrameAssessment {
 
     public static AspectConfigureRequest generateConfigurationRequest(FunctionalAspectInstance aspectInstance, GradleTaskHelper taskHelper,
                                                                       ObjectToTriplesConfiguration config) throws Exception{
+
+        // Find the dfu instance this aspect belongs to
         String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
         AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
 
         taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
 
+        // Pair each dfu with its uuid
         Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
                 cipherImplSolutions);
 
@@ -878,6 +881,7 @@ public class AnalysisFrameAssessment {
             exc.printStackTrace();
         }
 
+        // each dfu has different configuration parameters... encode these in the request pojo
         Class[] aspectSpecificDependencies = instantiateAspect.getAspectSpecificResourceDependencies();
         if (aspectSpecificDependencies.length != 0) {
             List<FunctionalAspect> aspectDependencies = new ArrayList<>();
@@ -917,14 +921,42 @@ public class AnalysisFrameAssessment {
         configureRequest.setCandidateImpls(dfuInstanceArr);
         configureRequest.setRequiredFunctionality(functionality.getClass());
 
-        //TODO parse ontology for minimum config solution instead of manually generating it
-        /*AspectConfigureSolution minimumConfigurationSolution = new AspectConfigureSolution();
-        ConfigurationBinding configurationBinding = new ConfigurationBinding();
-        configurationBinding.setBinding("16");
-        configurationBinding.setSemanticType(CipherKeyLength.class);
-        minimumConfigurationSolution.setConfigurationBindings(new ConfigurationBinding[]{configurationBinding});
+        String getMinimumConfiguration = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_functionality_aspects: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#>\n" +
+                "\n" +
+                "select ?configBindings where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t?minimumConfiguration a IMMoRTALS_functionality_aspects:AspectBestPracticeConfiguration\n" +
+                "\t\t; IMMoRTALS:hasBoundFunctionality  <???FUNCTIONALITY???>\n" +
+                "\t\t; IMMoRTALS:hasConfigurationBindings ?configBindings .\n" +
+                "\n" +
+                "\t}\n" +
+                "}\n";
+        getMinimumConfiguration = getMinimumConfiguration.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                .replace("???FUNCTIONALITY???", functionalityUUID);
+        AssertableSolutionSet configSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getMinimumConfiguration, configSolutions);
+
+        ConfigurationBinding[] configurationBindings = null;
+        if (!configSolutions.getSolutions().isEmpty()) {
+            configurationBindings = new ConfigurationBinding[configSolutions.getSolutions().size()];
+            int i = 0;
+            for (Solution configSolution : configSolutions.getSolutions()) {
+                String bindingUUID = configSolution.get("configBindings");
+                Object bindingObj = TriplesToPojo.convert(taskHelper.getGraphName(), bindingUUID, taskHelper.getClient());
+                
+                if (bindingObj instanceof ConfigurationBinding) {
+                    ConfigurationBinding configurationBinding = (ConfigurationBinding) bindingObj;
+                    configurationBindings[i] = configurationBinding;
+                }
+                i++;
+            }
+            AspectConfigureSolution minimumConfigurationSolution = new AspectConfigureSolution();
+            minimumConfigurationSolution.setConfigurationBindings(configurationBindings);
+
+            configureRequest.setMinimumConfigurationSolution(minimumConfigurationSolution);
+        }
         
-        configureRequest.setMinimumConfigurationSolution(minimumConfigurationSolution);*/
         return configureRequest;
     }
 
@@ -1143,6 +1175,35 @@ public class AnalysisFrameAssessment {
                 , getFunctionalAspectUUID(taskHelper, aspectInstance.getMethodPointer()));
         return getCipherImpl;
     }
+    
+    public static String findCipherJar(FunctionalAspectInstance aspectInstance, GradleTaskHelper taskHelper) {
+
+        String getCipherImplJar = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
+                "select ?jarPath where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t\n" +
+                "\t\t?jar IMMoRTALS:hasFileSystemPath ?jarPath\n" +
+                "\t\t; IMMoRTALS:hasJarContents ?class .\n" +
+                "\t\t?class IMMoRTALS:hasHash ?hash\n" +
+                "\t\t; IMMoRTALS:hasClassModel ?classModel .\n" +
+                "\n\t\t?classModel IMMoRTALS:hasClassName ?cipherImpl ." +
+                "\t\t?dfu IMMoRTALS:hasClassPointer ?hash\n" +
+                "\t\t; IMMoRTALS:hasFunctionalAspects <???ASPECT_INSTANCE???> \n" +
+                "\t\t; IMMoRTALS:hasFunctionalityAbstraction ?dfuFunctionality .\n" +
+                "\t}\n" +
+                "}";
+        getCipherImplJar = getCipherImplJar.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???ASPECT_INSTANCE???"
+                , getFunctionalAspectUUID(taskHelper, aspectInstance.getMethodPointer()));
+        AssertableSolutionSet jarFileSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getCipherImplJar, jarFileSolutions);
+        
+        if (!jarFileSolutions.getSolutions().isEmpty()) {
+            Solution jarFileSolution = jarFileSolutions.getSolutions().get(0);
+            return jarFileSolution.get("jarPath");
+        } else {
+            return null;   
+        }
+    }
 
     private static Wrapper initializeWrapper(MethodInvocationDataflowNode streamInitializationNode, Set<String> dependentFiles,
                                              List<String> dependencyPaths, WrapperFactory wrapperFactory, String s) {
@@ -1231,7 +1292,7 @@ public class AnalysisFrameAssessment {
         return traceSolutions;
     }
 
-    private static String getInterMethodNodeUUID(GradleTaskHelper taskHelper, InterMethodDataflowNode node) {
+    public static String getInterMethodNodeUUID(GradleTaskHelper taskHelper, InterMethodDataflowNode node) {
 
         String getNodeUUID = "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#>\n" +
@@ -1775,13 +1836,7 @@ public class AnalysisFrameAssessment {
         WrapperImplementationImpact analysisImpact = new WrapperImplementationImpact();
         taskHelper.getPw().println("Finding instances that implement the required functional aspect...");
 
-        String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
-        AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
-
-        taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
-
-        Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
-                cipherImplSolutions);
+        Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstancePairMap(taskHelper, config, aspectInstance);
 
         String cipherImpl = null;
         String magicString = null;
@@ -1810,7 +1865,6 @@ public class AnalysisFrameAssessment {
             case FUNCTIONAL:
                 taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a block design " +
                         "pattern. Repairs will occur immediately adjacent to the inter-process boundary...");
-
                 break;
             case STREAM:
                 taskHelper.getPw().println("Instance with method pointer: " + aspectInstance.getMethodPointer() + " utilizes a stream design pattern." +
@@ -1821,6 +1875,9 @@ public class AnalysisFrameAssessment {
                         config, analysisImpact, cipherImpl.replace("/", "."));
 
                 if (wrapper!= null) {
+
+                    appendNewDependencies(taskHelper, aspectInstance, analysisImpact);
+                    
                     if (magicString != null) {
                         // user specified configuration parameters, pass to code insertion stage
                         wrapper.getCipherInfo().setConfigurationParameters(Optional.of(magicString));
@@ -1847,13 +1904,7 @@ public class AnalysisFrameAssessment {
         //TODO should be only one
         taskHelper.getPw().println("Instances found. Determining their design pattern...");
 
-        String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
-        AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
-
-        taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
-
-        Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
-                cipherImplSolutions);
+        Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstancePairMap(taskHelper, config, aspectInstance);
 
         String cipherImpl = null;
         String magicString = null;
@@ -1889,8 +1940,11 @@ public class AnalysisFrameAssessment {
                         " Immortals will begin the process of wrapping the stream implementation in a custom class...");
                 Wrapper wrapper = constructWrapperFoundation(aspectInstance, producer, dependencies, taskHelper,
                         config, analysisImpact, cipherImpl.replace("/", "."));
-
+                
                 if (wrapper!= null) {
+
+                    appendNewDependencies(taskHelper, aspectInstance, analysisImpact);
+                    
                     if (magicString != null) {
                         // user specified configuration parameters, pass to code insertion stage
                         wrapper.getCipherInfo().setConfigurationParameters(Optional.of(magicString));
@@ -1904,6 +1958,35 @@ public class AnalysisFrameAssessment {
                 break;
         }
         return analysisImpact;
+    }
+
+    private static void appendNewDependencies(GradleTaskHelper taskHelper, FunctionalAspectInstance aspectInstance, WrapperImplementationImpact analysisImpact) {
+        
+        String[] newDependencies;
+        if (analysisImpact.getAdditionalDependencies() == null) {
+            newDependencies = new String[1];
+        } else {
+            newDependencies = Arrays.copyOf(analysisImpact.getAdditionalDependencies(), analysisImpact.getAdditionalDependencies().length + 1);
+        }
+        
+        String cipherResourceLocation = findCipherJar(aspectInstance, taskHelper);
+        if (cipherResourceLocation != null) {
+            // cipher belongs to jar, user application may need to include it
+            newDependencies[newDependencies.length - 1] = cipherResourceLocation;
+        }
+        
+        analysisImpact.setAdditionalDependencies(newDependencies);
+    }
+
+    public static Map<DfuInstance, Pair<String, String>> getDfuInstancePairMap(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config,
+                                                                               FunctionalAspectInstance aspectInstance) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+        String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
+        AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
+
+        taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
+
+        return getDfuInstanceStringMap(taskHelper,
+                cipherImplSolutions);
     }
 
     private static String getChosenInstanceUUID(DfuInstance chosenInstance, GradleTaskHelper taskHelper) {

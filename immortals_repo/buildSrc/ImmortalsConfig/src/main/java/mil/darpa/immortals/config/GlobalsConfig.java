@@ -3,6 +3,7 @@ package mil.darpa.immortals.config;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,6 +58,14 @@ public class GlobalsConfig {
 
     private String immortalsOntologyUriRoot = "http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#";
     private String immortalsOntologyUriPrefix = "IMMoRTALS_mil_darpa_immortals_ontology";
+
+    public static URI toFullUrl(RestfulAppConfigInterface c) {
+        try {
+            return new URI(c.getProtocol(), null, c.getUrl(), c.getPort(), null, null, null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public String getImmortalsOntologyUriRoot() {
         return immortalsOntologyUriRoot;

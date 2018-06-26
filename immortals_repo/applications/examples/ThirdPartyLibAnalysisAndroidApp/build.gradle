@@ -61,6 +61,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            testCoverageEnabled true
+        }
     }
     lintOptions {
         abortOnError false
@@ -108,10 +111,13 @@ afterEvaluate {
                 if (req.androidVersion == 21 && req.uploadBandwidthLimitKilobitsPerSecond == 800 &&
                         req.externallyAccessibleUrls.contains("dropbox.com:443") && req.externallyAccessibleUrls.contains("dropbox.com:80")) {
                     aec = conf
-                    // push the test file to the device
-                    exec {
-                        workingDir = project.rootDir
-                        commandLine = ['adb', 'connect', aec.adbUrl]
+
+                    // If the adbUrl is set, assume it must be connected to first
+                    if (aec.adbUrl != null) {
+                        exec {
+                            workingDir = project.rootDir
+                            commandLine = ['adb', 'connect', aec.adbUrl]
+                        }
                     }
                 }
             }

@@ -115,8 +115,13 @@ public class HddRassInitializationObject {
         this.requiredValidators = new LinkedList<>(requiredValidators);
         this.buildTool = buildInstance.getBuildPlatform().command;
         this.buildToolPath = buildInstance.getBuildToolPath().toString();
-        this.buildToolBuildParameter = String.join(" ", buildInstance.getBuildToolBuildParameters());
-        this.buildToolValidationParameters = String.join(" ", buildInstance.getTestBuildToolParameters());
+
+        // TODO: Replace these with Extracted values once mock vs non-mock and integration tests are properly handled
+//        this.buildToolBuildParameter = String.join(" ", buildInstance.getBuildToolBuildParameters());
+//        this.buildToolValidationParameters = String.join(" ", buildInstance.getTestBuildToolParameters());
+        this.buildToolBuildParameter = "clean build -x test";
+        this.buildToolValidationParameters = "--daemon -Dmil.darpa.immortals.mock=true clean test";
+
         this.applicationPath = buildRoot.toString() + "/";
         this.sourceSubpath = buildInstance.getRawBaseProjectData().getSourceSubdirectory();
         this.buildFilePath = buildRoot.relativize(buildInstance.getBuildFilePath()).toString();

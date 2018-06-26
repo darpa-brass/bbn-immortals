@@ -57,7 +57,7 @@ public class KnowledgeBuilderManager {
 				//#####################################################
 			}
 		} catch (Exception e) {
-			logger.error("Unexpected error initializing knowledge builders: " + e.getMessage());
+			throw new RuntimeException(e);
 		} finally {
 			if (out != null) {
 				try {

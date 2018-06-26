@@ -26,6 +26,8 @@ public class VoltDBConfiguration implements RestfulAppConfigInterface {
     private HashMap<String, String> environmentVariables = new HashMap<>();
     private String readyStdoutLineRegexPattern = " *\\[exec\\] Server completed initialization\\.";
 
+    private boolean shutdownEverythingOnTermination = false;
+
     @Override
     public boolean isUserManaged() {
         return userManaged;
@@ -52,7 +54,7 @@ public class VoltDBConfiguration implements RestfulAppConfigInterface {
 
     @Override
     public URI getFullUrl() {
-        return RestfulAppConfigInterface.toFullUrl(this);
+        return GlobalsConfig.toFullUrl(this);
     }
 
     @Override
@@ -94,5 +96,10 @@ public class VoltDBConfiguration implements RestfulAppConfigInterface {
     public Path getWorkingDirectoryTemplateFolder() {
         if (workingDirectoryTemplateFolder == null) return null;
         return Paths.get(workingDirectoryTemplateFolder);
+    }
+
+    @Override
+    public boolean isShutdownEverythingOnTermination() {
+        return shutdownEverythingOnTermination;
     }
 }

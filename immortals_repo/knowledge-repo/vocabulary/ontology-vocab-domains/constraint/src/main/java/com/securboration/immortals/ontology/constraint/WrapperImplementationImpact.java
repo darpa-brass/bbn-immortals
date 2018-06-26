@@ -13,6 +13,8 @@ public class WrapperImplementationImpact extends AnalysisImpact {
     
     private DataflowNode initializationNode;
     
+    private String[] additionalDependencies;
+    
     private Class<? extends FunctionalAspect> aspectImplemented;
 
     public Class<? extends FunctionalAspect> getAspectImplemented() {
@@ -45,5 +47,13 @@ public class WrapperImplementationImpact extends AnalysisImpact {
 
     public void setAugmentedUserFile(SourceFile augmentedUserFile) {
         this.augmentedUserFile = augmentedUserFile;
+    }
+
+    public String[] getAdditionalDependencies() {
+        return additionalDependencies;
+    }
+
+    public void setAdditionalDependencies(String[] additionalDependencies) {
+        this.additionalDependencies = additionalDependencies;
     }
 }

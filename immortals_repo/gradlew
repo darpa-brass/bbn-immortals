@@ -47,6 +47,10 @@ if [ "${1}" == "clean" ];then
         if [ -d "knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS" ];then
             rm -r "knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS"
         fi
+
+        if [ -f "ARTIFACT_DATA.json" ];then
+            rm -r "ARTIFACT_DATA.json"
+        fi
     
         # Cleans knowledge-repo
         mvn --file knowledge-repo/pom.xml clean

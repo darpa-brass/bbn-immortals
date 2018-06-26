@@ -24,10 +24,14 @@ Current Status:
 See details at the [CP2 Document](phase02/ChallengeProblems/Immortals-Phase2-cp2-CrossAppDepend.md)
 
 Current Status:
- * Implementation in progress 
+ * Baseline A has been implemented.
+ * Implementation of BaselineB and Challenge are in progress
 
 ### CP3
 See details at the [CP3 Document](phase02/ChallengeProblems/Immortals-Phase2-cp3-LibraryEvol.md)
+
+CP3 MUST be run with only one available emulator. This is due to the android testing framework not being designed to 
+target a specific emulator instance.
 
 Current Status:
  * Baseline A, Baseline B, and Challenge have been fully implemented for library mutation with one server mutation 
@@ -119,15 +123,20 @@ It will return a non-zero status along with a description of the issue if the sm
 
 ### Validation Test
 
-The validation test will run a single Challenge instance of each perturbation type that has been implemented to ensure 
-that the DAS executes as expected given valid perturbation info from our mock Test Harness. 
+The validation tests are split out between the challenge problems to manage resource requirements for the different 
+challenge problems. They will each run Baseline A, Baseline B, and the Challenge scenario for each challenge problem. 
+They should each be executed on a machine instance that hasn't been used for a perturbation yet.
 
 Steps:
 
 1.  Navigate to the utils directory  
     `$ cd ~/immortals_repo/shared/utils`  
-2.  Execute the test script  
-    `$ ./test.sh`  
+2.  Replace the emulator details in `test_override_file.json` to match the local deployment environment and the 
+    configuration required for the challenge problem.
+2.  Execute one of the following test scripts as follows:
+    * `$ ./test_cp1.sh`  
+    * `$ ./test_cp2.sh`
+    * `$ ./test_cp3.sh`  
 
 It will return a non-zero status along with a description of the issue if any of the validation tests fails.
 

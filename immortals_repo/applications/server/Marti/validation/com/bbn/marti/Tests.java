@@ -66,16 +66,18 @@ public class Tests {
     @ProvidedFunctionalityValidationAnnotation(validatedAspects = BaselineFunctionalAspect.class)
     @Test(priority = 100)
     public void testImageSave() {
+        // TODO: This test should be threaded. But no time...
         ValidationRunner.getInstance().execute();
 
         int imageCount = 0;
 
         long endTime = ValidationRunner.getInstance().getStartTimeMS() + ValidationRunner.getInstance().getTimeoutMS();
 
+        System.out.println("IMGDIR=" + ValidationRunner.getInstance().getMartiStorageDirectory());
         File dir = ValidationRunner.getInstance().getMartiStorageDirectory().toFile();
 
-        while (System.currentTimeMillis() < endTime && imageCount < 3) {
-            imageCount = 0;
+//        while (System.currentTimeMillis() < endTime && imageCount < 3) {
+//            imageCount = 0;
 
             File[] fileList = dir.listFiles();
             Assert.assertNotNull(fileList);
@@ -91,12 +93,12 @@ public class Tests {
                 Assert.fail("Failure due to test interruption!");
                 throw new RuntimeException(e);
             }
-        }
+//        }
 
         Assert.assertTrue(imageCount >= 3);
     }
 
-    @ProvidedFunctionalityValidationAnnotation(validatedFunctionality = ElevationDfu.class, validatedAspects = GetElevationFunctionalAspect.class)
+    @ProvidedFunctionalityValidationAnnotation(validatedFunctionality = ElevationDfu.class, validatedAspects = {BaselineFunctionalAspect.class, GetElevationFunctionalAspect.class})
     @Test(priority = 100)
     public void testElevationAccuracyEnhancement() {
         // The radius of the earth. Kind of like a negative value?

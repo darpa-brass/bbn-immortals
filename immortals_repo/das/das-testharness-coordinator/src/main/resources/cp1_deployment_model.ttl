@@ -44,9 +44,7 @@ IMMoRTALS_resource_containment:ConcreteResourceNode-83bc54b7-1173-4c95-909f-f015
         a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
         IMMoRTALS:hasContainedNode      IMMoRTALS_resource_containment:ConcreteResourceNode-84ff1e2c-e903-4bb3-8849-1579802bd615 ;
         IMMoRTALS:hasHumanReadableDesc  "Resource node representing the marti server instance. Also contains a database resource node." ;
-        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.MartiServer ;
-        IMMoRTALS_mil_darpa_immortals_ontology:hasFeatureRequirements
-                IMMoRTALS_mil_darpa_immortals_ontology:BaselineFunctionalAspect .
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:ClientServerEnvironment.MartiServer .
 
 IMMoRTALS_gmei:DeploymentModelCP1
         a                               IMMoRTALS_gmei:DeploymentModel ;
@@ -58,12 +56,12 @@ IMMoRTALS_gmei:DeploymentModelCP1
         IMMoRTALS:hasResourceContainmentModel
                 IMMoRTALS_resource_containment:ResourceContainmentModel-2c1d9c98-9475-4687-8ea3-3bc0c0b9ac2b ;
         IMMoRTALS:hasResourceMigrationTargets
-                IMMoRTALS_resources:ResourceMigrationTarget-f4dc7479-cb4f-4297-96e7-47f275922e0a .
+                IMMoRTALS_resources:ResourceMigrationTarget-f4dc7479-cb4f-4297-96e7-47f275922e0a ;
+        IMMoRTALS:hasFunctionalitySpec
+                IMMoRTALS_mil_darpa_immortals_ontology:BaselineFunctionalitySpec .
 
 IMMoRTALS_cp2:ClientServerEnvironment.MartiServer
         a                            IMMoRTALS_resources:Server ;
-        IMMoRTALS_mil_darpa_immortals_ontology:hasArtifactIdentifier
-                "Marti" ;
         IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$MartiServer" .
 
 IMMoRTALS_resources_logical:Column-cc212d12-6f66-446f-8d57-ca53924e8b7a

@@ -40,6 +40,8 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
 
     private String readyStdoutLineRegexPattern = "^STATE:\\[RUNNING\\]$";
 
+    private boolean shutdownEverythingOnTermination = false;
+
     public AqlBrassConfiguration() {
 
     }
@@ -120,7 +122,7 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
 
     @Override
     public URI getFullUrl() {
-        return RestfulAppConfigInterface.toFullUrl(this);
+        return GlobalsConfig.toFullUrl(this);
     }
 
     @Override
@@ -132,5 +134,10 @@ public class AqlBrassConfiguration implements MavenArtifactInterface, RestfulApp
     public Path getWorkingDirectoryTemplateFolder() {
         if (workingDirectoryTemplateFolder == null) return null;
         return Paths.get(workingDirectoryTemplateFolder);
+    }
+
+    @Override
+    public boolean isShutdownEverythingOnTermination() {
+        return shutdownEverythingOnTermination;
     }
 }

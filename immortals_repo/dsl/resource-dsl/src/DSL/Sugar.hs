@@ -13,11 +13,34 @@ import DSL.Parser
 -- * Syntactic Sugar
 --
 
+-- ** Types
+
+-- | Non-variational primitive types.
+tUnit, tBool, tInt, tFloat, tSymbol :: V PType
+tUnit   = One TUnit
+tInt    = One TInt
+tBool   = One TBool
+tFloat  = One TFloat
+tSymbol = One TSymbol
+
+
 -- ** Expressions
+
+-- | Non-variational variable reference.
+ref :: Var -> V Expr
+ref = One . Ref
+
+-- | Non-variational resource reference.
+res :: Path -> V Expr
+res = One . Res
+
+-- | Literal symbol name.
+sym :: Name -> V Expr
+sym = One . Lit . One . S . mkSymbol
 
 -- | Literal component ID.
 dfu :: Name -> V Expr
-dfu = One . Lit . One . S . mkSymbol
+dfu = sym
 
 -- | Primitive floor operation.
 pFloor :: V Expr -> Expr
@@ -96,6 +119,9 @@ exclusive' all yes = combine (yesExpr yesList) (noExpr noList)
 
 exclusive :: [T.Text] -> [T.Text] -> Maybe BExpr
 exclusive all yes = exclusive' (S.fromList all) (S.fromList yes)
+
+(.==.) :: V Expr -> V Expr -> V Expr
+x .==. y = (One (P2 (SS_B SEqu) x y))
 
 {- TODO TODO TODO
 -- | Macro for an integer-case construct. Evaluates the expression, then
