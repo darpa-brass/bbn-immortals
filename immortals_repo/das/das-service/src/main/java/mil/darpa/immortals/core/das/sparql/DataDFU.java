@@ -20,7 +20,7 @@ public class DataDFU extends SparqlQuery {
 			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
 
 			"SELECT ?dataLinkage ?className ?containsDisjunctiveFilter " +
-				"?startLineNumber ?endLineNumber ?sqlVariableName ?sql ?trainingDataTableName "
+				"?startLineNumber ?endLineNumber ?sqlVariableName ?sql ?trainingDataTableName ?validationDataTableName "
 				+ "?negativeDataTableName ?projection " +
 			"WHERE { " +
 			"   GRAPH <" + bootstrapUri + "> { " +
@@ -34,6 +34,7 @@ public class DataDFU extends SparqlQuery {
 			"		?dataLinkage kb:trainingDataTable ?trainingDataTableName . " +
 			"		?dataLinkage kb:negativeDataTable ?negativeDataTableName . " +
 			"		?dataLinkage kb:hasProjection ?projection . " +
+			"		?dataLinkage kb:validationDataTable ?validationDataTableName . " +
 			"	} " +
 			"}";
 		
@@ -50,6 +51,7 @@ public class DataDFU extends SparqlQuery {
 	        	getLiteral(t, "sql"),
 	        	getLiteral(t, "trainingDataTableName"),
 	        	getLiteral(t, "negativeDataTableName"),
+	        	getLiteral(t, "validationDataTableName"),
 	        	getLiteralAsList(t, "projection"))));
         }
         

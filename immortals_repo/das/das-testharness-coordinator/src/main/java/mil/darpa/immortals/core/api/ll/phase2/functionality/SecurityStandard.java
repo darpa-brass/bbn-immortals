@@ -9,7 +9,6 @@ import mil.darpa.immortals.core.api.annotations.P2CP2;
 @P2CP2
 @Description("Common security standards")
 public enum SecurityStandard {
-    Nothing("No security required"),
     FIPS140Dash1("Obsolete less secure NIST government security standard"),
     FIPS140Dash2("Current secure NIST government security standard"),
     NIST800Dash171("Recent governemnt contractor security standard");

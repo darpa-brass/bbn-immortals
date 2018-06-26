@@ -8,9 +8,6 @@ class SecurityStandard(Enum):
         self._key_idx_value = key_idx_value
         self.description = description  # type: str
 
-    Nothing = ("Nothing",
-        "No security required")
-
     FIPS140Dash1 = ("FIPS140Dash1",
         "Obsolete less secure NIST government security standard")
 

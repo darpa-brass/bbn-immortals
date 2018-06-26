@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import os
 import subprocess
 import sys
 import traceback
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 _staging_dir = '/tmp/immortals_deployment_test'
 
@@ -49,6 +50,418 @@ parser.add_argument('-l', '--ll-mode', action='store_true', default=False,
 
 parser.add_argument('-x', '--fail-fast', action='store_true', default=False,
                     help="Causes the installation sequence to fail at the first sign of trouble.")
+
+
+def validate_deployment(immortals_root_deployment: str):
+    try:
+        # Make sure an in-use DFU has been analyzed
+        expected_artifacts = {
+            "analysis": [
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/TakServerDataManager/',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/ElevationApi-2',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/ATAKLite',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/Marti'
+            ],
+            "build": [
+                'das/das-launcher-2.0-LOCAL.jar',
+                'applications/server/Marti/Marti-immortals.jar',
+                'applications/client/ATAKLite/ATAKLite-debug.apk'
+            ],
+            "extensions": [
+                'extensions/vanderbilt/aql-brass-server-aql-brass-server.jar',
+                'extensions/ucr/thirdPartyLibAnalysis/yuesLib.py'
+            ],
+            "database": [
+                'database/server/data/source.csv',
+                'database/server/data/cot_event.csv',
+                'database/server/data/cot_event_position.csv',
+                'database/server/data/master_cot_event.csv'
+            ]
+        }
+
+        for label in expected_artifacts.keys():
+            for path in expected_artifacts.get(label):
+                assert os.path.exists(os.path.join(immortals_root_deployment, path)), \
+                    'ERROR: ' + label + ' artifact "' + os.path.join(immortals_root_deployment,
+                                                                     path) + '" was not found!'
+
+        expected_good_commands = {
+            "database": [
+                ['psql', 'immortals', '--command', '']
+            ]
+        }
+
+        for label in expected_good_commands.keys():
+            for cmd in expected_good_commands.get(label):
+                rcode = subprocess.run(cmd).returncode
+                assert rcode == 0, \
+                    'ERROR: ' + label + ' command `' + ' '.join(
+                        cmd) + '` had a non-zero return code of ' + str(rcode) + '!'
+
+        # Relative to immortals_root
+        expected_json_values = {
+            immortals_root_deployment + 'ARTIFACT_DATA.json': {
+                immortals_root_deployment + "shared/modules/dfus/ElevationApi-1": {
+                    "targetName": "ElevationApi-1",
+                    "targetGroup": "mil.darpa.immortals.dfus",
+                    "targetVersion": "2.0-LOCAL",
+                    "deploymentTarget": "JAVA",
+                    "deploymentTargetVersion": "1.7",
+                    "buildFile": "build.gradle",
+                    "sourceSubdirectory": "src/main/java/",
+                    "buildPlatform": "GRADLE",
+                    "buildToolBuildParameters": [
+                        "clean",
+                        "build",
+                        "-x",
+                        "test"
+                    ],
+                    "testing": {
+                        "buildToolValidationParameters": [
+                            "--daemon",
+                            "clean",
+                            "test"
+                        ],
+                        "testResultXmlSubdirectory": "build/test-results/test/",
+                        "testCoverageReportXmlFileSubpath": "build/reports/jacoco/test/jacocoTestReport.xml"
+                    },
+                    "publishing": {
+                        "groupId": "mil.darpa.immortals.dfus",
+                        "artifactId": "ElevationApi-1",
+                        "version": "2.0-LOCAL",
+                        "buildToolPublishParameters": [
+                            "publish"
+                        ]
+                    },
+                    "execution": {
+                        "executionStartSettleTimeMS": 2000,
+                        "executableFilename": "ElevationApi-1-2.0-LOCAL.jar",
+                        "executionPackageIdentifier": "mil.darpa.immortals.dfus",
+                        "executionMainMethodClasspath": "mil.darpa.immortals.dfus.ElevationApi"
+                    }
+                },
+                immortals_root_deployment + "shared/modules/dfus/ElevationApi-2": {
+                    "targetName": "ElevationApi-2",
+                    "targetGroup": "mil.darpa.immortals.dfus",
+                    "targetVersion": "2.0-LOCAL",
+                    "deploymentTarget": "JAVA",
+                    "deploymentTargetVersion": "1.7",
+                    "rootProjectSubdirectory": "shared/modules/dfus/ElevationApi-2/",
+                    "buildFile": "build.gradle",
+                    "sourceSubdirectory": "src/main/java/",
+                    "buildPlatform": "GRADLE",
+                    "buildToolBuildParameters": [
+                        "clean",
+                        "build",
+                        "-x",
+                        "test"
+                    ],
+                    "testing": {
+                        "buildToolValidationParameters": [
+                            "--daemon",
+                            "clean",
+                            "test"
+                        ],
+                        "testResultXmlSubdirectory": "build/test-results/test/",
+                        "testCoverageReportXmlFileSubpath": "build/reports/jacoco/test/jacocoTestReport.xml"
+                    },
+                    "publishing": {
+                        "groupId": "mil.darpa.immortals.dfus",
+                        "artifactId": "ElevationApi-2",
+                        "version": "2.0-LOCAL",
+                        "buildToolPublishParameters": [
+                            "publish"
+                        ]
+                    },
+                    "execution": {
+                        "executionStartSettleTimeMS": 2000,
+                        "executableFilename": "ElevationApi-2-2.0-LOCAL.jar"
+                    }
+                },
+                immortals_root_deployment + "shared/modules/dfus/TakServerDataManager": {
+                    "targetName": "TakServerDataManager",
+                    "targetGroup": "mil.darpa.immortals.dfus",
+                    "targetVersion": "2.0-LOCAL",
+                    "deploymentTarget": "JAVA",
+                    "deploymentTargetVersion": "1.7",
+                    "rootProjectSubdirectory": "shared/modules/dfus/TakServerDataManager/",
+                    "buildFile": "build.gradle",
+                    "sourceSubdirectory": "src/main/java/",
+                    "buildPlatform": "GRADLE",
+                    "buildToolBuildParameters": [
+                        "clean",
+                        "build",
+                        "-x",
+                        "test"
+                    ],
+                    "testing": {
+                        "buildToolValidationParameters": [
+                            "--daemon",
+                            "clean",
+                            "validate"
+                        ],
+                        "testResultXmlSubdirectory": "build/test-results/test/",
+                        "testCoverageReportXmlFileSubpath": "build/reports/jacoco/test/jacocoTestReport.xml"
+                    },
+                    "publishing": {
+                        "groupId": "mil.darpa.immortals.dfus",
+                        "artifactId": "TakServerDataManager",
+                        "version": "2.0-LOCAL",
+                        "buildToolPublishParameters": [
+                            "publish"
+                        ]
+                    },
+                    "execution": {
+                        "executionStartSettleTimeMS": 2000,
+                        "executableFilename": "TakServerDataManager-2.0-LOCAL.jar",
+                        "executionPackageIdentifier": "mil.darpa.immortals.TakServerDataManager",
+                        "executionMainMethodClasspath": "mil.darpa.immortals.TakServerDataManager.DatabaseManager"
+                    },
+                    "baseTestCaseReports": [
+                        {
+                            "testCaseTarget": "TakServerDataManager",
+                            "testCaseIdentifier": "mil.darpa.immortals.dfus.TakServerDataManager.DataManagerTest.testCotEventsForConstantChannelJoin"
+                        },
+                        {
+                            "testCaseTarget": "TakServerDataManager",
+                            "testCaseIdentifier": "mil.darpa.immortals.dfus.TakServerDataManager.DataManagerTest.testCotEventsForConstantChannelJoin2"
+                        },
+
+                        {
+                            "testCaseTarget": "TakServerDataManager",
+                            "testCaseIdentifier": "mil.darpa.immortals.dfus.TakServerDataManager.DataManagerTest.testCotEventsForConstantTimeInterval"
+                        },
+                        {
+                            "testCaseTarget": "TakServerDataManager",
+                            "testCaseIdentifier": "mil.darpa.immortals.dfus.TakServerDataManager.DataManagerTest.testCotEventsForConstantCotType"
+                        },
+                        {
+                            "testCaseTarget": "TakServerDataManager",
+                            "testCaseIdentifier": "mil.darpa.immortals.dfus.TakServerDataManager.DataManagerTest.testCotEventsForConstantCompoundFilter"
+                        },
+                        {
+                            "testCaseTarget": "TakServerDataManager",
+                            "testCaseIdentifier": "mil.darpa.immortals.dfus.TakServerDataManager.DataManagerTest.testCotEventsForUidAndInterval"
+                        },
+                        {
+                            "testCaseTarget": "TakServerDataManager",
+                            "testCaseIdentifier": "mil.darpa.immortals.dfus.TakServerDataManager.DataManagerTest.testCotEventsOnChannelInRegion"
+                        },
+                        {
+                            "testCaseTarget": "TakServerDataManager",
+                            "testCaseIdentifier": "mil.darpa.immortals.dfus.TakServerDataManager.DataManagerTest.testCotEventsForConstantMixedJoin"
+                        }
+                    ]
+                },
+                immortals_root_deployment + "applications/server/Marti": {
+                    "targetName": "Marti",
+                    "targetGroup": "mil.darpa.immortals",
+                    "targetVersion": "2.0-LOCAL",
+                    "deploymentTarget": "JAVA",
+                    "deploymentTargetVersion": "1.8",
+                    "rootProjectSubdirectory": "",
+                    "buildFile": "build.gradle",
+                    "sourceSubdirectory": "src/",
+                    "buildPlatform": "GRADLE",
+                    "buildToolBuildParameters": [
+                        "clean",
+                        "build",
+                        "-x",
+                        "test"
+                    ],
+                    "testing": {
+                        "buildToolValidationParameters": [
+                            "--daemon",
+                            "clean",
+                            "test"
+                        ],
+                        "testResultXmlSubdirectory": "build/test-results/test/",
+                        "testCoverageReportXmlFileSubpath": "build/reports/jacoco/test/jacocoTestReport.xml"
+                    },
+                    "execution": {
+                        "executionStartSettleTimeMS": 2000,
+                        "executableFilename": "Marti-immortals.jar",
+                        "executionFileMap": {
+                            "Marti-Config.json": "Marti-Config.json"
+                        },
+                        "executionPackageIdentifier": "com.bbn.marti.service",
+                        "executionMainMethodClasspath": "com.bbn.marti.service.MartiMain"
+                    },
+                    "baseTestCaseReports": [
+                        {
+                            "testCaseTarget": "Marti",
+                            "testCaseIdentifier": "com.bbn.marti.Tests.testCotByteBufferPipe"
+                        },
+                        {
+                            "testCaseTarget": "Marti",
+                            "testCaseIdentifier": "com.bbn.marti.Tests.testDbIntegration"
+                        },
+                        {
+                            "testCaseTarget": "Marti",
+                            "testCaseIdentifier": "com.bbn.marti.Tests.testElevationAccuracyEnhancement"
+                        },
+                        {
+                            "testCaseTarget": "Marti",
+                            "testCaseIdentifier": "com.bbn.marti.Tests.testImageSave"
+                        },
+                        {
+                            "testCaseTarget": "Marti",
+                            "testCaseIdentifier": "com.bbn.marti.Tests.testImageTransmission"
+                        },
+                        {
+                            "testCaseTarget": "Marti",
+                            "testCaseIdentifier": "com.bbn.marti.Tests.testLatestSaTransmission"
+                        }
+                    ],
+                    "baseTestClassFileCoverage": {
+                        "com.bbn.marti.Tests.testCotByteBufferPipe": [
+                            {
+                                "identifier": "com/bbn/marti/immortals/pipes/CotByteBufferPipe"
+                            },
+                            {
+                                "identifier": "com/bbn/cot/CotEventContainer"
+                            }
+                        ],
+                        "com.bbn.marti.Tests.testElevationAccuracyEnhancement": [
+                            {
+                                "identifier": "com/bbn/marti/immortals/pipes/CotByteBufferPipe"
+                            },
+                            {
+                                "identifier": "com/bbn/cot/CotEventContainer"
+                            }
+                        ]
+                    }
+                },
+                immortals_root_deployment + "applications/client/ATAKLite": {
+                    "targetName": "ATAKLite",
+                    "targetGroup": "mil.darpa.immortals",
+                    "targetVersion": "2.0-LOCAL",
+                    "deploymentTarget": "ANDROID",
+                    "deploymentTargetVersion": "21",
+                    "rootProjectSubdirectory": "",
+                    "buildFile": "build.gradle",
+                    "sourceSubdirectory": "src/",
+                    "buildPlatform": "GRADLE",
+                    "buildToolBuildParameters": [
+                        "clean",
+                        "build",
+                        "-x",
+                        "test"
+                    ],
+                    "testing": {
+                        "buildToolValidationParameters": [
+                            "clean",
+                            "connectedAndroidTest"
+                        ],
+                        "testResultXmlSubdirectory": "build/outputs/androidTest-results/connected/"
+                    },
+                    "execution": {
+                        "executionStartSettleTimeMS": 2000,
+                        "executableFilename": "ATAKLite-debug.apk",
+                        "executionPackageIdentifier": "com.bbn.ataklite",
+                        "executionMainMethodClasspath": "com.bbn.ataklite.MainActivity"
+                    }
+                },
+                immortals_root_deployment + "applications/examples/ThirdPartyLibAnalysisAndroidApp": {
+                    "targetName": "ThirdPartyLibAnalysisAndroidApp",
+                    "targetGroup": "mil.darpa.immortals",
+                    "targetVersion": "2.0-LOCAL",
+                    "deploymentTarget": "ANDROID",
+                    "deploymentTargetVersion": "21",
+                    "rootProjectSubdirectory": "",
+                    "buildFile": "build.gradle",
+                    "sourceSubdirectory": "src/main/java/",
+                    "buildPlatform": "GRADLE",
+                    "buildToolBuildParameters": [
+                        "clean",
+                        "build",
+                        "-x",
+                        "test"
+                    ],
+                    "testing": {
+                        "buildToolValidationParameters": [
+                            "clean",
+                            "connectedAndroidTest"
+                        ],
+                        "testResultXmlSubdirectory": "build/outputs/androidTest-results/connected/"
+                    },
+                    "execution": {
+                        "executionStartSettleTimeMS": 2000,
+                        "executableFilename": "ThirdPartyLibAnalysisAndroidApp-debug.apk",
+                        "executionFileMap": {},
+                        "executionPackageIdentifier": "mil.darpa.immortals.examples"
+                    }
+                }
+            }
+        }
+
+        def count_terminal_nodes(obj):
+            rval = 0
+
+            if isinstance(obj, Dict):
+                for key in obj.keys():
+                    val = obj[key]
+                    rval = rval + count_terminal_nodes(val)
+
+            elif isinstance(obj, List):
+                for val in obj:
+                    rval = rval + count_terminal_nodes(val)
+
+            elif isinstance(obj, str) or isinstance(obj, int) or isinstance(obj, float):
+                rval = rval + 1
+
+            else:
+                raise Exception("Unable to count terminal nodes in expected values!")
+
+            return rval
+
+        validated_nodes = 0
+
+        for file_name in expected_json_values.keys():
+            read_data = json.load(open(file_name))
+            validation_data = expected_json_values[file_name]
+
+            def check(read_object, validation_object, err_string):
+                validated_nodes = 0
+                if isinstance(validation_object, Dict):
+                    assert isinstance(read_object, Dict), err_string + ': Not a Map!!'
+                    for key in validation_object.keys():
+                        assert key in read_object, err_string + 'Does not contain the key "' + key
+                        validated_nodes = validated_nodes + check(read_object[key], validation_object[key], (err_string + '["' + key + '"]'))
+
+                elif isinstance(validation_object, List):
+                    assert isinstance(read_object, List), err_string + ': Not a List!'
+
+                    for val1 in validation_object:
+                        exception = None
+                        success = False
+
+                        for val2 in read_object:
+                            try:
+                                validated_nodes = validated_nodes + check(val2, val1, err_string)
+                                success = True
+                                break
+                            except AssertionError as ae:
+                                exception = ae
+
+                        if not success:
+                            raise exception
+
+                elif (isinstance(validation_object, str) or isinstance(validation_object, int) or
+                      isinstance(validation_data, float)):
+                    assert validation_object == read_object, err_string + ': Value should be "' + str(
+                        validation_object) + '", not "' + str(read_object) + '"!'
+                    validated_nodes = validated_nodes + 1
+                    print(err_string + ' == ' + str(validation_object))
+
+                return validated_nodes
+
+            validated_nodes = validated_nodes + check(read_data, validation_data, file_name)
+
+        assert validated_nodes == count_terminal_nodes(expected_json_values), "Not all nodes appear to have been validated in the configuration files!"
+
+    except Exception as e:
+        raise e
 
 
 class TestResults:
@@ -231,50 +644,7 @@ class ImmortalsRootDeploymentTester:
     def validate_deployment(self):
         if not self._dry_run:
             try:
-                # Make sure an in-use DFU has been analyzed
-                expected_artifacts = {
-                    "analysis": [
-                        'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/TakServerDataManager/',
-                        'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/ElevationApi-2',
-                        'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/ATAKLite',
-                        'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/Marti'
-                    ],
-                    "build": [
-                        'das/das-launcher-2.0-LOCAL.jar',
-                        'applications/server/Marti/Marti-immortals.jar',
-                        'applications/client/ATAKLite/ATAKLite-debug.apk'
-                    ],
-                    "extensions": [
-                        'extensions/vanderbilt/aql-brass-server-aql-brass-server.jar',
-                        'extensions/ucr/thirdPartyLibAnalysis/yuesLib.py'
-                    ],
-                    "database": [
-                        'database/server/data/source.csv',
-                        'database/server/data/cot_event.csv',
-                        'database/server/data/cot_event_position.csv',
-                        'database/server/data/master_cot_event.csv'
-                    ]
-                }
-
-                for label in expected_artifacts.keys():
-                    for path in expected_artifacts.get(label):
-                        assert os.path.exists(os.path.join(self._immortals_root_deployment, path)), \
-                            'ERROR: ' + label + ' artifact "' + os.path.join(self._immortals_root_deployment,
-                                                                             path) + '" was not found!'
-
-                expected_good_commands = {
-                    "database": [
-                        ['psql', 'immortals', '--command', '']
-                    ]
-                }
-
-                for label in expected_good_commands.keys():
-                    for cmd in expected_good_commands.get(label):
-                        rcode = subprocess.run(cmd).returncode
-                        assert rcode == 0, \
-                            'ERROR: ' + label + ' command `' + ' '.join(
-                                cmd) + '` had a non-zero return code of ' + rcode + '!'
-
+                validate_deployment(immortals_root_deployment=self._immortals_root_deployment)
             except Exception as e:
                 self._results.full_deployment_validation = False
                 raise e

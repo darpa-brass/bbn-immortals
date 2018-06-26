@@ -2,9 +2,12 @@ package com.bbn.marti;
 
 import com.bbn.ataklite.ATAKLiteConfig;
 import com.bbn.ataklite.CLITAK;
+import com.bbn.marti.dataservices.ValidationBroker;
 import com.bbn.marti.service.MartiMain;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import mil.darpa.immortals.analytics.validators.ValidatorManager;
+import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.analytics.Analytics;
 import mil.darpa.immortals.core.analytics.AnalyticsEndpointInterface;
 import mil.darpa.immortals.core.analytics.AnalyticsEvent;
@@ -14,6 +17,8 @@ import mil.darpa.immortals.core.api.applications.MartiConfig;
 import mil.darpa.immortals.core.api.ll.phase1.TestResult;
 import mil.darpa.immortals.core.api.validation.Validators;
 import mil.darpa.immortals.core.api.validation.results.ValidationResults;
+import mil.darpa.immortals.core.das.adaptationtargets.deploying.AndroidApplicationDeployer;
+import mil.darpa.immortals.core.das.adaptationtargets.deploying.ApplicationDeploymentInstance;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
@@ -21,9 +26,7 @@ import org.testng.ITestResult;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,23 +90,31 @@ public class ValidationRunner {
 
     private long startTimeMS;
 
-    private long timeoutMS = 5000;
+    private final long timeoutMS;
 
     private final List<String> validatorIdentifiers;
 
     private ValidationResults results;
 
-    private final Gson gson = new Gson();
+    private final Gson gson;
 
     private final Path rootStorageDirectory;
 
     private final Path martiStorageDirectory;
 
+    private final boolean useMock;
+
+    private final ApplicationDeploymentInstance clientDeploymentInstanceTemplate;
+
     private ValidationRunnerState state = ValidationRunnerState.NOT_STARTED;
 
     private static final Set<Thread> threads = new HashSet<>();
 
+    private static final Set<AndroidApplicationDeployer> runningAndroidClients = new HashSet<>();
+
     private static ValidationRunner instance;
+
+    private ValidationBroker validationBroker;
 
     public static synchronized ValidationRunner getInstance() {
         if (instance == null) {
@@ -151,7 +162,7 @@ public class ValidationRunner {
         return config;
     }
 
-    private ATAKLiteConfig getClientConfig(String identifier) {
+    private ATAKLiteConfig getClitakConfig(String identifier) {
         InputStream is = Tests.class.getClassLoader().getResourceAsStream("ATAKLite-Config.json");
         ATAKLiteConfig config = gson.fromJson(new InputStreamReader(is), ATAKLiteConfig.class);
 
@@ -220,13 +231,21 @@ public class ValidationRunner {
         }
     }
 
-    private CLITAK startClient(@Nonnull final ATAKLiteConfig config, @Nonnull final AnalyticsEndpointInterface analyticsEndpoint) {
+    private void startClient(@Nonnull String clientIdentifier, @Nonnull final AnalyticsEndpointInterface analyticsEndpoint) throws IOException {
+        if (!useMock) {
+            AndroidApplicationDeployer deployer = new AndroidApplicationDeployer(clientIdentifier, clientDeploymentInstanceTemplate, rootStorageDirectory);
+            runningAndroidClients.add(deployer);
+            deployer.deploy();
+            deployer.start();
+            return;
+        }
+
         try {
             final CLITAK tak = new CLITAK();
 
             // This Seemingly redundant way of starting it allows each new client to have its own thread/Analytics instance
             Thread t = new Thread(() -> {
-                tak.initialize(config, analyticsEndpoint);
+                tak.initialize(getClitakConfig(clientIdentifier), analyticsEndpoint);
                 tak.start();
             });
             t.setUncaughtExceptionHandler(uncaughtExceptionHandler);
@@ -234,19 +253,50 @@ public class ValidationRunner {
             threads.add(t);
             t.start();
             t.join();
-            return tak;
         } catch (InterruptedException e) {
             System.out.println("#HaltClient: " + Long.toString(System.currentTimeMillis()));
-            if (state == ValidationRunnerState.TERMINATING) {
-                return null;
-            } else {
+            if (state != ValidationRunnerState.TERMINATING) {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
     private ValidationRunner(Path storageDirectory, String... validatorIdentifiers) {
+        // TODO: Bit hacky tying the DAS and this together...
+        this.gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Path.class, new ApplicationDeploymentInstance.PathDeserializer()).create();
+        String useMock = System.getProperty("mil.darpa.immortals.mock");
+        if (useMock != null && useMock.equals("true")) {
+            this.useMock = true;
+            this.clientDeploymentInstanceTemplate = null;
+
+        } else {
+            this.useMock = false;
+
+            String pathString = System.getProperty("mil.darpa.immortals.clientDeploymentInstance.json.path");
+            Path clientDeploymentInstancePath = pathString == null ? null : Paths.get(pathString);
+            if (clientDeploymentInstancePath == null || !Files.exists(clientDeploymentInstancePath)) {
+                throw new RuntimeException("Client DeploymentInstance configuration is not set!");
+            } else {
+                try {
+                    String data = new String(Files.readAllBytes(clientDeploymentInstancePath));
+                    this.clientDeploymentInstanceTemplate = gson.fromJson(
+                            data,
+                            ApplicationDeploymentInstance.class);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        String timeout = System.getenv("VALIDATION_SHORT_TIMEOUT_MS");
+        if (timeout != null && !timeout.equals("")) {
+            this.timeoutMS = Long.valueOf(timeout);
+        } else if (this.useMock) {
+            this.timeoutMS = 5000;
+        } else {
+            this.timeoutMS = 20000;
+        }
+
         System.setProperty("java.awt.headless", "true");
 
         this.rootStorageDirectory = storageDirectory.toAbsolutePath();
@@ -254,6 +304,7 @@ public class ValidationRunner {
         //noinspection ResultOfMethodCallIgnored
         this.martiStorageDirectory.toFile().mkdir();
         this.validatorIdentifiers = Arrays.asList(validatorIdentifiers);
+
     }
 
     public TestResult execute(Validators validator) {
@@ -262,77 +313,79 @@ public class ValidationRunner {
     }
 
     public ValidationResults execute() {
-        synchronized (threads) {
-            if (state == ValidationRunnerState.NOT_STARTED) {
-                state = ValidationRunnerState.STARTED;
+        try {
+            synchronized (threads) {
+                if (state == ValidationRunnerState.NOT_STARTED) {
+                    state = ValidationRunnerState.STARTED;
 
 
-                final CountDownLatch durationLatch = new CountDownLatch(1);
+                    final CountDownLatch durationLatch = new CountDownLatch(1);
 
-                String[] clientIdentifiers = {"Client0", "Client1", "Client2"};
-                ValidatorManager validatorManager = new ValidatorManager(Arrays.asList(clientIdentifiers), validatorIdentifiers, true);
+                    String[] clientIdentifiers = {"Client0", "Client1"};
 
-                System.out.println("STARTING: " + Long.toString(System.currentTimeMillis()).substring(0, 10));
 
-                final ValidationRunner vr = this;
-                Analytics.initializeEndpoint(new AnalyticsEndpointInterface() {
-                    @Override
-                    public void start() {
+                    ValidatorManager validatorManager = new ValidatorManager(Arrays.asList(clientIdentifiers), validatorIdentifiers, true);
 
+                    if (!useMock) {
+                        validationBroker = new ValidationBroker(validatorManager);
+                        validationBroker.start();
+                        Thread.sleep(2000);
                     }
 
-                    @Override
-                    public void log(AnalyticsEvent analyticsEvent) {
-                        if (analyticsEvent.type == AnalyticsEventType.Tooling_ValidationFinished) {
-                            ValidationResults results = gson.fromJson(analyticsEvent.data, ValidationResults.class);
-                            vr.setValidationResults(results);
-                            durationLatch.countDown();
+
+                    System.out.println("STARTING: " + Long.toString(System.currentTimeMillis()).substring(0, 10));
+
+                    final ValidationRunner vr = this;
+                    Analytics.initializeEndpoint(new AnalyticsEndpointInterface() {
+                        @Override
+                        public void start() {
+
+                        }
+
+                        @Override
+                        public void log(AnalyticsEvent analyticsEvent) {
+                            if (analyticsEvent.type == AnalyticsEventType.Tooling_ValidationFinished) {
+                                ValidationResults results = gson.fromJson(analyticsEvent.data, ValidationResults.class);
+                                vr.setValidationResults(results);
+                                durationLatch.countDown();
+                            }
+                        }
+
+                        @Override
+                        public void shutdown() {
+
+                        }
+                    });
+
+                    MartiConfig serverConfig = getServerConfig();
+
+                    validatorManager.start();
+                    startTimeMS = System.currentTimeMillis();
+
+                    startServer(serverConfig);
+                    startClient(clientIdentifiers[0], validatorManager);
+                    startClient(clientIdentifiers[1], validatorManager);
+
+                    System.out.println("#WAITING: " + Long.toString(System.currentTimeMillis()).substring(0, 10));
+                    try {
+                        durationLatch.await(timeoutMS, TimeUnit.MILLISECONDS);
+                    } catch (InterruptedException e) {
+                        System.out.println("#HaltWaiting: " + Long.toString(System.currentTimeMillis()));
+                        if (state != ValidationRunnerState.TERMINATING) {
+                            throw new RuntimeException(e);
                         }
                     }
 
-                    @Override
-                    public void shutdown() {
-
-                    }
-                });
-
-                MartiConfig serverConfig = getServerConfig();
-
-                ATAKLiteConfig clientConfig0 = getClientConfig(clientIdentifiers[0]);
-                ATAKLiteConfig clientConfig1 = getClientConfig(clientIdentifiers[1]);
-                ATAKLiteConfig clientConfig2 = getClientConfig(clientIdentifiers[2]);
-
-                validatorManager.start();
-                startTimeMS = System.currentTimeMillis();
-
-                startServer(serverConfig);
-                startClient(clientConfig0, validatorManager);
-                startClient(clientConfig1, validatorManager);
-                startClient(clientConfig2, validatorManager);
-
-                System.out.println("#WAITING: " + Long.toString(System.currentTimeMillis()).substring(0, 10));
-                String timeout = System.getenv("VALIDATION_SHORT_TIMEOUT_MS");
-                try {
-                    if (timeout != null && !timeout.equals("")) {
-                        timeoutMS = Long.valueOf(timeout);
-                        durationLatch.await(timeoutMS, TimeUnit.MILLISECONDS);
-                    } else {
-                        durationLatch.await(5000, TimeUnit.MILLISECONDS);
-                    }
-                } catch (InterruptedException e) {
-                    System.out.println("#HaltWaiting: " + Long.toString(System.currentTimeMillis()));
-                    if (state != ValidationRunnerState.TERMINATING) {
-                        throw new RuntimeException(e);
-                    }
+                    validatorManager.shutdown();
+                    results = validatorManager.getResults();
+                    state = ValidationRunnerState.FINISHED;
+                    System.out.println("#ResultsGotten: " + Long.toString(System.currentTimeMillis()).substring(0, 10));
                 }
-
-                validatorManager.shutdown();
-                results = validatorManager.getResults();
-                state = ValidationRunnerState.FINISHED;
-                System.out.println("#ResultsGotten: " + Long.toString(System.currentTimeMillis()).substring(0, 10));
             }
-        }
 
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return results;
     }
 
@@ -340,6 +393,9 @@ public class ValidationRunner {
         synchronized (threads) {
             System.out.println("#HALT: " + Long.toString(System.currentTimeMillis()).substring(0, 10));
             state = ValidationRunnerState.TERMINATING;
+            for (AndroidApplicationDeployer deployer : runningAndroidClients) {
+                deployer.halt();
+            }
             for (Thread t : threads) {
                 t.interrupt();
             }

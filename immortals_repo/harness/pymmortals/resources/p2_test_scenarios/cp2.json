@@ -1,0 +1,10 @@
+[
+    {
+        "scenarioIdentifier": "p2cp2baselineA",
+        "submissionModel": null,
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "PASS",
+        "submissionFlow": "BaselineA",
+        "perturbationScenario": "P2CP2DataInTransit"
+    }
+]

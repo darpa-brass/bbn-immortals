@@ -252,9 +252,9 @@ public class ConstraintAssessmentService {
                     "\t\n" +
                     "\t\t?project IMMoRTALS:hasClasspaths ?classPaths .\n" +
                     "\t\t\n" +
-                    "\t\t?classPaths IMMoRTALS:hasClasspathName \"compile\"\n" +
+                    "\t\t?classPaths IMMoRTALS:hasClasspathName ?classPathName\n" +
                     "\t\t; IMMoRTALS:hasElementHashValues ?hashes .\n" +
-                    "\t\t\n" +
+                    "\n\t\tFILTER regex(?classPathName, \"compile\") .\n" +
                     "\t\t?jars a IMMoRTALS_bytecode:JarArtifact\n" +
                     "\t\t; IMMoRTALS:hasHash ?hashes\n" +
                     "\t\t; IMMoRTALS:hasFileSystemPath ?filePaths .\n" +

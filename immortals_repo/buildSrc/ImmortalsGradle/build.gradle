@@ -1,20 +1,73 @@
 import java.nio.file.Paths
 
-apply plugin: 'groovy'
 apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+
+group = 'mil.darpa.immortals'
+version = '2.0-LOCAL'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 def IMMORTALS_REPO = Paths.get(getBuildscript().getSourceFile().parentFile.parentFile.parent).resolve('shared/IMMORTALS_REPO').toAbsolutePath()
+
 repositories {
+    mavenCentral()
     maven {
         url IMMORTALS_REPO.toString()
     }
     jcenter()
 }
 
+afterEvaluate {
+task sourceJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allJava
+}
+
+    publishing {
+        publications {
+            JavaComponent(MavenPublication) {
+                from components.java
+                artifact tasks.sourceJar
+            }
+        }
+        repositories {
+            maven {
+                url IMMORTALS_REPO.toString()
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+    }
+}
 dependencies {
+    compile 'com.google.code.findbugs:jsr305:3.0.1'
+    compile 'com.google.code.gson:gson:2.7'
+    testCompile 'junit:junit:4.12'
     compile gradleApi()
     compile localGroovy()
     compile project(':ImmortalsConfig')
+    compile 'com.google.code.findbugs:jsr305:3.0.1'
+    compile 'com.google.code.gson:gson:2.7'
+    testCompile 'junit:junit:4.12'
     compile 'com.securboration:immortals-project-to-triples:r2.0.0'
     compile 'com.android.tools.build:gradle:2.3.3'
 }
+
+

@@ -749,6 +749,13 @@ public class P2CP1TestCoordinator implements TestCoordinatorExecutionInterface {
                 deploymentModel.getProperty("http://darpa.mil/immortals/ontology/r2.0.0#hasSessionIdentifier"),
                 adaptationIdentifier);
 
+
+        // Inserting the Baseline Marti unique identifier (the source filepath)
+        Resource martiServer = deploymentModel.getResource("http://darpa.mil/immortals/ontology/r2.0.0/cp2#ClientServerEnvironment.MartiServer");
+        Property hasArtifactIdentifier = deploymentModel.getProperty("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#hasArtifactIdentifier");
+        martiServer.addLiteral(hasArtifactIdentifier,
+                ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/server/Marti").toString());
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         deploymentModel.write(out, "TURTLE");
 

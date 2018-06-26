@@ -54,6 +54,17 @@ public class TestHarnessRequestListener {
     @Produces(MediaType.APPLICATION_JSON)
     public synchronized Response cp2(SubmissionModel submissionModel) {
         networkLogger.logPostReceived("/action/crossApplicationDependencies", submissionModel);
+        if (submissionModel == null) {
+            logger.info("Empty submission model submitted. Assuming baseline where adaptation is NOT_APPLICABLE.");
+            submissionModel = new SubmissionModel(
+                    "I" + System.currentTimeMillis(),
+                    new MartiSubmissionModel(),
+                    new ATAKLiteSubmissionModel(),
+                    null
+            );
+            logger.info("Assigning adaptationIdentifier '" + submissionModel.sessionIdentifier + "' to baseline submission.");
+        }
+        
         // TODO: Validation
         // TODO: Insert baseline submission model
         Response response = thm.submitSubmissionModel(submissionModel, TestHarnessAdapterMediator.ChallengeProblem.P2CP2);

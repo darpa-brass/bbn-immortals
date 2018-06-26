@@ -28,20 +28,14 @@ import com.securboration.immortals.ontology.functionality.imagescaling.NumberOfP
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.ontology.pojos.markup.Ignore;
 import com.securboration.immortals.ontology.property.Property;
-import com.securboration.immortals.ontology.property.impact.AbstractDataflowBindingSite;
-import com.securboration.immortals.ontology.property.impact.AbstractPropertyCriterion;
-import com.securboration.immortals.ontology.property.impact.ConstraintViolationCriterion;
-import com.securboration.immortals.ontology.property.impact.ConstraintViolationImpact;
-import com.securboration.immortals.ontology.property.impact.ImpactStatement;
-import com.securboration.immortals.ontology.property.impact.PredictiveCauseEffectAssertion;
-import com.securboration.immortals.ontology.property.impact.PrescriptiveCauseEffectAssertion;
-import com.securboration.immortals.ontology.property.impact.PropertyImpact;
-import com.securboration.immortals.ontology.property.impact.ProscriptiveCauseEffectAssertion;
-import com.securboration.immortals.ontology.property.impact.RemediationImpact;
+import com.securboration.immortals.ontology.property.impact.*;
 import com.securboration.immortals.ontology.resources.FileSystemResource;
 import com.securboration.immortals.ontology.resources.MobileAndroidDevice;
 import com.securboration.immortals.ontology.resources.PlatformResource;
 import com.securboration.immortals.ontology.resources.Server;
+import com.securboration.immortals.ontology.resources.compute.Cpu;
+import com.securboration.immortals.ontology.resources.compute.InstructionSet;
+import com.securboration.immortals.ontology.resources.compute.InstructionSets;
 
 /**
  * An example client/server environment. There are three mobile android devices that have data
@@ -60,8 +54,8 @@ public class ClientServerEnvironment {
     public static FileSystem1 fileSystem1 = new FileSystem1();
     public static FileSystem2 fileSystem2 = new FileSystem2();
     public static DataflowNode4 serverNode = new DataflowNode4();
-    
-    
+
+
     @ConceptInstance(name = "DataSafetyConstraint")
     public static class DataSafetyConstraint extends ProscriptiveCauseEffectAssertion {
         public DataSafetyConstraint() {
@@ -77,31 +71,38 @@ public class ClientServerEnvironment {
                 impact.setDirectionOfViolation(DirectionOfViolationType.UNDERSHOOT);
             }
 
-            AbstractDataflowBindingSite abstractDataflowBindingSite = new AbstractDataflowBindingSite();{
-                abstractDataflowBindingSite.setSrc(MobileAndroidDevice.class);
-                abstractDataflowBindingSite.setDest(Server.class);
-                abstractDataflowBindingSite.setHumanReadableDescription("Any data between an android mobile device and server");
+            AbstractDataflowBindingSite clientToServerBinding = new AbstractDataflowBindingSite();
+            clientToServerBinding.setSrc(Analysis.Atak.AtakPhone.class);
+            clientToServerBinding.setDest(Analysis.Marti.MartiServer.class);
+            clientToServerBinding.setHumanReadableDescription("Any data between an android mobile device and server");
+
+
+            AbstractDataflowBindingSite serverToClientBinding = new AbstractDataflowBindingSite();{
+                serverToClientBinding.setDest(Analysis.Atak.AtakPhone.class);
+                serverToClientBinding.setSrc(Analysis.Marti.MartiServer.class);
+                serverToClientBinding.setHumanReadableDescription("Any data between an android mobile device and server");
             }
 
             this.setCriterion(criterion);
+            this.setAssertionBindingSites(new AssertionBindingSite[] {clientToServerBinding, serverToClientBinding});
             this.setImpact(new ImpactStatement[] {impact});
-            this.setApplicableDataType(DataType.class);
-            this.setHumanReadableDescription("All data being transmitted between MobileAndroidDevices and FileSystemResources " +
+            this.setApplicableDataType(BinaryData.class);
+            this.setHumanReadableDescription("All data being transmitted between MobileAndroidDevices and Servers " +
                     "must be confidential");
         }
     }
-    
+
     @ConceptInstance(name = "ConfidentialDataImplementationStrategy")
     public static class ConfidentialDataImplementationStrategy extends PrescriptiveCauseEffectAssertion {
         public ConfidentialDataImplementationStrategy() {
             ConstraintViolationCriterion criterion = new ConstraintViolationCriterion();{
-                criterion.setConstraint(new ClientServerEnvironment.DataSafetyConstraint());
+                criterion.setConstraint(new DataSafetyConstraint());
                 criterion.setTriggeringConstraintCriterion(ConstraintCriterionType.WHEN_HARD_VIOLATED);
             }
             this.setCriterion(criterion);
 
             RemediationImpact impact = new RemediationImpact();{
-                impact.setRemediationStrategy(new ClientServerEnvironment.ImpactOfEncryptingData());
+                impact.setRemediationStrategy(new ImpactOfEncryptingData());
             }
             this.setImpact(new ImpactStatement[] {impact});
             this.setHumanReadableDescription("When the DataSafetyConstraint is \"hard\" violated, this strategy can " +
@@ -165,10 +166,12 @@ public class ClientServerEnvironment {
     }
     
     @ConceptInstance
-    public static class ClientDevice1 extends MobileAndroidDevice {
+    public static class ClientDevice1 extends Analysis.Atak.AtakPhone {
         public ClientDevice1() {
             this.setResources(
                 new PlatformResource[]{
+                        new ATAKSoftware(),
+                        cpu("Qualcomm Snapdragon 835",4,4,new InstructionSets.X86()),
                         art("Oreo 8.0",false)
                     }
                 );
@@ -185,6 +188,8 @@ public class ClientServerEnvironment {
         public ClientDevice2() {
             this.setResources(
                 new PlatformResource[]{
+                        new ATAKSoftware(),
+                        cpu("Qualcomm Snapdragon 820",2,2,new InstructionSets.X86()),
                         art("Oreo 8.1",true)
                     }
                 );
@@ -194,9 +199,11 @@ public class ClientServerEnvironment {
     @ConceptInstance
     public static class ClientDevice3 extends MobileAndroidDevice {
         public ClientDevice3() {
+            
             this.setResources(
                 new PlatformResource[]{
-                        art("Nougat 7.1.2",false),
+                        new ATAKSoftware(),
+                        cpu("Qualcomm Snapdragon 820",2,2,new InstructionSets.X86()),
                         art("Nougat 7.1.3",false)
                     }
                 );
@@ -204,10 +211,12 @@ public class ClientServerEnvironment {
     }
     
     @ConceptInstance
-    public static class MartiServer extends Server {
+    public static class MartiServer extends Analysis.Marti.MartiServer {
         public MartiServer() {
             this.setResources(
                 new PlatformResource[]{
+                        new MartiSoftware(),
+                        cpu("Intel Xeon E7-8890V2",15,30,new InstructionSets.X86(),new InstructionSets.AES_NI()),
                         jvm("usr/local/jdk1.8.1_71","Oracle Java 8u171",false)
                     }
                 );
@@ -387,6 +396,21 @@ public class ClientServerEnvironment {
     }
     
     
+    private static Cpu cpu(
+            String name, 
+            int numPhysicalCores, 
+            int numLogicalCores, 
+            InstructionSet...isaSupported
+            ){
+        Cpu cpu = new Cpu();
+        
+        cpu.setNumCoresLogical(numLogicalCores);
+        cpu.setNumCoresPhysical(numPhysicalCores);
+        cpu.setHumanReadableDescription(name);
+        cpu.setInstructionSetArchitectureSupport(isaSupported);
+        
+        return cpu;
+    }
     
     private static AndroidRuntimeEnvironment art(
             String desc,

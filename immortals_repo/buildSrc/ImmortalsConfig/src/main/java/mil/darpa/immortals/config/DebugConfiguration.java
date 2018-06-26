@@ -18,6 +18,7 @@ public class DebugConfiguration {
     private int shutdownGracePeriodMS = 10000;
     public String loggingConfigDirectory = GlobalsConfig.staticImmortalsRoot.resolve("das/das-launcher/logging_scripts").toAbsolutePath().toString() + "/";
     private boolean haltTestingOnFailure = true;
+    private boolean keepRunningOnTestAdapterDoneSignal = false;
     
 
 
@@ -84,5 +85,9 @@ public class DebugConfiguration {
 
     public boolean isHaltTestingOnFailure() {
         return haltTestingOnFailure;
+    }
+    
+    public boolean isKeepRunningOnTestAdapterDoneSignal() {
+        return keepRunningOnTestAdapterDoneSignal;
     }
 }

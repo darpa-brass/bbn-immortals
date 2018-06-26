@@ -1,7 +1,6 @@
 package mil.darpa.immortals.config;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -25,6 +24,7 @@ public class TestAdapterConfiguration implements RestfulAppConfigInterface {
 
     private int websocketPort = 7878;
     private String readyStdoutLineRegexPattern = ".*(?<=Started TestAdapter at URL ').*(?<=\\.)$";
+    private boolean shutdownEverythingOnTermination = true;
 
     TestAdapterConfiguration() {
     }
@@ -91,7 +91,7 @@ public class TestAdapterConfiguration implements RestfulAppConfigInterface {
 
     @Override
     public URI getFullUrl() {
-        return RestfulAppConfigInterface.toFullUrl(this);
+        return GlobalsConfig.toFullUrl(this);
     }
 
     public int getWebsocketPort() {
@@ -101,5 +101,10 @@ public class TestAdapterConfiguration implements RestfulAppConfigInterface {
     @Override
     public String getReadyStdoutLineRegexPattern() {
         return readyStdoutLineRegexPattern;
+    }
+
+    @Override
+    public boolean isShutdownEverythingOnTermination() {
+        return shutdownEverythingOnTermination;
     }
 }

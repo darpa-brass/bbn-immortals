@@ -4,6 +4,8 @@ import mil.darpa.immortals.config.ImmortalsConfig
 
 import java.nio.file.Paths
 
+apply plugin: 'mil.darpa.immortals'
+
 sourceSets {
     validation {
         java {
@@ -63,6 +65,7 @@ dependencies {
     validationCompile('junit:junit:4.12')
 }
 
+immortalize.dependsOn(compileValidationJava)
 
 
 //def publish_extension = project.getExtensions().getByName('publishing')

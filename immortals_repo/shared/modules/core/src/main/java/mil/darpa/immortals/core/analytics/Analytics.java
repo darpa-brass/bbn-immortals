@@ -95,9 +95,11 @@ public class Analytics {
         } else {
             registerCurrentThread();
             a = getInstance();
+            a.endpoint = endpointInterface;
         }
 
         a.endpoint = endpointInterface;
+        a.endpoint.start();
         if (a.logQueue != null && !a.logQueue.isEmpty()) {
             for (AnalyticsEvent e : a.logQueue) {
                 a.endpoint.log(e);

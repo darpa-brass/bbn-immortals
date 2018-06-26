@@ -6,6 +6,7 @@ from typing import Dict, List, Set
 from pymmortals.datatypes.serializable import Serializable
 from pymmortals.generated.mil.darpa.immortals.config.deploymentenvironmentconfiguration import \
     DeploymentEnvironmentConfiguration, AndroidEnivronmentConfiguration
+from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.androidresource import AndroidResource
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.atakliterequirements import \
     AtakliteRequirements
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.ataklitesubmissionmodel import \
@@ -24,6 +25,7 @@ from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.globalmodel.glo
     GlobalRequirements
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.globalmodel.globalsubmissionmodel import \
     GlobalSubmissionModel
+from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.javaresource import JavaResource
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.martirequirements import MartiRequirements
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.martimodel.martisubmissionmodel import \
     MartiSubmissionModel
@@ -118,14 +120,26 @@ _sample_cp2_submission_model = SubmissionModel(
             dataInTransit=DataInTransit(
                 securityStandard=SecurityStandard.NIST800Dash171
             )
-        )
+        ),
+    ),
+    martiServerModel=MartiSubmissionModel(
+        resources=[
+            JavaResource.HARWARE_AES,
+            JavaResource.STRONG_CRYPTO
+        ]
+    ),
+    atakLiteClientModel=ATAKLiteSubmissionModel(
+        resources=[
+            AndroidResource.HARWARE_AES,
+            AndroidResource.STRONG_CRYPTO
+        ]
     )
 )  # type: SubmissionModel
 
 _sample_cp3_submission_model = SubmissionModel(
     martiServerModel=MartiSubmissionModel(
         requirements=MartiRequirements(
-            partialLibraryUpgrade=ServerPartialUpgradeLibrary.Dom4jCot_2,
+            partialLibraryUpgrade=ServerPartialUpgradeLibrary.ToBeDetermined_X_X,
             libraryUpgrade=ServerUpgradeLibrary.ElevationApi_2
         )
     ),
@@ -208,14 +222,12 @@ _prerequisites = DASPrerequisites(
             AndroidEmulatorRequirement(
                 androidVersion=21,
                 uploadBandwidthLimitKilobitsPerSecond=None,
-                externallyAccessibleUrls=[],
-                superuserAccess=False
+                externallyAccessibleUrls=[]
             ),
             AndroidEmulatorRequirement(
                 androidVersion=21,
                 uploadBandwidthLimitKilobitsPerSecond=None,
-                externallyAccessibleUrls=[],
-                superuserAccess=False
+                externallyAccessibleUrls=[]
             )
         ]
     ),
@@ -228,20 +240,17 @@ _prerequisites = DASPrerequisites(
                 externallyAccessibleUrls=[
                     "dropbox.com:443",
                     "dropbox.com:80"
-                ],
-                superuserAccess=True
+                ]
             ),
             AndroidEmulatorRequirement(
                 androidVersion=21,
                 uploadBandwidthLimitKilobitsPerSecond=None,
-                externallyAccessibleUrls=[],
-                superuserAccess=False
+                externallyAccessibleUrls=[]
             ),
             AndroidEmulatorRequirement(
                 androidVersion=21,
                 uploadBandwidthLimitKilobitsPerSecond=None,
-                externallyAccessibleUrls=[],
-                superuserAccess=False
+                externallyAccessibleUrls=[]
             )
         ]
     )
@@ -260,8 +269,7 @@ _input_das_configuration = DeploymentEnvironmentConfiguration(
                 externallyAccessibleUrls=[
                     "dropbox.com:443",
                     "dropbox.com:80"
-                ],
-                superuserAccess=True
+                ]
             )
         ),
         AndroidEnivronmentConfiguration(
@@ -271,8 +279,7 @@ _input_das_configuration = DeploymentEnvironmentConfiguration(
             environmentDetails=AndroidEmulatorRequirement(
                 androidVersion=21,
                 uploadBandwidthLimitKilobitsPerSecond=None,
-                externallyAccessibleUrls=[],
-                superuserAccess=False
+                externallyAccessibleUrls=[]
             )
         ),
         AndroidEnivronmentConfiguration(
@@ -284,8 +291,7 @@ _input_das_configuration = DeploymentEnvironmentConfiguration(
             AndroidEmulatorRequirement(
                 androidVersion=21,
                 uploadBandwidthLimitKilobitsPerSecond=None,
-                externallyAccessibleUrls=[],
-                superuserAccess=False
+                externallyAccessibleUrls=[]
             )
         )
     ]

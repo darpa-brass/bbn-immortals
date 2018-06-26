@@ -3,6 +3,7 @@ package mil.darpa.immortals.das.testcoordinators;
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
 import mil.darpa.immortals.das.TestCoordinatorExecutionInterface;
 import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
+import mil.darpa.immortals.das.deploymentmodel.DeploymentModelBuilder;
 import mil.darpa.immortals.testadapter.SubmissionServices;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
@@ -38,7 +39,16 @@ public abstract class AbstractTestCoordinator implements TestCoordinatorExecutio
     abstract void setupChallengeProblem(@Nonnull SubmissionModel submissionModel) throws Exception;
 
     @Nonnull
-    abstract String getDeploymentModel(@Nonnull SubmissionModel submissionModel) throws Exception;
+    protected String getDeploymentModel(@Nonnull SubmissionModel submissionModel) throws Exception {
+        Model deploymentModel = new DeploymentModelBuilder(submissionModel).build();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        deploymentModel.write(out, "TURTLE");
+
+        String rval = new String(out.toByteArray());
+        System.out.println(rval);
+        return rval;
+    }
 
     AbstractTestCoordinator() {
         logger = LoggerFactory.getLogger(this.getClass());
@@ -65,7 +75,7 @@ public abstract class AbstractTestCoordinator implements TestCoordinatorExecutio
         deploymentModelStatement.getSubject().addLiteral(
                 deploymentModel.getProperty("http://darpa.mil/immortals/ontology/r2.0.0#hasSessionIdentifier"),
                 adaptationIdentifier);
-        
+
         return deploymentModel;
     }
 

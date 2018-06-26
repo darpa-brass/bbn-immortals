@@ -4,11 +4,8 @@ import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiRequirements;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiSubmissionModel;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.ServerUpgradeLibrary;
-import mil.darpa.immortals.das.deploymentmodel.DeploymentModelBuilder;
-import org.apache.jena.rdf.model.Model;
 
 import javax.annotation.Nonnull;
-import java.io.ByteArrayOutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,19 +17,6 @@ public class P2CP3TestCoordinator extends AbstractTestCoordinator {
 
     public P2CP3TestCoordinator() {
         super();
-    }
-
-    @Nonnull
-    @Override
-    protected String getDeploymentModel(@Nonnull SubmissionModel submissionModel) throws Exception {
-        Model deploymentModel = new DeploymentModelBuilder(submissionModel).build();
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        deploymentModel.write(out, "TURTLE");
-
-        String rval = new String(out.toByteArray());
-        System.out.println(rval);
-        return rval;
     }
 
     @Nonnull
@@ -83,7 +67,8 @@ public class P2CP3TestCoordinator extends AbstractTestCoordinator {
                                     null,
                                     ServerUpgradeLibrary.ElevationApi_2,
                                     null
-                            )
+                            ),
+                            null
                     ),
                     null,
                     null

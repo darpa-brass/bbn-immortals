@@ -1,7 +1,11 @@
 package mil.darpa.immortals.core.das.adaptationtargets.building;
 
+import mil.darpa.immortals.analysis.adaptationtargets.BuildPlatform;
+import mil.darpa.immortals.analysis.adaptationtargets.DeploymentTarget;
 import mil.darpa.immortals.config.ImmortalsConfig;
+import mil.darpa.immortals.core.das.DasGsonHelper;
 import mil.darpa.immortals.das.ImmortalsProcessBuilder;
+import mil.darpa.immortals.das.context.DasAdaptationContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,6 +34,10 @@ public class GradleBuildFileHelper {
     }
 
     public synchronized void save() throws IOException {
+        if (hasBeenSaved) {
+            return;
+        }
+        hasBeenSaved = true;
         Path buildFile = buildInstance.getBuildFilePath();
         Path originalFile = buildFile.getParent().resolve(buildFile.getFileName() + ".original");
 
@@ -42,10 +50,10 @@ public class GradleBuildFileHelper {
         List<String> lines = new LinkedList<>();
         
         // TODO: Replace this with proper substitution. It won't let me substitute with a file for some reason...
-        for (String line : originallines) {
-            if (dependencyReplacementFileMap.isEmpty()) {
-                lines = originallines;
-            } else {
+        if (dependencyReplacementFileMap.isEmpty()) {
+            lines = originallines;
+        } else {
+            for (String line : originallines) {
                 for (Map.Entry<String, Path> entry : dependencyReplacementFileMap.entrySet()) {
                     line = line.replaceAll("compile " + "'" + entry.getKey() + "'", "compile files('" + entry.getValue().toString() + "')");
                     lines.add(line);
@@ -106,10 +114,7 @@ public class GradleBuildFileHelper {
     }
 
     private synchronized boolean executeCommand(String[] cmd) throws IOException, InterruptedException {
-
-        if (!hasBeenSaved) {
-            save();
-        }
+        save();
 
         Path settingsFile = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("settings.gradle");
 
@@ -171,7 +176,7 @@ public class GradleBuildFileHelper {
         return executeCommand(cmdList.toArray(new String[0]));
     }
 
-    public synchronized Boolean executeCleanAndTest(@Nullable Collection<String> testIdentifiers) throws IOException, InterruptedException {
+    public synchronized Boolean executeCleanAndTest(@Nullable Collection<String> testIdentifiers, @Nullable AdaptationTargetBuildInstance appToTestIntegrationWith) throws IOException, InterruptedException {
         if (!buildInstance.canTest()) {
             return null;
         }
@@ -181,13 +186,41 @@ public class GradleBuildFileHelper {
         cmdList.add(buildInstance.getBuildFilePath().toString());
         cmdList.addAll(Arrays.asList(buildInstance.getTestBuildToolParameters()));
 
-        if (testIdentifiers != null) {
-            for (String testIdentifier : testIdentifiers) {
-                cmdList.add("--tests");
-                cmdList.add(testIdentifier);
+        if (appToTestIntegrationWith != null) {
+            if (buildInstance.getBuildPlatform() == BuildPlatform.GRADLE) {
+
+                // TODO: Contain all gradle build/validation logic internally. All you need from the analysis should be task identifiers and task parameters.
+
+                Path clientDeploymentJsonPath = buildInstance.getBuildRoot().resolve("clientDeploymentInstance.json");
+                String clientConfigString = DasGsonHelper.getGson().toJson(appToTestIntegrationWith);
+                Files.write(clientDeploymentJsonPath, clientConfigString.getBytes());
+                // TODO: The filepath here should be quoted.... But it breaks running it from within the DAS, so skipping for now
+                cmdList.add(cmdList.size() - 2, "-Dmil.darpa.immortals.clientDeploymentInstance.json.path=" + clientDeploymentJsonPath.toString());
             }
+        } else {
+            cmdList.add(cmdList.size() - 2, "-Dmil.darpa.immortals.mock=true");
         }
 
+        if (testIdentifiers != null) {
+            if (buildInstance.getDeploymentTarget() == DeploymentTarget.JAVA) {
+                for (String testIdentifier : testIdentifiers) {
+                    cmdList.add("--tests");
+                    cmdList.add(testIdentifier);
+                }
+            } else if (buildInstance.getDeploymentTarget() == DeploymentTarget.ANDROID) {
+                List<String> androidTestIdentifiers = new ArrayList<>(testIdentifiers.size());
+                for (String ti : testIdentifiers) {
+                    int lastDot = ti.lastIndexOf(".");
+                    androidTestIdentifiers.add(ti.substring(0, lastDot) + "#" + ti.substring(lastDot + 1));
+                }
+                if (!androidTestIdentifiers.isEmpty()) {
+                    cmdList.add(cmdList.size() - 2, "-Pandroid.testInstrumentationRunnerArguments.class=" + String.join(",", androidTestIdentifiers));
+                }
+
+            } else {
+                throw new RuntimeException("Unexpected deployment target '" + buildInstance.getDeploymentTarget() + "'!");
+            }
+        }
         return executeCommand(cmdList.toArray(new String[0]));
     }
     

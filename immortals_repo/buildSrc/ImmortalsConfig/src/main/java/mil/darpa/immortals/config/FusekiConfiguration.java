@@ -1,19 +1,28 @@
 package mil.darpa.immortals.config;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.AbstractMap;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by awellman@bbn.com on 12/19/17.
  */
 public class FusekiConfiguration implements RestfulAppConfigInterface {
+    
+    private static HashMap<String, String> genParameters(String identifier) {
+        String fuseki_home = System.getenv("FUSEKI_HOME");
+        if (fuseki_home == null) {
+            fuseki_home = "";
+        }
+        
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("FUSEKI_HOME", fuseki_home);
+        parameters.put("FUSEKI_BASE", GlobalsConfig.mkworkingdir("_" + identifier + "/fuseki_base"));
+        parameters.put("FUSEKI_RUN", GlobalsConfig.mkworkingdir("_" + identifier + "/fuseki_run"));
+        return parameters;
+    }
+    
     private boolean userManaged = false;
     private long startupTimeMS = 20000;
     private String identifier = "fuseki";
@@ -27,13 +36,10 @@ public class FusekiConfiguration implements RestfulAppConfigInterface {
     private String[] parameters = {
             "--update", "--mem", "--port=" + Integer.toString(port), "/ds"
     };
-    private HashMap<String, String> environmentVariables = new HashMap<String, String>(Collections.unmodifiableMap(Stream.of(
-            new AbstractMap.SimpleEntry<String, String>("FUSEKI_HOME", System.getenv("FUSEKI_HOME") == null ? "" : System.getenv("FUSEKI_HOME")),
-            new AbstractMap.SimpleEntry<String, String>("FUSEKI_BASE", GlobalsConfig.mkworkingdir("_" + identifier + "/fuseki_base")),
-            new AbstractMap.SimpleEntry<String, String>("FUSEKI_RUN", GlobalsConfig.mkworkingdir("_" + identifier + "/fuseki_run"))
-    ).collect(Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue()))));
+    private HashMap<String, String> environmentVariables = genParameters(identifier);
     private String readyStdoutLineRegexPattern = ".*(?<=Started).*(?<= on port ).*";
-
+    private boolean shutdownEverythingOnTermination = false;
+    
     @Override
     public boolean isUserManaged() {
         return userManaged;
@@ -60,7 +66,7 @@ public class FusekiConfiguration implements RestfulAppConfigInterface {
 
     @Override
     public URI getFullUrl() {
-        return RestfulAppConfigInterface.toFullUrl(this);
+        return GlobalsConfig.toFullUrl(this);
     }
     
     @Override
@@ -102,5 +108,10 @@ public class FusekiConfiguration implements RestfulAppConfigInterface {
     public Path getWorkingDirectoryTemplateFolder() {
         if (workingDirectoryTemplateFolder == null) return null;
         return Paths.get(workingDirectoryTemplateFolder);
+    }
+
+    @Override
+    public boolean isShutdownEverythingOnTermination() {
+        return shutdownEverythingOnTermination;
     }
 }

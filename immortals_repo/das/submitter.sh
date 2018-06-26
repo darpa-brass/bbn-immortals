@@ -4,7 +4,7 @@
 HELP="
 INVALID INPUT!
 
-Valid argument values: cp1baselinea, cp1baselineb, cp1, cp3baseline, cp3hddrassbaselineb cp3hddrass, cp3plugbaselineb, cp3plug
+Valid argument values: cp1baselinea, cp1baselineb, cp1, cp2baselinea, cp3baselinea, cp3hddrassbaselineb, cp3plugbaselineb, cp3hddrass, cp3plug
 "
 
 DISABLE_DAS_INPUT="
@@ -99,8 +99,10 @@ else
     elif [ "$1" = "cp1" ];then
         curl -X POST -H "Content-Type: application/json" -d "$CP1_INPUT" http://127.0.0.1:55555/action/databaseSchemaPerturbation
 
-    elif [ "$1" = "cp2" ];then
-        curl -X POST -H "Content-Type: application/json" -d "$CP2_INPUT" http://127.0.0.1:55555/action/crossApplicationDependencies
+    elif [ "$1" = "cp2baselinea" ];then
+        curl -X POST -H "Content-Type: application/json" -d "$DISABLE_DAS_INPUT"  http://127.0.0.1:55555/enabled
+        sleep 2
+        curl -X POST -H "Content-Type: application/json" http://127.0.0.1:55555/action/crossApplicationDependencies
 
     elif [ "$1" = "cp3baselinea" ];then
         curl -X POST -H "Content-Type: application/json" -d "$DISABLE_DAS_INPUT"  http://127.0.0.1:55555/enabled

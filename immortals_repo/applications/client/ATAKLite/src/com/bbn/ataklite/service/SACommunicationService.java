@@ -154,6 +154,7 @@ public class SACommunicationService extends IntentService {
 
     public SACommunicationService() {
         super("SACommunicationService");
+        Analytics.registerCurrentThread();
     }
 
     @Override

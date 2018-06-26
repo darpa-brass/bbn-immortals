@@ -1,6 +1,87 @@
-jar {
-    manifest {
-        attributes "Main-Class": "mil.darpa.immortals.config.ImmortalsConfig"
-    }
-    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+import java.nio.file.Files
+import java.nio.file.Paths
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+
+group = 'mil.darpa.immortals'
+version = '2.0-LOCAL'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+
+def IMMORTALS_ROOT = Paths.get(getBuildscript().getSourceFile().parentFile.parentFile.parent).toAbsolutePath()
+def IMMORTALS_REPO = IMMORTALS_ROOT.resolve('shared/IMMORTALS_REPO').toAbsolutePath()
+
+// Record that info to a package in the configuration to be used globally on the system
+def resourcePath = IMMORTALS_ROOT.resolve('buildSrc/ImmortalsConfig/src/main/resources/')
+Files.createDirectories(resourcePath)
+Files.write(resourcePath.resolve('IMMORTALS_ROOT_PATH'), [IMMORTALS_ROOT.toString() + '/'])
+Files.write(resourcePath.resolve('IMMORTALS_REPO_PATH'), [IMMORTALS_REPO.toString() + '/'])
+
+
+
+repositories {
+    mavenCentral()
 }
+
+
+afterEvaluate {
+
+    task sourceJar(type: Jar) {
+        classifier 'sources'
+        from sourceSets.main.allJava
+    }
+    
+    task fatJar(type: Jar) {
+        classifier 'all'
+        from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    publishing {
+        publications {
+            JavaComponent(MavenPublication) {
+                from components.java
+                artifact tasks.sourceJar
+            }
+            FatComponent(MavenPublication) {
+                from components.java
+                artifact tasks.fatJar
+            }
+        }
+        repositories {
+            maven {
+                url IMMORTALS_REPO.toString()
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+    }
+}
+dependencies {
+    compile 'com.google.code.findbugs:jsr305:3.0.1'
+    compile 'com.google.code.gson:gson:2.7'
+    testCompile 'junit:junit:4.12'
+}
+
+//jar {
+//    manifest {
+//        attributes "Main-Class": "mil.darpa.immortals.config.ImmortalsConfig"
+//    }
+//    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+//}

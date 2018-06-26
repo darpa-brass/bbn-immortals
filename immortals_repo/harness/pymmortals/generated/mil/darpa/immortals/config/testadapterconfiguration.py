@@ -18,6 +18,7 @@ class TestAdapterConfiguration(Serializable):
                  port: int = None,
                  protocol: str = None,
                  readyStdoutLineRegexPattern: str = None,
+                 shutdownEverythinOnTermination: bool = None,
                  startupTimeMS: int = None,
                  url: str = None,
                  userManaged: bool = None,
@@ -33,6 +34,7 @@ class TestAdapterConfiguration(Serializable):
         self.port = port
         self.protocol = protocol
         self.readyStdoutLineRegexPattern = readyStdoutLineRegexPattern
+        self.shutdownEverythinOnTermination = shutdownEverythinOnTermination
         self.startupTimeMS = startupTimeMS
         self.url = url
         self.userManaged = userManaged

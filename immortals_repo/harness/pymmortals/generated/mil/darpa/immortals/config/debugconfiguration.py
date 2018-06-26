@@ -9,6 +9,7 @@ class DebugConfiguration(Serializable):
 
     def __init__(self,
                  haltTestingOnFailure: bool = None,
+                 keepRunningOnTestAdapterDoneSignal: bool = None,
                  logNetworkActivityToSeparateFile: bool = None,
                  loggingConfigDirectory: str = None,
                  shutdownGracePeriodMS: int = None,
@@ -24,6 +25,7 @@ class DebugConfiguration(Serializable):
                  useMockTestHarness: bool = None):
         super().__init__()
         self.haltTestingOnFailure = haltTestingOnFailure
+        self.keepRunningOnTestAdapterDoneSignal = keepRunningOnTestAdapterDoneSignal
         self.logNetworkActivityToSeparateFile = logNetworkActivityToSeparateFile
         self.loggingConfigDirectory = loggingConfigDirectory
         self.shutdownGracePeriodMS = shutdownGracePeriodMS

@@ -1,5 +1,7 @@
 from pymmortals.datatypes.serializable import Serializable
+from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.androidresource import AndroidResource
 from pymmortals.generated.mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.atakliterequirements import AtakliteRequirements
+from typing import List
 
 
 # noinspection PyPep8Naming
@@ -9,6 +11,8 @@ class ATAKLiteSubmissionModel(Serializable):
     _types = dict()
 
     def __init__(self,
-                 requirements: AtakliteRequirements = None):
+                 requirements: AtakliteRequirements = None,
+                 resources: List[AndroidResource] = None):
         super().__init__()
         self.requirements = requirements
+        self.resources = resources

@@ -80,6 +80,10 @@ test {
         new File("$buildDir/test-temp").mkdir()
         systemProperty 'java.io.tmpdir', "$buildDir/test-temp"
         systemProperty 'mil.darpa.immortals.envfile', "$buildDir/test-temp/env.json"
+        def clientDeploymentInstanceFilepath = System.getProperty("mil.darpa.immortals.clientDeploymentInstance.json.path")
+        if (clientDeploymentInstanceFilepath != null) {
+            systemProperty "mil.darpa.immortals.clientDeploymentInstance.json.path", clientDeploymentInstanceFilepath
+        }
     }
 }
 
@@ -97,9 +101,12 @@ dependencies {
     compile 'jaxen:jaxen:1.1.6'
     compile 'log4j:log4j:1.2.16'
     compile 'mil.darpa.immortals.dfus:ElevationApi-1:2.0-LOCAL'
+    testCompile('mil.darpa.immortals:ImmortalsConfig:+')
     testCompile('org.testng:testng:6.13.1')
     testCompile('com.bbn.ataklite:CLITAK:+')
     testCompile('org.jmockit:jmockit:1.39')
+    testCompile 'org.zeromq:jeromq:0.4.3'
+    testCompile 'commons-io:commons-io:2.4'
 }
 
 if (System.properties["mil.darpa.immortals.mock"] != null) {

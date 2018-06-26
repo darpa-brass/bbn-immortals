@@ -1,5 +1,7 @@
 package mil.darpa.immortals.config;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import java.io.File;
@@ -14,6 +16,8 @@ import java.util.Arrays;
  * Created by awellman@bbn.com on 9/29/17.
  */
 public class ImmortalsConfig {
+    
+    private static transient Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static transient ImmortalsConfig configuration;
 
@@ -56,8 +60,8 @@ public class ImmortalsConfig {
                 try {
                     File f = new File(override_path);
 
-                    JsonObject configJsonObject = StaticHelper.gson.fromJson(new FileReader(f), JsonObject.class);
-                    configuration = StaticHelper.gson.fromJson(configJsonObject, ImmortalsConfig.class);
+                    JsonObject configJsonObject = gson.fromJson(new FileReader(f), JsonObject.class);
+                    configuration = gson.fromJson(configJsonObject, ImmortalsConfig.class);
 
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
@@ -68,7 +72,7 @@ public class ImmortalsConfig {
     }
 
     public static synchronized String getInstanceAsJsonString() {
-        return StaticHelper.gson.toJson(getInstance());
+        return gson.toJson(getInstance());
     }
 
     public static void main(String[] argsv) {

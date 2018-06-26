@@ -80,6 +80,8 @@ public class DasLauncher {
 
     private static final TreeMap<String, Process> runningProcesses = new TreeMap<>();
 
+    private static final Set<Process> monitoredProcesses = new HashSet<>();
+
     private static final AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     private Thread stdListenThread = null;
@@ -431,6 +433,9 @@ public class DasLauncher {
 
             } else if (p.isAlive()) {
                 runningProcesses.put(appConfig.getIdentifier(), p);
+                if (appConfig.isShutdownEverythingOnTermination()) {
+                    monitoredProcesses.add(p);
+                }
                 System.out.println(" Done (" + Long.toString(durationMS) + "ms)");
 
             } else {
@@ -520,6 +525,11 @@ public class DasLauncher {
 
             try {
                 while (!shuttingDown.get()) {
+                    for (Process p : monitoredProcesses) {
+                        if (!p.isAlive()) {
+                            shutdown();
+                        }
+                    }
                     Thread.sleep(shutdownWaitDurationMS + 1000);
                 }
             } catch (InterruptedException e) {

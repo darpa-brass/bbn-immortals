@@ -12,12 +12,12 @@ import java.util.Set;
 public enum Validators {
     ClientLocationProduce("client-location-produce", ClientLocationProduceValidator.class),
     ClientLocationShare("client-location-share", ClientLocationShareValidator.class),
-    ClientLocationSourceTrusted("client-location-source-trusted", ClientLocationSourceTrustedValidator.class),
-    ClientLocationTrusted("client-location-trusted", ClientLocationTrustedValidator.class),
-    ClientLocationSourceUsb("client-location-source-usb", ClientLocationSourceUsbValidator.class),
-    ClientLocationSourceBluetooth("client-location-source-bluetooth", ClientLocationSourceBluetoothValidator.class),
-    ClientLocationSourceAndroidGps("client-location-source-androidgps", ClientLocationSourceAndroidGpsValidator.class),
-    ClientLocationSourceManual("client-location-source-manual", ClientLocationSourceManualValidator.class),
+//    ClientLocationSourceTrusted("client-location-source-trusted", ClientLocationSourceTrustedValidator.class),
+//    ClientLocationTrusted("client-location-trusted", ClientLocationTrustedValidator.class),
+//    ClientLocationSourceUsb("client-location-source-usb", ClientLocationSourceUsbValidator.class),
+//    ClientLocationSourceBluetooth("client-location-source-bluetooth", ClientLocationSourceBluetoothValidator.class),
+//    ClientLocationSourceAndroidGps("client-location-source-androidgps", ClientLocationSourceAndroidGpsValidator.class),
+//    ClientLocationSourceManual("client-location-source-manual", ClientLocationSourceManualValidator.class),
     ClientImageProduce("client-image-produce", ClientImageProduceValidator.class),
     ClientImageShare("client-image-share", ClientImageShareValidator.class);
 

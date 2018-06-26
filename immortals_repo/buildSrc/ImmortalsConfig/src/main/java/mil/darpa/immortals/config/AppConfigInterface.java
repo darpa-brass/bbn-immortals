@@ -26,4 +26,6 @@ public interface AppConfigInterface extends ExtensionInterface {
     public HashMap<String, String> getEnvironmentVariables();
     
     public String getReadyStdoutLineRegexPattern();
+
+    public boolean isShutdownEverythingOnTermination();
 }

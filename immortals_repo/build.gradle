@@ -69,14 +69,6 @@ static def exceptionOnEnvVarUnset(String var_key, String requirementDetails, Str
     }
 }
 
-def buildKnowledgeRepo = task('buildKnowledgeRepo', type: Exec) {
-    group = 'IMMoRTALS Deploy'
-    description = 'Builds the knowledge repository war file'
-    workingDir = IMMORTALS_ROOT.resolve('knowledge-repo').toString()
-    executable = 'mvn'
-    args = ['-DskipTests', 'install']
-}
-
 // Various tasks to provide build/clean functionality of external projects
 def dslSetup = task('dslSetup', type: Exec) {
     workingDir = IMMORTALS_ROOT.resolve('dsl/resource-dsl').toString()
@@ -151,7 +143,7 @@ def buildknowledge = task('buildknowledge', type: Exec) {
     workingDir = IMMORTALS_ROOT.resolve('das/das-service/').toString()
     commandLine = ['java', '-jar', 'das.jar', '--analyze']
 
-    dependsOn(setupdb)
+    dependsOn(setupdb, build, buildMarti, buildAtakLite)
 }
 
 // TODO: Make this a task definition once you remove applying java
@@ -213,8 +205,7 @@ def deploy = task('deploy') {
 
     }
 
-    dependsOn(build)
-    finalizedBy(buildKnowledgeRepo, setupdb, ':extensions:deploy', buildknowledge)
+    dependsOn(build, setupdb, buildknowledge, ':extensions:deploy')
 }
 
 def redeploy = task('redeploy') {
@@ -227,9 +218,7 @@ def redeploy = task('redeploy') {
 //            exceptionOnNotExistsInPath('z3', 'compiling DSL', 'https://github.com/Z3Prover/z3')
             exceptionOnEnvVarUnset('ANDROID_HOME', 'ATAKLite', 'https://developer.android.com/studio/releases/platform-tools.html')
         }
-
     }
 
-    dependsOn(build)
-    finalizedBy(buildKnowledgeRepo, ':extensions:deploy', buildknowledge)
+    dependsOn(build, buildknowledge, ':extensions:deploy')
 }

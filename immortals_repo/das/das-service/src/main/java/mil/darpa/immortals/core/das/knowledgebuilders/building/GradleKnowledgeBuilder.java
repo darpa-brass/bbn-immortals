@@ -41,9 +41,12 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static final Map<String, AdaptationTargetBuildBase> adaptationBuildTargetsLong = new HashMap<>();
-    private static final Map<String, AdaptationTargetBuildBase> adaptationBuildTargetsShort = new HashMap<>();
-    private static final Map<String, AdaptationTargetBuildBase> adaptationBuildTargetsCoordinates = new HashMap<>();
-    private static final HashMap<String, AdaptationTargetBuildInstance> adaptationBuildInstances = new HashMap<>();
+    private static final Map<String, String> adaptationBuildTargetsShort = new HashMap<>();
+    private static final Map<String, String> adaptationBuildTargetsCoordinates = new HashMap<>();
+
+    private static final HashMap<String, AdaptationTargetBuildInstance> adaptationBuildInstancesLong = new HashMap<>();
+    private static final Map<String, String> adaptationBuildInstancesShort = new HashMap<>();
+    private static final Map<String, String> adaptationBuildInstancesCoordinates = new HashMap<>();
 
     private static synchronized void performGradleAnalysis() {
         String[] targets = ImmortalsConfig.getInstance().getTargetApplicationUris();
@@ -51,13 +54,13 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
 
         for (String str : targets) {
             Path projectPath;
-            
+
             if (Files.exists(Paths.get(str))) {
                 projectPath = Paths.get(str);
             } else {
                 projectPath = GlobalsConfig.staticImmortalsRoot.resolve(str);
             }
-            
+
             Path buildFilePath = projectPath.resolve("build.gradle");
             if (!Files.exists(projectPath) || !Files.exists(buildFilePath)) {
                 throw new RuntimeException("No build.gradle found in the path '" + projectPath.toString() + "'!");
@@ -77,6 +80,12 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
                     pb.directory(projectPath.toFile());
                     pb.redirectError(ProcessBuilder.Redirect.INHERIT);
                     pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+
+                    String override_file_value = System.getenv("IMMORTALS_OVERRIDE_FILE");
+                    if (override_file_value != null && !override_file_value.equals("")) {
+                        pb.environment().put("IMMORTALS_OVERRIDE_FILE", override_file_value);
+                    }
+
                     p = pb.start();
                     p.waitFor(300000, TimeUnit.MILLISECONDS);
 
@@ -106,11 +115,11 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
 
                 ImmortalsGradleProjectData projectData = gson.fromJson(entry.getValue(), ImmortalsGradleProjectData.class);
                 AdaptationTargetBuildBase base = new AdaptationTargetBuildBase(projectData);
-
-                adaptationBuildTargetsShort.put(projectData.getTargetName(), base);
                 adaptationBuildTargetsLong.put(projectData.getIdentifier(), base);
+                adaptationBuildTargetsShort.put(projectData.getTargetName(), projectData.getIdentifier());
+
                 if (projectData.getPublishing() != null) {
-                    adaptationBuildTargetsCoordinates.put(projectData.getPublishing().getPublishCoordinates(), base);
+                    adaptationBuildTargetsCoordinates.put(projectData.getPublishing().getPublishCoordinates(), projectData.getIdentifier());
                 }
             }
         }
@@ -124,7 +133,7 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
             // TODO: This probably shouldn't simply be disabled for android applications...
             if (base.getDeploymentTarget() == DeploymentTarget.ANDROID) {
                 logger.info("Collection of test coverage data for android project '" + base.getTargetName() + "' not yet supported.");
-            
+
             } else {
 
                 logger.info("Collecting test coverage data for project '" + base.getTargetName() + "'.");
@@ -155,7 +164,7 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
 
     @Override
     public synchronized Model buildKnowledge(Map<String, Object> parameter) throws Exception {
-        
+
         performGradleAnalysis();
 
         if (ImmortalsConfig.getInstance().extensions.immortalizer.isPerformTestCoverageAnalysis()) {
@@ -186,24 +195,26 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
     public static synchronized AdaptationTargetBuildInstance getBuildInstance(@Nonnull String baseApplicationIdentifier,
                                                                               @Nonnull String adaptationIdentifier) throws IOException {
         loadData();
+
         String appInstanceIdentifier = baseApplicationIdentifier + "-" + adaptationIdentifier;
-        AdaptationTargetBuildInstance buildInstance = adaptationBuildInstances.get(appInstanceIdentifier);
+        AdaptationTargetBuildInstance buildInstance = adaptationBuildInstancesLong.get(appInstanceIdentifier);
 
         if (buildInstance == null) {
-            AdaptationTargetBuildBase buildBase = adaptationBuildTargetsLong.get(baseApplicationIdentifier);
-            
-            if (buildBase == null) {
-                buildBase = adaptationBuildTargetsCoordinates.get(baseApplicationIdentifier);
-
-                if (buildBase == null) {
-                    buildBase = adaptationBuildTargetsShort.get(baseApplicationIdentifier);
-                }
+            String key = adaptationBuildInstancesShort.get(adaptationIdentifier);
+            if (key == null) {
+                key = adaptationBuildInstancesCoordinates.get(adaptationIdentifier);
             }
+
+            buildInstance = adaptationBuildInstancesLong.get(key);
+        }
+
+        if (buildInstance == null) {
+            AdaptationTargetBuildBase buildBase = getBuildBase(baseApplicationIdentifier);
 
             if (buildBase != null) {
                 buildInstance = new AdaptationTargetBuildInstance(adaptationIdentifier, buildBase);
                 buildInstance.getBuildRoot();
-                adaptationBuildInstances.put(appInstanceIdentifier, buildInstance);
+                adaptationBuildInstancesLong.put(appInstanceIdentifier, buildInstance);
             }
         }
         return buildInstance;
@@ -214,7 +225,11 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
         loadData();
         AdaptationTargetBuildBase b = adaptationBuildTargetsLong.get(applicationIdentifier);
         if (b == null) {
-            b = adaptationBuildTargetsShort.get(applicationIdentifier);
+            String key = adaptationBuildTargetsShort.get(applicationIdentifier);
+            if (key == null) {
+                key = adaptationBuildTargetsCoordinates.get(applicationIdentifier);
+            }
+            b = adaptationBuildTargetsLong.get(key);
         }
         return b;
     }

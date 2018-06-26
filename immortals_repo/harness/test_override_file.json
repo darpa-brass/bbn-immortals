@@ -48,7 +48,6 @@
                 "environmentDetails": {
                     "androidVersion": 21,
                     "externallyAccessibleUrls": [],
-                    "superuserAccess": false,
                     "uploadBandwidthLimitKilobitsPerSecond": null
                 }
             }

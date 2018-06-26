@@ -7,7 +7,7 @@ from typing import Optional
 
 from pymmortals import immortalsglobals as ig
 from pymmortals.datatypes import root_configuration
-from pymmortals.datatypes.testing import Phase2TestScenario, Phase2SubmissionFlow
+from pymmortals.datatypes.testing import Phase2TestScenario, Phase2SubmissionFlow, PerturbationScenario
 from pymmortals.immortalsglobals import get_configuration
 from pymmortals.testing.harness_listeners import TABehaviorValidator
 from pymmortals.testing.ll_dummy_server import LLHarness
@@ -74,10 +74,13 @@ class SystemValidator:
                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             results.check_returncode()
 
-            cwd = os.path.join(ir, 'das/das-service')
-            results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar'), '--analyze'],
-                                     cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            results.check_returncode()
+            if self._current_test_scenario.perturbationScenario == PerturbationScenario.P2CP1DatabaseSchema and \
+                    (self._current_test_scenario.submissionFlow == Phase2SubmissionFlow.BaselineB or
+                     self._current_test_scenario.submissionFlow == Phase2SubmissionFlow.Challenge):
+                cwd = os.path.join(ir, 'das/das-service')
+                results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar'), '--analyze'],
+                                         cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                results.check_returncode()
 
             gradle_original = os.path.join(ir, 'settings.gradle.original')
             if os.path.exists(gradle_original):

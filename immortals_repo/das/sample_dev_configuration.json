@@ -45,7 +45,8 @@
     "testAdapter": {
         "userManaged": false,
         "port": 55555,
-        "url": "127.0.0.1"
+        "url": "127.0.0.1",
+        "shutdownEverythingOnTermination": false
     },
     "debug": {
         // If true, Fuseki will not be started
@@ -68,7 +69,7 @@
         "immortalizer": {
             "performBuildFileAnalysis": true,
             "performKrgpBytecodeAnalysis": true,
-            "performKrgpCompleteGradleTaskAnalysis":true,
+            "performKrgpCompleteGradleTaskAnalysis": true,
             "performTestCoverageAnalysis": true,
             "performSchemaAnalysis": true
         },
@@ -85,6 +86,18 @@
                 "adbIdentifier": "emulator-5554",
                 "adbPort": 5554,
                 "adbUrl": "127.0.0.1",
+                "environmentDetails": {
+                    "androidVersion": 21,
+                    "externallyAccessibleUrls": [
+                        "dropbox.com:443",
+                        "dropbox.com:80"
+                    ],
+                    "uploadBandwidthLimitKilobitsPerSecond": 800
+                }
+            },
+            {
+                "adbIdentifier": "emulator-5556",
+                "adbPort": 5556,
                 "environmentDetails": {
                     "androidVersion": 21,
                     "externallyAccessibleUrls": [

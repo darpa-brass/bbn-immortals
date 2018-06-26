@@ -48,8 +48,8 @@ public class StaticHelper {
      */
     static String readResourceValue(String resourceIdentifier) {
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    StaticHelper.class.getResourceAsStream(resourceIdentifier)));
+            InputStream is = StaticHelper.class.getResourceAsStream(resourceIdentifier);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             String rval = br.readLine();
             br.close();

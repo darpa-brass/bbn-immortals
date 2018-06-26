@@ -8,5 +8,5 @@ public enum Status {
     RUNNING,
     NOT_APPLICABLE,
     FAILURE,
-    SUCCESS
+    SUCCESS;
 }

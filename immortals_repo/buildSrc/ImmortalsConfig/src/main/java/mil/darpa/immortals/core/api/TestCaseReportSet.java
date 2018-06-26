@@ -3,7 +3,6 @@ package mil.darpa.immortals.core.api;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.stream.Collectors;
 
 /**
  * Created by awellman@bbn.com on 4/12/18.
@@ -44,11 +43,25 @@ public class TestCaseReportSet extends CopyOnWriteArraySet<TestCaseReport> {
     }
 
     public TestCaseReportSet getFailures() {
-        return new TestCaseReportSet(this.stream().filter(t -> t.getFailureMessage() != null).collect(Collectors.toList()));
+        TestCaseReportSet failures = new TestCaseReportSet();
+
+        for (TestCaseReport report : this) {
+            if (report.getFailureMessage() != null) {
+                failures.add(report);
+            }
+        }
+        return failures;
     }
 
     public Set<TestCaseReport> getSuccesses() {
-        return new HashSet<>(this.stream().filter(t -> t.getFailureMessage() == null).collect(Collectors.toList()));
+        TestCaseReportSet successes = new TestCaseReportSet();
+
+        for (TestCaseReport report : this) {
+            if (report.getFailureMessage() == null) {
+                successes.add(report);
+            }
+        }
+        return successes;
     }
 
     public String getResultChart() {
@@ -68,10 +81,12 @@ public class TestCaseReportSet extends CopyOnWriteArraySet<TestCaseReport> {
             if (vf == null || vf.size() == 0) {
                 functionality.add("N/A");
             } else {
-                functionality.add(
-                        String.join(",", vf.stream()
-                                .map(t -> t.substring(t.lastIndexOf("#") + 1, t.length()))
-                                .collect(Collectors.toList())));
+                List<String> res = new LinkedList<>();
+
+                for (String f : vf) {
+                    res.add(f.substring(f.lastIndexOf("#") + 1, f.length()));
+                }
+                functionality.add(String.join(",", res));
             }
         }
         return toChart(targetApps, testIdentifiers, results, functionality);

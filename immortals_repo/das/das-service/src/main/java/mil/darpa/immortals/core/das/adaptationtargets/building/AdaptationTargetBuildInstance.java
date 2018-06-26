@@ -274,16 +274,32 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
      * @throws IOException          If it fails to start the process
      * @throws InterruptedException If it is interrupted while waiting for the process to finish
      */
+    @Deprecated
     public TestCaseReportSet executeCleanAndTest(@Nullable Map<String, Set<String>> testFunctionalityMap) throws IOException, InterruptedException, DocumentException {
-        return executeCleanAndTest(testFunctionalityMap, null);
+        return executeCleanAndTest(testFunctionalityMap, null, null);
     }
 
-    public TestCaseReportSet executeCleanAndTest(@Nullable Map<String, Set<String>> testFunctionalityMap, @Nullable Collection<String> testIdentifiers) throws IOException, InterruptedException, DocumentException {
-        Boolean rval = gradleHelper.executeCleanAndTest(testIdentifiers);
+    public TestCaseReportSet executeCleanAndTest(@Nullable Map<String, Set<String>> testFunctionalityMap, @Nullable Collection<String> testIdentifiers, @Nullable AdaptationTargetBuildInstance appToTestIntegrationWith) throws IOException, InterruptedException, DocumentException {
+        Boolean rval = gradleHelper.executeCleanAndTest(testIdentifiers, appToTestIntegrationWith);
         if (rval == null) {
             return null;
         }
-        return XmlParser.getTestResultsFromFlatDirectory(getTestResultsPath().toFile(), base.getTargetIdentifier(), testFunctionalityMap);
+        TestCaseReportSet tcrs = XmlParser.getTestResultsFromFlatDirectory(getTestResultsPath().toFile(), base.getTargetIdentifier(), testFunctionalityMap);
+        if ((tcrs == null || tcrs.isEmpty()) && !rval) {
+            if (tcrs == null) {
+                tcrs = new TestCaseReportSet();
+            }
+            
+            if (testIdentifiers != null) {
+                for (String testIdentifier : testIdentifiers) {
+                    TestCaseReport tcr = new TestCaseReport(base.getRawBaseProjectData().getIdentifier(),
+                            testIdentifier, -1, "Failure executing build and test!",
+                            testFunctionalityMap.get(testIdentifier));
+                    tcrs.add(tcr);
+                }
+            }
+        }
+        return tcrs;
     }
     
     public ClassFileCoverageSet executeCleanTestAndGetCoverage(@Nullable Collection<String> testIdentifiers) throws Exception {

@@ -35,7 +35,12 @@ public class TestDetailsList extends LinkedList<TestDetails> {
     public TestDetailsList producePendingList() {
         TestDetailsList rval = new TestDetailsList();
         for (TestDetails td : this) {
-            rval.add(td.produceUpdate(TestOutcome.PENDING));
+            TestDetails td2 = td.clone();
+            td2.testCaseReport = null;
+            td2.currentState = TestOutcome.PENDING;
+            td2.detailMessages.clear();
+            td2.errorMessages.clear();
+            rval.add(td2);
         }
         return rval;
     }
@@ -43,11 +48,16 @@ public class TestDetailsList extends LinkedList<TestDetails> {
     public TestDetailsList produceRunningList() {
         TestDetailsList rval = new TestDetailsList();
         for (TestDetails td : this) {
-            rval.add(td.produceUpdate(TestOutcome.RUNNING));
+            TestDetails td2 = td.clone();
+            td2.testCaseReport = null;
+            td2.currentState = TestOutcome.RUNNING;
+            td2.detailMessages.clear();
+            td2.errorMessages.clear();
+            rval.add(td2);
         }
         return rval;
     }
-
+    
     public static TestDetailsList fromTestCaseReportSet(@Nonnull String adaptationIdentifier, @Nonnull TestCaseReportSet testCaseReports) {
         TestDetailsList rval = new TestDetailsList();
 
