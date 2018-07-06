@@ -107,14 +107,14 @@ public class AndroidApplicationDeployer {
                 Path target = clientDir.resolve("sample_image.jpg");
                 InputStream sampleImage = Tests.class.getClassLoader().getResourceAsStream("sample_image.jpg");
                 Files.copy(sampleImage, target);
-                deploymentInstance.getDeploymentFileMap().put(target.toFile(), "/storage/sdcard/ataklite/sample_image.jpg");
+                deploymentInstance.getDeploymentFileMap().put(target.toFile(), "/sdcard/ataklite/sample_image.jpg");
             }
 
 
             if (!deploymentRootFolder.resolve("env.json").toFile().exists()) {
                 Path target = clientDir.resolve("env.json");
                 Files.copy(Tests.class.getClassLoader().getResourceAsStream("env.json"), target);
-                deploymentInstance.getDeploymentFileMap().put(target.toFile(), "/storage/sdcard/ataklite/env.json");
+                deploymentInstance.getDeploymentFileMap().put(target.toFile(), "/sdcard/ataklite/env.json");
             }
 
 

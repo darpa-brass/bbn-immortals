@@ -130,7 +130,7 @@ They should each be executed on a machine instance that hasn't been used for a p
 Steps:
 
 1.  Navigate to the utils directory  
-    `$ cd ~/immortals_repo/shared/utils`  
+    `$ cd ~/immortals_repo/harness`  
 2.  Replace the emulator details in `test_override_file.json` to match the local deployment environment and the 
     configuration required for the challenge problem.
 2.  Execute one of the following test scripts as follows:

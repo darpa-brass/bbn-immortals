@@ -170,7 +170,8 @@ def get_configuration():
             _configuration.globals.globalWorkingDirectory,
             _configuration.globals.globalLogDirectory,
             _configuration.globals.globalApplicationDeploymentDirectory,
-            _configuration.globals.executionsDirectory
+            _configuration.globals.executionsDirectory,
+            _configuration.globals.executionsLogDirectory
         ]
         for r in roots:
             if not os.path.exists(r):
