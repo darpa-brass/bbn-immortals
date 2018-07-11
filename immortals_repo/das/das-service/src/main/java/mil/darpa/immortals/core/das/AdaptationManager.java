@@ -10,9 +10,11 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
+import mil.darpa.immortals.core.das.adaptationmodules.crossappdependencies.CrossAppDependenciesAdapter;
 import mil.darpa.immortals.core.das.adaptationmodules.hddrass.HddRassAdapter;
 import mil.darpa.immortals.core.api.TestCaseReportSet;
 import mil.darpa.immortals.core.das.adaptationmodules.partiallibraryupgrade.PartialLibraryUpgradeAdapter;
+import mil.darpa.immortals.core.das.adaptationmodules.protocolchanges.ProtocolChangeAdapter;
 import mil.darpa.immortals.core.das.upgrademodules.LibraryUpgradeModule;
 import mil.darpa.immortals.core.das.upgrademodules.UpgradeModuleInterface;
 import mil.darpa.immortals.das.context.ContextManager;
@@ -46,6 +48,8 @@ public class AdaptationManager {
         adaptationModules.add(new HddRassAdapter());
         adaptationModules.add(new PartialLibraryUpgradeAdapter());
         adaptationModules.add(new SchemaEvolutionAdapter());
+        adaptationModules.add(new CrossAppDependenciesAdapter());
+        adaptationModules.add(new ProtocolChangeAdapter());
     }
 
     public static AdaptationManager getInstance() {

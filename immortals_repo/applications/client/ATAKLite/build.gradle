@@ -90,4 +90,9 @@ dependencies {
     compile 'mil.darpa.immortals:core:+'
     compile 'com.securboration:immortals-adsl-generate:+'
     compile 'mil.darpa.immortals.datatypes:Coordinates:+'
+    // KRHACK: The KR should not need these in the original project to perform adaptation!
+    compile 'mil.darpa.immortals.dfus:JavaxCrypto:2.0-LOCAL'
+    compile 'mil.darpa.immortals.dfus:BouncyCastleCipher:2.0-LOCAL'
+    compile 'mil.darpa.immortals.dfus:BogoCipher:2.0-LOCAL'
+    compile 'mil.darpa.immortals.dfus:NoOpCipher:2.0-LOCAL'
 }

@@ -2,27 +2,32 @@ package mil.darpa.immortals.das.deploymentmodel;
 
 import mil.darpa.immortals.ImmortalsUtils;
 import mil.darpa.immortals.config.ImmortalsConfig;
+import mil.darpa.immortals.core.api.TestCaseReport;
+import mil.darpa.immortals.core.api.TestCaseReportSet;
 import mil.darpa.immortals.core.api.ll.phase2.RequirementsInterface;
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModelInterface;
 import mil.darpa.immortals.core.api.ll.phase2.UpgradableLibraryInterface;
 import mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.ATAKLiteSubmissionModel;
+import mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.AndroidResource;
 import mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.AtakliteRequirements;
+import mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements.AndroidPlatformVersion;
 import mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements.ClientPartialUpgradeLibrary;
+import mil.darpa.immortals.core.api.ll.phase2.functionality.DataInTransit;
+import mil.darpa.immortals.core.api.ll.phase2.functionality.SecurityStandard;
+import mil.darpa.immortals.core.api.ll.phase2.globalmodel.GlobalRequirements;
+import mil.darpa.immortals.core.api.ll.phase2.globalmodel.GlobalSubmissionModel;
+import mil.darpa.immortals.core.api.ll.phase2.martimodel.JavaResource;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiRequirements;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiSubmissionModel;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.ServerUpgradeLibrary;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.RDF;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by awellman@bbn.com on 4/2/18.
@@ -40,9 +45,9 @@ public class DeploymentModelBuilder {
     }
 
     private final SubmissionModel submissionModel;
-    private final Model model;
-    private final Props props;
-    private final Resources res;
+    final Model model;
+    final Props props;
+    final Resources res;
 
     public DeploymentModelBuilder(@Nonnull SubmissionModel submissionModel) {
         this.submissionModel = submissionModel;
@@ -65,11 +70,41 @@ public class DeploymentModelBuilder {
         model.setNsPrefix("IMMoRTALS_resources", "http://darpa.mil/immortals/ontology/r2.0.0/resources#");
         model.setNsPrefix("IMMoRTALS_cp2", "http://darpa.mil/immortals/ontology/r2.0.0/cp2#");
         model.setNsPrefix("IMMoRTALS_resource_containment", "http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#");
+        model.setNsPrefix("IMMoRTALS_cp_jvm", "http://darpa.mil/immortals/ontology/r2.0.0/cp/jvm#");
+        model.setNsPrefix("IMMoRTALS_resources_compute", "http://darpa.mil/immortals/ontology/r2.0.0/resources/compute#");
+        model.setNsPrefix("IMMoRTALS_functionality_aspects", "http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#");
+        model.setNsPrefix("IMMoRTALS_functionality_alg_encryption", "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#");
         model.setNsPrefix(props.CUSTOM_PF, props.CUSTOM_NS);
     }
 
+    static Resource getPropertyByType(Model model, Resource parentResource, Property property, Resource type) {
+        for (RDFNode obj : model.listObjectsOfProperty(parentResource, property).toList()) {
+            if (obj.isResource()) {
+                Resource objResource = obj.asResource();
+                if (objResource.hasProperty(RDF.type, type)) {
+                    return objResource;
+                }
+            }
+        }
+        return null;
+    }
+
+    private Resource getPropertyByType(Resource parentResource, Property property, Resource type) {
+        return this.getPropertyByType(model, parentResource, property, type);
+    }
+
     public Model build() {
-        // Create the deployment model
+        // If no security standard is set we can use the normal baseline since it only means the target and client
+        // baseline functionality must be validated
+        if (submissionModel.globalModel != null && submissionModel.globalModel.requirements != null &&
+                submissionModel.globalModel.requirements.dataInTransit != null &&
+                submissionModel.globalModel.requirements.dataInTransit.securityStandard != null) {
+            CP2DeploymentModelBuilder dmb = new CP2DeploymentModelBuilder(model, props, submissionModel);
+            dmb.build();
+            return model;
+        }
+
+        // Create the deployment m
         Resource deploymentModel = res.deploymentModelCP3();
 
         // Add the baseline feature requirements
@@ -115,6 +150,18 @@ public class DeploymentModelBuilder {
                         null
                 ));
             } else {
+                if (submissionModel.atakLiteClientModel.requirements != null) {
+                    AndroidPlatformVersion apv = submissionModel.atakLiteClientModel.requirements.deploymentPlatformVersion;
+                    if (apv != null && apv == AndroidPlatformVersion.Android23) {
+                        // Add Marti so that the full test is executed with real clients
+                        resourceSubmissionModels.put(res.martiServer(), new MartiSubmissionModel(
+                                new MartiRequirements(null, null, null),
+                                null
+                        ));
+
+                    }
+
+                }
                 resourceSubmissionModels.put(res.atakliteClient(), submissionModel.atakLiteClientModel);
             }
         }
@@ -140,6 +187,15 @@ public class DeploymentModelBuilder {
                 }
                 if (lui.getPartialLibraryUpgrade() != null) {
                     libraryUpgrades.add(lui.getPartialLibraryUpgrade());
+                }
+
+                if (lui instanceof AtakliteRequirements) {
+                    AtakliteRequirements alsm = (AtakliteRequirements) lui;
+                    if (alsm.deploymentPlatformVersion != null) {
+                        libraryUpgrades.add(alsm.deploymentPlatformVersion);
+                        // Needed to force proper validation
+                        deploymentModel.addProperty(props.HAS_AVAILABLE_RESOURCES, res.martiServer());
+                    }
                 }
 
                 for (UpgradableLibraryInterface ul : libraryUpgrades) {
@@ -211,7 +267,31 @@ public class DeploymentModelBuilder {
                     new ATAKLiteSubmissionModel(),
                     null
             );
-            
+
+            SubmissionModel cp2PerturbedSubmissionModel = new SubmissionModel(
+                    "1337Model",
+                    new MartiSubmissionModel(
+                            null,
+                            new JavaResource[]{
+                                    JavaResource.HARWARE_AES,
+                                    JavaResource.STRONG_CRYPTO
+                            }
+                    ),
+                    new ATAKLiteSubmissionModel(
+                            null,
+                            new AndroidResource[]{
+                                    AndroidResource.STRONG_CRYPTO
+                            }
+                    ),
+                    new GlobalSubmissionModel(
+                            new GlobalRequirements(
+                                    new DataInTransit(
+                                            SecurityStandard.AES_128
+                                    )
+                            )
+                    )
+            );
+
             SubmissionModel cp3HddrassSubmissionModel = new SubmissionModel(
                     "1337Model",
                     new MartiSubmissionModel(
@@ -240,8 +320,22 @@ public class DeploymentModelBuilder {
                     null
             );
 
-            SubmissionModel submissionModel = cp2BaselineSubmissionModel;
-            
+            SubmissionModel cp3LitlSubmissionModel = new SubmissionModel(
+                    "1337Model",
+                    null,
+                    new ATAKLiteSubmissionModel(
+                            new AtakliteRequirements(
+                                    AndroidPlatformVersion.Android23,
+                                    null,
+                                    null
+                            ),
+                            null
+                    ),
+                    null
+            );
+
+            SubmissionModel submissionModel = cp3PlugSubmissionModel;
+
             String jsonValue = ImmortalsUtils.nonHtmlEscapingGson.toJson(submissionModel);
             System.out.println(jsonValue);
 
@@ -264,5 +358,8 @@ public class DeploymentModelBuilder {
             throw new RuntimeException(e);
         }
 
+ 
     }
+
+
 }

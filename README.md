@@ -24,21 +24,18 @@ Current Status:
 See details at the [CP2 Document](phase02/ChallengeProblems/Immortals-Phase2-cp2-CrossAppDepend.md)
 
 Current Status:
- * Baseline A has been implemented.
- * Implementation of BaselineB and Challenge are in progress
+ * Baseline A, Baseline B, and Challenge have been fully has been implemented for a single security level scenario.
 
 ### CP3
 See details at the [CP3 Document](phase02/ChallengeProblems/Immortals-Phase2-cp3-LibraryEvol.md)
-
-CP3 MUST be run with only one available emulator. This is due to the android testing framework not being designed to 
-target a specific emulator instance.
 
 Current Status:
  * Baseline A, Baseline B, and Challenge have been fully implemented for library mutation with one server mutation 
    library (ElevationApi_2)
  * Baseline A, Baseline B, and Challenge have been fully implemented for partial library upgrades with one client 
    mutation library(Dropbox_3_0_6)
- * One additional library upgrade adaptation is in progress
+ * Baseline A, Baseline B, and Challenge have been fully implemented for an android version upgrade with a breaking 
+   permisisons change
  
  
 ## Initial Online Setup
@@ -66,8 +63,6 @@ repository:
     `$ cd ~/immortals_repo`
 8.  Execute DAS deployment  
     `$ ./gradlew deploy`
-9.  Execute the installation script. You may be asked one or more times for your root credentials to install software.  
-    `$ ./install.sh --ll-mode`  
 
 #### Assisted Installation
 

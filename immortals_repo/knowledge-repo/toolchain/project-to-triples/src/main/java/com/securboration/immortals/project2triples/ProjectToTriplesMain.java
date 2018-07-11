@@ -18,6 +18,7 @@ import com.securboration.immortals.instantiation.annotationparser.traversal.JarT
 import com.securboration.immortals.ontology.bytecode.*;
 
 
+import com.securboration.immortals.ontology.java.android.AndroidApp;
 import com.securboration.immortals.ontology.java.compiler.NamedClasspath;
 
 import com.securboration.immortals.ontology.java.source.SourceCodeRepo;
@@ -50,6 +51,7 @@ import com.securboration.immortals.ontology.java.vcs.VcsCoordinate;
 
 public class ProjectToTriplesMain {
 
+	private static final String ANDROID_VERSION = "21";
 	private static final boolean IGNORE_BINARIES = true;
 	private ObjectToTriplesConfiguration o2tc;
 	private SourceFinder sf;
@@ -177,7 +179,7 @@ public class ProjectToTriplesMain {
             sourceFileArray[j] = sourceFile;
             j++;
         }
-        
+
         sourceCodeRepo.setSourceFiles(sourceFileArray);
         
 		// For each classpath...
@@ -241,7 +243,49 @@ public class ProjectToTriplesMain {
 						}
 						// Jar file(s) on path
 					} else {
-						
+
+						if (path.endsWith("aar") && x.getAndroidApp() == null) {
+
+							File aarFile = new File(path);
+							while (aarFile != null && !aarFile.getName().equalsIgnoreCase("sdk")) {
+								aarFile = aarFile.getParentFile();
+							}
+
+							if (aarFile != null) {
+
+								String[] sdkDirs = aarFile.list((current, name) ->
+										new File(current, name).isDirectory());
+
+								File uberAndroidJarsParent = null;
+								for (String sdkDir : sdkDirs) {
+									if (sdkDir.equals("platforms")) {
+										uberAndroidJarsParent = new File(aarFile.getAbsolutePath()
+												+ File.separator + sdkDir);
+										break;
+									}
+								}
+
+								Collection<File> platformJars = FileUtils.listFiles(uberAndroidJarsParent, new String[]{"jar"},
+										true);
+								List<File> uberAndroidJars = platformJars.stream().filter(uberAndroidJar -> uberAndroidJar.getName()
+										.equals("android.jar")).collect(Collectors.toList());
+
+								File uberAndroidJar = null;
+								for (File possAndroidJar : uberAndroidJars) {
+									if (possAndroidJar.getParent().contains(ANDROID_VERSION)) {
+										uberAndroidJar = possAndroidJar;
+										break;
+									}
+								}
+
+								AndroidApp androidApp = new AndroidApp();
+								androidApp.setPathToUberJar(uberAndroidJar.getAbsolutePath());
+								x.setAndroidApp(androidApp);
+							} else {
+								System.out.println("REFERENCED AAR DOES NOT RESIDE IN ANDROID SDK");
+							}
+						}
+
 						// Analyze jar artifact
 						jal = analyzeJar(path, (includedLibs != null && includedLibs.stream()
                                 .noneMatch(lib -> path.contains(lib)) ? false : true));

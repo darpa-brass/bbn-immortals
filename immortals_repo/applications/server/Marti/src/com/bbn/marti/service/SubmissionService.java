@@ -170,16 +170,13 @@ public class SubmissionService extends BaseService {
     }
 
     private boolean isControlMessage(CotEventContainer c) {
-        Node event = c.getDocument().selectSingleNode("/event");
-        String type = event.valueOf("@type");
-
+        String type = c.getNodeType("/event");
         return type != null && controlMsgTypes.contains(type);
     }
 
     public void processControlMessage(CotEventContainer c) throws IOException {
         log.debug("processing control message for uid: " + c.getUid());
-        Node event = c.getDocument().selectSingleNode("/event");
-        String type = event.valueOf("@type");
+        String type = c.getNodeType("/event");
 
         switch (type) {
             case "t-b":
@@ -192,11 +189,10 @@ public class SubmissionService extends BaseService {
     }
 
     private void processSubscriptionMessage(CotEventContainer msg) throws IOException {
-        String xpath = msg.getDocument().valueOf("/event/detail/subscription/tests/@xpath");
+        String xpath = msg.getDocumentValue("/event/detail/subscription/tests/@xpath");
         CotChannel channel = null;
 
-        Node subNode = msg.getDocument().selectSingleNode("/event/detail/subscription");
-        String connectStr = subNode.valueOf("@publish");
+        String connectStr = msg.getDocumentNodeValue("/event/detail/subscription", "@publish");
         String[] tokens = connectStr.split(":");
 
         if (tokens.length < 3) {

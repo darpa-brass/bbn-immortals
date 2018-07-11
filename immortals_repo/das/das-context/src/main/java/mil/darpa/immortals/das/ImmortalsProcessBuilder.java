@@ -1,7 +1,6 @@
 package mil.darpa.immortals.das;
 
 import mil.darpa.immortals.config.ImmortalsConfig;
-import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
  * A helper class for starting subprocesses. Adds the following:
  * - Sets stdout/stderr redirection
  * - Sets working directory
- * - Gently (And after a delay forcefully) kills processes when a fatal error has occurred through {@link ImmortalsErrorHandler}
+ * - Gently (And after a delay forcefully) kills processes when a fatal error has occurred
  * <p>
  * Created by awellman@bbn.com on 1/30/18.
  */
@@ -74,6 +73,13 @@ public class ImmortalsProcessBuilder {
 
     private File workingDirectory;
 
+    public ImmortalsProcessBuilder() {
+        pb = new ProcessBuilder();
+        workingDirectory = new File(ImmortalsConfig.getInstance().dasService.getWorkingDirectory());
+        pb.directory(workingDirectory);
+        pb.inheritIO();
+        
+    }
 
     public ImmortalsProcessBuilder(@Nonnull String adaptationIdentifier,
                                    @Nonnull String extensionIdentifier) {
@@ -102,9 +108,10 @@ public class ImmortalsProcessBuilder {
 
     public synchronized ImmortalsProcessBuilder directory(File directory) {
         this.workingDirectory = directory;
+        pb.directory(directory);
         return this;
     }
-    
+
     public synchronized Process start() throws IOException {
         if (logger.isDebugEnabled()) {
             logger.debug("EXEC: `" + pb.command().stream().collect(Collectors.joining(" ")) + "`");

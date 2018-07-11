@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 @Description("A server library upgrade that will cause a partial upgrade")
 @P2CP3
 public enum ServerPartialUpgradeLibrary implements UpgradableLibraryInterface {
-    ToBeDetermined_X_X("Libraries to be determined", "dummy:old:version", "dummy:new:version", "http://central.maven.org/maven2/", new String[]{"FakeVulnerability"});
+    NONE("No Applicable Libraries Included", "dummy:old:version", "dummy:new:version", "http://central.maven.org/maven2/", new String[]{"FakeVulnerability"});
 
     public final String description;
 

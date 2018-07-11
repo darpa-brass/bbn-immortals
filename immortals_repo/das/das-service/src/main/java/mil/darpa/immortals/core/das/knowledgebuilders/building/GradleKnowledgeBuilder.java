@@ -87,7 +87,7 @@ public class GradleKnowledgeBuilder implements IKnowledgeBuilder {
                     }
 
                     p = pb.start();
-                    p.waitFor(300000, TimeUnit.MILLISECONDS);
+                    p.waitFor(600000, TimeUnit.MILLISECONDS);
 
                     if (p.exitValue() != 0) {
                         throw new RuntimeException("Immortalization did not behave as expected for '" + projectPath.toString() + "'!");

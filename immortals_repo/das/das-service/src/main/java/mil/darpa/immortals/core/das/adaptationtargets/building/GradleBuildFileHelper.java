@@ -176,7 +176,7 @@ public class GradleBuildFileHelper {
         return executeCommand(cmdList.toArray(new String[0]));
     }
 
-    public synchronized Boolean executeCleanAndTest(@Nullable Collection<String> testIdentifiers, @Nullable AdaptationTargetBuildInstance appToTestIntegrationWith) throws IOException, InterruptedException {
+    public synchronized Boolean executeCleanAndTest(@Nullable Collection<String> testIdentifiers, @Nullable AdaptationTargetBuildInstance appToTestIntegrationWith, boolean fakeAndroid23) throws IOException, InterruptedException {
         if (!buildInstance.canTest()) {
             return null;
         }
@@ -196,6 +196,18 @@ public class GradleBuildFileHelper {
                 Files.write(clientDeploymentJsonPath, clientConfigString.getBytes());
                 // TODO: The filepath here should be quoted.... But it breaks running it from within the DAS, so skipping for now
                 cmdList.add(cmdList.size() - 2, "-Dmil.darpa.immortals.clientDeploymentInstance.json.path=" + clientDeploymentJsonPath.toString());
+                if (fakeAndroid23) {
+                    cmdList.add(cmdList.size() - 2, "-Dmil.darpa.immortals.fakeAndroidVersion=23");
+                    // It seems to need this....
+                    cmdList.add(cmdList.size() - 2, "--no-daemon");
+                    for (String cmd : new ArrayList<>(cmdList)) {
+                        if (cmd.equals("--daemon")) {
+                            cmdList.remove("--daemon");
+                        }
+                    }
+                } else {
+                    cmdList.add(cmdList.size() - 2, "-Dmil.darpa.immortals.fakeAndroidVersion=21");
+                }
             }
         } else {
             cmdList.add(cmdList.size() - 2, "-Dmil.darpa.immortals.mock=true");

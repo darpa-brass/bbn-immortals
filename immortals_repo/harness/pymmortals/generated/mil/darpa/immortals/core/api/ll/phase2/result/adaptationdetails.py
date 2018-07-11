@@ -11,10 +11,12 @@ class AdaptationDetails(AbstractAdaptationDetails):
 
     def __init__(self,
                  adaptationIdentifier: str = None,
+                 adaptationValidationsPerformed: int = None,
                  adaptorIdentifier: str = None,
                  dasOutcome: DasOutcome = None,
                  detailMessages: List[str] = None,
-                 errorMessages: List[str] = None):
-        super().__init__(adaptationIdentifier=adaptationIdentifier, adaptorIdentifier=adaptorIdentifier, dasOutcome=dasOutcome)
+                 errorMessages: List[str] = None,
+                 passingAdaptationValidations: int = None):
+        super().__init__(adaptationIdentifier=adaptationIdentifier, adaptationValidationsPerformed=adaptationValidationsPerformed, adaptorIdentifier=adaptorIdentifier, dasOutcome=dasOutcome, passingAdaptationValidations=passingAdaptationValidations)
         self.detailMessages = detailMessages
         self.errorMessages = errorMessages

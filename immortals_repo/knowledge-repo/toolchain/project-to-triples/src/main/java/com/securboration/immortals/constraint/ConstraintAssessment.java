@@ -477,6 +477,7 @@ public class ConstraintAssessment {
         int i = 0;
         for (ConstraintViolation constraintViolation : constraintViolations) {
             constraintViolationsArr[i] = constraintViolation;
+            i++;
         }
         assessmentReport.setConstraintViolations(constraintViolationsArr);
         taskHelper.getClient().addToModel(ObjectToTriples.convert(config, assessmentReport), taskHelper.getGraphName());

@@ -1,6 +1,5 @@
 package mil.darpa.immortals.dfus.TakServerDataManager;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,14 +14,15 @@ import org.slf4j.LoggerFactory;
 
 import mil.darpa.immortals.datatypes.cot.CotHelper;
 import mil.darpa.immortals.datatypes.cot.Event;
-import mil.darpa.immortals.datatypes.cot.Point;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForConstantChannelJoin;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForConstantChannelJoin2;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForConstantCompoundFilter;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForConstantCotType;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForConstantMixedJoin;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForConstantTimeInterval;
+import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForSource;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForUidAndInterval;
+import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsForXYTiles;
 import mil.darpa.immortals.dfus.TakServerDataManager.DFU.CotEventsOnChannelInRegion;
 
 public class DataManager {
@@ -311,6 +311,38 @@ public class DataManager {
 		return rowset;
 	}
 
+	public CachedRowSet cotEventsForXYTiles(int tileX, int tileY) throws Exception {
+
+		CotEventsForXYTiles dfu = new CotEventsForXYTiles();
+		CachedRowSet rowset = null;
+		
+		try {
+			rowset = dfu.execute(dataSource, tileX, tileY);
+			logger.debug("Successfully completed cotEventsForXYTiles.");
+		} catch (Exception e) {
+			logger.error("Unable to complete cotEventsForXYTiles: " + e);
+			rowset = null;
+		}
+		
+		return rowset;
+	}
+
+	public CachedRowSet cotEventsForSource(int sourceId) throws Exception {
+
+		CotEventsForSource dfu = new CotEventsForSource();
+		CachedRowSet rowset = null;
+		
+		try {
+			rowset = dfu.execute(dataSource, sourceId);
+			logger.debug("Successfully completed cotEventsForSource.");
+		} catch (Exception e) {
+			logger.error("Unable to complete cotEventsForSource: " + e);
+			rowset = null;
+		}
+		
+		return rowset;
+	}
+
 	public static void main(String[] args) throws Exception {
 		
 		DataManager dm = new DataManager();
@@ -338,6 +370,12 @@ public class DataManager {
 
 		System.out.println("Running cotEventsForConstantCotType");
 		dm.cotEventsForConstantCotType();
+
+		System.out.println("Running cotEventsForTileXY");
+		dm.cotEventsForXYTiles(1, 2);
+
+		System.out.println("Running cotEventsForSource");
+		dm.cotEventsForSource(2199);
 
 	}
 	

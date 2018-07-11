@@ -280,7 +280,11 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
     }
 
     public TestCaseReportSet executeCleanAndTest(@Nullable Map<String, Set<String>> testFunctionalityMap, @Nullable Collection<String> testIdentifiers, @Nullable AdaptationTargetBuildInstance appToTestIntegrationWith) throws IOException, InterruptedException, DocumentException {
-        Boolean rval = gradleHelper.executeCleanAndTest(testIdentifiers, appToTestIntegrationWith);
+        return executeCleanAndTest(testFunctionalityMap, testIdentifiers, appToTestIntegrationWith, false);
+    }
+
+    public TestCaseReportSet executeCleanAndTest(@Nullable Map<String, Set<String>> testFunctionalityMap, @Nullable Collection<String> testIdentifiers, @Nullable AdaptationTargetBuildInstance appToTestIntegrationWith, boolean fakeAndroid23) throws IOException, InterruptedException, DocumentException {
+        Boolean rval = gradleHelper.executeCleanAndTest(testIdentifiers, appToTestIntegrationWith, fakeAndroid23);
         if (rval == null) {
             return null;
         }
@@ -289,7 +293,7 @@ public class AdaptationTargetBuildInstance implements AdaptationTargetInterface 
             if (tcrs == null) {
                 tcrs = new TestCaseReportSet();
             }
-            
+
             if (testIdentifiers != null) {
                 for (String testIdentifier : testIdentifiers) {
                     TestCaseReport tcr = new TestCaseReport(base.getRawBaseProjectData().getIdentifier(),

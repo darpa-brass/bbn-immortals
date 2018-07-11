@@ -48,6 +48,20 @@ if [ "${1}" == "clean" ];then
             rm -r "knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS"
         fi
 
+        if [ -f "knowledge-repo/vocabulary/ontology-static/ontology/atakMartiDuplex.ttl" ];then
+            rm "knowledge-repo/vocabulary/ontology-static/ontology/atakMartiDuplex.ttl"
+        fi
+
+        if [ -f "knowledge-repo/vocabulary/ontology-static/ontology/cipherUsageParadigms.ttl" ];then
+            rm "knowledge-repo/vocabulary/ontology-static/ontology/cipherUsageParadigms.ttl"
+        fi
+
+        if [ -f "knowledge-repo/vocabulary/ontology-static/ontology/schemaDependencies.ttl" ];then
+            rm "knowledge-repo/vocabulary/ontology-static/ontology/schemaDependencies.ttl"
+        fi
+
+
+
         if [ -f "ARTIFACT_DATA.json" ];then
             rm -r "ARTIFACT_DATA.json"
         fi

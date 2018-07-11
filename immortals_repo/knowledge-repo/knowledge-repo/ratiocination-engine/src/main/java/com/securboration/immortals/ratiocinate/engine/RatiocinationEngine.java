@@ -161,9 +161,11 @@ public class RatiocinationEngine {
                         continue;
                     }
                     
-                    Model newTriples = client.executeConstructQuery(
-                        resolveVariables(ruleQuery.getQueryText())
-                        );
+                    final String query = resolveVariables(ruleQuery.getQueryText());
+                    
+                    Model newTriples = client.executeConstructQuery(query);
+                    
+                    report.print(">>%s\n", query);
                     
                     report.print(
                         "\trule [%s] fired in %dms, producing %d triples\n", 
@@ -236,7 +238,7 @@ public class RatiocinationEngine {
     }
     
     private String resolveVariables(String query){
-        return query.replace("?GRAPH?", graphName);
+        return query.replace("?GRAPH?", client.getFusekiServiceDataUrl() + "/" + graphName);
     }
     
     /**

@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 import sys
+import traceback
 from subprocess import Popen, PIPE
 from typing import Optional
 
@@ -99,21 +100,25 @@ class SystemValidator:
         :param test_suite_identifier: The test suite to execute
         :param test_identifier: THe test to execute from the test suite. If None, all test suite tests are run
         """
-        self.harness = LLHarness(host=get_configuration().testHarness.url,
-                                 port=get_configuration().testHarness.port,
-                                 done_listener=self.done_listener)
+        try:
+            self.harness = LLHarness(host=get_configuration().testHarness.url,
+                                     port=get_configuration().testHarness.port,
+                                     done_listener=self.done_listener)
 
-        initial_test_scenario = self.harness.load_test(test_suite_identifier=test_suite_identifier,
-                                                       test_identifier=test_identifier)
+            initial_test_scenario = self.harness.load_test(test_suite_identifier=test_suite_identifier,
+                                                           test_identifier=test_identifier)
 
-        ig.add_exit_handler(self.exit_handler)
+            ig.add_exit_handler(self.exit_handler)
 
-        self._current_test_scenario = initial_test_scenario
-        self._start_das()
+            self._current_test_scenario = initial_test_scenario
+            self._start_das()
 
-        self.harness.start()
-        ig.force_exit()
-        sys.exit(ig.get_exit_code())
+            self.harness.start()
+            ig.force_exit()
+            sys.exit(ig.get_exit_code())
+        except Exception as e:
+            traceback.print_exc()
+            sys.exit(1)
 
     def exit_handler(self):
         self.harness.stop()

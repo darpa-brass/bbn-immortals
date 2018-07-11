@@ -5,6 +5,7 @@ import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.config.TestAdapterConfiguration;
 import mil.darpa.immortals.core.api.ll.phase2.result.AdaptationDetailsList;
 import mil.darpa.immortals.core.api.ll.phase2.result.TestDetailsList;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,7 +49,11 @@ public class TestAdapterSubmitter {
             submissionInterface = new MockServices.MockTestAdapter();
         } else {
             TestAdapterConfiguration tac = ImmortalsConfig.getInstance().testAdapter;
+
+            OkHttpClient client = new OkHttpClient.Builder().retryOnConnectionFailure(true).build();
+            
             Retrofit retrofit = new Retrofit.Builder()
+                    .client(client)
                     .baseUrl(tac.getProtocol() + "://" + tac.getUrl() + ":" + tac.getPort() + "/")
                     .addConverterFactory(GsonConverterFactory.create(ImmortalsUtils.gson))
                     .build();

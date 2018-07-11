@@ -1,8 +1,10 @@
 package mil.darpa.immortals.das.testcoordinators;
 
 import mil.darpa.immortals.core.api.ll.phase2.SubmissionModel;
+import mil.darpa.immortals.core.api.ll.phase2.ataklitemodel.requirements.ClientUpgradeLibrary;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiRequirements;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.MartiSubmissionModel;
+import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.ServerPartialUpgradeLibrary;
 import mil.darpa.immortals.core.api.ll.phase2.martimodel.requirements.ServerUpgradeLibrary;
 
 import javax.annotation.Nonnull;
@@ -32,12 +34,21 @@ public class P2CP3TestCoordinator extends AbstractTestCoordinator {
 
         if (submissionModel.martiServerModel != null && submissionModel.martiServerModel.requirements != null) {
             upgradeObjects.add(submissionModel.martiServerModel.requirements.libraryUpgrade);
+            if (ServerPartialUpgradeLibrary.NONE == submissionModel.martiServerModel.requirements.partialLibraryUpgrade) {
+                rval.add("'NONE' value is not a valid value and indicates this field is unused for this perturbation!");
+            }
             upgradeObjects.add(submissionModel.martiServerModel.requirements.partialLibraryUpgrade);
         }
 
         if (submissionModel.atakLiteClientModel != null && submissionModel.atakLiteClientModel.requirements != null) {
+            if (ClientUpgradeLibrary.NONE == submissionModel.atakLiteClientModel.requirements.libraryUpgrade) {
+                rval.add("'NONE' value is not a valid value and indicates this field is unused for this perturbation!");
+            }
             upgradeObjects.add(submissionModel.atakLiteClientModel.requirements.libraryUpgrade);
             upgradeObjects.add(submissionModel.atakLiteClientModel.requirements.partialLibraryUpgrade);
+            if (submissionModel.atakLiteClientModel.requirements.deploymentPlatformVersion != null) {
+                upgradeObjects.add(submissionModel.atakLiteClientModel.requirements.deploymentPlatformVersion);
+            }
         }
 
         int upgradeObjectCount = upgradeObjects.stream().filter(Objects::nonNull).collect(Collectors.toSet()).size();

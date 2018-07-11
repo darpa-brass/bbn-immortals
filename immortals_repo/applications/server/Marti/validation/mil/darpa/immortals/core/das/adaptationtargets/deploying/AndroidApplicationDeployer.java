@@ -5,6 +5,7 @@ import com.bbn.marti.Tests;
 import com.bbn.marti.ValidationRunner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import mil.darpa.immortals.config.ImmortalsConfig;
 
 import javax.annotation.Nonnull;
@@ -52,6 +53,15 @@ public class AndroidApplicationDeployer {
     public synchronized void deploy() {
         if (applicationPhase != ApplicationPhase.NOT_DEPLOYED) {
             throw new RuntimeException(deploymentInstance.getDeploymentInstanceIdentifier() + ": Cannot deploy from the current phase '" + applicationPhase.name() + "'!");
+        }
+        
+        if (!"23".equals(System.getProperty("mil.darpa.immortals.fakeAndroidVersion"))) {
+            adbHelper.clean();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         prepareClientConfig();
@@ -111,12 +121,20 @@ public class AndroidApplicationDeployer {
             }
 
 
+            Path envTarget = clientDir.resolve("env.json");
             if (!deploymentRootFolder.resolve("env.json").toFile().exists()) {
-                Path target = clientDir.resolve("env.json");
-                Files.copy(Tests.class.getClassLoader().getResourceAsStream("env.json"), target);
-                deploymentInstance.getDeploymentFileMap().put(target.toFile(), "/sdcard/ataklite/env.json");
+                Files.copy(Tests.class.getClassLoader().getResourceAsStream("env.json"), envTarget);
+                deploymentInstance.getDeploymentFileMap().put(envTarget.toFile(), "/sdcard/ataklite/env.json");
             }
 
+            JsonObject ec = gson.fromJson(new FileReader(envTarget.toFile()), JsonObject.class);
+
+            String fakeAndroidVersionStr = System.getProperty("mil.darpa.immortals.fakeAndroidVersion");
+            if (fakeAndroidVersionStr == null) {
+                throw new RuntimeException("Android Version not propagated to client! Error!");
+            }
+            ec.addProperty("simulatedAndroidVersion", Integer.valueOf(fakeAndroidVersionStr));
+            Files.write(envTarget, gson.toJson(ec).getBytes());
 
             config.callsign = clientIdentifier;
             config.analyticsConfig.target = ATAKLiteConfig.AnalyticsTarget.ZEROMQ;

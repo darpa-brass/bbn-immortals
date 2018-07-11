@@ -21,6 +21,13 @@ public abstract class AbstractAdaptationDetails {
     @Description("The identifier for the adaptation instance")
     public String adaptationIdentifier;
 
+    // TODO: Add the adaptation validation counters to the constructor parameters and constructor usage sites
+    @Description("The total number of validations performed by the adaptation")
+    public int adaptationValidationsPerformed;
+
+    @Description("The total number of passing validations performed by the adaptation")
+    public int passingAdaptationValidations;
+    
     public AbstractAdaptationDetails() {
     }
 
@@ -28,5 +35,7 @@ public abstract class AbstractAdaptationDetails {
         this.adaptorIdentifier = adaptorIdentifier;
         this.dasOutcome = dasOutcome;
         this.adaptationIdentifier = adaptationIdentifier;
+        this.adaptationValidationsPerformed = 0;
+        this.passingAdaptationValidations = 0;
     }
 }

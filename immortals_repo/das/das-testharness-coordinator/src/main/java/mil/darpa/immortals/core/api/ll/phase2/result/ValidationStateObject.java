@@ -21,6 +21,10 @@ public class ValidationStateObject {
     @Result
     @Description("The tests executed to support the verdict outcome")
     public LinkedList<TestStateObject> executedTests = new LinkedList<>();
+    
+    @Result
+    @Description("The percentage of passed tests")
+    public double testsPassedPercent;
 
     public ValidationStateObject() {
     }

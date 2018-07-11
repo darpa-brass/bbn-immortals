@@ -27,18 +27,7 @@
                     "dropbox.com:80"
                 ],
                 "uploadBandwidthLimitKilobitsPerSecond": 800
-            },
-            {
-                "androidVersion": 21,
-                "externallyAccessibleUrls": [],
-                "uploadBandwidthLimitKilobitsPerSecond": null
-            },
-            {
-                "androidVersion": 21,
-                "externallyAccessibleUrls": [],
-                "uploadBandwidthLimitKilobitsPerSecond": null
             }
-
         ],
         "challengeProblemUrl": "/action/libraryEvolution"
     }

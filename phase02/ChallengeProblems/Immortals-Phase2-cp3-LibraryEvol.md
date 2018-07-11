@@ -238,14 +238,14 @@ __Endpoint URL__: /action/libraryEvolution
     "atakLiteClientModel": {
         "requirements": {
             "deploymentPlatformVersion": "Android23",
-            "libraryUpgrade": "ToBeDetermined_X_X",
+            "libraryUpgrade": "NONE",
             "partialLibraryUpgrade": "Dropbox_3_0_6"
         }
     },
     "martiServerModel": {
         "requirements": {
             "libraryUpgrade": "ElevationApi_2",
-            "partialLibraryUpgrade": "ToBeDetermined_X_X"
+            "partialLibraryUpgrade": "NONE"
         }
     }
 }  
@@ -286,16 +286,15 @@ __Description__: Possible Android platforms to deploy on
 
 | Values    | Description                                                             |  
 | --------- | ----------------------------------------------------------------------- |  
-| Android21 | Baseline Android API version 21                                         |  
 | Android23 | Newer Android API version 23 which requires runtime permission requests |  
 
 #### ClientUpgradeLibrary  
 __Type__: String Constant  
 __Description__: A client upgrade library that will cause a mutation  
 
-| Values             | Description                | NewDependencyCoordinates | OldDependencyCoordinates |  
-| ------------------ | -------------------------- | ------------------------ | ------------------------ |  
-| ToBeDetermined_X_X | Libraries to be determined | dummy:new:version        | dummy:old:version        |  
+| Values | Description                      | NewDependencyCoordinates | OldDependencyCoordinates |  
+| ------ | -------------------------------- | ------------------------ | ------------------------ |  
+| NONE   | No Applicable Libraries Included | dummy:new:version        | dummy:old:version        |  
 
 #### ClientPartialUpgradeLibrary  
 __Type__: String Constant  
@@ -334,6 +333,6 @@ __Description__: A server upgrade library that will cause a mutation
 __Type__: String Constant  
 __Description__: A server library upgrade that will cause a partial upgrade  
 
-| Values             | Description                |  
-| ------------------ | -------------------------- |  
-| ToBeDetermined_X_X | Libraries to be determined |  
+| Values | Description                      |  
+| ------ | -------------------------------- |  
+| NONE   | No Applicable Libraries Included |  

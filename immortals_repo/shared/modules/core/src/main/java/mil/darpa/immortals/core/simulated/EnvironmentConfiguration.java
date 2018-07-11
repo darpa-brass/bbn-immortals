@@ -61,12 +61,19 @@ public class EnvironmentConfiguration {
     private static EnvironmentConfiguration simulatedEnvironment;
 
     private LinkedList<String> availableResources;
+    
+    private Integer simulatedAndroidVersion;
+    
+    public Integer getSimulatedndroidVersion() {
+        return simulatedAndroidVersion;
+    }
 
     public HashMap<String, SimulatedLocation.BehaviorProfile> locationBehaviorProfiles;
 
-    public EnvironmentConfiguration(List<String> availableResources, Map<String, SimulatedLocation.BehaviorProfile> locationBehaviorProfiles) {
+    public EnvironmentConfiguration(List<String> availableResources, Map<String, SimulatedLocation.BehaviorProfile> locationBehaviorProfiles, int androidVersion) {
         this.availableResources = new LinkedList<>(availableResources);
         this.locationBehaviorProfiles = new HashMap<>(locationBehaviorProfiles);
+        this.simulatedAndroidVersion = androidVersion;
     }
 
     public static EnvironmentConfiguration getAndroidEnvironment() {

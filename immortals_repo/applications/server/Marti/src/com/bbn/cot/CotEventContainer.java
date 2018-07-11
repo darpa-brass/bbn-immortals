@@ -1,6 +1,8 @@
 package com.bbn.cot;
 
 import com.bbn.filter.Images;
+import com.bbn.marti.remote.RemoteSubscription;
+import com.bbn.marti.util.Assertion;
 import mil.darpa.immortals.dfus.ElevationData;
 import org.dom4j.*;
 import org.slf4j.Logger;
@@ -14,9 +16,18 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class CotEventContainer {
+
+    private static SimpleDateFormat dateFormat;
+
+    static {
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+        dateFormat.setTimeZone(new SimpleTimeZone(0, "UTC"));
+    }
+
     public static final String PRIMARY_KEY = "primary_key";
     public static final String IMAGE_KEY = "image";
     public static final String THUMB_KEY = "thumb";
@@ -41,15 +52,15 @@ public class CotEventContainer {
         doc = xml;
     }
 
-    public String asXml() {
+    public synchronized String asXml() {
         return doc.asXML();
     }
 
-    public String getAccess() {
+    public synchronized String getAccess() {
         return getRootAttribute("access");
     }
 
-    public String getCallsign() {
+    public synchronized String getCallsign() {
         Attribute callsignAttr = (Attribute) doc.selectSingleNode("/event/detail/contact/@callsign");
         if (callsignAttr != null) {
             return callsignAttr.getValue();
@@ -58,23 +69,23 @@ public class CotEventContainer {
         }
     }
 
-    public Double getCe() {
+    public synchronized Double getCe() {
         return Double.parseDouble(getPointAttribute("ce"));
     }
 
-    public boolean hasContextKey(String key) {
+    public synchronized boolean hasContextKey(String key) {
         return context.containsKey(key);
     }
 
-    public Object getContext(String key) {
+    public synchronized Object getContext(String key) {
         return context.get(key);
     }
 
-    public <T> T getContext(String key, Class<T> type) {
+    public synchronized <T> T getContext(String key, Class<T> type) {
         return (T) getContext(key);
     }
 
-    public <T> T getContextOrElse(String key, T alternate) {
+    public synchronized <T> T getContextOrElse(String key, T alternate) {
         T value = (T) getContext(key);
 
         if (value == null)
@@ -83,7 +94,7 @@ public class CotEventContainer {
         return value;
     }
 
-    public <T> T getContextOrStore(String key, T init) {
+    public synchronized <T> T getContextOrStore(String key, T init) {
         T value = getContextOrElse(key, init);
 
         if (value == init) {
@@ -93,11 +104,11 @@ public class CotEventContainer {
         return value;
     }
 
-    public Object getContextValue(String key) {
+    public synchronized Object getContextValue(String key) {
         return context.get(key);
     }
 
-    public <T> T getContextValueOrElse(String key, T alternate) {
+    public synchronized <T> T getContextValueOrElse(String key, T alternate) {
         T current = (T) getContextValue(key);
         if (current != null) {
             return current;
@@ -106,7 +117,7 @@ public class CotEventContainer {
         }
     }
 
-    public <T> T getOrStoreContextValue(String key, T init) {
+    public synchronized <T> T getOrStoreContextValue(String key, T init) {
         T current = (T) getContextValue(key);
 
         if (current == null) {
@@ -117,7 +128,7 @@ public class CotEventContainer {
         return current;
     }
 
-    public String getDetailXml() {
+    public synchronized String getDetailXml() {
         Element detailElem = (Element) doc.selectSingleNode("/event/detail");
         if (detailElem != null) {
             return detailElem.asXML();
@@ -130,11 +141,7 @@ public class CotEventContainer {
         return doc;
     }
 
-    public Document document() {
-        return doc;
-    }
-
-    public String getEndpoint() {
+    public synchronized String getEndpoint() {
         Attribute endpointAttr = (Attribute) doc.selectSingleNode("/event/detail/contact/@endpoint");
         if (endpointAttr != null) {
             return endpointAttr.getValue();
@@ -143,24 +150,24 @@ public class CotEventContainer {
         }
     }
 
-    public Double getHae() {
+    public synchronized Double getHae() {
         return Double.parseDouble(getPointAttribute("hae"));
     }
-    
-    public void setElevationData(ElevationData elevationData) {
+
+    public synchronized void setElevationData(ElevationData elevationData) {
         setPointAddtribute("hae", Double.toString(elevationData.getHae()));
         setPointAddtribute("le", Double.toString(elevationData.getLe()));
     }
 
-    public String getHow() {
+    public synchronized String getHow() {
         return getRootAttribute("how");
     }
 
-    public Double getLat() {
+    public synchronized Double getLat() {
         return Double.parseDouble(getPointAttribute("lat"));
     }
 
-    public Double getLe() {
+    public synchronized Double getLe() {
         return Double.parseDouble(getPointAttribute("le"));
     }
 
@@ -171,7 +178,7 @@ public class CotEventContainer {
      * @return a List of dom4j Elements, one for each link; or an empty List, if there are no links
      */
 
-    public List<Element> getLinks() {
+    private synchronized List<Element> getLinks() {
         List<Node> nodes = doc.selectNodes("/event/detail/link");
 
         if (nodes == null) {
@@ -185,7 +192,7 @@ public class CotEventContainer {
         }
     }
 
-    public double getLon() {
+    public synchronized double getLon() {
         return Double.parseDouble(getPointAttribute("lon"));
     }
 
@@ -193,43 +200,43 @@ public class CotEventContainer {
         return getRootAttribute("opex");
     }
 
-    private String getPointAttribute(String attribute) {
+    private synchronized String getPointAttribute(String attribute) {
         return doc.getRootElement().element("point").attributeValue(attribute);
     }
 
-    private void setPointAddtribute(String key, String value) {
+    private synchronized void setPointAddtribute(String key, String value) {
         doc.getRootElement().element("point").attribute(key).setData(value);
     }
 
-    public String getQos() {
+    public synchronized String getQos() {
         return getRootAttribute("qos");
     }
 
-    private String getRootAttribute(String attribute) {
+    private synchronized String getRootAttribute(String attribute) {
         return doc.getRootElement().attributeValue(attribute);
     }
 
-    public String getStale() {
+    public synchronized String getStale() {
         return getRootAttribute("stale");
     }
 
-    public String getStart() {
+    public synchronized String getStart() {
         return getRootAttribute("start");
     }
 
-    public String getTime() {
+    public synchronized String getTime() {
         return getRootAttribute("time");
     }
 
-    public String getType() {
+    public synchronized String getType() {
         return getRootAttribute("type");
     }
 
-    public String getUid() {
+    public synchronized String getUid() {
         return getRootAttribute("uid");
     }
 
-    public boolean matchXPath(String b) {
+    public synchronized boolean matchXPath(String b) {
         if (doc != null) {
             XPath xpath = DocumentHelper.createXPath(b);
             return xpath.booleanValueOf(doc);
@@ -237,38 +244,38 @@ public class CotEventContainer {
         return false;
     }
 
-    public <T> T removeContext(String key, Class<T> type) {
+    public synchronized <T> T removeContext(String key, Class<T> type) {
         return (T) context.remove(key);
     }
 
-    public Object removeContextValue(String key) {
+    public synchronized Object removeContextValue(String key) {
         return context.remove(key);
     }
 
-    public <T> T setContextAndCarry(String key, T value) {
+    public synchronized <T> T setContextAndCarry(String key, T value) {
         context.put(key, value);
         return value;
     }
 
-    public <T> T setContext(String key, T value) {
+    public synchronized <T> T setContext(String key, T value) {
         T old = (T) getContext(key);
         context.put(key, value);
 
         return old;
     }
 
-    public Object setContextValue(String key, Object value) {
+    public synchronized Object setContextValue(String key, Object value) {
         Object old = getContext(key);
         context.put(key, value);
 
         return old;
     }
 
-    public String toString() {
+    public synchronized String toString() {
         return asXml();
     }
 
-    public CotEventContainer copy() {
+    public synchronized CotEventContainer copy() {
         return new CotEventContainer(this);
     }
 
@@ -337,7 +344,7 @@ public class CotEventContainer {
 
 
     @Nullable
-    public BufferedImage getBufferedImage() {
+    public synchronized BufferedImage getBufferedImage() {
         Element imageElem = (Element) doc.selectSingleNode("/event/detail/image");
         if (imageElem == null) {
             return null;
@@ -354,7 +361,7 @@ public class CotEventContainer {
         }
     }
 
-    public void setBufferedImage(@Nullable BufferedImage image) {
+    public synchronized void setBufferedImage(@Nullable BufferedImage image) {
         // TODO: Add image?
         Element imageElem = (Element) doc.selectSingleNode("/event/detail/image");
         if (image == null) {
@@ -375,7 +382,94 @@ public class CotEventContainer {
                 logger.error("Image Conversion Error: " + e.getMessage());
             }
         }
+    }
 
+    public synchronized boolean detachNodeIfExists(String xpathExpression) {
+        Attribute serverAttr = (Attribute) doc.selectSingleNode(xpathExpression);
+        if (serverAttr != null) {
+            serverAttr.detach();
+            return true;
+        }
+        return false;
+    }
 
+    public synchronized boolean containsElement(String name) {
+        return doc.getRootElement().element(name) != null;
+    }
+    
+    public synchronized String getDocumentValue(String xpathExpression) {
+        return doc.valueOf(xpathExpression);
+    }
+    
+    public synchronized String getDocumentNodeValue(String nodeName, String xpathExpression) {
+        Node subNode = doc.selectSingleNode(nodeName);
+        return subNode.valueOf(xpathExpression);
+    }
+
+    public synchronized void filter(String serverId) {
+        // check to make sure detail field exists
+        Element detailElem = doc.getRootElement().element("detail");
+
+        if (detailElem != null) {
+            Element flowTagElem = DocumentHelper.makeElement(detailElem, "/_flow-tags_");
+            flowTagElem.addAttribute(serverId, dateFormat.format(System.currentTimeMillis()));
+        }
+    }
+    
+    public synchronized void filterImages(List<Images.ImageData> imageList, RemoteSubscription.ImagePref pref) {
+        // get detail element out of document for attaching child images
+        Element detailElem = DocumentHelper.makeElement(doc, Images.DETAIL_PATH);
+
+        // remove any existing image elements
+        List<Element> imageElems = (List<Element>) detailElem.elements(Images.IMAGE_ELEMENT_NAME);
+        if (imageElems.size() > 0) {
+            logger.warn("Trying to format cot message for images that already has image elements present -- stripping them out");
+            for (Element imageElem : imageElems) {
+                imageElem.detach();
+            }
+        }
+
+        // attach image string data for each image
+        for (Images.ImageData img : imageList) {
+            Element imageElem = Images.generateElementFromData(img, pref);
+            if (imageElem != null) {
+                detailElem.add(imageElem);
+            }
+        }
+    }
+    
+    public synchronized void imageProcessingFilter() {
+        List<Node> imageElems = doc.selectNodes(Images.IMAGE_PATH);
+
+        if (imageElems.size() > 0) {
+            logger.debug("stripping " + imageElems.size() + " images from the cot message");
+
+            // have some image elements to process
+            // initialize ImageData image list
+            List<Images.ImageData> dataList = getContextOrStore(CotEventContainer.IMAGE_KEY, new ArrayList<Images.ImageData>(imageElems.size()));
+
+            // should have no ImageData already attached to the cot message -- process only once
+            Assertion.zero(dataList.size());
+
+            // convert each image element to an ImageData construct attached to the CoT message
+            for (Node imageElem : imageElems) {
+                // convert element to imageData
+                Images.ImageData data = Images.imageDataFromElement((Element)imageElem);
+
+                // add data to data list if nonnull (something terrible could have happened)
+                if (data != null) {
+                    // add to image data context list
+                    dataList.add(data);
+                }
+
+                // remove image element from the document
+                imageElem.detach();
+            }
+        }
+    }
+    
+    public synchronized String getNodeType(String name) {
+        Node event = doc.selectSingleNode(name);
+        return event.valueOf("@type");
     }
 }

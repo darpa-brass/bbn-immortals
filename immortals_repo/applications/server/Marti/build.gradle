@@ -59,7 +59,13 @@ jar {
                 "Main-Class": "com.bbn.marti.service.MartiMain"
     }
 
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { (configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) } } {
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } } {
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA' 
+    }
 
     destinationDir = file('./')
     archiveName = "Marti-immortals.jar"
@@ -84,6 +90,10 @@ test {
         if (clientDeploymentInstanceFilepath != null) {
             systemProperty "mil.darpa.immortals.clientDeploymentInstance.json.path", clientDeploymentInstanceFilepath
         }
+        def fakeAndroidVersionStr = System.getProperty("mil.darpa.immortals.fakeAndroidVersion")
+        if (fakeAndroidVersionStr != null) {
+            systemProperty "mil.darpa.immortals.fakeAndroidVersion", fakeAndroidVersionStr
+        }
     }
 }
 
@@ -107,6 +117,9 @@ dependencies {
     testCompile('org.jmockit:jmockit:1.39')
     testCompile 'org.zeromq:jeromq:0.4.3'
     testCompile 'commons-io:commons-io:2.4'
+    // KRHACK: The KR should not need these in the original project to perform adaptation!
+    compile 'mil.darpa.immortals.dfus:JavaxCrypto:2.0-LOCAL'
+    compile 'mil.darpa.immortals.dfus:BouncyCastleCipher:2.0-LOCAL'
 }
 
 if (System.properties["mil.darpa.immortals.mock"] != null) {

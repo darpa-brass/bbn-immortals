@@ -24,7 +24,7 @@ public class TestEventBroadcaster {
         this.storageDirectory = Paths.get(saCommunicationService.getConfig().storageDirectory);
     }
 
-    public synchronized void startBroadcastingImage(int intervalMS, int startDelayMS) {
+    public synchronized void startBroadcastingImage(final int intervalMS, final int startDelayMS) {
 
         File imagePath = storageDirectory.resolve("sample_image.jpg").toFile();
 

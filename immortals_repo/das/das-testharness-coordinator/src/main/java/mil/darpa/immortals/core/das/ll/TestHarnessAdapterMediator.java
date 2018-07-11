@@ -167,9 +167,9 @@ public class TestHarnessAdapterMediator {
                         ImmortalsErrorHandler.reportFatalException(e);
                     }
                 }
+                break;
 
             case SUCCESS:
-            case NOT_APPLICABLE:
                 if (previousOutcome != DasOutcome.PENDING && previousOutcome != DasOutcome.RUNNING) {
                     ImmortalsErrorHandler.reportFatalError("Unexpected DAS state transition from terminal state '" + previousOutcome.name() +
                             " to another terminal state '" + adaptationDetails.dasOutcome.name() + "'!");
@@ -242,6 +242,13 @@ public class TestHarnessAdapterMediator {
             long completeDegradedCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.COMPLETE_DEGRADED).count();
             long completeFailCount = tests.stream().filter(t -> t.actualStatus == TestOutcome.COMPLETE_FAIL).count();
 
+            long adaptationValidatorCount = 0;
+            long passedAdaptationValidatorCount = 0;
+            if (state.testAdapterState.adaptation != null && state.testAdapterState.adaptation.details != null) {
+                adaptationValidatorCount = state.testAdapterState.adaptation.details.adaptationValidationsPerformed;
+                passedAdaptationValidatorCount = state.testAdapterState.adaptation.details.passingAdaptationValidations;
+            }
+
             if (logger.isDebugEnabled()) {
                 String msg = "ReceivedTests:" +
                         "\n\tError: " + errorCount +
@@ -252,7 +259,9 @@ public class TestHarnessAdapterMediator {
                         "\n\tIncomplete: " + incompleteCount +
                         "\n\tCompletePass: " + completePassCount +
                         "\n\tCompleteDegraded: " + completeDegradedCount +
-                        "\n\tCompleteFail: " + completeFailCount;
+                        "\n\tCompleteFail: " + completeFailCount +
+                        "\n\tAdaptationValidatorCount: " + adaptationValidatorCount + 
+                        "\n\tPassedAdaptationValidatorCount: " + passedAdaptationValidatorCount;
                 logger.debug(msg);
             }
 
@@ -271,20 +280,33 @@ public class TestHarnessAdapterMediator {
                 vo = VerdictOutcome.PENDING;
 
             } else {
+
                 // Validation has finished
+                double totalValidFinishedTests = completePassCount + completeFailCount + completeDegradedCount + adaptationValidatorCount;
+                double totalValidPassedTests = completePassCount + passedAdaptationValidatorCount;
+                double totalPassedPercentage = 0.0;
+                
+                if (totalValidFinishedTests > 0) {
+                    totalPassedPercentage = totalValidPassedTests / totalValidFinishedTests;
+                    state.testAdapterState.validation.testsPassedPercent = totalPassedPercentage;
+                }
 
                 if (completeFailCount == 0) {
                     if (completeDegradedCount == 0) {
                         if (completePassCount == 0) {
                             vo = VerdictOutcome.INCONCLUSIVE;
                         } else {
-                            vo = VerdictOutcome.PASS;
+                            if (totalPassedPercentage == 1) {
+                                vo = VerdictOutcome.PASS;
+                            } else {
+                                vo = VerdictOutcome.DEGRADED;
+                            }
                         }
                     } else {
                         //TODO: Replace this hack
                         vo = VerdictOutcome.DEGRADED;
                         for (TestStateObject tso : tests) {
-                            if(tso.testIdentifier.equals("mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest") && tso.actualStatus != TestOutcome.COMPLETE_PASS) {
+                            if (tso.testIdentifier.equals("mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest") && tso.actualStatus != TestOutcome.COMPLETE_PASS) {
                                 vo = VerdictOutcome.FAIL;
                             }
                         }
@@ -297,7 +319,7 @@ public class TestHarnessAdapterMediator {
                         //TODO: Replace this hack
                         vo = VerdictOutcome.DEGRADED;
                         for (TestStateObject tso : tests) {
-                            if(tso.testIdentifier.equals("mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest") && tso.actualStatus != TestOutcome.COMPLETE_PASS) {
+                            if (tso.testIdentifier.equals("mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest") && tso.actualStatus != TestOutcome.COMPLETE_PASS) {
                                 vo = VerdictOutcome.FAIL;
                             }
                         }

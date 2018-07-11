@@ -52,7 +52,11 @@ public class CipherImpl{
         this.paddingScheme = paddingScheme;
 
         this.keySpec = getKeySpec(keyPhrase,algorithm,keyLengthBytes);
-        this.initVectorSpec = getInitVectorSpec(initVectorPhrase,keyLengthBytes);
+        if (initVectorPhrase != null) {
+            this.initVectorSpec = getInitVectorSpec(initVectorPhrase, keyLengthBytes);
+        } else {
+            this.initVectorSpec = null;
+        }
     }
 
     private Cipher getCipher() throws NoSuchAlgorithmException, NoSuchPaddingException{
@@ -89,7 +93,7 @@ public class CipherImpl{
             final int lengthBytes
     ) throws NoSuchAlgorithmException{
         return new IvParameterSpec(
-                hash(initVectorPhrase,lengthBytes)
+                new byte[8]
         );
     }
 
@@ -99,11 +103,18 @@ public class CipherImpl{
 
         Cipher cipher = getCipher();
 
-        cipher.init(
-                Cipher.ENCRYPT_MODE,
-                keySpec,
-                initVectorSpec
-        );
+        if (initVectorSpec == null) {
+            cipher.init(
+                    Cipher.DECRYPT_MODE,
+                    keySpec
+            );
+        } else {
+            cipher.init(
+                    Cipher.DECRYPT_MODE,
+                    keySpec,
+                    initVectorSpec
+            );
+        }
 
         return new CipherOutputStream(o,cipher);
     }
@@ -112,11 +123,18 @@ public class CipherImpl{
 
         Cipher cipher = getCipher();
 
-        cipher.init(
-                Cipher.DECRYPT_MODE,
-                keySpec,
-                initVectorSpec
-        );
+        if (initVectorSpec == null) {
+            cipher.init(
+                    Cipher.DECRYPT_MODE,
+                    keySpec
+            );
+        } else {
+            cipher.init(
+                    Cipher.DECRYPT_MODE,
+                    keySpec,
+                    initVectorSpec
+            );
+        }
 
         return new CipherInputStream(i,cipher);
     }
@@ -125,11 +143,18 @@ public class CipherImpl{
 
     public byte[] encrypt(byte[] data) throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException{
         Cipher cipher = getCipher();
-        cipher.init(
-                Cipher.ENCRYPT_MODE,
-                keySpec,
-                initVectorSpec
-        );
+        if (initVectorSpec == null) {
+            cipher.init(
+                    Cipher.DECRYPT_MODE,
+                    keySpec
+            );
+        } else {
+            cipher.init(
+                    Cipher.DECRYPT_MODE,
+                    keySpec,
+                    initVectorSpec
+            );
+        }
 
         return cipher.doFinal(data);
     }
@@ -142,11 +167,18 @@ public class CipherImpl{
             cipher = this.encryptionCipher;
         } else {
             cipher = getCipher();
-            cipher.init(
-                    Cipher.ENCRYPT_MODE,
-                    keySpec,
-                    initVectorSpec
-            );
+            if (initVectorSpec == null) {
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        keySpec
+                );
+            } else {
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        keySpec,
+                        initVectorSpec
+                );
+            }
 
             this.encryptionCipher = cipher;
         }
@@ -162,11 +194,18 @@ public class CipherImpl{
             cipher = this.decryptionCipher;
         } else {
             cipher = getCipher();
-            cipher.init(
-                    Cipher.DECRYPT_MODE,
-                    keySpec,
-                    initVectorSpec
-            );
+            if (initVectorSpec == null) {
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        keySpec
+                );
+            } else {
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        keySpec,
+                        initVectorSpec
+                );
+            }
 
             this.decryptionCipher = cipher;
         }
@@ -182,11 +221,18 @@ public class CipherImpl{
             cipher = this.encryptionCipher;
         } else {
             cipher = getCipher();
-            cipher.init(
-                    Cipher.ENCRYPT_MODE,
-                    keySpec,
-                    initVectorSpec
-            );
+            if (initVectorSpec == null) {
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        keySpec
+                );
+            } else {
+                cipher.init(
+                        Cipher.DECRYPT_MODE,
+                        keySpec,
+                        initVectorSpec
+                );
+            }
 
             this.encryptionCipher = cipher;
         }
@@ -200,12 +246,19 @@ public class CipherImpl{
 
     public byte[] decrypt(byte[] data) throws IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException{
         Cipher cipher = getCipher();
-        cipher.init(
-                Cipher.DECRYPT_MODE,
-                keySpec,
-                initVectorSpec
-        );
-
+        
+        if (initVectorSpec == null) {
+            cipher.init(
+                    Cipher.DECRYPT_MODE,
+                    keySpec
+            );
+        } else {
+            cipher.init(
+                    Cipher.DECRYPT_MODE,
+                    keySpec,
+                    initVectorSpec
+            );
+        }
         byte[] result = cipher.doFinal(data);
 
         {//TODO: this feels janky

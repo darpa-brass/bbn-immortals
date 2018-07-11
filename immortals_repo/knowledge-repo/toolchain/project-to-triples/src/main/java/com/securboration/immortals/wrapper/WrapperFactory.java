@@ -26,29 +26,61 @@ public class WrapperFactory {
         wrappedClassToWrapper = new HashMap<>();
     }
     
-    public Wrapper createWrapper(String className, List<String> dependencies, Set<String> dependentFiles) {
-        
+    public Wrapper createWrapper(String className, List<String> dependencies, Set<String> dependentFiles, String androidJarPath) {
+
+
+      /*  if (androidJarPath != null) {
+
+            //G.reset();
+            Scene.v().setSootClassPath("");
+            //Scene.v().removeClass(Scene.v().getSootClass("java.nio.channels.SocketChannel"));
+
+            StringBuilder sootCP = new StringBuilder();
+            sootCP.append(androidJarPath);
+            Scene.v().setSootClassPath(sootCP.toString());
+            SootClass wrappedClass = Scene.v().loadClassAndSupport(className);
+
+            for (String dependency : dependencies) {
+                sootCP.append(File.pathSeparatorChar + dependency);
+            }
+            Scene.v().setSootClassPath(sootCP.toString());
+            Scene.v().loadBasicClasses();
+
+            return new Wrapper(wrappedClass);
+        }*/
+
         Scene.v().getSootClassPath();
+
+        String sootClasspath = Scene.v().getSootClassPath();
+        String[] cpElements = sootClasspath.split(File.pathSeparator);
+
+        if (cpElements.length > 1) {
+            SootClass wrappedClass = Scene.v().loadClassAndSupport(className);
+            return new Wrapper(wrappedClass);
+        }
         
-        boolean bootstrapRT = false;
+       /* boolean bootstrapRT = false;
         boolean bootstrapJCE = false;
         
         for (String dependentFile : dependentFiles) {
             if (dependentFile.contains("rt.jar")) {
                 bootstrapRT = true;
+
                 break;
             }  else if (dependentFile.contains("jce.jar")) {
                 bootstrapJCE = true;
                 break;
             }
-        }
+        }*/
+
+        dependentFiles.removeIf(file -> file.contains("rt"));
         
         Options.v().set_keep_line_number(true);
         PhaseOptions.v().setPhaseOption("jb", "use-original-names:true");
         SootClass wrappedClass = null;
         
         try {
-            if (bootstrapRT) {
+            /*if (bootstrapRT) {
                 Scene.v().setSootClassPath("");
                 StringBuilder sootCP = new StringBuilder("");
                 for (String dependentFile : dependentFiles) {
@@ -70,18 +102,33 @@ public class WrapperFactory {
             if (!bootstrapJCE) {
                 Scene.v().extendSootClassPath(System.getProperty("java.home") + File.separatorChar
                         + "lib" + File.separatorChar + "jce.jar");
-            }
-            
-            StringBuilder sootCP = new StringBuilder(Scene.v().getSootClassPath());
-            
-            Scene.v().loadBasicClasses();
+            }*/
+            Options.v().set_allow_phantom_refs(true);
+            StringBuilder sootCP = new StringBuilder();
+
+            sootCP.append(androidJarPath);
             for (String dependency : dependencies) {
                 sootCP.append(File.pathSeparatorChar + dependency);
             }
-            
+
+           /* if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+                sootCP.append(androidJarPath);
+                for (String dependency : dependencies) {
+                    sootCP.append(File.pathSeparatorChar + dependency);
+                }
+            } else {
+                sootCP.append(File.separator + androidJarPath);
+                for (String dependency : dependencies) {
+                    sootCP.append(File.pathSeparatorChar + File.separator + dependency);
+                }
+            }*/
+           // sootCP.append(androidJarPath);
+            //Scene.v().loadBasicClasses();
+
             Scene.v().setSootClassPath(sootCP.toString());
             //Scene.v().extendSootClassPath(System.getProperty("java.home") + File.separatorChar + "lib" + File.separatorChar + "jce.jar");
             wrappedClass = Scene.v().loadClassAndSupport(className);
+            Scene.v().loadBasicClasses();
 
         } catch (Exception exc) {
             System.out.println("Issue loading dependencies/specified class");
@@ -119,6 +166,15 @@ public class WrapperFactory {
     public boolean wrapWithCipher(Wrapper wrapper, String cipherImpl, WrapperSourceFile[] wrapperSourceFiles,
                                        GradleTaskHelper taskHelper, boolean plugin, List<MethodInvocationDataflowNode> methodNodes) throws IOException {
         String complexity;
+        
+        if (wrapper == null) {
+            System.out.println("WRAPPER OBJECT IS NULL");
+        } else if (wrapper.getWrappedClass() == null) {
+            System.out.println("WRAPPED CLASS IS NULL");
+        } else if (wrapper.getWrappedClass().getName() == null) {
+            System.out.println("WRAPPED CLASS NAME IS NULL???");
+        }
+        
         //TODO infer complexity based on soot or javaparser analysis
         if (wrapper.getWrappedClass().getName().equals("java.net.Socket")) {
             complexity = "simple";

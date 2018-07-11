@@ -38,5 +38,6 @@ fi
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export IMMORTALS_OVERRIDE_FILE="${DIR}/test_override_file.json"
 
+python3 tools.py orchestrate cp3litl
 python3 tools.py orchestrate cp3plu
 python3 tools.py orchestrate cp3hddrass

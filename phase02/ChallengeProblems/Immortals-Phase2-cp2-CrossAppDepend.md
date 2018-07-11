@@ -501,7 +501,7 @@ __Endpoint URL__: /action/crossApplicationDependencies
     "globalModel": {
         "requirements": {
             "dataInTransit": {
-                "securityStandard": "NIST800Dash171"
+                "securityStandard": "AES_128"
             }
         }
     },
@@ -571,11 +571,9 @@ __Description__: The requirements for all data that is transmitted over the wire
 __Type__: String Constant  
 __Description__: Common security standards  
 
-| Values         | Description                                            |  
-| -------------- | ------------------------------------------------------ |  
-| FIPS140Dash1   | Obsolete less secure NIST government security standard |  
-| FIPS140Dash2   | Current secure NIST government security standard       |  
-| NIST800Dash171 | Recent governemnt contractor security standard         |  
+| Values  | Algorithm | CipherChainingMode | Description                              | KeySize |  
+| ------- | --------- | ------------------ | ---------------------------------------- | ------- |  
+| AES_128 | AES       | on                 | AES encryption standard with 128bit+ key |         |  
 
 #### MartiSubmissionModel  
 __Type__: JSON Object  

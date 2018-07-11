@@ -135,7 +135,7 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
         int castorResult = runCastor(castorSubmissionFolder, dataLinkageMetadata);
 
         if (castorResult != 0) {
-            logger.info("Castor exited with result code: " + castorResult);
+            logger.error("Castor exited with result code: " + castorResult);
             learnedSql = null;
         } else {
             learnedSql = readCastorOutput(castorSubmissionFolder);
@@ -442,29 +442,42 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
 
         boolean result = false;
 
-        StringBuilder comparisonSQL = new StringBuilder();
+        StringBuilder comparisonSQL1 = new StringBuilder();
+        StringBuilder comparisonSQL2 = new StringBuilder();        
 
         //we can use sql itself to verify the two result sets are equivalent,
         //though this is not the most efficient way to do this; also duplicate
         //records in one set are not detected using this approach
-        comparisonSQL.append("(" + query + ") ");
-        comparisonSQL.append(" except ");
-        comparisonSQL.append(" (select * from " + dataLinkageMetadata.getValidationDataTableName() + ") ");
-        comparisonSQL.append(" union ");
-        comparisonSQL.append(" (select * from " + dataLinkageMetadata.getValidationDataTableName() + ") ");
-        comparisonSQL.append(" except ");
-        comparisonSQL.append("(" + query + ") ");
-
-        CachedRowSet rowset = null;
+        comparisonSQL1.append("(" + query + ") ");
+        comparisonSQL1.append(" except ");
+        comparisonSQL1.append(" (select * from " + dataLinkageMetadata.getValidationDataTableName() + ") ");
 
         try (Connection conn = getDASConnection(true);
-             ResultSet rs = conn.prepareStatement(comparisonSQL.toString()).executeQuery()) {
-            rowset = RowSetProvider.newFactory().createCachedRowSet();
+                ResultSet rs = conn.prepareStatement(comparisonSQL1.toString()).executeQuery()) {
+        	   
+        	CachedRowSet rowset = RowSetProvider.newFactory().createCachedRowSet();
             rowset.populate(rs);
             result = !rowset.next();
         } catch (Exception e) {
-            result = false;
+        	result = false;
         }
+
+        if (result) {
+            comparisonSQL2.append(" (select * from " + dataLinkageMetadata.getValidationDataTableName() + ") ");
+            comparisonSQL2.append(" except ");
+            comparisonSQL2.append("(" + query + ") ");
+
+            try (Connection conn = getDASConnection(true);
+                    ResultSet rs = conn.prepareStatement(comparisonSQL2.toString()).executeQuery()) {
+            	
+            	CachedRowSet rowset = RowSetProvider.newFactory().createCachedRowSet();
+                rowset.populate(rs);
+                result = !rowset.next();
+            } catch (Exception e) {
+            	result = false;
+            }
+        }
+
 
         return result;
     }
@@ -483,6 +496,9 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
         LinkedList<String> errorMessages = new LinkedList<>();
         LinkedList<String> detailMessages = new LinkedList<>();
         Map<String, String> aqlProducedQueries = null;
+        
+        int totalDataLinkages = 0;
+        int passedCastorTests = 0;
 
         if (isApplicable(context)) {
 
@@ -507,7 +523,11 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
                 LearnedQuery learnedQuery;
                 
                 for (DataLinkageMetadata dataLinkageMetadata : dataLinkages) {
-                    
+                	
+                	logger.info("Schema evolution manager is examining data dfu: " + dataLinkageMetadata.getClassName());
+                	
+                	totalDataLinkages++;
+                	
                 	String sampleSql = sqlT.getRandomSampleSQL(dataLinkageMetadata.getResolvedQuery(),
                             SchemaDependencyKnowledgeBuilder.POSITIVE_DATA_LIMIT);
 
@@ -519,12 +539,20 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
                     if (!sqlEquivalent) {
                     	adaptationRequired = true;
                     	
-                        learnedQuery = learnQuery(dataLinkageMetadata, context, sqlT);
+                        try {
+                        	learnedQuery = learnQuery(dataLinkageMetadata, context, sqlT);
+                        } catch (Exception e) {
+                        	learnedQuery = null;
+                        	logger.error("Castor threw an exception for: " + dataLinkageMetadata.getClassName());
+                        	logger.error("Exception is: " + e.getMessage());
+                        	logger.error("Continuing with next query.");
+                        }
                         
                         if (learnedQuery == null) {
                         	logger.info("Castor did not learn query for: " + dataLinkageMetadata.getClassName());
                         } else {
                         	castorValidation = true;
+                        	passedCastorTests++;
                             //Modify Java code with new sql
                             modifySourceCode(context, learnedQuery);
                             numberLearnedQueries++;
@@ -578,6 +606,10 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
                 errorMessages.add(error + " Message: " + e.getMessage());
             }
             AdaptationDetails ad = new AdaptationDetails(getClass().getName(), outcome, context.getAdaptationIdentifer());
+            
+            ad.adaptationValidationsPerformed = totalDataLinkages;
+            ad.passingAdaptationValidations = passedCastorTests;
+            
             context.submitAdaptationStatus(ad);
         }
     }
@@ -675,7 +707,7 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
             LinkedList<String> detailMessages = new LinkedList<>();
             detailMessages.add("Mock Success!");
 
-            AdaptationDetails update = starting.produceUpdate(DasOutcome.SUCCESS, new LinkedList<>(), detailMessages);
+            AdaptationDetails update = starting.produceUpdate(DasOutcome.SUCCESS, new LinkedList<>(), detailMessages, 7, 8);
             context.submitAdaptationStatus(update);
 
         } catch (Exception e) {
@@ -754,6 +786,12 @@ public class SchemaEvolutionAdapter extends AbstractAdaptationModule {
 		return conn;
 	}
 
+	public void setSeed(Connection conn) throws SQLException {
+
+		try (Statement s = conn.createStatement()) {
+			s.executeQuery("select setseed(" + SEED + ")");
+		}
+	}
 
 	public static final double SEED = 0.5;
     private static WebTarget aqlService;

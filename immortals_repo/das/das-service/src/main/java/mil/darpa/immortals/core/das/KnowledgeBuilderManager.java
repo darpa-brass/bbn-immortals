@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import mil.darpa.immortals.core.das.knowledgebuilders.KnowledgeRepoConnectionBuilder;
+import mil.darpa.immortals.core.das.knowledgebuilders.ResourceDslKnowledgeBuilder;
 import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
@@ -30,6 +32,14 @@ public class KnowledgeBuilderManager {
 			// Initialize Gradle information for all known projects
 			GradleKnowledgeBuilder gkr = new GradleKnowledgeBuilder();
 			gkr.buildKnowledge(null);
+			
+			// Initialize the resource DSL
+			ResourceDslKnowledgeBuilder rdkb = new ResourceDslKnowledgeBuilder();
+			rdkb.buildKnowledge(null);
+
+			// Knowledge Repo Hacks.
+			KnowledgeRepoConnectionBuilder krcb = new KnowledgeRepoConnectionBuilder();
+			krcb.buildKnowledge(null);
 			
 			//####Initialize SchemaDependencyKnowledgeBuilder#####
 			//Get root folder of data DFUs

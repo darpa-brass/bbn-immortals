@@ -72,7 +72,7 @@ public class RaticinationEngineTestSimple {
                     "CONSTRUCT {" +
                     "  ?x <http://test#friendOf> ?x . " +
                     "} WHERE { " +
-                    "  GRAPH <http://localhost:3030/ds/data/?GRAPH?> {" +
+                    "  GRAPH <?GRAPH?> {" +
                     "    ?x a <http://test#TestThing> . " +
                     "  }" +
                     "}";
@@ -91,7 +91,7 @@ public class RaticinationEngineTestSimple {
                     "CONSTRUCT {" +
                     "  ?y <http://test#friendOf> ?x . " +
                     "} WHERE { " +
-                    "  GRAPH <http://localhost:3030/ds/data/?GRAPH?> {" +
+                    "  GRAPH <?GRAPH?> {" +
                     "    ?x <http://test#friendOf> ?y . " +
                     "    ?x a <http://test#TestThing> . " +
                     "    ?y a <http://test#TestThing> . " +
@@ -112,7 +112,7 @@ public class RaticinationEngineTestSimple {
                     "CONSTRUCT {" +
                     "  ?x <http://test#friendOf> ?z . " +
                     "} WHERE { " +
-                    "  GRAPH <http://localhost:3030/ds/data/?GRAPH?> {" +
+                    "  GRAPH <?GRAPH?> {" +
                     "    ?x <http://test#friendOf> ?y . " +
                     "    ?y <http://test#friendOf> ?z . " +
                     "    ?x a <http://test#TestThing> . " +
@@ -267,7 +267,7 @@ public class RaticinationEngineTestSimple {
                 inferred > 0
                 );
             
-            validate(client,graphName);
+            validate(client,client.getFusekiServiceDataUrl() + "/" +graphName);
             
             System.out.println(report.getReportText());
         } finally {
@@ -319,7 +319,7 @@ public class RaticinationEngineTestSimple {
         String query =
                 (
                 "ASK WHERE {\n"+
-                "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                "    GRAPH <?GRAPH?> {\n"+
                 "        ?s? ?p? ?o? .\n"+
                 "    }\n"+
                 "}\n"

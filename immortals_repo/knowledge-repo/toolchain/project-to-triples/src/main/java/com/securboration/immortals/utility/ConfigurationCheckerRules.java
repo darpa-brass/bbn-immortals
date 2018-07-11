@@ -148,11 +148,11 @@ public class ConfigurationCheckerRules {
         //all BOGO and NOOP configurations are valid regardless of any other
         // configuration settings
         {
-            if(dfu.getDurableUri().contains("BOGO")){
+            if(dfu.getDurableUri() != null && dfu.getDurableUri().contains("BOGO")){
                 return null;
             }
 
-            if(dfu.getDurableUri().contains("NOOP")){
+            if(dfu.getDurableUri() != null && dfu.getDurableUri().contains("NOOP")){
                 return null;
             }
         }

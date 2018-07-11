@@ -10,9 +10,13 @@ class AbstractAdaptationDetails(Serializable):
 
     def __init__(self,
                  adaptationIdentifier: str = None,
+                 adaptationValidationsPerformed: int = None,
                  adaptorIdentifier: str = None,
-                 dasOutcome: DasOutcome = None):
+                 dasOutcome: DasOutcome = None,
+                 passingAdaptationValidations: int = None):
         super().__init__()
         self.adaptationIdentifier = adaptationIdentifier
+        self.adaptationValidationsPerformed = adaptationValidationsPerformed
         self.adaptorIdentifier = adaptorIdentifier
         self.dasOutcome = dasOutcome
+        self.passingAdaptationValidations = passingAdaptationValidations

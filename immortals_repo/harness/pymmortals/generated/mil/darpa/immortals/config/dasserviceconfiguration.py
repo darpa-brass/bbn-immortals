@@ -18,6 +18,7 @@ class DasServiceConfiguration(Serializable):
                  port: int = None,
                  protocol: str = None,
                  readyStdoutLineRegexPattern: str = None,
+                 resourceDslPath: str = None,
                  shutdownEverythingOnTermination: bool = None,
                  startupTimeMS: int = None,
                  url: str = None,
@@ -33,6 +34,7 @@ class DasServiceConfiguration(Serializable):
         self.port = port
         self.protocol = protocol
         self.readyStdoutLineRegexPattern = readyStdoutLineRegexPattern
+        self.resourceDslPath = resourceDslPath
         self.shutdownEverythingOnTermination = shutdownEverythingOnTermination
         self.startupTimeMS = startupTimeMS
         self.url = url

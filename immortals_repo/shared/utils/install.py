@@ -57,10 +57,15 @@ def validate_deployment(immortals_root_deployment: str):
         # Make sure an in-use DFU has been analyzed
         expected_artifacts = {
             "analysis": [
-                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/TakServerDataManager/',
-                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/ElevationApi-2',
-                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/ATAKLite',
-                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/Marti'
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/TakServerDataManager/structures/TakServerDataManager-projectOutput.ttl',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/ElevationApi-1/structures/dfus/ElevationApi.class-DFU.ttl',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/ElevationApi-2/structures/dfus/ElevationApi.class-DFU.ttl',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/ATAKLite/structures/ATAKLite-projectOutput.ttl',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/Marti/structures/dfus/Tests.class-DFU.ttl',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/ThirdPartyLibAnalysisAndroidApp/structures/ThirdPartyLibAnalysisAndroidApp-projectOutput.ttl',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/BouncyCastleCipher/structures/dfus/CipherImplBouncyCrypto.class-DFU.ttl',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/JavaxCrypto/structures/dfus/CipherImplJavaxCrypto.class-DFU.ttl',
+                'knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp/NoOpCipher/structures/dfus/CipherImplNoop.class-DFU.ttl'
             ],
             "build": [
                 'das/das-launcher-2.0-LOCAL.jar',

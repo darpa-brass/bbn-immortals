@@ -738,6 +738,35 @@ public class AnalysisFrameAssessment {
             String initCallOwnerOwner = initCallInfoSolution.getSolutions().get(0).get("class");
             String initCallOwnerOwnerName = initCallInfoSolution.getSolutions().get(0).get("className");
 
+            String checkIfApplicableProjectIsAndroid = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                    "select ?uberJar where {\n" +
+                    "\tgraph <http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                    "\t\t?javaProject IMMoRTALS:hasSourceCodeRepo ?sourceRepo \n" +
+                    "    \t; IMMoRTALS:hasAndroidApp ?androidApp .\n" +
+                    "    \n" +
+                    "   \t\t ?androidApp IMMoRTALS:hasPathToUberJar ?uberJar .\n" +
+                    "    \n" +
+                    "\t\t ?sourceRepo IMMoRTALS:hasSourceFiles ?sourceFiles .\n" +
+                    "    \n" +
+                    "    \t ?sourceFiles IMMoRTALS:hasFullyQualifiedName \"???CLASS_NAME???\" . \n" +
+                    "\t}\n" +
+                    "}";
+
+            String sourceRepoSafeName = initCallOwnerOwnerName;
+            if (sourceRepoSafeName.contains("$")) {
+                sourceRepoSafeName = sourceRepoSafeName.substring(0, sourceRepoSafeName.indexOf("$"));
+            }
+
+            checkIfApplicableProjectIsAndroid = checkIfApplicableProjectIsAndroid.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                    .replace("???CLASS_NAME???", sourceRepoSafeName.replace("/", "."));
+            AssertableSolutionSet androidJarSolutions = new AssertableSolutionSet();
+            taskHelper.getClient().executeSelectQuery(checkIfApplicableProjectIsAndroid, androidJarSolutions);
+
+            String pathToAndroidJar = null;
+            if (!androidJarSolutions.getSolutions().isEmpty()) {
+                pathToAndroidJar = androidJarSolutions.getSolutions().get(0).get("uberJar");
+            }
+
             List<MethodInvocationDataflowNode> methodNodes = new ArrayList<>();
             MethodInvocationDataflowNode initializerNode = (MethodInvocationDataflowNode)
                     streamCallTrace.getCallSteps()[streamCallTrace.getCallSteps().length - 1];
@@ -793,7 +822,7 @@ public class AnalysisFrameAssessment {
                 case "cipherEncrypt": {
                     wrapperFactory = new WrapperFactory();
                     wrapper = initializeWrapper(streamInitializationNode, dependentFiles, dependencyPaths,
-                            wrapperFactory, "java.io.OutputStream");
+                            wrapperFactory, "java.io.OutputStream", pathToAndroidJar);
 
                     previouslyAugmented = wrapperFactory.wrapWithCipher(wrapper, cipherImpl, producedSourceFiles,
                             taskHelper, plugin, methodNodes);
@@ -810,7 +839,7 @@ public class AnalysisFrameAssessment {
 
                     wrapperFactory = new WrapperFactory();
                     wrapper = initializeWrapper(streamInitializationNode, dependentFiles, dependencyPaths,
-                            wrapperFactory, "java.io.InputStream");
+                            wrapperFactory, "java.io.InputStream", pathToAndroidJar);
 
                     previouslyAugmented = wrapperFactory.wrapWithCipher(wrapper, cipherImpl, producedSourceFiles,
                             taskHelper, plugin, methodNodes);
@@ -864,7 +893,7 @@ public class AnalysisFrameAssessment {
 
         // Pair each dfu with its uuid
         Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
-                cipherImplSolutions);
+                cipherImplSolutions, config);
 
         String functionalityUUID = cipherImplSolutions.getSolutions().get(0).get("dfuFunctionality");
         Functionality functionality = (Functionality) TriplesToPojo.convert(taskHelper.getGraphName(),
@@ -980,7 +1009,12 @@ public class AnalysisFrameAssessment {
         List<AspectConfigureSolution> configureSolutionList = new ArrayList<>();
         for (Solution configureSolution : configureSolutions.getSolutions()) {
             String aspectSolutionUUID = configureSolution.get("configureSolution");
-            configureSolutionList.add((AspectConfigureSolution) TriplesToPojo.convert(taskHelper.getGraphName(), aspectSolutionUUID, taskHelper.getClient()));
+            AspectConfigureSolution aspectConfigureSolution = (AspectConfigureSolution) TriplesToPojo.convert(taskHelper.getGraphName(),
+                    aspectSolutionUUID, taskHelper.getClient());
+            
+            if (aspectConfigureSolution.getChosenInstance() != null) {
+                configureSolutionList.add(aspectConfigureSolution);
+            }
         }
         
         return configureSolutionList;
@@ -1206,10 +1240,21 @@ public class AnalysisFrameAssessment {
     }
 
     private static Wrapper initializeWrapper(MethodInvocationDataflowNode streamInitializationNode, Set<String> dependentFiles,
-                                             List<String> dependencyPaths, WrapperFactory wrapperFactory, String s) {
+                                             List<String> dependencyPaths, WrapperFactory wrapperFactory, String s, String androidJarPath) {
+        // TODO: Not this hack!
+        if (dependentFiles != null) {
+            Set<String> tmpSet = new HashSet<>(dependentFiles);
+            for (String str : tmpSet) {
+                if (str.endsWith("rt.jar") && str.contains("/") && !str.startsWith("/")) {
+                    dependentFiles.remove(str);
+                    dependentFiles.add("/" + str);
+                }
+            }
+        }
+
         Wrapper wrapper;
         wrapper = wrapperFactory.createWrapper(streamInitializationNode.getJavaClassName().replace("/", "."),
-                dependencyPaths, dependentFiles);
+                dependencyPaths, dependentFiles, androidJarPath);
 
         wrapper.setStreamType(s);
         return wrapper;
@@ -1402,7 +1447,7 @@ public class AnalysisFrameAssessment {
     }
 
     public static Map<DfuInstance, Pair<String, String>> getDfuInstanceStringMap(GradleTaskHelper taskHelper,
-                                                                                 AssertableSolutionSet cipherImplSolutions) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+                                                                                 AssertableSolutionSet cipherImplSolutions, ObjectToTriplesConfiguration config) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchFieldException {
         Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = new HashMap<>();
         for (Solution cipherImplSolution : cipherImplSolutions.getSolutions()) {
 
@@ -1411,8 +1456,13 @@ public class AnalysisFrameAssessment {
             Object dfuInstanceObject = TriplesToPojo.convert(taskHelper.getGraphName(), dfuInstanceUUID, taskHelper.getClient());
 
             if (dfuInstanceObject instanceof DfuInstance) {
+                
+                DfuInstance dfuInstance = new DfuInstance();
+                dfuInstance.setClassPointer(((DfuInstance) dfuInstanceObject).getClassPointer());
+                config.getNamingContext().setNameForObject(dfuInstance, dfuInstanceUUID);
+                
                 Pair<String, String> dfuUUIDAndCipherImpl = new Pair<>(dfuInstanceUUID, cipherImplName);
-                dfuInstanceStringMap.put((DfuInstance) dfuInstanceObject, dfuUUIDAndCipherImpl);
+                dfuInstanceStringMap.put(dfuInstance, dfuUUIDAndCipherImpl);
             }
         }
         return dfuInstanceStringMap;
@@ -1921,6 +1971,11 @@ public class AnalysisFrameAssessment {
             String getUsageParadigmMagicString = getImplementationSpecificStrings(taskHelper,
                     dfuUUIDToCipherImpl.getLeft());
             AssertableSolutionSet usageParadigmSolutions = new AssertableSolutionSet();
+            
+            
+            System.err.println("MAGIC: " + getUsageParadigmMagicString == null ? "NULL" : getUsageParadigmMagicString);
+            
+            
             taskHelper.getClient().executeSelectQuery(getUsageParadigmMagicString, usageParadigmSolutions);
 
             magicString = usageParadigmSolutions.getSolutions().get(0).get("magicString");
@@ -1986,7 +2041,7 @@ public class AnalysisFrameAssessment {
         taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
 
         return getDfuInstanceStringMap(taskHelper,
-                cipherImplSolutions);
+                cipherImplSolutions, config);
     }
 
     private static String getChosenInstanceUUID(DfuInstance chosenInstance, GradleTaskHelper taskHelper) {

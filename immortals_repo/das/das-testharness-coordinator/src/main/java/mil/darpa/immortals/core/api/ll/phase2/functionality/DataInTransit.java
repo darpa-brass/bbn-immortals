@@ -11,7 +11,7 @@ import mil.darpa.immortals.core.api.annotations.P2CP2;
 public class DataInTransit {
     @P2CP2
     @Description("The required security standard to adhere to")
-    SecurityStandard securityStandard;
+    public SecurityStandard securityStandard;
 
     public DataInTransit() {
     }

@@ -1,13 +1,22 @@
 package mil.darpa.immortals.core.das.adaptationmodules.hddrass;
 
 import mil.darpa.immortals.config.ImmortalsConfig;
+import mil.darpa.immortals.core.das.adaptationmodules.crossappdependencies.Res;
 import mil.darpa.immortals.core.das.knowledgebuilders.building.GradleKnowledgeBuilder;
 import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -15,91 +24,31 @@ import java.util.*;
  */
 public class Hacks {
 
-    private static final String MARTI_DM_IDENTIFIER = "http://darpa.mil/immortals/ontology/r2.0.0/cp2#ClientServerEnvironment.MartiServer";
-    private static final String ATAKLITE_DM_IDENTIFIER = "http://darpa.mil/immortals/ontology/r2.0.0/cp2#ClientServerEnvironment.ClientDevice1";
-    private static final String MARTI_COORDINATE_IDENTIFIER = "Marti";
-    private static final String ATAKLITE_COORDINATE_IDENTIFIER = "ATAKLite";
-
-    private static final Map<String, String> coordinatesToDeploymentModelMap = new HashMap<>();
-    private static final Map<String, String> deploymentModelToCoordinatesMap = new HashMap<>();
-
     private static Logger logger = LoggerFactory.getLogger("Hacks");
-
-    static {
-        coordinatesToDeploymentModelMap.put(MARTI_COORDINATE_IDENTIFIER, MARTI_DM_IDENTIFIER);
-        coordinatesToDeploymentModelMap.put(ATAKLITE_COORDINATE_IDENTIFIER, ATAKLITE_DM_IDENTIFIER);
-        deploymentModelToCoordinatesMap.put(MARTI_DM_IDENTIFIER, MARTI_COORDINATE_IDENTIFIER);
-        deploymentModelToCoordinatesMap.put(ATAKLITE_DM_IDENTIFIER, ATAKLITE_COORDINATE_IDENTIFIER);
-    }
-
-    public static String normnalizeIdentifier(@Nonnull String shortIdentifier) {
-        String rval = null;
-
-        if (shortIdentifier.equals("core")) {
-            rval = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("shared/modules/core").toString();
-
-        } else if (shortIdentifier.equals("ElevationApi-1")) {
-            rval = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("shared/modules/dfus/ElevationApi-1").toString();
-
-        } else if (shortIdentifier.equals("ElevationApi-2")) {
-            rval = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("shared/modules/dfus/ElevationApi-2").toString();
-
-        } else if (shortIdentifier.equals("TakServerDataManager")) {
-            rval = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("shared/modules/dfus/TakServerDataManager").toString();
-
-        } else if (shortIdentifier.equals("Marti")) {
-            rval = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/server/Marti").toString();
-
-        } else if (shortIdentifier.equals("ATAKLite")) {
-            rval = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/client/ATAKLite").toString();
-
-        } else if (shortIdentifier.equals("ThirdPartyLibAnalysisAndroidApp")) {
-            rval = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/examples/ThirdPartyLibAnalysisAndroidApp").toString();
-
-        } else if (shortIdentifier.equals("ThirdPartyLibAnalysisJavaApp")) {
-            rval = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/examples/ThirdPartyLibAnalysisJavaApp").toString();
-        }
-
-        if (rval != null) {
-            logger.warn("Short Identifier '" + shortIdentifier + "' Converted to normalized identifier '" + rval + "'.");
-            return rval;
-        }
-        return shortIdentifier;
-    }
-
-    // TODO: This linkage shouldn't need this hack...
-    public static String deploymentModelIdentifierToAbsoluteIdentifier(String deploymentModelIdentifier) {
-        return deploymentModelToCoordinatesMap.get(deploymentModelIdentifier);
-    }
-
-    // TODO: This linkage shouldn't need this hack...
-    public static String absoluteIdentifierToDeploymentModelIdentifier(String coordinates) {
-        return coordinatesToDeploymentModelMap.get(coordinates);
-    }
 
     public static void injectMissingTestsAndFunctionality(Map<String, Map<String, Set<String>>> functionality) {
         try {
             Map<String, Set<String>> bbnDetectedTests = GradleKnowledgeBuilder.getAllTargetTests();
 
             for (String artifactIdentifier : bbnDetectedTests.keySet()) {
-                
+
                 Map<String, Set<String>> appFunctionality = functionality.get(artifactIdentifier);
                 if (appFunctionality == null) {
                     logger.debug("'" + artifactIdentifier + "' not analyzed by KRGP! Falling back on BBN Coverage Analysis!");
                     appFunctionality = new HashMap<>();
                     functionality.put(artifactIdentifier, appFunctionality);
                 }
-                
+
                 for (String testIdentifier : bbnDetectedTests.get(artifactIdentifier)) {
                     Set<String> testFunctionality = appFunctionality.get(testIdentifier);
                     if (testFunctionality == null) {
                         logger.debug("'" + artifactIdentifier + "' test '" + testIdentifier + "' not analyzed by KRGP! Falling back on BBN Coverage Analysis!");
                         testFunctionality = new HashSet<>();
                         appFunctionality.put(testIdentifier, testFunctionality);
-                        
+
                         if (testIdentifier.equals("mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest")) {
                             testFunctionality.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#VulnerabilityDropboxFunctionalAspect");
-                            
+
                         } else {
                             testFunctionality.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#BaselineFunctionalAspect");
                         }
@@ -107,7 +56,6 @@ public class Hacks {
                 }
 
             }
-            
 
             String app_path = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/examples/ThirdPartyLibAnalysisAndroidApp").toString();
             Map<String, Set<String>> appFunctionality = functionality.get(app_path);
@@ -136,42 +84,33 @@ public class Hacks {
         }
     }
 
-//    public static TestDetailsList getMissingExpectedTestsCP3PLUGFirstValidation(DasAdaptationContext dac) {
-//        Set<String> targets = DetermineTargets.select(dac);
-//
-//        String app_path = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/examples/ThirdPartyLibAnalysisAndroidApp").toString();
-//
-//        if (targets.contains(app_path)) {
-//            List<String> funcs = new LinkedList<>();
-//            funcs.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#BaselineFunctionalAspect");
-//            TestCaseReport tcr = new TestCaseReport(
-//                    app_path,
-//                    "mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.shouldPassWith003ButFailWith006",
-//                    -1,
-//                    null,
-//                    funcs);
-//
-//            List<String> funcs2 = new LinkedList<>();
-//            funcs2.add("http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#VulnerabilityDropboxFunctionalAspect");
-//            TestCaseReport tcr2 = new TestCaseReport(
-//                    app_path,
-//                    "mil.darpa.immortals.examples.tests.DropboxInstrumentedTest.dropboxUnitTest",
-//                    -1,
-//                    null,
-//                    funcs2);
-//
-//            TestDetailsList tdl = new TestDetailsList();
-//            tdl.add(new TestDetails(tcr, dac.getAdaptationIdentifer()));
-//            tdl.add(new TestDetails(tcr2, dac.getAdaptationIdentifer()));
-//            return tdl;
-//        }
-//
-//        app_path = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("shared/modules/dfus/TakServerDataManager").toString();
-//
-//        return null;
-//    }
+    private static String getDfuResourceUri(Path sourceFilepath) throws IOException {
+        Model m = ModelFactory.createDefaultModel();
+        InputStream is = new FileInputStream(sourceFilepath.toFile());
+        RDFDataMgr.read(m, is, Lang.TTL);
 
-//    public static Map<String, Set<String>> getUnannotatedTests() {
-//        
-//    }
+        List<Resource> resources = m.listResourcesWithProperty(RDF.type, m.getResource(Res.DFU_INSTANCE.uri)).toList();
+
+        if (resources.size() != 1) {
+            throw new RuntimeException("There should only be one DfuInstance in the JavaX Dfu file!");
+        }
+
+        return resources.get(0).getURI();
+    }
+
+    public static String getJavaxDfuInstanceUri() throws Exception {
+        String rval = getDfuResourceUri(
+                ImmortalsConfig.getInstance().extensions.krgp.getTtlTargetDirectory().resolve(
+                        "JavaxCrypto/structures/dfus/CipherImplJavaxCrypto.class-DFU.ttl"));
+//                .replaceAll(Prefix.IMMoRTALS_dfu_instance.uri, Prefix.IMMoRTALS_dfu_instance.name() + ":");
+        return rval;
+    }
+
+    public static String getBcDfuInstanceUri() throws Exception {
+        String rval = getDfuResourceUri(
+                ImmortalsConfig.getInstance().extensions.krgp.getTtlTargetDirectory().resolve(
+                        "BouncyCastleCipher/structures/dfus/CipherImplBouncyCrypto.class-DFU.ttl"));
+//                .replaceAll(Prefix.IMMoRTALS_dfu_instance.uri, Prefix.IMMoRTALS_dfu_instance.name() + ":");
+        return rval;
+    }
 }

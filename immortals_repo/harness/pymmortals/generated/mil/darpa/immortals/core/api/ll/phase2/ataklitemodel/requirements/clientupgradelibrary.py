@@ -11,8 +11,8 @@ class ClientUpgradeLibrary(Enum):
         self.oldDependencyCoordinates = oldDependencyCoordinates  # type: str
         self.repositoryUrl = repositoryUrl  # type: str
 
-    ToBeDetermined_X_X = ("ToBeDetermined_X_X",
-        "Libraries to be determined",
+    NONE = ("NONE",
+        "No Applicable Libraries Included",
         "dummy:new:version",
         "dummy:old:version",
         "http://central.maven.org/maven2/")

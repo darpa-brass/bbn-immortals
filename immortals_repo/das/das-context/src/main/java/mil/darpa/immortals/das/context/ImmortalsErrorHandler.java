@@ -3,6 +3,7 @@ package mil.darpa.immortals.das.context;
 import ch.qos.logback.classic.Logger;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.config.TestHarnessConfiguration;
+import okhttp3.OkHttpClient;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,7 +46,9 @@ public class ImmortalsErrorHandler {
             
         } else {
             TestHarnessConfiguration thc = ImmortalsConfig.getInstance().testHarness;
+            OkHttpClient client = new OkHttpClient.Builder().retryOnConnectionFailure(true).build();
             Retrofit retrofit = new Retrofit.Builder()
+                    .client(client)
                     .baseUrl(thc.getProtocol() + "://" + thc.getUrl() + ":" + thc.getPort())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();

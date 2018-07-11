@@ -10,6 +10,7 @@ class ImmortalizerConfiguration(Serializable):
     def __init__(self,
                  identifier: str = None,
                  performBuildFileAnalysis: bool = None,
+                 performDslCompilation: bool = None,
                  performKrgpBytecodeAnalysis: bool = None,
                  performKrgpCompleteGradleTaskAnalysis: bool = None,
                  performSchemaAnalysis: bool = None,
@@ -18,6 +19,7 @@ class ImmortalizerConfiguration(Serializable):
         super().__init__()
         self.identifier = identifier
         self.performBuildFileAnalysis = performBuildFileAnalysis
+        self.performDslCompilation = performDslCompilation
         self.performKrgpBytecodeAnalysis = performKrgpBytecodeAnalysis
         self.performKrgpCompleteGradleTaskAnalysis = performKrgpCompleteGradleTaskAnalysis
         self.performSchemaAnalysis = performSchemaAnalysis

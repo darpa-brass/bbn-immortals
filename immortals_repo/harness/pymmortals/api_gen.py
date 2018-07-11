@@ -118,7 +118,7 @@ _sample_cp2_submission_model = SubmissionModel(
     globalModel=GlobalSubmissionModel(
         requirements=GlobalRequirements(
             dataInTransit=DataInTransit(
-                securityStandard=SecurityStandard.NIST800Dash171
+                securityStandard=SecurityStandard.AES_128
             )
         ),
     ),
@@ -130,7 +130,6 @@ _sample_cp2_submission_model = SubmissionModel(
     ),
     atakLiteClientModel=ATAKLiteSubmissionModel(
         resources=[
-            AndroidResource.HARWARE_AES,
             AndroidResource.STRONG_CRYPTO
         ]
     )
@@ -139,7 +138,7 @@ _sample_cp2_submission_model = SubmissionModel(
 _sample_cp3_submission_model = SubmissionModel(
     martiServerModel=MartiSubmissionModel(
         requirements=MartiRequirements(
-            partialLibraryUpgrade=ServerPartialUpgradeLibrary.ToBeDetermined_X_X,
+            partialLibraryUpgrade=ServerPartialUpgradeLibrary.NONE,
             libraryUpgrade=ServerUpgradeLibrary.ElevationApi_2
         )
     ),
@@ -147,7 +146,7 @@ _sample_cp3_submission_model = SubmissionModel(
         requirements=AtakliteRequirements(
             deploymentPlatformVersion=AndroidPlatformVersion.Android23,
             partialLibraryUpgrade=ClientPartialUpgradeLibrary.Dropbox_3_0_6,
-            libraryUpgrade=ClientUpgradeLibrary.ToBeDetermined_X_X
+            libraryUpgrade=ClientUpgradeLibrary.NONE
         )
     )
 )  # type: SubmissionModel

@@ -46,4 +46,5 @@ dependencies {
     compile 'org.apache.jena:apache-jena-libs:3.1.0'
     compile 'org.apache.jena:jena:3.6.0'
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.22.2'
+    compile project(':shared:modules:core')
 }

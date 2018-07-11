@@ -34,8 +34,8 @@ apply plugin: 'java'
 apply plugin: 'maven-publish'
 apply from: 'dependencies.gradle'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 group "com.bbn.ataklite"
 version "2.0-LOCAL"
 
@@ -94,4 +94,6 @@ dependencies {
     compile 'mil.darpa.immortals:core:+'
     compile 'com.securboration:immortals-adsl-generate:+'
     compile 'mil.darpa.immortals.datatypes:Coordinates:+'
+    compile 'mil.darpa.immortals.dfus:JavaxCrypto:2.0-LOCAL'
+    compile 'mil.darpa.immortals.dfus:BouncyCastleCipher:2.0-LOCAL'
 }

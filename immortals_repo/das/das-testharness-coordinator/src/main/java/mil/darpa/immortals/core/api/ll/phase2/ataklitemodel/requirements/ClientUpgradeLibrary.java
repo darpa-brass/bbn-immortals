@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 @Description("A client upgrade library that will cause a mutation")
 public enum ClientUpgradeLibrary implements UpgradableLibraryInterface {
     @P2CP3
-    ToBeDetermined_X_X("Libraries to be determined", "dummy:old:version", "dummy:new:version", "http://central.maven.org/maven2/");
+    NONE("No Applicable Libraries Included", "dummy:old:version", "dummy:new:version", "http://central.maven.org/maven2/");
 
     public final String description;
     public final String oldDependencyCoordinates;

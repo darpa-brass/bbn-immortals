@@ -1,10 +1,24 @@
 #!/usr/bin/env bash
 
+START_TIME=`date +%s%N | cut -b1-13`
 
 HELP="
 INVALID INPUT!
 
-Valid argument values: cp1baselinea, cp1baselineb, cp1, cp2baselinea, cp3baselinea, cp3hddrassbaselineb, cp3plugbaselineb, cp3hddrass, cp3plug
+Valid argument values:
+    cp1baselinea
+    cp1baselineb
+    cp1
+    cp2baselinea
+    cp2baselineb
+    cp2
+    cp3baselinea
+    cp3hddrassbaselineb
+    cp3hddrass
+    cp3plugbaselineb
+    cp3plug
+    cp3litlbaselineb
+    cp3litl
 "
 
 DISABLE_DAS_INPUT="
@@ -15,6 +29,7 @@ DISABLE_DAS_INPUT="
 
 CP1_INPUT="
 {
+  \"sessionIdentifier\" : \"CP1${START_TIME}\",
   \"martiServerModel\": {
     \"requirements\": {
       \"postgresqlPerturbation\": {
@@ -48,20 +63,31 @@ CP1_INPUT="
 
 CP2_INPUT="
 {
-  \"sessionIdentifier\" : \"Cp2Challenge\",
+  \"sessionIdentifier\" : \"CP2${START_TIME}\",
   \"globalModel\": {
     \"requirements\": {
       \"dataInTransit\": {
-        \"securityStandard\": \"NIST800Dash171\"
+        \"securityStandard\": \"AES_128\"
       }
     }
+  },
+  \"atakLiteClientModel\": {
+    \"resources\": [
+      \"STRONG_CRYPTO\"
+    ]
+  },
+  \"martiServerModel\": {
+    \"resources\": [
+      \"HARWARE_AES\",
+      \"STRONG_CRYPTO\"
+    ]
   }
 }
 "
 
 CP3_HDDRASS_INPUT="
 {
-    \"sessionIdentifier\": \"1337Model\",
+    \"sessionIdentifier\" : \"CP3HDDRASS${START_TIME}\",
     \"martiServerModel\": {
         \"requirements\": {
             \"libraryUpgrade\": \"ElevationApi_2\"
@@ -72,11 +98,22 @@ CP3_HDDRASS_INPUT="
 
 CP3_PLUG_INPUT="
 {
-  \"sessionIdentifier\": \"1337Model\",
+
+  \"sessionIdentifier\" : \"CP3PLUG${START_TIME}\",
   \"atakLiteClientModel\": {
     \"requirements\": {
-      \"deploymentPlatformVersion\": \"Android21\",
       \"partialLibraryUpgrade\": \"Dropbox_3_0_6\"
+    }
+  }
+}
+"
+
+CP3_LITL_INPUT="
+{
+  \"sessionIdentifier\" : \"CP3LITL${START_TIME}\",
+  \"atakLiteClientModel\": {
+    \"requirements\": {
+      \"deploymentPlatformVersion\": \"Android23\"
     }
   }
 }
@@ -104,6 +141,14 @@ else
         sleep 2
         curl -X POST -H "Content-Type: application/json" http://127.0.0.1:55555/action/crossApplicationDependencies
 
+    elif [ "$1" = "cp2baselineb" ];then
+        curl -X POST -H "Content-Type: application/json" -d "$DISABLE_DAS_INPUT"  http://127.0.0.1:55555/enabled
+        sleep 2
+        curl -X POST -H "Content-Type: application/json" -d "$CP2_INPUT" http://127.0.0.1:55555/action/crossApplicationDependencies
+
+    elif [ "$1" = "cp2" ];then
+        curl -X POST -H "Content-Type: application/json" -d "$CP2_INPUT" http://127.0.0.1:55555/action/crossApplicationDependencies
+
     elif [ "$1" = "cp3baselinea" ];then
         curl -X POST -H "Content-Type: application/json" -d "$DISABLE_DAS_INPUT"  http://127.0.0.1:55555/enabled
         sleep 2
@@ -124,6 +169,14 @@ else
 
     elif [ "$1" = "cp3plug" ];then
         curl -X POST -H "Content-Type: application/json" -d "$CP3_PLUG_INPUT" http://127.0.0.1:55555/action/libraryEvolution
+
+    elif [ "$1" = "cp3litlbaselineb" ];then
+        curl -X POST -H "Content-Type: application/json" -d "$DISABLE_DAS_INPUT"  http://127.0.0.1:55555/enabled
+        sleep 2
+        curl -X POST -H "Content-Type: application/json" -d "$CP3_LITL_INPUT" http://127.0.0.1:55555/action/libraryEvolution
+
+    elif [ "$1" = "cp3litl" ];then
+        curl -X POST -H "Content-Type: application/json" -d "$CP3_LITL_INPUT" http://127.0.0.1:55555/action/libraryEvolution
 
     else
         echo ${HELP}

@@ -30,19 +30,23 @@ public class AdaptationDetails extends AbstractAdaptationDetails {
         super(adaptorIdentifier, dasOutcome, adaptationIdentifier);
         this.errorMessages = new LinkedList<>();
         this.detailMessages = new LinkedList<>();
+        this.adaptationValidationsPerformed = 0;
+        this.passingAdaptationValidations = 0;
     }
 
     public AdaptationDetails(@Nonnull String adaptorIdentifier, @Nonnull DasOutcome dasOutcome, @Nonnull String adaptationIdentifier, @Nonnull LinkedList<String> errorMessages, @Nonnull LinkedList<String> detailMessages) {
         super(adaptorIdentifier, dasOutcome, adaptationIdentifier);
         this.errorMessages = new LinkedList<>(errorMessages);
         this.detailMessages = new LinkedList<>(detailMessages);
+        this.adaptationValidationsPerformed = 0;
+        this.passingAdaptationValidations = 0;
     }
 
     private AdaptationDetails duplicate() {
         return new AdaptationDetails(adaptorIdentifier, dasOutcome, adaptationIdentifier, errorMessages, detailMessages);
     }
 
-    public synchronized AdaptationDetails produceUpdate(@Nonnull DasOutcome dasOutcome, @Nullable List<String> errorMessages, @Nullable List<String> detailMessages) {
+    public synchronized AdaptationDetails produceUpdate(@Nonnull DasOutcome dasOutcome, @Nullable List<String> errorMessages, @Nullable List<String> detailMessages, @Nonnull int adaptationValidationsPerformed, @Nonnull int passingAdaptationValidations) {
         AdaptationDetails ad = duplicate();
         ad.dasOutcome = dasOutcome;
         if (errorMessages != null) {
@@ -51,6 +55,8 @@ public class AdaptationDetails extends AbstractAdaptationDetails {
         if (detailMessages != null) {
             ad.detailMessages.addAll(detailMessages);
         }
+        ad.adaptationValidationsPerformed = adaptationValidationsPerformed;
+        ad.passingAdaptationValidations = passingAdaptationValidations;
         return ad;
     }
 }

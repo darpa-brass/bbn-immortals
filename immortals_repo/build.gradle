@@ -143,7 +143,7 @@ def buildknowledge = task('buildknowledge', type: Exec) {
     workingDir = IMMORTALS_ROOT.resolve('das/das-service/').toString()
     commandLine = ['java', '-jar', 'das.jar', '--analyze']
 
-    dependsOn(setupdb, build, buildMarti, buildAtakLite)
+    dependsOn(setupdb, build, buildMarti, buildAtakLite, dslBuild)
 }
 
 // TODO: Make this a task definition once you remove applying java
@@ -198,14 +198,14 @@ def deploy = task('deploy') {
 
     afterEvaluate {
         doFirst {
-//            exceptionOnNotExistsInPath('stack', 'compiling DSL', 'https://www.haskellstack.org')
-//            exceptionOnNotExistsInPath('z3', 'compiling DSL', 'https://github.com/Z3Prover/z3')
+            exceptionOnNotExistsInPath('stack', 'compiling DSL', 'https://www.haskellstack.org')
+            exceptionOnNotExistsInPath('z3', 'compiling DSL', 'https://github.com/Z3Prover/z3')
             exceptionOnEnvVarUnset('ANDROID_HOME', 'ATAKLite', 'https://developer.android.com/studio/releases/platform-tools.html')
         }
 
     }
 
-    dependsOn(build, setupdb, buildknowledge, ':extensions:deploy')
+    dependsOn(build, setupdb, buildknowledge, dslBuild, ':extensions:deploy')
 }
 
 def redeploy = task('redeploy') {

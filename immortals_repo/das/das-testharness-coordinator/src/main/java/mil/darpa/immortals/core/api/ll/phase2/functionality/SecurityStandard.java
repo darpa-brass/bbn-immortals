@@ -9,13 +9,23 @@ import mil.darpa.immortals.core.api.annotations.P2CP2;
 @P2CP2
 @Description("Common security standards")
 public enum SecurityStandard {
-    FIPS140Dash1("Obsolete less secure NIST government security standard"),
-    FIPS140Dash2("Current secure NIST government security standard"),
-    NIST800Dash171("Recent governemnt contractor security standard");
-    
+    AES_128("AES encryption standard with 128bit+ key", "AES", 16, null);
+//    AES_256("AES encryption standard with 256bit+ key", "AES", 32, null),
+//    Blowfish_128("Blowfish encryption standard with 128bit+ key", "Blowfish", 16, null),
+//    DESEDE_128("DESEDE encryption standard with 128bit+ key", "DESEDE", 16, null),
+//    DES_56("DES encryption standard with 56bit+ key", "DES", 7, null),
+//    GCM_128("GCM encryption standard with 128bit+ key", "GCM", 16, null);
+
+
     public final String description;
-    
-    SecurityStandard(String description) {
+    public final String algorithm;
+    public final Integer keySize;
+    public final String cipherChainingMode;
+
+    SecurityStandard(String description, String algorithm, Integer keySize, String cipherChainingMode) {
         this.description = description;
+        this.algorithm = algorithm;
+        this.keySize = keySize;
+        this.cipherChainingMode = cipherChainingMode;
     }
 }

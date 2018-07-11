@@ -6,7 +6,6 @@ import javax.sql.rowset.CachedRowSet;
 
 import mil.darpa.immortals.annotation.dsl.ontology.java.testing.annotation.ProvidedFunctionalityValidationAnnotation;
 import mil.darpa.immortals.ontology.BaselineFunctionalAspect;
-import mil.darpa.immortals.ontology.BaselineFunctionalitySpec;
 import mil.darpa.immortals.ontology.DatabaseQueryFunctionalAspect;
 import org.junit.After;
 import org.junit.Before;
@@ -127,6 +126,37 @@ public class DataManagerTest {
 
 		try {
 			CachedRowSet data = dm.cotEventsForConstantCotType();
+			assertTrue(data.size() > 0);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Unexpected error: " + e);
+		}
+	}
+
+	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
+	@Test
+	public void testCotEventsForXYTiles() {
+
+		int tileX = 18830;
+		int tileY = 25704;
+		
+		try {
+			CachedRowSet data = dm.cotEventsForXYTiles(tileX, tileY);
+			assertTrue(data.size() > 0);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Unexpected error: " + e);
+		}
+	}
+
+	@ProvidedFunctionalityValidationAnnotation(validatedAspects = {BaselineFunctionalAspect.class, DatabaseQueryFunctionalAspect.class})
+	@Test
+	public void testCotEventsForSource() {
+
+		int sourceId = 2199;
+		
+		try {
+			CachedRowSet data = dm.cotEventsForSource(sourceId);
 			assertTrue(data.size() > 0);
 		} catch (Exception e) {
 			e.printStackTrace();

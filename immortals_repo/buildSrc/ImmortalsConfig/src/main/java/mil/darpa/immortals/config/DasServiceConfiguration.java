@@ -23,6 +23,8 @@ public class DasServiceConfiguration implements RestfulAppConfigInterface {
     private HashMap<String, String> environmentVariables = new HashMap<>();
     String readyStdoutLineRegexPattern = ".*(?<=The DAS service located at).*(?<=is running.)$";
     private boolean shutdownEverythingOnTermination = false;
+    
+    private String resourceDslPath = GlobalsConfig.staticImmortalsRoot.resolve("dsl/resource-dsl").toAbsolutePath().toString();
 
     DasServiceConfiguration() {
     }
@@ -101,5 +103,9 @@ public class DasServiceConfiguration implements RestfulAppConfigInterface {
     @Override
     public boolean isShutdownEverythingOnTermination() {
         return shutdownEverythingOnTermination;
+    }
+    
+    public Path getResourceDslPath() {
+        return Paths.get(resourceDslPath);
     }
 }

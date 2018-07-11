@@ -200,7 +200,7 @@
         {
             "identifier": "z3",
             "environmentTag": "DSL",
-            "version": "4.6.0",
+            "version": "4.7.1",
             "home": "{installationRoot}z3",
             "versionExtractionCommand": "z3 --version",
             "versionExtractionRegex": "(?<=Z3 version )[0-9.]+(?=.*)",
@@ -215,7 +215,7 @@
             "setupCommands": [],
             "osx": {
                 "setupCommands": [
-                    "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-osx-10.11.zip --directory-prefix {tempDirectory}",
+                    "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-osx-10.11.6.zip --directory-prefix {tempDirectory}",
                     "unzip {tempDirectory}/z3-{version}-x64-osx-10.11.zip -d {installationRoot}",
                     "mv {installationRoot}z3-{version}-x64-osx-10.11 {home}"
                 ]

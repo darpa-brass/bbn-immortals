@@ -1,0 +1,16 @@
+apply plugin: mil.darpa.immortals.JavaModule
+
+apply plugin: 'mil.darpa.immortals'
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+    compile group: 'com.securboration', name: 'immortals-adsl-generate', version: 'r2.0.0'
+}
+

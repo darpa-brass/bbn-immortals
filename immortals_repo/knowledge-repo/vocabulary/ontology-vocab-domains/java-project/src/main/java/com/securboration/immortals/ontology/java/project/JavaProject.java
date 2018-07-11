@@ -3,6 +3,7 @@ package com.securboration.immortals.ontology.java.project;
 import com.securboration.immortals.ontology.bytecode.BytecodeArtifact;
 import com.securboration.immortals.ontology.bytecode.BytecodeArtifactCoordinate;
 import com.securboration.immortals.ontology.identifier.HasUuid;
+import com.securboration.immortals.ontology.java.android.AndroidApp;
 import com.securboration.immortals.ontology.java.build.BuildScript;
 import com.securboration.immortals.ontology.java.compiler.*;
 import com.securboration.immortals.ontology.java.source.CompiledJavaSourceFile;
@@ -55,6 +56,8 @@ public class JavaProject implements HasUuid {
     private VcsCoordinate vcsCoordinate;
     
     private SourceCodeRepo sourceCodeRepo;
+
+    private AndroidApp androidApp;
 
     public String[] getCompiledSourceHash() {
         return compiledSourceHash;
@@ -133,5 +136,13 @@ public class JavaProject implements HasUuid {
 
     public void setVcsCoordinate(VcsCoordinate vcsCoordinate) {
         this.vcsCoordinate = vcsCoordinate;
+    }
+
+    public AndroidApp getAndroidApp() {
+        return androidApp;
+    }
+
+    public void setAndroidApp(AndroidApp androidApp) {
+        this.androidApp = androidApp;
     }
 }

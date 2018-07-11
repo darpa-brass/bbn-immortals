@@ -21,6 +21,8 @@ public class ImmortalizerConfiguration {
     private boolean performTestCoverageAnalysis = true;
 
     private boolean performSchemaAnalysis = true;
+    
+    private boolean performDslCompilation = true;
 
     public String getIdentifier() {
         return identifier;
@@ -50,5 +52,9 @@ public class ImmortalizerConfiguration {
 
     public boolean isPerformSchemaAnalysis() {
         return performSchemaAnalysis;
+    }
+    
+    public boolean isPerformDslCompilation() {
+        return performDslCompilation;
     }
 }

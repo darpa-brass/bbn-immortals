@@ -255,12 +255,12 @@ public class P2CP1TestCoordinator implements TestCoordinatorExecutionInterface {
             //Write perturbed schema ddl to file (to support dataModel generation by Castor)
             Path ddlPath = castorSubmissionFolder.resolve("ddl.sql");
             writer = new FileWriter(ddlPath.toFile(), false);
-            writer.write(sourceTableDDL + ";" + perturbedDdl);
+            writer.write(sourceTableDDL + " " + perturbedDdl);
             writer.flush();
             writer.close();
 
             logger.info("Wrote perturbation DDL to Castor submission folder.");
-            logger.trace("Perturbation DDL: " + sourceTableDDL + ";" + perturbedDdl);
+            logger.trace("Perturbation DDL: " + sourceTableDDL + " " + perturbedDdl);
 
             //Prepare postgres database
             deleteAllTablesTakRpt();
@@ -323,6 +323,7 @@ public class P2CP1TestCoordinator implements TestCoordinatorExecutionInterface {
         StringBuilder dataLoadDML = null;
         String currentTable = null;
         String currentColumns = null;
+        String primaryCotEventTable = null;
 
         int keyIndex = 0;
 
@@ -346,9 +347,20 @@ public class P2CP1TestCoordinator implements TestCoordinatorExecutionInterface {
                 ddl.append(", CONSTRAINT source_pk FOREIGN KEY (source_id) REFERENCES source(source_id) MATCH SIMPLE ");
                 ddl.append(" ON UPDATE RESTRICT ON DELETE RESTRICT");
             }
+
+            if (primaryCotEventTable != null) {
+                ddl.append(", CONSTRAINT cot_event_fk" + keyIndex + " FOREIGN KEY (id) " +
+                        "REFERENCES " + primaryCotEventTable + " (id) MATCH SIMPLE " +
+                        "ON UPDATE RESTRICT ON DELETE RESTRICT");
+            }
+
             ddl.append(");");
 
             conn.createStatement().execute(ddl.toString());
+
+            if (primaryCotEventTable == null) {
+                primaryCotEventTable = currentTable;
+            }
 
             result += ddl;
 

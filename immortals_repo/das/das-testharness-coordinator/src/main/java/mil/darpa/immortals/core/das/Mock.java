@@ -37,7 +37,7 @@ public class Mock {
         Thread t = new Thread(() -> {
             try {
                 Thread.sleep(300);
-                AdaptationDetails ad2 = ad.produceUpdate(DasOutcome.SUCCESS, new LinkedList<>(), Arrays.asList("Did a little more stuff for " + cpIdentifier));
+                AdaptationDetails ad2 = ad.produceUpdate(DasOutcome.SUCCESS, new LinkedList<>(), Arrays.asList("Did a little more stuff for " + cpIdentifier), 0, 0);
                 ad2.dasOutcome = DasOutcome.SUCCESS;
                 AdaptationDetailsList adl = new AdaptationDetailsList();
                 adl.add(ad2);
@@ -179,12 +179,12 @@ public class Mock {
                 tdl0.add(td0);
                 TestDetailsList tdl1 = tdl0.producePendingList();
                 tdl1.sequence = 1;
-                AdaptationDetails ad1 = ad0.produceUpdate(DasOutcome.RUNNING, null, null);
+                AdaptationDetails ad1 = ad0.produceUpdate(DasOutcome.RUNNING, null, null, 0, 0);
                 AdaptationDetailsList adl1 = new AdaptationDetailsList();
                 adl1.add(ad1);
                 adl1.sequence = 2;
 
-                AdaptationDetails ad2 = ad1.produceUpdate(DasOutcome.SUCCESS, null, null);
+                AdaptationDetails ad2 = ad1.produceUpdate(DasOutcome.SUCCESS, null, null, 0, 0);
                 AdaptationDetailsList adl2 = new AdaptationDetailsList();
                 adl2.add(ad2);
                 adl2.sequence = 3;

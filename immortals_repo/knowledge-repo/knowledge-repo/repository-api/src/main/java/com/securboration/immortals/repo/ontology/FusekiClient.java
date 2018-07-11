@@ -209,6 +209,11 @@ public class FusekiClient {
     public static interface ResultSetProcessor {
         public void processQuerySolution(QuerySolution s);
     }
+
+    
+    public String getFusekiServiceDataUrl() {
+        return fusekiServiceDataUrl;
+    }
 }
 
 

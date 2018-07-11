@@ -71,7 +71,8 @@
             "performKrgpBytecodeAnalysis": true,
             "performKrgpCompleteGradleTaskAnalysis": true,
             "performTestCoverageAnalysis": true,
-            "performSchemaAnalysis": true
+            "performSchemaAnalysis": true,
+            "performDslCompilation": true
         },
         "voltdb": {
             "userManaged": false
@@ -115,6 +116,10 @@
         "shared/modules/dfus/ElevationApi-1",
         "shared/modules/dfus/ElevationApi-2",
         "shared/modules/dfus/TakServerDataManager",
+        "shared/modules/dfus/JavaxCrypto",
+        "shared/modules/dfus/BogoCipher",
+        "shared/modules/dfus/BouncyCastleCipher",
+        "shared/modules/dfus/NoOpCipher",
         "applications/server/Marti",
         "applications/client/ATAKLite",
         "applications/examples/ThirdPartyLibAnalysisAndroidApp",

@@ -1,0 +1,133 @@
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_cp_jvm: <http://darpa.mil/immortals/ontology/r2.0.0/cp/jvm#> .
+@prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#> .
+@prefix IMMoRTALS_functionality_datatype: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_resources_compute: <http://darpa.mil/immortals/ontology/r2.0.0/resources/compute#> .
+@prefix IMMoRTALS_property_impact: <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#> .
+@prefix IMMoRTALS_com_securboration_immortals_exampleDataflows: <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/exampleDataflows#> .
+
+IMMoRTALS_resources_compute:InstructionSets.X86
+        a                            IMMoRTALS_resources_compute:InstructionSet ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Intel's fully backward compatible microprocessor instruction set originating with the 8086" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resources.compute.InstructionSets$X86" .
+
+IMMoRTALS_gmei:DeploymentModelCP2
+        a                               IMMoRTALS_gmei:DeploymentModel ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1 , IMMoRTALS_cp2:ClientServerEnvironment.MartiServer ;
+        IMMoRTALS:hasCauseEffectAssertions
+                IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DataSafetyConstraint ;
+        IMMoRTALS:hasHumanReadableDescription
+                "This describes a server and several client devices, along with some file systems and software, on the devices.  There is a constraint placed on any data transmitted between client and server devices mandating it be confidential somehow." ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.gmei.DeploymentModelCP2" .
+
+IMMoRTALS_resources_compute:InstructionSets.AES_NI
+        a                            IMMoRTALS_resources_compute:InstructionSets.X86 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Advanced Encryption Standard instructions" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.resources.compute.InstructionSets$AES_NI" .
+
+IMMoRTALS_cp_jvm:AndroidRuntimeEnvironment-fe7e09ef-8545-4896-9e12-a2e013763254
+        a       IMMoRTALS_cp_jvm:AndroidRuntimeEnvironment ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Oreo 8.0" .
+
+IMMoRTALS_resources_compute:Cpu-6a6a1262-e048-4114-a689-3c4daedfad76
+        a                              IMMoRTALS_resources_compute:Cpu ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Qualcomm Snapdragon 835" ;
+        IMMoRTALS:hasInstructionSetArchitectureSupport
+                IMMoRTALS_resources_compute:InstructionSets.X86 ;
+        IMMoRTALS:hasNumCoresLogical   "4"^^xsd:int ;
+        IMMoRTALS:hasNumCoresPhysical  "4"^^xsd:int .
+
+IMMoRTALS_cp2:ClientServerEnvironment.MartiServer
+        a                            IMMoRTALS_cp2:Analysis.Marti.MartiServer ;
+        IMMoRTALS:hasHumanReadableDescription
+                "a server running MARTI" ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$MartiServer" ;
+        IMMoRTALS:hasResources       IMMoRTALS_cp2:ClientServerEnvironment.MartiSoftware , IMMoRTALS_resources_compute:Cpu-a92a1d62-48a0-4d03-804e-f4ff37ae1b75 , IMMoRTALS_cp_jvm:JavaRuntimeEnvironment-36a5c625-f1c4-468e-88c1-bc27fbb736b0 .
+
+IMMoRTALS_property_impact:ConstraintViolationImpact-218bb692-d8a2-4376-8520-a5a7d33d7e55
+        a       IMMoRTALS_property_impact:ConstraintViolationImpact ;
+        IMMoRTALS:hasConstraintViolationType
+                "HARD_CONSTRAINT_VIOLATION" ;
+        IMMoRTALS:hasDirectionOfViolation
+                "UNDERSHOOT" .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ATAKSoftware
+        a                               IMMoRTALS_cp2:Analysis.Atak.AtakSoftware ;
+        IMMoRTALS:hasApplicationName    "ATAK" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "An instance of the ATAK project" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ATAKSoftware" ;
+        IMMoRTALS:hasSoftwareCoordinate
+                "com.bbn.ataklite" ;
+        IMMoRTALS:hasVersionControlUrl  "https://dsl-external.bbn.com/svn/immortals/trunk/applications/client/ATAKLite" .
+
+IMMoRTALS_cp2:Analysis.Marti.MartiServer
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Marti$MartiServer" .
+
+IMMoRTALS_resources_compute:Cpu-a92a1d62-48a0-4d03-804e-f4ff37ae1b75
+        a                              IMMoRTALS_resources_compute:Cpu ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Intel Xeon E7-8890V2" ;
+        IMMoRTALS:hasInstructionSetArchitectureSupport
+                IMMoRTALS_resources_compute:InstructionSets.X86 ;
+        IMMoRTALS:hasNumCoresLogical   "30"^^xsd:int ;
+        IMMoRTALS:hasNumCoresPhysical  "15"^^xsd:int .
+
+IMMoRTALS_property_impact:AbstractPropertyCriterion-39d9b774-2150-4f13-a3e9-8e1e35436d96
+        a                       IMMoRTALS_property_impact:AbstractPropertyCriterion ;
+        IMMoRTALS:hasCriterion  "PROPERTY_ABSENT" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "This criterion specifies a situation where a confidential property is absent." ;
+        IMMoRTALS:hasProperty   IMMoRTALS_functionality:ConfidentialProperty .
+
+IMMoRTALS_cp2:ClientServerEnvironment.ClientDevice1
+        a                            IMMoRTALS_cp2:Analysis.Atak.AtakPhone ;
+        IMMoRTALS:hasHumanReadableDescription
+                "A phone with a file system connected to a network and running ATAK." ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$ClientDevice1" ;
+        IMMoRTALS:hasResources       IMMoRTALS_cp2:ClientServerEnvironment.ATAKSoftware , IMMoRTALS_resources_compute:Cpu-6a6a1262-e048-4114-a689-3c4daedfad76 , IMMoRTALS_cp_jvm:AndroidRuntimeEnvironment-fe7e09ef-8545-4896-9e12-a2e013763254 .
+
+IMMoRTALS_cp2:ClientServerEnvironment.MartiSoftware
+        a                               IMMoRTALS_cp2:Analysis.Marti.MartiSoftware ;
+        IMMoRTALS:hasApplicationName    "MARTI" ;
+        IMMoRTALS:hasHumanReadableDescription
+                "An instance of the MARTI project" ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.ontology.cp2.ClientServerEnvironment$MartiSoftware" ;
+        IMMoRTALS:hasSoftwareCoordinate
+                "mil.darpa.immortals:Marti-immortals:2.0-LOCAL" ;
+        IMMoRTALS:hasVersionControlUrl  "https://dsl-external.bbn.com/svn/immortals/trunk/applications/server/Marti" .
+
+IMMoRTALS_cp_jvm:JavaRuntimeEnvironment-36a5c625-f1c4-468e-88c1-bc27fbb736b0
+        a                          IMMoRTALS_cp_jvm:JavaRuntimeEnvironment ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Oracle Java 8u171" ;
+        IMMoRTALS:hasJavaHomePath  "usr/local/jdk1.8.1_71" .
+
+IMMoRTALS_cp2:Analysis.Atak.AtakPhone
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Atak$AtakPhone" .
+
+IMMoRTALS_property_impact:AbstractDataflowBindingSite-4e72b81f-43cf-4b99-ae28-35676aa1f46f
+        a                  IMMoRTALS_property_impact:AbstractDataflowBindingSite ;
+        IMMoRTALS:hasDest  IMMoRTALS_cp2:Analysis.Marti.MartiServer ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Any data between an android mobile device and server" ;
+        IMMoRTALS:hasSrc   IMMoRTALS_cp2:Analysis.Atak.AtakPhone .
+
+IMMoRTALS_property_impact:AbstractDataflowBindingSite-ee0db2ac-9085-4f90-a1b1-9b4cd2bd1016
+        a                  IMMoRTALS_property_impact:AbstractDataflowBindingSite ;
+        IMMoRTALS:hasDest  IMMoRTALS_cp2:Analysis.Atak.AtakPhone ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Any data between an android mobile device and server" ;
+        IMMoRTALS:hasSrc   IMMoRTALS_cp2:Analysis.Marti.MartiServer .
+

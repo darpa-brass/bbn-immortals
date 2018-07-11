@@ -1,8 +1,7 @@
 package mil.darpa.immortals.das;
 
 
-
-public class KRTemp{
+public class KRTemp {
     public static class immortals_analysis {
         public static final String AnalysisReport$ = "http://darpa.mil/immortals/ontology/r2.0.0/analysis#AnalysisReport";//a class URI
         public static final String CallGraphEdge$ = "http://darpa.mil/immortals/ontology/r2.0.0/analysis/cg#CallGraphEdge";//a class URI
@@ -153,11 +152,14 @@ public class KRTemp{
         public static final String AlgorithmPurposeProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/algorithm/purpose#AlgorithmPurposeProperty";//a class URI
         public static final String AlgorithmSpecificationProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/algorithm#AlgorithmSpecificationProperty";//a class URI
         public static final String AlgorithmStandardProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/algorithm#AlgorithmStandardProperty";//a class URI
+        public static final String AnalysisImpact$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#AnalysisImpact";//a class URI
         public static final String AndroidPhone$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#AndroidPhone";//a class URI
         public static final String ApplicationLayerAbstraction$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/network#ApplicationLayerAbstraction";//a class URI
         public static final String ArgToSemanticTypeBinding$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#ArgToSemanticTypeBinding";//a class URI
         public static final String AspectInjectionPoint$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#AspectInjectionPoint";//a class URI
         public static final String AssertionBindingSite$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#AssertionBindingSite";//a class URI
+        public static final String AugmentedMethodInvocation$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#AugmentedMethodInvocation";//a class URI
+        public static final String AugmentedUserSourceFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#AugmentedUserSourceFile";//a class URI
         public static final String BluetoothResource$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#BluetoothResource";//a class URI
         public static final String CauseEffectAssertion$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#CauseEffectAssertion";//a class URI
         public static final String Class$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/lang#Class";//a class URI
@@ -167,7 +169,9 @@ public class KRTemp{
         public static final String Column$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/logical#Column";//a class URI
         public static final String CommunicationChannel$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#CommunicationChannel";//a class URI
         public static final String CompiledCodeUnit$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#CompiledCodeUnit";//a class URI
+        public static final String CompiledSoftware$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#CompiledSoftware";//a class URI
         public static final String ComputeResource$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#ComputeResource";//a class URI
+        public static final String ConstraintViolation$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#ConstraintViolation";//a class URI
         public static final String ConstraintViolationCriterion$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#ConstraintViolationCriterion";//a class URI
         public static final String ConstraintViolationImpact$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#ConstraintViolationImpact";//a class URI
         public static final String ControlPoint$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp#ControlPoint";//a class URI
@@ -191,6 +195,7 @@ public class KRTemp{
         public static final String Dfu$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu#Dfu";//a class URI
         public static final String DfuAnnotation$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu/annotation#DfuAnnotation";//a class URI
         public static final String DfuAnnotations$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu/annotation#DfuAnnotations";//a class URI
+        public static final String DfuConfigurationVariable$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#DfuConfigurationVariable";//a class URI
         public static final String DfuInstance$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance";//a class URI
         public static final String Dfus$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu#Dfus";//a class URI
         public static final String DiscreteCompiledCodeUnit$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#DiscreteCompiledCodeUnit";//a class URI
@@ -226,6 +231,9 @@ public class KRTemp{
         public static final String ImmortalsBaseClass$ = "http://darpa.mil/immortals/ontology/r2.0.0#ImmortalsBaseClass";//a class URI
         public static final String ImpactStatement$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#ImpactStatement";//a class URI
         public static final String Input$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#Input";//a class URI
+        public static final String InstructionSet$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/compute#InstructionSet";//a class URI
+        public static final String InstructionSets_SSSE3$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/compute#InstructionSets.SSSE3";//a class URI
+        public static final String InstructionSets_X86$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/compute#InstructionSets.X86";//a class URI
         public static final String InterMethodDataflowEdge$ = "http://darpa.mil/immortals/ontology/r2.0.0/analysis#InterMethodDataflowEdge";//a class URI
         public static final String InterMethodDataflowNode$ = "http://darpa.mil/immortals/ontology/r2.0.0/analysis#InterMethodDataflowNode";//a class URI
         public static final String InterProcessDataflowNode$ = "http://darpa.mil/immortals/ontology/r2.0.0/analysis#InterProcessDataflowNode";//a class URI
@@ -321,6 +329,7 @@ public class KRTemp{
         public static final String VirtualMemoryResource$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/memory#VirtualMemoryResource";//a class URI
         public static final String Volume$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#Volume";//a class URI
         public static final String WirelessSpectrum$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/environment#WirelessSpectrum";//a class URI
+        public static final String WrapperAdaptation$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#WrapperAdaptation";//a class URI
         public static final String WrapperSourceFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#WrapperSourceFile";//a class URI
         public static final String XMLSchema$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/logical#XMLSchema";//a class URI
 
@@ -329,6 +338,7 @@ public class KRTemp{
         public static final String hasAbstractComponentLinkage$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAbstractComponentLinkage";//a property URI
         public static final String hasAnalysisFrameChild$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAnalysisFrameChild";//a property URI
         public static final String hasAnalysisFrameDataType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAnalysisFrameDataType";//a property URI
+        public static final String hasAnalysisImpacts$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAnalysisImpacts";//a property URI
         public static final String hasApplicableDataType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasApplicableDataType";//a property URI
         public static final String hasApplicableResourceInstance$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasApplicableResourceInstance";//a property URI
         public static final String hasApplicableResourceType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasApplicableResourceType";//a property URI
@@ -345,6 +355,7 @@ public class KRTemp{
         public static final String hasAspectSpecificResourceDependencies$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAspectSpecificResourceDependencies";//a property URI
         public static final String hasAspects$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAspects";//a property URI
         public static final String hasAssertionBindingSites$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAssertionBindingSites";//a property URI
+        public static final String hasAugmentedMethodInvocations$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAugmentedMethodInvocations";//a property URI
         public static final String hasAugmentedMethods$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAugmentedMethods";//a property URI
         public static final String hasBindingSite$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBindingSite";//a property URI
         public static final String hasCanRead$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCanRead";//a property URI
@@ -391,6 +402,8 @@ public class KRTemp{
         public static final String hasDirectionOfViolation$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDirectionOfViolation";//a property URI
         public static final String hasDisks$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDisks";//a property URI
         public static final String hasDurableId$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDurableId";//a property URI
+        public static final String hasDurableUri$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDurableUri";//a property URI
+        public static final String hasEdgeInViolation$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasEdgeInViolation";//a property URI
         public static final String hasEdgeProperties$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasEdgeProperties";//a property URI
         public static final String hasEdges$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasEdges";//a property URI
         public static final String hasEncoding$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasEncoding";//a property URI
@@ -426,6 +439,7 @@ public class KRTemp{
         public static final String hasImpactedResource$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasImpactedResource";//a property URI
         public static final String hasInputType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInputType";//a property URI
         public static final String hasInputs$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInputs";//a property URI
+        public static final String hasInstructionSetArchitectureSupport$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInstructionSetArchitectureSupport";//a property URI
         public static final String hasInternetLayer$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInternetLayer";//a property URI
         public static final String hasInverseAspect$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInverseAspect";//a property URI
         public static final String hasInvokedAspect$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInvokedAspect";//a property URI
@@ -441,6 +455,7 @@ public class KRTemp{
         public static final String hasLinkId$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasLinkId";//a property URI
         public static final String hasLinkLayer$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasLinkLayer";//a property URI
         public static final String hasLocalDevice$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasLocalDevice";//a property URI
+        public static final String hasMagicStringVar$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMagicStringVar";//a property URI
         public static final String hasMajor$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMajor";//a property URI
         public static final String hasMaxAvailableBytes$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMaxAvailableBytes";//a property URI
         public static final String hasMaxFrequency$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMaxFrequency";//a property URI
@@ -451,12 +466,14 @@ public class KRTemp{
         public static final String hasMemoryType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMemoryType";//a property URI
         public static final String hasMethodName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMethodName";//a property URI
         public static final String hasMethodPointer$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMethodPointer";//a property URI
+        public static final String hasMethodSignature$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMethodSignature";//a property URI
         public static final String hasMetric$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMetric";//a property URI
         public static final String hasMetricValues$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMetricValues";//a property URI
         public static final String hasMinFrequency$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMinFrequency";//a property URI
         public static final String hasMinFrequencyHertz$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMinFrequencyHertz";//a property URI
         public static final String hasMinor$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMinor";//a property URI
         public static final String hasMitigationStrategy$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMitigationStrategy";//a property URI
+        public static final String hasMitigationStrategyUtilized$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMitigationStrategyUtilized";//a property URI
         public static final String hasModulationStrategy$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasModulationStrategy";//a property URI
         public static final String hasMultiplicityOperator$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMultiplicityOperator";//a property URI
         public static final String hasName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasName";//a property URI
@@ -516,6 +533,7 @@ public class KRTemp{
         public static final String hasSatelliteId$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSatelliteId";//a property URI
         public static final String hasSatellites$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSatellites";//a property URI
         public static final String hasSemanticType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSemanticType";//a property URI
+        public static final String hasSoftwareCoordinate$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSoftwareCoordinate";//a property URI
         public static final String hasSource$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSource";//a property URI
         public static final String hasSourceFiles$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSourceFiles";//a property URI
         public static final String hasSpec$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSpec";//a property URI
@@ -524,6 +542,7 @@ public class KRTemp{
         public static final String hasStandardName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasStandardName";//a property URI
         public static final String hasStringValue$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasStringValue";//a property URI
         public static final String hasStructures$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasStructures";//a property URI
+        public static final String hasSurfaceName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSurfaceName";//a property URI
         public static final String hasSystemLibraries$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSystemLibraries";//a property URI
         public static final String hasTables$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasTables";//a property URI
         public static final String hasTag$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasTag";//a property URI
@@ -544,15 +563,18 @@ public class KRTemp{
         public static final String hasUsageParadigm$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasUsageParadigm";//a property URI
         public static final String hasValue$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasValue";//a property URI
         public static final String hasVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVersion";//a property URI
+        public static final String hasVersionControlUrl$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVersionControlUrl";//a property URI
         public static final String hasVersionTag$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVersionTag";//a property URI
         public static final String hasVersioningMetric$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVersioningMetric";//a property URI
         public static final String hasViolationMessage$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasViolationMessage";//a property URI
+        public static final String hasWrapperAdaptations$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasWrapperAdaptations";//a property URI
     }
 
     public static class immortals_cp {
         public static final String AbstractResourceNode$ = "http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#AbstractResourceNode";//a class URI
         public static final String AndroidPlatform$ = "http://darpa.mil/immortals/ontology/r2.0.0/android#AndroidPlatform";//a class URI
         public static final String AndroidPlatformVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0/android#AndroidPlatformVersion";//a class URI
+        public static final String AndroidRuntimeEnvironment$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/jvm#AndroidRuntimeEnvironment";//a class URI
         public static final String ArrayList$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/util#ArrayList";//a class URI
         public static final String BandwidthKiloBitsPerSecond$ = "http://darpa.mil/immortals/ontology/r2.0.0/connectivity#BandwidthKiloBitsPerSecond";//a class URI
         public static final String BytecodeArtifact$ = "http://darpa.mil/immortals/ontology/r2.0.0/bytecode#BytecodeArtifact";//a class URI
@@ -585,6 +607,7 @@ public class KRTemp{
         public static final String Jar$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/java#Jar";//a class URI
         public static final String JavaClassFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/java#JavaClassFile";//a class URI
         public static final String JavaInstallation$ = "http://darpa.mil/immortals/ontology/r2.0.0/server#JavaInstallation";//a class URI
+        public static final String JavaRuntimeEnvironment$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/jvm#JavaRuntimeEnvironment";//a class URI
         public static final String JavaSourceCodeFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/java#JavaSourceCodeFile";//a class URI
         public static final String JdkVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0/server#JdkVersion";//a class URI
         public static final String LinuxPlatform$ = "http://darpa.mil/immortals/ontology/r2.0.0/unix#LinuxPlatform";//a class URI
@@ -610,6 +633,7 @@ public class KRTemp{
         public static final String ResourceContainmentModel$ = "http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#ResourceContainmentModel";//a class URI
         public static final String ResourceContainmentModelNode$ = "http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#ResourceContainmentModelNode";//a class URI
         public static final String RevisedGmeInterchangeFormat$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp#RevisedGmeInterchangeFormat";//a class URI
+        public static final String RuntimeEnvironment$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/jvm#RuntimeEnvironment";//a class URI
         public static final String ServerPlatform$ = "http://darpa.mil/immortals/ontology/r2.0.0/server#ServerPlatform";//a class URI
         public static final String SoftwareSpec$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp#SoftwareSpec";//a class URI
         public static final String UnixPlatform$ = "http://darpa.mil/immortals/ontology/r2.0.0/unix#UnixPlatform";//a class URI
@@ -638,6 +662,8 @@ public class KRTemp{
         public static final String hasHumanReadableDesc$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasHumanReadableDesc";//a property URI
         public static final String hasHumanReadableDescription$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasHumanReadableDescription";//a property URI
         public static final String hasHumanReadableForm$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasHumanReadableForm";//a property URI
+        public static final String hasJavaHomePath$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJavaHomePath";//a property URI
+        public static final String hasJavaVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJavaVersion";//a property URI
         public static final String hasJdkVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJdkVersion";//a property URI
         public static final String hasKiloBytesPerSecond$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasKiloBytesPerSecond";//a property URI
         public static final String hasLocation$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasLocation";//a property URI
@@ -664,6 +690,7 @@ public class KRTemp{
         public static final String hasResourceType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasResourceType";//a property URI
         public static final String hasRightValue$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasRightValue";//a property URI
         public static final String hasSessionIdentifier$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSessionIdentifier";//a property URI
+        public static final String hasUnlimitedCryptoStrengh$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasUnlimitedCryptoStrengh";//a property URI
         public static final String hasWidth$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasWidth";//a property URI
     }
 
@@ -847,6 +874,7 @@ public class KRTemp{
         public static final String hasUuid$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasUuid";//a property URI
         public static final String hasValidatedAspects$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasValidatedAspects";//a property URI
         public static final String hasValidatedFunctionality$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasValidatedFunctionality";//a property URI
+        public static final String hasVcsCoordinate$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVcsCoordinate";//a property URI
         public static final String hasVcsInfo$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVcsInfo";//a property URI
         public static final String hasVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVersion";//a property URI
         public static final String hasVersionControlUrl$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVersionControlUrl";//a property URI
@@ -873,17 +901,26 @@ public class KRTemp{
         public static final String AlgorithmConfigurationProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/algorithm#AlgorithmConfigurationProperty";//a class URI
         public static final String AlgorithmProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/algorithm#AlgorithmProperty";//a class URI
         public static final String AlgorithmStandardProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/algorithm#AlgorithmStandardProperty";//a class URI
+        public static final String AspectCipherConfig$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#AspectCipherConfig";//a class URI
+        public static final String AspectConfigureRequest$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#AspectConfigureRequest";//a class URI
+        public static final String AspectConfigureSolution$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#AspectConfigureSolution";//a class URI
         public static final String Asymmetric$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption/properties#Asymmetric";//a class URI
         public static final String Audio$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#Audio";//a class URI
         public static final String BinaryData$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#BinaryData";//a class URI
         public static final String Bitmap$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#Bitmap";//a class URI
         public static final String BlockBased$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption/properties#BlockBased";//a class URI
+        public static final String CipherAlgorithm$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#CipherAlgorithm";//a class URI
+        public static final String CipherBlockSize$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#CipherBlockSize";//a class URI
+        public static final String CipherChainingMode$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#CipherChainingMode";//a class URI
+        public static final String CipherKeyLength$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#CipherKeyLength";//a class URI
         public static final String Class$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/lang#Class";//a class URI
         public static final String Compressed$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#Compressed";//a class URI
         public static final String CompressedLossless$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#CompressedLossless";//a class URI
         public static final String CompressedLossy$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#CompressedLossy";//a class URI
         public static final String CompressionAlgorithm$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/compression#CompressionAlgorithm";//a class URI
         public static final String ConfidentialProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#ConfidentialProperty";//a class URI
+        public static final String ConfigAspectBase$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#ConfigAspectBase";//a class URI
+        public static final String ConfigurationBinding$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#ConfigurationBinding";//a class URI
         public static final String CurrentBestPractice$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#CurrentBestPractice";//a class URI
         public static final String DataFormat$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataformat#DataFormat";//a class URI
         public static final String DataProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#DataProperty";//a class URI
@@ -891,6 +928,7 @@ public class KRTemp{
         public static final String DataPropertyImpacts$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#DataPropertyImpacts";//a class URI
         public static final String DataType$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#DataType";//a class URI
         public static final String DefaultAspectBase$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#DefaultAspectBase";//a class URI
+        public static final String DfuInstance$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance";//a class URI
         public static final String DiffieHellman$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#DiffieHellman";//a class URI
         public static final String Dst$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype/time#Dst";//a class URI
         public static final String DstProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype/time#DstProperty";//a class URI
@@ -903,6 +941,7 @@ public class KRTemp{
         public static final String FidelityResourceRelationships$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#FidelityResourceRelationships";//a class URI
         public static final String FileHandle$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/imagecapture#FileHandle";//a class URI
         public static final String FunctionalAspect$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#FunctionalAspect";//a class URI
+        public static final String Functionality$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#Functionality";//a class URI
         public static final String GrayScale$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#GrayScale";//a class URI
         public static final String HasMetadata$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#HasMetadata";//a class URI
         public static final String HighAccuracyProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/gps/properties#HighAccuracyProperty";//a class URI
@@ -916,6 +955,8 @@ public class KRTemp{
         public static final String ImmortalsBaseClass$ = "http://darpa.mil/immortals/ontology/r2.0.0#ImmortalsBaseClass";//a class URI
         public static final String ImpactOfInvocation$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#ImpactOfInvocation";//a class URI
         public static final String ImpactsOfInvocation$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#ImpactsOfInvocation";//a class URI
+        public static final String InitAspectBase$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#InitAspectBase";//a class URI
+        public static final String InitializationVector$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#InitializationVector";//a class URI
         public static final String InputStream$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#InputStream";//a class URI
         public static final String JammerResistantProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/gps/properties#JammerResistantProperty";//a class URI
         public static final String KeyLength$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption/properties#KeyLength";//a class URI
@@ -926,6 +967,7 @@ public class KRTemp{
         public static final String NumberOfPixels$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/imagescaling#NumberOfPixels";//a class URI
         public static final String OutputFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#OutputFile";//a class URI
         public static final String OutputStream$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#OutputStream";//a class URI
+        public static final String PaddingScheme$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#PaddingScheme";//a class URI
         public static final String PixelFidelity$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#PixelFidelity";//a class URI
         public static final String Pixelated$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#Pixelated";//a class URI
         public static final String PostQuantum$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption/properties#PostQuantum";//a class URI
@@ -948,9 +990,14 @@ public class KRTemp{
         public static final String Video$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#Video";//a class URI
 
         public static final String hasAltitudeWGS84$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAltitudeWGS84";//a property URI
+        public static final String hasBinding$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBinding";//a property URI
         public static final String hasBlockSize$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBlockSize";//a property URI
         public static final String hasBlockSpec$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBlockSpec";//a property URI
+        public static final String hasCandidateImpls$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCandidateImpls";//a property URI
+        public static final String hasChosenInstance$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasChosenInstance";//a property URI
         public static final String hasCompressionAlgorithm$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCompressionAlgorithm";//a property URI
+        public static final String hasConfigurationBindings$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasConfigurationBindings";//a property URI
+        public static final String hasConfigurationUnknowns$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasConfigurationUnknowns";//a property URI
         public static final String hasDesignPattern$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDesignPattern";//a property URI
         public static final String hasDrivenFidelity$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDrivenFidelity";//a property URI
         public static final String hasDrivingCondition$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDrivingCondition";//a property URI
@@ -974,12 +1021,15 @@ public class KRTemp{
         public static final String hasLongitude$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasLongitude";//a property URI
         public static final String hasMetadataContent$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMetadataContent";//a property URI
         public static final String hasMetadataFormat$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMetadataFormat";//a property URI
+        public static final String hasMinimumConfigurationSolution$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMinimumConfigurationSolution";//a property URI
         public static final String hasNumMegapixels$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasNumMegapixels";//a property URI
         public static final String hasObjectOfAssertion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasObjectOfAssertion";//a property URI
         public static final String hasOperator$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasOperator";//a property URI
         public static final String hasPropertyType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasPropertyType";//a property URI
         public static final String hasRelationships$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasRelationships";//a property URI
+        public static final String hasRequiredFunctionality$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasRequiredFunctionality";//a property URI
         public static final String hasScalingFactor$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasScalingFactor";//a property URI
+        public static final String hasSemanticType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSemanticType";//a property URI
         public static final String hasSizeInBytes$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSizeInBytes";//a property URI
         public static final String hasSubjectOfAssertion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSubjectOfAssertion";//a property URI
         public static final String hasTag$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasTag";//a property URI
@@ -999,9 +1049,24 @@ public class KRTemp{
         public static final String ResourceMigrationTarget$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#ResourceMigrationTarget";//a class URI
         public static final String SpecComponent$ = "http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#SpecComponent";//a class URI
         public static final String SpecExample_1$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.1";//a class URI
+        public static final String SpecExample_10$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.10";//a class URI
+        public static final String SpecExample_11$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.11";//a class URI
+        public static final String SpecExample_12$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.12";//a class URI
+        public static final String SpecExample_13$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.13";//a class URI
+        public static final String SpecExample_14$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.14";//a class URI
+        public static final String SpecExample_15$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.15";//a class URI
+        public static final String SpecExample_16$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.16";//a class URI
+        public static final String SpecExample_17$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.17";//a class URI
+        public static final String SpecExample_18$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.18";//a class URI
+        public static final String SpecExample_19$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.19";//a class URI
         public static final String SpecExample_2$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.2";//a class URI
         public static final String SpecExample_3$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.3";//a class URI
         public static final String SpecExample_4$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.4";//a class URI
+        public static final String SpecExample_5$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.5";//a class URI
+        public static final String SpecExample_6$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.6";//a class URI
+        public static final String SpecExample_7$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.7";//a class URI
+        public static final String SpecExample_8$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.8";//a class URI
+        public static final String SpecExample_9$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.9";//a class URI
 
         public static final String hasAvailableResources$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAvailableResources";//a property URI
         public static final String hasCauseEffectAssertions$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCauseEffectAssertions";//a property URI
@@ -1030,10 +1095,12 @@ public class KRTemp{
         public static final String AlgorithmSpecificationProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/algorithm#AlgorithmSpecificationProperty";//a class URI
         public static final String AlgorithmStandardProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/algorithm#AlgorithmStandardProperty";//a class URI
         public static final String AnAnnotation$ = "http://darpa.mil/immortals/ontology/r2.0.0/bytecode#AnAnnotation";//a class URI
+        public static final String AnalysisImpact$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#AnalysisImpact";//a class URI
         public static final String AnalysisReport$ = "http://darpa.mil/immortals/ontology/r2.0.0/analysis#AnalysisReport";//a class URI
         public static final String AndroidPhone$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#AndroidPhone";//a class URI
         public static final String AndroidPlatform$ = "http://darpa.mil/immortals/ontology/r2.0.0/android#AndroidPlatform";//a class URI
         public static final String AndroidPlatformVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0/android#AndroidPlatformVersion";//a class URI
+        public static final String AndroidRuntimeEnvironment$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/jvm#AndroidRuntimeEnvironment";//a class URI
         public static final String AnnotationKeyValuePair$ = "http://darpa.mil/immortals/ontology/r2.0.0/bytecode#AnnotationKeyValuePair";//a class URI
         public static final String AntBuildScript$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/build#AntBuildScript";//a class URI
         public static final String ApplicationLayerAbstraction$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/network#ApplicationLayerAbstraction";//a class URI
@@ -1041,10 +1108,15 @@ public class KRTemp{
         public static final String ArrayList$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/util#ArrayList";//a class URI
         public static final String AskQuery$ = "http://darpa.mil/immortals/ontology/r2.0.0/inference#AskQuery";//a class URI
         public static final String AskQueryResult$ = "http://darpa.mil/immortals/ontology/r2.0.0/inference#AskQueryResult";//a class URI
+        public static final String AspectCipherConfig$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#AspectCipherConfig";//a class URI
+        public static final String AspectConfigureRequest$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#AspectConfigureRequest";//a class URI
+        public static final String AspectConfigureSolution$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#AspectConfigureSolution";//a class URI
         public static final String AspectInjectionPoint$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#AspectInjectionPoint";//a class URI
         public static final String AssertionBindingSite$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#AssertionBindingSite";//a class URI
         public static final String Asymmetric$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption/properties#Asymmetric";//a class URI
         public static final String Audio$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#Audio";//a class URI
+        public static final String AugmentedMethodInvocation$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#AugmentedMethodInvocation";//a class URI
+        public static final String AugmentedUserSourceFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#AugmentedUserSourceFile";//a class URI
         public static final String BandwidthKiloBitsPerSecond$ = "http://darpa.mil/immortals/ontology/r2.0.0/connectivity#BandwidthKiloBitsPerSecond";//a class URI
         public static final String BasicBlock$ = "http://darpa.mil/immortals/ontology/r2.0.0/bytecode/analysis#BasicBlock";//a class URI
         public static final String BasicBlockDecomposition$ = "http://darpa.mil/immortals/ontology/r2.0.0/bytecode/analysis#BasicBlockDecomposition";//a class URI
@@ -1062,6 +1134,10 @@ public class KRTemp{
         public static final String CallGraphEdge$ = "http://darpa.mil/immortals/ontology/r2.0.0/analysis/cg#CallGraphEdge";//a class URI
         public static final String CauseEffectAssertion$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#CauseEffectAssertion";//a class URI
         public static final String ChallengeProblem$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/java#ChallengeProblem";//a class URI
+        public static final String CipherAlgorithm$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#CipherAlgorithm";//a class URI
+        public static final String CipherBlockSize$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#CipherBlockSize";//a class URI
+        public static final String CipherChainingMode$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#CipherChainingMode";//a class URI
+        public static final String CipherKeyLength$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#CipherKeyLength";//a class URI
         public static final String Class$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/lang#Class";//a class URI
         public static final String ClassArtifact$ = "http://darpa.mil/immortals/ontology/r2.0.0/bytecode#ClassArtifact";//a class URI
         public static final String ClassStructure$ = "http://darpa.mil/immortals/ontology/r2.0.0/bytecode#ClassStructure";//a class URI
@@ -1080,6 +1156,7 @@ public class KRTemp{
         public static final String CompiledArtifact$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/java#CompiledArtifact";//a class URI
         public static final String CompiledCodeUnit$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#CompiledCodeUnit";//a class URI
         public static final String CompiledJavaSourceFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/source#CompiledJavaSourceFile";//a class URI
+        public static final String CompiledSoftware$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#CompiledSoftware";//a class URI
         public static final String Compressed$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#Compressed";//a class URI
         public static final String CompressedLossless$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#CompressedLossless";//a class URI
         public static final String CompressedLossy$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#CompressedLossy";//a class URI
@@ -1087,7 +1164,10 @@ public class KRTemp{
         public static final String ComputeResource$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#ComputeResource";//a class URI
         public static final String ConcreteResourceNode$ = "http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#ConcreteResourceNode";//a class URI
         public static final String ConfidentialProperty$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#ConfidentialProperty";//a class URI
+        public static final String ConfigAspectBase$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#ConfigAspectBase";//a class URI
+        public static final String ConfigurationBinding$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#ConfigurationBinding";//a class URI
         public static final String ConfigurationSpec$ = "http://darpa.mil/immortals/ontology/r2.0.0/tmp#ConfigurationSpec";//a class URI
+        public static final String ConstraintViolation$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#ConstraintViolation";//a class URI
         public static final String ConstraintViolationCriterion$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#ConstraintViolationCriterion";//a class URI
         public static final String ConstraintViolationImpact$ = "http://darpa.mil/immortals/ontology/r2.0.0/property/impact#ConstraintViolationImpact";//a class URI
         public static final String ConstructQuery$ = "http://darpa.mil/immortals/ontology/r2.0.0/inference#ConstructQuery";//a class URI
@@ -1125,6 +1205,7 @@ public class KRTemp{
         public static final String Dfu$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu#Dfu";//a class URI
         public static final String DfuAnnotation$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu/annotation#DfuAnnotation";//a class URI
         public static final String DfuAnnotations$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu/annotation#DfuAnnotations";//a class URI
+        public static final String DfuConfigurationVariable$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#DfuConfigurationVariable";//a class URI
         public static final String DfuCutpoint$ = "http://darpa.mil/immortals/ontology/r2.0.0/fm/cutpoint#DfuCutpoint";//a class URI
         public static final String DfuFeature$ = "http://darpa.mil/immortals/ontology/r2.0.0/fm/feature#DfuFeature";//a class URI
         public static final String DfuInstance$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance";//a class URI
@@ -1215,10 +1296,15 @@ public class KRTemp{
         public static final String InferenceRule$ = "http://darpa.mil/immortals/ontology/r2.0.0/inference#InferenceRule";//a class URI
         public static final String InferenceRuleExecution$ = "http://darpa.mil/immortals/ontology/r2.0.0/inference#InferenceRuleExecution";//a class URI
         public static final String InferenceRules$ = "http://darpa.mil/immortals/ontology/r2.0.0/inference#InferenceRules";//a class URI
+        public static final String InitAspectBase$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#InitAspectBase";//a class URI
+        public static final String InitializationVector$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#InitializationVector";//a class URI
         public static final String Input$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality#Input";//a class URI
         public static final String InputImageSizeMegapixels$ = "http://darpa.mil/immortals/ontology/r2.0.0/measurement/cp1cp2#InputImageSizeMegapixels";//a class URI
         public static final String InputStream$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#InputStream";//a class URI
         public static final String Instruction$ = "http://darpa.mil/immortals/ontology/r2.0.0/bytecode/analysis#Instruction";//a class URI
+        public static final String InstructionSet$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/compute#InstructionSet";//a class URI
+        public static final String InstructionSets_SSSE3$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/compute#InstructionSets.SSSE3";//a class URI
+        public static final String InstructionSets_X86$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/compute#InstructionSets.X86";//a class URI
         public static final String InterMethodDataflowEdge$ = "http://darpa.mil/immortals/ontology/r2.0.0/analysis#InterMethodDataflowEdge";//a class URI
         public static final String InterMethodDataflowNode$ = "http://darpa.mil/immortals/ontology/r2.0.0/analysis#InterMethodDataflowNode";//a class URI
         public static final String InterProcessDataflowNode$ = "http://darpa.mil/immortals/ontology/r2.0.0/analysis#InterProcessDataflowNode";//a class URI
@@ -1234,6 +1320,7 @@ public class KRTemp{
         public static final String JavaExecutionConfiguration$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/execution#JavaExecutionConfiguration";//a class URI
         public static final String JavaInstallation$ = "http://darpa.mil/immortals/ontology/r2.0.0/server#JavaInstallation";//a class URI
         public static final String JavaProject$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/source#JavaProject";//a class URI
+        public static final String JavaRuntimeEnvironment$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/jvm#JavaRuntimeEnvironment";//a class URI
         public static final String JavaSourceCodeFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/java#JavaSourceCodeFile";//a class URI
         public static final String JavaSourceFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/source#JavaSourceFile";//a class URI
         public static final String JavaSourceVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0/java/compiler/version#JavaSourceVersion";//a class URI
@@ -1301,6 +1388,7 @@ public class KRTemp{
         public static final String OutputFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#OutputFile";//a class URI
         public static final String OutputImageSizeMegapixels$ = "http://darpa.mil/immortals/ontology/r2.0.0/measurement/cp1cp2#OutputImageSizeMegapixels";//a class URI
         public static final String OutputStream$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#OutputStream";//a class URI
+        public static final String PaddingScheme$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#PaddingScheme";//a class URI
         public static final String ParadigmComponent$ = "http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#ParadigmComponent";//a class URI
         public static final String Partition$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#Partition";//a class URI
         public static final String PartitionedDiskResource$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#PartitionedDiskResource";//a class URI
@@ -1350,6 +1438,7 @@ public class KRTemp{
         public static final String ResourcePerformanceMetricInstance$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#ResourcePerformanceMetricInstance";//a class URI
         public static final String ReturnValueToSemanticTypeBinding$ = "http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#ReturnValueToSemanticTypeBinding";//a class URI
         public static final String RevisedGmeInterchangeFormat$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp#RevisedGmeInterchangeFormat";//a class URI
+        public static final String RuntimeEnvironment$ = "http://darpa.mil/immortals/ontology/r2.0.0/cp/jvm#RuntimeEnvironment";//a class URI
         public static final String Schema$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/logical#Schema";//a class URI
         public static final String SchemaLogic$ = "http://darpa.mil/immortals/ontology/r2.0.0/database#SchemaLogic";//a class URI
         public static final String Serialized$ = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/dataproperties#Serialized";//a class URI
@@ -1368,9 +1457,24 @@ public class KRTemp{
         public static final String SparqlQuery$ = "http://darpa.mil/immortals/ontology/r2.0.0/inference#SparqlQuery";//a class URI
         public static final String SpecComponent$ = "http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#SpecComponent";//a class URI
         public static final String SpecExample_1$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.1";//a class URI
+        public static final String SpecExample_10$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.10";//a class URI
+        public static final String SpecExample_11$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.11";//a class URI
+        public static final String SpecExample_12$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.12";//a class URI
+        public static final String SpecExample_13$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.13";//a class URI
+        public static final String SpecExample_14$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.14";//a class URI
+        public static final String SpecExample_15$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.15";//a class URI
+        public static final String SpecExample_16$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.16";//a class URI
+        public static final String SpecExample_17$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.17";//a class URI
+        public static final String SpecExample_18$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.18";//a class URI
+        public static final String SpecExample_19$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.19";//a class URI
         public static final String SpecExample_2$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.2";//a class URI
         public static final String SpecExample_3$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.3";//a class URI
         public static final String SpecExample_4$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.4";//a class URI
+        public static final String SpecExample_5$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.5";//a class URI
+        public static final String SpecExample_6$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.6";//a class URI
+        public static final String SpecExample_7$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.7";//a class URI
+        public static final String SpecExample_8$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.8";//a class URI
+        public static final String SpecExample_9$ = "http://darpa.mil/immortals/ontology/r2.0.0/spec#SpecExample.9";//a class URI
         public static final String Standard$ = "http://darpa.mil/immortals/ontology/r2.0.0/core/org#Standard";//a class URI
         public static final String StaticCallGraph$ = "http://darpa.mil/immortals/ontology/r2.0.0#StaticCallGraph";//a class URI
         public static final String StaticCallGraphEdge$ = "http://darpa.mil/immortals/ontology/r2.0.0#StaticCallGraphEdge";//a class URI
@@ -1405,6 +1509,7 @@ public class KRTemp{
         public static final String Volume$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources#Volume";//a class URI
         public static final String WindowsPlatform$ = "http://darpa.mil/immortals/ontology/r2.0.0/windows#WindowsPlatform";//a class URI
         public static final String WirelessSpectrum$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/environment#WirelessSpectrum";//a class URI
+        public static final String WrapperAdaptation$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#WrapperAdaptation";//a class URI
         public static final String WrapperSourceFile$ = "http://darpa.mil/immortals/ontology/r2.0.0/lang#WrapperSourceFile";//a class URI
         public static final String XMLSchema$ = "http://darpa.mil/immortals/ontology/r2.0.0/resources/logical#XMLSchema";//a class URI
 
@@ -1415,6 +1520,7 @@ public class KRTemp{
         public static final String hasAltitudeWGS84$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAltitudeWGS84";//a property URI
         public static final String hasAnalysisFrameChild$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAnalysisFrameChild";//a property URI
         public static final String hasAnalysisFrameDataType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAnalysisFrameDataType";//a property URI
+        public static final String hasAnalysisImpacts$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAnalysisImpacts";//a property URI
         public static final String hasAndroidPlatformVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAndroidPlatformVersion";//a property URI
         public static final String hasAnnotationClassName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAnnotationClassName";//a property URI
         public static final String hasAnnotations$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAnnotations";//a property URI
@@ -1442,11 +1548,13 @@ public class KRTemp{
         public static final String hasAspectsValidated$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAspectsValidated";//a property URI
         public static final String hasAssertionBindingSites$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAssertionBindingSites";//a property URI
         public static final String hasAssertionCriterion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAssertionCriterion";//a property URI
+        public static final String hasAugmentedMethodInvocations$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAugmentedMethodInvocations";//a property URI
         public static final String hasAugmentedMethods$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAugmentedMethods";//a property URI
         public static final String hasAvailableResources$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasAvailableResources";//a property URI
         public static final String hasBackwardCompatibleWith$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBackwardCompatibleWith";//a property URI
         public static final String hasBasicBlockAnalysis$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBasicBlockAnalysis";//a property URI
         public static final String hasBinaryForm$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBinaryForm";//a property URI
+        public static final String hasBinding$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBinding";//a property URI
         public static final String hasBindingSite$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBindingSite";//a property URI
         public static final String hasBitDepth$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBitDepth";//a property URI
         public static final String hasBlockSize$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasBlockSize";//a property URI
@@ -1466,6 +1574,7 @@ public class KRTemp{
         public static final String hasCallerHash$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCallerHash";//a property URI
         public static final String hasCanRead$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCanRead";//a property URI
         public static final String hasCanWrite$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCanWrite";//a property URI
+        public static final String hasCandidateImpls$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCandidateImpls";//a property URI
         public static final String hasCauseEffectAssertions$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCauseEffectAssertions";//a property URI
         public static final String hasCenterFrequencyHertz$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCenterFrequencyHertz";//a property URI
         public static final String hasChannelColor$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasChannelColor";//a property URI
@@ -1473,6 +1582,7 @@ public class KRTemp{
         public static final String hasChannelProperties$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasChannelProperties";//a property URI
         public static final String hasChannels$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasChannels";//a property URI
         public static final String hasChildSelectionCriterion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasChildSelectionCriterion";//a property URI
+        public static final String hasChosenInstance$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasChosenInstance";//a property URI
         public static final String hasClassModel$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasClassModel";//a property URI
         public static final String hasClassName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasClassName";//a property URI
         public static final String hasClassPointer$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasClassPointer";//a property URI
@@ -1498,7 +1608,9 @@ public class KRTemp{
         public static final String hasComponent$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasComponent";//a property URI
         public static final String hasCompressionAlgorithm$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasCompressionAlgorithm";//a property URI
         public static final String hasConcreteResourceDependencies$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasConcreteResourceDependencies";//a property URI
+        public static final String hasConfigurationBindings$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasConfigurationBindings";//a property URI
         public static final String hasConfigurationSpec$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasConfigurationSpec";//a property URI
+        public static final String hasConfigurationUnknowns$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasConfigurationUnknowns";//a property URI
         public static final String hasConnections$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasConnections";//a property URI
         public static final String hasConstellation$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasConstellation";//a property URI
         public static final String hasConstellationName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasConstellationName";//a property URI
@@ -1549,8 +1661,10 @@ public class KRTemp{
         public static final String hasDrivenFidelity$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDrivenFidelity";//a property URI
         public static final String hasDrivingCondition$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDrivingCondition";//a property URI
         public static final String hasDurableId$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDurableId";//a property URI
+        public static final String hasDurableUri$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDurableUri";//a property URI
         public static final String hasDynamicCallGraph$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDynamicCallGraph";//a property URI
         public static final String hasDynamicCallGraphEdges$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasDynamicCallGraphEdges";//a property URI
+        public static final String hasEdgeInViolation$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasEdgeInViolation";//a property URI
         public static final String hasEdgeProperties$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasEdgeProperties";//a property URI
         public static final String hasEdges$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasEdges";//a property URI
         public static final String hasElement$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasElement";//a property URI
@@ -1623,6 +1737,7 @@ public class KRTemp{
         public static final String hasInnerClasses$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInnerClasses";//a property URI
         public static final String hasInputType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInputType";//a property URI
         public static final String hasInputs$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInputs";//a property URI
+        public static final String hasInstructionSetArchitectureSupport$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInstructionSetArchitectureSupport";//a property URI
         public static final String hasInstructions$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInstructions";//a property URI
         public static final String hasIntents$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasIntents";//a property URI
         public static final String hasInterestingInstructions$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasInterestingInstructions";//a property URI
@@ -1634,8 +1749,10 @@ public class KRTemp{
         public static final String hasIterateUntilNoNewTriples$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasIterateUntilNoNewTriples";//a property URI
         public static final String hasJarContents$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJarContents";//a property URI
         public static final String hasJavaClassName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJavaClassName";//a property URI
+        public static final String hasJavaHomePath$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJavaHomePath";//a property URI
         public static final String hasJavaMethodName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJavaMethodName";//a property URI
         public static final String hasJavaMethodPointer$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJavaMethodPointer";//a property URI
+        public static final String hasJavaVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJavaVersion";//a property URI
         public static final String hasJdkVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJdkVersion";//a property URI
         public static final String hasJvmArgs$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasJvmArgs";//a property URI
         public static final String hasKey$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasKey";//a property URI
@@ -1656,6 +1773,7 @@ public class KRTemp{
         public static final String hasLocalIndex$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasLocalIndex";//a property URI
         public static final String hasLocation$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasLocation";//a property URI
         public static final String hasLongitude$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasLongitude";//a property URI
+        public static final String hasMagicStringVar$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMagicStringVar";//a property URI
         public static final String hasMainClassName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMainClassName";//a property URI
         public static final String hasMajor$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMajor";//a property URI
         public static final String hasMajorVersionTag$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMajorVersionTag";//a property URI
@@ -1680,15 +1798,18 @@ public class KRTemp{
         public static final String hasMethodName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMethodName";//a property URI
         public static final String hasMethodOwner$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMethodOwner";//a property URI
         public static final String hasMethodPointer$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMethodPointer";//a property URI
+        public static final String hasMethodSignature$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMethodSignature";//a property URI
         public static final String hasMethods$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMethods";//a property URI
         public static final String hasMetric$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMetric";//a property URI
         public static final String hasMetricValues$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMetricValues";//a property URI
         public static final String hasMinFrequency$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMinFrequency";//a property URI
         public static final String hasMinFrequencyHertz$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMinFrequencyHertz";//a property URI
+        public static final String hasMinimumConfigurationSolution$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMinimumConfigurationSolution";//a property URI
         public static final String hasMinor$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMinor";//a property URI
         public static final String hasMinorVersionTag$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMinorVersionTag";//a property URI
         public static final String hasMissionSpec$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMissionSpec";//a property URI
         public static final String hasMitigationStrategy$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMitigationStrategy";//a property URI
+        public static final String hasMitigationStrategyUtilized$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMitigationStrategyUtilized";//a property URI
         public static final String hasModifiers$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasModifiers";//a property URI
         public static final String hasModulationStrategy$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasModulationStrategy";//a property URI
         public static final String hasMultiplicityOperator$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasMultiplicityOperator";//a property URI
@@ -1767,6 +1888,7 @@ public class KRTemp{
         public static final String hasRemoteDevice$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasRemoteDevice";//a property URI
         public static final String hasReportsPerMinute$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasReportsPerMinute";//a property URI
         public static final String hasRepositoryPath$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasRepositoryPath";//a property URI
+        public static final String hasRequiredFunctionality$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasRequiredFunctionality";//a property URI
         public static final String hasResource$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasResource";//a property URI
         public static final String hasResourceConsumed$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasResourceConsumed";//a property URI
         public static final String hasResourceContainmentModel$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasResourceContainmentModel";//a property URI
@@ -1798,6 +1920,7 @@ public class KRTemp{
         public static final String hasSessionIdentifier$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSessionIdentifier";//a property URI
         public static final String hasSimpleHaltingCriterion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSimpleHaltingCriterion";//a property URI
         public static final String hasSizeInBytes$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSizeInBytes";//a property URI
+        public static final String hasSoftwareCoordinate$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSoftwareCoordinate";//a property URI
         public static final String hasSolvedFeatures$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSolvedFeatures";//a property URI
         public static final String hasSolvedVariationPoint$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSolvedVariationPoint";//a property URI
         public static final String hasSource$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSource";//a property URI
@@ -1816,6 +1939,7 @@ public class KRTemp{
         public static final String hasSubjectOfAssertion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSubjectOfAssertion";//a property URI
         public static final String hasSuccess$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSuccess";//a property URI
         public static final String hasSuccessors$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSuccessors";//a property URI
+        public static final String hasSurfaceName$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSurfaceName";//a property URI
         public static final String hasSystemLibraries$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSystemLibraries";//a property URI
         public static final String hasSystemPath$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasSystemPath";//a property URI
         public static final String hasTables$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasTables";//a property URI
@@ -1839,6 +1963,7 @@ public class KRTemp{
         public static final String hasTruthConstraint$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasTruthConstraint";//a property URI
         public static final String hasType$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasType";//a property URI
         public static final String hasUnit$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasUnit";//a property URI
+        public static final String hasUnlimitedCryptoStrengh$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasUnlimitedCryptoStrengh";//a property URI
         public static final String hasUrl$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasUrl";//a property URI
         public static final String hasUsageParadigm$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasUsageParadigm";//a property URI
         public static final String hasUsesDaylightSavingsTime$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasUsesDaylightSavingsTime";//a property URI
@@ -1849,6 +1974,7 @@ public class KRTemp{
         public static final String hasVariationPoint$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVariationPoint";//a property URI
         public static final String hasVariationPointFeatureOperator$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVariationPointFeatureOperator";//a property URI
         public static final String hasVariationPointFeatures$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVariationPointFeatures";//a property URI
+        public static final String hasVcsCoordinate$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVcsCoordinate";//a property URI
         public static final String hasVcsInfo$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVcsInfo";//a property URI
         public static final String hasVersion$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVersion";//a property URI
         public static final String hasVersionControlUrl$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasVersionControlUrl";//a property URI
@@ -1857,8 +1983,8 @@ public class KRTemp{
         public static final String hasViolationMessage$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasViolationMessage";//a property URI
         public static final String hasWidth$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasWidth";//a property URI
         public static final String hasWidthPixels$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasWidthPixels";//a property URI
+        public static final String hasWrapperAdaptations$ = "http://darpa.mil/immortals/ontology/r2.0.0#hasWrapperAdaptations";//a property URI
     }
 
 }
-
 

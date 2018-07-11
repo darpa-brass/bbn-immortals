@@ -9,7 +9,6 @@ class GlobalsConfig(Serializable):
 
     def __init__(self,
                  executionsDirectory: str = None,
-                 executionsLogDirectory: str = None,
                  globalApplicationDeploymentDirectory: str = None,
                  globalLogDirectory: str = None,
                  globalWorkingDirectory: str = None,
@@ -21,7 +20,6 @@ class GlobalsConfig(Serializable):
                  ttlIngestionDirectory: str = None):
         super().__init__()
         self.executionsDirectory = executionsDirectory
-        self.executionsLogDirectory = executionsLogDirectory
         self.globalApplicationDeploymentDirectory = globalApplicationDeploymentDirectory
         self.globalLogDirectory = globalLogDirectory
         self.globalWorkingDirectory = globalWorkingDirectory

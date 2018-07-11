@@ -31,17 +31,18 @@ public class AndroidAdbHelper {
 
     private boolean hasConnected = false;
 
-    private synchronized void execSynchronous(@Nonnull List<String> cmd) {
+    private synchronized void execSynchronous(boolean allowFailure, @Nonnull List<String> cmd) {
         String[] cmd2 = cmd.toArray(new String[0]);
-        execSynchronous(cmd2);
+        execSynchronous(allowFailure, cmd2);
     }
 
-    private synchronized void execSynchronous(@Nonnull String... cmd) {
+    private synchronized void execSynchronous(boolean allowFailure, @Nonnull String... cmd) {
         if (!hasConnected) {
             hasConnected = true;
 
             if (androidEnvironment.getAdbUrl() != null) {
                 execSynchronous(
+                        allowFailure,
                         ADB_COMMAND,
                         "connect",
                         androidEnvironment.getAdbUrl() + ":" + androidEnvironment.getAdbPort()
@@ -55,7 +56,7 @@ public class AndroidAdbHelper {
             Process p = pb.start();
             p.waitFor();
 
-            if (p.exitValue() != 0) {
+            if (!allowFailure && p.exitValue() != 0) {
                 throw new RuntimeException("Got a non-zero exit value when executing the command '" +
                         Arrays.stream(cmd).collect(Collectors.joining(" ")) + "`" + "'!");
             }
@@ -64,38 +65,43 @@ public class AndroidAdbHelper {
         }
     }
 
-    private synchronized void execDeviceSynchronous(@Nonnull String... commands) {
+    private synchronized void execDeviceSynchronous(boolean allowFailure, @Nonnull String... commands) {
         List<String> cmd = new ArrayList<>(Arrays.asList(
                 ADB_COMMAND,
                 "-s",
                 androidEnvironment.getAdbIdentifier()));
 
         cmd.addAll(Arrays.asList(commands));
-        execSynchronous(cmd);
+        execSynchronous(allowFailure, cmd);
     }
 
     private AndroidAdbHelper(DeploymentEnvironmentConfiguration.AndroidEnivronmentConfiguration androidEnvironment) {
         this.androidEnvironment = androidEnvironment;
     }
-    
+
     public String getEmulatorIdentifier() {
         return androidEnvironment.getAdbIdentifier();
     }
 
     public void uploadFile(String source, String target) {
-        execDeviceSynchronous("shell", "mkdir -p " + Paths.get(target).getParent().toString());
-        execDeviceSynchronous("push", source, target);
+        execDeviceSynchronous(false, "shell", "mkdir -p " + Paths.get(target).getParent().toString());
+        execDeviceSynchronous(false, "push", source, target);
     }
 
     public void startProcess(String packageActivity) {
-        execDeviceSynchronous("shell", "am", "start", "-n", packageActivity);
+        execDeviceSynchronous(false, "shell", "am", "start", "-n", packageActivity);
     }
 
     public void forceStopProcess(String packageActivity) {
-        execDeviceSynchronous("shell", "am", "force-stop", packageActivity);
+        execDeviceSynchronous(false, "shell", "am", "force-stop", packageActivity);
+    }
+    
+    public void clean() {
+        execDeviceSynchronous(true, "uninstall", "com.bbn.ataklite");
+        execDeviceSynchronous(true, "shell", "rm", "-r", "/sdcard/ataklite");
     }
 
     public void deployApk(String adbFilepath) {
-        execDeviceSynchronous("install", "-r", adbFilepath);
+        execDeviceSynchronous(false, "install", "-r", adbFilepath);
     }
 }

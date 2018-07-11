@@ -12,6 +12,9 @@
 @prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#> .
 @prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#> .
 @prefix IMMoRTALS_types: <http://darpa.mil/immortals/ontology/r2.0.0/types#> .
+@prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#> .
+@prefix IMMoRTALS_resource_containment: <http://darpa.mil/immortals/ontology/r2.0.0/resource/containment#> .
+@prefix IMMoRTALS_cp_jvm: <http://darpa.mil/immortals/ontology/r2.0.0/cp/jvm#> .
 
 IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DecodeToCreateCoordinate
         a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
@@ -22,6 +25,13 @@ IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.Deco
                 IMMoRTALS_analysis:DataflowAnalysisFrame-2a450083-1115-4457-943f-e32f6cf5fea0 ;
         IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$DecodeToCreateCoordinate" ;
         IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.DecodeData .
+		
+IMMoRTALS_cp_jvm:AndroidRuntimeEnvironment-d573ecce-0613-45f1-a974-ea14c34676d4
+        a       IMMoRTALS_cp_jvm:AndroidRuntimeEnvironment ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Nougat 7.1.2" ;
+        IMMoRTALS:hasUnlimitedCryptoStrengh
+                false .
 
 IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ProcessToMessageConversion
         a                            IMMoRTALS_analysis:MethodInvocationDataflowEdge ;
@@ -32,6 +42,20 @@ IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.Proc
                 IMMoRTALS_analysis:DataflowAnalysisFrame-fde8d991-c906-4a73-8637-47c1e812e4d2 ;
         IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$ProcessToMessageConversion" ;
         IMMoRTALS:hasProducer        IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.ProcessByteBuffer .
+		
+IMMoRTALS_resource_containment:ResourceContainmentModel-2c6cf095-a58a-4ee3-b1b1-c5a454b05f30
+        a                           IMMoRTALS_resource_containment:ResourceContainmentModel ;
+        IMMoRTALS:hasResourceModel  IMMoRTALS_resource_containment:ConcreteResourceNode-818bed43-045a-46d3-b0fe-ed1752612881 , IMMoRTALS_resource_containment:ConcreteResourceNode-acf2f4d0-3758-4efb-b8d9-8f06558cbcef .
+		
+IMMoRTALS_resource_containment:ConcreteResourceNode-818bed43-045a-46d3-b0fe-ed1752612881
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing Marti server." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:Analysis.Marti.MartiServer .
+		
+IMMoRTALS_resource_containment:ConcreteResourceNode-acf2f4d0-3758-4efb-b8d9-8f06558cbcef
+        a                               IMMoRTALS_resource_containment:ConcreteResourceNode ;
+        IMMoRTALS:hasHumanReadableDesc  "Resource node representing an Atak client." ;
+        IMMoRTALS:hasResource           IMMoRTALS_cp2:Analysis.Atak.AtakPhone .
 
 IMMoRTALS_cp2:Analysis.Atak.AtakSoftware
         a                               IMMoRTALS_resources:CompiledSoftware ;
@@ -152,8 +176,16 @@ IMMoRTALS_cp2:Analysis.Marti.MartiServer
         IMMoRTALS:hasHumanReadableDescription
                 "a server running MARTI" ;
         IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Marti$MartiServer" ;
-        IMMoRTALS:hasResources       IMMoRTALS_cp2:Analysis.Marti.MartiSoftware , IMMoRTALS_cp2:Analysis.Marti.MartiFileSystem , IMMoRTALS_cp2:Analysis.Shared.SaNetwork .
-
+        IMMoRTALS:hasResources       IMMoRTALS_cp2:Analysis.Marti.MartiSoftware , IMMoRTALS_cp2:Analysis.Marti.MartiFileSystem , IMMoRTALS_cp2:Analysis.Shared.SaNetwork, IMMoRTALS_cp_jvm:JavaRuntimeEnvironment-c3fe8598-bf7a-43b2-8a96-4bb9e4f96722 .
+		
+IMMoRTALS_cp_jvm:JavaRuntimeEnvironment-c3fe8598-bf7a-43b2-8a96-4bb9e4f96722
+        a                          IMMoRTALS_cp_jvm:JavaRuntimeEnvironment ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Oracle Java 8u171" ;
+        IMMoRTALS:hasJavaHomePath  "usr/local/jdk1.8.1_71" ;
+        IMMoRTALS:hasUnlimitedCryptoStrengh
+                false .
+		
 IMMoRTALS_property_impact:AbstractDataflowBindingSite-7d15218a-329f-4062-b501-d6ad2371530f
         a                  IMMoRTALS_property_impact:AbstractDataflowBindingSite ;
         IMMoRTALS:hasDest  IMMoRTALS_cp2:Analysis.Marti.MartiServer ;
@@ -375,7 +407,7 @@ IMMoRTALS_cp2:Analysis.Atak.AtakPhone
         IMMoRTALS:hasHumanReadableDescription
                 "A phone with a file system connected to a network and running ATAK." ;
         IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.cp2.Analysis$Atak$AtakPhone" ;
-        IMMoRTALS:hasResources       IMMoRTALS_cp2:Analysis.Atak.AtakPhoneFileSystem , IMMoRTALS_cp2:Analysis.Shared.SaNetwork , IMMoRTALS_cp2:Analysis.Atak.AtakSoftware .
+        IMMoRTALS:hasResources       IMMoRTALS_cp2:Analysis.Atak.AtakPhoneFileSystem , IMMoRTALS_cp2:Analysis.Shared.SaNetwork , IMMoRTALS_cp2:Analysis.Atak.AtakSoftware, IMMoRTALS_cp_jvm:AndroidRuntimeEnvironment-d573ecce-0613-45f1-a974-ea14c34676d4 .
 
 IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.GetInputStream
         a                               IMMoRTALS_analysis:MethodInvocationDataflowNode ;
@@ -762,7 +794,7 @@ IMMoRTALS_com_securboration_immortals_exampleDataflows:AtakMartiDuplexFlows.Crea
         IMMoRTALS:hasJavaMethodPointer  "QH/F+KSG+4XdmBHRR0Q5xt+jvs3RBh8QUy84cv682nU=/methods/<init>(DDLjava/lang/Double;Ljava/lang/Float;JLjava/lang/String;)V" ;
         IMMoRTALS:hasLineNumber         "212"^^xsd:int ;
         IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.AtakMartiDuplexFlows$CreateCoordinate" .
-
+				
 IMMoRTALS_analysis:DataflowAnalysisFrame-cbb1f792-002d-49d8-b928-3e221f0bab92
         a       IMMoRTALS_analysis:DataflowAnalysisFrame ;
         IMMoRTALS:hasAnalysisFrameChild

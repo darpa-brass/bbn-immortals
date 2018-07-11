@@ -71,7 +71,7 @@ public class RaticinationEngineTest {
                     "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\r\n" + 
                     "\n"+
                     "ASK WHERE {\n"+
-                    "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                    "    GRAPH <?GRAPH?> {\n"+
                     "        ?x a <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#Humanoid> .\n"+
                     "        ?x <http://darpa.mil/immortals/ontology/r2.0.0#hasAdditionalProperty> ?y .\n"+
                     "    }\n"+
@@ -88,7 +88,7 @@ public class RaticinationEngineTest {
                     "        ?x IMMoRTALS:hasAdditionalNumericProperty ?value .\n"+
                     "}\n"+
                     "WHERE {\n"+
-                    "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                    "    GRAPH <?GRAPH?> {\n"+
                     "        ?x a <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#Humanoid> .\n"+
                     "        BIND( rand() as ?value) .\n"+
                     "    }\n"+
@@ -111,7 +111,7 @@ public class RaticinationEngineTest {
                     "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\r\n" + 
                     "\n"+
                     "ASK WHERE {\n"+
-                    "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                    "    GRAPH <?GRAPH?> {\n"+
                     "        ?x a <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#Humanoid> .\n"+
                     "    }\n"+
                     "}\n"+
@@ -127,7 +127,7 @@ public class RaticinationEngineTest {
                     "        ?x IMMoRTALS:hasAdditionalProperty ?value .\n"+
                     "}\n"+
                     "WHERE {\n"+
-                    "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                    "    GRAPH <?GRAPH?> {\n"+
                     "        ?x a <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#Humanoid> .\n"+
                     "        BIND( STR(NOW()) as ?value) .\n"+
                     "    }\n"+
@@ -156,7 +156,7 @@ public class RaticinationEngineTest {
                     "        ?x <http://www.w3.org/2000/01/rdf-schema#comment> \"a humanoid creature\" .\n"+
                     "}\n"+
                     "WHERE {\n"+
-                    "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                    "    GRAPH <?GRAPH?> {\n"+
                     "        ?x a ?y .\n"+
                     "        ?y <http://www.w3.org/2000/01/rdf-schema#subClassOf>* <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#RaticinationEngineTest.ExampleVocabulary.Human> .\n"+
                     "        ?x IMMoRTALS:hasName ?name .\n"+
@@ -184,7 +184,7 @@ public class RaticinationEngineTest {
                     "        ?x <http://www.w3.org/2000/01/rdf-schema#comment> \"a creature\" .\n"+
                     "}\n"+
                     "WHERE {\n"+
-                    "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                    "    GRAPH <?GRAPH?> {\n"+
                     "        ?x a ?y .\n"+
                     "        ?y <http://www.w3.org/2000/01/rdf-schema#subClassOf>* <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#RaticinationEngineTest.ExampleVocabulary.Animal> .\n"+
                     "        ?x IMMoRTALS:hasName ?name .\n"+
@@ -492,7 +492,7 @@ public class RaticinationEngineTest {
             
             engine.execute();
             
-            validate(client,graphName);
+            validate(client,client.getFusekiServiceDataUrl() + "/" + graphName);
         } finally {
             client.deleteModel(graphName);
         }
@@ -527,7 +527,7 @@ public class RaticinationEngineTest {
                 "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\r\n" + 
                 "\n"+
                 "ASK WHERE {\n"+
-                "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                "    GRAPH <?GRAPH?> {\n"+
                 "        ?x a <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#Creature> .\n"+
                 "        ?x IMMoRTALS:hasName ?name .\n"+
                 "    }\n"+
@@ -545,7 +545,7 @@ public class RaticinationEngineTest {
                 "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\r\n" + 
                 "\n"+
                 "ASK WHERE {\n"+
-                "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                "    GRAPH <?GRAPH?> {\n"+
                 "        ?x a ?y .\n"+
                 "        ?y <http://www.w3.org/2000/01/rdf-schema#subClassOf>* <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#RaticinationEngineTest.ExampleVocabulary.Animal> .\n"+
                 "        ?x IMMoRTALS:hasName ?name .\n"+
@@ -568,7 +568,7 @@ public class RaticinationEngineTest {
                 "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\r\n" + 
                 "\n"+
                 "ASK WHERE {\n"+
-                "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                "    GRAPH <?GRAPH?> {\n"+
                 "        ?x a <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#Humanoid> .\n"+
                 "        ?x IMMoRTALS:hasName ?name .\n"+
                 "    }\n"+
@@ -586,7 +586,7 @@ public class RaticinationEngineTest {
                 "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\r\n" + 
                 "\n"+
                 "ASK WHERE {\n"+
-                "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                "    GRAPH <?GRAPH?> {\n"+
                 "        ?x a ?y .\n"+
                 "        ?y <http://www.w3.org/2000/01/rdf-schema#subClassOf>* <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#RaticinationEngineTest.ExampleVocabulary.Human> .\n"+
                 "        ?x IMMoRTALS:hasName ?name .\n"+
@@ -609,7 +609,7 @@ public class RaticinationEngineTest {
                 "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\r\n" + 
                 "\n"+
                 "ASK WHERE {\n"+
-                "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                "    GRAPH <?GRAPH?> {\n"+
                 "        ?x a ?y .\n"+
                 "        ?y <http://www.w3.org/2000/01/rdf-schema#subClassOf>* <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#RaticinationEngineTest.ExampleVocabulary.Human> .\n"+
                 "        FILTER NOT EXISTS { ?x <http://darpa.mil/immortals/ontology/r2.0.0#hasAdditionalProperty> ?value } .\n"+
@@ -631,7 +631,7 @@ public class RaticinationEngineTest {
                 "PREFIX IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\r\n" + 
                 "\n"+
                 "ASK WHERE {\n"+
-                "    GRAPH <http://localhost:3030/ds/data/?GRAPH?> {\n"+
+                "    GRAPH <?GRAPH?> {\n"+
                 "        ?x a ?y .\n"+
                 "        ?y <http://www.w3.org/2000/01/rdf-schema#subClassOf>* <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/ratiociantion/engine/test#RaticinationEngineTest.ExampleVocabulary.Human> .\n"+
                 "        FILTER NOT EXISTS { ?x <http://darpa.mil/immortals/ontology/r2.0.0#hasAdditionalNumericProperty> ?value } .\n"+

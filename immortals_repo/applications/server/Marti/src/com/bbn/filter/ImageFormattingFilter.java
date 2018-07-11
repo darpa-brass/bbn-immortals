@@ -38,26 +38,8 @@ public class ImageFormattingFilter implements Filter<CotEventContainer> {
         }
 
         log.debug("reattaching " + imageList.size() + " to the cot, with format " + pref.toString());
-
-        // get detail element out of document for attaching child images
-        Element detailElem = DocumentHelper.makeElement(cot.getDocument(), Images.DETAIL_PATH);
-
-        // remove any existing image elements
-        List<Element> imageElems = (List<Element>) detailElem.elements(Images.IMAGE_ELEMENT_NAME);
-        if (imageElems.size() > 0) {
-            log.warn("Trying to format cot message for images that already has image elements present -- stripping them out");
-            for (Element imageElem : imageElems) {
-                imageElem.detach();
-            }
-        }
-
-        // attach image string data for each image
-        for (ImageData img : imageList) {
-            Element imageElem = Images.generateElementFromData(img, pref);
-            if (imageElem != null) {
-                detailElem.add(imageElem);
-            }
-        }
+        
+        cot.filterImages(imageList, pref);
 
         return cot;
     }

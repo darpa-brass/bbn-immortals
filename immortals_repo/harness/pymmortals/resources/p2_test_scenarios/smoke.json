@@ -95,7 +95,7 @@
             "globalModel": {
                 "requirements": {
                     "dataInTransit": {
-                        "securityStandard": "NIST800Dash171"
+                        "securityStandard": "AES_128"
                     }
                 }
             }
@@ -111,7 +111,7 @@
             "globalModel": {
                 "requirements": {
                     "dataInTransit": {
-                        "securityStandard": "NIST800Dash171"
+                        "securityStandard": "AES_128"
                     }
                 }
             }

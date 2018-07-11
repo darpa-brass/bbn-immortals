@@ -109,6 +109,7 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 					String positiveTrainingTable = sqlT.createTableForSQL(sampleSql, conn, sampleSize);
 					dataLinkage.addLiteral(TRAINING_DATA_TABLE, positiveTrainingTable);
 					
+					setSeed(conn);
 					String validationDataTable = sqlT.createTableForSQL(sampleSql, conn, -1);
 					dataLinkage.addLiteral(VALIDATION_DATA_TABLE, validationDataTable);
 
@@ -151,7 +152,15 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 		}
 
 		return conn;
-	}	
+	}
+	
+	public void setSeed(Connection conn) throws SQLException {
+
+		try (Statement s = conn.createStatement()) {
+			s.executeQuery("select setseed(" + SEED + ")");
+		}
+	}
+	
 	
 	private void vacuumDASDB() throws SQLException {
 		
@@ -179,8 +188,8 @@ public class SchemaDependencyKnowledgeBuilder extends AbstractKnowledgeBuilder {
 	public static final String DATA_DFU_SOURCE = "shared/modules/dfus/TakServerDataManager/src/main/java/mil/darpa/immortals/dfus/TakServerDataManager/DFU";
 
 	public static final String PARAM_DATA_DFU_ROOT = "PARAM_DATA_DFU_ROOT";
-	public static final int NEGATIVE_DATA_LIMIT = 5000;
-	public static final int POSITIVE_DATA_LIMIT = 10_000;
+	public static final int NEGATIVE_DATA_LIMIT = 2000;
+	public static final int POSITIVE_DATA_LIMIT = 100000;
 	
 	public static final double POSITIVE_DATA_LIMIT_PERC = 0.7;
 	
