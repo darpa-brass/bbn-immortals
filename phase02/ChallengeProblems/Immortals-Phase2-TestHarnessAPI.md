@@ -132,6 +132,7 @@ JSON Objects for now.
                 "testIdentifier": "ImageSendTest"
             }
         ],
+        "testsPassedPercent": 100.0,
         "verdictOutcome": "PASS"
     }
 }  
@@ -177,10 +178,11 @@ __Description__: The current state of the DAS
 __Type__: JSON Object  
 __Description__: The current state of intent satisfaction validation  
 
-| Field          | Type                  | Description                                       |  
-| -------------- | --------------------- | ------------------------------------------------- |  
-| executedTests  | List[TestStateObject] | The tests executed to support the verdict outcome |  
-| verdictOutcome | VerdictOutcome        | The outcome of the intent preservation            |  
+| Field              | Type                  | Description                                       |  
+| ------------------ | --------------------- | ------------------------------------------------- |  
+| executedTests      | List[TestStateObject] | The tests executed to support the verdict outcome |  
+| testsPassedPercent | float                 | The percentage of passed tests                    |  
+| verdictOutcome     | VerdictOutcome        | The outcome of the intent preservation            |  
 
 #### TestStateObject  
 __Type__: JSON Object  
