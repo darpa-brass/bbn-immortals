@@ -10,6 +10,7 @@ import mil.darpa.immortals.core.das.sparql.adaptationtargets.DetermineCrossAppRe
 import mil.darpa.immortals.core.das.sparql.deploymentmodel.DetermineCipherResources;
 import mil.darpa.immortals.core.das.sparql.deploymentmodel.DetermineCrossAppApplicability;
 import mil.darpa.immortals.das.context.DasAdaptationContext;
+import mil.darpa.immortals.das.context.ImmortalsErrorHandler;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.glassfish.jersey.client.ClientConfig;
@@ -24,8 +25,10 @@ import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by awellman@bbn.com on 6/22/18.
@@ -55,6 +58,9 @@ public class CrossAppDependenciesAdapter implements IAdaptationModule {
             isApplicable(context);
         }
 
+        LinkedList<String> details = new LinkedList<>();
+        LinkedList<String> errors = new LinkedList<>();
+
         // TODO: No hard-coding!
         String clientIdentifier = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/client/ATAKLite/").toString();
         String serverIdentifier = ImmortalsConfig.getInstance().globals.getImmortalsRoot().resolve("applications/server/Marti/").toString();
@@ -75,31 +81,26 @@ public class CrossAppDependenciesAdapter implements IAdaptationModule {
 
         // Feed it to the DSL and get back complete candidate configurations
         DslAdapter da = DslAdapter.getInstance();
-        Exception javaxException = null;
-        Exception bcException = null;
-        List<CipherConfiguration> configs = new LinkedList<>();
-        try {
-            List<CipherConfiguration> javaxConfigs = da.query(context.getAdaptationIdentifer(), partialConfiguration, true);
-            configs.addAll(javaxConfigs);
-        } catch (Exception e) {
-            javaxException = e;
-        }
-        try {
-            List<CipherConfiguration> bouncyCastleConfigs = da.query(context.getAdaptationIdentifer(), partialConfiguration, false);
-            configs.addAll(bouncyCastleConfigs);
-        } catch (Exception e) {
-            bcException = e;
-        }
+        CipherConfiguration cc = da.querySingleSolution(context.getAdaptationIdentifer(), partialConfiguration);
         
-        Random r = new Random(345312544354312L);
-        Collections.shuffle(configs, r);
-        
+        if (cc == null) {
+            details.add("Unable come up with a valid solution. Perhaps you are requesting AES_256 and the client or server do not have high key sizes enabled?");
+            AdaptationDetails update = new AdaptationDetails(
+                    getClass().getName(),
+                    DasOutcome.NOT_POSSIBLE,
+                    context.getAdaptationIdentifer(),
+                    errors,
+                    details);
+            context.submitAdaptationStatus(update);
+            return;
+        }
+
+        details.add("Selected cipher configuration: " + cc.toString());
+
         // Then insert each Solution into a model
         Model m = ModelFactory.createDefaultModel();
-        for (CipherConfiguration solution : configs) {
-            AspectConfigureSolutionBuilder sb = new AspectConfigureSolutionBuilder(solution, m, javaxDfuIdentifier, bcDfuIdentifier);
-            sb.buildSolution();
-        }
+        AspectConfigureSolutionBuilder sb = new AspectConfigureSolutionBuilder(cc, m, javaxDfuIdentifier, bcDfuIdentifier);
+        sb.buildSolution();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         m.write(out, "TURTLE");
@@ -129,6 +130,7 @@ public class CrossAppDependenciesAdapter implements IAdaptationModule {
         // And add them to the build instances
         for (Map.Entry<String, DetermineCrossAppReplacementFiles.CrossAppReplacementData> appEntry : replacementDataMap.entrySet()) {
             AdaptationTargetBuildInstance buildInstance = GradleKnowledgeBuilder.getBuildInstance(appEntry.getKey(), context.getAdaptationIdentifer());
+            String targetName = buildInstance.getTargetName();
             Path sourceRoot = buildInstance.getSourceRoot();
             DetermineCrossAppReplacementFiles.CrossAppReplacementData replacementData = appEntry.getValue();
 
@@ -155,16 +157,29 @@ public class CrossAppDependenciesAdapter implements IAdaptationModule {
             }
 
             boolean buildSuccess = buildInstance.executeCleanAndBuild();
-            DasOutcome outcome = buildSuccess ? DasOutcome.SUCCESS : DasOutcome.ERROR;
 
-
-            AdaptationDetails update = new AdaptationDetails(
-                    getClass().getName(),
-                    outcome,
-                    context.getAdaptationIdentifer());
-            context.submitAdaptationStatus(update);
-
+            if (!buildSuccess) {
+                String errorMsg = "Unexpected error building '" + targetName + "'!";
+                errors.add(errorMsg);
+                AdaptationDetails update = new AdaptationDetails(
+                        getClass().getName(),
+                        DasOutcome.ERROR,
+                        context.getAdaptationIdentifer(),
+                        errors,
+                        details);
+                context.submitAdaptationStatus(update);
+                ImmortalsErrorHandler.reportFatalError(errorMsg);
+                return;
+            }
         }
+
+        AdaptationDetails update = new AdaptationDetails(
+                getClass().getName(),
+                DasOutcome.SUCCESS,
+                context.getAdaptationIdentifer(),
+                errors,
+                details);
+        context.submitAdaptationStatus(update);
     }
 
     private static String removeBadChunks(String value) {

@@ -28,7 +28,6 @@
             },
             "martiServerModel": {
                 "resources": [
-                    "HARWARE_AES",
                     "STRONG_CRYPTO"
                 ]
             },
@@ -56,7 +55,6 @@
             },
             "martiServerModel": {
                 "resources": [
-                    "HARWARE_AES",
                     "STRONG_CRYPTO"
                 ]
             },

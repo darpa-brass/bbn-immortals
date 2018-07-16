@@ -23,10 +23,6 @@ public class KnowledgeBuilderManager {
 	static final Logger logger = LoggerFactory.getLogger(KnowledgeBuilderManager.class);
 
 	public static void initialize() {
-		
-		FileOutputStream out = null;
-		
-		
 		try {
 			logger.info("Executing knowledge builders.");
 			// Initialize Gradle information for all known projects
@@ -41,6 +37,16 @@ public class KnowledgeBuilderManager {
 			KnowledgeRepoConnectionBuilder krcb = new KnowledgeRepoConnectionBuilder();
 			krcb.buildKnowledge(null);
 			
+			performSchemaAnalysis();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void performSchemaAnalysis() {
+		FileOutputStream out = null;
+
+		try {
 			//####Initialize SchemaDependencyKnowledgeBuilder#####
 			//Get root folder of data DFUs
 			String dataDFURoot = ImmortalsConfig.getInstance().globals.getImmortalsRoot()

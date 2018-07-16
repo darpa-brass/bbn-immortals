@@ -1112,7 +1112,7 @@ public class AnalysisFrameAssessment {
 
             if (wrapper.getWrappedClass().isAbstract()) {
                 Optional<String> sourceWithAbstractMethodsImplemented = taskHelper.checkForNecessaryImplementations(
-                        wrapper.getWrappedClass().getName(), source, null);
+                        wrapper.getWrappedClass().getName(), source, null, wrapper);
                 if (sourceWithAbstractMethodsImplemented.isPresent()) {
                     source = sourceWithAbstractMethodsImplemented.get();
                 }

@@ -14,8 +14,26 @@ class SecurityStandard(Enum):
     AES_128 = ("AES_128",
         "AES",
         None,
-        "AES encryption standard with 128bit+ key",
+        "AES encryption algorithm with 128 bit key",
         16)
+
+    AES_256 = ("AES_256",
+        "AES",
+        None,
+        "AES encryption algorithm with 256 bit key",
+        32)
+
+    DES_56 = ("DES_56",
+        "DES",
+        None,
+        "DES encryption algorithm with 56 bit key",
+        8)
+
+    Rijndael = ("Rijndael",
+        "Rijndael",
+        None,
+        "Rijndael encryption algorithm",
+        None)
 
     @classmethod
     def all_algorithm(cls) -> FrozenSet[str]:

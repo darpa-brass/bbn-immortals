@@ -179,6 +179,7 @@ _sample_test_adapter_state = TestAdapterState(
     ),
     validation=ValidationStateObject(
         verdictOutcome=VerdictOutcome.PASS,
+        testsPassedPercent=100.00,
         executedTests=[
             TestStateObject(
                 testIdentifier="LocationSendTest",

@@ -10,6 +10,7 @@
     {
         "scenarioIdentifier": "p2cp1baselineB",
         "submissionModel": {
+            "sessionIdentifier": "p2cp1baselineB", 
             "martiServerModel": {
                 "requirements": {
                     "postgresqlPerturbation": {
@@ -47,6 +48,7 @@
     {
         "scenarioIdentifier": "p2cp1challenge",
         "submissionModel": {
+            "sessionIdentifier": "p2cp1challenge",
             "martiServerModel": {
                 "requirements": {
                     "postgresqlPerturbation": {

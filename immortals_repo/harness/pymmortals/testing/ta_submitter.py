@@ -1,6 +1,7 @@
 import copy
 import json
 import logging
+import os
 import time
 from typing import List, Callable, Union, Optional
 
@@ -55,6 +56,8 @@ def send_cp1(submission_model: Optional[SubmissionModel] = None):
         body = None
     else:
         body = submission_model.to_dict(include_metadata=False, strip_nulls=True)
+        submission_model.to_file_pretty(os.path.join(
+            get_configuration().globals.immortalsRoot, 'DAS_DEPLOYMENT/input.json'), include_metadata = False)
     tpr.start_thread(thread_method=post, thread_args=[TestAdapterEndpoint.CP1, body])
 
 
@@ -63,6 +66,8 @@ def send_cp2(submission_model: Optional[SubmissionModel] = None):
         body = None
     else:
         body = submission_model.to_dict(include_metadata=False, strip_nulls=True)
+        submission_model.to_file_pretty(os.path.join(
+            get_configuration().globals.immortalsRoot, 'DAS_DEPLOYMENT/input.json'), include_metadata = False)
     tpr.start_thread(thread_method=post, thread_args=[TestAdapterEndpoint.CP2, body])
 
 
@@ -71,6 +76,8 @@ def send_cp3(submission_model: Optional[SubmissionModel] = None):
         body = None
     else:
         body = submission_model.to_dict(include_metadata=False, strip_nulls=True)
+        submission_model.to_file_pretty(os.path.join(
+            get_configuration().globals.immortalsRoot, 'DAS_DEPLOYMENT/input.json'), include_metadata = False)
     tpr.start_thread(thread_method=post, thread_args=[TestAdapterEndpoint.CP3, body])
 
 

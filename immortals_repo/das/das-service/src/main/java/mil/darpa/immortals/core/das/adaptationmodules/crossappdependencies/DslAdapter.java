@@ -2,9 +2,10 @@ package mil.darpa.immortals.core.das.adaptationmodules.crossappdependencies;
 
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.das.ImmortalsProcessBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -18,23 +19,38 @@ import java.util.concurrent.TimeUnit;
  */
 public class DslAdapter {
 
-    public static List<CipherConfiguration> parseDslOutput(@Nonnull Path bestFilepath, CipherConfiguration partialConfig) throws IOException {
+    private static final Logger logger = LoggerFactory.getLogger(DslAdapter.class);
+
+    public static List<CipherConfiguration> parseDslOutput(@Nonnull Path bestFilepath, CipherConfiguration partialConfig) throws Exception {
         List<CipherConfiguration> configurations = new LinkedList<>();
 
         List<String> allLines = Files.readAllLines(bestFilepath);
 
         CipherConfiguration currentConfiguration = null;
 
+        if ("No solutions found.".equals(allLines.get(0))) {
+            return new LinkedList<>();
+        }
+
         for (String line : allLines) {
             if (line.startsWith("Solution")) {
+                if (currentConfiguration != null) {
+                    currentConfiguration.finalize(partialConfig);
+                    configurations.add(currentConfiguration);
+                }
                 currentConfiguration = partialConfig.clone();
-                configurations.add(currentConfiguration);
-            } else if (!line.startsWith("Search stopped")) {
+
+            } else if (!line.startsWith("Search stopped") && !line.startsWith("Found")) {
                 line = line.trim().replace(" :: Bool", "");
 
                 String identifier = line.substring(0, line.indexOf(" "));
                 boolean valid = line.substring(line.lastIndexOf(" ")).endsWith("True");
                 currentConfiguration.setValue(identifier, valid);
+            } else {
+                if (currentConfiguration != null) {
+                    currentConfiguration.finalize(partialConfig);
+                    configurations.add(currentConfiguration);
+                }
             }
         }
         return configurations;
@@ -52,7 +68,40 @@ public class DslAdapter {
         return instance;
     }
 
-    public synchronized List<CipherConfiguration> query(@Nonnull String adaptationIdentifier, @Nonnull CipherConfiguration partialConfig, Boolean clientServerJavax) throws Exception {
+    public CipherConfiguration querySingleSolution(@Nonnull String adaptationIdentifier, @Nonnull CipherConfiguration partialConfiguration) throws Exception {
+        // Feed it to the DSL and get back complete candidate configurations
+        DslAdapter da = DslAdapter.getInstance();
+        List<CipherConfiguration> configs = new LinkedList<>();
+        
+        List<CipherConfiguration> javaxConfigs = da.query(adaptationIdentifier, partialConfiguration, true, false);
+        configs.addAll(javaxConfigs);
+        
+        List<CipherConfiguration> javaxConfigsNoPadding = da.query(adaptationIdentifier, partialConfiguration, true, true);
+        configs.addAll(javaxConfigsNoPadding);
+        
+        List<CipherConfiguration> bouncyCastleConfigs = da.query(adaptationIdentifier, partialConfiguration, false, false);
+        configs.addAll(bouncyCastleConfigs);
+        
+        List<CipherConfiguration> bouncyCastleConfigsNoPadding = da.query(adaptationIdentifier, partialConfiguration, false, true);
+        configs.addAll(bouncyCastleConfigsNoPadding);
+
+        Random r = new Random(34531244354312L);
+        Collections.shuffle(configs, r);
+
+        CipherConfiguration cc = null;
+
+        if (configs.size() == 0) {
+            String msg = "No solution found: " + partialConfiguration.toString();
+            logger.info(msg);
+//            throw new RuntimeException(msg);
+        } else {
+            cc = configs.get(0);
+            logger.info("Solution found: " + cc.toString());
+        }
+        return cc;
+    }
+
+    private synchronized List<CipherConfiguration> query(@Nonnull String adaptationIdentifier, @Nonnull CipherConfiguration partialConfig, boolean clientServerJavax, boolean noPadding) throws Exception {
         Path dslPath = ImmortalsConfig.getInstance().dasService.getResourceDslPath();
         LinkedList<String> command = new LinkedList<>();
         command.add("stack");
@@ -77,14 +126,37 @@ public class DslAdapter {
             onValues.add(partialConfig.getCipherChainingMode());
         }
 
-        if (clientServerJavax != null) {
-            if (clientServerJavax) {
-                onValues.add("ClientJavax");
-                onValues.add("ServerJavax");
-            } else {
-                offValues.add("ClientJavax");
-                offValues.add("ServerJavax");
-            }
+        if (clientServerJavax) {
+            onValues.add("ClientJavax");
+            onValues.add("ServerJavax");
+        } else {
+            offValues.add("ClientJavax");
+            offValues.add("ServerJavax");
+        }
+
+        if (noPadding) {
+            onValues.add("NoPadding");
+            offValues.add("CBC");
+//            onValues.add("CFB");
+//            onValues.add("CTR");
+            offValues.add("ECB");
+//            onValues.add("CTS");
+//            onValues.add("OFB");
+//            onValues.add("OpenPGPCFB");
+            offValues.add("PGPCFBBlock");
+//            onValues.add("SICBlock");
+
+        } else {
+            offValues.add("NoPadding");
+//            onValues.add("CBC");
+            offValues.add("CFB");
+            offValues.add("CTR");
+//            onValues.add("ECB");
+            offValues.add("CTS");
+            offValues.add("OFB");
+            offValues.add("OpenPGPCFB");
+//            onValues.add("PGPCFBBlock");
+            offValues.add("SICBlock");
         }
 
         if (onValues.size() > 0) {
@@ -92,16 +164,13 @@ public class DslAdapter {
             command.add("[\"" + String.join("\",\"", onValues) + "\"]");
         }
 
-        if (!partialConfig.isUseServerAESNI()) {
+        if (!partialConfig.isUseClientAESNI() || !partialConfig.isUseServerAESNI()) {
             offValues.add("ServerAESNI");
-        }
-        if (!partialConfig.isUseServerSEP()) {
-            offValues.add("ServerSEP");
-        }
-        if (!partialConfig.isUseClientAESNI()) {
             offValues.add("ClientAESNI");
         }
-        if (!partialConfig.isUseClientSEP()) {
+
+        if (!partialConfig.isUseClientSEP() || !partialConfig.isUseServerSEP()) {
+            offValues.add("ServerSEP");
             offValues.add("ClientSEP");
         }
 
@@ -119,43 +188,10 @@ public class DslAdapter {
         p.waitFor(60000, TimeUnit.MILLISECONDS);
 
         if (p.exitValue() != 0) {
-            throw new RuntimeException("The DSL execution returned with a non-zero exit status of " + Integer.toString(p.exitValue()) + "!");
+            // No results. I haven't seen a return code that doesn't mean no results found...
+//            throw new RuntimeException("The DSL execution returned with a non-zero exit status of " + Integer.toString(p.exitValue()) + "!");
+            return new LinkedList<>();
         }
-
         return parseDslOutput(ImmortalsConfig.getInstance().dasService.getResourceDslPath().resolve("outbox/best.txt"), partialConfig);
     }
-
-    public static void main(String[] args) {
-        try {
-            CipherConfiguration partialConfiguration = new CipherConfiguration(true, true, true, true,
-                    "AES", 16, null, null);
-            
-            String adaptationIdentifier = "TestMain";
-
-            DslAdapter da = DslAdapter.getInstance();
-            List<CipherConfiguration> javaxConfigs = da.query(adaptationIdentifier, partialConfiguration, true);
-            List<CipherConfiguration> bouncyCastleConfigs = da.query(adaptationIdentifier, partialConfiguration, false);
-            List<CipherConfiguration> results = new LinkedList<>();
-            results.addAll(javaxConfigs);
-            results.addAll(bouncyCastleConfigs);
-            Random r = new Random(34531254235412L);
-            Collections.shuffle(results, r);
-
-            for (CipherConfiguration cc : results) {
-                System.out.println(
-                        "KEYLEN=" + cc.getKeyLength() +
-                        ", ALG=" + cc.getCipherAlgorithm() +
-                                ", PADDING=" + cc.getPaddingScheme() +
-                                
-                                ", MODE=" + cc.getCipherChainingMode() + 
-                                ", CJX=" + cc.isClientJavax() +
-                                ", SJX=" + cc.isServerJavax()
-                );
-            }
-            System.out.println("MEH");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

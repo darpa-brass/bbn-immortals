@@ -79,7 +79,7 @@ class SystemValidator:
                     (self._current_test_scenario.submissionFlow == Phase2SubmissionFlow.BaselineB or
                      self._current_test_scenario.submissionFlow == Phase2SubmissionFlow.Challenge):
                 cwd = os.path.join(ir, 'das/das-service')
-                results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar'), '--analyze'],
+                results = subprocess.run(['java', '-jar', os.path.join(cwd, 'das.jar'), '--perform-schema-analysis'],
                                          cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 results.check_returncode()
 

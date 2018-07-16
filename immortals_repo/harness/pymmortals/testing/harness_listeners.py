@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import sys
 from threading import RLock
 from typing import Dict, Union, List, Callable, Optional
@@ -564,6 +565,10 @@ class TABehaviorValidator(Phase2TestHarnessListenerInterface):
     def receiving_post_listener(self, endpoint: TestHarnessEndpoint, body_str: str):
         with self._lock:
             body_dict = self.parse_posted_data(endpoint=endpoint, body_str=body_str)
+            if endpoint == TestHarnessEndpoint.DONE:
+                with open(os.path.join(ig.get_configuration().globals.immortalsRoot,
+                                       'DAS_DEPLOYMENT/result.json'), 'w') as out:
+                    out.write(body_str)
             self._scenario_executions[0].receiving_post_listener(
                 endpoint=endpoint,
                 body_str=(None if body_dict is None else json.dumps(body_dict)))

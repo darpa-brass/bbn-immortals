@@ -31,8 +31,10 @@ public class DAS {
     	if (args.length == 1) {
     		String argument = args[0].trim();
     		if (argument.equalsIgnoreCase(ANALYZE)) {
-        		//Run through knowledge builders to analyze code; exit DAS when done
-    			KnowledgeBuilderManager.initialize();
+                //Run through knowledge builders to analyze code; exit DAS when done
+                KnowledgeBuilderManager.initialize();
+            } else if (argument.equalsIgnoreCase(PERFORM_SCHEMA_ANALYSIS)) {
+    		    KnowledgeBuilderManager.performSchemaAnalysis();
     		} else if (argument.equalsIgnoreCase(HELP)) {
     			//Print help and exit
     			System.out.println("An optional parameter may be supplied to perform startup analysis; e.g., 'java DAS --analyze' /n After analysis completes, the DAS exits. "
@@ -154,5 +156,6 @@ public class DAS {
     private static final String DAS_FORCEFULLY_STOPPED = String.format("The DAS service at: %s did not start or stop gracefully and was forced to shutdown.", BASE_URI);
     private static final String DAS_STARTED = "The DAS service located at: %s is running.";
     private static final String ANALYZE = "--ANALYZE";
+    private static final String PERFORM_SCHEMA_ANALYSIS = "--PERFORM-SCHEMA-ANALYSIS";
     private static final String HELP = "--HELP";
 }

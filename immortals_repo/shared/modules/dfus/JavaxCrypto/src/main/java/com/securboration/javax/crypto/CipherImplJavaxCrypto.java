@@ -203,7 +203,13 @@ public class CipherImplJavaxCrypto implements CipherImplApi{
                 this.encryptionCipher = cipher;
             }
 
-            return cipher.update(data);
+            final byte[] result = cipher.update(data);
+            
+            if(result == null){
+                return new byte[]{};
+            } else {
+                return result;
+            }
         } catch(Exception e){
             throw new RuntimeException(e);
         }
@@ -238,7 +244,13 @@ public class CipherImplJavaxCrypto implements CipherImplApi{
                 this.decryptionCipher = cipher;
             }
 
-            return cipher.update(data);
+            final byte[] result = cipher.update(data);
+            
+            if(result == null){
+                return new byte[]{};
+            } else {
+                return result;
+            }
         } catch(Exception e){
             throw new RuntimeException(e);
         }

@@ -160,6 +160,7 @@ public class HddRassAdapter implements IAdaptationModule {
             if (code == 0) {
                 outcome = DasOutcome.SUCCESS;
             } else {
+                System.err.println("HDDRass returned with a non-zero exit code!");
                 outcome = DasOutcome.ERROR;
             }
             AdaptationDetails update = new AdaptationDetails(

@@ -405,7 +405,7 @@ public class GradleTaskHelper {
         return true;
     }
     
-    public Optional<String> checkForNecessaryImplementations(String wrappedClassName, String source, File sourceFile) throws IOException {
+    public Optional<String> checkForNecessaryImplementations(String wrappedClassName, String source, File sourceFile, Wrapper wrapper) throws IOException {
         
         String getNecessaryImplementations = "prefix IMMoRTALS_pattern_spec: <http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#> \n" +
                 "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
@@ -433,8 +433,31 @@ public class GradleTaskHelper {
         for (Solution necessaryImplementationSolution : necessaryImplementationSolutionSet.getSolutions()) {
             CodeSpec codeSpec = new CodeSpec();
             codeSpec.setClassName(wrappedClassName);
-            codeSpec.setMethodSignature(necessaryImplementationSolution.get("codeSpecSig"));
-            codeSpec.setCode(necessaryImplementationSolution.get("codeSpecCode"));
+
+            String methodSig = necessaryImplementationSolution.get("codeSpecSig");
+            if (methodSig.contains("???CIPHER_CLASS_UP???")) {
+                methodSig = methodSig.replace("???CIPHER_CLASS_UP???", wrapper.getCipherInfo().getCipherClassName());
+                codeSpec.setMethodSignature(methodSig);
+            } else if (methodSig.contains("???CIPHER_CLASS_LOW???")) {
+                methodSig = methodSig.replace("???CIPHER_CLASS_LOW???", wrapper.getCipherInfo().getCipherClassName().toLowerCase());
+                codeSpec.setMethodSignature(methodSig);
+            } else {
+                codeSpec.setMethodSignature(methodSig);
+            }
+
+            String codeSpecCode = necessaryImplementationSolution.get("codeSpecCode");
+            if (codeSpecCode.contains("???CIPHER_CLASS_UP???")) {
+                codeSpecCode = codeSpecCode.replace("???CIPHER_CLASS_UP???", wrapper.getCipherInfo().getCipherClassName());
+                codeSpec.setCode(codeSpecCode);
+            } else if (codeSpecCode.contains("???CIPHER_CLASS_LOW???")) {
+                codeSpecCode = codeSpecCode.replace("???CIPHER_CLASS_LOW???", wrapper.getCipherInfo().getCipherClassName().toLowerCase());
+                codeSpec.setCode(codeSpecCode);
+            } else {
+                codeSpec.setCode(codeSpecCode);
+            }
+
+            //codeSpec.setMethodSignature(necessaryImplementationSolution.get("codeSpecSig"));
+            //codeSpec.setCode(necessaryImplementationSolution.get("codeSpecCode"));
             codeSpecs.add(codeSpec);
         }
         

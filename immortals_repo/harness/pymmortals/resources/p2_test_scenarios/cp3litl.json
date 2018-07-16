@@ -8,8 +8,9 @@
         "perturbationScenario": "P2CP3LibraryOrPlatformUpgrade"
     },
     {
-        "scenarioIdentifier": "p2cp3litlbaselineB",
+        "scenarioIdentifier": "p2cp3baselineB",
         "submissionModel": {
+            "sessionIdentifier": "p2cp2baselineB",
             "atakLiteClientModel": {
                 "requirements": {
                     "deploymentPlatformVersion": "Android23"
@@ -22,8 +23,9 @@
         "perturbationScenario": "P2CP3LibraryOrPlatformUpgrade"
     },
     {
-        "scenarioIdentifier": "p2cp3litlchallenge",
+        "scenarioIdentifier": "p2cp3challenge",
         "submissionModel": {
+            "sessionIdentifier": "p2cp3challenge",
             "atakLiteClientModel": {
                 "requirements": {
                     "deploymentPlatformVersion": "Android23"

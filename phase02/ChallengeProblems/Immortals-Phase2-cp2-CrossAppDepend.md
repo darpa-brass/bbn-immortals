@@ -494,7 +494,6 @@ __Endpoint URL__: /action/crossApplicationDependencies
 {
     "atakLiteClientModel": {
         "resources": [
-            "HARWARE_AES",
             "STRONG_CRYPTO"
         ]
     },
@@ -571,9 +570,12 @@ __Description__: The requirements for all data that is transmitted over the wire
 __Type__: String Constant  
 __Description__: Common security standards  
 
-| Values  | Algorithm | CipherChainingMode | Description                              | KeySize |  
-| ------- | --------- | ------------------ | ---------------------------------------- | ------- |  
-| AES_128 | AES       | on                 | AES encryption standard with 128bit+ key |         |  
+| Values   | Description                               |  
+| -------- | ----------------------------------------- |  
+| AES_128  | AES encryption algorithm with 128 bit key |  
+| AES_256  | AES encryption algorithm with 256 bit key |  
+| DES_56   | DES encryption algorithm with 56 bit key  |  
+| Rijndael | Rijndael encryption algorithm             |  
 
 #### MartiSubmissionModel  
 __Type__: JSON Object  

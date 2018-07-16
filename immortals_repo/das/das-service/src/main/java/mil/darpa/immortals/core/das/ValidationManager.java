@@ -89,8 +89,7 @@ public class ValidationManager {
                         "com.bbn.marti.Tests.testEncryptedLatestSaTransmission",
                         -1,
                         null,
-                        null
-//                        validationFunctionality1
+                        validationFunctionality1
                 ));
             }
 
@@ -211,6 +210,11 @@ public class ValidationManager {
                         }
                     }
                     testCaseReports.addAll(transformedReportSet);
+                    if (transformedReportSet.size() > 0) {
+                        logger.info("Performed validation on '" + target + "' with test results of:\n" + transformedReportSet.getResultChart());
+                    } else {
+                        logger.debug("Performed validation on '" + target + "' with no test results.\n");
+                    }
                 }
                 
                 

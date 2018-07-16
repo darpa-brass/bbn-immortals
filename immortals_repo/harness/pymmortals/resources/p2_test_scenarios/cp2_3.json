@@ -16,7 +16,6 @@
         "submissionModel": {
             "atakLiteClientModel": {
                 "resources": [
-                    "STRONG_CRYPTO"
                 ]
             },
             "globalModel": {
@@ -28,8 +27,6 @@
             },
             "martiServerModel": {
                 "resources": [
-                    "HARWARE_AES",
-                    "STRONG_CRYPTO"
                 ]
             },
             "sessionIdentifier": "p2cp2baselineB"
@@ -44,7 +41,6 @@
         "submissionModel": {
             "atakLiteClientModel": {
                 "resources": [
-                    "STRONG_CRYPTO"
                 ]
             },
             "globalModel": {
@@ -56,8 +52,6 @@
             },
             "martiServerModel": {
                 "resources": [
-                    "HARWARE_AES",
-                    "STRONG_CRYPTO"
                 ]
             },
             "sessionIdentifier": "p2cp2challenge"

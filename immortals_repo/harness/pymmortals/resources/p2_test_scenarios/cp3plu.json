@@ -10,6 +10,7 @@
     {
         "scenarioIdentifier": "p2cp3baselineB",
         "submissionModel": {
+            "sessionIdentifier": "p2cp3baselineB",
             "atakLiteClientModel": {
                 "requirements": {
                     "partialLibraryUpgrade": "Dropbox_3_0_6"
@@ -24,6 +25,7 @@
     {
         "scenarioIdentifier": "p2cp3challenge",
         "submissionModel": {
+            "sessionIdentifier": "p2cp3challenge",
             "atakLiteClientModel": {
                 "requirements": {
                     "partialLibraryUpgrade": "Dropbox_3_0_6"

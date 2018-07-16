@@ -2,15 +2,12 @@ package mil.darpa.immortals.core.das.adaptationmodules.crossappdependencies;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by awellman@bbn.com on 6/26/18.
  */
-public class CipherConfiguration {
+public class CipherConfiguration implements Comparator<CipherConfiguration>, Comparable<CipherConfiguration> {
 
     public static final HashSet<String> resources = new HashSet<>(Arrays.asList(
             "ServerAESNI",
@@ -100,9 +97,14 @@ public class CipherConfiguration {
     private boolean serverJavax;
     private boolean clientJavax;
 
-    private CipherConfiguration(boolean useServerAESNI, boolean useServerSEP, boolean useClientAESNI, boolean useClientSEP,
-                                String cipherAlgorithm, Integer keyLength, String paddingScheme, String cipherChainingMode,
-                                boolean serverJavax, boolean clientJavax) {
+    private List<String> cipherAlgorithms = new LinkedList<>();
+    private List<Integer> keyLengths = new LinkedList<>();
+    private List<String> paddingSchemes = new LinkedList<>();
+    private List<String> cipherChainingModes = new LinkedList<>();
+
+    CipherConfiguration(boolean useServerAESNI, boolean useServerSEP, boolean useClientAESNI, boolean useClientSEP,
+                        String cipherAlgorithm, Integer keyLength, String paddingScheme, String cipherChainingMode,
+                        boolean serverJavax, boolean clientJavax) {
         this.useServerAESNI = useServerAESNI;
         this.useServerSEP = useServerSEP;
         this.useClientAESNI = useClientAESNI;
@@ -115,9 +117,14 @@ public class CipherConfiguration {
         this.clientJavax = clientJavax;
     }
 
-    CipherConfiguration(boolean useServerAESNI, boolean useServerSEP, boolean useClientAESNI, boolean useClientSEP,
-                        @Nullable String cipherAlgorithm, @Nullable Integer keyLength,
-                        @Nullable String paddingScheme, @Nullable String cipherChainingMode) {
+    public String toString() {
+        return "CipherConfiguration(useServerAESNI=" + useClientAESNI + ",useServerSEP=" + useServerSEP + ",useClientAESNI=" + useClientAESNI + ",useClientSEP=" + useClientSEP +
+                ",cipherAlgorithm=" + cipherAlgorithm + ",keyLength=" + keyLength + ",paddingScheme=" + paddingScheme + ",mode=" + cipherChainingMode + ",serverJavax=" + serverJavax + ",clientJavax=" + clientJavax + ")";
+    }
+
+    public CipherConfiguration(boolean useServerAESNI, boolean useServerSEP, boolean useClientAESNI, boolean useClientSEP,
+                               @Nullable String cipherAlgorithm, @Nullable Integer keyLength,
+                               @Nullable String paddingScheme, @Nullable String cipherChainingMode) {
         this.useServerAESNI = useServerAESNI;
         this.useServerSEP = useServerSEP;
         this.useClientAESNI = useClientAESNI;
@@ -171,22 +178,22 @@ public class CipherConfiguration {
     void setValue(@Nonnull String identifier, boolean valid) {
         if (algorithms.contains(identifier)) {
             if (valid) {
-                cipherAlgorithm = identifier;
+                cipherAlgorithms.add(identifier);
             }
 
         } else if (modes.contains(identifier)) {
             if (valid) {
-                cipherChainingMode = identifier;
+                cipherChainingModes.add(identifier);
             }
 
         } else if (paddings.contains(identifier)) {
             if (valid) {
-                paddingScheme = identifier;
+                paddingSchemes.add(identifier);
             }
 
         } else if (keysizes.contains(identifier)) {
             if (valid) {
-                keyLength = Integer.valueOf(identifier.replace("KSZ", ""));
+                keyLengths.add(Integer.valueOf(identifier.replace("KSZ", "")));
             }
 
         } else if (identifier.equals("ClientJavax")) {
@@ -213,21 +220,69 @@ public class CipherConfiguration {
         }
     }
 
+    public void finalize(CipherConfiguration partialConfiguration) throws Exception {
+        if (partialConfiguration.cipherAlgorithm == null) {
+            cipherAlgorithm = cipherAlgorithms.get(0);
+        } else {
+            if (cipherAlgorithms.contains(partialConfiguration.cipherAlgorithm)) {
+                cipherAlgorithm = partialConfiguration.cipherAlgorithm;
+            } else {
+                throw new RuntimeException("Required cipher algorithm '" + partialConfiguration.cipherAlgorithm + "' not found in solution!");
+            }
+        }
+
+        if (partialConfiguration.keyLength == null) {
+            keyLength = keyLengths.get(0);
+        } else {
+            if (keyLengths.contains(partialConfiguration.keyLength)) {
+                keyLength = partialConfiguration.keyLength;
+            } else {
+                throw new RuntimeException("Required key length '" + Integer.toString(partialConfiguration.keyLength) + "' not found in solution!");
+            }
+
+        }
+
+        if (partialConfiguration.cipherChainingMode == null) {
+            cipherChainingMode = cipherChainingModes.get(0);
+        } else {
+            if (cipherChainingModes.contains(partialConfiguration.cipherChainingMode)) {
+                cipherChainingMode = partialConfiguration.cipherChainingMode;
+            } else {
+                throw new RuntimeException("Required chaining mode '" + partialConfiguration.cipherChainingMode + "' not found in solution!");
+            }
+
+        }
+
+        if (partialConfiguration.paddingScheme == null) {
+            paddingScheme = paddingSchemes.get(0);
+        } else {
+            if (paddingSchemes.contains(partialConfiguration.paddingScheme)) {
+                paddingScheme = partialConfiguration.paddingScheme;
+            } else {
+                throw new RuntimeException("Required padding scheme '" + partialConfiguration.paddingScheme + "' not found in configuration!");
+            }
+        }
+
+        if (clientJavax != serverJavax) {
+            throw new RuntimeException("clientJavax and serverJavax should be equal!");
+        }
+    }
+
     public CipherConfiguration clone() {
         return new CipherConfiguration(useServerAESNI, useServerSEP, useClientAESNI, useClientSEP,
                 cipherAlgorithm, keyLength, paddingScheme, cipherChainingMode, serverJavax, clientJavax);
     }
-    
+
     public static void main(String[] args) {
 
         List<String> algList = new LinkedList<>(algorithms);
         List<String> ksList = new LinkedList<>(keysizes);
         for (int i = 0; i < algList.size(); i++) {
             String algorithm = algList.get(i);
-            
+
             for (int j = 0; j < ksList.size(); j++) {
                 String keysize = ksList.get(j);
-                
+
                 String line = algorithm + "_" + keysize + "(\"" + algorithm + "-" + keysize + "\", \"" + algorithm + "\", " + keysize.replace("KSZ", "") + ", null)";
                 if (i + 1 == algList.size() && j + 1 == ksList.size()) {
                     line += ";";
@@ -235,6 +290,44 @@ public class CipherConfiguration {
                     line += ",";
                 }
             }
-        }  
+        }
+    }
+
+    @Override
+    public int compareTo(CipherConfiguration o) {
+        return compare(this, o);
+    }
+
+    @Override
+    public int compare(CipherConfiguration o1, CipherConfiguration o2) {
+        if (o1 == null && o2 == null) {
+            return 0;
+
+        } else if (o1 == null) {
+            return -1;
+        } else if (o2 == null) {
+            return 1;
+        } else if (
+                o1.cipherChainingMode.equals(o2.cipherChainingMode) &&
+                        o1.paddingScheme.equals(o2.paddingScheme) &&
+                        o1.keyLength.equals(o2.keyLength) &&
+                        o1.clientJavax == o2.clientJavax &&
+                        o1.serverJavax == o2.serverJavax
+                ) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CipherConfiguration)) {
+            return false;
+        } else {
+            CipherConfiguration cc = (CipherConfiguration) o;
+            return compareTo(cc) == 0;
+        }
     }
 }

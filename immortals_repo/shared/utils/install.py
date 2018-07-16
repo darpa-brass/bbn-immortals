@@ -649,7 +649,10 @@ class ImmortalsRootDeploymentTester:
     def validate_deployment(self):
         if not self._dry_run:
             try:
-                validate_deployment(immortals_root_deployment=self._immortals_root_deployment)
+                if self._build_in_current_project:
+                    validate_deployment(immortals_root_deployment=self._real_immortals_root)
+                else:
+                    validate_deployment(immortals_root_deployment=self._immortals_root_deployment)
             except Exception as e:
                 self._results.full_deployment_validation = False
                 raise e

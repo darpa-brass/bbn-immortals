@@ -475,7 +475,7 @@ IMMoRTALS_spec:SpecExample.3-537e7204-7291-4d3d-b5e1-bc45afe116f4
 IMMoRTALS_pattern_spec:CodeSpec-f5229251-a4e9-4cc5-b26f-af0452177aab
         a                             IMMoRTALS_pattern_spec:CodeSpec ;
         IMMoRTALS:hasClassName        "java/nio/channels/SocketChannel" ;
-        IMMoRTALS:hasCode             "\t\t{try {\n\t\tdelegate.write(ByteBuffer.wrap(???CIPHER_CLASS_LOW???.encryptFinish()));\n\t\t} catch (IllegalBlockSizeException | BadPaddingException e) {\n\t\tthrow new RuntimeException(e);\n\t\t}\n\t\t\n\t\tthis.socketchannel.close();}" ;
+        IMMoRTALS:hasCode             "\t\t{try {\n\t\tthis.socketchannel.write(ByteBuffer.wrap(???CIPHER_CLASS_LOW???.encryptFinish()));\n\t\t} catch (IllegalBlockSizeException | BadPaddingException e) {\n\t\tthrow new RuntimeException(e);\n\t\t}\n\t\t\n\t\tthis.socketchannel.close();}" ;
         IMMoRTALS:hasMethodSignature  "implCloseSelectableChannel()V" .
 		
 IMMoRTALS_pattern_spec:CodeSpec-f5229252-a4e9-4cc5-b26f-af0452177aab
