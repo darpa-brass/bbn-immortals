@@ -118,7 +118,7 @@ public class CipherConfiguration implements Comparator<CipherConfiguration>, Com
     }
 
     public String toString() {
-        return "CipherConfiguration(useServerAESNI=" + useClientAESNI + ",useServerSEP=" + useServerSEP + ",useClientAESNI=" + useClientAESNI + ",useClientSEP=" + useClientSEP +
+        return "CipherConfiguration(useServerAESNI=" + useServerAESNI + ",useServerSEP=" + useServerSEP + ",useClientAESNI=" + useClientAESNI + ",useClientSEP=" + useClientSEP +
                 ",cipherAlgorithm=" + cipherAlgorithm + ",keyLength=" + keyLength + ",paddingScheme=" + paddingScheme + ",mode=" + cipherChainingMode + ",serverJavax=" + serverJavax + ",clientJavax=" + clientJavax + ")";
     }
 

@@ -176,6 +176,11 @@ public class CP2DeploymentModelBuilder {
             Resource atakAndroidEnvironment = getPropertyByType(atakClient, props.HAS_RESOURCES, getResource(Res.ANDROID_RUNTIME_ENVIRONMENT));
             List<AndroidResource> androidResources = Arrays.asList(submissionModel.atakLiteClientModel.resources);
             atakAndroidEnvironment.addLiteral(props.HAS_UNLIMITED_CRYPTO_STRENGTH, androidResources.contains(AndroidResource.STRONG_CRYPTO));
+            
+            if (androidResources.contains(AndroidResource.HARWARE_AES)) {
+                Resource atakCpu = getPropertyByType(atakClient, props.HAS_RESOURCES, getResource(Res.CPU));
+                atakCpu.addProperty(props.HAS_INSTRUCTION_SET_ARCHITECTURE_SUPPORT, getResource(Res.INSTRUCTION_SET_AES_NI));
+            }
         }
     }
 

@@ -99,15 +99,15 @@ public class AspectConfigureSolutionBuilder {
 
         Resource algBinding = addResourceInstanceToResource(solution, Prop.HAS_CONFIGURATION_BINDINGS, Res.CONFIGURATION_BINDING);
         addResourceToResource(algBinding, Prop.HAS_SEMANTIC_TYPE, Res.CIPHER_ALGORITHM);
-        addLiteralToResource(algBinding, Prop.HAS_BINDING, configuration.getCipherAlgorithm());
+        addLiteralToResource(algBinding, Prop.HAS_BINDING, configuration.getCipherAlgorithm().replaceAll("_", "-"));
 
         Resource paddingSchemeBinding = addResourceInstanceToResource(solution, Prop.HAS_CONFIGURATION_BINDINGS, Res.CONFIGURATION_BINDING);
         addResourceToResource(paddingSchemeBinding, Prop.HAS_SEMANTIC_TYPE, Res.PADDING_SCHEME);
-        addLiteralToResource(paddingSchemeBinding, Prop.HAS_BINDING, configuration.getPaddingScheme());
+        addLiteralToResource(paddingSchemeBinding, Prop.HAS_BINDING, configuration.getPaddingScheme().replaceAll("_", "-"));
 
         Resource chainingModeBinding = addResourceInstanceToResource(solution, Prop.HAS_CONFIGURATION_BINDINGS, Res.CONFIGURATION_BINDING);
         addResourceToResource(chainingModeBinding, Prop.HAS_SEMANTIC_TYPE, Res.CIPHER_CHAINING_MODE);
-        addLiteralToResource(chainingModeBinding, Prop.HAS_BINDING, configuration.getCipherChainingMode());
+        addLiteralToResource(chainingModeBinding, Prop.HAS_BINDING, configuration.getCipherChainingMode().replaceAll("_", "-"));
 
         Resource keyLengthBinding = addResourceInstanceToResource(solution, Prop.HAS_CONFIGURATION_BINDINGS, Res.CONFIGURATION_BINDING);
         addResourceToResource(keyLengthBinding, Prop.HAS_SEMANTIC_TYPE, Res.CIPHER_KEY_LENGTH);

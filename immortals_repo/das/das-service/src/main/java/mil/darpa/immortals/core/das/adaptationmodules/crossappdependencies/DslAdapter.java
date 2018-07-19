@@ -8,16 +8,87 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by awellman@bbn.com on 6/26/18.
  */
 public class DslAdapter {
+
+    private static final HashSet<String> aesDesBadPaddings = new HashSet<>(Arrays.asList(
+            "ISO10126_2Padding",
+            "ISO7816_4Padding",
+            "PKCS7Padding",
+            "TBCPadding",
+            "X923Padding",
+            "ZeroBytePadding"
+    ));
+
+    private static final HashSet<String> aesDesBadModes = new HashSet<>(Arrays.asList(
+            "CBC",
+            "CFB",
+            "CTR",
+            "ECB",
+            "CTS",
+            "OFB"
+    ));
+
+    private static final HashSet<String> rijndaelBadNoPaddingModes = new HashSet<>(Arrays.asList(
+            "CFB",
+            "CTR",
+            "OFB"
+    ));
+
+    private static final HashSet<String> rijndaelBadNoPkcs5Modes = new HashSet<>(Arrays.asList(
+            "CBC",
+            "CFB",
+            "CTR",
+            "ECB",
+            "OFB"
+    ));
+
+    public boolean isCombinationValid(CipherConfiguration cc) {
+        if (cc.isServerJavax() || cc.isClientJavax()) {
+            if (cc.getCipherAlgorithm().equals("AES")) {
+
+                if ("CTS".equals(cc.getCipherChainingMode()) && "PKCS5Padding".equals(cc.getPaddingScheme())) {
+                    return false;
+
+                } else if (aesDesBadModes.contains(cc.getCipherChainingMode())) {
+                    if (aesDesBadPaddings.contains(cc.getPaddingScheme())) {
+                        return false;
+                    }
+                }
+
+            } else if (cc.getCipherAlgorithm().equals("DES")) {
+                if ("CTS".equals(cc.getCipherChainingMode()) && "NoPadding".equals(cc.getPaddingScheme())) {
+                    return false;
+                } else if (aesDesBadModes.contains(cc.getCipherChainingMode())) {
+                    if (aesDesBadPaddings.contains(cc.getPaddingScheme())) {
+                        return false;
+                    }
+                }
+            } else if (cc.getCipherAlgorithm().equals("Rijndael")) {
+                if (cc.getPaddingScheme().equals("PKCS5Padding")) {
+                    if (rijndaelBadNoPkcs5Modes.contains(cc.getCipherChainingMode())) {
+                        return false;
+                    }
+                } else if (cc.getPaddingScheme().equals("NoPadding")) {
+                    if (rijndaelBadNoPaddingModes.contains(cc.getCipherChainingMode())) {
+                        return false;
+                    }
+                }
+            }
+        } else if (!cc.isServerJavax() || !cc.isClientJavax()) {
+            if ("AES".equals(cc.getCipherAlgorithm()) || "DES".equals(cc.getCipherAlgorithm()) || "Rijndael".equals(cc.getCipherAlgorithm())) {
+                if ("NoPadding".equals(cc.getPaddingScheme()) && "PGPCFBBlock".equals(cc.getCipherChainingMode())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(DslAdapter.class);
 
@@ -95,8 +166,13 @@ public class DslAdapter {
             logger.info(msg);
 //            throw new RuntimeException(msg);
         } else {
-            cc = configs.get(0);
-            logger.info("Solution found: " + cc.toString());
+            for (CipherConfiguration candidate : configs) {
+                if (isCombinationValid(candidate)) {
+                    cc = candidate;
+                    logger.info("Solution found: " + cc.toString());
+                    break;
+                }
+            }
         }
         return cc;
     }
