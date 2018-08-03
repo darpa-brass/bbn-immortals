@@ -43,9 +43,11 @@ public class AnalyticsMQEndpoint implements AnalyticsEndpointInterface {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println("IMMORTALS-SENDING: " + event);
-                requester.send(event.getBytes(), 0);
-                requester.recv(0);
+                synchronized (requester) {
+                    System.out.println("IMMORTALS-SENDING: " + event);
+                    requester.send(event.getBytes(), 0);
+                    requester.recv(0);
+                }
             }
         });
         t.setDaemon(true);

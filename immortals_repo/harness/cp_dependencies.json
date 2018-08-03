@@ -24,10 +24,23 @@
                 "androidVersion": 21,
                 "externallyAccessibleUrls": [
                     "dropbox.com:443",
-                    "dropbox.com:80"
+                    "dropbox.com:80",
+                    "dropboxapi.com:443",
+                    "dropboxapi.com:80"
                 ],
                 "uploadBandwidthLimitKilobitsPerSecond": 800
+            },
+            {
+                "androidVersion": 21,
+                "externallyAccessibleUrls": [],
+                "uploadBandwidthLimitKilobitsPerSecond": null
+            },
+            {
+                "androidVersion": 21,
+                "externallyAccessibleUrls": [],
+                "uploadBandwidthLimitKilobitsPerSecond": null
             }
+
         ],
         "challengeProblemUrl": "/action/libraryEvolution"
     }

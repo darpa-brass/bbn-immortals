@@ -1,12 +1,17 @@
 package mil.darpa.immortals.core.das.knowledgebuilders;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import mil.darpa.immortals.analysis.adaptationtargets.DeploymentTarget;
+import mil.darpa.immortals.analysis.adaptationtargets.ImmortalsGradleProjectData;
 import mil.darpa.immortals.config.ImmortalsConfig;
 import mil.darpa.immortals.core.das.adaptationmodules.crossappdependencies.Prefix;
 import mil.darpa.immortals.core.das.adaptationmodules.crossappdependencies.Res;
 import org.apache.commons.io.IOUtils;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.query.ARQ;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.RDF;
@@ -17,11 +22,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by awellman@bbn.com on 7/2/18.
  */
 public class KnowledgeRepoConnectionBuilder implements IKnowledgeBuilder {
+
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public KnowledgeRepoConnectionBuilder() {
 
@@ -96,6 +104,41 @@ public class KnowledgeRepoConnectionBuilder implements IKnowledgeBuilder {
         for (Path p : filesToDelete) {
             if (Files.exists(p)) {
                 Files.delete(p);
+            }
+        }
+
+        Path dataFile = ImmortalsConfig.getInstance().extensions.immortalizer.getProducedDataTargetFile();
+        JsonObject jsonData = gson.fromJson(new FileReader(dataFile.toFile()), JsonObject.class);
+        
+        for (Map.Entry<String, JsonElement> entry : jsonData.entrySet()) {
+            ImmortalsGradleProjectData projectData = gson.fromJson(entry.getValue(), ImmortalsGradleProjectData.class);
+            if (projectData.getDeploymentTarget() == DeploymentTarget.ANDROID) {
+                Path filePath = ImmortalsConfig.getInstance().extensions.krgp.getTtlTargetDirectory().
+                        resolve(projectData.getTargetName()).resolve("structures/" + projectData.getTargetName() + "-projectOutput.ttl");
+                if (Files.exists(filePath)) {
+                    ARQ.init();
+                    FileInputStream fis = new FileInputStream(filePath.toFile());
+                    Model m = ModelFactory.createDefaultModel();
+                    RDFDataMgr.read(m, fis, Lang.TTL);
+                    fis.close();
+
+                    Resource javaProject = m.getResource("http://darpa.mil/immortals/ontology/r2.0.0/java/project#JavaProject");
+                    ResIterator ri = m.listResourcesWithProperty(RDF.type, javaProject);
+                    Resource javaProjectResource = ri.next();
+                    Property hasAndroidApp = m.getProperty("http://darpa.mil/immortals/ontology/r2.0.0#hasAndroidApp");
+                    if (!javaProjectResource.hasProperty(hasAndroidApp)) {
+                        Resource androidApp = m.getResource("http://darpa.mil/immortals/ontology/r2.0.0/java/android#AndroidApp");
+                        Property hasPathToUberJar = m.getProperty("http://darpa.mil/immortals/ontology/r2.0.0#hasPathToUberJar");
+                        Resource androidAppInstance = m.getResource("http://darpa.mil/immortals/ontology/r2.0.0/java/android#AndroidApp-" + UUID.randomUUID().toString());
+                        androidAppInstance.addProperty(RDF.type, androidApp);
+                        androidAppInstance.addProperty(hasPathToUberJar, ImmortalsConfig.getInstance().build.augmentations.getAndroidSdkJarPath());
+                        javaProjectResource.addProperty(hasAndroidApp, androidAppInstance);
+                        
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        m.write(baos, "TURTLE");
+                        Files.write(filePath, baos.toByteArray());
+                    }
+                }
             }
         }
 
