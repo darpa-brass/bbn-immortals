@@ -1,6 +1,6 @@
 #! /bin/sh
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$( cd "$( dirname "0" )" && pwd )"
 JAR_PATH=${SCRIPT_DIR}/lib/pql_on_android.jar
 
 echo $SCRIPT_DIR
