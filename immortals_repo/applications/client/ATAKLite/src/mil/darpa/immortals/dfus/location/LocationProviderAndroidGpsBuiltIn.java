@@ -93,6 +93,8 @@ public class LocationProviderAndroidGpsBuiltIn {
             // TODO: Make this prettier? Indicates Marshmallow and selective permissions have disabled location.
             throw new RuntimeException(e);
         }
+        
+        locationListener.onLocationChanged(null);
     }
 
     private synchronized void setLocation(Location location) {
