@@ -1,6 +1,6 @@
 # BBN-SWRI Interface Specification
 
-A majority of the information sent between BBN and SWRI will be in the MDL-compliant graph that exists in orientdb. 
+A majority of the information sent between BBN and SwRI will be in the MDL-compliant graph that exists in OrientDB. 
 However, additional information is needed to execute Flight Test Scenario 5. This serves as a means to document those 
 requirements.
 
@@ -16,10 +16,28 @@ requirements.
 It has been indicated by [Austin Whittington](https://git.isis.vanderbilt.edu/SwRI/BBN/bbn-immortals/issues/47) that 
 using the Manufacturer and Model tags of a DAU or Module is the best way to indicate a specific piece of hardware, so we 
 will rely on these to match metadata with their corresponding Module or DAU.
- 
-## Pre-Evaluation Metadata
 
-This section covers all the data that is required prior to evaluation that should be provided along side the DAU Inventory
+## DAU Inventory
+
+The DAU Inventory consists of a number of **NetworkNode** child elements within a top level element with the identifier **DAUInventory**. For example, the following is a list of three DAUs (contents omitted):
+
+```xml
+<DAUInventory>
+  <NetworkNode>
+  </NetworkNode>
+  <NetworkNode>
+  </NetworkNode>
+  <NetworkNode>
+  </NetworkNode>
+</DAUInventory>
+
+It will be provided in an XML format prior to test execution. It will optimally be hosted in the same OrientDB as the faulty Flight Test Configuration to simplify integrating DAUs into the configuration.
+
+DAUs may be identical in terms of features if and only if their top level **Manufacturer** and **Model** match.  Similarly, any DAUs with the same **Manufacturer** and **Model** must be identical other than their inventory id.
+ 
+## DAU Inventory Metadata
+
+This section covers all the data that is required prior to evaluation that should be provided within DAUs inside the DAU Inventory
 
 ### Required Information
 
