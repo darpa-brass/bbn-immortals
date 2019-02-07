@@ -1,0 +1,23 @@
+{
+  "identifier": "orientdb",
+  "version": "2.2.24",
+  "home": "{installationRoot}orientdb",
+  "packageDependencies": [
+    "wget",
+    "unzip"
+  ],
+  "linux": {
+    "ubuntu": {
+      "setupCommands": [
+        "export ORIENTDB_ROOT_PASSWORD=th3r3c@nb3onlyon3",
+        "wget https://orientdb.com/download.php?file=orientdb-community-{version}.zip -O {tempDirectory}/orientdb-community-{version}.zip",
+        "unzip {tempDirectory}/orientdb-community-{version}.zip -d {tempDirectory}",
+        "mv {tempDirectory}/orientdb-community-{version} {home}"
+      ]
+    },
+    "requiredExecutables": [
+      "bin/orientdb.sh"
+    ],
+    "homeExportRequired": false
+  }
+}

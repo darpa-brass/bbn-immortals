@@ -1,0 +1,19 @@
+{
+  "identifier": "fuseki",
+  "version": "2.3.1",
+  "home": "{installationRoot}fuseki",
+  "versionExtractionCommand": "./fuseki-server --version",
+  "versionExtractionRegex": "(?=.*\\nFuseki:\\s)(?<=VERSION:\\s)[0-9.]+",
+  "homeExportVariable": "FUSEKI_HOME",
+  "homeExportRequired": true,
+  "pathExports": [],
+  "packageDependencies": [],
+  "requiredExecutables": [
+    "fuseki-server"
+  ],
+  "setupCommands": [
+    "wget http://archive.apache.org/dist/jena/binaries/apache-jena-fuseki-{version}.tar.gz --directory-prefix {tempDirectory}",
+    "tar xvzf {tempDirectory}/apache-jena-fuseki-{version}.tar.gz -C {tempDirectory}",
+    "mv {tempDirectory}/apache-jena-fuseki-{version} {home}"
+  ]
+}

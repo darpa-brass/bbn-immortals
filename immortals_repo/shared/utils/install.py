@@ -3,15 +3,22 @@ import argparse
 import json
 import os
 import subprocess
-import sys
 import traceback
 from typing import List, Optional, Dict
+
+import sys
 
 _staging_dir = '/tmp/immortals_deployment_test'
 
 parser = argparse.ArgumentParser(
     description='Test The IMMoRTALS Deployment. By default, everything is tested. Installation of dependencies ' +
                 'will be executed and validated if known prerequisites are not present.')
+
+parser.add_argument('--skip-basic-env-setup', action='store_true', default=False,
+                    help='Skips installation of the basic deployment dependencies')
+
+parser.add_argument('--skip-deployment-env-setup', action='store_true', default=False,
+                    help='Skips installation of the full deployment dependencies prior to validation')
 
 parser.add_argument('-e', '--skip-environment-setup', action='store_true', default=False,
                     help='Skips installation of the deployment dependencies prior to validation')
@@ -50,6 +57,9 @@ parser.add_argument('-l', '--ll-mode', action='store_true', default=False,
 
 parser.add_argument('-x', '--fail-fast', action='store_true', default=False,
                     help="Causes the installation sequence to fail at the first sign of trouble.")
+
+parser.add_argument('--buildsystem-predeploy-setup', action='store_true', default=False,
+                    help="Configuration for setting up the predeploy environment used by the build system.")
 
 
 def validate_deployment(immortals_root_deployment: str):
@@ -432,7 +442,8 @@ def validate_deployment(immortals_root_deployment: str):
                     assert isinstance(read_object, Dict), err_string + ': Not a Map!!'
                     for key in validation_object.keys():
                         assert key in read_object, err_string + 'Does not contain the key "' + key
-                        validated_nodes = validated_nodes + check(read_object[key], validation_object[key], (err_string + '["' + key + '"]'))
+                        validated_nodes = validated_nodes + check(read_object[key], validation_object[key],
+                                                                  (err_string + '["' + key + '"]'))
 
                 elif isinstance(validation_object, List):
                     assert isinstance(read_object, List), err_string + ': Not a List!'
@@ -463,7 +474,8 @@ def validate_deployment(immortals_root_deployment: str):
 
             validated_nodes = validated_nodes + check(read_data, validation_data, file_name)
 
-        assert validated_nodes == count_terminal_nodes(expected_json_values), "Not all nodes appear to have been validated in the configuration files!"
+        assert validated_nodes == count_terminal_nodes(
+            expected_json_values), "Not all nodes appear to have been validated in the configuration files!"
 
     except Exception as e:
         raise e
@@ -475,6 +487,7 @@ class TestResults:
         self.basic_installation = None
         self.basic_build = None
         self.full_installation = None
+        self.buildsystem_predeploy_prep = None
         self.full_deployment = None
         self.full_deployment_validation = None
         self.baseline_marti = None
@@ -494,6 +507,7 @@ class TestResults:
                '\n| Basic Installation         |' + TestResults._stringify_result(self.basic_installation) + \
                '\n| Basic Build                |' + TestResults._stringify_result(self.basic_build) + \
                '\n| Full Installation          |' + TestResults._stringify_result(self.full_installation) + \
+               '\n| Buildsystem Predeploy Prep |' + TestResults._stringify_result(self.full_installation) + \
                '\n| Full Deployment            |' + TestResults._stringify_result(self.full_deployment) + \
                '\n| Full Deployment Validation |' + TestResults._stringify_result(self.full_deployment_validation) + \
                '\n| Baseline Marti             |' + TestResults._stringify_result(self.baseline_marti) + \
@@ -620,6 +634,31 @@ class ImmortalsRootDeploymentTester:
             self._results.full_installation = False
         return self._results.full_installation
 
+    def perform_buildsystem_predeploy_prep(self) -> bool:
+        try:
+            self._results.buildsystem_predeploy_prep = False
+            cwd = self._real_immortals_root
+
+
+            # TODO: There must be a better way to get the dependency stuff out of the way without building it...
+            if not self._run('predeploy_prep_dsl_setup', ['stack', 'setup'],
+                             cwd=os.path.join(cwd, 'dsl', 'resource-dsl')):
+                self._results.buildsystem_predeploy_prep = False
+                return False
+
+            if not self._run('predeploy_prep_dsl_build', ['stack', 'build'],
+                             cwd=os.path.join(cwd, 'dsl', 'resource-dsl')):
+                self._results.buildsystem_predeploy_prep = False
+                return False
+
+
+            self._results.buildsystem_predeploy_prep = True
+
+        except Exception:
+            self._results.buildsystem_predeploy_prep = False
+
+        return self._results.buildsystem_predeploy_prep
+
     def test_deployment(self):
         # noinspection PyBroadException
         try:
@@ -675,7 +714,9 @@ class ImmortalsRootDeploymentTester:
         try:
             self._results.baseline_marti = False
             cwd = os.path.join(self._test_root, 'applications/server/Marti')
-            self._results.baseline_marti = self._run('baseline_marti', ['../../../gradlew', '-Dmil.darpa.immortals.mock=true', 'clean', 'test'],
+            self._results.baseline_marti = self._run('baseline_marti',
+                                                     ['../../../gradlew', '-Dmil.darpa.immortals.mock=true', 'clean',
+                                                      'test'],
                                                      cwd=cwd)
         except Exception:
             self._results.baseline_marti = False
@@ -698,10 +739,28 @@ def main():
 
             args.skip_basic_build = False
             args.skip_full_deployment = False
-            args.skip_environment_setup = False
+
+            args.skip_deployment_env_setup = False
+            args.buildsystem_predeploy_prep = False
+            args.skip_basic_env_setup = False
             args.skip_deployment_validation = False
             args.skip_marti_baseline = False
             args.skip_api_smoketest = False
+            args.fail_fast = True
+
+        elif args.buildsystem_predeploy_setup:
+            args.clean_first = False
+            args.build_in_current_project = False
+            args.use_existing_tmp_project = False
+
+            args.skip_basic_build = False
+            args.skip_full_deployment = True
+            args.skip_deployment_env_setup = False
+            args.buildsystem_predeploy_prep = True
+            args.skip_basic_env_setup = False
+            args.skip_deployment_validation = True
+            args.skip_marti_baseline = True
+            args.skip_api_smoketest = True
             args.fail_fast = True
 
         ff = args.fail_fast
@@ -712,15 +771,19 @@ def main():
 
         execution_sequence = list()
 
+        if not args.skip_basic_env_setup:
+            execution_sequence.append(tester.test_basic_environment_setup)
+
         if not args.skip_basic_build:
-            if not args.skip_environment_setup:
-                execution_sequence.append(tester.test_basic_environment_setup)
             execution_sequence.append(tester.test_basic_build)
 
+        if not args.skip_deployment_env_setup:
+            execution_sequence.append(tester.test_deployment_environment_setup)
+
         if not args.skip_full_deployment:
-            if not args.skip_environment_setup:
-                execution_sequence.append(tester.test_deployment_environment_setup)
             execution_sequence.append(tester.test_deployment)
+        elif args.buildsystem_predeploy_prep:
+            execution_sequence.append(tester.perform_buildsystem_predeploy_prep)
 
         if not args.skip_full_deployment and not args.skip_deployment_validation:
             execution_sequence.append(tester.validate_deployment)

@@ -1,0 +1,43 @@
+[
+    {
+        "scenarioIdentifier": "p2cp3hddrassBaselineA",
+        "submissionModel": null,
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "PASS",
+        "expectedTestsPassedPercent": 1.0,
+        "submissionFlow": "BaselineA",
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
+    },
+    {
+        "scenarioIdentifier": "p2cp3hddrassBaselineB",
+        "submissionModel": {
+            "sessionIdentifier": "p2cp3hddrassBaselineB",
+            "martiServerModel": {
+                "requirements": {
+                    "libraryUpgrade": "ElevationApi_2"
+                }
+            }
+        },
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "DEGRADED",
+        "expectedTestsPassedPercent": 0.8125,
+        "submissionFlow": "BaselineB",
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
+    },
+    {
+        "scenarioIdentifier": "p2cp3hddrassChallenge",
+        "submissionModel": {
+            "sessionIdentifier": "p2cp3hddrassChallenge",
+            "martiServerModel": {
+                "requirements": {
+                    "libraryUpgrade": "ElevationApi_2"
+                }
+            }
+        },
+        "expectedAdaptationResult": "SUCCESS",
+        "expectedVerdictOutcome": "PASS",
+        "expectedTestsPassedPercent": 1.0,
+        "submissionFlow": "Challenge",
+        "perturbationScenario": "P2CP3JavaLibraryMutation"
+    }
+]

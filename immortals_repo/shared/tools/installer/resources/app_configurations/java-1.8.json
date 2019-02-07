@@ -1,0 +1,32 @@
+{
+  "identifier": "java",
+  "version": "1.8",
+  "versionExtractionCommand": "java -version",
+  "versionExtractionRegex": "(?<=['java'|'openjdk'] version \")[0-9\\-._]+",
+  "homeExportVariable": "JAVA_HOME",
+  "homeExportRequired": true,
+  "pathExports": [
+    "bin"
+  ],
+  "requiredExecutables": [
+    "bin/java",
+    "bin/javac",
+    "bin/jar"
+  ],
+  "packageDependencies": [],
+  "setupCommands": [],
+  "osx": {
+    "home": "/Library/Java/JavaVirtualMachines/jdk*jdk/contents/Home/",
+    "setupCommands": [
+      "brew cask install java"
+    ]
+  },
+  "linux": {
+    "ubuntu": {
+      "home": "/usr/lib/jvm/java-8-openjdk-amd64",
+      "packageDependencies": [
+        "openjdk-8-jdk-headless"
+      ]
+    }
+  }
+}

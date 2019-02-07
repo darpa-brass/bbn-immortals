@@ -1,0 +1,32 @@
+{
+  "identifier": "z3",
+  "version": "4.7.1",
+  "home": "{installationRoot}z3",
+  "versionExtractionCommand": "z3 --version",
+  "versionExtractionRegex": "(?<=Z3 version )[0-9.]+(?=.*)",
+  "pathExports": [
+    "bin"
+  ],
+  "requiredExecutables": [
+    "bin/z3"
+  ],
+  "homeExportRequired": false,
+  "packageDependencies": [],
+  "setupCommands": [],
+  "osx": {
+    "setupCommands": [
+      "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-osx-10.11.6.zip --directory-prefix {tempDirectory}",
+      "unzip {tempDirectory}/z3-{version}-x64-osx-10.11.zip -d {installationRoot}",
+      "mv {installationRoot}z3-{version}-x64-osx-10.11 {home}"
+    ]
+  },
+  "linux": {
+    "ubuntu": {
+      "setupCommands": [
+        "wget https://github.com/Z3Prover/z3/releases/download/z3-{version}/z3-{version}-x64-ubuntu-16.04.zip --directory-prefix {tempDirectory}",
+        "unzip {tempDirectory}/z3-{version}-x64-ubuntu-16.04.zip -d {installationRoot}",
+        "mv {installationRoot}z3-{version}-x64-ubuntu-16.04 {home}"
+      ]
+    }
+  }
+}

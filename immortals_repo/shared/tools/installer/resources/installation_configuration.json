@@ -1,0 +1,118 @@
+{
+    "installationRoot": "${HOME}/.immortals/",
+    "tempDirectory": "{installationRoot}tmp/",
+    "targetInstallationPlatforms": {
+        "osx": {
+            "identifier": "osx",
+            "packageManagerInitCommands": [
+                "brew update"
+            ],
+            "packageManagerInstallationCommand": "brew install",
+            "requiredPlatformPackages": []
+        },
+        "ubuntu": {
+            "identifier": "ubuntu",
+            "packageManagerInitCommands": [
+                "sudo apt-get update"
+            ],
+            "packageManagerInstallationCommand": "sudo apt-get -y install",
+            "requiredPlatformPackages": [
+                "build-essential",
+                "curl",
+                "git",
+                "htop",
+                "openssh-server",
+                "subversion",
+                "tmux",
+                "unzip",
+                "vim",
+                "wget"
+            ]
+        }
+    },
+    "applicationIdentifiers": [
+        "java-1.8",
+        "stack",
+        "z3-4.7.1",
+        "maven-3",
+        "fuseki-2.3.1"
+    ],
+    "applications": [],
+    "configurationProfiles": {
+        "phase2": {
+            "targetInstallationPlatforms": {
+                "osx": {
+                    "identifier": "osx",
+                    "packageManagerInitCommands": [
+                        "brew update"
+                    ],
+                    "packageManagerInstallationCommand": "brew install",
+                    "requiredPlatformPackages": []
+                },
+                "ubuntu": {
+                    "identifier": "ubuntu",
+                    "packageManagerInitCommands": [
+                        "sudo apt-get update"
+                    ],
+                    "packageManagerInstallationCommand": "sudo apt-get -y install",
+                    "requiredPlatformPackages": [
+                        "software-properties-common",
+                        "curl",
+                        "wget",
+                        "vim",
+                        "subversion",
+                        "maven",
+                        "build-essential",
+                        "apt-transport-https",
+                        "ca-certificates",
+                        "unzip",
+                        "python3-pip",
+                        "python3-bottle",
+                        "python3-cherrypy3",
+                        "python3-requests",
+                        "python3-pkg-resources",
+                        "python-pip",
+                        "python-networkx",
+                        "cmake",
+                        "pkg-config",
+                        "libatlas-base-dev",
+                        "libboost-python-dev"
+                    ]
+                }
+            },
+            "applicationIdentifiers": [
+                "java-1.8",
+                "android_sdk",
+                "postgresql-9.5",
+                "voltdb-8.0",
+                "stack",
+                "z3-4.7.1",
+                "fuseki-2.3.1",
+                "maven-3"
+            ]
+        },
+        "phase3": {
+            "applicationIdentifiers": [
+                "java-1.8",
+                "stack",
+                "z3-4.7.1",
+                "maven-3",
+                "fuseki-2.3.1"
+            ]
+        },
+        "phase3scenario5": {
+            "applicationIdentifiers": [
+                "java-1.8",
+                "stack",
+                "z3-4.7.1"
+            ]
+        },
+        "phase3scenario6": {
+            "applicationIdentifiers": [
+                "java-1.8",
+                "maven-3",
+                "fuseki-2.3.1"
+            ]
+        }
+    }
+}

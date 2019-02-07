@@ -1,0 +1,89 @@
+[
+    {
+        "scenarioIdentifier": "p2cp1BaselineA",
+        "submissionModel": null,
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "PASS",
+        "expectedTestsPassedPercent": 1.0,
+        "submissionFlow": "BaselineA",
+        "perturbationScenario": "P2CP1DatabaseSchema"
+    },
+    {
+        "scenarioIdentifier": "p2cp1BaselineB",
+        "submissionModel": {
+            "sessionIdentifier": "p2cp1BaselineB",
+            "martiServerModel": {
+                "requirements": {
+                    "postgresqlPerturbation": {
+                        "tables": [
+                            {
+                                "columns": [
+                                    "CotEvent_SourceId",
+                                    "CotEvent_CotType",
+                                    "CotEvent_How",
+                                    "CotEvent_Detail",
+                                    "CotEvent_ServerTime"
+                                ]
+                            },
+                            {
+                                "columns": [
+                                    "Position_PointHae",
+                                    "Position_PointCE",
+                                    "Position_PointLE",
+                                    "Position_TileX",
+                                    "Position_TileY",
+                                    "Position_Longitude",
+                                    "Position_Latitude"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "DEGRADED",
+        "expectedTestsPassedPercent": 0.5,
+        "submissionFlow": "BaselineB",
+        "perturbationScenario": "P2CP1DatabaseSchema"
+    },
+    {
+        "scenarioIdentifier": "p2cp1Challenge",
+        "submissionModel": {
+            "sessionIdentifier": "p2cp1Challenge",
+            "martiServerModel": {
+                "requirements": {
+                    "postgresqlPerturbation": {
+                        "tables": [
+                            {
+                                "columns": [
+                                    "CotEvent_SourceId",
+                                    "CotEvent_CotType",
+                                    "CotEvent_How",
+                                    "CotEvent_Detail",
+                                    "CotEvent_ServerTime"
+                                ]
+                            },
+                            {
+                                "columns": [
+                                    "Position_PointHae",
+                                    "Position_PointCE",
+                                    "Position_PointLE",
+                                    "Position_TileX",
+                                    "Position_TileY",
+                                    "Position_Longitude",
+                                    "Position_Latitude"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "expectedAdaptationResult": "SUCCESS",
+        "expectedVerdictOutcome": "DEGRADED",
+        "expectedTestsPassedPercent": 0.8125,
+        "submissionFlow": "Challenge",
+        "perturbationScenario": "P2CP1DatabaseSchema"
+    }
+]

@@ -1,0 +1,247 @@
+{
+  "globals": {
+    "immortalsRoot": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals",
+    "immortalsRepo": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/shared/IMMORTALS_REPO",
+    "globalApplicationDeploymentDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/APP_DEPLOYMENT",
+    "globalWorkingDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT",
+    "ttlIngestionDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/knowledge-repo/vocabulary/ontology-static/ontology",
+    "globalLogDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT/_logs",
+    "executionsDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT",
+    "immortalsOntologyUriRoot": "http://darpa.mil/immortals/ontology/r2.0.0/mil/darpa/immortals/ontology#",
+    "immortalsOntologyUriPrefix": "IMMoRTALS_mil_darpa_immortals_ontology",
+    "headless": true
+  },
+  "dasService": {
+    "userManaged": false,
+    "startupTimeMS": 60000,
+    "identifier": "dasservice",
+    "port": 8080,
+    "protocol": "http",
+    "url": "127.0.0.1",
+    "exePath": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/das/das-service/das.jar",
+    "workingDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT/_dasservice",
+    "interpreterParameters": [],
+    "parameters": [],
+    "environmentVariables": {},
+    "readyStdoutLineRegexPattern": ".*(?\u003c\u003dThe DAS service located at).*(?\u003c\u003dis running.)$",
+    "shutdownEverythingOnTermination": false,
+    "resourceDslPath": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/dsl/resource-dsl"
+  },
+  "testHarness": {
+    "protocol": "http",
+    "url": "127.0.0.1",
+    "port": 44444
+  },
+  "testAdapter": {
+    "userManaged": false,
+    "startupTimeMS": 20000,
+    "identifier": "testadapter",
+    "port": 55555,
+    "protocol": "http",
+    "url": "127.0.0.1",
+    "exePath": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/das/das-testharness-coordinator/das-testharness-coordinator.jar",
+    "workingDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT/_testadapter",
+    "interpreterParameters": [],
+    "parameters": [],
+    "environmentVariables": {},
+    "websocketPort": 7878,
+    "readyStdoutLineRegexPattern": ".*(?\u003c\u003dStarted TestAdapter at URL \u0027).*(?\u003c\u003d\\.)$",
+    "shutdownEverythingOnTermination": true
+  },
+  "fuseki": {
+    "userManaged": false,
+    "startupTimeMS": 20000,
+    "identifier": "fuseki",
+    "port": 3030,
+    "protocol": "http",
+    "url": "127.0.0.1",
+    "exePath": "/home/awellman/.immortals/fuseki/fuseki-server.jar",
+    "workingDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT/_fuseki",
+    "interpreterParameters": [],
+    "parameters": [
+      "--update",
+      "--mem",
+      "--port\u003d3030",
+      "/ds"
+    ],
+    "environmentVariables": {
+      "FUSEKI_HOME": "/home/awellman/.immortals/fuseki/",
+      "FUSEKI_RUN": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT/_fuseki/fuseki_run",
+      "FUSEKI_BASE": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT/_fuseki/fuseki_base"
+    },
+    "readyStdoutLineRegexPattern": ".*(?\u003c\u003dStarted).*(?\u003c\u003d on port ).*",
+    "shutdownEverythingOnTermination": false
+  },
+  "knowledgeRepoService": {
+    "userManaged": false,
+    "startupTimeMS": 60000,
+    "identifier": "knowledgerepo",
+    "url": "127.0.0.1",
+    "protocol": "http",
+    "port": 9999,
+    "exePath": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/knowledge-repo/knowledge-repo/repository-service/target/immortals-repository-service-boot.war",
+    "workingDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT/_knowledgerepo",
+    "interpreterParameters": [
+      "-Djava.security.egd\u003dfile:/dev/urandom",
+      "-Dserver.address\u003d127.0.0.1",
+      "-Dserver.port\u003d9999"
+    ],
+    "readyStdoutLineRegexPattern": "^running ImmortalsRepositoryService$",
+    "parameters": [],
+    "environmentVariables": {},
+    "shutdownEverythingOnTermination": false
+  },
+  "build": {
+    "das": {
+      "rootGroup": "mil.darpa.immortals",
+      "publishVersion": "2.0-LOCAL",
+      "javaVersionCompatibility": "1.8",
+      "slf4jVersion": "1.7.21",
+      "gradleVersion": "3.4.1"
+    },
+    "augmentations": {
+      "publishVersion": "2.0-LOCAL",
+      "javaVersionCompatibility": "1.7",
+      "androidBuildToolsVersion": "25.0.2",
+      "androidGradleToolsVersion": "2.3.3",
+      "androidCompileSdkVersion": 21,
+      "androidMinSdkVersion": 21,
+      "androidTargetSdkVersion": 21,
+      "javaHome": "/usr/lib/jvm/java-8-openjdk-amd64/",
+      "androidSdkRoot": "/home/awellman/.local/share/android-sdk",
+      "mavenPublishRepo": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/shared/IMMORTALS_REPO"
+    }
+  },
+  "debug": {
+    "useMockFuseki": false,
+    "useMockKnowledgeRepository": false,
+    "useMockDas": false,
+    "useMockApplicationDeployment": true,
+    "useMockTestHarness": false,
+    "useMockTestAdapter": false,
+    "useMockAqlBrass": false,
+    "useMockExtensionHddRass": false,
+    "useMockExtensionSchemaEvolution": false,
+    "useMockTestCoordinators": false,
+    "logNetworkActivityToSeparateFile": true,
+    "shutdownGracePeriodMS": 10000,
+    "loggingConfigDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/das/das-launcher/logging_scripts/",
+    "haltTestingOnFailure": true,
+    "keepRunningOnTestAdapterDoneSignal": false,
+    "forceTestingSystemExitWithoutKillingServer": false
+  },
+  "extensions": {
+    "castor": {
+      "identifier": "castor"
+    },
+    "krgp": {
+      "identifier": "krgp",
+      "ttlTargetDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS/_krgp"
+    },
+    "hddrass": {
+      "identifier": "hddrass",
+      "jarPath": "extensions/osu/hddrass/build/libs/hddRASS-1.0-SNAPSHOT.jar",
+      "gradleBuildFile": "extensions/osu/hddrass/build.gradle"
+    },
+    "voltdb": {
+      "userManaged": false,
+      "startupTimeMS": 20000,
+      "identifier": "voltdb",
+      "port": 21212,
+      "protocol": "http",
+      "url": "127.0.0.1",
+      "workingDirectoryTemplateFolder": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/castor/voltdb7",
+      "workingDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT/_voltdb",
+      "exePath": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT/_voltdb/build.xml",
+      "interpreterParameters": [
+        "-buildfile"
+      ],
+      "parameters": [],
+      "environmentVariables": {},
+      "readyStdoutLineRegexPattern": " *\\[exec\\] Server completed initialization\\.",
+      "shutdownEverythingOnTermination": false
+    },
+    "aqlbrass": {
+      "userManaged": false,
+      "startupTimeMS": 20000,
+      "identifier": "aqlbrass",
+      "mavenGroupId": "aql-brass-server",
+      "mavenArtifactId": "aql-brass-server",
+      "mavenArtifactExtension": "jar",
+      "port": 9090,
+      "protocol": "http",
+      "url": "127.0.0.1",
+      "workingDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/DAS_DEPLOYMENT/_aqlbrass",
+      "exePath": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/extensions/vanderbilt/aql-brass-server-aql-brass-server.jar",
+      "interpreterParameters": [],
+      "parameters": [
+        "--hostname",
+        "127.0.0.1",
+        "--port",
+        "9090"
+      ],
+      "environmentVariables": {},
+      "readyStdoutLineRegexPattern": "^STATE:\\[RUNNING\\]$",
+      "shutdownEverythingOnTermination": false
+    },
+    "immortalizer": {
+      "identifier": "immortalizer",
+      "performBuildFileAnalysis": true,
+      "performKrgpBytecodeAnalysis": true,
+      "performKrgpCompleteGradleTaskAnalysis": true,
+      "performTestCoverageAnalysis": true,
+      "performSchemaAnalysis": true,
+      "performDslCompilation": true,
+      "producedDataTargetFile": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/ARTIFACT_DATA.json"
+    },
+    "partiallibraryupgrade": {
+      "identifier": "partiallibraryupgrade",
+      "gitRepositoryUrl": "https://github.com/yijiufly/thirdPartyLibAnalysis",
+      "targetClonePath": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/extensions/ucr/thirdPartyLibAnalysis",
+      "exePath": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/extensions/ucr/thirdPartyLibAnalysis/yuesLib.py",
+      "workingDirectoryTemplateFolder": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/extensions/ucr/thirdPartyLibAnalysis"
+    },
+    "orientdb": {
+      "protocol": "http",
+      "url": "brass-th",
+      "port": 80
+    },
+    "producedTtlOutputDirectory": "/home/awellman/Documents/workspaces/immortals/primary/git/immortals/knowledge-repo/vocabulary/ontology-static/ontology/_ANALYSIS"
+  },
+  "deploymentEnvironment": {
+    "androidEnvironments": [
+      {
+        "adbPort": 5554,
+        "adbIdentifier": "emulator-5554",
+        "environmentDetails": {
+          "androidVersion": 21,
+          "uploadBandwidthLimitKilobitsPerSecond": 800,
+          "externallyAccessibleUrls": [
+            "dropbox.com:443",
+            "dropbox.com:80"
+          ]
+        }
+      },
+      {
+        "adbPort": 5556,
+        "adbIdentifier": "emulator-5556",
+        "environmentDetails": {
+          "androidVersion": 21
+        }
+      }
+    ],
+    "martiAddress": "10.0.2.2"
+  },
+  "targetApplicationUris": [
+    "shared/modules/core",
+    "shared/modules/dfus/TakServerDataManager",
+    "applications/server/Marti"
+  ],
+  "knowledgeBuilderClassNames": [
+    "mil.darpa.immortals.core.das.knowledgebuilders.schemadependency.SchemaDependencyKnowledgeBuilder"
+  ],
+  "knowledgeBuilderGradleTasks": [
+    "bytecode",
+    "mine"
+  ]
+}

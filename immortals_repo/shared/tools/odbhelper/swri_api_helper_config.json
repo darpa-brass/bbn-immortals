@@ -1,0 +1,12 @@
+{
+    "server": {
+        "username": "root",
+        "password": "th3r3c@nb3onlyon3",
+        "address": "127.0.0.1",
+        "port": 2424
+    },
+    "database": {
+        "username": "admin",
+        "password": "admin"
+    }
+}

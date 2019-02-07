@@ -1,0 +1,53 @@
+{
+  "identifier": "voltdb",
+  "version": "8.0",
+  "home": "{installationRoot}voltdb",
+  "versionExtractionCommand": "voltdb --version",
+  "versionExtractionRegex": "(?<=voltdb version )[0-9.]+",
+  "homeExportVariable": "VOLTDB_HOME",
+  "homeExportRequired": true,
+  "pathExports": [
+    "bin"
+  ],
+  "packageDependencies": [],
+  "requiredExecutables": [
+    "bin/voltdb"
+  ],
+  "osx": {
+    "packageDependencies": [
+      "ant",
+      "cmake",
+      "ccache"
+    ]
+  },
+  "linux": {
+    "ubuntu": {
+      "packageDependencies": [
+        "ant",
+        "build-essential",
+        "ant-optional",
+        "openjdk-8-jdk-headless",
+        "cmake",
+        "ntp",
+        "ccache",
+        "git-svn",
+        "python-httplib2",
+        "python-setuptools",
+        "python-dev",
+        "apt-show-versions"
+      ],
+      "sudoSetupCommands": [
+        "sudo echo -e \"[Unit]\nDescription=Disable Transparent Huge Pages (THP)\n\n[Service]\nType=simple\nExecStart=/bin/sh -c \\\"echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled && echo 'never' > /sys/kernel/mm/transparent_hugepage/defrag\\\"\n\n[Install]\nWantedBy=multi-user.target\" | sudo tee /etc/systemd/system/disable-thp.service",
+        "sudo systemctl daemon-reload",
+        "sudo systemctl start disable-thp",
+        "sudo systemctl enable disable-thp"
+      ]
+    }
+  },
+  "setupCommands": [
+    "git clone https://github.com/VoltDB/voltdb {home}",
+    "cd {home}",
+    "ant"
+  ]
+
+}
