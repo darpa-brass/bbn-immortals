@@ -12,10 +12,9 @@ The system will be created by BBN as an AWS instance provided to the evaluator f
 
 * The system the _Evaluation Target_ is hosted on must have at least 4 CPU cores and 8 GB of memory. This is subject to change if bottlenecks are encountered during internal testing.
 
-* Persistent storage is vital for us to properly do our own detailed evaluation of how our system performed. We propose 
-two possible options:
-    1. BBN provides the evaluator with another AWS instance that must be running and connectable from the  _Evaluation Target_ during all evaluations.
-    2. The Evaluator provides a persistent storage endpoint (Which may simply be another OrientDB instance with a blank graph)
+* Persistent storage is vital for us to properly do our own detailed evaluation of how our system performed. We have 
+decided to supply you with an image that will launch a data collection endpoint that all our evaluation servers will 
+communicate with to store data fort our analysis.
 
 ## OrientDB Structure
 
@@ -109,24 +108,22 @@ We propose that a specific node contains a property containing a JSON String.
 
 The initial draft of this JSON object has the following three fields:
 
-| Identifier        | Type      | Description                                                                                                                   |
-|:------------------|-----------|-------------------------------------------------------------------------------------------------------------------------------|
-| initialMdlVersion | String    | The initial MDL version. This will be taken from a list of predefined values agreed upon prior to evaluation                  |
-| updatedMdlVersion | String    | The new MDL version. This must be later than the initial version and will be taken from the same list of predefined values    |
-| updatedMdlSchema  | String    | The new MDL schema document to upgrade to. It must be less than 1 MB It should follow appropriate JSON escaping as necessary  |
+| Identifier        | Type      | Valid Values           | Description                                                                                                                   |
+|:------------------|-----------|------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| initialMdlVersion | String    | ["V0_8_17", "V0_8_19"] | The initial MDL version. This will be taken from a list of predefined values agreed upon prior to evaluation                  |
+| updatedMdlVersion | String    | ["V0_8_17", "V0_8_19"] | The new MDL version. This must be later than the initial version and will be taken from the same list of predefined values    |
+| updatedMdlSchema  | String    | A valid MDL XSD schema | The new MDL schema document to upgrade to. It must be less than 1 MB It should follow appropriate JSON escaping as necessary  |
 
 The **initialMdlVersion** is mandatory. The **updatedMdlVersion** and **updatedMdlSchema** are mutually exclusive.
 
 ### Examples
 
-The values utilized in these do not reflect the final allowable values.
-
 #### Input Example A - Existing XSLT Transformations
 
 ```json
 {
-    "initialMdlVersion": "V0_8_1",
-    "updatedMdlVersion": "V0_8_4"
+    "initialMdlVersion": "V0_8_17",
+    "updatedMdlVersion": "V0_8_19"
 }
 ```
 
@@ -136,7 +133,7 @@ Ellipses are used in place of a new MDL schema for readability.
 
 ```json
 {
-    "initialMdlVersion": "V0_8_1",
+    "initialMdlVersion": "V0_8_19",
     "updatedMdlSchema": "<...>"
 }
 ```
