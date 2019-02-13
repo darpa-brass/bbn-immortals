@@ -11,12 +11,6 @@ requirements.
 
  * Measurements have been excluded from this draft until we receive a response to the [Measurements Clarification Issue](https://git.isis.vanderbilt.edu/SwRI/BBN/bbn-immortals/issues/50)
  
-## Unique Identifiers
-
-It has been indicated by [Austin Whittington](https://git.isis.vanderbilt.edu/SwRI/BBN/bbn-immortals/issues/47) that 
-using the Manufacturer and Model tags of a DAU or Module is the best way to indicate a specific piece of hardware, so we 
-will rely on these to match metadata with their corresponding Module or DAU.
-
 ## DAU Inventory
 
 The DAU Inventory consists of a number of **NetworkNode** child elements within a top level element with the identifier **DAUInventory**. For example, the following is a list of three DAUs (contents omitted):
@@ -30,14 +24,13 @@ The DAU Inventory consists of a number of **NetworkNode** child elements within 
   <NetworkNode>
   </NetworkNode>
 </DAUInventory>
+```
 
-It will be provided in an XML format prior to test execution. It will optimally be hosted in the same OrientDB as the faulty Flight Test Configuration to simplify integrating DAUs into the configuration.
+It will be provided in an XML format prior to test execution. It will also be hosted in the same OrientDB as the faulty Flight Test Configuration to simplify integrating DAUs into the configuration.
 
-DAUs may be identical in terms of features if and only if their top level **Manufacturer** and **Model** match.  Similarly, any DAUs with the same **Manufacturer** and **Model** must be identical other than their inventory id.
- 
 ## DAU Inventory Metadata
 
-This section covers all the data that is required prior to evaluation that should be provided within DAUs inside the DAU Inventory
+This section covers all the data that is required prior to evaluation that should be provided within DAUs inside the DAU Inventory.
 
 ### Required Information
 
@@ -49,13 +42,19 @@ This section covers all the data that is required prior to evaluation that shoul
  provide the same general functionality (although other properties may still cause incompatibilities) 
  Identifier: **BBNPortFunctionality**
  
- * Port Sample Rates - The formatting of this is still being scoped out in the following [Issue](https://git.isis.vanderbilt.edu/SwRI/BBN/bbn-immortals/issues/50)
+ * Port Sample Rates - There are some issues inserting this into a graph in an optimal format as per this 
+   [issue](https://git.isis.vanderbilt.edu/SwRI/BBN/bbn-immortals/issues/50). Currently, we are reading it in as the 
+   workaround I stated at the end of this [comment](https://git.isis.vanderbilt.edu/SwRI/bbn-immortals/issues/50#note_3435).
  
- * Port Data Length - The length of that data being sent by the port. Identifier: **BBNDataLength**
+ * Port Data Length - The length of that data being sent by the port. Identifier: **DataLength**
 
  * DAU Monetary Cost - The cost to utilize a replacement DAU. This is used to provide an optimal solution. Identifier: **BBNDauMonetaryCost**
 
  * DAU Opportunity Cost - To be discussed further. Identifier: **BBNDauOpportunityCost**
+ 
+ * Excitation Port Presence - As indicated in [this](https://git.isis.vanderbilt.edu/SwRI/bbn-immortals/issues/55) 
+   issue it has been decided to simply use a flag to associate excitation ports. This is optional, and the absense 
+   indicates no excitation port is present. Identifier: **ExcitationPortIsPresent**
  
 ### Pre-Evaluation Metadata Format
 
@@ -87,7 +86,9 @@ Modules, and Ports within the DAU inventory are expected to contain this additio
           <Port Enabled="true" ID="Module2-Ch1" Index="1">
             <GenericParameter>
               <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
-              <BBNDataLength>16</BBNDataLength>
+              <ExcitationPortIsPresent/>
+              <DataLength>16</DataLength>
+              <SampleRate>[128,192,256]</SampleRate>
             </GenericParameter>
             <Name>Ch1</Name>
             <PortTypes>
@@ -124,7 +125,10 @@ part of the input Test Configuration.
    - **BBNMaxDataRate**
 
  * Faulty DAU - The DAU that must be replaced. This will be identifier by adding the appropriate element to the 
- DAU's GeneralParameter section. Identifier: **BBNFlaggedForReplacement**
+ DAU's GeneralParameter section. It's presence indicates it is required and its absence indicates it is not required. Identifier: **BBNFlaggedForReplacement**
+ 
+ * Excitation Port Required - This indicates an excitation port is required for usage. It's presence indicates it is 
+   required and its absence indicates it is not required. Identifier: **ExcitationPortRequired**
  
 ### Evaluation Metadata Example
 
@@ -182,6 +186,7 @@ All new data is contained in **GenericParameter** elements as agreed on.
                           <NameValue Name="BBN" Index="0"></NameValue>
                         </NameValues>
                         <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
+                        <ExcitationPortRequired/>
                       </GenericParameter>
                     </Port>
                   </Ports>
