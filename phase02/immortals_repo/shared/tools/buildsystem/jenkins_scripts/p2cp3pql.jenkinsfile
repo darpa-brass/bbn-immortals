@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Update Build Scripts') {
+            steps {
+            checkout(
+                [
+                    $class: 'SubversionSCM', 
+                    additionalCredentials: [], 
+                    excludedCommitMessages: '', 
+                    excludedRegions: '', 
+                    excludedRevprop: '', 
+                    excludedUsers: '', 
+                    filterChangelog: false, 
+                    ignoreDirPropChanges: false, 
+                    includedRegions: '', 
+                    locations: [
+                        [
+                            cancelProcessOnExternalsFail: true, 
+                            credentialsId: '43d0c0a7-bf0d-4fcf-8425-25e863cf674f', 
+                            depthOption: 'infinity', 
+                            ignoreExternalsOption: true, 
+                            local: '.', 
+                            remote: 'svn+ssh://dsl-external.bbn.com/svn/immortals/trunk'
+                        ]
+                    ],
+                    quietOperation: true, 
+                    workspaceUpdater: [
+                        $class: 'UpdateUpdater'
+                    ]
+                ]
+            )
+        }
+        }
+        stage('Claim Testbed') {
+            steps {
+                sh 'bash shared/tools.sh buildsystem autobuild_cp3pql_' + currentBuild.number + ' --jenkins-claim-testbed'
+            }
+        }
+        stage('Update Testbed Repo') {
+            steps {
+                sh 'bash shared/tools.sh buildsystem autobuild_cp3pql_' + currentBuild.number + ' --das-repo-update'
+            }
+        }
+        stage('Executing Gradle deploy task') {
+            steps {
+                sh 'bash shared/tools.sh buildsystem autobuild_cp3pql_' + currentBuild.number + ' --das-deploy --specify-cp-profile p2cp3pql'
+            }
+        }
+        stage('Execute Challenge') {
+            steps {
+                sh 'bash shared/tools.sh buildsystem autobuild_cp3pql_' + currentBuild.number + ' --das-execute-test p2cp3pqlChallenge --specify-cp-profile p2cp3pql'
+                sh 'bash shared/tools.sh buildsystem autobuild_cp3pql_' + currentBuild.number + ' --jenkins-replace-testbed-nowait'
+            }
+        }
+    }
+}

@@ -15,7 +15,7 @@ import com.securboration.immortals.ontology.core.Resource;
     " communicated. This can, for example, be a method call or a DFU's" +
     " functional aspect, depending upon the granularity of analysis. " +
     " @author jstaples ")
-public class DataflowNode {
+public class DataflowNode extends DataflowGraphComponent {
     
     /**
      * A template for the resource on which the node exists. E.g.,
@@ -46,32 +46,30 @@ public class DataflowNode {
         " AndroidDevice templates.")
     private Resource contextTemplate;
 
+    private Class<? extends Resource> abstractResourceTemplate;
 
-    
     public Resource getContextTemplate() {
         return contextTemplate;
     }
 
-
-    
     public void setContextTemplate(Resource contextTemplate) {
         this.contextTemplate = contextTemplate;
     }
 
-
-
-    
     public Resource getResourceTemplate() {
         return resourceTemplate;
     }
 
-
-
-    
     public void setResourceTemplate(Resource resourceTemplate) {
         this.resourceTemplate = resourceTemplate;
     }
-    
-    
-    
+
+
+    public Class<? extends Resource> getAbstractResourceTemplate() {
+        return abstractResourceTemplate;
+    }
+
+    public void setAbstractResourceTemplate(Class<? extends Resource> abstractResourceTemplate) {
+        this.abstractResourceTemplate = abstractResourceTemplate;
+    }
 }

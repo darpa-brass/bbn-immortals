@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://example.org/burgershake" 
+targetNamespace="http://example.org/burgershake" >
+
+
+    <xs:complexType name="burger">
+    	<xs:sequence>
+    		<xs:element name="burgerId" type="xs:string" maxOccurs="1" minOccurs="1"></xs:element>
+    		<xs:element name="eatenTime" type="xs:date" maxOccurs="1" minOccurs="1"></xs:element>
+    		<xs:element name="toppings" type="burgerTopping"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</xs:element>
+    		<xs:element name="numPatties" type="xs:int" maxOccurs="1" minOccurs="1"></xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="shake">
+    	<xs:sequence>
+    		<xs:element name="shakeName" type="xs:string" maxOccurs="1" minOccurs="1"></xs:element>
+    		<xs:element name="toppings" type="shakeTopping"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+    
+    <xs:simpleType name="burgerTopping">
+    	<xs:restriction base="xs:string">
+    		<xs:enumeration value="cheese"></xs:enumeration>
+    		<xs:enumeration value="lettuce"></xs:enumeration>
+    		<xs:enumeration value="mayo"></xs:enumeration>
+    		<xs:enumeration value="mustard"></xs:enumeration>
+    	</xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="shakeTopping">
+    	<xs:restriction base="xs:string">
+    		<xs:enumeration value="cherry"></xs:enumeration>
+    		<xs:enumeration value="whipped cream"></xs:enumeration>
+    		<xs:enumeration value="sprinkles"></xs:enumeration>
+    	</xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="meal">
+    	<xs:sequence>
+    		<xs:element name="burger" type="burger" maxOccurs="unbounded" minOccurs="0"></xs:element>
+    		<xs:element name="shake" type="shake" maxOccurs="1" minOccurs="0"></xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+</xs:schema> 

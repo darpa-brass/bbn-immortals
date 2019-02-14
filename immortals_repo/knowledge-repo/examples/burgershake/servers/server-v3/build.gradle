@@ -1,0 +1,40 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${SPRING_VERSION}")
+    }
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+dependencies {
+	compile project(":schema-code:${SERVER_SCHEMA_VERSION}")
+    compile("org.springframework.boot:spring-boot-starter-web-services")
+    compile("org.springframework.ws:spring-ws-core")
+	
+	compile("org.apache.ws.xmlschema:xmlschema-core:2.2.1")
+	compile("wsdl4j:wsdl4j:1.6.3")
+	compile("com.sun.xml.ws:jaxws-rt:2.3.0.2")
+	
+	/*
+	compile("com.sun.activation:javax.activation:1.2.0")
+	compile("org.jvnet.jax-ws-commons.spring:jaxws-spring:1.9")
+	*/
+}
+
+bootJar {
+    baseName = 'immortals-cp3.1-server'
+    version =  '1.0.0'
+    mainClassName = 'com.securboration.main.Main'
+	
+	into("BOOT-INF/classes/wsdl"){
+		from("${projectDir}/../schema/${CLIENT_SCHEMA_VERSION}"){
+			//include everything
+		}
+	}
+}
+
+

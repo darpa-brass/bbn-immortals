@@ -1,0 +1,134 @@
+@startuml
+
+
+!include components/port_mappings.iuml
+
+skinparam component {
+    backgroundColor<<Not Yet Utilized>> LightGray
+    backgroundColor<<LearnMore>> Orange
+    borderColor<<Modifiable>> Blue
+}
+
+skinparam package {
+    backgroundColor<<Not Yet Utilized>> LightGray
+    borderColor<<Swappable>> Blue
+    backgroundColor<<LearnMore>> Orange
+}
+
+skinparam interface {
+    backgroundColor<<Not Yet Utilized>> LightGray
+    borderColor<<Swappable>> Blue
+    backgroundColor<<LearnMore>> Orange
+}
+
+skinparam fixCircleLabelOverlapping true
+
+package MDLRoot {
+    package "Unit [0..1]" {
+        component "???" as unknown
+    }
+    package "MeasurementDomains [0..1]" {
+
+        package "MeasurementDomain [1..*]" {
+
+            package "Measurements [0..1]" {
+
+                package "Measurement [1..*] (ID)" {
+                    package "MeasurementTypes [1]" {
+                        component "MeasurementType [1..*] \n{'Analog'|'Discrete'|'DigitalBus'|'Computed'|'Time'|'Video'|\n'Overhead'|'Constant'|'Audio'|'Acquired'|'IU'|'EU'|'Raw'|'Transport'|'Extension'}" as MeasurementType
+'                        [MeasurementActive (bool)]
+                    }
+
+                    package "DataAttributes [0..1]" {
+                        component Uncertainties <<Not Yet Utilized>>
+'                        [Uncertainties] <<Not Yet Utilized>>
+                        component AnalogAttributes <<Not Yet Utilized>>
+                        component Calibration <<Not Yet Utilized>>
+                        component TimeAttributes <<Not Yet Utilized>>
+                        component AnalogAttributes <<Not Yet Utilized>>
+                        component Endianness <<Not Yet Utilized>>
+                        component DigitalEncoding <<Not Yet Utilized>>
+
+
+                        package "DigitalAttributes [0..1]" {
+
+                            component ActiveInputRange <<Not Yet Utilized>>
+
+                            package "DataLength [1]" {
+                                interface dl_cp as "ConditionalParameter [1..*]"
+                            }
+
+                            package "SampleRate [0..1]" {
+                                interface sr_cp as "ConditionalParameter [1..*]"
+                            }
+
+                            package "DataRate [0..1]" {
+                                interface meh as "ConditionalParameter [1..*]"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    package "NeworkDomain [0..1]" as networkdomain {
+
+        package "Networks [1]" as networkdomainNetworks {
+
+            package "Network [1..*] (ID)" {
+
+                component NetworkType <<Not Yet Utilized>>
+
+                package "NetworkNodes [0..1]" as networkdomainNetworkNodes {
+
+                    package "Network Node [1..*] (ID)" <<Swappable>> as networkdomainNetworkNode {
+
+                        component NetworkNodeType <<Not Yet Utilized>>
+                        component Routes <<Not Yet Utilized>>
+                        component LogicalLocation <<Not Yet Utilized>>
+                        component TmNSApps <<Not Yet Utilized>>
+                        component Capabilities <<Not Yet Utilized>>
+
+                        package "InternalStructure [1]" as networkdomainNetworkNodeInternalstructure {
+                            interface nn_m as "Module [1..*]"
+                        }
+                    }
+                }
+
+                package "Devices [0..1]" as networkdomainNetworkDevices {
+                    package "Device [1..*]" as networkdomainNetworkDevice {
+                        component "DeviceType [1]" <<LearnMore>> as DeviceType
+
+                        package "DeviceStructure [1]" as networkdomainNetworkDeviceStructure {
+                            package "DeviceModules [1]" as networkdomainNetworkDevicemodules {
+                                interface "DeviceModule [1..*]" as networkdomainNetworkDevicemodule
+                            }
+
+                        }
+
+                    }
+                }
+
+                package "Antennas [0..1]" <<Not Yet Utilized>> {
+                }
+
+                package "PortMappings [0..1]" {
+                    package "PortMappping [1..*]" {
+                    }
+                }
+
+                 PORT_MAPPINGS(networkdomainNetwork, "PortMappings [0..1]")
+            }
+        }
+        PORT_MAPPINGS(networkdomain, "NetworkToNetworkPortMapping [0..1]")
+
+
+    }
+
+    component "RANConfigurations [0..1]" <<Not Yet Utilized>>
+    component "DSCPTable [0..1]" <<Not Yet Utilized>>
+    component "SupportedMulticastAddresses [0..1]" <<Not Yet Utilized>>
+}
+
+@enduml

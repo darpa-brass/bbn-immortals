@@ -25,17 +25,23 @@
 
 	<dependencies>
 
-		<dependency>
-			<groupId>com.securboration</groupId>
-			<artifactId>immortals-bytecode-analysis</artifactId>
-			<version>r2.0.0</version>
-		</dependency>
-		
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+
 		<dependency>
 			<groupId>org.gradle</groupId>
 			<artifactId>gradle-core</artifactId>
 			<version>${gradle.version}</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>dataflow-analyzer</artifactId>
+			<version>${immortals.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -53,12 +59,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.xeustechnologies</groupId>
-			<artifactId>jcl-core</artifactId>
-			<version>2.8</version>
-		</dependency>
-
-		<dependency>
 			<groupId>com.securboration</groupId>
 			<artifactId>immortals-ontologies-domains-java-project</artifactId>
 			<version>${immortals.version}</version>
@@ -67,21 +67,7 @@
 
 		<dependency>
 			<groupId>com.securboration</groupId>
-			<artifactId>immortals-ontologies-functional</artifactId>
-			<version>${immortals.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.securboration</groupId>
 			<artifactId>immortals-ontologies-constraint</artifactId>
-			<version>${immortals.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.securboration</groupId>
-			<artifactId>immortals-ontologies-domains-resources</artifactId>
 			<version>${immortals.version}</version>
 			<scope>compile</scope>
 		</dependency>
@@ -113,19 +99,12 @@
             <version>4.0.0.Final</version>
             <scope>compile</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.bitbucket.mstrobel</groupId>
             <artifactId>procyon-compilertools</artifactId>
             <version>0.5.32</version>
         </dependency>
-
-		<dependency>
-			<groupId>com.securboration</groupId>
-			<artifactId>immortals-ontologies-package</artifactId>
-			<version>${immortals.version}</version>
-			<scope>compile</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -187,7 +166,7 @@
         <dependency>
             <groupId>ca.mcgill.sable</groupId>
             <artifactId>soot</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>3.1.0-SNAPSHOT</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -196,8 +175,20 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-ratiocination-engine</artifactId>
+            <version>r2.0.0</version>
+            <scope>compile</scope>
+        </dependency>
 
-	</dependencies>
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-trace-analyzer</artifactId>
+			<version>r2.0.0</version>
+		</dependency>
+
+    </dependencies>
 
 	<build>
 		<plugins>
@@ -261,6 +252,25 @@
 								<resource>
 									<directory>${project.basedir}/gradle-plugins</directory>
 									<targetPath>META-INF/gradle-plugins</targetPath>
+								</resource>
+								<resource>
+									<directory>${project.basedir}/../../vocabulary/ontology-package/target</directory>
+									<includes>
+										<include>immortals-ontologies-package-${immortals.version}.jar</include>
+									</includes>
+									<targetPath>ontology</targetPath>
+								</resource>
+								<resource>
+									<directory>${project.basedir}/../../soot</directory>
+									<includes>
+										<include>javabase.txt</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>${project.basedir}/../../soot</directory>
+									<includes>
+										<include>AnalysisReport.txt</include>
+									</includes>
 								</resource>
 							</resources>
 						</configuration>

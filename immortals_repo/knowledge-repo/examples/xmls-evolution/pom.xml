@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>com.securboration</groupId>
+	<artifactId>xsd-example</artifactId>
+	<name>xsd example project</name>
+	<version>0.0.1</version>
+	<packaging>jar</packaging>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.jvnet.jaxb2.maven2</groupId>
+			<artifactId>maven-jaxb2-plugin</artifactId>
+			<version>0.14.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.saxon</groupId>
+			<artifactId>saxon</artifactId>
+			<version>9.1.0.8</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.14.0</version>
+				<executions>
+					<execution>
+						<id>generate-sources-v1</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<schemaDirectory>src/main/xsd</schemaDirectory>
+							<schemaIncludes>
+								<include>todolist-v1.xsd</include>
+							</schemaIncludes>
+							<generateDirectory>target/generated-sources/jaxb2/v1</generateDirectory>
+							<generatePackage>com.securboration.generated.v1</generatePackage>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<id>generate-sources-v2</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<schemaDirectory>src/main/xsd</schemaDirectory>
+							<schemaIncludes>
+								<include>todolist-v2.xsd</include>
+							</schemaIncludes>
+							<generateDirectory>target/generated-sources/jaxb2/v2</generateDirectory>
+							<generatePackage>com.securboration.generated.v2</generatePackage>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!--
+			<schemaDirectory>src/main/resources/workflow</schemaDirectory>
+                <schemaIncludes>
+                    <include>edu.xsd</include>
+                </schemaIncludes>
+                <bindingDirectory>src/main/resources/workflow</bindingDirectory>
+                <bindingIncludes>
+                    <include>edu.xjb</include>
+                </bindingIncludes>
+                <generateDirectory>target/generated-sources/xjc/workflow</generateDirectory>
+                <generatePackage>com.websystique.xml.workflow</generatePackage>
+				-->
+		</plugins>
+	</build>
+</project>
+
+
+

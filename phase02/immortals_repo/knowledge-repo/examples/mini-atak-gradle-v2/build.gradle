@@ -1,0 +1,29 @@
+group 'com.securboration'
+version 'r2.0.0'
+
+buildscript {
+    repositories {
+        repositories {
+            mavenLocal()
+        }
+        dependencies {
+            classpath group: 'com.securboration', name: 'immortals-project-to-triples', version: 'r2.0.0'
+        }
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'com.securboration.p2t'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    compile group: 'org.apache.commons', name: 'commons-compress', version: '1.9'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+
+    compile group: 'com.securboration', name: 'immortals-adsl-generate', version: 'r2.0.0'
+}

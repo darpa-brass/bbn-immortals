@@ -1,0 +1,108 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+  http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>com.securboration</groupId>
+		<artifactId>immortals-cp3.1</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+
+	<artifactId>immortals-cp3.1-client-v2</artifactId>
+	<name>MDL message listener client (uses schema v2)</name>
+	<packaging>jar</packaging>
+	<modelVersion>4.0.0</modelVersion>
+
+	<properties>
+		<root-path>../..</root-path>
+		<client-schema-version>v2</client-schema-version>
+	</properties>
+	
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-core</artifactId>
+			<version>3.0.4.RELEASE</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-cp3.1-wsdl-types-${client-schema-version}</artifactId>
+			<version>${cp3.1-version}</version>
+		</dependency>
+		
+	</dependencies>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler-plugin-version}</version>
+				<configuration>
+					<source>${compiler-src-version}</source>
+					<target>${compiler-target-version}</target>
+				</configuration>
+			</plugin>
+			
+			<!-- Add the WSDL and supporting XSDs -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>${build-helper-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>add-wsdl-schemas</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${schema-root-path}/${client-schema-version}</directory>
+									<targetPath>wsdl</targetPath>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Create an uberjar -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-version}</version>
+				<configuration>
+					<mainClass>com.securboration.main.Main</mainClass>
+					<layout>ZIP</layout>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+		</plugins>
+
+	</build>
+
+</project>
+
+

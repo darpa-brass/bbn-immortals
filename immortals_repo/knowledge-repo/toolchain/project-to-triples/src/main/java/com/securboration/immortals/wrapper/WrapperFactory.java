@@ -10,6 +10,7 @@ import com.securboration.immortals.utility.Decompiler;
 import com.securboration.immortals.utility.GradleTaskHelper;
 import org.apache.commons.io.FileUtils;
 import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.JasminClass;
 import soot.options.Options;
 import soot.util.JasminOutputStream;
@@ -51,13 +52,13 @@ public class WrapperFactory {
 
         Scene.v().getSootClassPath();
 
-        String sootClasspath = Scene.v().getSootClassPath();
-        String[] cpElements = sootClasspath.split(File.pathSeparator);
+       // String sootClasspath = Scene.v().getSootClassPath();
+       // String[] cpElements = sootClasspath.split(File.pathSeparator);
 
-        if (cpElements.length > 1) {
-            SootClass wrappedClass = Scene.v().loadClassAndSupport(className);
-            return new Wrapper(wrappedClass);
-        }
+        //if (cpElements.length > 1) {
+          //  SootClass wrappedClass = Scene.v().loadClassAndSupport(className);
+           // return new Wrapper(wrappedClass);
+       // }
         
        /* boolean bootstrapRT = false;
         boolean bootstrapJCE = false;
@@ -73,7 +74,7 @@ public class WrapperFactory {
             }
         }*/
 
-        dependentFiles.removeIf(file -> file.contains("rt"));
+        //dependentFiles.removeIf(file -> file.contains("rt"));
         
         Options.v().set_keep_line_number(true);
         PhaseOptions.v().setPhaseOption("jb", "use-original-names:true");
@@ -136,6 +137,119 @@ public class WrapperFactory {
         
         return new Wrapper(wrappedClass);
     }
+
+    public static void resetScene() {
+        G.reset();
+    }
+
+    public Wrapper createWrapper(String className, Collection<String> dependencies) {
+
+      /*  if (androidJarPath != null) {
+
+            //G.reset();
+            Scene.v().setSootClassPath("");
+            //Scene.v().removeClass(Scene.v().getSootClass("java.nio.channels.SocketChannel"));
+
+            StringBuilder sootCP = new StringBuilder();
+            sootCP.append(androidJarPath);
+            Scene.v().setSootClassPath(sootCP.toString());
+            SootClass wrappedClass = Scene.v().loadClassAndSupport(className);
+
+            for (String dependency : dependencies) {
+                sootCP.append(File.pathSeparatorChar + dependency);
+            }
+            Scene.v().setSootClassPath(sootCP.toString());
+            Scene.v().loadBasicClasses();
+
+            return new Wrapper(wrappedClass);
+        }*/
+
+        //Scene.v().getSootClassPath();
+
+         String sootClasspath = Scene.v().getSootClassPath();
+         String[] cpElements = sootClasspath.split(File.pathSeparator);
+
+        if (cpElements.length > 1) {
+            SootClass wrappedClass = Scene.v().loadClassAndSupport(className.replace("/", "."));
+            return new Wrapper(wrappedClass);
+         }
+
+       /* boolean bootstrapRT = false;
+        boolean bootstrapJCE = false;
+
+        for (String dependentFile : dependentFiles) {
+            if (dependentFile.contains("rt.jar")) {
+                bootstrapRT = true;
+
+                break;
+            }  else if (dependentFile.contains("jce.jar")) {
+                bootstrapJCE = true;
+                break;
+            }
+        }*/
+
+        //dependentFiles.removeIf(file -> file.contains("rt"));
+
+        Options.v().set_keep_line_number(true);
+        PhaseOptions.v().setPhaseOption("jb", "use-original-names:true");
+        SootClass wrappedClass = null;
+
+        try {
+            /*if (bootstrapRT) {
+                Scene.v().setSootClassPath("");
+                StringBuilder sootCP = new StringBuilder("");
+                for (String dependentFile : dependentFiles) {
+                    if (sootCP.toString().equals("")) {
+                        sootCP.append(dependentFile);
+                    } else {
+                        sootCP.append(File.pathSeparatorChar).append(dependentFile);
+                    }
+                }
+
+                Scene.v().setSootClassPath(sootCP.toString());
+
+            } else {
+                Scene.v().extendSootClassPath(System.getProperty("java.home") + File.separatorChar
+                        + "lib" + File.separatorChar + "jce.jar");
+                bootstrapJCE = true;
+            }
+
+            if (!bootstrapJCE) {
+                Scene.v().extendSootClassPath(System.getProperty("java.home") + File.separatorChar
+                        + "lib" + File.separatorChar + "jce.jar");
+            }*/
+            Options.v().set_allow_phantom_refs(true);
+            StringBuilder sootCP = new StringBuilder();
+
+            for (String dependency : dependencies) {
+                sootCP.append(File.pathSeparatorChar + dependency);
+            }
+
+           /* if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+                sootCP.append(androidJarPath);
+                for (String dependency : dependencies) {
+                    sootCP.append(File.pathSeparatorChar + dependency);
+                }
+            } else {
+                sootCP.append(File.separator + androidJarPath);
+                for (String dependency : dependencies) {
+                    sootCP.append(File.pathSeparatorChar + File.separator + dependency);
+                }
+            }*/
+            // sootCP.append(androidJarPath);
+            //Scene.v().loadBasicClasses();
+
+            Scene.v().setSootClassPath(sootCP.toString());
+            //Scene.v().extendSootClassPath(System.getProperty("java.home") + File.separatorChar + "lib" + File.separatorChar + "jce.jar");
+            wrappedClass = Scene.v().loadClassAndSupport(className.replace("/", "."));
+            Scene.v().loadBasicClasses();
+
+        } catch (Exception exc) {
+            System.out.println("Issue loading dependencies/specified class");
+        }
+
+        return new Wrapper(wrappedClass);
+    }
     
     public void wrap(Wrapper wrapper) {
         
@@ -195,27 +309,11 @@ public class WrapperFactory {
         
         checkForInaccessibleMethods(wrappedClass, methodNodes);
 
-        SootClass cipherImplClass = Scene.v().loadClassAndSupport(cipherImpl);
-
-        String checkForPreviousAugmentation = "prefix IMMoRTALS_constraint: <http://darpa.mil/immortals/ontology/r2.0.0/constraint#> \n" +
-                "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
-                "\n" +
-                "select ?sourceFile where {\n" +
-                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
-                "\t\t\n" +
-                "\t\t?impacts IMMoRTALS:hasProducedSourceFiles ?sourceFile .\n" +
-                "\t\t\n" +
-                "\t\t?sourceFile IMMoRTALS:hasFileName \"???FILE_NAME???\" .\n" +
-                "\t}\n" +
-                "}";
-        checkForPreviousAugmentation = checkForPreviousAugmentation.replace("???FILE_NAME???", wrapperClassName + ".java")
-        .replace("???GRAPH_NAME???", taskHelper.getGraphName());
-        GradleTaskHelper.AssertableSolutionSet previousAugmentationSolutions = new GradleTaskHelper.AssertableSolutionSet();
-        
-        taskHelper.getClient().executeSelectQuery(checkForPreviousAugmentation, previousAugmentationSolutions);
+        boolean previousAugmentation = Scene.v().containsClass(wrapperClassName);
+        SootClass cipherImplClass = Scene.v().loadClassAndSupport(cipherImpl.replace("/", "."));
         String[] argTypes;
-        if (!previousAugmentationSolutions.getSolutions().isEmpty()) {
-            
+
+          if (previousAugmentation) {
             //TODO
             wrapperClass = Scene.v().loadClassAndSupport(wrapperClassName);
             wrapper.setWrapperClass(wrapperClass);
@@ -279,7 +377,7 @@ public class WrapperFactory {
             }
             return true;
         }
-        
+
         wrapperClass = new SootClass(wrapperClassName, modifiers);
         wrapper.setWrapperClass(wrapperClass);
         Scene.v().addClass(wrapperClass);
@@ -306,7 +404,7 @@ public class WrapperFactory {
 
         Decompiler decompiler = new Decompiler();
         String bareBonesWrapperPath = this.produceWrapperClassFile(wrapper);
-        
+
         String pathToJavaSource;
         if (plugin) {
             pathToJavaSource = taskHelper.getResultsDir() + "Wrapper" + wrapper.getWrappedClass().getShortName() + ".java";

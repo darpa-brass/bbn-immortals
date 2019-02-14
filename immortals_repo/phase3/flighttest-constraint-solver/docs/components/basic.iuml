@@ -1,0 +1,71 @@
+@startuml
+
+skinparam component {
+    backgroundColor<<Not Yet Utilized>> LightGray
+    backgroundColor<<LearnMore>> Orange
+    borderColor<<Modifiable>> Blue
+}
+
+skinparam package {
+    backgroundColor<<Not Yet Utilized>> LightGray
+    borderColor<<Swappable>> Blue
+    backgroundColor<<LearnMore>> Orange
+}
+
+skinparam interface {
+    backgroundColor<<Not Yet Utilized>> LightGray
+    borderColor<<Swappable>> Blue
+    backgroundColor<<LearnMore>> Orange
+}
+
+skinparam fixCircleLabelOverlapping true
+
+!definelong TYPE_KEY()
+component ConditionOperation as "ConditionOperation {
+\t'>'
+\t'>='
+\t'<'
+\t'<='
+\t'=='
+\t'!='
+\t
+}"
+
+component ConditionValue as "ConditionValue {
+\tdouble
+\tlong
+\tHexInteger
+\tBinInteger
+}"
+
+component BaseUnit as "BaseUnit {
+\t'Meter' |\t'Kilogram' |\t'Second' |\t'Ampere' |\t'Kelvin' |
+\t'Mole' |\t'Candela' |\t'Radian' |\t'Steradian' |\t'Hertz' |
+\t'Newton' |\t'Pascal' |\t'Joule' |\t'Watt' |\t'Coulomb' |
+\t'Volt' |\t'Farad' |\t'Ohm' |\t'Siemens' |\t'Weber' |
+\t'Tesla' |\t'Henry' |\t'Celsius' |\t'Lumen' |\t'Lux' |
+\t'Becquerel' |\t'Gray' |\t'Sievert' |\t'Katal' |\t'Bit' |
+\t'BitPerSecond' |\t'Counts' |\t'dB' |\t'dBm' |\t'Unitless' |
+}"
+
+component PortDirection as "PortDirection {
+\t'Input' |
+\t'Output' |
+\t'Bidirectional' |
+\t'Unspecified'
+}"
+
+component Polarity as "Polarity [
+PortPolarity [0..1] {
+\t'Unipolar' |
+\t'Bipolar
+}"
+
+
+ConditionValue --[hidden]r-> ConditionOperation
+ConditionOperation -[hidden]r-> BaseUnit
+
+!enddefinelong
+
+'TYPE_KEY()
+@enduml

@@ -4,7 +4,6 @@ import com.securboration.immortals.ontology.dfu.instance.DfuInstance;
 import com.securboration.immortals.ontology.frame.CallTrace;
 import com.securboration.immortals.ontology.analysis.*;
 import com.securboration.immortals.ontology.dfu.instance.FunctionalAspectInstance;
-
 import com.securboration.immortals.ontology.functionality.*;
 import com.securboration.immortals.ontology.functionality.alg.encryption.*;
 import com.securboration.immortals.ontology.functionality.aspects.AspectConfigureRequest;
@@ -12,9 +11,11 @@ import com.securboration.immortals.ontology.functionality.aspects.AspectConfigur
 import com.securboration.immortals.ontology.functionality.datatype.DataType;
 import com.securboration.immortals.ontology.lang.AugmentedMethodInvocation;
 import com.securboration.immortals.ontology.lang.AugmentedUserSourceFile;
+import com.securboration.immortals.ontology.lang.SourceFile;
 import com.securboration.immortals.ontology.lang.WrapperSourceFile;
 import com.securboration.immortals.ontology.pattern.spec.CodeSpec;
 import com.securboration.immortals.ontology.property.impact.AnalysisImpact;
+import com.securboration.immortals.soot.UserAppInfo;
 import com.securboration.immortals.utility.Decompiler;
 import com.securboration.immortals.utility.GradleTaskHelper;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
@@ -22,15 +23,14 @@ import com.securboration.immortals.o2t.analysis.ObjectToTriples;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
 import com.securboration.immortals.ontology.constraint.*;
 import com.securboration.immortals.ontology.frame.AnalysisFrameAssessmentReport;
-
 import com.securboration.immortals.ontology.functionality.datatype.DataProperty;
 import com.securboration.immortals.ontology.property.Property;
 import com.securboration.immortals.ontology.property.impact.ImpactStatement;
 import com.securboration.immortals.ontology.property.impact.PropertyImpact;
 import com.securboration.immortals.repo.query.TriplesToPojo;
-
 import com.securboration.immortals.wrapper.Wrapper;
 import com.securboration.immortals.wrapper.WrapperFactory;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.atlas.lib.Pair;
 import org.apache.jena.rdf.model.Model;
@@ -39,10 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
@@ -50,6 +46,7 @@ import java.util.regex.Pattern;
 
 import static com.securboration.immortals.utility.GradleTaskHelper.*;
 
+@Deprecated
 public class AnalysisFrameAssessment {
 
     private static final Logger logger =
@@ -836,7 +833,6 @@ public class AnalysisFrameAssessment {
                 }
 
                 case "cipherDecrypt": {
-
                     wrapperFactory = new WrapperFactory();
                     wrapper = initializeWrapper(streamInitializationNode, dependentFiles, dependencyPaths,
                             wrapperFactory, "java.io.InputStream", pathToAndroidJar);
@@ -989,38 +985,68 @@ public class AnalysisFrameAssessment {
         return configureRequest;
     }
 
-    public static List<AspectConfigureSolution> retrieveConfigurationSolutions(GradleTaskHelper taskHelper) throws Exception{
+    public static List<AspectConfigureSolution> retrieveConfigurationSolutions(GradleTaskHelper taskHelper, String projectUUID) throws Exception{
 
-        String getConfigurationSolution = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+        List<AspectConfigureSolution> configureSolutionList = new ArrayList<>();
+
+        String getProjectSpecificConfigSolution = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "prefix IMMoRTALS_functionality_aspects: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#>\n" +
                 "\n" +
                 "select ?configureSolution where {\n" +
                 "\t\n" +
                 "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
                 "\t\n" +
-                "\t\t?configureSolution a IMMoRTALS_functionality_aspects:AspectConfigureSolution.\n" +
+                "\t\t?configureSolution a IMMoRTALS_functionality_aspects:AspectConfigureSolution\n" +
+                "\t\t; IMMoRTALS:hasProjectUUID \"???PROJECT_UUID???\"." +
                 "\t\n" +
                 "\t}\n" +
                 "}";
-        getConfigurationSolution = getConfigurationSolution.replace("???GRAPH_NAME???", taskHelper.getGraphName());
-        AssertableSolutionSet configureSolutions = new AssertableSolutionSet();
-        taskHelper.getClient().executeSelectQuery(getConfigurationSolution, configureSolutions);
+        getProjectSpecificConfigSolution = getProjectSpecificConfigSolution.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                .replace("???PROJECT_UUID???", projectUUID);
+        AssertableSolutionSet projectSpecificSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getProjectSpecificConfigSolution, projectSpecificSolutions);
 
+        if (!projectSpecificSolutions.getSolutions().isEmpty()) {
+           configureSolutionList.addAll(pojofyConfigSolutions(taskHelper, projectSpecificSolutions));
+        }
+        // no project-specific solutions available, will look for generic solutions now
+
+        String getGenericConfigurationSolution = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_functionality_aspects: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#>\n" +
+                "\n" +
+                "select ?configureSolution where {\n" +
+                "\t\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\n" +
+                "\t\t?configureSolution a IMMoRTALS_functionality_aspects:AspectConfigureSolution .\n" +
+                "\t\t filter not exists {?configureSolution IMMoRTALS:hasProjectUUID ?projectSpecifier}\n" +
+                "\t\n" +
+                "\t}\n" +
+                "}";
+        getGenericConfigurationSolution = getGenericConfigurationSolution.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+        AssertableSolutionSet configureSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getGenericConfigurationSolution, configureSolutions);
+
+        configureSolutionList.addAll(pojofyConfigSolutions(taskHelper, configureSolutions));
+        
+        return configureSolutionList;
+    }
+
+    private static List<AspectConfigureSolution> pojofyConfigSolutions(GradleTaskHelper taskHelper, AssertableSolutionSet configureSolutions) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchFieldException {
         List<AspectConfigureSolution> configureSolutionList = new ArrayList<>();
         for (Solution configureSolution : configureSolutions.getSolutions()) {
             String aspectSolutionUUID = configureSolution.get("configureSolution");
             AspectConfigureSolution aspectConfigureSolution = (AspectConfigureSolution) TriplesToPojo.convert(taskHelper.getGraphName(),
                     aspectSolutionUUID, taskHelper.getClient());
-            
+
             if (aspectConfigureSolution.getChosenInstance() != null) {
                 configureSolutionList.add(aspectConfigureSolution);
             }
         }
-        
         return configureSolutionList;
     }
 
-    private static void recordAspectAdaptation(GradleTaskHelper taskHelper, FunctionalAspect functionalAspect, Wrapper wrapper) {
+    public static void recordAspectAdaptation(GradleTaskHelper taskHelper, FunctionalAspect functionalAspect, Wrapper wrapper) {
         for (Wrapper cachedWrapper : taskHelper.getWrappers()) {
             if (cachedWrapper.getWrapperClass().getName().equals(
                     wrapper.getWrapperClass().getName())) {
@@ -1037,7 +1063,7 @@ public class AnalysisFrameAssessment {
         }
     }
 
-    private static void checkForImplementationSpecificMethods(GradleTaskHelper taskHelper, Wrapper wrapper) {
+    public static void checkForImplementationSpecificMethods(GradleTaskHelper taskHelper, Wrapper wrapper) {
         String wrappedClassName = wrapper.getWrappedClass().getName();
         String getNecessaryImplementations = "prefix IMMoRTALS_pattern_spec: <http://darpa.mil/immortals/ontology/r2.0.0/pattern/spec#> \n" +
                 "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
@@ -1074,14 +1100,14 @@ public class AnalysisFrameAssessment {
         wrapper.introduceMediationMethods(codeSpecs, taskHelper);
     }
 
-    private static String getStreamObject(FunctionalAspect functionalAspect) {
+    public static String getStreamObject(FunctionalAspect functionalAspect) {
         return functionalAspect.getAspectId().contains("Encrypt") ?
                 "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#OutputStream" :
                 "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#InputStream";
     }
 
-    private static File decompileWrapperFoundation(GradleTaskHelper taskHelper, Wrapper wrapper, boolean plugin,
-                                                   String classFileLocation) throws IOException {
+    public static File decompileWrapperFoundation(GradleTaskHelper taskHelper, Wrapper wrapper, boolean plugin,
+                                                  String classFileLocation) throws IOException {
         Decompiler decompiler = new Decompiler();
         File javaSource;
         if (plugin) {
@@ -1096,54 +1122,68 @@ public class AnalysisFrameAssessment {
         return javaSource;
     }
 
-    public static void performWrapperCodeInsertions(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config) throws Exception {
-
+    public static void performWrapperCodeInsertions(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config,
+                                                    List<Pair<String, WrapperImplementationImpact>> assessGraphNameToImpacts) throws Exception {
 
         for (Wrapper wrapper : taskHelper.getWrappers()) {
+
             String wrappedClassFileName = wrapper.getWrapperClass().getShortName() + ".java";
 
-            String getPreviouslyAugmentedSource = getWrapperSource(wrappedClassFileName, taskHelper);
-            AssertableSolutionSet sourceSolutions = new AssertableSolutionSet();
-            taskHelper.getClient().executeSelectQuery(getPreviouslyAugmentedSource, sourceSolutions);
+            Optional<Pair<String, WrapperImplementationImpact>> pairOptional = assessGraphNameToImpacts.stream().filter(pair
+                    -> pair.getRight().getWrapperClassNameShort().equals(wrappedClassFileName.substring(0, wrappedClassFileName.indexOf(".java")))).findFirst();
 
-            Solution sourceSolution = sourceSolutions.getSolutions().get(0);
-            String sourceFileName = sourceSolution.get("sourceFile");
-            String source = sourceSolution.get("sourceCode"); // retrieve source from ontology
+            if (pairOptional.isPresent()) {
 
-            if (wrapper.getWrappedClass().isAbstract()) {
-                Optional<String> sourceWithAbstractMethodsImplemented = taskHelper.checkForNecessaryImplementations(
+                Pair<String, WrapperImplementationImpact> assessGraphNameToImpact = pairOptional.get();
+                WrapperImplementationImpact wrapperImplementationImpact = assessGraphNameToImpact.getRight();
+
+                String getPreviouslyAugmentedSource = getWrapperSource(wrappedClassFileName, taskHelper);
+                AssertableSolutionSet sourceSolutions = new AssertableSolutionSet();
+                taskHelper.getClient().executeSelectQuery(getPreviouslyAugmentedSource, sourceSolutions);
+
+                Solution sourceSolution = sourceSolutions.getSolutions().get(0);
+                String source = sourceSolution.get("sourceCode"); // retrieve source from ontology
+
+                if (wrapper.getWrappedClass().isAbstract()) {
+                    Optional<String> sourceWithAbstractMethodsImplemented = taskHelper.checkForNecessaryImplementations(
+                            wrapper.getWrappedClass().getName(), source, null, wrapper);
+                    if (sourceWithAbstractMethodsImplemented.isPresent()) {
+                        source = sourceWithAbstractMethodsImplemented.get();
+                    }
+                }
+
+                Optional<String> sourceWithAugmentationSurfaceMethods = taskHelper.augmentAdaptationSurfaceMethods(
                         wrapper.getWrappedClass().getName(), source, null, wrapper);
-                if (sourceWithAbstractMethodsImplemented.isPresent()) {
-                    source = sourceWithAbstractMethodsImplemented.get();
+                if (sourceWithAugmentationSurfaceMethods.isPresent()) {
+                    source = sourceWithAugmentationSurfaceMethods.get();
+                }
+
+                Optional<String> newWrapperSource = expandAdaptationSurface(taskHelper, Optional.empty(), Optional.of(wrappedClassFileName),
+                        source, false);
+
+                if (newWrapperSource.isPresent()) {
+
+                    for (SourceFile wrapperSourceFile : wrapperImplementationImpact.getProducedSourceFiles()) {
+                        if (!wrapperSourceFile.getFileName().contains("[")) {
+                            wrapperSourceFile.setSource(newWrapperSource.get());
+                        }
+                    }
+                    Model impactModel = ObjectToTriples.convert(config, wrapperImplementationImpact);
+                    taskHelper.getClient().setModel(impactModel, assessGraphNameToImpact.getLeft());
                 }
             }
-
-            Optional<String> sourceWithAugmentationSurfaceMethods = taskHelper.augmentAdaptationSurfaceMethods(
-                    wrapper.getWrappedClass().getName(), source, null, wrapper);
-            if (sourceWithAugmentationSurfaceMethods.isPresent()) {
-                source = sourceWithAugmentationSurfaceMethods.get();
-            }
-
-            WrapperSourceFile sourceFile = (WrapperSourceFile) TriplesToPojo.convert(taskHelper.getGraphName(),
-                    sourceFileName, taskHelper.getClient());
-            sourceFile.setSource(source);
-
-            taskHelper.getClient().addToModel(ObjectToTriples.convert(config, sourceFile), taskHelper.getGraphName());
-
-            Files.write(Paths.get(sourceFile.getFileSystemPath()), Collections.singleton(source), StandardCharsets.UTF_8);
         }
     }
 
     private static String getWrapperSource(String wrappedClassFileName, GradleTaskHelper taskHelper) {
-        String getPreviouslyAugmentedSource = "prefix IMMoRTALS_constraint: <http://darpa.mil/immortals/ontology/r2.0.0/constraint#> \n" +
+        String getPreviouslyAugmentedSource = "prefix IMMoRTALS_lang: <http://darpa.mil/immortals/ontology/r2.0.0/lang#>\n" +
                 "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
                 "\n" +
-                "select ?sourceFile ?sourceCode where {\n" +
+                "select ?sourceCode where {\n" +
                 "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
                 "\t\t\n" +
-                "\t\t?impacts IMMoRTALS:hasProducedSourceFiles ?sourceFile .\n" +
-                "\t\t\n" +
-                "\t\t?sourceFile IMMoRTALS:hasFileName \"???FILE_NAME???\"\n" +
+                "\t\t?sourceFile a IMMoRTALS_lang:WrapperSourceFile " +
+                "\t\t; IMMoRTALS:hasFileName \"???FILE_NAME???\"\n" +
                 "\t\t; IMMoRTALS:hasSource ?sourceCode .\n" +
                 "\t}\n" +
                 "}";
@@ -1239,7 +1279,7 @@ public class AnalysisFrameAssessment {
         }
     }
 
-    private static Wrapper initializeWrapper(MethodInvocationDataflowNode streamInitializationNode, Set<String> dependentFiles,
+    public static Wrapper initializeWrapper(MethodInvocationDataflowNode streamInitializationNode, Set<String> dependentFiles,
                                              List<String> dependencyPaths, WrapperFactory wrapperFactory, String s, String androidJarPath) {
         // TODO: Not this hack!
         if (dependentFiles != null) {
@@ -1260,7 +1300,26 @@ public class AnalysisFrameAssessment {
         return wrapper;
     }
 
-    private static boolean analysisViaPlugin(GradleTaskHelper taskHelper) {
+    public static Wrapper initializeWrapper(String streamInitClassName, Set<String> dependentFiles, WrapperFactory wrapperFactory, String s) {
+        // TODO: Not this hack!
+        if (dependentFiles != null) {
+            Set<String> tmpSet = new HashSet<>(dependentFiles);
+            for (String str : tmpSet) {
+                if (str.endsWith("rt.jar") && str.contains("/") && !str.startsWith("/")) {
+                    dependentFiles.remove(str);
+                    dependentFiles.add("/" + str);
+                }
+            }
+        }
+
+        Wrapper wrapper;
+        wrapper = wrapperFactory.createWrapper(streamInitClassName, dependentFiles);
+
+        wrapper.setStreamType(s);
+        return wrapper;
+    }
+
+    public static boolean analysisViaPlugin(GradleTaskHelper taskHelper) {
         boolean plugin;
         if (taskHelper.getResultsDir() == null) {
             plugin = false;
@@ -1280,7 +1339,7 @@ public class AnalysisFrameAssessment {
         return dependentFiles;
     }
 
-    private static AssertableSolutionSet getWrapperInsertionSiteContext(GradleTaskHelper taskHelper, String initCallOwnerOwnerName) {
+    public static AssertableSolutionSet getWrapperInsertionSiteContext(GradleTaskHelper taskHelper, String initCallOwnerOwnerName) {
         String sourceCodeRepoSafeName = initCallOwnerOwnerName.replaceAll("/", ".");
         if (sourceCodeRepoSafeName.contains("$")) {
             sourceCodeRepoSafeName = sourceCodeRepoSafeName.substring(0, sourceCodeRepoSafeName.indexOf("$"));
@@ -1315,7 +1374,7 @@ public class AnalysisFrameAssessment {
         return ownerSourceSolutions;
     }
 
-    private static ArrayList<CallTrace> findWrapperInsertionSite(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config, AssertableSolutionSet traceSolutions) throws Exception {
+    public static ArrayList<CallTrace> findWrapperInsertionSite(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config, AssertableSolutionSet traceSolutions) throws Exception {
         String streamStarterNodeUUID = traceSolutions.getSolutions().get(0).get("nodes");
         String streamStarterEdgeUUID = traceSolutions.getSolutions().get(0).get("edge");
 
@@ -1327,7 +1386,7 @@ public class AnalysisFrameAssessment {
                 streamStarterEdge.getDataflowAnalysisFrame(), config);
     }
 
-    private static AssertableSolutionSet findStreamImplementationInUsersCode(InterMethodDataflowNode node, GradleTaskHelper taskHelper,
+    public static AssertableSolutionSet findStreamImplementationInUsersCode(InterMethodDataflowNode node, GradleTaskHelper taskHelper,
                                                                              String applicableStreamObject) {
 
         String headOfTraceUUID = getInterMethodNodeUUID(taskHelper, node);
@@ -1392,7 +1451,7 @@ public class AnalysisFrameAssessment {
         taskHelper.getPw().println("Searching for your specific stream implementation...");
     }
 
-    private static AssertableSolutionSet getInitializationData(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config,
+    public static AssertableSolutionSet getInitializationData(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config,
                                                                MethodInvocationDataflowNode streamInitializationNode) {
         String getInformationAboutInitMethodCall = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "\t\t\n" +
@@ -1535,7 +1594,7 @@ public class AnalysisFrameAssessment {
         }
     }
 
-    private static void augmentUserApplication(List<MethodInvocationDataflowNode> affectedNodes, GradleTaskHelper taskHelper,
+    public static void augmentUserApplication(List<MethodInvocationDataflowNode> affectedNodes, GradleTaskHelper taskHelper,
                                                MethodInvocationDataflowNode initializerNode, List<String> applicationLines,
                                                Wrapper wrapper, String initCallOwnerOwnerName) throws IOException {
 
@@ -1563,7 +1622,33 @@ public class AnalysisFrameAssessment {
                 ,newSourceBuilder.toString(), true);
     }
 
-    public static void expandAdaptationSurface(GradleTaskHelper taskHelper, Optional<String> ownerNameOption,
+    public static Optional<String> augmentUserApplication(GradleTaskHelper taskHelper, UserAppInfo userAppInfo, Wrapper wrapper) throws IOException {
+
+        String streamIdentifier = augmentInitializationNode(userAppInfo, userAppInfo.getUserAppLines(),
+                wrapper.getWrapperClass().getShortName());
+
+        if (streamIdentifier == null) {
+            // no assignment performed, so no stream identifier
+            return Optional.empty();
+        }
+
+        if (!userAppInfo.getProblematicMethodNodes().isEmpty()) {
+            for (MethodInvocationDataflowNode nodeToAugment : userAppInfo.getProblematicMethodNodes()) {
+                augmentInaccessibleInheritedMethods(nodeToAugment, userAppInfo.getUserAppLines(), streamIdentifier);
+            }
+        }
+
+        StringBuilder newSourceBuilder = new StringBuilder();
+        for (String newSourceLine : userAppInfo.getUserAppLines()) {
+            newSourceLine+="\\n";
+            newSourceBuilder.append(newSourceLine);
+        }
+
+        return expandAdaptationSurface(taskHelper, Optional.of(userAppInfo.getInitNodeClassOwner()), Optional.empty(),
+                newSourceBuilder.toString(), true);
+    }
+
+    public static Optional<String> expandAdaptationSurface(GradleTaskHelper taskHelper, Optional<String> ownerNameOption,
                                                Optional<String> fileNameOption, String newSource, boolean userCode) throws IOException {
 
         if (userCode) {
@@ -1605,57 +1690,36 @@ public class AnalysisFrameAssessment {
             taskHelper.getClient().executeUpdate(replaceCurrentApplicationSource);
 
             String getActualSourceFile = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
-                    "select ?path where {" +
-                    "\t\t graph<http://localhost:3030/ds/data/???GRAPH_NAME???> {" +
-                    " ?javaProject IMMoRTALS:hasClasspaths ?classpaths\n" +
-                    "\t\t; IMMoRTALS:hasSourceCodeRepo ?sourceCodeRepo\n" +
-                    "    \t; IMMoRTALS:hasCompiledSourceHash ?compiledHash .\n" +
+                    "select ?sourceFiles where {\t\t \n" +
+                    "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                    "\t\t?javaProject IMMoRTALS:hasSourceCodeRepo ?sourceCodeRepo .\n" +
                     "\t\t\n" +
                     "\t\t?sourceCodeRepo IMMoRTALS:hasSourceFiles ?sourceFiles .\n" +
                     "\t\t\n" +
-                    "\t\t?sourceFiles IMMoRTALS:hasFullyQualifiedName \"???CLASS_NAME???\"\n" +
-                    "\t\t; IMMoRTALS:hasFileSystemPath ?path .\n" +
+                    "\t\t?sourceFiles IMMoRTALS:hasFullyQualifiedName \"???CLASS_NAME???\" .\n" +
                     "\t\t\n" +
-                    "\t\t?classArtifact IMMoRTALS:hasHash ?compiledHash .\n" +
-                    "\t\t\n" +
-                    "\t\t?classArtifact IMMoRTALS:hasClassModel ?aClass .\n" +
-                    "\t\t\n" +
-                    "\t\t?aClass IMMoRTALS:hasClassName \"???CLASS_NAME_URL???\" ." +
-                    "\t}" +
-                    "}\n";
+                    "\t\t}\n" +
+                    "\t\t\t\n" +
+                    "\t}\n";
             getActualSourceFile = getActualSourceFile.replace("???GRAPH_NAME???",
-                    taskHelper.getGraphName()).replace("???CLASS_NAME???", initCallOwnerOwnerName.replaceAll("/",
-                    ".")).replace("???CLASS_NAME_URL???", initCallOwnerOwnerName).replace("???NEW_SOURCE???",
-                    newSource);
+                    taskHelper.getGraphName()).replace("???CLASS_NAME???", sourceCodeRepoSafeName);
             AssertableSolutionSet sourceFileSolutions = new AssertableSolutionSet();
             taskHelper.getClient().executeSelectQuery(getActualSourceFile, sourceFileSolutions);
 
             if (!sourceFileSolutions.getSolutions().isEmpty()) {
 
-                String sourceFilePath = sourceFileSolutions.getSolutions().get(0).get("path");
-                File sourceFile = new File(sourceFilePath);
+                String sourceFileUUID = sourceFileSolutions.getSolutions().get(0).get("sourceFiles");
 
-                if (sourceFile.exists()) {
-
-                    System.out.println("User application file found on local file system, do you want" +
-                            " constraint analysis to automatically augment it in order to resolve remediation" +
-                            " strategy?  y/n");
-                    Scanner sc = new Scanner(System.in);
-                    String userInput = sc.next();
-
-                    if (userInput.equalsIgnoreCase("yes") || userInput.equalsIgnoreCase("y")) {
-                        Files.write(sourceFile.toPath(), Collections.singleton(newSource), Charset.defaultCharset());
-                    } else {
-                        System.out.println("Immortals system won't change application source, user can retrieve augmented code from the" +
-                                "source code repo preserved in ontology.");
-                    }
-                }
+                return Optional.of(sourceFileUUID);
             }
         } else {
 
             String fileName = null;
             if (fileNameOption.isPresent()) {
                 fileName = fileNameOption.get();
+            } else {
+                System.err.println("UNABLE TO DETERMINE WRAPPER FILE NAME");
+                return null;
             }
 
             String replaceWrapperSource = "prefix IMMoRTALS_lang: <http://darpa.mil/immortals/ontology/r2.0.0/lang#> \n" +
@@ -1667,11 +1731,15 @@ public class AnalysisFrameAssessment {
                     "WHERE  {?wrapperSourceFile a IMMoRTALS_lang:WrapperSourceFile\n" +
                     "\t\t; IMMoRTALS:hasFileName \"???FILE_NAME???\"\n" +
                     "\t\t; IMMoRTALS:hasSource ?source .}";
-            replaceWrapperSource = replaceWrapperSource.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace(
-                    "???NEW_SOURCE???", newSource.replace("\n", "\\n")
-                            .replaceAll("\"", "\\\\\"")).replace("???FILE_NAME???", fileName);
+            replaceWrapperSource = replaceWrapperSource.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                    .replace("???NEW_SOURCE???", newSource.replaceAll("\"", "\\\\\"")
+                            .replace("\n", "\\n").replace("\r", ""))
+                    .replace("???FILE_NAME???", fileName);
             taskHelper.getClient().executeUpdate(replaceWrapperSource);
+
+            return Optional.of(newSource);
         }
+        return Optional.empty();
     }
 
     private static String augmentInitializationNode(MethodInvocationDataflowNode methodNode, List<String> applicationSourceLines,
@@ -1686,6 +1754,73 @@ public class AnalysisFrameAssessment {
         if (sidesOfExpression.length == 1) {
 
             Pattern p = Pattern.compile("(.[a-zA-Z0-9_.-]+\\." + methodNode.getJavaMethodName() + ")");
+            Matcher m = p.matcher(initializationLine);
+
+            if (m.find()) {
+                int indexOfInit = initializationLine.indexOf(m.group());
+                String restOfLine = initializationLine.substring(indexOfInit);
+
+                int resolvedInitMethod = 1;
+                int currentIndex = 0;
+                for (char c : restOfLine.toCharArray()) {
+                    if (c == '(') {
+                        resolvedInitMethod++;
+                    } else if (c == ')') {
+                        resolvedInitMethod--;
+                    }
+                    if (resolvedInitMethod == 1) {
+                        break;
+                    }
+                    currentIndex++;
+                }
+
+                StringBuilder sb = new StringBuilder(initializationLine);
+                sb.insert(currentIndex + indexOfInit,")");
+                sb.insert(indexOfInit + 1, " new " + wrapperClassName + "(");
+                applicationSourceLines.set(initializationLineNumber, sb.toString());
+            }
+        } else {
+
+            String[] leftSideOfExpression = sidesOfExpression[0].trim().split(" ");
+            if (leftSideOfExpression.length > 1) {
+                // new var assignment
+                if (initializationLine.contains(" final ")) {
+                    // streaming abstraction is declared final
+                    identifier = leftSideOfExpression[2];
+                } else {
+                    identifier = leftSideOfExpression[1];
+                }
+            } else {
+                // existing field assignment
+                identifier = leftSideOfExpression[0];
+            }
+
+            if (initializationLine.contains(wrapperClassName)) {
+                return identifier;
+            }
+
+            StringBuilder sb = new StringBuilder(initializationLine);
+            sb.insert(sb.indexOf("=") + 1, " new " + wrapperClassName + "(");
+            sb.insert(sb.lastIndexOf(";"), ")");
+
+            applicationSourceLines.set(initializationLineNumber, sb.toString());
+        }
+
+        return identifier;
+    }
+
+    private static String augmentInitializationNode(UserAppInfo userAppInfo, List<String> applicationSourceLines,
+                                                    String wrapperClassName) {
+
+        String identifier = null;
+        int initializationLineNumber =userAppInfo.getInitializerLineNumber() - 1;
+        String initializationLine = applicationSourceLines.get(initializationLineNumber);
+
+        String[] sidesOfExpression = initializationLine.split("=");
+
+        if (sidesOfExpression.length == 1) {
+
+            Pattern p = Pattern.compile("(.[a-zA-Z0-9_.-]+\\." + userAppInfo.getInitializerMethodName() + ")");
             Matcher m = p.matcher(initializationLine);
 
             if (m.find()) {
@@ -1782,9 +1917,12 @@ public class AnalysisFrameAssessment {
         StringBuilder sb = new StringBuilder(methodLine);
         int indexToAugment = sb.indexOf(streamIdentifier + "." + methodNode.getJavaMethodName());
         sb.insert(indexToAugment + streamIdentifier.length() + 1 + methodNode.getJavaMethodName().length(), "Wrapped");
+        sb.insert(indexToAugment + streamIdentifier.length(), ")");
+
+        String syntaxFriendlyClassName = methodNode.getJavaClassName().substring(methodNode.getJavaClassName().lastIndexOf("/") + 1);
+        sb.insert(indexToAugment - 1, "((Wrapper" + syntaxFriendlyClassName + ")");
 
         applicationSourceLines.set(methodLineNumber, sb.toString());
-
     }
 
     public static AspectConfigureSolution checkForUnknownConfigurations(FunctionalAspectInstance aspectInstance,
@@ -2015,7 +2153,7 @@ public class AnalysisFrameAssessment {
         return analysisImpact;
     }
 
-    private static void appendNewDependencies(GradleTaskHelper taskHelper, FunctionalAspectInstance aspectInstance, WrapperImplementationImpact analysisImpact) {
+    public static void appendNewDependencies(GradleTaskHelper taskHelper, FunctionalAspectInstance aspectInstance, WrapperImplementationImpact analysisImpact) {
         
         String[] newDependencies;
         if (analysisImpact.getAdditionalDependencies() == null) {

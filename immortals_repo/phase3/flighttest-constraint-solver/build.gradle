@@ -1,0 +1,61 @@
+plugins {
+	id 'groovy'
+	id "com.github.johnrengelman.shadow" version "4.0.4"
+
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+group 'mil.darpa.immortals'
+version '1.0-SNAPSHOT'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = []
+		}
+		groovy {
+			srcDirs = ['src/main/java', 'src/main/groovy']
+		}
+	}
+}
+
+shadowJar {
+	manifest {
+		attributes "Implementation-Title": "Immortals-FlightTest-Constraint_solver",
+				"Main-Class": "mil.darpa.immortals.flitcons.Main"
+	}
+	destinationDir = file('./')
+	archiveName = "flighttest-constraint-solver.jar"
+}
+
+jar.finalizedBy(shadowJar)
+
+
+dependencies {
+	compile 'ch.qos.logback:logback-classic:1.1.7'
+	compile 'ch.qos.logback:logback-core:1.1.7'
+	compile 'org.slf4j:slf4j-api:1.7.21'
+	compile 'com.google.code.findbugs:jsr305:3.0.1'
+	compile 'com.google.code.gson:gson:2.7'
+
+	compile 'com.tinkerpop.gremlin:gremlin-groovy:2.6.0'
+	compile 'com.tinkerpop.gremlin:gremlin-java:2.6.0'
+	compile 'com.tinkerpop.blueprints:blueprints-core:2.6.0'
+	compile localGroovy()
+	compile 'com.orientechnologies:orientdb-core:2.2.24'
+	compile 'com.orientechnologies:orientdb-graphdb:2.2.24'
+	compile 'commons-io:commons-io:2.6'
+	compile 'info.picocli:picocli:3.9.0'
+	compile 'org.dom4j:dom4j:2.1.1'
+	compile 'jaxen:jaxen:1.1.6'
+
+	compile 'mil.darpa.immortals:mdl-immortals-bridge:0.1.2'
+}

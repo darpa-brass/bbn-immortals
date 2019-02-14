@@ -16,7 +16,7 @@ public class Cp2Kludge extends InferenceRules {
         this.setIterateUntilNoNewTriples(false);
         this.setMaxIterations(1);
         
-        this.getRules().add(getMartiLinkageRule());
+       // this.getRules().add(getMartiLinkageRule());
     }
 
     private InferenceRule getMartiLinkageRule(){

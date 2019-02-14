@@ -195,10 +195,13 @@ public class AnnotationGenerator {
 //        sb.append("  ").append("public String GUID() default \"\";\n");
         
         sb.append("/* begin:[FOR IMMORTALS TOOLING USE ONLY] */");
-        
+
+        String normalizedString = Type.getType(c).getDescriptor();
+        normalizedString = normalizedString.substring(0, normalizedString.length() - 1);
+
         final String uri = OntologyHelper.makeUriName(
                 configuration.getJavaToTriplesConfiguration(), 
-                Type.getType(c).getClassName());
+                normalizedString);
         
         sb.append("\n");
         sb.append("  ").append("public static final String SEMANTIC_URI=\"").append(uri).append("\";\n");

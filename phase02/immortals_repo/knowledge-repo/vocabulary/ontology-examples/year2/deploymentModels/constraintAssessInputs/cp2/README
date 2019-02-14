@@ -1,0 +1,24 @@
+Required Inputs for Constraint Assessment
+1) Dataflows
+	- Atak -> Marti
+		-- There are primarily four dataflows from Atak to Marti that are required
+		   in order to perform constraint assessment:
+			--- The dataflow carrying Atak's output stream abstraction (java/nio/channels/SocketChannel) from Dispatcher.java
+				to WriteHandler.java
+			--- The dataflow carrying the Atak's CotMessage to WriteHandler.java
+			--- The dataflow carrying Marti's input stream abstraction (java/net/Socket) from TcpSocketServer$1.java to 
+				TcpTransport.java
+			--- The dataflow carrying the received CotMessage from Atak
+	- Marti -> Atak
+		-- These flows are similar to above, only reversed
+	- All dataflows can be found in /Dataflows
+2) Constraints
+	- Data Safety Constraint
+		-- All data between an Atak Client and Marti Server (and vice versa) must be encrypted
+	- Packaged with dataflows
+3) Usage Paradigms
+	- Tells constraint assessment how to use specific libraries
+		-- How to initialize cipher implementations
+		-- How to configure cipher implementations
+		-- How to retrieve underlying input/output streams
+	-Found in /UsageParadigms

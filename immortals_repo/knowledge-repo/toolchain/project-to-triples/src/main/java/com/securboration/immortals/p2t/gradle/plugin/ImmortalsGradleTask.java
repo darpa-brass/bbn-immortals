@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class ImmortalsGradleTask extends DefaultTask {
     
-    protected FusekiClient client = new FusekiClient("http://localhost:3030/ds");
+    protected FusekiClient client;
     private String graphName;
     private final String KRGP_DIR = "/krgp/";
     ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration("r2.0.0");
@@ -28,6 +28,9 @@ public class ImmortalsGradleTask extends DefaultTask {
     
     private GradleTaskHelper taskHelper;
 
+    public void initFuseki(String fusekiEndpoint) {
+        this.client = new FusekiClient(fusekiEndpoint);
+    }
 
     protected void serializeAndRecordReport(Object object, GradleTaskHelper.TaskType taskType, String projectPath) throws IOException {
         Model m = ObjectToTriples.convert(config, object);

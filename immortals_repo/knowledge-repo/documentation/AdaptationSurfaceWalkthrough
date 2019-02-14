@@ -1,0 +1,18 @@
+======Adaptation Surface Technology Walkthrough=========
+1. First step is navigate to target project and confirm that, at minimum, the "pluginOutput" and
+"localRepoPath" properties are set. The plugin output property specifies where the large amount of rdf artifacts will
+be written while the local repository path specifies where the technology should look for the various dependencies the
+target project utilizes.
+2. Build the project, "gradle clean build"
+3. Analyze project's bytecode structure, "gradle bytecode"
+4. Parse repositories for available dfus, "gradle mine"
+5. Start fuseki
+6. Start knowledge repository service
+7. Submit a POST request to "/krs/ingest" with the body referencing the plugin output property discussed above
+8. Submit a POST request to "/krs/append/???GRAPH_NAME???" with the graph name returned by the ingest request and
+the body consisting of "AspectConfigureSolution" solutions specifying which dfu's to implement and how they will be
+configured.
+9. Submit a POST request to "/krs/adapt/???GRAPH_NAME???" with the same graph name
+10. Navigate to the effected projects and execute "gradle repair"
+11. Inspect introduced adaptation surfaces, and add any required dependencies to the corresponding project
+12. Recompile project, "gradle clean build"

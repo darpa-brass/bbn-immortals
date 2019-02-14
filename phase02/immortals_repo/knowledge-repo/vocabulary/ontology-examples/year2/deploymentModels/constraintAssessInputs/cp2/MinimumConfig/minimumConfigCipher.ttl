@@ -1,0 +1,28 @@
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_functionality_aspects: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_functionality_alg_encryption: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/alg/encryption#> .
+
+IMMoRTALS_functionality_aspects:AspectBestPracticeConfiguration-d079995a-e3e7-4794-85cc-72f38ce7cba9
+        a       IMMoRTALS_functionality_aspects:AspectBestPracticeConfiguration ;
+        IMMoRTALS:hasBoundFunctionality
+                IMMoRTALS_functionality_alg_encryption:Cipher ;
+        IMMoRTALS:hasConfigurationBindings
+                IMMoRTALS_functionality:ConfigurationBinding-a114e47d-803f-4fa7-89e9-1390932db4b5 , IMMoRTALS_functionality:ConfigurationBinding-a148fe46-b32f-4ca5-b839-ba9436ff2bae .
+
+IMMoRTALS_functionality:ConfigurationBinding-a148fe46-b32f-4ca5-b839-ba9436ff2bae
+        a                          IMMoRTALS_functionality:ConfigurationBinding ;
+        IMMoRTALS:hasBinding       "AES" ;
+        IMMoRTALS:hasSemanticType  IMMoRTALS_functionality_alg_encryption:CipherAlgorithm .
+
+IMMoRTALS_functionality:ConfigurationBinding-a114e47d-803f-4fa7-89e9-1390932db4b5
+        a                          IMMoRTALS_functionality:ConfigurationBinding ;
+        IMMoRTALS:hasBinding       "16" ;
+        IMMoRTALS:hasSemanticType  IMMoRTALS_functionality_alg_encryption:CipherKeyLength .
+
+IMMoRTALS_functionality_alg_encryption:Cipher
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.ontology.functionality.alg.encryption.Cipher" .

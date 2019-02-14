@@ -2,19 +2,39 @@
 
 The purpose of this document is to define the shared integration points for the challenge problems for Scenario 5 and Scenario 6. 
 
-## Evaluation System Creation
+Discussions have led us to create an image that may serve one of two roles:
 
-The system will be created by BBN as an AWS instance provided to the evaluator for evaluation, which is the _Evaluation Target_
+ * **Evaluation Target** - The virtual machine that the evaluation will take place on.
+ * **Persistent Storage** - The virtual machine that must available to all executions that will be used to collect execution data for 
+   post-evaluation analysis.
 
-## Evaluation Environment
+## Evaluation Target
 
-* It will be offline with no internet connection
+* After image creation it will be offline with no internet connection
+* It must have at least 4 CPU cores and 16 GB of memory. This is subject to change if bottlenecks are encountered during internal testing.
+* Installation requires sudo access, so if the installation wil be unattended make sure sudo will be granted to the logged in user automatically.
 
-* The system the _Evaluation Target_ is hosted on must have at least 4 CPU cores and 8 GB of memory. This is subject to change if bottlenecks are encountered during internal testing.
+### General Tips
 
-* Persistent storage is vital for us to properly do our own detailed evaluation of how our system performed. We have 
-decided to supply you with an image that will launch a data collection endpoint that all our evaluation servers will 
-communicate with to store data fort our analysis.
+* Make sure you are using bash as your login shell. Sometimes ssh and AWS-specific instances use lighter weight alternatives.
+* Make sure your ~/.bashrc is being sourced properly. Depending on the parameters, SSH and Bash may not honor it.
+
+### Creation
+
+#### Steps
+The following steps will prepare a system for use:
+
+1.  Download the immortals source code.
+2.  Navigate to the 'phase3' directory in the immortals root.
+3.  Execute the "install.sh" script with the build flag to install dependencies and build the system (If the user requires a password for sudo):  
+    `./install.sh --build`
+4.  Execute the "build.sh" script to build the system:  
+    `./build.sh`
+5.  Shut down the system and save it to an image.
+
+## Persistent Storage
+
+The **Persistent Storage** system will utilize the same image as the **Evaluation Target** but will be started using different Parameters.
 
 ## OrientDB Structure
 
@@ -71,9 +91,9 @@ CREATE PROPERTY BBNEvaluationOutput.finalStateInfo STRING
 ## Evaluation Execution 
 The steps performed by the evaluator to execute evaluation will be as follows:
 
-1.  The persistent storage solution will be started if not already running.
-2.  An instance of our provided AWS instance is brought up (How does the evaluator know it is finished starting?)
-3.  The evaluator opens a shell on the AWS instance and starts our evaluation as follows:
+1.  The **Persistent Storage** must be started if not already running (executed in the root immortals folder):
+    `./shared/tools.sh odbhelper start --persistence-only --use-default-root-password`
+3.  The evaluator opens a shell on the AWS instance for the **Evaluation Target** and starts our evaluation as follows:
 `bash ~/immortals_repo/phase3/start.sh --scenario <scenarioIdentifier> --odb-url <odbUrl> --odb-user <<odbUser> --odb-password <odbPassword> --odb-persistence-url <odbPersistanceUrl>`
 
 Where the parameters are the following:
@@ -82,18 +102,19 @@ Where the parameters are the following:
 |:------------------|----------------------|----------------------------------------------------------------------------------------------------------------|
 | --scenario        | <scenarioIdentifier> | The identifier for the scenario that is being executed. Valid values: '5' or '6'                               |
 | --odb-url         | <odbUrl>             | The Url of the OrientDB instance and graph. example: 'remote:OrientDB.example.com:2424/GratefulDeadConcerts'   |
-| --persistence-url | <persistanceUrl>     | The Url of the persistent storage                                                                              |
+| --persistence-url | <persistenceUrl>     | The Url of the persistent storage                                                                              |
 | --odb-user        | <odbUser>            | The OrientDB user name                                                                                         |
 | --odb-password    | <odbPassword>        | The OrientDB user password                                                                                     |
 
+As an example, if the **Persistent Storage** vm has an ip of '10.26.55.41', the _persistanceUrl would be the following:  
+`remote:10.26.55.41:2424/BBNPersistent`
+
 At this point, the following occurs within the _Evaluation Target_:  
 
-1.  The system validates a connection to persistent storage
-2.  The system queries the OrientDB graph for data relating to the specified scenario
-3.  The system attempts to resolve the perturbation
-4.  The results are stored to a predefined location.
-5.  Additional data is stored to the persistent storage location
-6.  The script shuts down, indicating the completion of the evaluation session.
+1.  The system queries the OrientDB graph for data relating to the specified scenario and saves it to **Persistent Storage**
+2.  The system attempts to resolve the perturbation
+3.  The results are stored in the defined location and in **Persistent Storage**
+4.  The script shuts down, indicating the completion of the evaluation session.
 
 In the event of an error, it will be output to the console and an attempt to upload it to OrientDB will be performed if possible.
 
@@ -137,3 +158,27 @@ Ellipses are used in place of a new MDL schema for readability.
     "updatedMdlSchema": "<...>"
 }
 ```
+
+## Local Smoke Test
+
+A local smoke test can be executed on the server from the 'phase3' directory after a prepared image has been saved. 
+
+For Scenario 5 we are using [this](../../../../shared/tools/odbhelper/resources/dummy_data/scenario5_input_mdlRoot.xml) 
+input configuration and [this](../../../../shared/tools/odbhelper/resources/dummy_data/scenario5_input_mdlRoot.xml) 
+dau inventory.
+
+For Scenario 6 we are using the above examples, with the schema for V0_8_19 as the updatedMdlSchema.
+
+The steps are as follows (it requires two terminals, one for the OrientDB instance and another for the evaluation target):
+
+1. From the immortals root directory start the OrientDB server and wait for it to finish loading:
+   `./shared/tools.sh odbhelper start --use-default-root-password`
+2. From the phase3 directory execute one of the following commands (There is an "all" option but there are some issues related to running the tests consecutively that we are still debugging)): 
+   `./start.sh --local-test s5`
+   `./start.sh --local-test s6a`
+   `./start.sh --local-test s6b`
+
+After it has finished you will see the results of the tests.
+
+
+

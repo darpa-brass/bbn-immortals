@@ -1,0 +1,78 @@
+@startuml
+
+!include basic.iuml
+!include connector.iuml
+!include port.iuml
+
+!definelong BASIC()
+component ConditionOperation as "ConditionOperation {
+\t'>'
+\t'>='
+\t'<'
+\t'<='
+\t'=='
+\t'!='
+\t
+}"
+
+ component ConditionValue as "ConditionValue {
+ \tdouble
+ \tlong
+ \tHexInteger
+ \tBinInteger
+ }"
+
+ component BaseUnit as "BaseUnit {
+ \t'Meter' |\t'Kilogram' |\t'Second' |\t'Ampere' |\t'Kelvin' |
+ \t'Mole' |\t'Candela' |\t'Radian' |\t'Steradian' |\t'Hertz' |
+ \t'Newton' |\t'Pascal' |\t'Joule' |\t'Watt' |\t'Coulomb' |
+ \t'Volt' |\t'Farad' |\t'Ohm' |\t'Siemens' |\t'Weber' |
+ \t'Tesla' |\t'Henry' |\t'Celsius' |\t'Lumen' |\t'Lux' |
+ \t'Becquerel' |\t'Gray' |\t'Sievert' |\t'Katal' |\t'Bit' |
+ \t'BitPerSecond' |\t'Counts' |\t'dB' |\t'dBm' |\t'Unitless' |
+ }"
+
+
+component PortDirection as "PortDirection {
+\t'Input' |
+\t'Output' |
+\t'Bidirectional' |
+\t'Unspecified'
+}"
+
+component Polarity as "Polarity [
+PortPolarity [0..1] {
+\t'Unipolar' |
+\t'Bipolar
+}"
+
+
+ConditionValue --[hidden]r-> ConditionOperation
+ConditionOperation -[hidden]r-> BaseUnit
+!enddefinelong
+
+
+!definelong CHILDREN(parent, pkg_title)
+package "pkg_title (Children)" <<LearnMore>> as parent##Children {
+    interface "Child [1..*]" as parent##Child #Orange
+}
+!enddefinelong
+
+
+!definelong CONNECTORS(parent, pkg_title)
+package "pkg_title (Connectors)" as parent##Connectors {
+    CONNECTOR(parent##Connectors, "[1..*]")
+}
+!enddefinelong
+
+!definelong PORTS(parent, pkg_title)
+package "pkg_title (Ports)" as parent##Ports {
+    PORT(parent##Ports, "[1..*]")
+}
+!enddefinelong
+
+'BASIC()
+'CONNECTORS(ROOT, "Children [0..1]")
+'CHILDREN(ROOT, "Children [0..1]")
+
+@enduml

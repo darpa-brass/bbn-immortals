@@ -1,0 +1,14 @@
+@startuml
+
+BuildManager -> Vine: Import Basic Testbed
+Vine --> BuildManager: Basic Testbed Imported 
+BuildManager -> DAS: Checkout Latest Source
+DAS --> BuildManager: Checkout Completed
+BuildManager -> DAS: Perform Initial Environment Setup:
+DAS --> BuildManager: Initial Environment Setup Completed
+BuildManager -> DAS: Perform basic build to cache dependencies
+DAS --> BuildManager: Basic build complete
+BuildManager -> Vine: Save Created Images
+Vine --> BuildManager: Images Saved
+
+@enduml

@@ -1,0 +1,24 @@
+{
+  "identifier": "stack",
+  "pathExports": [],
+  "requiredExecutables": [
+    "stack"
+  ],
+  "homeExportRequired": false,
+  "packageDependencies": [],
+  "setupCommands": [],
+  "osx": {
+    "setupCommands": [
+      "brew update",
+      "brew install haskell-stack"
+    ]
+  },
+  "linux": {
+    "packageDependencies": [
+      "haskell-platform"
+    ],
+    "setupCommands": [
+      "wget -qO- https://get.haskellstack.org/ | sh"
+    ]
+  }
+}

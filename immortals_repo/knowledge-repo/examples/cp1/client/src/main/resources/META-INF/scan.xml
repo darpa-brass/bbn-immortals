@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<!--
+Sets scan path
+-->
+
+<scan>
+ <packages>
+  <package>com.securboration</package>
+  <package>a.b.c</package>
+ </packages>
+ <classes>
+ <!--
+  <class>org.bar.Bar1</class>
+  <class>org.anotherbar.Bar2</class>
+  -->
+ </classes>
+</scan>
+

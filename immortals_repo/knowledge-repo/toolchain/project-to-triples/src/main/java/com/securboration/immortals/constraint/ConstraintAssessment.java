@@ -3,44 +3,290 @@ package com.securboration.immortals.constraint;
 import com.securboration.immortals.aframes.AnalysisFrameAssessment;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
 import com.securboration.immortals.o2t.analysis.ObjectToTriples;
-import com.securboration.immortals.o2t.ontology.OntologyHelper;
 import com.securboration.immortals.ontology.analysis.*;
 import com.securboration.immortals.ontology.constraint.*;
 
+import com.securboration.immortals.ontology.core.Resource;
 import com.securboration.immortals.ontology.dfu.instance.DfuInstance;
 import com.securboration.immortals.ontology.dfu.instance.FunctionalAspectInstance;
-import com.securboration.immortals.ontology.functionality.ConfigurationBinding;
+import com.securboration.immortals.ontology.frame.CallTrace;
 import com.securboration.immortals.ontology.functionality.DesignPattern;
-import com.securboration.immortals.ontology.functionality.DfuConfigurationVariable;
 import com.securboration.immortals.ontology.functionality.FunctionalAspect;
 import com.securboration.immortals.ontology.functionality.aspects.AspectConfigureRequest;
 import com.securboration.immortals.ontology.functionality.aspects.AspectConfigureSolution;
 import com.securboration.immortals.ontology.functionality.aspects.DefaultAspectBase;
+import com.securboration.immortals.ontology.functionality.datatype.BinaryData;
 import com.securboration.immortals.ontology.functionality.datatype.DataProperty;
+import com.securboration.immortals.ontology.functionality.datatype.DataType;
 import com.securboration.immortals.ontology.gmei.DeploymentModel;
+import com.securboration.immortals.ontology.java.project.AnalysisMetrics;
 import com.securboration.immortals.ontology.property.Property;
 import com.securboration.immortals.ontology.property.impact.*;
+import com.securboration.immortals.ontology.resources.Device;
+import com.securboration.immortals.ontology.resources.FormattedData;
+import com.securboration.immortals.ontology.resources.logical.XMLSchema;
 import com.securboration.immortals.repo.query.TriplesToPojo;
+import com.securboration.immortals.soot.SootTransformStage;
+import com.securboration.immortals.soot.SootXmlTransformer;
+import com.securboration.immortals.utility.CannedEssSchemaTranslator;
 import com.securboration.immortals.utility.ConfigurationCheckerRules;
 import com.securboration.immortals.utility.GradleTaskHelper;
+import com.securboration.immortals.wrapper.WrapperFactory;
+import org.apache.commons.io.FileUtils;
 import org.apache.jena.atlas.lib.Pair;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import soot.*;
+import soot.jimple.*;
+import soot.options.Options;
+import soot.tagkit.LineNumberTag;
+import soot.tagkit.Tag;
+import soot.util.Chain;
+import soot.util.JasminOutputStream;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static com.securboration.immortals.aframes.AnalysisFrameAssessment.getDfuInstanceStringMap;
-import static com.securboration.immortals.aframes.AnalysisFrameAssessment.retrieveChosenDfuImpl;
+import static com.securboration.immortals.aframes.AnalysisFrameAssessment.findWrapperInsertionSite;
+import static com.securboration.immortals.aframes.AnalysisFrameAssessment.getInitializationData;
 import static com.securboration.immortals.utility.GradleTaskHelper.*;
 
 public class ConstraintAssessment {
 
+    public static void architectureAnalysis(GradleTaskHelper taskHelper, int inferenceTriples, int domainTriples, int baseVocabTriples,
+                                            ObjectToTriplesConfiguration config) throws ClassNotFoundException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+
+        Long beginTime = System.currentTimeMillis();
+
+        String getApplicationArchitectures = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#>\n" +
+                "\n" +
+                "select ?arch where {\n" +
+                "    graph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\n" +
+                "     ?arch a IMMoRTALS_gmei:ApplicationArchitecture .\n" +
+                "\t \n" +
+                "\t}\n" +
+                " }";
+        getApplicationArchitectures = getApplicationArchitectures.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+
+        GradleTaskHelper.AssertableSolutionSet architectureSolutions = new GradleTaskHelper.AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getApplicationArchitectures, architectureSolutions);
+
+        if (architectureSolutions.getSolutions().size() != 0) {
+            for (GradleTaskHelper.Solution architectureSolution : architectureSolutions.getSolutions()) {
+
+                String architectureUUID = architectureSolution.get("arch");
+
+                String getArchResources = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                        "select ?resources where {\n" +
+                        "    graph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                        "\t\n" +
+                        "\t<???ARCH_UUID???> IMMoRTALS:hasAvailableResources ?resources .\n" +
+                        "\t \n" +
+                        "\t}\n" +
+                        " }";
+                getArchResources = getArchResources.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                                                    .replace("???ARCH_UUID???", architectureUUID);
+
+                GradleTaskHelper.AssertableSolutionSet resourceSolutions = new GradleTaskHelper.AssertableSolutionSet();
+                taskHelper.getClient().executeSelectQuery(getArchResources, resourceSolutions);
+
+                List<Resource> resources = new ArrayList<>();
+                for (GradleTaskHelper.Solution resourceSolution : resourceSolutions.getSolutions()) {
+
+                    String resourceUUID = resourceSolution.get("resources");
+                    try {
+                        resources.add((Resource) TriplesToPojo.convert(taskHelper.getGraphName(),
+                                resourceUUID, taskHelper.getClient()));
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchFieldException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                String getArchConstraints = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                        "select ?constraints where {\n" +
+                        "    graph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                        "\t\n" +
+                        "\t<???ARCH_UUID???> IMMoRTALS:hasCauseEffectAssertions ?constraints .\n" +
+                        "\t \n" +
+                        "\t}\n" +
+                        " }";
+                getArchConstraints = getArchConstraints.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                        .replace("???ARCH_UUID???", architectureUUID);
+                GradleTaskHelper.AssertableSolutionSet constraintSolutions = new GradleTaskHelper.AssertableSolutionSet();
+                taskHelper.getClient().executeSelectQuery(getArchConstraints, constraintSolutions);
+
+                List<Pair<String, ProscriptiveCauseEffectAssertion>> constraintsWithUUID = new ArrayList<>();
+
+                for (GradleTaskHelper.Solution constraintSolution : constraintSolutions.getSolutions()) {
+                    String constraintUUID = constraintSolution.get("constraints");
+                    try {
+                        if (!isConstraintAlreadyResolved(taskHelper, constraintUUID)) {
+                            constraintsWithUUID.add(new Pair<>(constraintUUID,
+                                    (ProscriptiveCauseEffectAssertion) TriplesToPojo.convert(taskHelper.getGraphName(),
+                                    constraintUUID, taskHelper.getClient())));
+                        }
+                    } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | InstantiationException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                for (Pair<String, ProscriptiveCauseEffectAssertion> constraintWithUUID : constraintsWithUUID) {
+                    boolean constraintSatisfied = true;
+
+                    ProscriptiveCauseEffectAssertion constraint = constraintWithUUID.getRight();
+                    String constraintUUID = constraintWithUUID.getLeft();
+                    //TODO first get binding sites
+                    List<Resource> constrainedResources = new ArrayList<>();
+                    List<DataflowEdge> constrainedFlows = new ArrayList<>();
+                    for (AssertionBindingSite assertionBindingSite : constraint.getAssertionBindingSites()) {
+                        if (assertionBindingSite instanceof AbstractResourceBindingSite) {
+                            AbstractResourceBindingSite abstractResourceBindingSite = (AbstractResourceBindingSite) assertionBindingSite;
+                            for (Resource archResource : resources) {
+                                if (abstractResourceBindingSite.getResourceType().isInstance(archResource)) {
+                                    constrainedResources.add(archResource);
+                                }
+                            }
+                        } else if (assertionBindingSite instanceof AbstractDataflowBindingSite) {
+                            AbstractDataflowBindingSite abstractDataflowBindingSite = (AbstractDataflowBindingSite) assertionBindingSite;
+                            //TODO
+                        }
+                    }
+
+                    //TODO then, get criterion statement
+                    CriterionStatement constraintCriterion = constraint.getCriterion();
+
+                    if (constraintCriterion instanceof FormattedDataVersionCriterion) {
+                        FormattedDataVersionCriterion formattedDataVersionCriterion = (FormattedDataVersionCriterion) constraintCriterion;
+
+                        switch (formattedDataVersionCriterion.getFormattedDataCriterionType()) {
+                            case VERSION_DIFFERENT:
+
+                                List<Device> devices = new ArrayList<>();
+                                for (Resource constrainedResource : constrainedResources) {
+                                    if (constrainedResource instanceof Device) {
+                                        devices.add((Device) constrainedResource);
+                                    }
+                                }
+
+                                boolean versionCollision = false;
+                                String currentVersion = null;
+                                for (Device device : devices) {
+                                    for (Resource deviceResource : device.getResources()) {
+                                        if (deviceResource instanceof XMLSchema) {
+                                            XMLSchema xmlSchema = (XMLSchema) deviceResource;
+                                            if (currentVersion != null) {
+                                                if (!currentVersion.equals(xmlSchema.getVersion())) {
+                                                    versionCollision = true;
+                                                    constraintSatisfied = false;
+                                                    break;
+                                                }
+                                            } else {
+                                                currentVersion = xmlSchema.getVersion();
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (versionCollision) {
+                                    //TODO multiple versions of XML found in the same architecture...
+                                    //satisfyConstraint(taskHelper);
+                                    ConstraintViolation constraintViolation = new ConstraintViolation();
+                                    ProscriptiveCauseEffectAssertion dummyConstraint = new ProscriptiveCauseEffectAssertion();
+                                    config.getNamingContext().setNameForObject(dummyConstraint, constraintUUID);
+                                    constraintViolation.setConstraint(dummyConstraint);
+
+                                    String getStrategyImpacts = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                                            "prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#>\n" +
+                                            "prefix IMMoRTALS_impact:  <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#>\n" +
+                                            "select ?strategy\n" +
+                                            "\t where { \n" +
+                                            "\t graph <http://localhost:3030/ds/data/???GRAPH_NAME???> { \n" +
+                                            "  ?strategy a IMMoRTALS_impact:PrescriptiveCauseEffectAssertion .\n" +
+                                            "  \n" +
+                                            " \n" +
+                                            "}\n" +
+                                            "}";
+                                    getStrategyImpacts = getStrategyImpacts.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+                                    taskHelper.getPw().println("Retrieving impacts of mitigation strategies using query:\n\n" + getStrategyImpacts + "\n\n");
+                                    AssertableSolutionSet strategySolutions = new AssertableSolutionSet();
+                                    taskHelper.getClient().executeSelectQuery(getStrategyImpacts, strategySolutions);
+
+                                    Optional<Pair<String, PrescriptiveCauseEffectAssertion>> strategyWithUUIDOption = Optional.empty();
+                                    for (Solution strategySolution : strategySolutions.getSolutions()) {
+
+                                        String strategyUUID = strategySolution.get("strategy");
+                                        PrescriptiveCauseEffectAssertion strategy = (PrescriptiveCauseEffectAssertion) TriplesToPojo.convert(taskHelper.getGraphName(),
+                                                strategyUUID, taskHelper.getClient());
+
+                                        ConstraintViolationCriterion criterion = (ConstraintViolationCriterion) strategy.getCriterion();
+                                        if (compareConstraints(criterion.getConstraint(), constraint)) {
+                                            strategyWithUUIDOption = Optional.of(new Pair<>(strategyUUID, strategy));
+                                            break;
+                                        }
+                                    }
+
+                                    if (strategyWithUUIDOption.isPresent()) {
+                                        Pair<String, PrescriptiveCauseEffectAssertion> strategyWithUUID = strategyWithUUIDOption.get();
+                                        PrescriptiveCauseEffectAssertion dummyStrategy = new PrescriptiveCauseEffectAssertion();
+                                        config.getNamingContext().setNameForObject(dummyStrategy, strategyWithUUID.getLeft());
+                                        constraintViolation.setMitigationStrategyUtilized(dummyStrategy);
+                                        Model violationModel = ObjectToTriples.convert(config, constraintViolation);
+                                        inferenceTriples+=violationModel.getGraph().size();
+
+                                        Long endTime = System.currentTimeMillis() - beginTime;
+
+                                        String getMetrics = "prefix IMMoRTALS_java_project: <http://darpa.mil/immortals/ontology/r2.0.0/java/project#>\n" +
+                                                "\n" +
+                                                "select ?metrics where {\n" +
+                                                "\n" +
+                                                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                                                "\t\n" +
+                                                "\t\t?metrics a IMMoRTALS_java_project:AnalysisMetrics .\n" +
+                                                "\t}\n" +
+                                                "\t\n" +
+                                                "}\n" +
+                                                "\t";
+                                        getMetrics = getMetrics.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+                                        AssertableSolutionSet metricSolutions = new AssertableSolutionSet();
+                                        taskHelper.getClient().executeSelectQuery(getMetrics, metricSolutions);
+
+                                        if (!metricSolutions.getSolutions().isEmpty()) {
+                                            String metricUUID = metricSolutions.getSolutions().get(0).get("metrics");
+                                            AnalysisMetrics analysisMetrics = new AnalysisMetrics();
+                                            analysisMetrics.setIngestExec(endTime);
+                                            analysisMetrics.setInferenceTriples(inferenceTriples);
+                                            analysisMetrics.setDomainTriples(domainTriples);
+                                            analysisMetrics.setBaseVocabTriples(baseVocabTriples);
+                                            config.getNamingContext().setNameForObject(analysisMetrics, metricUUID);
+                                            Model metricModel = ObjectToTriples.convert(config, analysisMetrics);
+                                            taskHelper.getClient().addToModel(metricModel, taskHelper.getGraphName());
+                                        }
+                                        taskHelper.getClient().addToModel(violationModel, taskHelper.getGraphName());
+                                    }
+
+                                } else {
+                                    //TODO all versions of XML found are compliant...
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public static void constraintAnalysis(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config) throws Exception {
 
+        // retrieve all constraints
         String getConstraints = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "prefix IMMoRTALS_impact:  <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#>\n" +
                 "\n" +
@@ -66,12 +312,19 @@ public class ConstraintAssessment {
                 boolean constraintSatisfied = true;
                 String constraintUUID = constraint.get("constraints");
                 String applicableDataType = constraint.get("dataType");
+
+                ////
+                DataType dataType = (DataType) TriplesToPojo.convert(taskHelper.getGraphName(),
+                        applicableDataType, taskHelper.getClient());
+                ////
+
                 taskHelper.getPw().println("Constraint found: ");
 
-                TriplesToPojo.SparqlPojoContext results = taskHelper.getObjectRepresentation(constraintUUID,
-                        CONSTRAINT_TYPE, config);
-                ProscriptiveCauseEffectAssertion assertion = null;
-                for (Map<String, Object> result : results) {
+                //TriplesToPojo.SparqlPojoContext results = taskHelper.getObjectRepresentation(constraintUUID,
+                       // CONSTRAINT_TYPE, config);
+                ProscriptiveCauseEffectAssertion assertion = (ProscriptiveCauseEffectAssertion) TriplesToPojo.convert(taskHelper.getGraphName(),
+                        constraintUUID, taskHelper.getClient());
+               /* for (Map<String, Object> result : results) {
                     assertion = (ProscriptiveCauseEffectAssertion) result.get("obj");
                     taskHelper.getPw().println(result.get("obj$uri") + "\n");
 
@@ -81,39 +334,13 @@ public class ConstraintAssessment {
                     } catch (IOException exc) {
                         exc.printStackTrace();
                     }
-                }
+                }*/
 
                 // check to see if constraint was already resolved
-                String getResolvedConstraintUUIDs = "prefix IMMoRTALS_constraint: <http://darpa.mil/immortals/ontology/r2.0.0/constraint#> \n" +
-                        "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
-                        "\n" +
-                        "select ?constraintUUID where {\n" +
-                        "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
-                        "\t\t?report a IMMoRTALS_constraint:ConstraintAssessmentReport\n" +
-                        "\t\t; IMMoRTALS:hasConstraintViolations ?violations .\n" +
-                        "\t\t\n" +
-                        "\t\t?violations IMMoRTALS:hasConstraint ?constraintUUID .\n" +
-                        "\t}\n" +
-                        "}";
-                getResolvedConstraintUUIDs = getResolvedConstraintUUIDs.replace("???GRAPH_NAME???", taskHelper.getGraphName());
-                AssertableSolutionSet constraintUUIDSolutions = new AssertableSolutionSet();
-                taskHelper.getClient().executeSelectQuery(getResolvedConstraintUUIDs, constraintUUIDSolutions);
-
-                boolean alreadyResolved = false;
-                for (Solution constraintUUIDSolution : constraintUUIDSolutions.getSolutions()) {
-                    String resolvedConstraintUUID = constraintUUIDSolution.get("constraintUUID");
-                    if (resolvedConstraintUUID.equals(constraintUUID)) {
-                        //constraint has already been resolved
-                        alreadyResolved = true;
-                    }
-                }
-
-                if (alreadyResolved) {
-                    continue;
-                }
+                if (isConstraintAlreadyResolved(taskHelper, constraintUUID)) continue;
 
                 // find any data flows that it applies to.
-                String getApplicableDataflows = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+               /* String getApplicableDataflows = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
                         "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                         "prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#>\n" +
                         "prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> \n" +
@@ -149,9 +376,147 @@ public class ConstraintAssessment {
                 getApplicableDataflows = getApplicableDataflows.replace("???GRAPH_NAME???", taskHelper.getGraphName())
                         .replace("???CONSTRAINT???", constraintUUID).replace("???DATA_TYPE???", applicableDataType);
                 GradleTaskHelper.AssertableSolutionSet dataFlowEdges = new GradleTaskHelper.AssertableSolutionSet();
+                taskHelper.getClient().executeSelectQuery(getApplicableDataflows, dataFlowEdges);*/
+
+
+               ///////////////
+
+
+                String getApplicableDataflows = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                        "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                        "prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#>\n" +
+                        "prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> \n" +
+                        "prefix IMMoRTALS_analysis:  <http://darpa.mil/immortals/ontology/r2.0.0/analysis#> \n" +
+                        "\n" +
+                        "select distinct ?dataFlowEdge ?node2 where {\n" +
+                        "\t\n" +
+                        "    graph <http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                        " \n" +
+                        "\t\t  <???CONSTRAINT???> IMMoRTALS:hasAssertionBindingSites ?bindingSite .\n" +
+                        "\t\t  \n" +
+                        "\t\t  ?bindingSite IMMoRTALS:hasDest ?dest\n" +
+                        "\t\t  ; IMMoRTALS:hasSrc ?src .\n" +
+                        "\t\t  \n" +
+                        "\t\t  {?dataFlowEdge a* IMMoRTALS_analysis:DataflowEdge} \n" +
+                        "\t\t   UNION\n" +
+                        "\t\t  {?tester rdfs:subClassOf* IMMoRTALS_analysis:DataflowEdge.\n" +
+                        "    \t\t?dataFlowEdge a* ?tester }\n" +
+                        "    \n" +
+                        "          ?dataFlowEdge IMMoRTALS:hasConsumer ?node1\n" +
+                        "\t\t  ; IMMoRTALS:hasProducer ?node2 .\n" +
+                        "\t\t  \n" +
+                        "\t\t  ?node1 IMMoRTALS:hasResourceTemplate ?resource1 .\n" +
+                        "\t\t  ?resource1 a* ?dest .\n" +
+                        "\t\t   ?node2 IMMoRTALS:hasResourceTemplate ?resource2 .\n" +
+                        "\t\t  ?resource2 a* ?src .\n" +
+                        "\n" +
+                        "\t}\n" +
+                        "  \n" +
+                        "}";
+
+                getApplicableDataflows = getApplicableDataflows.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                        .replace("???CONSTRAINT???", constraintUUID);
+                GradleTaskHelper.AssertableSolutionSet dataFlowEdges = new GradleTaskHelper.AssertableSolutionSet();
                 taskHelper.getClient().executeSelectQuery(getApplicableDataflows, dataFlowEdges);
 
-                if (dataFlowEdges.getSolutions().size() != 0) {
+                List<DataflowEdge> applicableEdges = new ArrayList<>();
+                for (Solution dataFlowEdgeSolution : dataFlowEdges.getSolutions()) {
+
+                    String dataFlowUUID = dataFlowEdgeSolution.get("dataFlowEdge");
+                    DataflowEdge dataflowEdge = (DataflowEdge) TriplesToPojo.convert(taskHelper.getGraphName(), dataFlowUUID, taskHelper.getClient());
+
+                    if (dataflowEdge instanceof InterMethodDataflowEdge) {
+
+                        InterMethodDataflowEdge interMethodDataflowEdge = (InterMethodDataflowEdge) dataflowEdge;
+                        DataflowAnalysisFrame frame = interMethodDataflowEdge.getDataflowAnalysisFrame();
+
+                        while (frame != null) {
+                            if (frame.getAnalysisFrameDataType().isInstance(dataType)) {
+                                applicableEdges.add(interMethodDataflowEdge);
+                             break;
+                            }
+                            frame = frame.getAnalysisFrameChild();
+                        }
+                    }
+                }
+
+                String getCriterion = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                        "select distinct ?criterion ?criterionRelation ?criterionProperty ?standardType ?violationType where {\n" +
+                        "\t\n" +
+                        "    graph <http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                        " \n" +
+                        "\t\t  <???CONSTRAINT???> IMMoRTALS:hasCriterion ?criterion\n" +
+                        "\t\t  ; IMMoRTALS:hasImpact ?violationImpact .\n" +
+                        "\t\t  \n" +
+                        "          ?violationImpact IMMoRTALS:hasConstraintViolationType ?violationType .\n" +
+                        "\n" +
+                        "\t\t  ?criterion IMMoRTALS:hasCriterion ?criterionRelation\n" +
+                        "\t\t  ;IMMoRTALS:hasProperty ?criterionProperty .\n" +
+                        "\t\t   OPTIONAL {?criterion IMMoRTALS:hasStandardCriterionType ?standardType}\t}\n" +
+                        "\t\n" +
+                        "}";
+
+                getCriterion = getCriterion.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???CONSTRAINT???", constraintUUID);
+                GradleTaskHelper.AssertableSolutionSet criterionInfo = new GradleTaskHelper.AssertableSolutionSet();
+                taskHelper.getClient().executeSelectQuery(getCriterion, criterionInfo);
+
+                for (DataflowEdge dataflowEdge : applicableEdges) {
+
+                    if (!criterionInfo.getSolutions().isEmpty()) {
+                        Solution criterionSolution = criterionInfo.getSolutions().get(0);
+
+                        boolean criterionSatisfied = false;
+
+                        String criterionUUID = criterionSolution.get("criterion");
+
+                        String criterionRelation = criterionSolution.get("criterionRelation");
+                        String criterionPropertyUUID = criterionSolution.get("criterionProperty");
+
+                        Property criterionProperty = (Property) TriplesToPojo.convert(taskHelper.getGraphName(),
+                                criterionPropertyUUID, taskHelper.getClient());
+
+                        switch (criterionRelation) {
+
+                            case "PROPERTY_ABSENT":
+
+                                if (dataflowEdge.getEdgeProperties() != null) {
+                                    for (Property property : dataflowEdge.getEdgeProperties()) {
+                                        if (criterionProperty.getClass().isInstance(property)) {
+                                            criterionSatisfied = true;
+                                        }
+                                    }
+                                }
+                                break;
+
+                            case "PROPERTY_PRESENT":
+
+                                if (dataflowEdge.getEdgeProperties() == null) {
+                                    criterionSatisfied = true;
+                                } else {
+                                    boolean propertyPresent = false;
+                                    for (Property property : dataflowEdge.getEdgeProperties()) {
+                                        if (criterionProperty.getClass().isInstance(property)) {
+                                            propertyPresent = true;
+                                        }
+                                    }
+                                    criterionSatisfied = propertyPresent;
+                                }
+                                break;
+                            default:
+                                System.err.println("This should never be called... something is VERY wrong.");
+                        }
+
+                        constraintSatisfied = constraintSatisfied && criterionSatisfied;
+
+                        if (!constraintSatisfied) {
+                            satisfyConstraint(taskHelper, dataflowEdge, assertion, config);
+                        }
+                    }
+                }
+
+                //////////////////
+
+               /* if (dataFlowEdges.getSolutions().size() != 0) {
                     String getCriterion = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                             "select distinct ?criterion ?criterionRelation ?criterionProperty ?standardType ?violationType where {\n" +
                             "\t\n" +
@@ -296,7 +661,7 @@ public class ConstraintAssessment {
 
                 } else {
                     taskHelper.getPw().println("Constraint has no applicable data flow edges.");
-                }
+                }*/
             }
         }
 
@@ -304,6 +669,165 @@ public class ConstraintAssessment {
 
         taskHelper.getPw().flush();
         taskHelper.getPw().close();
+    }
+
+    private static boolean isConstraintAlreadyResolved(GradleTaskHelper taskHelper, String constraintUUID) {
+        String getResolvedConstraintUUIDs = "prefix IMMoRTALS_constraint: <http://darpa.mil/immortals/ontology/r2.0.0/constraint#> \n" +
+                "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n" +
+                "\n" +
+                "select ?constraintUUID where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t?report a IMMoRTALS_constraint:ConstraintAssessmentReport\n" +
+                "\t\t; IMMoRTALS:hasConstraintViolations ?violations .\n" +
+                "\t\t\n" +
+                "\t\t?violations IMMoRTALS:hasConstraint ?constraintUUID .\n" +
+                "\t}\n" +
+                "}";
+        getResolvedConstraintUUIDs = getResolvedConstraintUUIDs.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+        AssertableSolutionSet constraintUUIDSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getResolvedConstraintUUIDs, constraintUUIDSolutions);
+
+        boolean alreadyResolved = false;
+        for (Solution constraintUUIDSolution : constraintUUIDSolutions.getSolutions()) {
+            String resolvedConstraintUUID = constraintUUIDSolution.get("constraintUUID");
+            if (resolvedConstraintUUID.equals(constraintUUID)) {
+                //constraint has already been resolved
+                alreadyResolved = true;
+            }
+        }
+
+        if (alreadyResolved) {
+            return true;
+        }
+        return false;
+    }
+
+    private static void satisfyConstraint(GradleTaskHelper taskHelper, DataflowEdge dataflowEdge, ProscriptiveCauseEffectAssertion constraint,
+                                          ObjectToTriplesConfiguration config) throws Exception {
+
+        ConstraintViolation constraintViolation = new ConstraintViolation();
+        constraintViolation.setConstraint(constraint);
+        constraintViolation.setEdgeInViolation(dataflowEdge);
+
+        String getStrategyImpacts = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#>\n" +
+                "prefix IMMoRTALS_impact:  <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#>\n" +
+                "select ?strategy\n" +
+                "\t where { \n" +
+                "\t graph <http://localhost:3030/ds/data/???GRAPH_NAME???> { \n" +
+                "  ?strategy a IMMoRTALS_impact:PrescriptiveCauseEffectAssertion .\n" +
+                "  \n" +
+                " \n" +
+                "}\n" +
+                "}";
+        getStrategyImpacts = getStrategyImpacts.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+        taskHelper.getPw().println("Retrieving impacts of mitigation strategies using query:\n\n" + getStrategyImpacts + "\n\n");
+        AssertableSolutionSet strategySolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getStrategyImpacts, strategySolutions);
+
+
+        Optional<PrescriptiveCauseEffectAssertion> strategyOption = Optional.empty();
+        for (Solution strategySolution : strategySolutions.getSolutions()) {
+
+            String strategyUUID = strategySolution.get("strategy");
+            PrescriptiveCauseEffectAssertion strategy = (PrescriptiveCauseEffectAssertion) TriplesToPojo.convert(taskHelper.getGraphName(),
+                    strategyUUID, taskHelper.getClient());
+
+            ConstraintViolationCriterion criterion = (ConstraintViolationCriterion) strategy.getCriterion();
+            if (compareConstraints(criterion.getConstraint(), constraint)) {
+                strategyOption = Optional.of(strategy);
+                break;
+            }
+        }
+
+        if (strategyOption.isPresent()) {
+
+            PrescriptiveCauseEffectAssertion strategy = strategyOption.get();
+            constraintViolation.setMitigationStrategyUtilized(strategy);
+
+            for (ImpactStatement strategyImpact : strategy.getImpact()) {
+
+                if (strategyImpact instanceof RemediationImpact) {
+
+                    RemediationImpact remediationImpact = (RemediationImpact) strategyImpact;
+                    PredictiveCauseEffectAssertion remediationStrategy = remediationImpact.getRemediationStrategy();
+                    AbstractPropertyCriterion remediationCriterion = (AbstractPropertyCriterion) remediationStrategy.getCriterion();
+                    PropertyImpact propertyImpact = new PropertyImpact();
+                    //TODO temp
+                    for (ImpactStatement impactStatement : remediationStrategy.getImpact()) {
+                        if (impactStatement instanceof PropertyImpact) {
+                            propertyImpact.setImpactOnProperty(((PropertyImpact) impactStatement).getImpactOnProperty());
+                            break;
+                        }
+                    }
+                    //TODO temp
+                    propertyImpact.setImpactedProperty(remediationCriterion.getProperty());
+                    Property property = remediationCriterion.getProperty().newInstance();
+
+
+                    switch (remediationCriterion.getCriterion()) {
+
+                        case PROPERTY_ADDED:
+
+                            modifyEdge(dataflowEdge, property, config, taskHelper);
+
+                            if (property instanceof DataProperty) {
+                                // determining the scope of the repair process
+                                if (((DataProperty) property).isHidden()) {
+                                    taskHelper.getPw().println("Adding this property will have inter-process impacts, will have to analyze both consumer and producer" +
+                                            " systems...");
+                                    DesignPattern flowDesign = getDataflowDesignPattern(config.getNamingContext().getNameForObject(dataflowEdge.getProducer()),
+                                            taskHelper);
+
+                                    if (flowDesign.equals(DesignPattern.FUNCTIONAL)) {
+                                        taskHelper.getPw().println("Functional data flow detected, proceeding with repairs...");
+                                    } else if (flowDesign.equals(DesignPattern.STREAM)) {
+                                        taskHelper.getPw().println("Streaming data flow detected, proceeding with repairs...");
+                                    }
+
+                                    FunctionalAspectInstance[] aspectInstances = taskHelper.getInstancesFromImpactStatement(propertyImpact, config);
+
+                                    if (aspectInstances.length == 0) {
+                                        taskHelper.getPw().println("Unable to find instance(s) required for repairing system, implement instance and re-run analysis.");
+                                        return;
+                                    }
+
+                                    // generate configuration requests for each aspect instance found
+                                    List<AspectConfigureRequest> aspectConfigureRequests = new ArrayList<>();
+                                    for (FunctionalAspectInstance aspectInstance : aspectInstances) {
+                                        aspectConfigureRequests.add(AnalysisFrameAssessment.generateConfigurationRequest(aspectInstance,
+                                                taskHelper, config));
+                                    }
+
+                                    // add them to the ontology for the DAS to process
+                                    for (AspectConfigureRequest configureRequest : aspectConfigureRequests) {
+                                        taskHelper.getClient().addToModel(ObjectToTriples.convert(config, configureRequest),
+                                                taskHelper.getGraphName());
+                                    }
+
+                                    // add constraint violation to ontology should the user decide to create an adaptation surface
+                                    taskHelper.getClient().addToModel(ObjectToTriples.convert(config, constraintViolation), taskHelper.getGraphName());
+                                }
+                            }
+                        break;
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    private static boolean compareConstraints(ProscriptiveCauseEffectAssertion constraint1, ProscriptiveCauseEffectAssertion constraint2) {
+        if (!constraint1.getHumanReadableDescription().equals(constraint2.getHumanReadableDescription())) {
+            return false;
+        } else if (!constraint1.getApplicableDataType().equals(constraint2.getApplicableDataType())) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private static void satisfyConstraint(GradleTaskHelper taskHelper, String dataFlowUUID, ProscriptiveCauseEffectAssertion constraint,
@@ -414,17 +938,20 @@ public class ConstraintAssessment {
                                     return;
                                 }
 
+                                // generate configuration requests for each aspect instance found
                                 List<AspectConfigureRequest> aspectConfigureRequests = new ArrayList<>();
                                 for (FunctionalAspectInstance aspectInstance : aspectInstances) {
                                     aspectConfigureRequests.add(AnalysisFrameAssessment.generateConfigurationRequest(aspectInstance,
                                             taskHelper, config));
                                 }
 
+                                // add them to the ontology for the DAS to process
                                 for (AspectConfigureRequest configureRequest : aspectConfigureRequests) {
                                     taskHelper.getClient().addToModel(ObjectToTriples.convert(config, configureRequest),
                                             taskHelper.getGraphName());
                                 }
 
+                                // add constraint violation to ontology should the user decide to create an adaptation surface
                                 taskHelper.getClient().addToModel(ObjectToTriples.convert(config, constraintViolation), taskHelper.getGraphName());
                             }
                         }
@@ -436,57 +963,1763 @@ public class ConstraintAssessment {
         }
     }
 
-    public static String createAdaptationSurface(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config, Set<File> dependencies) throws Exception {
+    // check if class poised to be expanded belongs to a bootstrap jvm jar
+    private static boolean checkIfBootstrapClass(String className) throws IOException {
+
+        String[] bootstrapJars = System.getProperty("sun.boot.class.path").split(File.pathSeparator);
+
+        for (String bootstrapJar : bootstrapJars) {
+
+            File file = new File(bootstrapJar);
+
+            if (file.exists()) {
+                ZipInputStream jar = new ZipInputStream(new FileInputStream(file));
+
+                for (ZipEntry entry = jar.getNextEntry(); entry != null; entry = jar.getNextEntry()) {
+                    if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+                        String bootstrapClassName = entry.getName().substring(0, entry.getName().indexOf(".class"));
+
+                        if (className.equals(bootstrapClassName)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public String injectAdaptationSurface(File baseProjDir, String xsdTranslationEndpoint ,String projUUID, GradleTaskHelper taskHelper,
+                                                  int adaptTriples, Long beginTime, ObjectToTriplesConfiguration config) throws Exception {
 
         ConstraintAssessmentReport assessmentReport = new ConstraintAssessmentReport();
-        AspectConfigureSolution chosenSolution = getAspectConfigureSolution(taskHelper);
 
         List<ConstraintViolation> constraintViolations = retrieveConstraintViolations(taskHelper);
+        assessmentReport.setConstraintViolations(constraintViolations.toArray(new ConstraintViolation[0]));
+
+        Set<String> modifiedClasses = new HashSet<>();
+        Set<String> modifiedMethods = new HashSet<>();
+        List<AnalysisImpact> analysisImpacts = new ArrayList<>();
         for (ConstraintViolation constraintViolation : constraintViolations) {
 
-            AnalysisImpact[] analysisImpacts = new AnalysisImpact[2];
+            ObjectToTriples.convert(config, constraintViolation);
+
+            PrescriptiveCauseEffectAssertion causeEffectAssertion = constraintViolation.getMitigationStrategyUtilized();
+            ImpactStatement[] impactStatementsArr = causeEffectAssertion.getImpact();
+
+            for (ImpactStatement impactStatement : impactStatementsArr) {
+                if (impactStatement instanceof RemediationImpact) {
+
+                    RemediationImpact remediationImpact = (RemediationImpact) impactStatement;
+                    PredictiveCauseEffectAssertion predictiveCauseEffectAssertion = remediationImpact.getRemediationStrategy();
+
+                    for (ImpactStatement strategyImpact : predictiveCauseEffectAssertion.getImpact()) {
+                        if (strategyImpact instanceof FormattedDataImpact) {
+                            FormattedDataImpact formattedDataImpact = (FormattedDataImpact) strategyImpact;
+
+                            switch (formattedDataImpact.getImpactType()) {
+
+                                case FORMAT_CHANGE:
+                                    ResourceImpact applicableResourceImpact = formattedDataImpact.getApplicableResource();
+                                    if (applicableResourceImpact instanceof XmlResourceImpact) {
+
+                                        XmlResourceImpact xmlResourceImpact = (XmlResourceImpact) applicableResourceImpact;
+                                        Class<? extends Resource> affectedResource = xmlResourceImpact.getImpactedResource();
+                                        String resourceUUID = config.getNamingContext().getNameForObject(affectedResource);
+                                        Set<DataflowEdge> dataflowEdges = getEdgesBelongingToResourceInProj(resourceUUID, projUUID, taskHelper);
+
+                                        switch (xmlResourceImpact.getXmlResourceImpactType()) {
+
+                                            case XML_SCHEMA_CHANGE:
+                                                //TODO placeholder...need to get from other group
+                                                Pair<String, String> currentToTargetAndBack = new Pair<>(CannedEssSchemaTranslator.translateClientToServer(baseProjDir,
+                                                        xsdTranslationEndpoint), CannedEssSchemaTranslator.translateServerToClient(xsdTranslationEndpoint, baseProjDir));
+
+                                                InjectionImpact injectionImpactOutgoing = new InjectionImpact();
+                                                injectionImpactOutgoing.setProjectUUID(projUUID);
+
+                                                SootMethod fileReaderMethod = SootXmlTransformer.generateFileReader(taskHelper);
+
+                                                String outgoingXslt = currentToTargetAndBack.getLeft();
+                                                InjectionSite injectionSiteOutward = getOutgoingInjectionSite(dataflowEdges, injectionImpactOutgoing);
+                                                SootMethod outgoingTransformMethod = SootXmlTransformer.generateXmlTransformMethod(taskHelper, injectionImpactOutgoing);
+                                                injectionSiteOutward.setProjectBaseDir(baseProjDir);
+
+                                                modifiedClasses.add(injectionSiteOutward.getClassName());
+                                                modifiedMethods.add(injectionSiteOutward.getMethodName());
+                                                injectMethodCallOutgoing(outgoingTransformMethod, injectionSiteOutward, outgoingXslt, fileReaderMethod);
+                                                analysisImpacts.add(injectionImpactOutgoing);
+
+                                                InjectionImpact injectionImpactIncoming = new InjectionImpact();
+                                                injectionImpactIncoming.setProjectUUID(projUUID);
+
+                                                String incomingXslt = currentToTargetAndBack.getRight();
+                                                InjectionSite injectionSiteInward = getIncomingInjectionSite(dataflowEdges, injectionImpactIncoming);
+                                                SootMethod incomingTransformMethod = SootXmlTransformer.generateXmlTransformMethod(taskHelper, injectionImpactIncoming);
+                                                injectionSiteInward.setProjectBaseDir(baseProjDir);
+
+                                                modifiedClasses.add(injectionSiteInward.getClassName());
+                                                modifiedMethods.add(injectionSiteInward.getMethodName());
+                                                injectMethodCallIncoming(incomingTransformMethod, injectionSiteInward, incomingXslt, fileReaderMethod);
+                                                analysisImpacts.add(injectionImpactIncoming);
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        Long endTime = System.currentTimeMillis() - beginTime;
+        assessmentReport.setAnalysisImpacts(analysisImpacts.toArray(new AnalysisImpact[0]));
+        Model m = ModelFactory.createDefaultModel();
+        m.add(ObjectToTriples.convert(config, assessmentReport));
+        adaptTriples+=m.getGraph().size();
+
+        String getMetricUUID = "prefix IMMoRTALS_java_project: <http://darpa.mil/immortals/ontology/r2.0.0/java/project#>\n" +
+                "\n" +
+                "select ?metrics where {\n" +
+                "\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\n" +
+                "\t\t?metrics a IMMoRTALS_java_project:AnalysisMetrics .\n" +
+                "\t}\n" +
+                "\t\n" +
+                "}\n" +
+                "\t";
+        getMetricUUID = getMetricUUID.replace("???GRAPH_NAME???", taskHelper.getGraphName());
+        AssertableSolutionSet metricUUIDSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getMetricUUID, metricUUIDSolutions);
+
+        String metricUUID = null;
+        if (!metricUUIDSolutions.getSolutions().isEmpty()) {
+            metricUUID = metricUUIDSolutions.getSolutions().get(0).get("metrics");
+        }
+
+        String getSpecificMetrics = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_java_project: <http://darpa.mil/immortals/ontology/r2.0.0/java/project#>\n" +
+                "prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#>\n" +
+                "prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "\n" +
+                "select ?ingestExec ?inferenceTriples ?mineTriples ?mineExec ?bytecodeTriples ?bytecodeExec ?baseVocab ?domainTriples where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t<???ANALYSIS_METRICS???> a IMMoRTALS_java_project:AnalysisMetrics\n" +
+                "\t\t; IMMoRTALS:hasIngestExec ?ingestExec\n" +
+                "\t\t; IMMoRTALS:hasInferenceTriples ?inferenceTriples\n" +
+                "\t\t; IMMoRTALS:hasMineTriples ?mineTriples\n" +
+                "\t\t; IMMoRTALS:hasMineExec ?mineExec\n" +
+                "\t\t; IMMoRTALS:hasBytecodeTriples ?bytecodeTriples\n" +
+                "\t\t; IMMoRTALS:hasBytecodeExec ?bytecodeExec\n" +
+                "\t\t; IMMoRTALS:hasBaseVocabTriples ?baseVocab\n" +
+                "\t\t; IMMoRTALS:hasDomainTriples ?domainTriples .\n" +
+                "\t}\n" +
+                "}";
+        getSpecificMetrics = getSpecificMetrics.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???ANALYSIS_METRICS???", metricUUID);
+        AssertableSolutionSet metricSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getSpecificMetrics, metricSolutions);
+
+        AnalysisMetrics analysisMetrics = new AnalysisMetrics();
+        if (!metricSolutions.getSolutions().isEmpty()) {
+
+            Long ingestExec = -1L;
+            int inferenceTriples = -1;
+            int mineTriples = -1;
+            Long mineExec = -1L;
+            int bytecodeTriples = -1;
+            Long bytecodeExec = -1L;
+            int baseVocabTriples = -1;
+            int domainTriples = -1;
+            for (Solution metricSolution : metricSolutions.getSolutions()) {
+
+                if (ingestExec == -1L) {
+                    String ingestExecString = metricSolution.get("ingestExec");
+                    Long ingestExecTemp = Long.parseLong(ingestExecString);
+                    if (ingestExecTemp != 0L) {
+                        ingestExec = ingestExecTemp;
+                    }
+                }
+
+                if (inferenceTriples == -1) {
+                    String inferenceTriplesString = metricSolution.get("inferenceTriples");
+                    int inferenceTriplesTemp = Integer.parseInt(inferenceTriplesString);
+                    if (inferenceTriplesTemp != 0) {
+                        inferenceTriples = inferenceTriplesTemp;
+                    }
+                }
+
+                if (mineTriples == -1) {
+                    String mineTriplesString = metricSolution.get("mineTriples");
+                    int mineTriplesTemp = Integer.parseInt(mineTriplesString);
+                    if (mineTriplesTemp != 0) {
+                        mineTriples = mineTriplesTemp;
+                    }
+                }
+
+                if (mineExec == -1L) {
+                    String mineExecString = metricSolution.get("mineExec");
+                    Long mineExecTemp = Long.parseLong(mineExecString);
+                    if (mineExecTemp != 0L) {
+                        mineExec = mineExecTemp;
+                    }
+                }
+
+                if (bytecodeTriples == -1) {
+                    String bytecodeTriplesString = metricSolution.get("bytecodeTriples");
+                    int bytecodeTriplesTemp = Integer.parseInt(bytecodeTriplesString);
+                    if (bytecodeTriplesTemp != 0) {
+                        bytecodeTriples = bytecodeTriplesTemp;
+                    }
+                }
+
+                if (bytecodeExec == -1L) {
+                    String bytecodeExecString = metricSolution.get("bytecodeExec");
+                    Long bytecodeExecTemp = Long.parseLong(bytecodeExecString);
+                    if (bytecodeExecTemp != 0L) {
+                        bytecodeExec = bytecodeExecTemp;
+                    }
+                }
+
+                if (baseVocabTriples == -1) {
+                    String baseVocabTriplesString = metricSolution.get("baseVocab");
+                    int baseVocabTriplesTemp = Integer.parseInt(baseVocabTriplesString);
+                    if (baseVocabTriplesTemp != 0) {
+                        baseVocabTriples = baseVocabTriplesTemp;
+                    }
+                }
+
+                if (domainTriples == -1) {
+                    String domainTriplesString = metricSolution.get("domainTriples");
+                    int domainTriplesTemp = Integer.parseInt(domainTriplesString);
+                    if (domainTriplesTemp != 0) {
+                        domainTriples = domainTriplesTemp;
+                    }
+                }
+            }
+
+            analysisMetrics.setAdaptationTriples(adaptTriples);
+            analysisMetrics.setAdaptExec(endTime);
+            analysisMetrics.setInferenceTriples(inferenceTriples);
+            analysisMetrics.setIngestExec(ingestExec);
+            analysisMetrics.setMineTriples(mineTriples);
+            analysisMetrics.setMineExec(mineExec);
+            analysisMetrics.setDomainTriples(domainTriples);
+            analysisMetrics.setBaseVocabTriples(baseVocabTriples);
+            analysisMetrics.setBytecodeTriples(bytecodeTriples);
+            analysisMetrics.setBytecodeExec(bytecodeExec);
+
+            if (modifiedClasses.isEmpty()) {
+                analysisMetrics.setClassesModified(new String[]{});
+            } else {
+                analysisMetrics.setClassesModified(modifiedClasses.toArray(new String[0]));
+            }
+
+            if (modifiedMethods.isEmpty()) {
+                analysisMetrics.setMethodsModified(new String[]{});
+            } else {
+                analysisMetrics.setMethodsModified(modifiedMethods.toArray(new String[0]));
+            }
+
+            //TODO need to infer this data somehow... for now just fake it
+            analysisMetrics.setNewClasses(new String[]{});
+            analysisMetrics.setNewMethods(new String[]{});
+            analysisMetrics.setNewDependencies(new String[]{});
+        }
+
+        copyReport(taskHelper.getResultsDir(), analysisMetrics);
+
+        taskHelper.getClient().addToModel(m, taskHelper.getGraphName());
+        return config.getNamingContext().getNameForObject(assessmentReport);
+    }
+
+    private void copyReport(String pluginOutput, AnalysisMetrics analysisMetrics) throws IOException {
+
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("AnalysisReport.txt");
+        if (is == null) {
+            throw new RuntimeException("ERROR LOADING SOOT RESOURCES");
+        }
+
+        File sootResources = new File(pluginOutput + File.separator + "AnalysisReport.txt");
+        sootResources.createNewFile();
+
+        try (FileOutputStream out = new FileOutputStream(sootResources)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+        }
+
+        String reportString = FileUtils.readFileToString(sootResources);
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(analysisMetrics.getBaseVocabTriples());
+        addWhiteSpace(sb, 16);
+        reportString = reportString.replace("???BASE_VOCAB???", sb.toString());
+
+        sb = new StringBuilder();
+        sb.append(analysisMetrics.getAdaptationTriples());
+        addWhiteSpace(sb, 16);
+        reportString = reportString.replace("???ADAPTATION???", sb.toString());
+
+        sb = new StringBuilder();
+        sb.append(analysisMetrics.getDomainTriples());
+        addWhiteSpace(sb, 12);
+        reportString = reportString.replace("???DOMAIN???", sb.toString());
+
+        sb = new StringBuilder();
+        sb.append(analysisMetrics.getBytecodeTriples());
+        addWhiteSpace(sb, 14);
+        reportString = reportString.replace("???BYTECODE???", sb.toString());
+
+        sb = new StringBuilder();
+        sb.append(analysisMetrics.getMineTriples());
+        addWhiteSpace(sb, 10);
+        reportString = reportString.replace("???MINE???", sb.toString());
+
+        sb = new StringBuilder();
+        sb.append(analysisMetrics.getInferenceTriples());
+        addWhiteSpace(sb, 15);
+        reportString = reportString.replace("???INFERENCE???", sb.toString());
+
+        sb = new StringBuilder();
+        sb.append(analysisMetrics.getBytecodeExec());
+        addWhiteSpace(sb, 19);
+        reportString = reportString.replace("???BYTECODE_TIME???", sb.toString());
+
+        sb = new StringBuilder();
+        sb.append(analysisMetrics.getMineExec());
+        addWhiteSpace(sb, 15);
+        reportString = reportString.replace("???MINE_TIME???", sb.toString());
+
+        sb = new StringBuilder();
+        sb.append(analysisMetrics.getIngestExec());
+        addWhiteSpace(sb, 17);
+        reportString = reportString.replace("???INGEST_TIME???", sb.toString());
+
+        sb = new StringBuilder();
+        sb.append(analysisMetrics.getAdaptExec());
+        addWhiteSpace(sb, 16);
+        reportString = reportString.replace("???ADAPT_TIME???", sb.toString());
+
+        sb = new StringBuilder();
+        for (String modifiedClass : analysisMetrics.getClassesModified()) {
+            sb.append(modifiedClass + ",");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        addWhiteSpace(sb, 20);
+        reportString = reportString.replace("???MODDED_CLASSES???", sb.toString());
+
+        sb = new StringBuilder();
+        for (String modifiedMethod : analysisMetrics.getMethodsModified()) {
+            sb.append(modifiedMethod + ",");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        addWhiteSpace(sb, 20);
+        reportString = reportString.replace("???MODDED_METHODS???", sb.toString());
+
+        sb = new StringBuilder();
+        for (String generatedClass : analysisMetrics.getNewClasses()) {
+            sb.append(generatedClass + ",");
+        }
+        addWhiteSpace(sb, 17);
+        reportString = reportString.replace("???GEN_CLASSES???", sb.toString());
+
+        sb = new StringBuilder();
+        for (String generatedMethod : analysisMetrics.getNewMethods()) {
+            sb.append(generatedMethod + ",");
+        }
+        addWhiteSpace(sb, 17);
+        reportString = reportString.replace("???GEN_METHODS???", sb.toString());
+
+        sb = new StringBuilder();
+        for (String newDependency : analysisMetrics.getNewDependencies()) {
+            sb.append(newDependency + ",");
+        }
+        addWhiteSpace(sb, 18);
+        reportString = reportString.replace("???DEPENDENCIES???", sb.toString());
+
+        FileUtils.writeStringToFile(sootResources, reportString);
+    }
+
+    private void addWhiteSpace(StringBuilder sb, int lengthOfWildCard) {
+        if (sb.length() <= lengthOfWildCard) {
+            int numOfWhiteSpace = lengthOfWildCard - sb.length();
+            while (numOfWhiteSpace > 0) {
+                sb.append(" ");
+                numOfWhiteSpace--;
+            }
+        } else {
+            //TODO
+        }
+    }
+
+
+    public static String createAdaptationSurface(File baseProjDir, String xsdTranslationEndpoint ,String projUUID, GradleTaskHelper taskHelper,
+                                                 ObjectToTriplesConfiguration config) throws Exception {
+
+        ConstraintAssessmentReport assessmentReport = new ConstraintAssessmentReport();
+
+        List<ConstraintViolation> constraintViolations = retrieveConstraintViolations(taskHelper);
+        List<SootTransformStage> sootTransformStages = new ArrayList<>();
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+
+            ObjectToTriples.convert(config, constraintViolation);
+
             PrescriptiveCauseEffectAssertion causeEffectAssertion = constraintViolation.getMitigationStrategyUtilized();
             ImpactStatement[] impactStatementsArr = causeEffectAssertion.getImpact();
             PropertyImpact propertyImpact = null;
             for (ImpactStatement impactStatement : impactStatementsArr) {
                 if (impactStatement instanceof RemediationImpact) {
-                    propertyImpact = (PropertyImpact) ((RemediationImpact) impactStatement).getRemediationStrategy().getImpact()[0];
+
+                    RemediationImpact remediationImpact = (RemediationImpact) impactStatement;
+                    PredictiveCauseEffectAssertion predictiveCauseEffectAssertion = remediationImpact.getRemediationStrategy();
+
+                    for (ImpactStatement strategyImpact : predictiveCauseEffectAssertion.getImpact()) {
+                        if (strategyImpact instanceof FormattedDataImpact) {
+                            FormattedDataImpact formattedDataImpact = (FormattedDataImpact) strategyImpact;
+
+                            /*switch (formattedDataImpact.getImpactType()) {
+
+                                case FORMAT_CHANGE:
+                                    ResourceImpact applicableResourceImpact = formattedDataImpact.getApplicableResource();
+                                    if (applicableResourceImpact instanceof XmlResourceImpact) {
+
+                                        XmlResourceImpact xmlResourceImpact = (XmlResourceImpact) applicableResourceImpact;
+                                        Class<? extends Resource> affectedResource = xmlResourceImpact.getImpactedResource();
+                                        String resourceUUID = config.getNamingContext().getNameForObject(affectedResource);
+                                        Set<DataflowEdge> dataflowEdges = getEdgesBelongingToResourceInProj(resourceUUID, projUUID, taskHelper);
+
+                                        switch (xmlResourceImpact.getXmlResourceImpactType()) {
+
+                                            case XML_SCHEMA_CHANGE:
+                                                //String currentVersion = getFormatVersionInResource(resourceUUID, taskHelper);
+                                                Class<? extends Resource> targetResource = xmlResourceImpact.getTargetResource();
+                                                //String targetResourceUUID = config.getNamingContext().getNameForObject(targetResource);
+                                                //String targetVersion = getFormatVersionInResource(targetResourceUUID, taskHelper);
+                                                //TODO placeholder...need to get from other group
+                                                Pair<String, String> currentToTargetAndBack = new Pair<>(CannedEssSchemaTranslator.translateClientToServer(baseProjDir,
+                                                        xsdTranslationEndpoint), CannedEssSchemaTranslator.translateServerToClient(xsdTranslationEndpoint, baseProjDir));
+
+                                                String outgoingXslt = currentToTargetAndBack.getLeft();
+                                                InjectionSite injectionSiteOutward = getOutgoingInjectionSite(dataflowEdges);
+                                                SootClass outgoingInjectionClass = Scene.v().loadClassAndSupport(injectionSiteOutward.getClassName());
+                                                SootMethod outgoingTransformMethod = SootXmlTransformer.generateXmlTransformMethod(taskHelper);
+                                                //if (!outgoingInjectionClass.getMethods().contains(outgoingTransformMethod)) {
+                                                   // outgoingInjectionClass.getMethods().add(outgoingTransformMethod);
+                                                //}
+
+                                                injectMethodCallOutgoing(outgoingTransformMethod, injectionSiteOutward, outgoingXslt);
+
+                                                String incomingXslt = currentToTargetAndBack.getRight();
+                                                InjectionSite injectionSiteInward = getIncomingInjectionSite(dataflowEdges);
+                                                SootClass incomingInjectionClass = Scene.v().loadClassAndSupport(injectionSiteInward.getClassName());
+                                                SootMethod incomingTransformMethod = SootXmlTransformer.generateXmlTransformMethod(taskHelper);
+                                               // if (!incomingInjectionClass.getMethods().contains(incomingTransformMethod)) {
+                                                //    incomingInjectionClass.getMethods().add(incomingTransformMethod);
+                                              //  }
+
+                                                injectMethodCallIncoming(incomingTransformMethod, injectionSiteInward, incomingXslt);
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }*/
+                        }
+                    }
+                    break;
                 }
             }
 
-            FunctionalAspectInstance aspectInstance = retrieveAspectFromChosenDfu(chosenSolution.getChosenInstance(),
-                    propertyImpact);
-            analysisImpacts[0] = AnalysisFrameAssessment.repairProducer(taskHelper, config, (InterMethodDataflowNode)
-                            constraintViolation.getEdgeInViolation().getProducer(), dependencies, DesignPattern.STREAM,
-                    chosenSolution, aspectInstance);
+            if (propertyImpact == null) {
+                return null;
+            }
 
-            propertyImpact.setImpactOnProperty(PropertyImpactType.REMOVES);
-            aspectInstance = retrieveAspectFromChosenDfu(chosenSolution.getChosenInstance(),
-                    propertyImpact);
-            taskHelper.getPw().println("Starting repairs on consumer...");
-            analysisImpacts[1] = AnalysisFrameAssessment.repairConsumer(taskHelper, config, (InterMethodDataflowNode)
-                            constraintViolation.getEdgeInViolation().getConsumer(), dependencies, DesignPattern.STREAM,
-                    aspectInstance, chosenSolution);
+            DataflowNode producerNode = constraintViolation.getEdgeInViolation().getProducer();
+            if (producerNode instanceof InterMethodDataflowNode) {
 
-            constraintViolation.setAnalysisImpacts(analysisImpacts);
+                InterMethodDataflowNode interProducerNode = (InterMethodDataflowNode) producerNode;
+
+                String applicableStreamObject = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#OutputStream";//AnalysisFrameAssessment.getStreamObject(producerAspectInstance.getAbstractAspect().newInstance());
+                AssertableSolutionSet traceSolutions = AnalysisFrameAssessment.findStreamImplementationInUsersCode(interProducerNode, taskHelper, applicableStreamObject);
+
+                ArrayList<CallTrace> callTraces = findWrapperInsertionSite(taskHelper, config, traceSolutions);
+                CallTrace streamCallTrace = callTraces.get(0);
+                MethodInvocationDataflowNode streamInitializationNode = (MethodInvocationDataflowNode)
+                        streamCallTrace.getCallSteps()[streamCallTrace.getCallSteps().length - 1];
+
+                AssertableSolutionSet initCallInfoSolution = getInitializationData(taskHelper, config, streamInitializationNode);
+                String initCallOwnerOwnerName = initCallInfoSolution.getSolutions().get(0).get("className");
+
+                List<MethodInvocationDataflowNode> methodNodes = new ArrayList<>();
+                for (DataflowNode dataflowNode : streamCallTrace.getCallSteps()) {
+                    if (dataflowNode instanceof MethodInvocationDataflowNode) {
+                        methodNodes.add((MethodInvocationDataflowNode) dataflowNode);
+                    }
+                }
+
+                methodNodes.removeIf(methodNode -> !methodNode.getJavaClassName().equals
+                        (streamInitializationNode.getJavaClassName()));
+
+                String projectUUID = getNodesProject(taskHelper, config.getNamingContext().getNameForObject(streamInitializationNode));
+                AspectConfigureSolution chosenSolution =  getAspectConfigureSolution(taskHelper, projectUUID);
+                FunctionalAspectInstance producerAspectInstance = retrieveAspectFromChosenDfu(chosenSolution.getChosenInstance(),
+                        propertyImpact);
+
+                Set<File> projectDependencies = getProjectDependencies(taskHelper, config, projectUUID, streamInitializationNode);
+
+                Optional<SootTransformStage> sootTransformStageOption = SootTransformStage.constructStage(taskHelper, streamInitializationNode,
+                        projectUUID, projectDependencies, producerAspectInstance, sootTransformStages, methodNodes, initCallOwnerOwnerName, chosenSolution);
+
+                sootTransformStageOption.ifPresent(sootTransformStages::add);
+            }
+
+            DataflowNode consumerNode = constraintViolation.getEdgeInViolation().getConsumer();
+            if (consumerNode instanceof InterMethodDataflowNode) {
+                InterMethodDataflowNode interConsumerNode = (InterMethodDataflowNode) consumerNode;
+                propertyImpact.setImpactOnProperty(PropertyImpactType.REMOVES);
+
+
+                String applicableStreamObject = "http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#InputStream";
+                AssertableSolutionSet traceSolutions = AnalysisFrameAssessment.findStreamImplementationInUsersCode(interConsumerNode,
+                        taskHelper, applicableStreamObject);
+
+                ArrayList<CallTrace> callTraces = findWrapperInsertionSite(taskHelper, config, traceSolutions);
+                CallTrace streamCallTrace = callTraces.get(0);
+                MethodInvocationDataflowNode streamInitializationNode = (MethodInvocationDataflowNode)
+                        streamCallTrace.getCallSteps()[streamCallTrace.getCallSteps().length - 1];
+
+                AssertableSolutionSet initCallInfoSolution = getInitializationData(taskHelper, config, streamInitializationNode);
+                String initCallOwnerOwnerName = initCallInfoSolution.getSolutions().get(0).get("className");
+
+                String projectUUID = getNodesProject(taskHelper, config.getNamingContext().getNameForObject(streamInitializationNode));
+                AspectConfigureSolution chosenSolution =  getAspectConfigureSolution(taskHelper, projectUUID);
+                FunctionalAspectInstance consumerAspectInstance = retrieveAspectFromChosenDfu(chosenSolution.getChosenInstance(),
+                        propertyImpact);
+
+                Set<File> projectDependencies = getProjectDependencies(taskHelper, config, projectUUID, streamInitializationNode);
+
+                List<MethodInvocationDataflowNode> methodNodes = new ArrayList<>();
+                for (DataflowNode dataflowNode : streamCallTrace.getCallSteps()) {
+                    if (dataflowNode instanceof MethodInvocationDataflowNode) {
+                        methodNodes.add((MethodInvocationDataflowNode) dataflowNode);
+                    }
+                }
+
+                methodNodes.removeIf(methodNode -> !methodNode.getJavaClassName().equals
+                        (streamInitializationNode.getJavaClassName()));
+
+                Optional<SootTransformStage> sootTransformStageOption = SootTransformStage.constructStage(taskHelper, streamInitializationNode,
+                        projectUUID, projectDependencies, consumerAspectInstance, sootTransformStages, methodNodes, initCallOwnerOwnerName, chosenSolution);
+                sootTransformStageOption.ifPresent(sootTransformStages::add);
+            }
+
+           /* } else {
+
+               /* LibraryExpansionImpact libraryExpansionImpact = new LibraryExpansionImpact();
+                libraryExpansionImpact.setAspectImplemented(aspectInstance.getAbstractAspect());
+
+                String getCipherImpl = retrieveChosenDfuImpl(aspectInstance, taskHelper, config);
+                AssertableSolutionSet cipherImplSolutions = new AssertableSolutionSet();
+                taskHelper.getClient().executeSelectQuery(getCipherImpl, cipherImplSolutions);
+                Map<DfuInstance, Pair<String, String>> dfuInstanceStringMap = getDfuInstanceStringMap(taskHelper,
+                        cipherImplSolutions, config);
+
+                DfuInstance chosenInstance = chosenSolution.getChosenInstance();
+                Pair<String, String> dfuUUIDToCipherImpl = null;
+                for (DfuInstance dfuInstance : dfuInstanceStringMap.keySet()) {
+                    if (chosenInstance.getClassPointer().equals(dfuInstance.getClassPointer())) {
+                        dfuUUIDToCipherImpl = dfuInstanceStringMap.get(dfuInstance);
+                    }
+                }
+
+                String pathToCipherJar = getCipherJarPath(dfuUUIDToCipherImpl.getLeft(), taskHelper);
+
+                DataflowNode consumerNode = constraintViolation.getEdgeInViolation().getConsumer();
+                String classToBeExpanded = null;
+                if (consumerNode instanceof InterMethodDataflowNode) {
+                    InterMethodDataflowNode interConsumerNode = (InterMethodDataflowNode) consumerNode;
+                    classToBeExpanded = interConsumerNode.getJavaClassName();
+                }
+
+                String pathToJarToBeExpanded = getAugmentedJarPath(classToBeExpanded, taskHelper);
+                libraryExpansionImpact.setPathToLibrary(pathToJarToBeExpanded);
+                libraryExpansionImpact.setLibraryName(pathToJarToBeExpanded.substring(pathToJarToBeExpanded.lastIndexOf(File.separatorChar)));
+
+                classToBeExpanded = classToBeExpanded.replace("/", ".");
+                CipherTransformPlatform cipherTransformPlatform = new CipherTransformPlatform(pathToCipherJar, pathToJarToBeExpanded,
+                        Optional.of("C:/BBNImmortals/test.jar"));
+                String cipherImpl = dfuUUIDToCipherImpl.getRight();
+                libraryExpansionImpact.setFieldAdaptation(cipherTransformPlatform.initializeFieldTransformer(classToBeExpanded, cipherImpl));
+
+                transmissionMethodSig = convertToSootSubSignature(transmissionMethodSig);
+
+                libraryExpansionImpact.setMethodAdaptations(new MethodAdaptation[] {cipherTransformPlatform.initializeCheckTransformer(classToBeExpanded, cipherImpl, transmissionMethodSig,
+                        Arrays.asList(chosenSolution.getConfigurationBindings())),cipherTransformPlatform.initializeWrapTransformer(classToBeExpanded, cipherImpl, transmissionMethodSig,
+                        "java.io.FileOutputStream")});
+                // cipherTransformPlatform.initializeCheckTransformer(classToBeExpanded, cipherImpl, transmissionMethodSig,
+                //       Arrays.asList(chosenSolution.getConfigurationBindings()));
+                //  cipherTransformPlatform.initializeWrapTransformer(classToBeExpanded, cipherImpl, transmissionMethodSig,
+                //   "java.io.FileOutputStream");
+                //TODO need to infer this through data flows
+
+                cipherTransformPlatform.addTransformsToPack();
+                cipherTransformPlatform.runTransformers();
+
+                constraintViolation.setAnalysisImpacts(new AnalysisImpact[]{libraryExpansionImpact});*/
         }
 
-        AnalysisFrameAssessment.performWrapperCodeInsertions(taskHelper, config);
+        List<Pair<String, WrapperImplementationImpact>> artifactGraphToImpacts = new ArrayList<>();
+        WrapperImplementationImpact[] analysisImpacts = new WrapperImplementationImpact[sootTransformStages.size()];
+        int i = 0;
+        for (SootTransformStage sootTransformStage : sootTransformStages) {
+
+            analysisImpacts[i] = sootTransformStage.transform(taskHelper, config);
+            String adaptArtifactGraphName = "http://localhost:3030/ds/data/" + sootTransformStage.getProjectUUID() + "-AdaptArtifacts";
+            artifactGraphToImpacts.add(new Pair<>(adaptArtifactGraphName, analysisImpacts[i]));
+
+            WrapperFactory.resetScene();
+            i++;
+        }
+
+        AnalysisFrameAssessment.performWrapperCodeInsertions(taskHelper, config, artifactGraphToImpacts);
 
         ConstraintViolation[] constraintViolationsArr = new ConstraintViolation[constraintViolations.size()];
-        int i = 0;
+        i = 0;
         for (ConstraintViolation constraintViolation : constraintViolations) {
             constraintViolationsArr[i] = constraintViolation;
             i++;
         }
         assessmentReport.setConstraintViolations(constraintViolationsArr);
-        taskHelper.getClient().addToModel(ObjectToTriples.convert(config, assessmentReport), taskHelper.getGraphName());
+        AnalysisImpact[] dummyImpacts = new AnalysisImpact[analysisImpacts.length];
+        i = 0;
+        for (AnalysisImpact analysisImpact : analysisImpacts) {
+            AnalysisImpact dummyImpact = new AnalysisImpact();
+            config.getNamingContext().setNameForObject(dummyImpact, config.getNamingContext().getNameForObject(analysisImpact));
+            ObjectToTriples.convert(config, dummyImpact);
+            dummyImpacts[i] = dummyImpact;
+            i++;
+        }
+
+        assessmentReport.setAnalysisImpacts(dummyImpacts);
+        Model assessmentReportModel = ObjectToTriples.convert(config, assessmentReport);
+
+        for (String adaptArtifactGraphName : artifactGraphToImpacts.stream().map(Pair::getLeft).collect(Collectors.toSet())) {
+            taskHelper.getClient().addToModel(assessmentReportModel, adaptArtifactGraphName);
+        }
+
+        taskHelper.getClient().addToModel(assessmentReportModel, taskHelper.getGraphName());
         return config.getNamingContext().getNameForObject(assessmentReport);
     }
-    
-    private static AspectConfigureSolution getAspectConfigureSolution(GradleTaskHelper taskHelper) throws Exception {
+
+    private static void injectMethodCallOutgoing(SootMethod outgoingTransformMethod, InjectionSite injectionSiteOutward, String outgoingXslt,
+                                                 SootMethod fileReaderMethod) throws IOException {
+
+
+        //TODO currently here... PackManager.v().writeClass(classToInjectInto);
+        SootClass classToInjectInto = Scene.v().loadClassAndSupport(injectionSiteOutward.getClassName());
+        Scene.v().loadNecessaryClasses();
+        for (SootMethod sootMethod : classToInjectInto.getMethods()) {
+
+            Body methodBody = sootMethod.retrieveActiveBody();
+            Chain<Unit> units = methodBody.getUnits();
+            for (Unit unit : units) {
+                for (Tag tag : unit.getTags()) {
+                    if (tag instanceof LineNumberTag) {
+                        LineNumberTag lineNumberTag = (LineNumberTag) tag;
+                        if (lineNumberTag.getLineNumber() == injectionSiteOutward.getLineNumber()) {
+
+                            if (unit instanceof AssignStmt) {
+
+                                Value rightValue = ((AssignStmt) unit).getRightOp();
+                                Value leftValue = ((AssignStmt) unit).getLeftOp();
+
+                                //TODO need to implement special invoke here, not virtual
+                                if (rightValue instanceof VirtualInvokeExpr) {
+                                    VirtualInvokeExpr virtualInvokeExpr = (VirtualInvokeExpr) rightValue;
+
+                                    if (virtualInvokeExpr.getMethod().getName().equals(injectionSiteOutward.getMethodName())) {
+                                        //TODO need to make sure param and return types are compatible somehow
+                                        Type type = virtualInvokeExpr.getType();
+                                        if (!type.equals(outgoingTransformMethod.getReturnType())) {
+                                            throw new RuntimeException("INCOMPATIBLE TYPES...");
+                                        }
+
+                                        Local localOfInterest = null;
+                                        if (leftValue instanceof Local) {
+                                            localOfInterest = (Local) leftValue;
+                                        }
+
+                                        //TODO
+                                        String xsltFileResourcePath = injectionSiteOutward.getProjectBaseDir().getAbsolutePath() + File.separator + "outgoingXslt-"
+                                                + injectionSiteOutward.getMethodName() + "-" + injectionSiteOutward.getClassName();
+                                        File xsltFileResource = new File(xsltFileResourcePath);
+                                        boolean fileCreated = xsltFileResource.createNewFile();
+                                        if (fileCreated) {
+                                            FileUtils.writeStringToFile(xsltFileResource, outgoingXslt, Charset.defaultCharset());
+                                        }
+
+                                        Local xsltFileLocal = Jimple.v().newLocal("xsltFile", Scene.v().getType("java.lang.String"));
+                                        methodBody.getLocals().add(xsltFileLocal);
+                                        AssignStmt assignStmt = Jimple.v().newAssignStmt(xsltFileLocal, StringConstant.v(xsltFileResourcePath));
+                                        units.insertBefore(unit, assignStmt);
+                                        StaticInvokeExpr invokeFileReader = Jimple.v().newStaticInvokeExpr(fileReaderMethod.makeRef(), xsltFileLocal);
+
+                                        Local xsltLocal = Jimple.v().newLocal("xsltLocal", Scene.v().getType("java.lang.String"));
+                                        methodBody.getLocals().add(xsltLocal);
+                                        AssignStmt assignXslt = Jimple.v().newAssignStmt(xsltLocal, invokeFileReader);
+                                        units.insertAfter(assignXslt, assignStmt);
+                                        //TODO
+
+                                        //classToInjectInto.addMethod(outgoingTransformMethod);
+                                        StaticInvokeExpr staticInvokeExpr = Jimple.v().newStaticInvokeExpr(outgoingTransformMethod.makeRef());
+                                        staticInvokeExpr.setArg(0, xsltLocal);
+                                        staticInvokeExpr.setArg(1, localOfInterest);
+                                        Local tempLocal = Jimple.v().newLocal("tempLocal", outgoingTransformMethod.getReturnType());
+                                        methodBody.getLocals().add(tempLocal);
+                                        AssignStmt newAssign = Jimple.v().newAssignStmt(tempLocal, staticInvokeExpr);
+                                        units.insertAfter(newAssign, unit);
+                                        AssignStmt assignToOldLocal = Jimple.v().newAssignStmt(localOfInterest, tempLocal);
+                                        units.insertAfter(assignToOldLocal, newAssign);
+                                        produceWrapperClassFile(classToInjectInto);
+                                        return;
+                                    }
+                                } else if (rightValue instanceof StaticInvokeExpr) {
+
+                                } else if (rightValue instanceof SpecialInvokeExpr) {
+                                    SpecialInvokeExpr specialInvokeExpr = (SpecialInvokeExpr) rightValue;
+
+                                    if (specialInvokeExpr.getMethod().getName().equals(injectionSiteOutward.getMethodName())) {
+                                        Type type = specialInvokeExpr.getType();
+                                        if (!type.equals(outgoingTransformMethod.getReturnType())) {
+                                            throw new RuntimeException("INCOMPATIBLE TYPES...");
+                                        }
+
+                                        Local localOfInterest = null;
+                                        if (leftValue instanceof Local) {
+                                            localOfInterest = (Local) leftValue;
+                                        }
+
+                                        //TODO
+                                        String xsltFileResourcePath = injectionSiteOutward.getProjectBaseDir().getAbsolutePath() + File.separator + "outgoingXslt-"
+                                                + injectionSiteOutward.getMethodName() + "-" + injectionSiteOutward.getClassName();
+                                        File xsltFileResource = new File(xsltFileResourcePath);
+                                        boolean fileCreated = xsltFileResource.createNewFile();
+                                        if (fileCreated) {
+                                            FileUtils.writeStringToFile(xsltFileResource, outgoingXslt, Charset.defaultCharset());
+                                        }
+
+                                        Local xsltFileLocal = Jimple.v().newLocal("xsltFile", Scene.v().getType("java.lang.String"));
+                                        methodBody.getLocals().add(xsltFileLocal);
+                                        AssignStmt assignStmt = Jimple.v().newAssignStmt(xsltFileLocal, StringConstant.v(xsltFileResourcePath));
+                                        units.insertBefore(assignStmt, unit);
+                                        StaticInvokeExpr invokeFileReader = Jimple.v().newStaticInvokeExpr(fileReaderMethod.makeRef(), xsltFileLocal);
+
+                                        Local xsltLocal = Jimple.v().newLocal("xsltLocal", Scene.v().getType("java.lang.String"));
+                                        methodBody.getLocals().add(xsltLocal);
+                                        AssignStmt assignXslt = Jimple.v().newAssignStmt(xsltLocal, invokeFileReader);
+                                        units.insertAfter(assignXslt, assignStmt);
+                                        //TODO
+
+                                        // Local xsltLocal = Jimple.v().newLocal("outgoingXslt", Scene.v().getType("java.lang.String"));
+                                        // methodBody.getLocals().add(xsltLocal);
+                                        //  AssignStmt assignXslt = Jimple.v().newAssignStmt(xsltLocal, StringConstant.v(outgoingXslt));
+                                        //  units.insertBefore(assignXslt, unit);
+
+                                        StaticInvokeExpr staticInvokeExpr = Jimple.v().newStaticInvokeExpr(outgoingTransformMethod.makeRef(), xsltLocal, localOfInterest);
+                                        //staticInvokeExpr.setArg(0, xsltLocal);
+                                        //staticInvokeExpr.setArg(1, localOfInterest);
+                                        Local tempLocal = Jimple.v().newLocal("tempLocal", outgoingTransformMethod.getReturnType());
+                                        methodBody.getLocals().add(tempLocal);
+                                        AssignStmt newAssign = Jimple.v().newAssignStmt(tempLocal, staticInvokeExpr);
+                                        units.insertAfter(newAssign, unit);
+                                        AssignStmt assignToOldLocal = Jimple.v().newAssignStmt(localOfInterest, tempLocal);
+                                        units.insertAfter(assignToOldLocal, newAssign);
+                                        produceWrapperClassFile(classToInjectInto);
+                                        return;
+                                    }
+                                }
+                            }
+
+                            if (unit instanceof VirtualInvokeExpr) {
+
+                                VirtualInvokeExpr virtualInvokeExpr = (VirtualInvokeExpr) unit;
+
+                                if (virtualInvokeExpr.getMethod().getName().equals(injectionSiteOutward.getMethodName())) {
+                                    //TODO need to make sure param and return types are compatible somehow
+                                    Type type = virtualInvokeExpr.getType();
+                                    if (!type.equals(outgoingTransformMethod.getReturnType())) {
+                                        throw new RuntimeException("INCOMPATIBLE TYPES...");
+                                    }
+
+                                    classToInjectInto.addMethod(outgoingTransformMethod);
+                                    StaticInvokeExpr staticInvokeExpr = Jimple.v().newStaticInvokeExpr(outgoingTransformMethod.makeRef());
+                                    staticInvokeExpr.setArg(0, virtualInvokeExpr);
+                                    InvokeStmt invokeStmt = Jimple.v().newInvokeStmt(staticInvokeExpr);
+                                    units.insertBefore(invokeStmt, unit);
+                                    produceWrapperClassFile(classToInjectInto);
+                                    return;
+                                }
+                            } else if (unit instanceof StaticInvokeExpr) {
+
+                            } else if (unit instanceof SpecialInvokeExpr) {
+
+                            } else if (unit instanceof InvokeStmt) {
+                                InvokeStmt invokeStmt = (InvokeStmt) unit;
+                                InvokeExpr invokeExpr = invokeStmt.getInvokeExpr();
+
+                                if (invokeExpr instanceof VirtualInvokeExpr) {
+
+                                } else if (unit instanceof StaticInvokeExpr) {
+
+                                } else if (unit instanceof SpecialInvokeExpr) {
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static void injectMethodCallIncoming(SootMethod incomingTransformMethod, InjectionSite injectionSiteInward, String incomingXslt, SootMethod fileReaderMethod) throws IOException, ClassNotFoundException {
+
+        SootClass classToInjectInto = Scene.v().loadClassAndSupport(injectionSiteInward.getClassName());
+        SootMethod methodToInjectInto = classToInjectInto.getMethodByName(injectionSiteInward.getMethodName());
+
+        for (SootMethod sootMethod : classToInjectInto.getMethods()) {
+            Body methodBody = sootMethod.retrieveActiveBody();
+            Chain<Unit> units = methodBody.getUnits();
+            for (Unit unit : units) {
+                for (Tag tag : unit.getTags()) {
+                    if (tag instanceof LineNumberTag) {
+                        LineNumberTag lineNumberTag = (LineNumberTag) tag;
+                        if (lineNumberTag.getLineNumber() == injectionSiteInward.getLineNumber()) {
+
+                            if (unit instanceof AssignStmt) {
+
+                                Value rightValue = ((AssignStmt) unit).getRightOp();
+                                Value leftValue = ((AssignStmt) unit).getLeftOp();
+
+                                if (rightValue instanceof VirtualInvokeExpr) {
+                                    VirtualInvokeExpr virtualInvokeExpr = (VirtualInvokeExpr) rightValue;
+
+                                    if (virtualInvokeExpr.getMethod().getName().equals(injectionSiteInward.getMethodName())) {
+                                        //TODO need to make sure param and return types are compatible somehow
+                                        Type type = virtualInvokeExpr.getType();
+                                        if (!type.equals(incomingTransformMethod.getReturnType())) {
+                                            throw new RuntimeException("INCOMPATIBLE TYPES...");
+                                        }
+
+                                        Local localOfInterest = null;
+                                        if (leftValue instanceof Local) {
+                                            localOfInterest = (Local) leftValue;
+                                        }
+
+                                        //TODO
+                                        String xsltFileResourcePath = injectionSiteInward.getProjectBaseDir().getAbsolutePath() + File.separator + "incomingXslt-"
+                                                + injectionSiteInward.getMethodName() + "-" + injectionSiteInward.getClassName();
+                                        File xsltFileResource = new File(xsltFileResourcePath);
+                                        boolean fileCreated = xsltFileResource.createNewFile();
+                                        if (fileCreated) {
+                                            FileUtils.writeStringToFile(xsltFileResource, incomingXslt, Charset.defaultCharset());
+                                        }
+
+                                        Local xsltFileLocal = Jimple.v().newLocal("xsltFile", Scene.v().getType("java.lang.String"));
+                                        methodBody.getLocals().add(xsltFileLocal);
+                                        AssignStmt assignStmt = Jimple.v().newAssignStmt(xsltFileLocal, StringConstant.v(xsltFileResourcePath));
+                                        units.insertBefore(assignStmt, unit);
+                                        StaticInvokeExpr invokeFileReader = Jimple.v().newStaticInvokeExpr(fileReaderMethod.makeRef(), xsltFileLocal);
+                                        //TODO
+
+                                        Local xsltLocal = Jimple.v().newLocal("xsltLocal", Scene.v().getType("java.lang.String"));
+                                        methodBody.getLocals().add(xsltLocal);
+                                        AssignStmt assignXslt = Jimple.v().newAssignStmt(xsltLocal, invokeFileReader);
+                                        units.insertAfter(assignXslt, assignStmt);
+
+                                        //classToInjectInto.addMethod(outgoingTransformMethod);
+                                        StaticInvokeExpr staticInvokeExpr = Jimple.v().newStaticInvokeExpr(incomingTransformMethod.makeRef());
+                                        staticInvokeExpr.setArg(0, xsltLocal);
+                                        staticInvokeExpr.setArg(1, localOfInterest);
+                                        Local tempLocal = Jimple.v().newLocal("tempLocal", incomingTransformMethod.getReturnType());
+                                        methodBody.getLocals().add(tempLocal);
+                                        AssignStmt newAssign = Jimple.v().newAssignStmt(tempLocal, staticInvokeExpr);
+                                        units.insertAfter(newAssign, unit);
+                                        AssignStmt assignToOldLocal = Jimple.v().newAssignStmt(localOfInterest, tempLocal);
+                                        units.insertAfter(assignToOldLocal, newAssign);
+                                        produceWrapperClassFile(classToInjectInto);
+                                        return;
+                                    }
+                                } else if (rightValue instanceof StaticInvokeExpr) {
+
+                                } else if (rightValue instanceof SpecialInvokeExpr) {
+                                    SpecialInvokeExpr specialInvokeExpr = (SpecialInvokeExpr) rightValue;
+
+                                    if (specialInvokeExpr.getMethod().getName().equals(injectionSiteInward.getMethodName())) {
+                                        Type type = specialInvokeExpr.getType();
+                                        if (!type.equals(incomingTransformMethod.getReturnType())) {
+
+                                            Class<?> existingReturn = Class.forName(type.toString());
+                                            Class<?> newReturn = Class.forName(incomingTransformMethod.getReturnType().toString());
+
+                                            if (!existingReturn.isAssignableFrom(newReturn)) {
+                                                throw new RuntimeException("INCOMPATIBLE TYPES...");
+                                            }
+                                        }
+
+                                        Local localOfInterest = null;
+                                        if (leftValue instanceof Local) {
+                                            localOfInterest = (Local) leftValue;
+                                        }
+
+                                        //TODO
+                                        String xsltFileResourcePath = injectionSiteInward.getProjectBaseDir().getAbsolutePath() + File.separator + "incomingXslt-"
+                                                + injectionSiteInward.getMethodName() + "-" + injectionSiteInward.getClassName();
+                                        File xsltFileResource = new File(xsltFileResourcePath);
+                                        boolean fileCreated = xsltFileResource.createNewFile();
+                                        if (fileCreated) {
+                                            FileUtils.writeStringToFile(xsltFileResource, incomingXslt, Charset.defaultCharset());
+                                        }
+
+                                        Local xsltFileLocal = Jimple.v().newLocal("xsltFile", Scene.v().getType("java.lang.String"));
+                                        methodBody.getLocals().add(xsltFileLocal);
+                                        AssignStmt assignStmt = Jimple.v().newAssignStmt(xsltFileLocal, StringConstant.v(xsltFileResourcePath));
+                                        units.insertBefore(assignStmt, unit);
+                                        StaticInvokeExpr invokeFileReader = Jimple.v().newStaticInvokeExpr(fileReaderMethod.makeRef(), xsltFileLocal);
+                                        //TODO
+
+                                        Local xsltLocal = Jimple.v().newLocal("xsltLocal", Scene.v().getType("java.lang.String"));
+                                        methodBody.getLocals().add(xsltLocal);
+                                        AssignStmt assignXslt = Jimple.v().newAssignStmt(xsltLocal, invokeFileReader);
+                                        units.insertAfter(assignXslt, assignStmt);
+
+                                       // Local xsltLocal = Jimple.v().newLocal("incomingXslt", Scene.v().getType("java.lang.String"));
+                                       // methodBody.getLocals().add(xsltLocal);
+                                       // AssignStmt assignXslt = Jimple.v().newAssignStmt(xsltLocal, StringConstant.v(incomingXslt));
+                                      //  units.insertBefore(assignXslt, unit);
+
+                                        StaticInvokeExpr staticInvokeExpr = Jimple.v().newStaticInvokeExpr(incomingTransformMethod.makeRef(), xsltLocal, localOfInterest);
+                                        //staticInvokeExpr.setArg(0, xsltLocal);
+                                        //staticInvokeExpr.setArg(1, localOfInterest);
+                                        Local tempLocal = Jimple.v().newLocal("tempLocal", incomingTransformMethod.getReturnType());
+                                        methodBody.getLocals().add(tempLocal);
+                                        AssignStmt newAssign = Jimple.v().newAssignStmt(tempLocal, staticInvokeExpr);
+                                        units.insertAfter(newAssign, unit);
+                                        AssignStmt assignToOldLocal = Jimple.v().newAssignStmt(localOfInterest, tempLocal);
+                                        units.insertAfter(assignToOldLocal, newAssign);
+                                        produceWrapperClassFile(classToInjectInto);
+                                        return;
+                                    }
+                                }
+                            }
+
+                            if (unit instanceof VirtualInvokeExpr) {
+
+                                VirtualInvokeExpr virtualInvokeExpr = (VirtualInvokeExpr) unit;
+
+                                if (virtualInvokeExpr.getMethod().getName().equals(injectionSiteInward.getMethodName())) {
+                                    //TODO need to make sure param and return types are compatible somehow
+                                    Type type = virtualInvokeExpr.getType();
+                                    if (!type.equals(incomingTransformMethod.getReturnType())) {
+                                        throw new RuntimeException("INCOMPATIBLE TYPES...");
+                                    }
+
+                                    classToInjectInto.addMethod(incomingTransformMethod);
+                                    StaticInvokeExpr staticInvokeExpr = Jimple.v().newStaticInvokeExpr(incomingTransformMethod.makeRef());
+                                    staticInvokeExpr.setArg(0, virtualInvokeExpr);
+                                    InvokeStmt invokeStmt = Jimple.v().newInvokeStmt(staticInvokeExpr);
+                                    units.insertBefore(invokeStmt, unit);
+                                }
+                            } else if (unit instanceof StaticInvokeExpr) {
+
+                            } else if (unit instanceof SpecialInvokeExpr) {
+
+                            } else if (unit instanceof InvokeStmt) {
+                                InvokeStmt invokeStmt = (InvokeStmt) unit;
+                                InvokeExpr invokeExpr = invokeStmt.getInvokeExpr();
+
+                                if (invokeExpr instanceof VirtualInvokeExpr) {
+
+                                } else if (unit instanceof StaticInvokeExpr) {
+
+                                } else if (unit instanceof SpecialInvokeExpr) {
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static String produceWrapperClassFile(SootClass classToProduce) throws IOException {
+
+        classToProduce.setApplicationClass();
+
+        for (SootMethod sootMethod : classToProduce.getMethods()) {
+            sootMethod.retrieveActiveBody();
+        }
+
+        PackManager.v().writeOutput();
+        String fileName = SourceLocator.v().getFileNameFor(classToProduce, Options.output_format_class);
+        File classFile = new File(fileName);
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(classFile.getAbsolutePath());
+            OutputStream streamOut = new JasminOutputStream(fileOutputStream);
+            PrintWriter writerOut = new PrintWriter(new OutputStreamWriter(streamOut));
+            JasminClass jasminClass = new JasminClass(classToProduce);
+            jasminClass.print(writerOut);
+            writerOut.flush();
+            streamOut.close();
+
+            return fileName.replace("\\", "/");
+        } catch (FileNotFoundException exc) {
+            exc.printStackTrace();
+        }
+        return null;
+    }
+
+    private static InjectionSite getIncomingInjectionSite(Set<DataflowEdge> dataflowEdges, InjectionImpact injectionImpact) {
+
+        List<DataflowEdge> tempEdges = new ArrayList<>(dataflowEdges);
+        DataflowEdge starterEdge = null;
+        for (int i = 0; i < tempEdges.size(); i++) {
+            DataflowEdge dataflowEdge = tempEdges.get(i);
+
+            if (dataflowEdge.getProducer() != null && dataflowEdge.getConsumer() != null) {
+                starterEdge = tempEdges.remove(i);
+                break;
+            }
+        }
+        DataflowNode starterProducer = starterEdge.getProducer();
+        DataflowNode starterConsumer = starterEdge.getConsumer();
+
+        List<List<DataflowGraphComponent>> linearFlows = new ArrayList<>();
+        while (!tempEdges.isEmpty()) {
+            List<DataflowGraphComponent> linearFlow = new ArrayList<>();
+
+            linearFlow.add(starterProducer);
+            linearFlow.add(starterEdge);
+            linearFlow.add(starterConsumer);
+
+            while ((linearFlow.get(0) != null) || (linearFlow.get(linearFlow.size() - 1) != null)) {
+                for (DataflowEdge dataflowEdge : tempEdges) {
+
+                    DataflowNode firstNode = (DataflowNode) linearFlow.get(0);
+                    DataflowNode lastNode = (DataflowNode) linearFlow.get(linearFlow.size() - 1);
+
+                    if (firstNode != null) {
+                        if ((dataflowEdge.getConsumer() != null) && (compareMethodNodes(dataflowEdge.getConsumer(), firstNode))) {
+                            linearFlow.add(0, dataflowEdge);
+                            linearFlow.add(0, dataflowEdge.getProducer());
+                            continue;
+                        }
+                    }
+
+                    if (lastNode != null) {
+                        if ((dataflowEdge.getProducer() != null) && (compareMethodNodes(dataflowEdge.getProducer(), lastNode))) {
+                            linearFlow.add(dataflowEdge);
+                            linearFlow.add(dataflowEdge.getConsumer());
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            ListIterator<DataflowEdge> edgeIter = tempEdges.listIterator();
+            while (edgeIter.hasNext()) {
+                DataflowEdge dataflowEdge = edgeIter.next();
+                for (DataflowGraphComponent graphComponent : linearFlow) {
+                    if (graphComponent instanceof DataflowEdge) {
+                        DataflowEdge analyzedEdge = (DataflowEdge) graphComponent;
+                        if (compareEdges(dataflowEdge, analyzedEdge)) {
+                            edgeIter.remove();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < tempEdges.size(); i++) {
+                DataflowEdge dataflowEdge = tempEdges.get(i);
+                if (dataflowEdge.getProducer() != null && dataflowEdge.getConsumer() != null) {
+                    starterEdge = tempEdges.remove(i);
+                    break;
+                }
+            }
+            starterProducer = starterEdge.getProducer();
+            starterConsumer = starterEdge.getConsumer();
+
+            linearFlows.add(linearFlow);
+        }
+        for (List<DataflowGraphComponent> linearFlow : linearFlows) {
+            DataflowGraphComponent graphComponent = linearFlow.get(linearFlow.size() - 2);
+
+            if (graphComponent instanceof MethodInvocationDataflowEdge) {
+                //TODO inward flow
+                dataflowEdges.removeAll(linearFlow.stream().filter(dataGraphComp -> dataGraphComp instanceof DataflowEdge).map(edge -> (DataflowEdge) edge)
+                        .collect(Collectors.toList()));
+                injectionImpact.setDataflows(linearFlow.toArray(new DataflowGraphComponent[linearFlow.size()]));
+                return getInjectionInward(linearFlow);
+            }
+        }
+
+        return null;
+    }
+
+    private static InjectionSite getInjectionInward(List<DataflowGraphComponent> linearFlow) {
+
+        //TODO currently here, didn't need to to reverse incoming data flows, should work as intended, but need to test
+        int indexOfTransformation = -1;
+        TransformationState transformationState = TransformationState.PRE_ANALYSIS;
+
+        while (!transformationState.equals(TransformationState.POST_TRANSFORMATION)) {
+            for (int i = 0; i < linearFlow.size(); i++) {
+
+                DataflowGraphComponent dataflowGraphComponent = linearFlow.get(i);
+
+                if (dataflowGraphComponent instanceof DataflowEdge) {
+
+                    DataflowEdge dataflowEdge = (DataflowEdge) dataflowGraphComponent;
+                    if (dataflowEdge.getDataTypeCommunicated().equals(BinaryData.class)) {
+                        if (transformationState.equals(TransformationState.PRE_ANALYSIS)) {
+                            transformationState = transformationState.next();
+                        }
+                    } else if (FormattedData.class.isAssignableFrom(dataflowEdge.getDataTypeCommunicated())) {
+                        if (transformationState.equals(TransformationState.PRE_ANALYSIS)) {
+                            throw new RuntimeException("NEVER ENCOUNTERED BINARY DATA... CHECK DATA FLOWS FOR VALIDITY");
+                        } else if (transformationState.equals(TransformationState.PRE_TRANSFORMATION)) {
+                            transformationState = transformationState.next();
+                            indexOfTransformation = i;
+                        }
+                    }
+                }
+            }
+        }
+
+        DataflowEdge dataflowEdge = (DataflowEdge) linearFlow.get(indexOfTransformation);
+        DataflowNode dataflowNode = dataflowEdge.getProducer();
+        if (dataflowNode instanceof InterMethodDataflowNode) {
+            //TODO
+        } else if (dataflowNode instanceof MethodInvocationDataflowNode) {
+            MethodInvocationDataflowNode methodNode = (MethodInvocationDataflowNode) dataflowNode;
+            return new InjectionSite(methodNode.getJavaClassName(), methodNode.getJavaMethodName(), methodNode.getLineNumber());
+        }
+        return null;
+    }
+
+    private static InjectionSite getOutgoingInjectionSite(Set<DataflowEdge> dataflowEdges, InjectionImpact injectionImpact) {
+
+        List<DataflowEdge> tempEdges = new ArrayList<>(dataflowEdges);
+        DataflowEdge starterEdge = null;
+        for (int i = 0; i < tempEdges.size(); i++) {
+            DataflowEdge dataflowEdge = tempEdges.get(i);
+
+            if (dataflowEdge.getProducer() != null && dataflowEdge.getConsumer() != null) {
+               starterEdge = tempEdges.remove(i);
+               break;
+            }
+        }
+
+        DataflowNode starterProducer = starterEdge.getProducer();
+        DataflowNode starterConsumer = starterEdge.getConsumer();
+
+        List<List<DataflowGraphComponent>> linearFlows = new ArrayList<>();
+        while (!tempEdges.isEmpty()) {
+            List<DataflowGraphComponent> linearFlow = new ArrayList<>();
+
+            linearFlow.add(starterProducer);
+            linearFlow.add(starterEdge);
+            linearFlow.add(starterConsumer);
+
+            while ((linearFlow.get(0) != null) || (linearFlow.get(linearFlow.size() - 1) != null)) {
+                for (DataflowEdge dataflowEdge : tempEdges) {
+
+                    DataflowNode firstNode = (DataflowNode) linearFlow.get(0);
+                    DataflowNode lastNode = (DataflowNode) linearFlow.get(linearFlow.size() - 1);
+
+                    if (firstNode != null) {
+                        if ((dataflowEdge.getConsumer() != null) && (compareMethodNodes(dataflowEdge.getConsumer(), firstNode))) {
+                            linearFlow.add(0, dataflowEdge);
+                            linearFlow.add(0, dataflowEdge.getProducer());
+                            continue;
+                        }
+                    }
+
+                    if (lastNode != null) {
+                        if ((dataflowEdge.getProducer() != null) && (compareMethodNodes(dataflowEdge.getProducer(),lastNode))) {
+                            linearFlow.add(dataflowEdge);
+                            linearFlow.add(dataflowEdge.getConsumer());
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            ListIterator<DataflowEdge> edgeIter = tempEdges.listIterator();
+            while (edgeIter.hasNext()) {
+                DataflowEdge dataflowEdge = edgeIter.next();
+                for (DataflowGraphComponent graphComponent : linearFlow) {
+                    if (graphComponent instanceof DataflowEdge) {
+                        DataflowEdge analyzedEdge = (DataflowEdge) graphComponent;
+                        if (compareEdges(dataflowEdge, analyzedEdge)) {
+                            edgeIter.remove();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < tempEdges.size(); i++) {
+                DataflowEdge dataflowEdge = tempEdges.get(i);
+                if (dataflowEdge.getProducer() != null && dataflowEdge.getConsumer() != null) {
+                    starterEdge = tempEdges.remove(i);
+                    break;
+                }
+            }
+            starterProducer = starterEdge.getProducer();
+            starterConsumer = starterEdge.getConsumer();
+
+            linearFlows.add(linearFlow);
+        }
+
+        for (List<DataflowGraphComponent> linearFlow : linearFlows) {
+           DataflowGraphComponent graphComponent = linearFlow.get(linearFlow.size() - 2);
+
+           if (graphComponent instanceof InterMethodDataflowEdge) {
+               //TODO outward flow
+               dataflowEdges.removeAll(linearFlow.stream().filter(dataGraphComp -> dataGraphComp instanceof DataflowEdge).map(edge -> (DataflowEdge) edge)
+                       .collect(Collectors.toList()));
+               injectionImpact.setDataflows(linearFlow.toArray(new DataflowGraphComponent[linearFlow.size()]));
+               return getInjectionSiteOutward(linearFlow);
+           }
+        }
+
+        return null;
+    }
+
+    public static boolean compareEdges(DataflowEdge edge1, DataflowEdge edge2) {
+        if (!compareMethodNodes(edge1.getProducer(), edge2.getProducer())) {
+            return false;
+        }
+
+        if (!compareMethodNodes(edge1.getConsumer(), edge2.getConsumer())) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean compareMethodNodes(DataflowNode dataflowNode1, DataflowNode dataflowNode2) {
+
+        if (dataflowNode1 == null && dataflowNode2 == null) {
+            return true;
+        } else if (dataflowNode1 == null && dataflowNode2 != null) {
+            return false;
+        } else if (dataflowNode1 != null && dataflowNode2 == null) {
+            return false;
+        }
+
+        String methodName1 = null;
+        String methodClass1 = null;
+        int methodLine1 = -1;
+
+        if (dataflowNode1 instanceof MethodInvocationDataflowNode) {
+            MethodInvocationDataflowNode methodNode1 = (MethodInvocationDataflowNode) dataflowNode1;
+            methodName1 = methodNode1.getJavaMethodName();
+            methodClass1 = methodNode1.getJavaClassName();
+            methodLine1 = methodNode1.getLineNumber();
+        } else if (dataflowNode1 instanceof InterMethodDataflowNode) {
+            InterMethodDataflowNode methodNode1 = (InterMethodDataflowNode) dataflowNode1;
+            methodName1 = methodNode1.getJavaMethodName();
+            methodClass1 = methodNode1.getJavaClassName();
+            methodLine1 = methodNode1.getLineNumber();
+        }
+
+        String methodName2 = null;
+        String methodClass2 = null;
+        int methodLine2 = -1;
+
+        if (dataflowNode2 instanceof MethodInvocationDataflowNode) {
+            MethodInvocationDataflowNode methodNode2 = (MethodInvocationDataflowNode) dataflowNode2;
+            methodName2 = methodNode2.getJavaMethodName();
+            methodClass2 = methodNode2.getJavaClassName();
+            methodLine2 = methodNode2.getLineNumber();
+        } else if (dataflowNode2 instanceof InterMethodDataflowNode) {
+            InterMethodDataflowNode methodNode2 = (InterMethodDataflowNode) dataflowNode2;
+            methodName2 = methodNode2.getJavaMethodName();
+            methodClass2 = methodNode2.getJavaClassName();
+            methodLine2 = methodNode2.getLineNumber();
+        }
+
+        if (!methodName1.equals(methodName2)) {
+            return false;
+        } else if (!methodClass1.equals(methodClass2)) {
+            return false;
+        } else if (methodLine1 != methodLine2) {
+            return false;
+        }
+        return true;
+    }
+
+
+
+    private static InjectionSite getInjectionSiteOutward(List<DataflowGraphComponent> linearFlow) {
+
+        Collections.reverse(linearFlow);
+
+        int indexOfTransformation = -1;
+        TransformationState transformationState = TransformationState.PRE_ANALYSIS;
+
+        while (!transformationState.equals(TransformationState.POST_TRANSFORMATION)) {
+            for (int i = 0; i < linearFlow.size(); i++) {
+
+                DataflowGraphComponent dataflowGraphComponent = linearFlow.get(i);
+
+                if (dataflowGraphComponent instanceof DataflowEdge) {
+
+                    DataflowEdge dataflowEdge = (DataflowEdge) dataflowGraphComponent;
+                    if (dataflowEdge.getDataTypeCommunicated().equals(BinaryData.class)) {
+                        if (transformationState.equals(TransformationState.PRE_ANALYSIS)) {
+                            transformationState = transformationState.next();
+                        }
+                    } else if (FormattedData.class.isAssignableFrom(dataflowEdge.getDataTypeCommunicated())) {
+                        if (transformationState.equals(TransformationState.PRE_ANALYSIS)) {
+                            throw new RuntimeException("NEVER ENCOUNTERED BINARY DATA... CHECK DATA FLOWS FOR VALIDITY");
+                        } else if (transformationState.equals(TransformationState.PRE_TRANSFORMATION)) {
+                            transformationState = transformationState.next();
+                            indexOfTransformation = i;
+                        }
+                    }
+                }
+            }
+        }
+
+        DataflowEdge dataflowEdge = (DataflowEdge) linearFlow.get(indexOfTransformation);
+        DataflowNode dataflowNode = dataflowEdge.getConsumer();
+        if (dataflowNode instanceof InterMethodDataflowNode) {
+            //TODO
+        } else if (dataflowNode instanceof MethodInvocationDataflowNode) {
+            MethodInvocationDataflowNode methodNode = (MethodInvocationDataflowNode) dataflowNode;
+            return new InjectionSite(methodNode.getJavaClassName(), methodNode.getJavaMethodName(), methodNode.getLineNumber());
+        }
+        return null;
+    }
+
+    private static Pair<String, String> getXslt(String currentVersion, String targetVersion) {
+        return null;
+    }
+
+    private static String getFormatVersionInResource(String resourceUUID, GradleTaskHelper taskHelper) {
+
+        String getVersion = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_resources_logical: <http://darpa.mil/immortals/ontology/r2.0.0/resources/logical#> \n" +
+                "prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#>\n" +
+                "\n" +
+                "select ?targetVersion where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t?arch a IMMoRTALS_gmei:ApplicationArchitecture\n" +
+                "\t; IMMoRTALS:hasAvailableResources ?archResource .\n" +
+                "\t\n" +
+                "\t{?archResource a* <???TARGET_RESOURCE???> .}\n" +
+                "\tUNION\n" +
+                "\t{?tempArchResource rdfs:subClassOf* <???TARGET_RESOURCE???> .\n" +
+                "\t ?archResource a* ?tempArchResource }\n" +
+                "\t \n" +
+                "\t ?archResource IMMoRTALS:hasResources ?formattedResource .\n" +
+                "\t \n" +
+                "\t{?formattedResource a* IMMoRTALS_resources_logical:Schema}\n" +
+                "\tUNION\n" +
+                "\t{?tempFormatetdResource rdfs:subClassOf* IMMoRTALS_resources_logical:Schema. \n" +
+                "\t ?formattedResource a* ?tempArchResource }\n" +
+                "\t \n" +
+                "\t ?formattedResource IMMoRTALS:hasVersion ?targetVersion .\n" +
+                "\t \n" +
+                "    }\n" +
+                "}";
+        getVersion = getVersion.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???TARGET_RESOURCE???", resourceUUID);
+        AssertableSolutionSet versionSolutions = new AssertableSolutionSet();
+
+        taskHelper.getClient().executeSelectQuery(getVersion, versionSolutions);
+
+        if (!versionSolutions.getSolutions().isEmpty()) {
+            return versionSolutions.getSolutions().get(0).get("targetVersion");
+        } else {
+            throw new RuntimeException("UNABLE TO FIND TARGET VERSION");
+        }
+    }
+
+    private static Set<DataflowEdge> getEdgesBelongingToResourceInProj(String resourceUUID,
+                                                                        String projUUID, GradleTaskHelper taskHelper) throws ClassNotFoundException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+
+        Set<DataflowEdge> dataflowEdges = new HashSet<>();
+
+        String getNodes = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_java_project: <http://darpa.mil/immortals/ontology/r2.0.0/java/project#>\n" +
+                "prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#>\n" +
+                "prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "\n" +
+                "select distinct ?edge where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t{?node a* IMMoRTALS_analysis:DataflowNode}\n" +
+                "\t\tUNION\n" +
+                "\t\t{?tester rdfs:subClassOf* IMMoRTALS_analysis:DataflowNode .\n" +
+                "\t\t?node a* ?tester .}\n" +
+                "\t\t\n" +
+                "\t\t?node IMMoRTALS:hasAbstractResourceTemplate <???RESOURCE???> .\n" +
+                "\n" +
+                "\t\t{?edge a* IMMoRTALS_analysis:DataflowEdge}\n" +
+                "\t\tUNION\n" +
+                "\t\t{?tempEdge rdfs:subClassOf* IMMoRTALS_analysis:DataflowEdge .\n" +
+                "\t\t ?edge a* ?tempEdge .}\n" +
+                "\t\t\n" +
+                "\t\t {?edge IMMoRTALS:hasConsumer ?node}\n" +
+                "\t\tUNION\n" +
+                "\t\t{?edge IMMoRTALS:hasProducer ?node}\n" +
+                "\t\t\n" +
+                "\t}\n" +
+                "}";
+        getNodes = getNodes.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???PROJ_UUID???", projUUID)
+                .replace("???RESOURCE???", resourceUUID);
+        AssertableSolutionSet edgeSolutions = new AssertableSolutionSet();
+
+        taskHelper.getClient().executeSelectQuery(getNodes, edgeSolutions);
+
+        if (!edgeSolutions.getSolutions().isEmpty()) {
+            for (Solution edgeSolution : edgeSolutions.getSolutions()) {
+                String edgeUUID = edgeSolution.get("edge");
+                DataflowEdge dataflowEdge = (DataflowEdge) TriplesToPojo.convert(taskHelper.getGraphName(), edgeUUID, taskHelper.getClient());
+                dataflowEdges.add(dataflowEdge);
+            }
+
+            return dataflowEdges;
+
+        } else {
+            throw new RuntimeException("UNABLE TO FIND NODES BELONGING TO SPECIFIED RESOURCE");
+        }
+    }
+
+    private static Set<File> getProjectDependencies(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config, String projectUUID, MethodInvocationDataflowNode streamInitNode) throws UnsupportedEncodingException {
+        Set<File> thirdPartyDependencies = getThirdPartyDependencies(taskHelper, projectUUID);
+        Optional<String> androidJarOption = retrieveProjectPlatform(taskHelper, projectUUID);
+
+        Set<File> platformResources = new HashSet<>();
+        if (androidJarOption.isPresent()) {
+            //androidApp
+            File androidJarFile = new File(androidJarOption.get());
+            if (androidJarFile.exists()) {
+                platformResources.add(androidJarFile);
+            } else {
+                System.err.println("UNABLE TO FIND ANDROID JAR");
+            }
+        } else {
+            platformResources.addAll(getJavaPlatformResources(taskHelper, config, streamInitNode));
+        }
+
+        thirdPartyDependencies.addAll(platformResources);
+
+        return thirdPartyDependencies;
+    }
+
+    private static Set<File> getJavaPlatformResources(GradleTaskHelper taskHelper, ObjectToTriplesConfiguration config, MethodInvocationDataflowNode streamInitNode) throws UnsupportedEncodingException {
+        String getDependentFiles = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\n" +
+                "select ?dependentFiles where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t<???CLASS???> IMMoRTALS:hasDependentFiles ?dependentFiles .\n" +
+                "\t}\n" +
+                "}";
+        getDependentFiles = getDependentFiles.replace("???GRAPH_NAME???", taskHelper.getGraphName()).
+                replace("???CLASS???", getClassWhereMethodNodeExists(taskHelper, config.getNamingContext().getNameForObject(streamInitNode)));
+        AssertableSolutionSet dependentFileSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getDependentFiles, dependentFileSolutions);
+
+        taskHelper.getPw().println("Precise location of initialization found, can now proceed to create wrapper class...");
+
+        Set<String> dependentFilePaths = sanitizeDependencyPaths(dependentFileSolutions);
+
+        Set<File> dependentFiles = new HashSet<>();
+        String systemOS = System.getProperty("os.name");
+        boolean windows = false;
+        if (systemOS.toLowerCase().contains("windows")) {
+            windows = true;
+        }
+
+        for (String dependentFilePath : dependentFilePaths) {
+            if (!windows) {
+                dependentFiles.add(new File("/" + dependentFilePath));
+            } else {
+                dependentFiles.add(new File(dependentFilePath));
+            }
+        }
+
+        return dependentFiles;
+    }
+
+    //uses old field, hasSemanticLink
+    @Deprecated
+    private static String getClassWhereMethodNodeExists(GradleTaskHelper taskHelper, String nodeUUID) {
+
+        String getClassWhereNodeExists = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\n" +
+                "select ?aClass where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "    \n" +
+                "    ?methodCalls IMMoRTALS:hasSemanticLink <???METHOD_NODE???> .\n" +
+                "    \n" +
+                "    ?methods IMMoRTALS:hasInterestingInstructions ?methodCalls .\n" +
+                "    \n" +
+                "    ?aClass IMMoRTALS:hasMethods ?methods .\n" +
+                "  }\n" +
+                "}";
+        getClassWhereNodeExists = getClassWhereNodeExists.replace("???GRAPH_NAME???", taskHelper.getGraphName()).
+                replace("???METHOD_NODE???", nodeUUID);
+        AssertableSolutionSet classSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getClassWhereNodeExists, classSolutions);
+
+        if (!classSolutions.getSolutions().isEmpty()) {
+            return classSolutions.getSolutions().get(0).get("aClass");
+        } else {
+            System.out.println("UNABLE TO FIND CLASS WHERE METHOD NODE EXISTS");
+            return null;
+        }
+    }
+
+    private static Set<String> sanitizeDependencyPaths(AssertableSolutionSet dependentFileSolutions) throws UnsupportedEncodingException {
+        Set<String> dependentFiles = new HashSet<>();
+        for (Solution dependentFileSolution : dependentFileSolutions.getSolutions()) {
+            String dependentFileFullPath = dependentFileSolution.get("dependentFiles");
+            dependentFiles.add(URLDecoder.decode(dependentFileFullPath.replace("\\", "/").
+                    substring(dependentFileFullPath.indexOf("jar:file:/") + 10, dependentFileFullPath.indexOf("!")), "UTF-8"));
+        }
+        return dependentFiles;
+    }
+
+    private static Optional<String> retrieveProjectPlatform(GradleTaskHelper taskHelper, String projectUUID) {
+        String checkIfApplicableProjectIsAndroid = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "select ?uberJar where {\n" +
+                "\tgraph <http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t<???PROJECT_UUID???> IMMoRTALS:hasAndroidApp ?androidApp .\n" +
+                "    \n" +
+                "   \t\t ?androidApp IMMoRTALS:hasPathToUberJar ?uberJar .\n" +
+                "    \n" +
+                "\t}\n" +
+                "}";
+        checkIfApplicableProjectIsAndroid = checkIfApplicableProjectIsAndroid.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                .replace("???PROJECT_UUID???", projectUUID);
+        AssertableSolutionSet androidJarSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(checkIfApplicableProjectIsAndroid, androidJarSolutions);
+
+        if (androidJarSolutions.getSolutions().isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(androidJarSolutions.getSolutions().get(0).get("uberJar"));
+        }
+    }
+
+    protected static Set<File> getThirdPartyDependencies(GradleTaskHelper taskHelper, String projectUUID) {
+
+        Set<File> dependencies = new HashSet<>();
+
+        String getDependencyPaths = "prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#>\n" +
+                "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> \n\n" +
+                "select ?filePaths where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\n" +
+                "\t\t<???PROJECT_UUID???> IMMoRTALS:hasClasspaths ?classPaths .\n" +
+                "\t\t\n" +
+                "\t\t?classPaths IMMoRTALS:hasClasspathName ?classPathName\n" +
+                "\t\t; IMMoRTALS:hasElementHashValues ?hashes .\n" +
+                "\n\t\tFILTER regex(?classPathName, \"compile\") .\n" +
+                "\t\t?jars a IMMoRTALS_bytecode:JarArtifact\n" +
+                "\t\t; IMMoRTALS:hasHash ?hashes\n" +
+                "\t\t; IMMoRTALS:hasFileSystemPath ?filePaths .\n" +
+                "\t}\n" +
+                "}";
+        getDependencyPaths = getDependencyPaths.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???PROJECT_UUID???", projectUUID);
+        GradleTaskHelper.AssertableSolutionSet dependencySolutions = new GradleTaskHelper.AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getDependencyPaths, dependencySolutions);
+
+        for (GradleTaskHelper.Solution dependencySolution : dependencySolutions.getSolutions()) {
+            dependencies.add(new File(dependencySolution.get("filePaths")));
+        }
+
+        return dependencies;
+    }
+
+    private static String getNodesProject(GradleTaskHelper taskHelper, String nodeUUID) {
+
+        String getNodesProject = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\n" +
+                "select distinct ?project where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "    \n" +
+                "    {\n" +
+                "    ?methodCalls IMMoRTALS:hasSemanticLink <???METHOD_NODE???> .\n" +
+                "    \n" +
+                "    ?methods IMMoRTALS:hasInterestingInstructions ?methodCalls .\n" +
+                "    \n" +
+                "    ?aClass IMMoRTALS:hasMethods ?methods\n" +
+                "      ; IMMoRTALS:hasClassName ?fullName .\n" +
+                "    \n" +
+                "    BIND(str(STRBEFORE(str(?fullName), \"$\")) as ?regexedName)\n" +
+                "    BIND(REPLACE(str(?regexedName), \"/\", \"\\\\.\") as ?urlFullName)\n" +
+                "    \n" +
+                "    ?sourceFiles IMMoRTALS:hasFullyQualifiedName ?urlFullName .\n" +
+                "    \n" +
+                "    ?sourceRepo IMMoRTALS:hasSourceFiles ?sourceFiles .\n" +
+                "    \n" +
+                "    ?project IMMoRTALS:hasSourceCodeRepo ?sourceRepo .\n" +
+                "    }\n" +
+                "    union\n" +
+                "    {\n" +
+                "    ?methodCalls IMMoRTALS:hasSemanticLink <???METHOD_NODE???> .\n" +
+                "    \n" +
+                "    ?methods IMMoRTALS:hasInterestingInstructions ?methodCalls .\n" +
+                "    \n" +
+                "    ?aClass IMMoRTALS:hasMethods ?methods\n" +
+                "      ; IMMoRTALS:hasClassName ?fullName .\n" +
+                "    \n" +
+                "    BIND(REPLACE(str(?fullName), \"/\", \"\\\\.\") as ?urlFullName)\n" +
+                "    \n" +
+                "    ?sourceFiles IMMoRTALS:hasFullyQualifiedName ?urlFullName .\n" +
+                "    \n" +
+                "    ?sourceRepo IMMoRTALS:hasSourceFiles ?sourceFiles .\n" +
+                "    \n" +
+                "    ?project IMMoRTALS:hasSourceCodeRepo ?sourceRepo .\n" +
+                "    }\n" +
+                "    \n" +
+                "    \n" +
+                "    \t\n" +
+                "\n" +
+                "  }\n" +
+                "}";
+        getNodesProject = getNodesProject.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???METHOD_NODE???", nodeUUID);
+        AssertableSolutionSet projectSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getNodesProject, projectSolutions);
+
+        if (!projectSolutions.getSolutions().isEmpty()) {
+            return projectSolutions.getSolutions().get(0).get("project");
+        } else {
+            System.out.println("UNABLE TO FIND PROJECT THAT DATA FLOW NODE: " + nodeUUID + " BELONGS TO");
+            return null;
+        }
+    }
+
+    private static String convertToSootSubSignature(String transmissionMethodSig) {
+
+        String methodName = transmissionMethodSig.substring(0, transmissionMethodSig.indexOf("("));
+
+        String returnType = transmissionMethodSig.substring(transmissionMethodSig.lastIndexOf(")") + 1);
+
+        switch (returnType) {
+            case "V" :
+                returnType = "void";
+                break;
+            default:
+                break;
+        }
+
+        String paramsString = transmissionMethodSig.substring(transmissionMethodSig.indexOf("(") + 1, transmissionMethodSig.lastIndexOf(")"));
+        String[] params = paramsString.split(";");
+        paramsString = "";
+
+        for (int i = 0; i < params.length; i++) {
+            String param = params[i];
+            if (param.startsWith("L")) {
+                param = param.substring(1);
+                param = param.replace("/", ".");
+                paramsString+=param;
+            } else if (param.startsWith("Z")) {
+                param = "boolean";
+                paramsString+=param;
+            }
+
+            if (i != params.length - 1) {
+                paramsString+=",";
+            }
+        }
+
+        String newSignature = returnType + " " + methodName + "(" + paramsString + ")";
+        return newSignature;
+    }
+
+    public static String getMethodSignatureFromPointer(String javaMethodPointer) {
+        return javaMethodPointer.substring(javaMethodPointer.lastIndexOf("/methods/") + 9);
+    }
+
+    private static String getAugmentedJarPath(String classToBeExpanded, GradleTaskHelper taskHelper) {
+
+        String classJarPath = null;
+        String getClassJarPath =  "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#>\n" +
+                "\n" +
+                "select ?jarPath where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t?jar a IMMoRTALS_bytecode:JarArtifact\n" +
+                "\t\t; IMMoRTALS:hasFileSystemPath ?jarPath\n" +
+                "\t\t; IMMoRTALS:hasJarContents ?classArtifacts .\n" +
+                "\t\t\n" +
+                "\t\t?classArtifacts IMMoRTALS:hasHash ?dfuHash " +
+                "\t\t; IMMoRTALS:hasName \"???CLASS_NAME???\"\n" +
+                "\t\t\n" +
+                "\t}\n" +
+                "}";
+        getClassJarPath = getClassJarPath.replace("???GRAPH_NAME???", taskHelper.getGraphName()).replace("???CLASS_NAME???", classToBeExpanded + ".class");
+        AssertableSolutionSet classJarPathSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getClassJarPath, classJarPathSolutions);
+
+        if (!classJarPathSolutions.getSolutions().isEmpty()) {
+            classJarPath = classJarPathSolutions.getSolutions().get(0).get("jarPath");
+        }
+
+        return classJarPath;
+    }
+
+    private static String getCipherJarPath(String dfuUUID, GradleTaskHelper taskHelper) {
+
+        String cipherJarPath = null;
+        String getCipherJarPath = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#>\n" +
+                "\n" +
+                "select ?jarPath where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\t?jar a IMMoRTALS_bytecode:JarArtifact\n" +
+                "\t\t; IMMoRTALS:hasFileSystemPath ?jarPath\n" +
+                "\t\t; IMMoRTALS:hasJarContents ?classArtifacts .\n" +
+                "\t\t\n" +
+                "\t\t?classArtifacts IMMoRTALS:hasHash ?dfuHash .\n" +
+                "\t\t\n" +
+                "\t\t<???DFU_INSTANCE???> IMMoRTALS:hasClassPointer ?dfuHash .\n" +
+                "\t}\n" +
+                "}";
+        getCipherJarPath = getCipherJarPath.replace("???GRAPH_NAME???", taskHelper.getGraphName())
+                .replace("???DFU_INSTANCE???", dfuUUID);
+        AssertableSolutionSet cipherJarPathSolutions = new AssertableSolutionSet();
+        taskHelper.getClient().executeSelectQuery(getCipherJarPath, cipherJarPathSolutions);
+
+        if (!cipherJarPathSolutions.getSolutions().isEmpty()) {
+            cipherJarPath = cipherJarPathSolutions.getSolutions().get(0).get("jarPath");
+        }
+
+        return cipherJarPath;
+    }
+
+    private static AspectConfigureSolution getAspectConfigureSolution(GradleTaskHelper taskHelper, String projectUUID) throws Exception {
         DeploymentModel deploymentModel = retrieveDeploymentModel(taskHelper);
-        List<AspectConfigureSolution> configureSolutions = AnalysisFrameAssessment.retrieveConfigurationSolutions(taskHelper);
+        List<AspectConfigureSolution> configureSolutions = AnalysisFrameAssessment.retrieveConfigurationSolutions(taskHelper, projectUUID);
         AspectConfigureSolution chosenSolution = null;
         for (AspectConfigureSolution configureSolution : configureSolutions) {
             if (ConfigurationCheckerRules.checkConfiguration(deploymentModel, configureSolution) != null) {
@@ -528,7 +2761,7 @@ public class ConstraintAssessment {
         String getConstraintViolations = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
                 "prefix IMMoRTALS_property_impact: <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#>\n" +
                 "\n" +
-                "select ?constraintViolation where {\n" +
+                "select distinct ?constraintViolation where {\n" +
                 "\t\n" +
                 "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
                 "\t\t?constraintViolation a IMMoRTALS_property_impact:ConstraintViolation .\n" +

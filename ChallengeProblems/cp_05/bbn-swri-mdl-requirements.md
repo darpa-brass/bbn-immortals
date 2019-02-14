@@ -28,6 +28,8 @@ The DAU Inventory consists of a number of **NetworkNode** child elements within 
 
 It will be provided in an XML format prior to test execution. It will also be hosted in the same OrientDB as the faulty Flight Test Configuration to simplify integrating DAUs into the configuration.
 
+A sample we are using for internal testing based on the initial example gone over during the last PI Meeting can be found [here](../../../../shared/tools/odbhelper/resources/dummy_data/s5_dauInventory.xml)
+
 ## DAU Inventory Metadata
 
 This section covers all the data that is required prior to evaluation that should be provided within DAUs inside the DAU Inventory.
@@ -110,6 +112,7 @@ The purpose of evaluation is to replace faulty DAUs with suitable replacements. 
 initial example it will initially be a 1-1 swap. This section covers the additional metadata that is expected to be 
 part of the input Test Configuration.
 
+A sample we are using for internal testing based on the initial example gone over during the last PI Meeting can be found [here](../../../../shared/tools/odbhelper/resources/dummy_data/scenario5_input_mdlRoot.xml)
 
 ### Required Information
 

@@ -105,13 +105,24 @@ public class ConstraintAssessmentService {
 
         {//load everything into fuseki
             for(File f:files){
+                System.out.println("READING IN: " + f.getName());
                 if (!(f.length() > 50000000)) {
                     Model m = ModelFactory.createDefaultModel();
-                    m.read(
-                            new ByteArrayInputStream(FileUtils.readFileToByteArray(f)),
-                            null,
-                            "TURTLE"
-                    );
+                    
+                    try {
+                        m.read(
+                                new ByteArrayInputStream(FileUtils.readFileToByteArray(f)),
+                                null,
+                                "TURTLE"
+                        );
+                    } catch (Exception exc) {
+                        if (f.getParentFile().getName().contains("Pax")) {
+                            System.out.println("read pax file...");
+                            continue;
+                        } else {
+                            return null;
+                        }
+                    }
                     repository.appendToGraph(m, graphName);
                 } else {
                     logger.warn("File: " + f.getName() + " is too large for analysis, skipping...");
@@ -144,7 +155,7 @@ public class ConstraintAssessmentService {
             taskHelper.setPw(new PrintWriter(System.out));
             ConstraintAssessment.constraintAnalysis(
                     taskHelper, config);
-           // String assessmentUUID = ConstraintAssessment.createAdaptationSurface(taskHelper, config, Helper.getDependencies(taskHelper));
+           // String assessmentUUID = ConstraintAssessment.createAdaptationSurface(taskHelper, config, Helper.getThirdPartyDependencies(taskHelper));
 
         }
         return graphName;
@@ -217,7 +228,7 @@ public class ConstraintAssessmentService {
         ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration("r2.0.0");
         GradleTaskHelper taskHelper = new GradleTaskHelper(repository.getFusekiClient(), graphName);
         taskHelper.setPw(new PrintWriter(System.out));
-        String assessmentUUID = ConstraintAssessment.createAdaptationSurface(taskHelper, config, Helper.getDependencies(taskHelper));
+        String assessmentUUID = null;//ConstraintAssessment.createAdaptationSurface(taskHelper, config);
         return assessmentUUID;
     }
 

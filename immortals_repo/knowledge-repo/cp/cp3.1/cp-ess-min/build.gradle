@@ -1,0 +1,38 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+  }
+}
+
+allprojects {
+	apply plugin: 'base'
+	apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'java'
+	apply plugin: 'maven'
+
+    compileJava {
+		sourceCompatibility = "${JAVA_COMPILER_SRC_LEVEL}"
+        targetCompatibility = "${JAVA_COMPILER_SRC_LEVEL}"
+    }
+
+    repositories {
+        mavenCentral()
+    }
+	
+	tasks.withType(Jar) {
+        destinationDir = file("${projectDir}/target")
+    }
+	
+	clean {
+		delete "${projectDir}/target"
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.9'
+}
+
+

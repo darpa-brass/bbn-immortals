@@ -1,0 +1,14 @@
+!include basic.iuml
+
+!definelong CONDITION_PARAMETERS(parent, pkg_title)
+package "pkg_title (ConditionParameters)" as parent##ConditionParameters {
+    package "ConditionParameter [1..*]" as parent##ConditionParameter {
+                    component parent##ConditionparameterConditionoperation as "ConditionOperation (ConditionOperation) [1]"
+                    component parent##ConditionparameterConditionvalue as "ConditionValue (Value) [1]"
+                    component parent##ConditionparameterBaseunit as "BaseUnit (BaseUnit) [1]"
+
+                    parent##ConditionparameterConditionoperation -[hidden]r-> parent##ConditionparameterConditionvalue
+                    parent##ConditionparameterConditionvalue -[hidden]r-> parent##ConditionparameterBaseunit
+    }
+}
+!enddefinelong

@@ -1,0 +1,24 @@
+!include basic.iuml
+!include common.iuml
+
+!definelong PORT_MAPPINGS(parent, label)
+package parent##PortMappings as "PortmMappings [0..1]" {
+    package parent##Portmapping as "PortMappping [1..*]" {
+        rectangle parent##PortmappingID as "ID (str)"
+        component parent##PortmappingPortref as "PortRef [1..2] (str)"
+
+        rectangle parent##PortmappingChoice as  " " <<Choose One>> {
+            package parent##PortmappingDatastreamrefs as "DataStreamRefs [1]" {
+                rectangle parent##PortmappingDatastreamref as "DataStreamRef [1..*] (str)"
+            }
+
+            package parent##PortmappingMeasurementrefs as "MeasurementRefs [1]" {
+                rectangle parent##PortmappingMeasurementref as "MeasurementRef [1..*] (str)"
+            }
+        }
+
+        parent##PortmappingID -r-> parent##PortmappingPortref
+        parent##PortmappingPortref -r-> parent##PortmappingChoice
+    }
+}
+!enddefinelong

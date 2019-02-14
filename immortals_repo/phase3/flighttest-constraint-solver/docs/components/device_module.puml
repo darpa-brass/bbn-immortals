@@ -1,0 +1,56 @@
+@startuml
+
+!include basic.iuml
+!include common.iuml
+!include device_submodule.iuml
+
+!definelong DEVICE_MODULE(parent, pkg_title)
+package "pkg_title## (DeviceModule)" as parent##Devicemodule {
+    rectangle "ID (str)" as parent##DevicemoduleID
+    component "Position (int)" <<Modifiable>> as parent##DevicemodulePosition
+    component "PositionsOccupied (int)" <<Modifiable>> as parent##DevicemodulePositionsoccupied
+
+    CONDITION_PARAMETERS(parent##DevicemoduleSensitivity, "Sensitivity [0..1]")
+
+    component "ExcitationSource [0..1]" <<Not Yet Utilized>> as parent##DevicemoduleExcitationsource
+    component "Calibration [0..1]" <<Not Yet Utilized>> as parent##DevicemoduleCalibration
+
+    CHILDREN(parent##Devicemodule, "Children [0..1]")
+    CONNECTORS(parent##Devicemodule, "Connectors [0..1]")
+    PORTS(parent##Devicemodule, "Ports [1]")
+
+    package "DeviceSubModules [0..1]" as parent##DevicemoduleSubmodules {
+        DEVICE_SUBMODULE(parent##DeviceSubmodules, "DeviceSubmodule [1..*]")
+    }
+
+    parent##Devicemodule -d-> parent##DevicemoduleID
+'    parent##Devicemodule -r-> parent##DevicemoduleID
+
+    parent##DevicemoduleID -r-> parent##DevicemodulePosition
+    parent##DevicemodulePosition -r-> parent##DevicemodulePositionsoccupied
+    parent##DevicemodulePositionsoccupied -r-> parent##DevicemoduleExcitationsource
+    parent##DevicemoduleExcitationsource -r-> parent##DevicemoduleCalibration
+
+
+
+'    parent##DevicemoduleID -r-> parent##DevicemoduleSubmodules
+'    parent##DevicemodulePosition -r-> parent##DevicemoduleSubmodules
+'    parent##DevicemodulePositionsoccupied -r-> parent##DevicemoduleSubmodules
+'    parent##DevicemoduleExcitationsource -r-> parent##DevicemoduleSubmodules
+'    parent##DevicemoduleCalibration -r-> parent##DevicemoduleSubmodules
+    parent##DevicemoduleChildren -r-> parent##DevicemoduleSubmodules
+'    parent##DevicemoduleSensitivityConditionParameters -r-> parent##DevicemoduleSubmodules
+
+    parent##DevicemoduleConnectors -r-> parent##DevicemoduleChildren
+
+    parent##DevicemoduleConnectors -d-> parent##DevicemoduleSensitivityConditionParameters
+
+'    parent##DevicemodulePorts -r-> parent##DevicemoduleSubmodules
+
+    parent##DevicemoduleID -d-> parent##DevicemoduleConnectors
+    parent##DevicemoduleSensitivityConditionParameters -d-> parent##DevicemodulePorts
+}
+!enddefinelong
+
+DEVICE_MODULE(ROOT, "DeviceMods [1..*]")
+@enduml

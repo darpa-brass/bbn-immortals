@@ -20,10 +20,6 @@ import com.securboration.immortals.ontology.resources.streams.*;
 @Ignore
 public class SpecExample {
     
-    
-    
-    
-
     @ConceptInstance
     public static class CipherSpecSocketExampleOuput extends LibraryFunctionalAspectSpec {
 
@@ -36,8 +32,7 @@ public class SpecExample {
             this.setComponent(getCipherSpecSocketOuput());
         }
     }
-
-
+    
     private static SpecComponent[] getCipherSpecSocketOuput(){
         List<SpecComponent> components = new ArrayList<>();
 
@@ -46,15 +41,10 @@ public class SpecExample {
 
             CodeSpec codeSpec = new CodeSpec();
             codeSpec.setClassName("java/net/Socket");
-            codeSpec.setCode("\t\t{CipherImpl c = new CipherImpl(\n" +
-                    "                \"AES\",\n" +
-                    "                16,\n" +
-                    "                \"CBC\",\n" +
-                    "                \"PKCS5Padding\",\n" +
-                    "                \"a test password\",\n" +
-                    "                \"an init vector\"\n" +
-                    "        );\n" +
-                    "        return c;}");
+            codeSpec.setCode("{ ???CIPHER_CLASS??? cipherImpl = new ???CIPHER_CLASS???();\n" +
+                    "                    cipherImpl.configure(\"$ALG$\", $KEY_LENGTH$, \"$CHAINING_MODE$\", \"$PADDING$\", \"a test password\", \"an init vector\");\n" +
+                    "                    return cipherImpl; }");
+            codeSpec.setMethodSignature("initCipherImpl()L???CIPHER_CLASS???");
             this.setCodeSpec(codeSpec);
             this.setAspectBeingPerformed(AspectCipherInitialize.class);
         }});
@@ -193,6 +183,120 @@ public class SpecExample {
     }
     
     @ConceptInstance
+    public static class NoOpCipherParadigm extends AbstractUsageParadigm {
+        private DfuInstance dfuInstance;
+        private String magicInitString;
+        private DfuConfigurationVariable[] configurationVariables;
+        
+        public NoOpCipherParadigm() {
+            this.setMagicInitString("{ CipherImplNoop cipherImplNoop = new CipherImplNoop();\n" +
+                    "cipherImplNoop.configure(\"AES\", 16, \"CBC\", \"PKCS5Padding\", \"a test password\", \"an init vector\");\n" +
+                    "return cipherImplNoop; }");
+            DfuConfigurationVariable[] dfuConfigurationVariables = new DfuConfigurationVariable[5];
+            DfuConfigurationVariable dfuConfigurationVariable0 = new DfuConfigurationVariable();
+            dfuConfigurationVariable0.setSemanticType(CipherAlgorithm.class);
+            dfuConfigurationVariable0.setMagicStringVar("$ALG$");
+            DfuConfigurationVariable dfuConfigurationVariable1 = new DfuConfigurationVariable();
+            dfuConfigurationVariable1.setSemanticType(CipherKeyLength.class);
+            dfuConfigurationVariable1.setMagicStringVar("$KEY_LENGTH$");
+            DfuConfigurationVariable dfuConfigurationVariable2 = new DfuConfigurationVariable();
+            dfuConfigurationVariable2.setSemanticType(CipherBlockSize.class);
+            dfuConfigurationVariable2.setMagicStringVar("$BLOCK_SIZE$");
+            DfuConfigurationVariable dfuConfigurationVariable3 = new DfuConfigurationVariable();
+            dfuConfigurationVariable3.setSemanticType(CipherChainingMode.class);
+            dfuConfigurationVariable3.setMagicStringVar("$CHAINING_MODE$");
+            DfuConfigurationVariable dfuConfigurationVariable4 = new DfuConfigurationVariable();
+            dfuConfigurationVariable4.setSemanticType(PaddingScheme.class);
+            dfuConfigurationVariable4.setMagicStringVar("$PADDING_SCHEME$");
+            dfuConfigurationVariables[0] = dfuConfigurationVariable0;
+            dfuConfigurationVariables[1] = dfuConfigurationVariable1;
+            dfuConfigurationVariables[2] = dfuConfigurationVariable2;
+            dfuConfigurationVariables[3] = dfuConfigurationVariable3;
+            dfuConfigurationVariables[4] = dfuConfigurationVariable4;
+            this.setConfigurationVariables(dfuConfigurationVariables);
+        }
+
+        public String getMagicInitString() {
+            return magicInitString;
+        }
+
+        public void setMagicInitString(String magicInitString) {
+            this.magicInitString = magicInitString;
+        }
+
+        public DfuConfigurationVariable[] getConfigurationVariables() {
+            return configurationVariables;
+        }
+
+        public void setConfigurationVariables(DfuConfigurationVariable[] configurationVariables) {
+            this.configurationVariables = configurationVariables;
+        }
+    }
+    
+
+    @ConceptInstance
+    public static class BouncyCastleCipherParadigm extends AbstractUsageParadigm {
+
+        private DfuInstance dfuInstance;
+        private String magicInitString;
+        private DfuConfigurationVariable[] configurationVariables;
+
+        public BouncyCastleCipherParadigm() {
+            this.setDfuInstance(new BouncyCastleCipher());
+            this.setMagicInitString("{ CipherImplBouncyCrypto cipherImpl = new CipherImplBouncyCrypto();\n" +
+                    "cipherImpl.configure(\"AES\", 16, \"CBC\", \"PKCS5Padding\", \"a test password\", \"an init vector\");\n" +
+                    "return cipherImpl; }");
+
+            DfuConfigurationVariable[] dfuConfigurationVariables = new DfuConfigurationVariable[5];
+            DfuConfigurationVariable dfuConfigurationVariable0 = new DfuConfigurationVariable();
+            dfuConfigurationVariable0.setSemanticType(CipherAlgorithm.class);
+            dfuConfigurationVariable0.setMagicStringVar("$ALG$");
+            DfuConfigurationVariable dfuConfigurationVariable1 = new DfuConfigurationVariable();
+            dfuConfigurationVariable1.setSemanticType(CipherKeyLength.class);
+            dfuConfigurationVariable1.setMagicStringVar("$KEY_LENGTH$");
+            DfuConfigurationVariable dfuConfigurationVariable2 = new DfuConfigurationVariable();
+            dfuConfigurationVariable2.setSemanticType(CipherBlockSize.class);
+            dfuConfigurationVariable2.setMagicStringVar("$BLOCK_SIZE$");
+            DfuConfigurationVariable dfuConfigurationVariable3 = new DfuConfigurationVariable();
+            dfuConfigurationVariable3.setSemanticType(CipherChainingMode.class);
+            dfuConfigurationVariable3.setMagicStringVar("$CHAINING_MODE$");
+            DfuConfigurationVariable dfuConfigurationVariable4 = new DfuConfigurationVariable();
+            dfuConfigurationVariable4.setSemanticType(PaddingScheme.class);
+            dfuConfigurationVariable4.setMagicStringVar("$PADDING_SCHEME$");
+            dfuConfigurationVariables[0] = dfuConfigurationVariable0;
+            dfuConfigurationVariables[1] = dfuConfigurationVariable1;
+            dfuConfigurationVariables[2] = dfuConfigurationVariable2;
+            dfuConfigurationVariables[3] = dfuConfigurationVariable3;
+            dfuConfigurationVariables[4] = dfuConfigurationVariable4;
+            this.setConfigurationVariables(dfuConfigurationVariables);
+        }
+
+        public DfuInstance getDfuInstance() {
+            return dfuInstance;
+        }
+
+        public void setDfuInstance(DfuInstance dfuInstance) {
+            this.dfuInstance = dfuInstance;
+        }
+
+        public String getMagicInitString() {
+            return magicInitString;
+        }
+
+        public void setMagicInitString(String magicInitString) {
+            this.magicInitString = magicInitString;
+        }
+
+        public DfuConfigurationVariable[] getConfigurationVariables() {
+            return configurationVariables;
+        }
+
+        public void setConfigurationVariables(DfuConfigurationVariable[] configurationVariables) {
+            this.configurationVariables = configurationVariables;
+        }
+    }
+    
+    @ConceptInstance
     public static class JavaxCryptoCipherParadigm extends AbstractUsageParadigm {
         
         private DfuInstance dfuInstance;
@@ -201,15 +305,9 @@ public class SpecExample {
         
         public JavaxCryptoCipherParadigm() {
             this.setDfuInstance(new JavaxCryptoCipher());
-            this.setMagicInitString("\t\t{CipherImpl c = new CipherImpl(\n" +
-                    "                \"$ALG$\",\n" +
-                    "                $KEY_LENGTH$,\n" +
-                    "                \"$CHAINING_MODE$\",\n" +
-                    "                \"$PADDING$\",\n" +
-                    "                \"a test password\",\n" +
-                    "                \"an init vector\"\n" +
-                    "        );\n" +
-                    "        return c;}");
+            this.setMagicInitString("{ CipherImplJavaxCrypto cipherImpl = new CipherImplJavaxCrypto();\n" +
+                    "cipherImpl.configure(\"AES\", 16, \"CBC\", \"PKCS5Padding\", \"a test password\", \"an init vector\");\n" +
+                    "return cipherImpl; }");
             
             DfuConfigurationVariable[] dfuConfigurationVariables = new DfuConfigurationVariable[5];
             DfuConfigurationVariable dfuConfigurationVariable0 = new DfuConfigurationVariable();
@@ -334,15 +432,10 @@ public class SpecExample {
 
             CodeSpec codeSpec = new CodeSpec();
             codeSpec.setClassName("java/nio/channels/SocketChannel");
-            codeSpec.setCode("\t\t{CipherImpl c = new CipherImpl(\n" +
-                    "                \"$ALG$\",\n" +
-                    "                $KEY_LENGTH$,\n" +
-                    "                \"$CHAINING_MODE$\",\n" +
-                    "                \"$PADDING$\",\n" +
-                    "                \"a test password\",\n" +
-                    "                \"an init vector\"\n" +
-                    "        );\n" +
-                    "        return c;}");
+            codeSpec.setCode("{ ???CIPHER_CLASS??? cipherImpl = new ???CIPHER_CLASS???();\n" +
+                    "                    cipherImpl.configure(\"$ALG$\", $KEY_LENGTH$, \"$CHAINING_MODE$\", \"$PADDING$\", \"a test password\", \"an init vector\");\n" +
+                    "                    return cipherImpl; }");
+            codeSpec.setMethodSignature("initCipherImpl()L???CIPHER_CLASS???");
             this.setCodeSpec(codeSpec);
             this.setAspectBeingPerformed(AspectCipherInitialize.class);
         }});
@@ -448,15 +541,9 @@ public class SpecExample {
             
             CodeSpec codeSpec = new CodeSpec();
             codeSpec.setClassName("java/nio/channels/SocketChannel");
-            codeSpec.setCode("\t\t{CipherImpl c = new CipherImpl(\n" +
-                    "                \"$ALG$\",\n" +
-                    "                $KEY_LENGTH$,\n" +
-                    "                \"$CHAINING_MODE$\",\n" +
-                    "                \"$PADDING$\",\n" +
-                    "                \"a test password\",\n" +
-                    "                \"an init vector\"\n" +
-                    "        );\n" +
-                    "        return c;}");
+            codeSpec.setCode("{ ???CIPHER_CLASS??? cipherImpl = new ???CIPHER_CLASS???();\n" +
+                    "                    cipherImpl.configure(\"$ALG$\", $KEY_LENGTH$, \"$CHAINING_MODE$\", \"$PADDING$\", \"a test password\", \"an init vector\");\n" +
+                    "                    return cipherImpl; }");
             this.setCodeSpec(codeSpec);
             
             this.setAspectBeingPerformed(AspectCipherInitialize.class);

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.securboration.immortals.repo.ontology.FusekiClient;
 import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.jar.JarArchiveInputStream;
 import org.apache.commons.io.FileUtils;
@@ -100,8 +101,6 @@ public class JarIngestor {
         
         Model retrievedModel = client.getGraph(graphName);
         
-        
-        
         FileUtils.writeStringToFile(
                 new File("./"+graphName+".ttl"),
                 OntologyHelper.serializeModel(
@@ -112,6 +111,71 @@ public class JarIngestor {
                 );
         
         log("done retrieving graph %s",graphName);
+    }
+
+    public static int ingest(
+            FusekiClient client,
+            byte[] jar,
+            String namespace,
+            String version,
+            String graphName,
+            String... validSuffixes
+    ) throws IOException {
+
+        int triplesAdded = 0;
+
+        Map<String, byte[]> models = new LinkedHashMap<>();
+
+        JarIngestor.openJar(
+                new ByteArrayInputStream(jar),
+                Arrays.asList(validSuffixes),
+                models
+        );
+
+        Model aggregateModel = ModelFactory.createDefaultModel();
+
+        for(String modelName:models.keySet()){
+            byte[] modelBytes = models.get(modelName);
+
+            log("about to load model %s (%dB)",modelName,modelBytes.length);
+
+            Model model = getModel(modelName,modelBytes);
+            triplesAdded+=model.getGraph().size();
+
+            aggregateModel.add(model);
+        }
+
+        ObjectToTriplesConfiguration c =
+                new ObjectToTriplesConfiguration(version);
+
+        OntologyHelper.addOntologyMetadata(
+                c,
+                aggregateModel,
+                "IMMoRTALS ontology"
+        );
+
+        log("about to push an aggregate model derived from [%d] sub models into graph [%s]\n",models.size(),graphName);
+
+        client.addToModel(aggregateModel,graphName);
+
+        log("done with push");
+
+        log("retrieving graph %s",graphName);
+
+        Model retrievedModel = client.getModel(graphName);
+
+        FileUtils.writeStringToFile(
+                new File("./"+graphName+".ttl"),
+                OntologyHelper.serializeModel(
+                        retrievedModel,
+                        "Turtle",
+                        c.isValidateOntology()
+                )
+        );
+
+        log("done retrieving graph %s",graphName);
+
+        return triplesAdded;
     }
     
     private static String getLanguage(String modelName){

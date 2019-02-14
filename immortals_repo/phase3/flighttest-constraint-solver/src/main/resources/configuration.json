@@ -1,0 +1,119 @@
+{
+    "haltOnUnsupportedDauType": true,
+    "haltOnUnsupportedModuleFunctionality": true,
+    "haltOnUnsupportedPortFunctionality": true,
+    "supported": {
+        "dauTypes": [
+            "NetworkNode"
+        ],
+        "moduleFunctionalityTypes": [
+            "SignalConditionerModule",
+            "ThermocoupleConditionerModule"
+        ],
+        "portFunctionalityTypes": [
+            "SignalConditionerPort",
+            "ThermocoupleConditionerPort"
+        ]
+    },
+    "ignored": {
+        "dauTypes": [],
+        "moduleFunctionalityTypes": [
+            "IgnoredModule"
+        ],
+        "portFunctionalityTypes": [
+            "IgnoredPort"
+        ]
+    },
+    "adaptation": {
+        "collectedDauProperties": {
+//            "NetworkNode": [
+//                "Model",
+//                "Manufacturer"
+//            ],
+//            "Module": [
+//                "Model",
+//                "Manufacturer"
+//            ],
+            "Port": [
+                "PortDirection"
+            ],
+            "PortType": [
+                "Extension",
+                "Thermocouple"
+            ],
+            "PortTypes": [
+                "PortType"
+            ],
+            "GenericParameter": [
+                "BBNDauMonetaryCost",
+                "BBNDauOpportunityCost",
+                "BBNModuleFunctionality",
+                "BBNPortFunctionality",
+                "BBNDauFlaggedForReplacement",
+//                "DataLength",
+//                "SampleRate"
+            ]
+        },
+        "indirectCollectedProperties": {
+            "GenericParameter": [
+                "BBNMinDataLength",
+                "BBNMaxDataLength",
+                "BBNMinDataRate",
+                "BBNMaxDataRate",
+                "BBNMinSampleRate",
+                "BBNMaxSampleRate"
+            ]
+        }
+    },
+    "dauInventoryCollection": {
+        "collectedDauProperties": {
+            "NetworkNode": [
+                "Model",
+                "Manufacturer"
+            ],
+            "Module": [
+                "Model",
+                "Manufacturer"
+            ],
+            "Port": [
+                "PortDirection"
+            ],
+            "PortType": [
+                "Extension",
+                "Thermocouple"
+            ],
+            "PortTypes": [
+                "PortType"
+            ],
+            "GenericParameter": [
+                "BBNDauMonetaryCost",
+                "BBNDauOpportunityCost",
+                "BBNModuleFunctionality",
+                "BBNPortFunctionality",
+                "BBNDauFlaggedForReplacement",
+                "DataLength",
+                "SampleRate"
+            ]
+        }
+    },
+    "dslTransformation": {
+        "transplantPropertiesToParentNode": [
+            "GenericParameter",
+            "PortType",
+            "PortTypes"
+        ],
+        "shortNodesToParent": [
+            "InternalStructure",
+            "Modules",
+            "Module",
+            "Ports",
+        ],
+        "ignoreNodes": [
+            "SubModules"
+        ],
+        "taggedNodes": [
+            "NetworkNode",
+            "Port"
+        ]
+    }
+}

@@ -19,6 +19,11 @@
             <version>${immortals.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-ontologies-domains-bytecode</artifactId>
+            <version>r2.0.0</version>
+        </dependency>
     </dependencies>
 
 

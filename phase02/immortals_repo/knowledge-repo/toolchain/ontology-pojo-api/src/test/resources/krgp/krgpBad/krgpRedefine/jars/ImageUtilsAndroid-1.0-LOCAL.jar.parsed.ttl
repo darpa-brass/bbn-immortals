@@ -1,0 +1,25 @@
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_bytecode: <http://darpa.mil/immortals/ontology/r2.0.0/bytecode#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_functionality_imagescaling: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/imagescaling#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_functionality_imageprocessor: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/imageprocessor#> .
+@prefix IMMoRTALS_dfu_instance: <http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#> .
+
+IMMoRTALS_dfu_instance:DfuInstance-ed929f83-0b3a-479f-bf36-bea1b6569534
+        a                          IMMoRTALS_dfu_instance:DfuInstance ;
+        IMMoRTALS:hasClassPointer  "gQ+0nAvQLV3yyVQE/xsYANZ+qu0xUbDzTTRXt0YexyY=" ;
+        IMMoRTALS:hasFunctionalityAbstraction
+                IMMoRTALS_functionality_imageprocessor:ImageProcessor .
+
+IMMoRTALS_dfu_instance:DfuInstance-73556a0f-7b4d-49d2-beab-0fa8bef6327c
+        a                          IMMoRTALS_dfu_instance:DfuInstance ;
+        IMMoRTALS:hasClassPointer  "mGqFUBNzN1kJ7cwT1Wn5XDZztl3+rXICpeqjDM3rpyY=" ;
+        IMMoRTALS:hasFunctionalityAbstraction
+                IMMoRTALS_functionality_imagescaling:ImageResizer .
+                
+IMMoRTALS_bytecode:AField
+        a                          owl:Class ;
+        IMMoRTALS:IWontWork        "oh no" .

@@ -76,6 +76,10 @@ public class OntologyHelper {
             String outputLanguage, 
             boolean validate
             ) throws IOException {
+
+        if (m == null) {
+            m = ModelFactory.createDefaultModel();
+        }
         
         if(validate){
             ModelValidator.validateModel(m, System.out);
@@ -743,8 +747,10 @@ public class OntologyHelper {
                 }
                 
                 return enumResource;
-            } 
-            return OntologyHelper.getResourceForType(context,model,t.getClassName());
+            }
+            String normalizedString = t.getDescriptor();
+            normalizedString = normalizedString.substring(0, normalizedString.length() - 1);
+            return OntologyHelper.getResourceForType(context,model,normalizedString);
         }
         
         throw new RuntimeException("unhandled corner case: " + t.getClassName());
@@ -799,10 +805,13 @@ public class OntologyHelper {
             OntModel model,
             Class<?> c
             ){
+
+          String normalizedString = Type.getType(c).getDescriptor();
+          normalizedString = normalizedString.substring(0, normalizedString.length() - 1);
           return getResourceForType(
                   context,
                   model,
-                  Type.getType(c).getClassName());
+                  normalizedString);//Type.getType(c).getDescriptor().substring(0, Type.getType(c).getDescriptor().length()));
     }
     
     private static Resource getResourceForType(
@@ -829,9 +838,12 @@ public class OntologyHelper {
     private static String getClassloaderName(String className){
 
         className = className.replace("/", ".");
-        
+
         if(!className.contains("[]")){
-            return className;
+            if (className.endsWith(";")) {
+                return className.substring(1, className.length() - 1);
+            }
+            return className.substring(1);
         }
         
         final int firstBracketIndex = className.indexOf("[]");
@@ -1222,6 +1234,10 @@ public class OntologyHelper {
         className = className.replace(".", "/");
         
         Type type = Type.getType(className);
+
+        if (className.endsWith(";")) {
+            className = className.substring(0, className.length() - 1);
+        }
         
         if(isArrayType(className)){
             type = type.getElementType();
@@ -1236,9 +1252,10 @@ public class OntologyHelper {
         
         StringBuilder sb = new StringBuilder();
         sb.append(context.getTargetNamespace());
-        
+
+        className = className.substring(1);
         String[] pieces = className.split("/");
-        
+
         if(!className.startsWith("/") && pieces.length > 1){
             sb.append("/");
         }

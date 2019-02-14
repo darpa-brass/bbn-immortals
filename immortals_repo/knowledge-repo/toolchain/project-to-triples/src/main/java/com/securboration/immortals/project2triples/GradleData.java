@@ -1,5 +1,6 @@
 package com.securboration.immortals.project2triples;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,6 +102,15 @@ public class GradleData {
      */
 	private List<String> additionalSources;
 
+    /**
+     * Path to project's build directory
+     */
+    private String pathToBuildDir;
+
+    private List<String> repoPaths;
+
+    private List<File> dependencies = new ArrayList<>();
+    
 	public String getCompiledProjectJarPath() {
 		return compiledProjectJarPath;
 	}
@@ -234,4 +244,28 @@ public class GradleData {
     public void setAdditionalSources(List<String> additionalSources) {
         this.additionalSources = additionalSources;
     }
+
+    public String getPathToBuildDir() {
+        return pathToBuildDir;
+    }
+
+    public void setPathToBuildDir(String pathToBuildDir) {
+        this.pathToBuildDir = pathToBuildDir;
+    }
+
+	public List<String> getRepoPaths() {
+		return repoPaths;
+	}
+
+	public void setRepoPaths(List<String> repoPaths) {
+		this.repoPaths = repoPaths;
+	}
+
+	public List<File> getDependencies() {
+		return dependencies;
+	}
+
+	public void setDependencies(List<File> dependencies) {
+		this.dependencies = dependencies;
+	}
 }

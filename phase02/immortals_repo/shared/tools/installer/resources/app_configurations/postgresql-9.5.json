@@ -1,0 +1,30 @@
+{
+  "identifier": "postgresql",
+  "versionExtractionCommand": "psql --version",
+  "versionExtractionRegex": "(?<=psql \\(PostgreSQL\\) )[0-9.+]+",
+  "setupCommands": [],
+  "requiredExecutables": [
+    "psql"
+  ],
+  "homeExportRequired": false,
+  "linux": {
+    "ubuntu": {
+      "version": "9.5",
+      "packageDependencies": [
+        "unzip",
+        "postgresql-{version}"
+      ],
+      "setupCommands": [
+        "sudo usermod -a -G postgres ${USER}",
+        "sudo -u postgres psql -a -c \"CREATE USER ${USER} SUPERUSER INHERIT CREATEDB CREATEROLE;\"",
+        "createdb"
+      ]
+    }
+  },
+  "osx": {
+    "version": "9.5",
+    "packageDependencies": [
+      "postgresql"
+    ]
+  }
+}

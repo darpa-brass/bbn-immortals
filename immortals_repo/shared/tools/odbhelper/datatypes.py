@@ -7,7 +7,7 @@ STDOUT_LOG_BASE_NAME = 'immortals-orientdb%s-out.log'
 STDERR_LOG_BASE_NAME = 'immortals-orientdb%s-err.log'
 
 
-class TestScenario(Enum):
+class GraphDetails(Enum):
     s5 = ('IMMORTALS_TEST-SCENARIO_5', 'Scenario 5')
     s6a = ('IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA', 'Scenario 6 - Unknown Schema')
     s6b = ('IMMORTALS_TEST-SCENARIO_6-KNOWN_SCHEMA', 'Scenario 6 - Known Schema')

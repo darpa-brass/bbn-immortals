@@ -472,7 +472,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch2</Name>
                                         <Description>Channel 2 Signal Input</Description>
@@ -726,7 +726,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch1</Name>
                                         <Description> Channel 1 Signal Input</Description>
@@ -746,7 +746,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch2</Name>
                                         <Description> Channel 2 Signal Input</Description>
@@ -1000,7 +1000,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch1</Name>
                                         <Description> Channel 1 Signal Input</Description>
@@ -1020,7 +1020,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch2</Name>
                                         <Description> Channel 2 Signal Input</Description>
@@ -1245,7 +1245,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch1</Name>
                                         <Description>Channel 1</Description>
@@ -1268,7 +1268,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch2</Name>
                                         <Description>Channel 2</Description>
@@ -1291,7 +1291,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch3</Name>
                                         <Description>Channel 3</Description>
@@ -1314,7 +1314,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch4</Name>
                                         <Description>Channel 4</Description>
@@ -1403,7 +1403,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch1</Name>
                                         <Description>Channel 1</Description>
@@ -1426,7 +1426,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch2</Name>
                                         <Description>Channel 2</Description>
@@ -1449,7 +1449,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch3</Name>
                                         <Description>Channel 3</Description>
@@ -1472,7 +1472,7 @@
                                             </NameValues>
                                             <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                             <DataLength>16</DataLength>
-                                            <SampleRate>20</SampleRate>
+                                            <SampleRate>128,256,512</SampleRate>
                                         </GenericParameter>
                                         <Name>Ch4</Name>
                                         <Description>Channel 4</Description>
@@ -2801,7 +2801,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch1</Name>
                                             <Description>MSCD Channel 1 Signal Input</Description>
@@ -2821,7 +2821,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch2</Name>
                                             <Description>MSCD Channel 2 Signal Input</Description>
@@ -2841,7 +2841,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch3</Name>
                                             <Description>MSCD Channel 3 Signal Input</Description>
@@ -2861,7 +2861,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch4</Name>
                                             <Description>MSCD Channel 4 Signal Input</Description>
@@ -2881,7 +2881,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch5</Name>
                                             <Description>MSCD Channel 5 Signal Input</Description>
@@ -2901,7 +2901,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch6</Name>
                                             <Description>MSCD Channel 6 Signal Input</Description>
@@ -2921,7 +2921,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch1-EC</Name>
                                             <Description>MSCD Channel 1 Excitation Constant Current Output</Description>
@@ -3414,7 +3414,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch1</Name>
                                             <Description>MTCD Channel 1</Description>
@@ -3434,7 +3434,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch2</Name>
                                             <Description>MTCD Channel 2</Description>
@@ -3454,7 +3454,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch3</Name>
                                             <Description>MTCD Channel 3</Description>
@@ -3474,7 +3474,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch4</Name>
                                             <Description>MTCD Channel 4</Description>
@@ -3494,7 +3494,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch5</Name>
                                             <Description>MTCD Channel 5</Description>
@@ -3514,7 +3514,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch6</Name>
                                             <Description>MTCD Channel 6</Description>
@@ -3534,7 +3534,7 @@
                                                 </NameValues>
                                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
-                                                <SampleRate>128,256,512</SampleRate>
+                                                <SampleRate>100</SampleRate>
                                             </GenericParameter>
                                             <Name>Ch7</Name>
                                             <Description>MTCD Channel 7</Description>

@@ -231,26 +231,30 @@ public class TestDasWorkflow2 extends QueryTestBase {
         
         //write knowledge to graphs that can later be safely cleaned up
         {
-            client.copy(
-                DEFAULT_GRAPH, 
-                super.generateUniqueUri(context,"bytecode-analysis")
+
+            if (context.getGraphs().keySet().stream().anyMatch(graph -> graph.equals(DEFAULT_GRAPH))) {
+
+                client.copy(
+                        DEFAULT_GRAPH,
+                        super.generateUniqueUri(context, "bytecode-analysis")
                 );
-            client.setModel(
-                getKnowledge(DomainKnowledge.class), 
-                super.generateUniqueUri(context,"domain-knowledge")
+                client.setModel(
+                        getKnowledge(DomainKnowledge.class),
+                        super.generateUniqueUri(context, "domain-knowledge")
                 );
-            client.setModel(
-                getKnowledge(ScalingFactorMeasurements.class), 
-                super.generateUniqueUri(context,"scaling-factor-metrics-gathered")
+                client.setModel(
+                        getKnowledge(ScalingFactorMeasurements.class),
+                        super.generateUniqueUri(context, "scaling-factor-metrics-gathered")
                 );
-            client.setModel(
-                getKnowledge(Analysis.class), 
-                super.generateUniqueUri(context,"dataflow-analysis")
+                client.setModel(
+                        getKnowledge(Analysis.class),
+                        super.generateUniqueUri(context, "dataflow-analysis")
                 );
-            client.setModel(
-                getKnowledge(GmeInterchangeFormatUberExample.class), 
-                super.generateUniqueUri(context,"gme-output")
+                client.setModel(
+                        getKnowledge(GmeInterchangeFormatUberExample.class),
+                        super.generateUniqueUri(context, "gme-output")
                 );
+            }
         }
         
         final String uberGraph = 

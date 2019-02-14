@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>com.securboration</groupId>
+		<artifactId>immortals</artifactId>
+		<version>r2.0.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<artifactId>immortals-ontologies-generate</artifactId>
+	<packaging>jar</packaging>
+	
+	<name>IMMoRTALS ontology generation project (schema + vocabulary)</name>
+	<url>https://dsl-external.bbn.com/tracsvr/immortals</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-vocab</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-vocab-instances</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-object-to-triples</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>${commons-compress.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-debug-all</artifactId>
+			<version>${asm.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>${json.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+	
+
+	<properties>
+		<local-repo-root>${project.basedir}/../../..</local-repo-root>
+	</properties>
+
+
+	<repositories>
+		<!-- blank -->
+	</repositories>
+
+	<profiles>
+		<!-- blank -->
+	</profiles>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.securboration</groupId>
+						<artifactId>immortals-ontologies-functional</artifactId>
+						<version>${immortals.version}</version>
+						<scope>compile</scope>
+					</dependency>
+					<dependency>
+						<groupId>com.securboration</groupId>
+						<artifactId>immortals-ontologies-constraint</artifactId>
+						<version>${immortals.version}</version>
+						<scope>compile</scope>
+					</dependency>
+					<dependency>
+						<groupId>com.securboration</groupId>
+						<artifactId>immortals-ontologies-domains-resources</artifactId>
+						<version>${immortals.version}</version>
+						<scope>compile</scope>
+					</dependency>
+					<dependency>
+						<groupId>com.securboration</groupId>
+						<artifactId>immortals-ontologies-vocab</artifactId>
+						<version>${immortals.version}</version>
+						<scope>compile</scope>
+					</dependency>
+					
+					<dependency>
+						<groupId>com.securboration</groupId>
+						<artifactId>immortals-ontologies-vocab-instances</artifactId>
+						<version>${immortals.version}</version>
+						<scope>compile</scope>
+					</dependency>
+				</dependencies>
+				<executions>
+					<!--
+					Generate triples from java classes: CORE
+					-->
+					<execution>
+						<id>java-to-triples-core</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_core.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/core/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/core/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<!--
+					Generate triples from java classes: SA
+					-->
+					<execution>
+						<id>java-to-triples-sa</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_sa.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/sa/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/sa/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<!--
+					Generate triples from java classes: bytecode
+					-->
+					<execution>
+						<id>java-to-triples-bytecode</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_bytecode.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/bytecode/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/bytecode/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+
+					<!--
+					Generate triples from java classes: functional
+					-->
+					<execution>
+						<id>java-to-triples-functional</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_functional.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/functional/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/functional/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+
+					<!--
+					Generate triples from java classes: resources
+					-->
+					<execution>
+						<id>java-to-triples-constraint</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_resources.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/constraint/target/classes</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/constraint/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>java-to-triples-resources</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_resources.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/resources/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/resources/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<!--
+					Generate triples from java classes: CP
+					-->
+					<execution>
+						<id>java-to-triples-cp</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_cp.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/cp/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/cp/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<!--
+					Generate triples from java classes: scratchpad
+					-->
+					<execution>
+						<id>java-to-triples-scratchpad</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_scratchpad.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/scratchpad/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/scratchpad/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<!--
+					Generate triples from java classes: analysis
+					-->
+					<execution>
+						<id>java-to-triples-analysis</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_analysis.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/analysis/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/analysis/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<!--
+					Generate triples from java classes: java-project
+					-->
+					<execution>
+						<id>java-to-triples-java-project</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_java_project.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/java-project/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/java-project/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<!--
+					Generate triples from java classes: feature model
+					-->
+					<execution>
+						<id>java-to-triples-fm</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_fm.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/fm/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/fm/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					<!--
+					Generate triples from java classes: inference
+					-->
+					<execution>
+						<id>java-to-triples-inference</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.instantiation.JavaToTriplesMain</mainClass>
+							<arguments>
+								<argument>${project.basedir}/target/classes/ontology/immortals_inference.ttl</argument>
+								<argument>Turtle</argument>
+								<argument>${immortals.version}</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/inference/target/classes/</argument>
+								<argument>${project.basedir}/../ontology-vocab-domains/inference/src/main/java</argument>
+								<argument>com.securboration.immortals.instantiation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					
+					
+					<!--
+					Build uber vocabulary
+					-->
+					<execution>
+						<id>construct-uber-vocabulary</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>com.securboration.immortals.j2t.aggregator.VocabularyAggregator</mainClass>
+							<arguments>
+								<argument>Turtle</argument><!-- lang -->
+								<argument>${project.basedir}/target/classes/ontology/immortals_uber.ttl</argument><!-- output path -->
+								<argument>${project.basedir}/target/classes/ontology</argument><!-- path to ontology files -->
+								<!-- other paths to ontology files -->
+							</arguments>
+						</configuration>
+					</execution>
+					
+				</executions>
+				
+			</plugin>
+
+
+			<!-- 
+			Exclude the classes used to create the triples, they should be included 
+			as a separate dependency on the api project (i.e., this jar will contain only
+			the generated triples).
+			-->
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>default-jar</id><!-- mandatory name -->
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>ontology/**/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>

@@ -59,22 +59,25 @@ public class RatiocinationEngine {
      */
     public RatiocinationReport execute(){
         RatiocinationReport report = new RatiocinationReport();
-        
+
+        int triplesAdded = 0;
         final long start = System.currentTimeMillis();
         int count = 0;
         for(InferenceRules r:getInferenceRules()){
-            execute(report,r);
+            triplesAdded+=execute(report,r);
             count++;
         }
         final long elapsed = System.currentTimeMillis() - start;
         
         report.print("processed %d bags of rules in %dms\n", count, elapsed);
+        report.setTriplesAdded(triplesAdded);
         
         return report;
     }
     
-    private void execute(RatiocinationReport report, InferenceRules ruleset){
-        
+    private int execute(RatiocinationReport report, InferenceRules ruleset){
+
+        int triplesAdded = 0;
         final long startTime = System.currentTimeMillis();
         report.print(
             "start time: %dms\n", 
@@ -173,7 +176,8 @@ public class RatiocinationEngine {
                         System.currentTimeMillis() - ruleStart,
                         newTriples.size()
                         );
-                    
+
+                    triplesAdded+=newTriples.getGraph().size();
                     client.addToModel(newTriples, graphName);
                     
                     handledAllRules = false;
@@ -235,6 +239,8 @@ public class RatiocinationEngine {
             "done processing ruleset in %dms\n", 
             System.currentTimeMillis() - startTime
             );
+
+        return triplesAdded;
     }
     
     private String resolveVariables(String query){

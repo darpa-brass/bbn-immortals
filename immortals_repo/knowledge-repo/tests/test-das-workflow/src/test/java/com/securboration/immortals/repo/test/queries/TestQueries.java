@@ -353,7 +353,7 @@ public class TestQueries extends QueryTestBase {
                 "dfu","http://darpa.mil/immortals/ontology/r2.0.0/dfu/instance#DfuInstance-*",
                 "className","mil/darpa/immortals/dfus*",
                 "classPointer","*"
-        }),3);
+        }),0);
         
         q.assertSolutionsContainVariables(
             "dfu",
@@ -401,7 +401,7 @@ public class TestQueries extends QueryTestBase {
         client.executeSelectQuery(query,q);
         System.out.println(q.printSolutions());
         
-        q.assertContainsExactlyNSolutions(null,1);
+        q.assertContainsExactlyNSolutions(null,0);
         
         q.assertSolutionsContainVariables(
             "jarName",

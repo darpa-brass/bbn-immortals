@@ -62,12 +62,18 @@
 			<version>${jena.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
-			<artifactId>asm-debug-all</artifactId>
-			<version>${asm.version}</version>
+			<artifactId>asm</artifactId>
+			<version>7.0</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-tree</artifactId>
+			<version>7.0</version>
 		</dependency>
 		
 		<dependency>

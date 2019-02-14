@@ -1,0 +1,10 @@
+Below is the procedure for adding new vocabulary modules to the IMMoRTALS knowledge-repo build
+
+1) create a new module under knowledge-repo/vocabulary/ontology-vocab-domains.  Add it to trunk/knowledge-repo/pom.xml
+
+2) in trunk/knowledge-repo/vocabulary/ontology-generate, add a dependency on the new module
+
+3) in trunk/knowledge-repo/vocabulary/ontology-generate, add an execution step that emits Owl from the vocabulary POJOs
+
+4) in trunk/knowledge-repo/vocabulary/ontology-vocab-aggregated, add the source dir of the new vocabulary module to the project
+

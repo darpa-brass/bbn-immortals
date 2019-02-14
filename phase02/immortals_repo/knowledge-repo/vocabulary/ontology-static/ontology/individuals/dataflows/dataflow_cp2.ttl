@@ -1,0 +1,121 @@
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_functionality_aspects: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/aspects#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> .
+@prefix IMMoRTALS_network: <http://darpa.mil/immortals/ontology/r2.0.0/resources/network#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix IMMoRTALS_cp2: <http://darpa.mil/immortals/ontology/r2.0.0/cp2#> .
+@prefix IMMoRTALS_analysis: <http://darpa.mil/immortals/ontology/r2.0.0/analysis#> .
+@prefix IMMoRTALS_functionality_datatype: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/datatype#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_functionality_imagecapture: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/imagecapture#> .
+
+#Define data flow origin (call site)
+IMMoRTALS_cp2:SACommunicationService
+        a       IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName
+                "com.bbn.ataklite.service.SACommunicationService" ;
+        IMMoRTALS:hasJavaMethodName
+                "handleActionSendImage(String imageFilepath, Location location)" ;
+        IMMoRTALS:hasResourceDependencies
+                IMMoRTALS_network:NetworkBandwidth .
+
+#Define LocationImageReader node
+IMMoRTALS_cp2:LocationImageReader
+        a       IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName
+                "mil.darpa.immortals.dfus.images.BitmapReader".
+
+#Define ImageCotifier node
+IMMoRTALS_cp2:ImageCotifier
+        a       IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName
+                "com.bbn.ataklite.pipes.ImageCotifier" .
+
+#Define CotByter node
+IMMoRTALS_cp2:CotByter
+        a       IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName
+                "com.bbn.ataklite.pipes.CotByter" .
+
+#Define Dispatcher node
+IMMoRTALS_cp2:Dispatcher
+        a       IMMoRTALS_analysis:MethodInvocationDataflowNode ;
+        IMMoRTALS:hasJavaClassName
+                "com.bbn.ataklite.net.Dispatcher" .
+
+#Define incoming edge from origin node
+IMMoRTALS_analysis:SACommunicationServiceToLocationImageReader
+        a       IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasProducer
+        	IMMoRTALS_cp2:SACommunicationService;
+        IMMoRTALS:hasConsumer
+        	IMMoRTALS_cp2:LocationImageReader;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:FilePath ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:Location ;
+        IMMoRTALS:hasHumanReadableDescription
+                "ATAK passes the image file path and current GPS Location coordinates to a class that resolves the image location to a bitmap object.".
+
+#Define edge from LocationImageReader to ImageCotifier node
+IMMoRTALS_analysis:LocationImageReaderToImageCotifier
+        a       IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasProducer
+                IMMoRTALS_cp2:LocationImageReader;
+        IMMoRTALS:hasConsumer
+                IMMoRTALS_cp2:ImageCotifier;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:Bitmap ;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:Location ;
+        IMMoRTALS:hasHumanReadableDescription
+                "The LocationImageReader resolves the FilePath to a Bitmap and passes the Bitmap and Location to the ImageCotifier.".
+
+#Define edge from ImageCotifier to CotByter node
+IMMoRTALS_analysis:ImageCotifierToCotByter
+        a       IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasProducer
+                IMMoRTALS_cp2:ImageCotifier;
+        IMMoRTALS:hasConsumer
+                IMMoRTALS_cp2:CotByter;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:CotMessage ;
+        IMMoRTALS:hasHumanReadableDescription
+                "The ImageCotifier combines the Bitmap and Location instance to a CotMessage.".
+
+#Define edge from CotByter to Dispatcher node
+IMMoRTALS_analysis:CotByterToDispatcher
+        a       IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasProducer
+                IMMoRTALS_cp2:CotByter;
+        IMMoRTALS:hasConsumer
+                IMMoRTALS_cp2:Dispatcher;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:ByteArray ;
+        IMMoRTALS:hasHumanReadableDescription
+                "The CotByter converts the CotMessage to a byte array and forwards the array to the network dispatcher.".
+
+#Define edge from Dispatcher to network (TAK server)
+IMMoRTALS_analysis:DispatcherToTAKServer
+        a       IMMoRTALS_analysis:DataflowEdge ;
+        IMMoRTALS:hasProducer
+                IMMoRTALS_cp2:Dispatcher;
+        IMMoRTALS:hasDataTypeCommunicated
+                IMMoRTALS_functionality_datatype:ByteArray ;
+        IMMoRTALS:hasHumanReadableDescription
+                "The dispatcher transmits the byte array to the TAK Server.".
+
+IMMoRTALS_cp2:cp2DataflowGraph
+        a       IMMoRTALS_analysis:DataflowGraph ;
+        IMMoRTALS:hasEdges
+			IMMoRTALS_analysis:SACommunicationServiceToLocationImageReader,
+			IMMoRTALS_analysis:LocationImageReaderToImageCotifier,
+			IMMoRTALS_analysis:ImageCotifierToCotByter,
+			IMMoRTALS_analysis:CotByterToDispatcher,
+			IMMoRTALS_analysis:DispatcherToTAKServer;
+        IMMoRTALS:hasHumanReadableDescription
+                "Describes a dataflow in which ATAK reads an image and location from a local device file and transmits it to a remote TAK server process." .
+

@@ -9,9 +9,7 @@ public class ConstraintViolation {
     private ProscriptiveCauseEffectAssertion constraint;
     
     private PrescriptiveCauseEffectAssertion mitigationStrategyUtilized;
-    
-    private AnalysisImpact[] analysisImpacts;
-    
+
     private DataflowEdge edgeInViolation;
     
     public ProscriptiveCauseEffectAssertion getConstraint() {
@@ -28,14 +26,6 @@ public class ConstraintViolation {
 
     public void setMitigationStrategyUtilized(PrescriptiveCauseEffectAssertion mitigationStrategyUtilized) {
         this.mitigationStrategyUtilized = mitigationStrategyUtilized;
-    }
-
-    public AnalysisImpact[] getAnalysisImpacts() {
-        return analysisImpacts;
-    }
-
-    public void setAnalysisImpacts(AnalysisImpact[] analysisImpacts) {
-        this.analysisImpacts = analysisImpacts;
     }
 
     public DataflowEdge getEdgeInViolation() {

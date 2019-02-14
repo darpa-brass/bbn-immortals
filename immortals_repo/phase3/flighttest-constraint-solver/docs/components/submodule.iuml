@@ -1,0 +1,25 @@
+!include basic.iuml
+!include common.iuml
+
+!definelong SUBMODULE(parent, pkg_title)
+package "pkg_title (SubModule)" as parent##Submodule {
+    rectangle "ID (str)" as parent##SubmoduleID
+    [Position (int)] <<Modifiable>> as parent##SubmodulePosition
+
+    CHILDREN(parent##Submodule, "Children [0..1]")
+
+    CONNECTORS(parent##Submodule, "Connectors [0..1]")
+
+    PORTS(parent##Submodule, "Ports [1]")
+
+    parent##SubmoduleID -[hidden]r-> parent##SubmodulePosition
+    parent##SubmodulePosition -[hidden]r-> parent##SubmoduleChildren
+    parent##SubmoduleChildren -[hidden]r-> parent##SubmoduleConnectors
+
+    parent##SubmoduleID -[hidden]d-> parent##SubmodulePorts
+    parent##SubmoduleChildren -[hidden]d-> parent##SubmodulePorts
+    parent##SubmoduleConnectors -[hidden]d-> parent##SubmodulePorts
+
+}
+'parent##SubmodulePortsPortPinrefIdref -> parent##SubmoduleConnectorsConnectorPinId
+!enddefinelong

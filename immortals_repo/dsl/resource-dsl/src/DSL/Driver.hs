@@ -25,9 +25,10 @@ import DSL.Serialize
 import DSL.Parser (parseBExprString)
 import DSL.V
 
+import DSL.Example.CrossApp
 import DSL.Example.Location
 import DSL.Example.Network
-import DSL.Example.CrossApp
+import DSL.Example.SwapDau
 
 
 --
@@ -39,9 +40,10 @@ runDriver = do
     cmd <- getCommand
     case cmd of
       Run opts -> run opts
+      Example (CrossApp opts) -> runCrossApp opts
       Example (Location opts) -> runLocation opts
       Example (Network opts)  -> runNetwork opts
-      Example (CrossApp opts) -> runCrossApp opts
+      Swap opts  -> runSwap opts
       Check opts -> runCheck opts
 
 getBExpr :: S.Set Var -> SelOpts -> Maybe BExpr
@@ -162,6 +164,7 @@ data Command
      = Run RunOpts
      | Example Example
      | Check CheckOpts
+     | Swap SwapOpts
   deriving (Data,Eq,Generic,Read,Show,Typeable)
 
 data SelOpts = Formula String
@@ -182,7 +185,6 @@ data RunOpts = RunOpts
      , errorFile   :: FilePath
      , successFile :: FilePath }
   deriving (Data,Eq,Generic,Read,Show,Typeable)
-
 
 data Example
      = Location LocationOpts
@@ -215,7 +217,11 @@ parseCommand = subparser
         (progDesc "Check a configuration against the latest run call"))
     <> command "example"
         (info (Example <$> (helper <*> parseExample))
-        (progDesc "Generate example inputs and put them in the inbox")) )
+        (progDesc "Generate example inputs and put them in the inbox"))
+    <> command "swap-dau"
+        (info (Swap <$> (helper <*> parseSwapOpts))
+        (progDesc "Find replacement DAUs"))
+     )
 
 parseExample :: Parser Example
 parseExample = subparser

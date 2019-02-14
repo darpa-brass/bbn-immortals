@@ -367,13 +367,11 @@ public class ObjectToTriples {
         
         
         private Resource getResourceForType(Type t){
-            
-            final String internalName = t.getClassName();
-            
+
             Resource r = OntologyHelper.getResourceForType(
                     context,
                     analysisContext.resourceModel,
-                    internalName
+                    t.getDescriptor()
                     );
             
             return r;

@@ -1,0 +1,54 @@
+!include basic.iuml
+
+!include condition_parameters.iuml
+
+!definelong PORT(parent, pkg_title)
+package "pkg_title (Port)" as parent##Port {
+    rectangle "ID (str)   " as parent##PortId
+    rectangle "Index (int)  " as parent##PortIndex
+    rectangle "Enabled (bool)" as parent##PortEnabled
+
+    component parent##PortDirection as "PortDirection (PortDirection)"
+
+    component parent##PortPolarity as "PortPolarity (Polarity)"
+
+    package "PortTypes [0..1]" <<LearnMore>> as parent##PortTypes {
+        package "PortType [1..*]" as parent##PortType {
+            component "???" as parent##PortTypeUnknown #Orange
+        }
+    }
+
+    package "Excitation[0..1]" as parent##Excitation {
+        component parent##PortExcitationPolarity as "Polarity (Polarity)"
+        CONDITION_PARAMETERS(parent##PortExcitation, "Sensitivity [0..1]")
+    }
+
+    package "CaptureCapabilityRefs [0..1]" <<Not Yet Utilized>> as parent##PortCaptureCapabilityRefs {
+        interface "CaptureCapabilityRef [1..*]" as parent##PortCapCapRef  #LightGray
+    }
+
+    package "PinRefs [0..1]" as parent##PortPinrefs {
+        package "PinREF [1..*]" as parent@PortPinrefsPinref{
+            rectangle "IDREF (str)" as parent##PortPinrefIdref
+        }
+    }
+
+    package "PhysicalNetworkPortRef [0..1]" as parent##PortPhysicalNetworkPortRef {
+        rectangle "IDREF (str)" as parent##PortPhysPortRef
+    }
+
+    parent##PortId -[hidden]r-> parent##PortIndex
+    parent##PortIndex -[hidden]r-> parent##PortEnabled
+    parent##PortEnabled -[hidden]r-> parent##PortDirection
+    parent##PortDirection -[hidden]r-> parent##PortPolarity
+
+    parent##PortTypes -[hidden]r-> parent##PortPinrefs
+    parent##PortPinrefs -[hidden]r-> parent##PortPhysicalNetworkPortRef
+    parent##PortPhysicalNetworkPortRef -[hidden]r-> parent##PortCaptureCapabilityRefs
+
+    parent##PortId -[hidden]d-> parent##PortTypes
+    parent##PortTypes -[hidden]d-> parent##Excitation
+
+}
+
+!enddefinelong

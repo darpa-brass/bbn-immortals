@@ -2,10 +2,12 @@ package com.securboration.immortals.ontology.java.project;
 
 import com.securboration.immortals.ontology.bytecode.BytecodeArtifact;
 import com.securboration.immortals.ontology.bytecode.BytecodeArtifactCoordinate;
+import com.securboration.immortals.ontology.bytecode.Dependency;
 import com.securboration.immortals.ontology.identifier.HasUuid;
 import com.securboration.immortals.ontology.java.android.AndroidApp;
 import com.securboration.immortals.ontology.java.build.BuildScript;
 import com.securboration.immortals.ontology.java.compiler.*;
+import com.securboration.immortals.ontology.java.dfus.DfuModuleRepo;
 import com.securboration.immortals.ontology.java.source.CompiledJavaSourceFile;
 import com.securboration.immortals.ontology.java.source.SourceCodeRepo;
 import com.securboration.immortals.ontology.java.vcs.VcsCoordinate;
@@ -47,6 +49,8 @@ public class JavaProject implements HasUuid {
      * naked classes (unpackaged), etc.
      */
     private BytecodeArtifact compiledSoftware;
+
+    private Dependency[] dependencies;
     
     /**
      * This project's coordinate, e.g. group:artifact:version
@@ -58,6 +62,10 @@ public class JavaProject implements HasUuid {
     private SourceCodeRepo sourceCodeRepo;
 
     private AndroidApp androidApp;
+
+    private DfuModuleRepo dfuModuleRepo;
+
+    private AnalysisMetrics analysisMetrics;
 
     public String[] getCompiledSourceHash() {
         return compiledSourceHash;
@@ -144,5 +152,29 @@ public class JavaProject implements HasUuid {
 
     public void setAndroidApp(AndroidApp androidApp) {
         this.androidApp = androidApp;
+    }
+
+    public DfuModuleRepo getDfuModuleRepo() {
+        return dfuModuleRepo;
+    }
+
+    public void setDfuModuleRepo(DfuModuleRepo dfuModuleRepo) {
+        this.dfuModuleRepo = dfuModuleRepo;
+    }
+
+    public Dependency[] getDependencies() {
+        return dependencies;
+    }
+
+    public void setDependencies(Dependency[] dependencies) {
+        this.dependencies = dependencies;
+    }
+
+    public AnalysisMetrics getAnalysisMetrics() {
+        return analysisMetrics;
+    }
+
+    public void setAnalysisMetrics(AnalysisMetrics analysisMetrics) {
+        this.analysisMetrics = analysisMetrics;
     }
 }

@@ -1,0 +1,116 @@
+@prefix IMMoRTALS_resources_logical: <http://darpa.mil/immortals/ontology/r2.0.0/resources/logical#> .
+@prefix IMMoRTALS_functionality: <http://darpa.mil/immortals/ontology/r2.0.0/functionality#> .
+@prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#> .
+@prefix IMMoRTALS_com_securboration_immortals_exampleDataflows: <http://darpa.mil/immortals/ontology/r2.0.0/com/securboration/immortals/exampleDataflows#> .
+@prefix IMMoRTALS_gmei: <http://darpa.mil/immortals/ontology/r2.0.0/gmei#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix IMMoRTALS_resources: <http://darpa.mil/immortals/ontology/r2.0.0/resources#> .
+@prefix IMMoRTALS_functionality_xml: <http://darpa.mil/immortals/ontology/r2.0.0/functionality/xml#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix IMMoRTALS_property_impact: <http://darpa.mil/immortals/ontology/r2.0.0/property/impact#> .
+@prefix IMMoRTALS_resources_xml: <http://darpa.mil/immortals/ontology/r2.0.0/resources/xml#> .
+
+IMMoRTALS_resources:Server-5eb28441-e345-47de-8161-ffc5eef7a395
+        a                       IMMoRTALS_resources:Server ;
+        IMMoRTALS:hasResources  IMMoRTALS_resources_logical:XMLSchema-7e3a7c60-ad6d-4050-b72c-8ddacca6c3dc .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:ServerOrientedFormattedDataConstraint.XsltImplementationStrategy
+        a                            IMMoRTALS_property_impact:PrescriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:ConstraintViolationCriterion-7ac784c3-d4a2-416b-8e73-944aba1b0b2e ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:RemediationImpact-be3a8311-cef6-4d83-84cd-134b56c7c16a ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.ServerOrientedFormattedDataConstraint$XsltImplementationStrategy" .
+
+IMMoRTALS_property_impact:RemediationImpact-be3a8311-cef6-4d83-84cd-134b56c7c16a
+        a       IMMoRTALS_property_impact:RemediationImpact ;
+        IMMoRTALS:hasRemediationStrategy
+                IMMoRTALS_com_securboration_immortals_exampleDataflows:ServerOrientedFormattedDataConstraint.XsltTransformImpact .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:ServerOrientedFormattedDataConstraint.XsltTransformImpact
+        a                            IMMoRTALS_property_impact:PredictiveCauseEffectAssertion ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:FormattedDataImpact-ec0489c3-c687-4fc0-8473-4caf7c305137 ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.ServerOrientedFormattedDataConstraint$XsltTransformImpact" .
+
+IMMoRTALS_functionality_xml:AspectConstructXml-48bfd928-1bda-4f00-99cf-9dfdb55ff6cb
+        a                      IMMoRTALS_functionality_xml:AspectConstructXml ;
+        IMMoRTALS:hasAspectId  "xml-construct" ;
+        IMMoRTALS:hasOutputs   IMMoRTALS_functionality:Output-ceef6de6-7030-42f7-8624-f9e72b978713 .
+
+IMMoRTALS_resources_logical:XMLSchema-22683651-d9c5-4aad-a9ea-64bec53f666e
+        a                     IMMoRTALS_resources_logical:XMLSchema ;
+        IMMoRTALS:hasVersion  "1.0" .
+
+IMMoRTALS_property_impact:ConstraintViolationImpact-fe4f0ac3-6e63-4e72-ba93-866cdadef7cf
+        a       IMMoRTALS_property_impact:ConstraintViolationImpact ;
+        IMMoRTALS:hasConstraintViolationType
+                "HARD_CONSTRAINT_VIOLATION" ;
+        IMMoRTALS:hasDirectionOfViolation
+                "UNDERSHOOT" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:ServerOrientedFormattedDataConstraint
+        a                            IMMoRTALS_property_impact:ProscriptiveCauseEffectAssertion ;
+        IMMoRTALS:hasApplicableDataType
+                IMMoRTALS_resources:FormattedData ;
+        IMMoRTALS:hasAssertionBindingSites
+                IMMoRTALS_property_impact:AbstractResourceBindingSite-e809dacb-7317-43a5-a9f8-b025ce0485f0 , IMMoRTALS_property_impact:AbstractResourceBindingSite-ff9f20bc-7f8d-40f8-a56c-bbf19220ec16 ;
+        IMMoRTALS:hasCriterion       IMMoRTALS_property_impact:FormattedDataVersionCriterion-995c9ef9-4c7e-4699-b3b3-2920dfba73d3 ;
+        IMMoRTALS:hasHumanReadableDescription
+                "Client devices transmitting xml messages to the server must adhere to the version present" ;
+        IMMoRTALS:hasImpact          IMMoRTALS_property_impact:ConstraintViolationImpact-fe4f0ac3-6e63-4e72-ba93-866cdadef7cf ;
+        IMMoRTALS:hasPojoProvenance  "com.securboration.immortals.exampleDataflows.ServerOrientedFormattedDataConstraint" .
+
+IMMoRTALS_property_impact:AbstractResourceBindingSite-ff9f20bc-7f8d-40f8-a56c-bbf19220ec16
+        a                          IMMoRTALS_property_impact:AbstractResourceBindingSite ;
+        IMMoRTALS:hasResourceType  IMMoRTALS_resources:Server .
+
+IMMoRTALS_property_impact:AbstractResourceBindingSite-e809dacb-7317-43a5-a9f8-b025ce0485f0
+        a                          IMMoRTALS_property_impact:AbstractResourceBindingSite ;
+        IMMoRTALS:hasResourceType  IMMoRTALS_resources:Client .
+
+IMMoRTALS_functionality:Output-ceef6de6-7030-42f7-8624-f9e72b978713
+        a                  IMMoRTALS_functionality:Output ;
+        IMMoRTALS:hasType  IMMoRTALS_resources_xml:XmlInstance .
+
+IMMoRTALS_resources:Client-ab5103fd-85c5-44aa-bb43-9cc2198c2946
+        a                       IMMoRTALS_resources:Client ;
+        IMMoRTALS:hasResources  IMMoRTALS_resources_logical:XMLSchema-22683651-d9c5-4aad-a9ea-64bec53f666e .
+
+IMMoRTALS_property_impact:XmlResourceImpact-b612c501-d6a0-43b0-bb37-ef6ac9f6d2e4
+        a                              IMMoRTALS_property_impact:XmlResourceImpact ;
+        IMMoRTALS:hasImpactedResource  IMMoRTALS_resources:Client ;
+        IMMoRTALS:hasTargetResource    IMMoRTALS_resources:Server ;
+        IMMoRTALS:hasXmlResourceImpactType
+                "XML_SCHEMA_CHANGE" .
+
+IMMoRTALS_property_impact:ConstraintViolationCriterion-7ac784c3-d4a2-416b-8e73-944aba1b0b2e
+        a                        IMMoRTALS_property_impact:ConstraintViolationCriterion ;
+        IMMoRTALS:hasConstraint  IMMoRTALS_com_securboration_immortals_exampleDataflows:ServerOrientedFormattedDataConstraint ;
+        IMMoRTALS:hasTriggeringConstraintCriterion
+                "WHEN_HARD_VIOLATED" .
+
+IMMoRTALS_property_impact:FormattedDataImpact-ec0489c3-c687-4fc0-8473-4caf7c305137
+        a                          IMMoRTALS_property_impact:FormattedDataImpact ;
+        IMMoRTALS:hasApplicableResource
+                IMMoRTALS_property_impact:XmlResourceImpact-b612c501-d6a0-43b0-bb37-ef6ac9f6d2e4 ;
+        IMMoRTALS:hasImpactType    "FORMAT_CHANGE" ;
+        IMMoRTALS:hasImpactedData  IMMoRTALS_resources_xml:XmlInstance .
+
+IMMoRTALS_property_impact:FormattedDataVersionCriterion-995c9ef9-4c7e-4699-b3b3-2920dfba73d3
+        a                           IMMoRTALS_property_impact:FormattedDataVersionCriterion ;
+        IMMoRTALS:hasFormattedData  IMMoRTALS_resources_xml:XmlInstance ;
+        IMMoRTALS:hasFormattedDataCriterionType
+                "VERSION_DIFFERENT" .
+
+IMMoRTALS_com_securboration_immortals_exampleDataflows:CPP_ESS_ARCH
+        a                               IMMoRTALS_gmei:ApplicationArchitecture ;
+        IMMoRTALS:hasAvailableResources
+                IMMoRTALS_resources:Server-5eb28441-e345-47de-8161-ffc5eef7a395 , IMMoRTALS_resources:Client-ab5103fd-85c5-44aa-bb43-9cc2198c2946 ;
+        IMMoRTALS:hasCauseEffectAssertions
+                IMMoRTALS_com_securboration_immortals_exampleDataflows:ServerOrientedFormattedDataConstraint ;
+        IMMoRTALS:hasFunctionalAspects  IMMoRTALS_functionality_xml:AspectConstructXml-48bfd928-1bda-4f00-99cf-9dfdb55ff6cb ;
+        IMMoRTALS:hasPojoProvenance     "com.securboration.immortals.exampleDataflows.CPP_ESS_ARCH" .
+
+IMMoRTALS_resources_logical:XMLSchema-7e3a7c60-ad6d-4050-b72c-8ddacca6c3dc
+        a                     IMMoRTALS_resources_logical:XMLSchema ;
+        IMMoRTALS:hasVersion  "2.0" .

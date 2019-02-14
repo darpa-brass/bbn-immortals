@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Update Build Scripts') {
+            steps {
+            checkout(
+                [
+                    $class: 'SubversionSCM', 
+                    additionalCredentials: [], 
+                    excludedCommitMessages: '', 
+                    excludedRegions: '', 
+                    excludedRevprop: '', 
+                    excludedUsers: '', 
+                    filterChangelog: false, 
+                    ignoreDirPropChanges: false, 
+                    includedRegions: '', 
+                    locations: [
+                        [
+                            cancelProcessOnExternalsFail: true, 
+                            credentialsId: '43d0c0a7-bf0d-4fcf-8425-25e863cf674f', 
+                            depthOption: 'infinity', 
+                            ignoreExternalsOption: true, 
+                            local: '.', 
+                            remote: 'svn+ssh://dsl-external.bbn.com/svn/immortals/trunk'
+                        ]
+                    ],
+                    quietOperation: true, 
+                    workspaceUpdater: [
+                        $class: 'UpdateUpdater'
+                    ]
+                ]
+            )
+        }
+        }
+        stage('Claim Testbed') {
+            steps {
+                sh 'bash shared/tools.sh buildsystem autobuild_cp1_' + currentBuild.number + ' --jenkins-claim-testbed'
+            }
+        }
+        stage('Update Testbed Repo') {
+            steps {
+                sh 'bash shared/tools.sh buildsystem autobuild_cp1_' + currentBuild.number + ' --das-repo-update'
+            }
+        }
+        stage('Executing Gradle deploy task') {
+            steps {
+                sh 'bash shared/tools.sh buildsystem autobuild_cp1_' + currentBuild.number + ' --das-deploy --specify-cp-profile p2cp1'
+            }
+        }
+        stage('Execute Baseline A') {
+            steps {
+                sh 'bash shared/tools.sh buildsystem autobuild_cp1_' + currentBuild.number + ' --das-execute-test p2cp1BaselineA --specify-cp-profile p2cp1'
+            }
+        }
+        stage('Execute Challenge') {
+            steps {
+                sh 'bash shared/tools.sh buildsystem autobuild_cp1_' + currentBuild.number + ' --das-execute-test p2cp1Challenge --specify-cp-profile p2cp1'
+                sh 'bash shared/tools.sh buildsystem autobuild_cp1_' + currentBuild.number + ' --jenkins-replace-testbed-nowait'
+            }
+        }
+    }
+}

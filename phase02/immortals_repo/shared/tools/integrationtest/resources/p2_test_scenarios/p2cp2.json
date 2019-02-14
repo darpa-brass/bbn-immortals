@@ -1,0 +1,69 @@
+[
+    {
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "PASS",
+        "expectedTestsPassedPercent": 1.0,
+        "perturbationScenario": "P2CP2DataInTransit",
+        "scenarioIdentifier": "p2cp2BaselineA",
+        "submissionFlow": "BaselineA",
+        "submissionModel": null
+    },
+    {
+        "expectedAdaptationResult": "NOT_APPLICABLE",
+        "expectedVerdictOutcome": "DEGRADED",
+        "expectedTestsPassedPercent": 0.8125,
+        "perturbationScenario": "P2CP2DataInTransit",
+        "scenarioIdentifier": "p2cp2BaselineB",
+        "submissionFlow": "BaselineB",
+        "submissionModel": {
+            "atakLiteClientModel": {
+                "resources": [
+                    "STRONG_CRYPTO"
+                ]
+            },
+            "globalModel": {
+                "requirements": {
+                    "dataInTransit": {
+                        "securityStandard": "AES_128"
+                    }
+                }
+            },
+            "martiServerModel": {
+                "resources": [
+                    "HARWARE_AES",
+                    "STRONG_CRYPTO"
+                ]
+            },
+            "sessionIdentifier": "p2cp2BaselineB"
+        }
+    },
+    {
+        "expectedAdaptationResult": "SUCCESS",
+        "expectedVerdictOutcome": "PASS",
+        "expectedTestsPassedPercent": 1.0,
+        "perturbationScenario": "P2CP2DataInTransit",
+        "scenarioIdentifier": "p2cp2Challenge",
+        "submissionFlow": "Challenge",
+        "submissionModel": {
+            "atakLiteClientModel": {
+                "resources": [
+                    "STRONG_CRYPTO"
+                ]
+            },
+            "globalModel": {
+                "requirements": {
+                    "dataInTransit": {
+                        "securityStandard": "AES_128"
+                    }
+                }
+            },
+            "martiServerModel": {
+                "resources": [
+                    "HARWARE_AES",
+                    "STRONG_CRYPTO"
+                ]
+            },
+            "sessionIdentifier": "p2cp2Challenge"
+        }
+    }
+]

@@ -1,0 +1,46 @@
+@startuml
+
+partition "Rebuild Predeploy Environment" {
+:Import Base Testbed;
+:Update To Latest Source;
+:Perform Predeploy Environment Setup;
+:Save Created Images;
+}
+
+fork
+
+partition "Build Current DAS Image" {
+:Build DAS;
+}
+
+fork
+
+:Test P2CP1;
+fork again
+:Test P2CP2;
+fork again
+:Test P2CP3_HDDRASS;
+fork again
+:Test P2CP_PLUG;
+fork again
+:Test P2CP_PQL;
+fork again
+:Test P3CP1;
+fork again
+:Test P3CP2;
+fork again
+:Test P3CP3;
+end fork
+
+stop
+
+
+'(*)  --> "check input"
+'If "input is verbose" then
+'--> [Yes] "turn on verbosity"
+'--> "run command"
+'else
+'--> "run command"
+'Endif
+'-->(*)
+@enduml

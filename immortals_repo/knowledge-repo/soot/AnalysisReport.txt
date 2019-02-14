@@ -1,0 +1,21 @@
+================================Analysis Report================================
+===																			===
+===               Base-Vocab Triples -> ???BASE_VOCAB??? 					===
+===               Domain Triples -> ???DOMAIN???							===
+===               Bytecode Triples -> ???BYTECODE???						===
+===               Mine Triples -> ???MINE???								===
+===               Inference Triples -> ???INFERENCE???						===
+===               Adaptation Triples -> ???ADAPTATION???					===
+===               															===
+===               Bytecode Execution -> ???BYTECODE_TIME???					===
+===               Mine Execution -> ???MINE_TIME???							===
+===               Ingest Execution -> ???INGEST_TIME???						===
+===               Adapt Execution -> ???ADAPT_TIME???						===
+===																			===
+===               Classes Modified -> ???MODDED_CLASSES???					===
+===               Methods Modified -> ???MODDED_METHODS???				    ===
+===               Classes Generated -> ???GEN_CLASSES???					===
+===               Methods Generated -> ???GEN_METHODS???					===
+===               New Dependencies -> ???DEPENDENCIES???					===
+===																			===
+===============================================================================               

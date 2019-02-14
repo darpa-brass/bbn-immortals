@@ -15,7 +15,7 @@ import com.securboration.immortals.ontology.property.Property;
 @com.securboration.immortals.ontology.annotations.RdfsComment(
     "A directed dataflow edge connecting a producer to a consumer of an" +
     " abstract data type  @author jstaples ")
-public class DataflowEdge {
+public class DataflowEdge extends DataflowGraphComponent {
     
     /**
      * The type of data being communicated

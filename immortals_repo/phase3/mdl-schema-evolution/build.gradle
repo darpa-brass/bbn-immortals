@@ -1,0 +1,57 @@
+plugins {
+	id 'java'
+	id 'maven-publish'
+}
+
+repositories {
+	mavenCentral()
+}
+
+group 'mil.darpa.immortals'
+version '0.1.2'
+
+sourceCompatibility = 1.8
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/main/java/']
+		}
+	}
+	integrationTest {
+		java {
+			srcDirs = ['src/integrationtest/java']
+		}
+	}
+}
+
+publishing {
+	publications {
+		mseLib(MavenPublication) {
+			artifactId = 'mdl-schema-evolution-bridge'
+			from components.java
+		}
+		immortalsMseLib(MavenPublication) {
+			artifactId = 'mdl-immortals-bridge'
+			from components.java
+		}
+	}
+}
+
+task integrationTest(type: Test) {
+	useTestNG()
+	group = 'Verification'
+	description = 'Executes integration tests. Requires properly set up local OrientDB instance to pass'
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+dependencies {
+	compile 'com.orientechnologies:orientdb-core:2.2.24'
+	compile 'com.orientechnologies:orientdb-graphdb:2.2.24'
+	compile 'com.google.code.findbugs:jsr305:3.0.1'
+
+	integrationTestCompile project(':')
+	integrationTestCompile 'org.testng:testng:6.14.3'
+	integrationTestCompile 'com.google.code.gson:gson:2.7'
+}

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>com.securboration</groupId>
+		<artifactId>immortals</artifactId>
+		<version>r2.0.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<artifactId>immortals-ontologies-vocab</artifactId>
+	<packaging>jar</packaging>
+	
+	<name>IMMoRTALS ontology vocabulary</name>
+	<url>https://dsl-external.bbn.com/tracsvr/immortals</url>
+
+	<dependencies>
+	
+		<!-- POJO decorators -->
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-pojo-annotations</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<!-- domains -->
+		<dependency><!-- CORE -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-core</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency><!-- SA -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-sa</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency><!-- BYTECODE -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-bytecode</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency><!-- CP -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-cp</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency><!-- scratchpad -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-scratchpad</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency><!-- analysis -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-analysis</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency><!-- java project -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-java-project</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency><!-- feature model -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-feature-model</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency><!-- functional -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-functional</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency><!-- resources -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-resources</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-constraint</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency><!-- inference -->
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-ontologies-domains-inference</artifactId>
+			<version>${immortals.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+	</dependencies>
+
+	<properties>
+		<!-- blank -->
+	</properties>
+
+	<repositories>
+		<!-- blank -->
+	</repositories>
+
+	<profiles>
+		<!-- blank -->
+	</profiles>
+
+	<build>
+		<plugins>
+			<!--
+			Add the ontology API source to this project's build path
+			(so our Maven plugin can generate triples from it)
+			-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.10</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.basedir}/../ontology-vocab-domains/core/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/bytecode/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/sa/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/cp/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/scratchpad/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/analysis/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/java-project/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/functional/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/constraint/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/resources/src/main/java</source>
+								<source>${project.basedir}/../ontology-vocab-domains/fm/src/main/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin><!-- target 1.7 for android -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler-plugin.version}</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+	</build>
+
+</project>

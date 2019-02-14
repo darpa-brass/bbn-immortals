@@ -148,6 +148,10 @@
 		<!-- bytecode analysis -->
 		<module>toolchain/bytecode-analyzer</module>
 		
+		<!-- dynamic analysis -->
+		<module>toolchain/trace-analysis</module>
+		<module>toolchain/dataflow-analyzer</module>
+		
 		<module>toolchain/constraint-analysis</module>
 		
 		<!-- exaples -->
@@ -155,6 +159,9 @@
 		
 		<!-- tests -->
 		<module>tests/test-das-workflow</module>
+		
+		
+		<module>cp/cp3.1/cp-eval-service</module>
 		
 	</modules>
 

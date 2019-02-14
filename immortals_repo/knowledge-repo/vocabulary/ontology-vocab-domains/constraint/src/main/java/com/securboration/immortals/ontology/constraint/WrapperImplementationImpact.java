@@ -1,18 +1,23 @@
 package com.securboration.immortals.ontology.constraint;
 
 import com.securboration.immortals.ontology.analysis.DataflowNode;
+import com.securboration.immortals.ontology.bytecode.BytecodeArtifactCoordinate;
 import com.securboration.immortals.ontology.functionality.FunctionalAspect;
 import com.securboration.immortals.ontology.lang.SourceFile;
 import com.securboration.immortals.ontology.property.impact.AnalysisImpact;
 
 public class WrapperImplementationImpact extends AnalysisImpact {
-    
+
     private SourceFile[] producedSourceFiles;
-    
+
     private SourceFile augmentedUserFile;
-    
+
     private DataflowNode initializationNode;
-    
+
+    private String wrapperClassNameShort;
+
+    private BytecodeArtifactCoordinate newDependencies;
+
     private String[] additionalDependencies;
     
     private Class<? extends FunctionalAspect> aspectImplemented;
@@ -55,5 +60,21 @@ public class WrapperImplementationImpact extends AnalysisImpact {
 
     public void setAdditionalDependencies(String[] additionalDependencies) {
         this.additionalDependencies = additionalDependencies;
+    }
+
+    public String getWrapperClassNameShort() {
+        return wrapperClassNameShort;
+    }
+
+    public void setWrapperClassNameShort(String wrapperClassNameShort) {
+        this.wrapperClassNameShort = wrapperClassNameShort;
+    }
+
+    public BytecodeArtifactCoordinate getNewDependencies() {
+        return newDependencies;
+    }
+
+    public void setNewDependencies(BytecodeArtifactCoordinate newDependencies) {
+        this.newDependencies = newDependencies;
     }
 }

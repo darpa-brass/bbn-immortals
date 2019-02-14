@@ -576,7 +576,7 @@ public class JarIngestor {
             //it's an instance method, so there is an implicit "this" param
             MethodArg arg = new MethodArg();
             arg.setArgNumber(0);
-            arg.setDeclaredTypeDescriptor(Type.getType(owner.name).getDescriptor());
+            arg.setDeclaredTypeDescriptor(Type.getType(owner.getClass()).getDescriptor());
             arg.setLocalIndex(localIndex);
             arg.setName("this");
             arg.setOwner(methodModel);
@@ -1081,6 +1081,8 @@ public class JarIngestor {
         
         static
         {
+            map.put(0x36, "Java SE 10");
+            map.put(0x35, "Java SE 9");
             map.put(0x34, "Java SE 8");
             map.put(0x33, "Java SE 7");
             map.put(0x32, "Java SE 6.0");

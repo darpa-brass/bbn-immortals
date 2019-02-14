@@ -1,0 +1,48 @@
+@startuml
+
+!include basic.iuml
+!include common.iuml
+!include submodule.iuml
+
+!definelong MODULE(parent, cardinality)
+package "Module [1..*]" as parent##Module {
+    rectangle "ID (str)" as parent##ModuleID
+    [Position (int)] <<Modifiable>> as parent##ModulePosition
+    [PositionsOccupied (int)] <<Modifiable>> as parent##ModulePositionsoccupied
+
+    package "RunningAppRefs [0..1]" <<Not Yet Utilized>> as parent##ModuleRunningAppRefs {
+        interface TmNSAppRef as parent##ModuleRAR #LightGray
+    }
+
+    CHILDREN(parent##Module, "Children [0..1]")
+
+    package "NetworkInterfaces [0..1]" <<Not Yet Utilized>> as parent##ModuleNetworkInterfaces {
+        interface "NetworkInterface [1..*]" as parent##ModuleNetworkInterface
+    }
+
+    CONNECTORS(parent##Module, "Connectors [0..1]")
+
+    PORTS(parent##Module, "Ports [1]")
+
+    package "SubModules [0..1]" as parent##ModuleSubmodules {
+        SUBMODULE(parent##ModuleSubmodules, "SubModules [1..*]")
+    }
+
+    parent##ModuleID -[hidden]r-> parent##ModulePosition
+    parent##ModulePosition -[hidden]r-> parent##ModulePositionsoccupied
+    parent##ModulePositionsoccupied -[hidden]r-> parent##ModuleNetworkInterfaces
+    parent##ModuleNetworkInterfaces -[hidden]r-> parent##ModuleChildren
+    parent##ModuleChildren -[hidden]r-> parent##ModuleRunningAppRefs
+
+    parent##ModulePositionsoccupied -[hidden]d-> parent##ModuleSubmodules
+    parent##ModuleSubmodules -[hidden]d-> parent##ModulePorts
+
+    parent##ModuleNetworkInterfaces -[hidden]d-> parent##ModuleConnectors
+    parent##ModuleConnectors -[hidden]d-> parent##ModulePorts
+}
+'parent##ModulePortsPortPinrefIdref -> parent##ModuleConnectorsConnectorPinId
+
+!enddefinelong
+
+MODULE(MEH, "[1..*]")
+@enduml

@@ -1,0 +1,20 @@
+{
+  "identifier": "maven",
+  "version": "3",
+  "versionExtractionCommand": "mvn --version",
+  "versionExtractionRegex": "(?<=Apache Maven )[0-9]",
+  "home": "{installationRoot}apache-maven",
+  "pathExports": [
+    "bin"
+  ],
+  "requiredExecutables": [
+    "bin/mvn"
+  ],
+  "homeExportRequired": false,
+  "setupCommands": [
+    "wget http://www-us.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz --directory-prefix {tempDirectory}",
+    "tar xvzf {tempDirectory}apache-maven-3.3.9-bin.tar.gz -C {installationRoot}",
+    "mv {installationRoot}/apache-maven-3.3.9 {home}"
+  ],
+  "packageDependencies": []
+}

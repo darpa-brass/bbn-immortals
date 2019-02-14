@@ -1,0 +1,72 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {}
+}
+
+task genJaxb {
+    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+    ext.classesDir = "${buildDir}/classes/jaxb"
+    ext.schema = "${projectDir}/../../schema/v3/MessageListenerSchema.xsd"
+
+    outputs.dir classesDir
+
+    doLast() {
+        project.ant {
+            taskdef name: "xjc", 
+			classname: "com.sun.tools.xjc.XJCTask",
+			classpath: configurations.jaxb.asPath
+            mkdir(dir: sourcesDir)
+            mkdir(dir: classesDir)
+			
+			System.out.println(schema);//TODO
+
+            xjc(destdir: sourcesDir, schema: schema) {
+                arg(value: "-wsdl")
+                produces(dir: sourcesDir, includes: "**/*.java")
+				
+            }
+
+            javac(
+				destdir: classesDir, 
+				source: "${JAVA_COMPILER_SRC_LEVEL}", 
+				target: "${JAVA_COMPILER_SRC_LEVEL}", 
+				debug: true,
+                debugLevel: "lines,vars,source",
+				classpath: configurations.jaxb.asPath
+				) {
+                src(path: sourcesDir)
+                include(name: "**/*.java")
+                include(name: "*.java")
+            }
+
+            copy(todir: classesDir) {
+                fileset(dir: sourcesDir, erroronmissingdir: false) {
+                    exclude(name: "**/*.java")
+                }
+            }
+        }
+    }
+}
+
+jar {
+  from genJaxb.classesDir
+}
+
+task afterEclipseImport {
+	dependsOn "genJaxb"
+}
+
+configurations {
+    jaxb
+}
+
+dependencies {
+	jaxb("com.sun.xml.bind:jaxb-impl:2.2.11")
+    jaxb("org.glassfish.jaxb:jaxb-xjc:2.2.11")
+	jaxb("com.sun.activation:javax.activation:1.2.0")
+	
+    compile(files(genJaxb.classesDir).builtBy(genJaxb))
+}
+

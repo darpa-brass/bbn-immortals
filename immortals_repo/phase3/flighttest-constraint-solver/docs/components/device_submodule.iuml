@@ -1,0 +1,20 @@
+!include basic.iuml
+!include common.iuml
+
+!definelong DEVICE_SUBMODULE(parent, pkg_title)
+package "pkg_title## (DeviceSubModule)" as parent##Devicesubmodule {
+    rectangle "ID (str)" as parent##DevicesubmoduleID
+    component "Position (int)" <<Modifiable>> as parent##DevicesubmodulePosition
+    component "PositionsOccupied (int)" <<Modifiable>> as parent##DevicesubmodulePositionsoccupied
+
+    CHILDREN(parent##Devicesubmodule, "Children [0..1]")
+    CONNECTORS(parent##Devicesubmodule, "Connectors [0..1]")
+    PORTS(parent##Devicesubmodule, "Ports [1]")
+    parent##DevicesubmoduleID -[hidden]r-> parent##DevicesubmodulePosition
+    parent##DevicesubmodulePosition -[hidden]r-> parent##DevicesubmodulePositionsoccupied
+    parent##DevicesubmodulePositionsoccupied -[hidden]r->  parent##DevicesubmoduleChildren
+    parent##DevicesubmoduleChildren -[hidden]r->  parent##DevicesubmoduleConnectors
+
+    parent##DevicesubmoduleID -[hidden]d->  parent##DevicesubmodulePorts
+}
+!enddefinelong

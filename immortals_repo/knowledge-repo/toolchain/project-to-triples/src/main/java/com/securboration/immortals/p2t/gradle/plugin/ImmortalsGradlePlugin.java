@@ -32,6 +32,8 @@ public class ImmortalsGradlePlugin implements Plugin<Project>{
         private boolean staticAnalysisEnabled = false;
 
         private String targetDir = null;
+
+        private String localRepoPath;
         
         private String[] includedLibs;
         
@@ -50,6 +52,8 @@ public class ImmortalsGradlePlugin implements Plugin<Project>{
         public String getTargetDir() {
             return targetDir;
         }
+
+        public void setTargetDir(String _targetDir) {targetDir = _targetDir;}
 
         public String[] getIncludedLibs() {
             return includedLibs;
@@ -74,7 +78,15 @@ public class ImmortalsGradlePlugin implements Plugin<Project>{
         public void setVcsAnchor(String vcsAnchor) {
             this.vcsAnchor = vcsAnchor;
         }
-    }
+
+		public String getLocalRepoPath() {
+			return localRepoPath;
+		}
+
+		public void setLocalRepoPath(String localRepoPaths) {
+			this.localRepoPath = localRepoPaths;
+		}
+	}
     
     
 	/**
@@ -172,16 +184,36 @@ public class ImmortalsGradlePlugin implements Plugin<Project>{
 
 	@Override
     public void apply(Project p) {
-	    
+
 	    p.getExtensions().add("krgp", new ImmortalsPluginExtension());
 
 		Task bytecode = p.getTasks().create("bytecode", BytecodeGradleTask.class);
 		bytecode.setGroup(TASK_GROUP);
 		bytecode.setDescription("Perform bytecode-triple generation for the current project.");
-		
+
+		Task mine = p.getTasks().create("mine", MineGradleTask.class);
+		mine.setGroup(TASK_GROUP);
+		mine.setDescription("Mine dfu repos (if any) for dfu annotations");
+
+		Task ingest = p.getTasks().create("ingest", IngestGradleTask.class);
+		ingest.setGroup(TASK_GROUP);
+		ingest.setDescription("Ingest ttl artifacts into local fuseki instance and enforce given constraints");
+
+		Task adapt = p.getTasks().create("adapt", AdaptGradleTask.class);
+		adapt.setGroup(TASK_GROUP);
+		adapt.setDescription("Generate dataflow artifacts and adaptation surface(s) to mitigate constraint violation");
+
+		Task repair = p.getTasks().create("repair", RepairGradleTask.class);
+		repair.setGroup(TASK_GROUP);
+		repair.setDescription("Introduces adaptation surface(s) to target project");
+
 		Task constraint = p.getTasks().create("constraint", ConstraintGradleTask.class);
 		constraint.setGroup(TASK_GROUP);
 		constraint.setDescription("Enforce all constraints on current ontology.");
+
+		Task outputUber = p.getTasks().create("output", OutputUberGradleTask.class);
+		outputUber.setGroup(TASK_GROUP);
+		outputUber.setDescription("Output uber graph belonging to current project");
 		
 		Task cleanUp = p.getTasks().create("cleanup", PluginCleanupGradleTask.class);
 		cleanUp.shouldRunAfter(bytecode, constraint);

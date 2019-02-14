@@ -9,6 +9,8 @@ public class AspectConfigureSolution {
     
     private ConfigurationBinding[] configurationBindings;
 
+    private String projectUUID;
+
     public DfuInstance getChosenInstance() {
         return chosenInstance;
     }
@@ -23,5 +25,13 @@ public class AspectConfigureSolution {
 
     public void setConfigurationBindings(ConfigurationBinding[] configurationBindings) {
         this.configurationBindings = configurationBindings;
+    }
+
+    public String getProjectUUID() {
+        return projectUUID;
+    }
+
+    public void setProjectUUID(String projectUUID) {
+        this.projectUUID = projectUUID;
     }
 }

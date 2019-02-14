@@ -1,0 +1,21 @@
+{
+  "identifier": "anaconda",
+  "version": "3.7",
+  "home": "{installationRoot}anaconda",
+  "packageDependencies": [
+  ],
+  "linux": {
+    "ubuntu": {
+      "setupCommands": [
+        "wget https://repo.anaconda.com/archive/Anaconda3-2018.12-Linux-x86_64.sh -O {tempDirectory}/Anaconda3-2018.12-Linux-x86_64.sh",
+        "cd {tempDirectory}",
+        "sudo chmod +x Anaconda3-2018.12-Linux-x86_64.sh",
+        "./Anaconda3-2018.12-Linux-x86_64.sh -b -p /home/awellman/.immortals/anaconda"
+      ]
+    },
+    "requiredExecutables": [
+      "bin/activate"
+    ],
+    "homeExportRequired": false
+  }
+}

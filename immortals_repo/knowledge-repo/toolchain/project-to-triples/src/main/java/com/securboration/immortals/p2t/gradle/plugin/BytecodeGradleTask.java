@@ -10,6 +10,12 @@ import org.apache.http.impl.client.HttpClients;
 import org.gradle.api.Project;
 import org.gradle.api.UnknownDomainObjectException;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.artifacts.ProjectDependency;
+import org.gradle.api.artifacts.dsl.RepositoryHandler;
+import org.gradle.api.artifacts.repositories.ArtifactRepository;
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
+import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency;
 import org.gradle.api.tasks.TaskAction;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -103,6 +109,17 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
         Project p = getProject();
         List<String> srcDirs = new ArrayList<>();
 
+        List<String> repoPaths = new ArrayList<>();
+        for (ArtifactRepository repository : p.getRepositories()) {
+            if (repository instanceof MavenArtifactRepository) {
+                MavenArtifactRepository mavenArtifactRepository = (MavenArtifactRepository) repository;
+                String repoPath = mavenArtifactRepository.getUrl().getPath();
+                if (repoPath.toLowerCase().contains("immortals_repo")) {
+                    repoPaths.add(mavenArtifactRepository.getUrl().getPath());
+                }
+            }
+        }
+
         try {
             String buildScriptString = FileUtils.readFileToString(p.getBuildscript().getSourceFile());
             Pattern captureAdditionalSourceSets = Pattern.compile("srcDirs = \\[(.+)\\]");
@@ -135,26 +152,34 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
         ArrayList<String> includedLibs = null;
         boolean completeAnalysis= false;
         String vcsAnchor = null;
+        String localRepoPath = null;
         try {
             ImmortalsGradlePlugin.ImmortalsPluginExtension extension = (ImmortalsGradlePlugin.ImmortalsPluginExtension) p.getExtensions().getByName("krgp");
-            completeAnalysis = extension.isCompleteAnalysis();
             pluginOutput = extension.getTargetDir();
-            vcsAnchor = extension.getVcsAnchor();
             includedLibs = new ArrayList<>();
             includedLibs.addAll(Arrays.asList(extension.getIncludedLibs()));
-        } catch (UnknownDomainObjectException exc) {
-            pluginOutput = String.valueOf(p.getProperties().get("pluginOutput"));
         } catch (Exception exc) {
             includedLibs = null;
         }
+        if (pluginOutput == null) {
+            pluginOutput = String.valueOf(p.getProperties().get("pluginOutput"));
+        }
+        localRepoPath = String.valueOf(p.getProperties().get("localRepo"));
+        completeAnalysis = false;
         ProjectToTriplesMain p2tm = new ProjectToTriplesMain();
         GradleTaskHelper taskHelper = new GradleTaskHelper(client, null, pluginOutput, p.getName());
        
         GradleData data = new GradleData();
+        data.setPathToBuildDir(p.getBuildDir().getAbsolutePath());
         data.setGroup(p.getGroup().toString());
         data.setArtifact(p.getName());
         data.setVersion(p.getVersion().toString());
-        
+        if (localRepoPath == null) {
+            data.setRepoPaths(repoPaths);
+        } else {
+            data.setRepoPaths(Collections.singletonList(localRepoPath));
+        }
+
         String version = p.getVersion().toString();
         if (version != null && !version.equals("")){
             data.setImmortalsVersion(version);
@@ -194,8 +219,8 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
 
         for(int i = 0; i < myList.size(); i++){
             String classFile = myList.get(i);
-            if(classFile.contains(".class")){
-                if (classFile.contains("/test/") || classFile.contains("\\test\\")){
+            if (classFile.endsWith(".class")) {
+                if (classFile.contains("/test/") || classFile.contains("\\test\\") || classFile.contains(File.separator + "validation" + File.separator)){
                     testClassFiles.add(classFile);
                 }
                 else{
@@ -213,7 +238,7 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
         for(int i = 0; i < myList.size(); i++){
             String sourceFile = myList.get(i);
             if(sourceFile.contains(".java")){
-                if (sourceFile.contains("/test/") || sourceFile.contains("\\test\\") || sourceFile.contains(File.separator + "androidTest" + File.separator)){
+                if (sourceFile.contains("/test/") || sourceFile.contains("\\test\\") || sourceFile.contains("/" + "androidTest" + "/")){
                     testSourceFiles.add(sourceFile);
                 }
                 else{
@@ -224,7 +249,7 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
 
         myList = new ArrayList<String>(Arrays.asList(p.fileTree("build/generated").getAsPath().split(splitter)));
         for(int i = 0; i < myList.size(); i++){
-            String sourceFile = myList.get(i);
+            String sourceFile = myList.get(i);  
             if(sourceFile.contains(".java")){
                 sourceFiles.add(sourceFile);
             }
@@ -249,6 +274,9 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
         data.setAdditionalSources(srcDirs);
         data.setSourceFilePaths(sourceFiles);
         data.setTestSourceFilePaths(testSourceFiles);
+
+        Configuration configuration = p.getConfigurations().getByName("compile");
+        configuration.forEach(file -> data.getDependencies().add(file));
 
         try {
             String result = "";
@@ -283,7 +311,7 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
         }
     }
 
-    private ArrayList<String> readClasspath(Project p, String var){
+    public static ArrayList<String> readClasspath(Project p, String var){
         ArrayList<String> items = new ArrayList<>();
         
         Configuration conf = p.getConfigurations().getByName(var);

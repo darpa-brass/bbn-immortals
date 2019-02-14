@@ -1,34 +1,33 @@
 package com.securboration.immortals.project2triples;
 
-import java.io.*;
+import static soot.SootClass.BODIES;
+import static soot.SootClass.SIGNATURES;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.PackageDeclaration;
-import com.securboration.immortals.instantiation.annotationparser.bytecode.BytecodeHelper;
-import com.securboration.immortals.instantiation.annotationparser.traversal.AnnotationParser;
-import com.securboration.immortals.instantiation.annotationparser.traversal.JarTraverser;
-import com.securboration.immortals.ontology.bytecode.*;
-
-
-import com.securboration.immortals.ontology.java.android.AndroidApp;
-import com.securboration.immortals.ontology.java.compiler.NamedClasspath;
-
-import com.securboration.immortals.ontology.java.source.SourceCodeRepo;
-import com.securboration.immortals.ontology.lang.ProgrammingLanguage;
-import com.securboration.immortals.ontology.lang.SourceFile;
-
-import com.securboration.immortals.semanticweaver.ObjectMapper;
-
-import com.securboration.immortals.utility.GradleTaskHelper;
-
+import com.securboration.immortals.ontology.java.project.AnalysisMetrics;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -39,15 +38,43 @@ import org.json.simple.parser.ParseException;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.utils.Pair;
 import com.securboration.immortals.instantiation.bytecode.JarIngestor;
 import com.securboration.immortals.instantiation.bytecode.SourceFinder;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
 import com.securboration.immortals.o2t.analysis.ObjectToTriples;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
+import com.securboration.immortals.ontology.bytecode.AClass;
+import com.securboration.immortals.ontology.bytecode.BytecodeArtifactCoordinate;
+import com.securboration.immortals.ontology.bytecode.ClassArtifact;
+import com.securboration.immortals.ontology.bytecode.ClasspathElement;
+import com.securboration.immortals.ontology.bytecode.Dependency;
+import com.securboration.immortals.ontology.bytecode.JarArtifact;
+import com.securboration.immortals.ontology.java.android.AndroidApp;
 import com.securboration.immortals.ontology.java.build.BuildScript;
+import com.securboration.immortals.ontology.java.compiler.NamedClasspath;
+import com.securboration.immortals.ontology.java.dfus.DfuModuleRepo;
 import com.securboration.immortals.ontology.java.project.JavaProject;
 import com.securboration.immortals.ontology.java.source.CompiledJavaSourceFile;
+import com.securboration.immortals.ontology.java.source.SourceCodeRepo;
 import com.securboration.immortals.ontology.java.vcs.VcsCoordinate;
+import com.securboration.immortals.ontology.lang.ProgrammingLanguage;
+import com.securboration.immortals.ontology.lang.SourceFile;
+import com.securboration.immortals.semanticweaver.ObjectMapper;
+import com.securboration.immortals.soot.JimpleClassMapping;
+import com.securboration.immortals.utility.GradleTaskHelper;
+
+import soot.Printer;
+import soot.Scene;
+import soot.SootClass;
+import soot.SootResolver;
+import soot.SourceLocator;
+import soot.options.Options;
+import soot.tagkit.InnerClassTag;
+import soot.tagkit.Tag;
 
 public class ProjectToTriplesMain {
 
@@ -59,9 +86,9 @@ public class ProjectToTriplesMain {
 	private enum RDFFormat {
 		TURTLE(".ttl"),
 		XML(".xml");
-		
+
 		private String ext;
-		
+
 		RDFFormat(String ext) {
 
 			this.ext = ext;
@@ -69,18 +96,20 @@ public class ProjectToTriplesMain {
 		public String ext() {
 			return ext;
 		}
-		
+
 	}
-	
-	public static void main(String[] args) {
-    }
-    
+
+	public static void main(String[] args){}
+
 	public String testFunction(){
 		return "Hello, world!";
 	}
-	
+
 	public String gradleDataToTriples(GradleData gd, GradleTaskHelper taskHelper, ArrayList<String> includedLibs,
-                                      boolean completeAnalysis, String vcsAnchor) throws Exception{
+									  boolean completeAnalysis, String vcsAnchor) throws Exception {
+
+		Long beginTime = System.currentTimeMillis();
+		int bytecodeTriples = 0;
 		String uuid = getUUID();
 		o2tc = new ObjectToTriplesConfiguration("r2.0.0");
 		JavaProject x = new JavaProject();
@@ -120,104 +149,83 @@ public class ProjectToTriplesMain {
 			String buildScriptHash = hash(pom);
 			buildScript = new BuildScript(buildScriptContents,buildScriptHash,uuid);
 		}
-		
+
 		// Initialize data structures that will be used across classpaths
 		ArrayList<NamedClasspath> gradlePaths = new ArrayList<>();
 		Set<String> compiledSourcesHash = new HashSet<>();
 		Set<String> elementPathList = new HashSet<>();
 		NamedClasspath gpc;
-		
+
 		JarArtifact jal;
-		
-        if (!completeAnalysis) {
 
-            HashSet<String> defaultClassPaths = new HashSet<>();
-            defaultClassPaths.add(COMPILE_CLASSPATH_NAME);
+		if (!completeAnalysis) {
 
-            HashMap<String, ArrayList<String>> tempClasspath = new HashMap<>();
-            tempClasspath.putAll(gd.getClasspathNameToClasspathList());
-            for (String key : tempClasspath.keySet()) {
-                if (!defaultClassPaths.contains(key)) {
-                    gd.getClasspathNameToClasspathList().remove(key);
-                }
-            }
-        }
-        
-        ArrayList<String> customAnnotClasses = new ArrayList<>();
-        customAnnotClasses.addAll(gd.getClasspathNameToClasspathList().get("compile"));
-        customAnnotClasses.addAll(getPackagePaths(gd.getClassFilePaths()));
-        
-        String[] neededClassPaths = new String[customAnnotClasses.size()];
-        int i = 0;
-        for (String classPath : customAnnotClasses) {
-            neededClassPaths[i] = classPath;
-            i++;
-        }
-        
-        SourceCodeRepo sourceCodeRepo = new SourceCodeRepo();
-        gd.getSourceFilePaths().addAll(gd.getAdditionalSources());
-        SourceFile[] sourceFileArray = new SourceFile[gd.getSourceFilePaths().size()];
-        
-        int j = 0;
-        for (String javaSourceFile : gd.getSourceFilePaths()) {
-            SourceFile sourceFile = new SourceFile();
-            ProgrammingLanguage programmingLanguage = new ProgrammingLanguage();
-            programmingLanguage.setLanguageName("java");
-            sourceFile.setLanguageModel(programmingLanguage);
-            String source = FileUtils.readFileToString(new File(javaSourceFile));
-            CompilationUnit compilationUnit = JavaParser.parse(source);
-            Optional<PackageDeclaration> filePackageOption = compilationUnit.getPackageDeclaration();
-            String fileSimpleName = javaSourceFile.substring(javaSourceFile.lastIndexOf(File.separatorChar) + 1);
-            sourceFile.setFileName(fileSimpleName);
-            fileSimpleName = fileSimpleName.substring(0, fileSimpleName.lastIndexOf(".java"));
-            if (filePackageOption.isPresent()) {
-                PackageDeclaration filePackage = filePackageOption.get();
-                sourceFile.setFullyQualifiedName(filePackage.getNameAsString() + "." + fileSimpleName);
-            }
-            sourceFile.setSource(source);
-            
-            sourceFileArray[j] = sourceFile;
-            j++;
-        }
+			HashSet<String> defaultClassPaths = new HashSet<>();
+			defaultClassPaths.add(COMPILE_CLASSPATH_NAME);
 
-        sourceCodeRepo.setSourceFiles(sourceFileArray);
-        
+			HashMap<String, ArrayList<String>> tempClasspath = new HashMap<>();
+			tempClasspath.putAll(gd.getClasspathNameToClasspathList());
+			for (String key : tempClasspath.keySet()) {
+				if (!defaultClassPaths.contains(key)) {
+					gd.getClasspathNameToClasspathList().remove(key);
+				}
+			}
+		}
+
+		SourceCodeRepo sourceCodeRepo = new SourceCodeRepo();
+		gd.getSourceFilePaths().addAll(gd.getAdditionalSources());
+		SourceFile[] sourceFileArray = new SourceFile[gd.getSourceFilePaths().size()];
+
+		int j = 0;
+		for (String javaSourceFile : gd.getSourceFilePaths()) {
+			SourceFile sourceFile = new SourceFile();
+			ProgrammingLanguage programmingLanguage = new ProgrammingLanguage();
+			programmingLanguage.setLanguageName("java");
+			sourceFile.setLanguageModel(programmingLanguage);
+			String source = FileUtils.readFileToString(new File(javaSourceFile));
+			CompilationUnit compilationUnit = JavaParser.parse(source);
+			Optional<PackageDeclaration> filePackageOption = compilationUnit.getPackageDeclaration();
+			String fileSimpleName = javaSourceFile.substring(javaSourceFile.lastIndexOf(File.separatorChar) + 1);
+			sourceFile.setFileName(fileSimpleName);
+			fileSimpleName = fileSimpleName.substring(0, fileSimpleName.lastIndexOf(".java"));
+			if (filePackageOption.isPresent()) {
+				PackageDeclaration filePackage = filePackageOption.get();
+				sourceFile.setFullyQualifiedName(filePackage.getNameAsString() + "." + fileSimpleName);
+			}
+			sourceFile.setSource(source);
+
+			sourceFileArray[j] = sourceFile;
+			j++;
+		}
+
+		sourceCodeRepo.setSourceFiles(sourceFileArray);
+
 		// For each classpath...
-        gd.getClassFilePaths().addAll(gd.getTestClassFilePaths());
+		gd.getClassFilePaths().addAll(gd.getTestClassFilePaths());
 		for (String key : gd.getClasspathNameToClasspathList().keySet()){
 			ArrayList<String> jarPath = gd.getClasspathNameToClasspathList().get(key);
 			// Debugging statement
 			gpc = new NamedClasspath();
 			// Add all methods on this classpath to cache
 			for (String path : new HashSet<>(gd.getClassFilePaths())) {
-				ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration("r2.0.0");
-				AnnotationParser annotationParser = new AnnotationParser(config, neededClassPaths);
-				
 				CompiledJavaSourceFile sourceFile = processClassFileFromString(path, taskHelper, basedir, gd);
-				
+
+				//TODO we should be going through this loop
 				if (elementPathList.add(path)) {
 					compiledSourcesHash.add(sourceFile.getHash());
 					Model classModel = ObjectToTriples.convert(o2tc, sourceFile);
+					bytecodeTriples+=classModel.getGraph().size();
 					String serialModel = OntologyHelper.serializeModel(classModel, "Turtle", false);
 					recordCPElement(serialModel, taskHelper.getResultsDir() + gd.getCompiledProjectName()
 							+ SOURCES_DIRECTORY + sourceFile.getName() + RDFFormat.TURTLE.ext);
-
-					byte[] bytecode = FileUtils.readFileToByteArray(new File(path));
-					annotationParser.visitClass(BytecodeHelper.hash(bytecode), bytecode);
-					//Serialize each dfu element for each class file
-					serialModel = serializeCPElement(config);
-					if (!serialModel.equals("")) {
-						recordCPElement(serialModel, taskHelper.getResultsDir() + gd.getCompiledProjectName()
-								+ DFUS_DIRECTORY + sourceFile.getName() + "-DFU" + RDFFormat.TURTLE.ext);
-					}
 				}
 			}
 			for (String path : jarPath) {
-				ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration("r2.0.0");
-				AnnotationParser annotationParser = new AnnotationParser(config, neededClassPaths);
+
 				// Check if we have already processed this file
 				if (elementPathList.add(path)) {
 					// Single class file on path
+					//TODO currently here... don't think we should be going through this loop , but the one above instead
 					if (path.endsWith(".class")) {
 						// Analyze class file element
 						ClasspathElement element = JarIngestor.ingest(new File(path), sf);
@@ -227,114 +235,96 @@ public class ProjectToTriplesMain {
 
 							//Serialize Rdf model and output for each class file
 							Model classModel = ObjectToTriples.convert(o2tc, element);
+							bytecodeTriples+=classModel.getGraph().size();
 							String serialModel = OntologyHelper.serializeModel(classModel, "Turtle", false);
-							recordCPElement(serialModel, taskHelper.getResultsDir()
-									 + "/" + key + CLASS_ARTIFACTS_DIRECTORY + element.getName() + RDFFormat.TURTLE.ext);
-
-							// Traverse class for dfu's
-							byte[] bytecode = FileUtils.readFileToByteArray(new File(path));
-							annotationParser.visitClass(BytecodeHelper.hash(bytecode), bytecode);
-							//Serialize each dfu element for each class file
-							serialModel = serializeCPElement(config);
-							if (!serialModel.equals("")) {
-								recordCPElement(serialModel, taskHelper.getResultsDir()
-										+ DFUS_DIRECTORY + element.getName() + "-DFU" + RDFFormat.TURTLE.ext);
-							}
+							recordCPElement(serialModel, taskHelper.getResultsDir() + gd.getCompiledProjectName()
+									+ "/" + key + CLASS_ARTIFACTS_DIRECTORY + element.getName() + RDFFormat.TURTLE.ext);
 						}
 						// Jar file(s) on path
 					} else {
 
 						if (path.endsWith("aar") && x.getAndroidApp() == null) {
-
 							File aarFile = new File(path);
-							while (aarFile != null && !aarFile.getName().equalsIgnoreCase("sdk")) {
-								aarFile = aarFile.getParentFile();
-							}
-
-							if (aarFile != null) {
-
-								String[] sdkDirs = aarFile.list((current, name) ->
-										new File(current, name).isDirectory());
-
-								File uberAndroidJarsParent = null;
-								for (String sdkDir : sdkDirs) {
-									if (sdkDir.equals("platforms")) {
-										uberAndroidJarsParent = new File(aarFile.getAbsolutePath()
-												+ File.separator + sdkDir);
-										break;
+							while (!aarFile.getName().toLowerCase().contains("sdk")) {
+								try {
+									aarFile = aarFile.getParentFile();
+								} catch (NullPointerException exc) {
+									// aar file wasn't in sdk dir... try to get ANDROID_HOME
+									String androidSDK = System.getenv("ANDROID_HOME");
+									aarFile = new File(androidSDK);
+									if (!aarFile.exists()) {
+										System.err.println("ANDROID DEPENDENCIES DETECTED, BUT UNABLE TO FIND ANDROID BOOTSTRAP JAR..." +
+												"MAKE SURE ANDROID_HOME ENVIRONMENT VARIABLE IS SET");
 									}
 								}
-
-								Collection<File> platformJars = FileUtils.listFiles(uberAndroidJarsParent, new String[]{"jar"},
-										true);
-								List<File> uberAndroidJars = platformJars.stream().filter(uberAndroidJar -> uberAndroidJar.getName()
-										.equals("android.jar")).collect(Collectors.toList());
-
-								File uberAndroidJar = null;
-								for (File possAndroidJar : uberAndroidJars) {
-									if (possAndroidJar.getParent().contains(ANDROID_VERSION)) {
-										uberAndroidJar = possAndroidJar;
-										break;
-									}
-								}
-
-								AndroidApp androidApp = new AndroidApp();
-								androidApp.setPathToUberJar(uberAndroidJar.getAbsolutePath());
-								x.setAndroidApp(androidApp);
-							} else {
-								System.out.println("REFERENCED AAR DOES NOT RESIDE IN ANDROID SDK");
 							}
+
+							String[] sdkDirs = aarFile.list((current, name) ->
+									new File(current, name).isDirectory());
+
+							File uberAndroidJarsParent = null;
+							for (String sdkDir : sdkDirs) {
+								if (sdkDir.equals("platforms")) {
+									uberAndroidJarsParent = new File(aarFile.getAbsolutePath()
+											+ File.separator + sdkDir);
+									break;
+								}
+							}
+
+							Collection<File> platformJars = FileUtils.listFiles(uberAndroidJarsParent, new String[] {"jar"},
+									true);
+							List<File> uberAndroidJars = platformJars.stream().filter(uberAndroidJar -> uberAndroidJar.getName()
+									.equals("android.jar")).collect(Collectors.toList());
+
+							File uberAndroidJar = null;
+							for (File possAndroidJar : uberAndroidJars) {
+								if (possAndroidJar.getParent().contains(ANDROID_VERSION)) {
+									uberAndroidJar = possAndroidJar;
+									break;
+								}
+							}
+
+							AndroidApp androidApp = new AndroidApp();
+							androidApp.setPathToUberJar(uberAndroidJar.getAbsolutePath());
+							x.setAndroidApp(androidApp);
 						}
 
 						// Analyze jar artifact
-						jal = analyzeJar(path, (includedLibs != null && includedLibs.stream()
-                                .noneMatch(lib -> path.contains(lib)) ? false : true));
+						jal = analyzeJar(path, (includedLibs == null || includedLibs.stream()
+								.anyMatch(path::contains)));
 						jal.setFileSystemPath(path);
-                        String cachedURI = null;
-                        
-                        if (taskHelper.isPreviousTaskDetected()) {
-                            cachedURI = checkCache(jal.getHash(), gd.getCompiledProjectName(), taskHelper);
-                        }
-						
-                        // If it's brand new, serialize and output
+						String cachedURI = null;
+
+						if (taskHelper.isPreviousTaskDetected()) {
+							cachedURI = checkCache(jal.getHash(), gd.getCompiledProjectName(), taskHelper);
+						}
+
+						// If it's brand new, serialize and output
 						if (gpc.addElementHashValue(jal.getHash())) {
 							taskHelper.getPw().println("New file, adding to master list : " + path);
 							if (cachedURI == null) {
-							    
-                                Model jarArtModel = ObjectToTriples.convert(o2tc, jal);
-                                
-                                String jarURI = o2tc.getNamingContext().getNameForObject(jal);
-                                addToCache(jal.getHash(), jarURI, gd.getCompiledProjectName(), taskHelper);
-                                
-                                String serialModel = OntologyHelper.serializeModel(jarArtModel, "Turtle", false);
-                                recordCPElement(serialModel, taskHelper.getResultsDir() + gd.getCompiledProjectName()
-                                        + JARS_DIRECTORY + jal.getName() + RDFFormat.TURTLE.ext);
 
-                                // Traverse jar for DFU's
-                                JarTraverser.traverseJar(new File(path), annotationParser);
-                                // Serialize DFU elements and output for each jar
-                                serialModel = serializeCPElement(config);
-                                if (!serialModel.equals("")) {
-                                    recordCPElement(serialModel, taskHelper.getResultsDir() + gd.getCompiledProjectName()
-                                            + DFUS_DIRECTORY + jal.getName() + "DFU" + RDFFormat.TURTLE.ext);
-                                }
-                                // Record call graph info
-                            } else if(!cachedURI.equals("jarAlreadyBelongsToCurrentProject")){
-                                JarArtifact dummyJar = new JarArtifact();
-                                dummyJar.setName(jal.getName());
-                                o2tc.getNamingContext().setNameForObject(dummyJar, cachedURI);
+								Model jarArtModel = ObjectToTriples.convert(o2tc, jal);
+								bytecodeTriples+= jarArtModel.getGraph().size();
+								String jarURI = o2tc.getNamingContext().getNameForObject(jal);
+								addToCache(jal.getHash(), jarURI, gd.getCompiledProjectName(), taskHelper);
 
-                                Model dummyJarModel = ObjectToTriples.convert(o2tc, dummyJar);
-                                recordCPElement(OntologyHelper.serializeModel(dummyJarModel, "TTL", false), taskHelper.getResultsDir()
-                                        + gd.getCompiledProjectName() + JARS_DIRECTORY + jal.getName() + RDFFormat.TURTLE.ext);
-                            }
+								String serialModel = OntologyHelper.serializeModel(jarArtModel, "Turtle", false);
+								recordCPElement(serialModel, taskHelper.getResultsDir() + gd.getCompiledProjectName()
+										+ JARS_DIRECTORY + jal.getName() + RDFFormat.TURTLE.ext);
+
+								// Record call graph info
+							} else if(!cachedURI.equals("jarAlreadyBelongsToCurrentProject")){
+								JarArtifact dummyJar = new JarArtifact();
+								dummyJar.setName(jal.getName());
+								o2tc.getNamingContext().setNameForObject(dummyJar, cachedURI);
+
+								Model dummyJarModel = ObjectToTriples.convert(o2tc, dummyJar);
+								recordCPElement(OntologyHelper.serializeModel(dummyJarModel, "TTL", false), taskHelper.getResultsDir()
+										+ gd.getCompiledProjectName() + JARS_DIRECTORY + jal.getName() + RDFFormat.TURTLE.ext);
+							}
 						}
 					}
-					/*
-					 * Even if the artifact is not brand new, we want to record its call graph info
-					 *  because it might contain different information, depending on what other artifacts 
-					 *  are on the path with it.
- 					 */
 				}
 			}
 			gpc.setClasspathName(key);
@@ -343,120 +333,232 @@ public class ProjectToTriplesMain {
 			ObjectToTriples.convert(o2tc, gpc);
 			o2tc.getNamingContext().setNameForObject(dummyClasspath, o2tc.getNamingContext().getNameForObject(gpc));
 		}
-		
+
+		DfuModuleRepo dfuModuleRepo = new DfuModuleRepo();
+		String repoPath = gd.getRepoPaths().get(0);
+		dfuModuleRepo.setPathToRepo(repoPath);
+
 		// Record and serialize the overall, JavaProject ontology info
 		NamedClasspath[] gpcs = new NamedClasspath[gradlePaths.size()];
 		gradlePaths.toArray(gpcs);
 		x.setClasspaths(gpcs);
-		
+
 		// TODO update this with new method call cache system
 		String jarPath = gd.getCompiledProjectJarPath();
 		if (jarPath != null && !jarPath.equals("")){
 			JarArtifact cs = analyzeJar(jarPath, (includedLibs != null && includedLibs.stream()
-                    .noneMatch(lib -> jarPath.contains(lib)) ? false : true));
+					.noneMatch(lib -> jarPath.contains(lib)) ? false : true));
 			x.setCompiledSoftware(cs);
 		}
-		
+
 		x.setCompiledSourceHash(compiledSourcesHash.toArray(new String[compiledSourcesHash.size()]));
 		x.setUuid(uuid);
 		x.setBuildScript(buildScript);
 		x.setSourceCodeRepo(sourceCodeRepo);
+		x.setDfuModuleRepo(dfuModuleRepo);
+
+		Dependency[] dependencies = new Dependency[gd.getDependencies().size()];
+		for (int i = 0; i < dependencies.length; i++) {
+			File dependencyFile = gd.getDependencies().get(i);
+			Dependency dependency = new Dependency();
+			dependency.systemPath = dependencyFile.getAbsolutePath();
+			dependency.classifier = dependencyFile.getName();
+			dependencies[i] = dependency;
+		}
+		x.setDependencies(dependencies);
+
 		BytecodeArtifactCoordinate projectCoordinate= new BytecodeArtifactCoordinate();
 		projectCoordinate.setGroupId(gd.getGroup());
 		projectCoordinate.setArtifactId(gd.getArtifact());
 		projectCoordinate.setVersion(gd.getVersion());
 
-        if (vcsAnchor != null && basedir != null) {
-            //String fileRemoteURL = getPath(basedir.substring(basedir.indexOf(vcsAnchor) + vcsAnchor.length() + 1));
-            VcsCoordinate vcsInfo = new VcsCoordinate();
-            vcsInfo.setVersion(gd.getVersion()); //TODO
-            vcsInfo.setVersionControlUrl(basedir); //TODO
-            x.setVcsCoordinate(vcsInfo);
-        } else {
-            taskHelper.getPw().println("Unable to set remote URL and link to local file location, check you've set the correct parameters and/or there are no" +
-                    "package with file path conflicts.");
-        }
-		
+		if (vcsAnchor != null && basedir != null) {
+			//String fileRemoteURL = getPath(basedir.substring(basedir.indexOf(vcsAnchor) + vcsAnchor.length() + 1));
+			VcsCoordinate vcsInfo = new VcsCoordinate();
+			vcsInfo.setVersion(gd.getVersion()); //TODO
+			vcsInfo.setVersionControlUrl(basedir); //TODO
+			x.setVcsCoordinate(vcsInfo);
+		} else {
+			taskHelper.getPw().println("Unable to set remote URL and link to local file location, check you've set the correct parameters and/or there are no" +
+					"package with file path conflicts.");
+		}
+
 		x.setCoordinate(projectCoordinate);
+
+		Long endTime = System.currentTimeMillis() - beginTime;
+		AnalysisMetrics analysisMetrics = new AnalysisMetrics();
+		analysisMetrics.setBytecodeExec(endTime);
+		bytecodeTriples+=ObjectToTriples.convert(o2tc, x).getGraph().size();
+		analysisMetrics.setBytecodeTriples(bytecodeTriples);
+		x.setAnalysisMetrics(analysisMetrics);
+
 		Model m = ObjectToTriples.convert(o2tc, x);
 		return OntologyHelper.serializeModel(m, "Turtle", false);
 	}
 
-    private Set<String> getPackagePaths(ArrayList<String> classFilePaths) throws IOException {
-	    
-	    Set<String> packagePaths = new HashSet<>();
-	    
-	    for (String classFilePath : classFilePaths) {
-            Path p = Paths.get(classFilePath);
-            byte[] binaryForm = Files.readAllBytes(p);
-            
-            ClassReader cr = new ClassReader(binaryForm);
-            ClassNode cn = new ClassNode();
-            cr.accept(cn, 0);
-            
-            classFilePath = classFilePath.replace("\\", "/");
-            packagePaths.add(classFilePath.substring(0, classFilePath.indexOf(cn.name)));
-        }
-        return packagePaths;
-    }
+	private void generateSemantics(CompiledJavaSourceFile sourceFile, List<JimpleClassMapping> jimpleClassMappings) throws IOException {
 
-    private String checkCache(String discoveredJarHash, String projectName, GradleTaskHelper taskHelper) throws IOException {
-        JSONParser parser = new JSONParser();
-        File cacheFile = new File(taskHelper.getResultsDir() + "/cache/");
-        cacheFile = new File(cacheFile.getAbsolutePath() + "/cachedJars.json");
-        JSONArray cachedJars;
-        try {
-            cachedJars = (JSONArray) parser.parse(new FileReader(cacheFile.getAbsolutePath()));
-        } catch (ParseException parseException) {
-            cachedJars = new JSONArray();
-        }
-        
-        for (Object o : cachedJars) {
-            JSONObject cachedJar = (JSONObject) o;
-            
-            String cachedJarHash = (String) cachedJar.get("jarBytecode");
-            String cachedJarOwner = (String) cachedJar.get("projectOwner");
-            
-            if (cachedJarHash.equals(discoveredJarHash) && cachedJarOwner.equals(projectName)) {
-                return "jarAlreadyBelongsToCurrentProject";
-            } else if (cachedJarHash.equals(discoveredJarHash)) {
-                return (String) cachedJar.get("jarURI");
-            }
-        }
-        return null;
-    }
-    
-    private void addToCache(String jarBytecode, String jarURI, String projectName, GradleTaskHelper taskHelper) throws IOException {
-	    File cacheFile = new File(taskHelper.getResultsDir() + "/cache/");
-	    cacheFile.mkdirs();
-	    cacheFile = new File(cacheFile.getAbsolutePath() + "/cachedJars.json");
-	    cacheFile.createNewFile();
-	    
-        JSONParser parser = new JSONParser();
-        JSONArray cachedJars;
-        try {
-            cachedJars = (JSONArray) parser.parse(new FileReader(cacheFile.getAbsolutePath()));
-        } catch (ParseException parseException) {
-            cachedJars = new JSONArray();
-        }
-        
-        JSONObject newCachedJar = new JSONObject();
-        newCachedJar.put("jarBytecode", jarBytecode);
-        newCachedJar.put("jarURI", jarURI);
-        newCachedJar.put("projectOwner", projectName);
-        
-        cachedJars.add(newCachedJar);
-        
-        try (FileWriter file = new FileWriter(cacheFile.getAbsolutePath())) {
+		for (ClassArtifact classArtifact : sourceFile.getCorrespondingClass()) {
 
-            file.write(cachedJars.toJSONString());
-            file.flush();
+			String className = classArtifact.getName();
 
-        } catch (IOException e) {
-            taskHelper.getPw().println(e.getLocalizedMessage());
-        }
-    }
-	
+			Optional<JimpleClassMapping> jimpleClassMappingOption = jimpleClassMappings.stream().filter(
+					jCMO -> jCMO.getClassName().equals(className)).findAny();
+
+			if (jimpleClassMappingOption.isPresent()) {
+				JimpleClassMapping jimpleClassMapping = jimpleClassMappingOption.get();
+
+				File jimpleFile = new File(jimpleClassMapping.getPathToJimple());
+
+				if (jimpleFile.exists()) {
+					String jimpleString = FileUtils.readFileToString(jimpleFile);
+					String fields = jimpleString.substring(jimpleString.indexOf("{") + 1);
+					fields = fields.substring(0, jimpleString.indexOf("{"));
+
+				}
+			}
+
+
+		}
+
+	}
+
+	private List<JimpleClassMapping> generateJimples(SourceFile[] sourceFiles, String buildDir) throws IOException {
+
+		List<JimpleClassMapping> jimpleClassMappings = new ArrayList<>();
+
+		String classFilesDir = buildDir + File.separator + "classes" + File.separator + "main";
+
+		String oldSootPath = Scene.v().getSootClassPath();
+		Scene.v().setSootClassPath(oldSootPath + File.pathSeparator + classFilesDir);
+		Scene.v().loadNecessaryClasses();
+
+		for (SourceFile sourceFile : sourceFiles) {
+
+			if (sourceFile.getFullyQualifiedName() == null) {
+				continue;
+			}
+
+			SootClass sootClass = Scene.v().forceResolve(sourceFile.getFullyQualifiedName(), BODIES);
+			if (!sootClass.isConcrete()) {
+				SootResolver.v().reResolve(sootClass, SIGNATURES);
+			}
+
+			sootClass.setApplicationClass();
+
+			List<Tag> classTags = sootClass.getTags();
+			for (Tag classTag : classTags) {
+				if (classTag.getName().equals("InnerClassTag")) {
+					InnerClassTag innerClassTag = (InnerClassTag) classTag;
+					SootClass innerClass;
+					if (sootClass.isConcrete()) {
+						innerClass = Scene.v().forceResolve(innerClassTag.getInnerClass().replace("/", "."),
+								BODIES);
+					} else {
+						innerClass = Scene.v().forceResolve(innerClassTag.getInnerClass().replace("/", "."),
+								SIGNATURES);
+					}
+					innerClass.setApplicationClass();
+					jimpleClassMappings.add(jimplfyClass(innerClass));
+				}
+			}
+			jimpleClassMappings.add(jimplfyClass(sootClass));
+		}
+		return jimpleClassMappings;
+	}
+
+	private JimpleClassMapping jimplfyClass(SootClass sc) throws IOException {
+		String fileName = SourceLocator.v().getFileNameFor(sc, Options.output_format_jimple);
+		OutputStream streamOut = new FileOutputStream(fileName);
+		PrintWriter writerOut = new PrintWriter(new OutputStreamWriter(streamOut));
+		try {
+			Printer.v().printTo(sc, writerOut);
+		} catch (RuntimeException exc) {
+			Scene.v().removeClass(sc);
+			streamOut.close();
+		}
+		writerOut.flush();
+		streamOut.close();
+
+		JimpleClassMapping jimpleClassMapping = new JimpleClassMapping(new Pair<>(fileName, sc.getName()));
+		return jimpleClassMapping;
+	}
+
+	private Set<String> getPackagePaths(ArrayList<String> classFilePaths) throws IOException {
+
+		Set<String> packagePaths = new HashSet<>();
+
+		for (String classFilePath : classFilePaths) {
+			Path p = Paths.get(classFilePath);
+			byte[] binaryForm = Files.readAllBytes(p);
+
+			ClassReader cr = new ClassReader(binaryForm);
+			ClassNode cn = new ClassNode();
+			cr.accept(cn, 0);
+
+			classFilePath = classFilePath.replace("\\", "/");
+			packagePaths.add(classFilePath.substring(0, classFilePath.indexOf(cn.name)));
+		}
+		return packagePaths;
+	}
+
+	private String checkCache(String discoveredJarHash, String projectName, GradleTaskHelper taskHelper) throws IOException {
+		JSONParser parser = new JSONParser();
+		File cacheFile = new File(taskHelper.getResultsDir() + "/cache/");
+		cacheFile = new File(cacheFile.getAbsolutePath() + "/cachedJars.json");
+		JSONArray cachedJars;
+		try {
+			cachedJars = (JSONArray) parser.parse(new FileReader(cacheFile.getAbsolutePath()));
+		} catch (ParseException parseException) {
+			cachedJars = new JSONArray();
+		}
+
+		for (Object o : cachedJars) {
+			JSONObject cachedJar = (JSONObject) o;
+
+			String cachedJarHash = (String) cachedJar.get("jarBytecode");
+			String cachedJarOwner = (String) cachedJar.get("projectOwner");
+
+			if (cachedJarHash.equals(discoveredJarHash) && cachedJarOwner.equals(projectName)) {
+				return "jarAlreadyBelongsToCurrentProject";
+			} else if (cachedJarHash.equals(discoveredJarHash)) {
+				return (String) cachedJar.get("jarURI");
+			}
+		}
+		return null;
+	}
+
+	private void addToCache(String jarBytecode, String jarURI, String projectName, GradleTaskHelper taskHelper) throws IOException {
+		File cacheFile = new File(taskHelper.getResultsDir() + "/cache/");
+		cacheFile.mkdirs();
+		cacheFile = new File(cacheFile.getAbsolutePath() + "/cachedJars.json");
+		cacheFile.createNewFile();
+
+		JSONParser parser = new JSONParser();
+		JSONArray cachedJars;
+		try {
+			cachedJars = (JSONArray) parser.parse(new FileReader(cacheFile.getAbsolutePath()));
+		} catch (ParseException parseException) {
+			cachedJars = new JSONArray();
+		}
+
+		JSONObject newCachedJar = new JSONObject();
+		newCachedJar.put("jarBytecode", jarBytecode);
+		newCachedJar.put("jarURI", jarURI);
+		newCachedJar.put("projectOwner", projectName);
+
+		cachedJars.add(newCachedJar);
+
+		try (FileWriter file = new FileWriter(cacheFile.getAbsolutePath())) {
+
+			file.write(cachedJars.toJSONString());
+			file.flush();
+
+		} catch (IOException e) {
+			taskHelper.getPw().println(e.getLocalizedMessage());
+		}
+	}
+
 	// Serialize classpath element, passing an o2tc object and returning a string representation
 	private String serializeCPElement(ObjectToTriplesConfiguration config) throws IOException {
 
@@ -491,17 +593,13 @@ public class ProjectToTriplesMain {
 	 * @param path - path to which the model will be written to
 	 * @throws IOException - writing the model is unsuccessful
 	 */
-	private static void recordCPElement(String serialMod, String path) throws IOException {
-		File mod2Rdf = new File(path);
-		mod2Rdf.getParentFile().mkdirs();
-		mod2Rdf.createNewFile();
-
-        try (FileWriter fileWriter = new FileWriter(mod2Rdf)) {
-            fileWriter.write(serialMod);
-            fileWriter.flush();
-        }
+	public static void recordCPElement(String serialMod, String path) throws IOException {
+	    FileUtils.writeStringToFile(
+	        new File(path).getAbsoluteFile(), 
+	        serialMod
+	        );
 	}
-	
+
 	private void detectDirectory(String src, Set<String> dirSet){
 		int i = src.lastIndexOf(File.separator);
 		if (i != -1){
@@ -521,12 +619,12 @@ public class ProjectToTriplesMain {
 		byte[] binaryForm = Files.readAllBytes(p);
 		String hash = hash(binaryForm);
 		String name = p.getFileName().toString();
-		
+
 		String sourceEncoding = "UTF-8"; //TODO guessing
-		
+
 		AClass ac = analyzeClass(binaryForm);
 		AClass[] inneracs = ac.getInnerClasses();
-		
+
 		ClassArtifact[] cas;
 		ClassArtifact builder;
 		if (inneracs != null){
@@ -549,7 +647,7 @@ public class ProjectToTriplesMain {
 		builder.setHash(hash);
 		builder.setName(name);
 		cas[0] = builder;
-		
+
 		CompiledJavaSourceFile c = new CompiledJavaSourceFile();
 		if (IGNORE_BINARIES){
 			c.setBinaryForm(new byte[]{0});
@@ -557,43 +655,53 @@ public class ProjectToTriplesMain {
 		else{
 			c.setBinaryForm(binaryForm);
 		}
-		
+
 		String tempClassName = ac.getClassName();
 
 		while(tempClassName.contains("$")) {
-            tempClassName = tempClassName.substring(0, tempClassName.indexOf('$'));
-        }
-        
-        final String className = tempClassName;
-        
-        ArrayList<String> javaSources = gradleData.getSourceFilePaths();
-		List<String> list = javaSources.stream().map(source -> {
-            try {
-                return getPath(source);
-            } catch (IOException e) {
-                taskHelper.getPw().println(e.getLocalizedMessage());
-            }
-            return null;
-        }).filter(source -> source.contains(className)).collect(Collectors.toList());
-		
+			tempClassName = tempClassName.substring(0, tempClassName.indexOf('$'));
+		}
+
+		final String className = tempClassName;
+
+		ArrayList<String> javaSources = gradleData.getSourceFilePaths();
+
 		String sourceFilePath = null;
-		if (!list.isEmpty()) {
-		    sourceFilePath = list.get(0);
-        }
-        
+		for (String javaSource : javaSources) {
+			javaSource = javaSource.replace("\\", "/");
+			if (javaSource.contains(className)) {
+				sourceFilePath = javaSource;
+			}
+		}
+
+		//TODO keep an eye on this for now...
+		//List<String> list = javaSources.stream().map(source -> {
+		//	try {
+			//	return getPath(source);
+		//	} catch (IOException e) {
+			//	taskHelper.getPw().println(e.getLocalizedMessage());
+		//	}
+		//	return null;
+	//	}).filter(source -> source.contains(className)).collect(Collectors.toList());
+
+
+		//if (!list.isEmpty()) {
+		//	sourceFilePath = list.get(0);
+	//	}
+
 		if (vcsAnchor != null && sourceFilePath != null) {
-		    // TODO Phasing out the remote repo path, all should be the path to the project's build file
-            //String fileRemoteURL = sourceFilePath.substring(sourceFilePath.indexOf(vcsAnchor) + vcsAnchor.length() + 1);
-            VcsCoordinate vcsInfo = new VcsCoordinate();
-            vcsInfo.setVersion(gradleData.getVersion()); //TODO
-            vcsInfo.setVersionControlUrl(vcsAnchor); //TODO
-            c.setVcsInfo(vcsInfo);
-            c.setAbsoluteFilePath(sourceFilePath);
-        } else {
-		    taskHelper.getPw().println("Unable to set remote URL and link to local file location, check you've set the correct parameters and/or there are no" +
-                    "package with file path conflicts.");
-        }
-		
+			// TODO Phasing out the remote repo path, all should be the path to the project's build file
+			//String fileRemoteURL = sourceFilePath.substring(sourceFilePath.indexOf(vcsAnchor) + vcsAnchor.length() + 1);
+			VcsCoordinate vcsInfo = new VcsCoordinate();
+			vcsInfo.setVersion(gradleData.getVersion()); //TODO
+			vcsInfo.setVersionControlUrl(vcsAnchor); //TODO
+			c.setVcsInfo(vcsInfo);
+			c.setAbsoluteFilePath(sourceFilePath);
+		} else {
+			taskHelper.getPw().println("Unable to set remote URL and link to local file location, check you've set the correct parameters and/or there are no" +
+					"package with file path conflicts.");
+		}
+
 		c.setCorrespondingClass(cas);
 		c.setHash(hash);
 		c.setName(name);
@@ -601,10 +709,10 @@ public class ProjectToTriplesMain {
 		return c;
 	}
 
-    private static String getPath(String path) throws IOException{
-        return new File(path).toPath().toRealPath().toFile().getAbsolutePath().replace("\\", "/");
-    }
-    
+	private static String getPath(String path) throws IOException{
+		return new File(path).toPath().toRealPath().toFile().getAbsolutePath().replace("\\", "/");
+	}
+
 	private AClass analyzeClass(byte[] cb) throws NoSuchAlgorithmException {
 		//getClassNode code
 		ClassReader cr = new ClassReader(cb);
@@ -616,7 +724,7 @@ public class ProjectToTriplesMain {
 		JarIngestor ji = new JarIngestor(sf);
 		return ji.processClass(hash, cn, true);
 	}
-	
+
 	private JarArtifact analyzeJar(String jarFile, boolean fullAnalysis) throws IOException{
 		Path p = Paths.get(jarFile);
 		byte[] jar = Files.readAllBytes(p);
@@ -633,13 +741,13 @@ public class ProjectToTriplesMain {
 		}
 		return JarIngestor.ingest(jar, name, bac.getGroupId(), bac.getArtifactId(), bac.getVersion(), sf, fullAnalysis);
 	}
-	
+
 	private static String hash(byte[] in) throws NoSuchAlgorithmException{
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.update(in);
 		return Base64.getEncoder().encodeToString(md.digest());
 	}
-	
+
 	private static final String COMPILE_CLASSPATH_NAME = "compile";
 	private static final String CLASS_ARTIFACTS_DIRECTORY = "/classes/";
 	private static final String SOURCES_DIRECTORY = "/structures/sources/";

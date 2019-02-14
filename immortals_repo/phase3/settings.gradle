@@ -1,0 +1,7 @@
+// Just a simple wrapper to make development easier
+rootProject.name = "Phase3IdeWrapper"
+
+includeBuild 'flighttest-constraint-solver'
+includeBuild 'mdl-schema-evolution'
+includeBuild '../docs'
+includeBuild '../shared'

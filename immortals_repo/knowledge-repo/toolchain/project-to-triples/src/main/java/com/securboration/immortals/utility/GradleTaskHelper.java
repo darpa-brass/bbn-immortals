@@ -456,8 +456,6 @@ public class GradleTaskHelper {
                 codeSpec.setCode(codeSpecCode);
             }
 
-            //codeSpec.setMethodSignature(necessaryImplementationSolution.get("codeSpecSig"));
-            //codeSpec.setCode(necessaryImplementationSolution.get("codeSpecCode"));
             codeSpecs.add(codeSpec);
         }
         

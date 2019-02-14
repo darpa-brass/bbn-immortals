@@ -1,0 +1,18 @@
+!include basic.iuml
+
+!definelong CONNECTOR(parent, cardinality)
+
+package [Connector##cardinality] as parent##Connector {
+    package "Pins [1]" as parent##ConnectorPins {
+        package "Pin [1..*]" as parent##ConnectorPin {
+            rectangle "ID (str)" as parent##ConnectorPinId
+            rectangle "Index (int)" as parent##ConnectorPinIndex
+            component "Designator (str)" as parent##ConnectorPinDes
+
+            parent##ConnectorPinId -[hidden]r-> parent##ConnectorPinIndex
+            parent##ConnectorPinIndex -[hidden]r-> parent##ConnectorPinDes
+        }
+    }
+}
+
+!enddefinelong

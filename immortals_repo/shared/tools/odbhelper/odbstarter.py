@@ -6,13 +6,15 @@ import subprocess
 from subprocess import Popen
 from typing import List, Optional
 
+from lxml import etree
+from lxml.etree import ElementTree as ET
 import pyorient as pyorient
 import time
 from pyorient import OrientDB
 
 from odbhelper import resources
 from odbhelper.brass_api_helper import BrassApiHelper
-from odbhelper.datatypes import TestScenario, STARTUP_TIMEOUT_S, SHUTDOWN_TIMEOUT_S, STDOUT_LOG_BASE_NAME, \
+from odbhelper.datatypes import GraphDetails, STARTUP_TIMEOUT_S, SHUTDOWN_TIMEOUT_S, STDOUT_LOG_BASE_NAME, \
     STDERR_LOG_BASE_NAME
 
 SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
@@ -20,6 +22,8 @@ SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 ODB_STARTED_REGEX = r'[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{3} INFO  OrientDB Server is active.*'
 
 BBN_PERSISTENT_DB_NAME = "BBNPersistent"
+
+XML_COMBINED_FILE = 'mdl_combined.xml'
 
 
 def load_xml_into_db(host: str, port: int, root_password: str, xml_filepath: str, db_identifier: str):
@@ -67,6 +71,38 @@ def init_bbn_persistent(host: str, port: int, root_password: str):
 
 
 def init_scenario5(host: str, port: int, root_password: str, db_name: str):
+
+    # # TODO: This is hacky. I shouldn't have to import it has the child of a GenericParameter and then disconnect it!
+    # ns = {
+    #     None: 'http://www.wsmr.army.mil/RCC/schemas/MDL'
+    #     # 'tmatsCommon': 'http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsCommonTypes',
+    #     # 'tmatsP': 'http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsPGroup',
+    #     # 'tmatsD': 'http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsDGroup'
+    # }
+    # m_tree = etree.parse(os.path.join(SCRIPT_DIRECTORY, 'resources', 'dummy_data', 'scenario5_input_mdlRoot.xml'))
+    #
+    # m_root = m_tree.getroot()
+    # d_tree = etree.parse(os.path.join(SCRIPT_DIRECTORY, 'resources', 'dummy_data', 's5_dauInventory.xml'))
+    # d_root = d_tree.getroot()
+    #
+    # gp = m_root.find('MeasurementDomains/MeasurementDomain/GenericParameter', ns)
+    #
+    # if gp is None:
+    #     md = m_root.find('MeasurementDomains/MeasurementDomain', ns)
+    #     gp = etree.Element('GenericParameter')
+    #     nvs = etree.Element('NameValues')
+    #     nv = etree.Element('NameValue', {'Name': 'BBN', 'Index': '1'})
+    #     nvs.append(nv)
+    #     gp.append(nvs)
+    #     md.insert(0, gp)
+    #
+    # gp.append(d_root)
+    # open(XML_COMBINED_FILE, 'w').write(etree.tostring(m_root, method='xml', pretty_print=True).decode())
+    #
+    # client = init_db_data(host, port, root_password, db_name, [XML_COMBINED_FILE])  # type: OrientDB
+    #
+    # End hacky
+
     client = init_db_data(
         host, port, root_password, db_name,
         [
@@ -125,9 +161,9 @@ def init_scenario6b(host: str, port: int, root_password: str, db_name: str):
 
 
 _init_functions = {
-    TestScenario.s5: init_scenario5,
-    TestScenario.s6a: init_scenario6a,
-    TestScenario.s6b: init_scenario6b
+    GraphDetails.s5: init_scenario5,
+    GraphDetails.s6a: init_scenario6a,
+    GraphDetails.s6b: init_scenario6b
 }
 
 
@@ -195,7 +231,7 @@ class OdbStarter:
             client.command('CREATE PROPERTY BBNEvaluationOutput.evaluationInstanceIdentifier STRING')
             client.close()
 
-    def init_test_scenarios(self, reset_scenarios: Optional[List[TestScenario]] = None):
+    def init_test_scenarios(self, reset_scenarios: Optional[List[GraphDetails]] = None):
         print('Initializing OrientDB Databases...')
 
         client = pyorient.OrientDB(self.host, self.port)
@@ -208,7 +244,7 @@ class OdbStarter:
                     client.db_drop(scenario.db_name)
 
         setup_scenarios = \
-            list(filter(lambda x: not client.db_exists(x.db_name), list(dict(TestScenario.__members__).values())))
+            list(filter(lambda x: not client.db_exists(x.db_name), list(dict(GraphDetails.__members__).values())))
 
         client.close()
 
