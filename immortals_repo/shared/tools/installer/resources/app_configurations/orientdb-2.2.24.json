@@ -11,7 +11,8 @@
   "linux": {
     "ubuntu": {
       "setupCommands": [
-        "pip3 install pyorient lxml",
+        "pip3 install pyorient",
+        "pip3 install lxml",
         "export ORIENTDB_ROOT_PASSWORD=th3r3c@nb3onlyon3",
         "wget https://orientdb.com/download.php?file=orientdb-community-{version}.zip -O {tempDirectory}/orientdb-community-{version}.zip",
         "unzip {tempDirectory}/orientdb-community-{version}.zip -d {tempDirectory}",

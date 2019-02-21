@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
+set -e
+
 IMMORTALSRC_PATH=""
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )/"
-
-echo SCRIPT_DIR: ${SCRIPT_DIR}
-
 
 if [ "$IMMORTALSRC" != "" ];then
     if [ -f "$IMMORTALSRC" ];then
@@ -33,7 +32,9 @@ elif [ -f "${SCRIPT_DIR}../immortalsrc" ];then
 fi
 
 if [ "$IMMORTALSRC_PATH" == "" ];then
-    echo "No immortalsrc found! If your primary environment is not configured to run IMMoRTALS you will likely have issues!"
+    if [[ "$1" != "installer" ]];then
+        echo "No immortalsrc found! If your primary environment is not configured to run IMMoRTALS you will likely have issues!"
+    fi
 else
     source "$IMMORTALSRC_PATH"
 fi

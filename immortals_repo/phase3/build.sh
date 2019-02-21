@@ -4,12 +4,16 @@ set -e
 
 IMMORTALSRC_PATH=""
 
+PPWD="`pwd`"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )/"
 
-if [ "$IMMORTALSRC" != "" ];then
-    if [ -f "$IMMORTALSRC" ];then
+ARTIFACT_NAME=immortals-exe
+ARTIFACT_ROOT="${SCRIPT_DIR}/${ARTIFACT_NAME}"
+
+if [ "${IMMORTALSRC}" != "" ];then
+    if [ -f "${IMMORTALSRC}" ];then
         echo "Environment variable IMMORTALSRC points to a valid file. Sourcing..."
-        IMMORTALSRC_PATH="$IMMORTALSRC"
+        IMMORTALSRC_PATH="${IMMORTALSRC}"
     else
         echo "IMMORTALSRC environment variable defined as ${IMMORTALSRC}, but the file does not exist!"
     fi
@@ -31,10 +35,10 @@ elif [ -f "${SCRIPT_DIR}../immortalsrc" ];then
     IMMORTALSRC_PATH="${SCRIPT_DIR}../immortalsrc"
 fi
 
-if [ "$IMMORTALSRC_PATH" == "" ];then
+if [ "${IMMORTALSRC_PATH}" == "" ];then
     echo "No immortalsrc found! If your primary environment is not configured to run IMMoRTALS you will likely have issues!"
 else
-    source "$IMMORTALSRC_PATH"
+    source "${IMMORTALSRC_PATH}"
 fi
 
 if [[ "$1" == "" ]];then
@@ -71,42 +75,63 @@ else
 
 fi
 
+if [[ -d "$ARTIFACT_ROOT" ]];then
+    rm -r "$ARTIFACT_ROOT"
+fi
+
+mkdir "$ARTIFACT_ROOT"
 
 if [[ ${DO_SCENARIO_5} == true ]];then
     echo Building Scenario 5!
 
-    cd mdl-schema-evolution/
-    ./gradlew clean build publishImmortalsMseLibPublicationToMavenLocal publishMseLibPublicationToMavenLocal
-    cd ../
+    "${SCRIPT_DIR}/mdl-schema-evolution/gradlew" --build-file "${SCRIPT_DIR}/mdl-schema-evolution/build.gradle" clean build publishImmortalsMseLibPublicationToMavenLocal publishMseLibPublicationToMavenLocal
 
-    cd flighttest-constraint-solver/
-    ./gradlew clean build
-    cd ../
+    "${SCRIPT_DIR}/flighttest-constraint-solver/gradlew" --build-file "${SCRIPT_DIR}/flighttest-constraint-solver/build.gradle" clean build
 
-    cd ../dsl/resource-dsl/
+    cd "${SCRIPT_DIR}/../dsl/resource-dsl/"
     stack setup
     stack build
-
     stack exec resource-dsl -- swap-dau --init
-    cd ../../phase3
+    cd "${PPWD}"
+
+    mkdir "${ARTIFACT_ROOT}/phase3"
+    mkdir "${ARTIFACT_ROOT}/phase3/flighttest-constraint-solver"
+
+    cp "${SCRIPT_DIR}/flighttest-constraint-solver/flighttest-constraint-solver.jar" "${ARTIFACT_ROOT}/phase3/flighttest-constraint-solver/"
+    cp "${SCRIPT_DIR}/start.py" "${ARTIFACT_ROOT}/phase3/"
+    cp "${SCRIPT_DIR}/start.sh" "${ARTIFACT_ROOT}/phase3/"
+
+    cp -R "${SCRIPT_DIR}/../dsl" "${ARTIFACT_ROOT}/"
 fi
 
 if [[ ${DO_SCENARIO_6} == true ]];then
     echo Building Scenario 6!
 
+    cd "${SCRIPT_DIR}/../knowledge-repo/cp/cp3.1/xsd-tranlsation-service-aql/aql/"
     source ~/.immortals/anaconda/bin/activate
-    cd ../knowledge-repo/cp/cp3.1/xsd-tranlsation-service-aql/aql/
     if [ ! -d "${HOME}/.immortals/anaconda/envs/aql" ]; then
         conda env create -f environment.yml
     fi
-    cd ../../../../../phase3
+    cd "${PPWD}"
 
-    cd mdl-schema-evolution/
-    ./gradlew clean build publishImmortalsMseLibPublicationToMavenLocal publishMseLibPublicationToMavenLocal
-    cd ../
+    "${SCRIPT_DIR}/mdl-schema-evolution/gradlew" --build-file "${SCRIPT_DIR}/mdl-schema-evolution/build.gradle" clean build publishImmortalsMseLibPublicationToMavenLocal publishMseLibPublicationToMavenLocal
 
     # Build Securboration artifacts and return to the immortals root
-    exec mvn -f ../knowledge-repo/pom.xml clean install -DskipTests
-    exec mvn -f ../knowledge-repo/cp/cp3.1/xsd-translation-service/pom.xml clean install -DskipTests
+    mvn -f "${SCRIPT_DIR}/../knowledge-repo/pom.xml" clean install -DskipTests
+    mvn -f "${SCRIPT_DIR}/../knowledge-repo/cp/cp3.1/xsd-translation-service/pom.xml" clean install -DskipTests
+
+    cp -R "${SCRIPT_DIR}/../knowledge-repo" "${ARTIFACT_ROOT}/"
 fi
 
+mkdir -p "${ARTIFACT_ROOT}/shared"
+cp -R "${SCRIPT_DIR}/../shared/tools" "${ARTIFACT_ROOT}/shared"
+cp -R "${SCRIPT_DIR}/../shared/tools.sh" "${ARTIFACT_ROOT}/shared/tools.sh"
+
+
+if [[ -f "${ARTIFACT_ROOT}.tar.gz" ]];then
+    rm "${ARTIFACT_ROOT}.tar.gz"
+fi
+
+cd "${SCRIPT_DIR}"
+tar cvzf "${ARTIFACT_ROOT}.tar.gz" ${ARTIFACT_NAME}
+cd "${PPWD}"
