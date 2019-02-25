@@ -84,9 +84,9 @@ mkdir "$ARTIFACT_ROOT"
 if [[ ${DO_SCENARIO_5} == true ]];then
     echo Building Scenario 5!
 
-    "${SCRIPT_DIR}/mdl-schema-evolution/gradlew" --build-file "${SCRIPT_DIR}/mdl-schema-evolution/build.gradle" clean build publishImmortalsMseLibPublicationToMavenLocal publishMseLibPublicationToMavenLocal
+    "${SCRIPT_DIR}/mdl-schema-evolution/gradlew" --no-daemon --build-file "${SCRIPT_DIR}/mdl-schema-evolution/build.gradle" clean build publishImmortalsMseLibPublicationToMavenLocal publishMseLibPublicationToMavenLocal
 
-    "${SCRIPT_DIR}/flighttest-constraint-solver/gradlew" --build-file "${SCRIPT_DIR}/flighttest-constraint-solver/build.gradle" clean build
+    "${SCRIPT_DIR}/flighttest-constraint-solver/gradlew" --no-daemon --build-file "${SCRIPT_DIR}/flighttest-constraint-solver/build.gradle" clean build
 
     cd "${SCRIPT_DIR}/../dsl/resource-dsl/"
     stack setup
@@ -114,7 +114,7 @@ if [[ ${DO_SCENARIO_6} == true ]];then
     fi
     cd "${PPWD}"
 
-    "${SCRIPT_DIR}/mdl-schema-evolution/gradlew" --build-file "${SCRIPT_DIR}/mdl-schema-evolution/build.gradle" clean build publishImmortalsMseLibPublicationToMavenLocal publishMseLibPublicationToMavenLocal
+    "${SCRIPT_DIR}/mdl-schema-evolution/gradlew" --no-daemon --build-file "${SCRIPT_DIR}/mdl-schema-evolution/build.gradle" clean build publishImmortalsMseLibPublicationToMavenLocal publishMseLibPublicationToMavenLocal
 
     # Build Securboration artifacts and return to the immortals root
     mvn -f "${SCRIPT_DIR}/../knowledge-repo/pom.xml" clean install -DskipTests
