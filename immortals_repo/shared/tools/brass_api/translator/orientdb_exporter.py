@@ -15,6 +15,7 @@ Author: Di Yao (di.yao@vanderbilt.edu)
 
 from brass_api.orientdb.orientdb_helper import *
 from brass_api.translator import xml_util
+from brass_api.common import common_util
 
 '''
 TODO: 
@@ -64,7 +65,7 @@ class OrientDBXMLExporter(object):
         self.xmlFile.write(
             '{0}</{1}>\n'.format(
                 xml_util.create_tab_string(numberTabs),
-                record._class
+                common_util.strip_trailing_a(record._class)
             )
         )
 

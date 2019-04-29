@@ -8,8 +8,10 @@ Author: Di Yao (di.yao@vanderbilt.edu)
 import pyorient
 import os
 from brass_api.common.exception_class import *
+#from  brass_api.common.common_util import strip_trailing_a
+from brass_api.common import common_util
 
-SKIP_PROPERTY_TAGS = ['uid', 'ID', 'IDREF', 'in_Containment', 'out_Containment', 'in_Reference', 'out_Reference', 'schema']
+SKIP_PROPERTY_TAGS = ['uid', 'ID', 'IDREF', 'in_Containment', 'out_Containment', 'in_Reference', 'out_Reference', 'schema', 'Index', 'Enabled', 'Extension', 'Thermocouple']
 
 
 def create_tab_string(numberTabs):
@@ -50,19 +52,35 @@ def orient_record_to_xml(record, numberTabs):
             xml_str_list.append('<MDLRoot>')
         xml_str_list.append('\n')
     else:
-        xml_str_list.append( "{0}<{1}".format(create_tab_string(numberTabs), record._class) )
+        xml_str_list.append( "{0}<{1}".format(create_tab_string(numberTabs), common_util.strip_trailing_a(record._class)) )
 
         if 'ID' in record.oRecordData.keys():
             xml_str_list.append(' {0}="{1}"'.format('ID', record.oRecordData['ID']) )
-        elif 'IDREF' in record.oRecordData.keys():
+        if 'IDREF' in record.oRecordData.keys():
             xml_str_list.append(' {0}="{1}"'.format('IDREF', record.oRecordData['IDREF']) )
+        if 'Index' in record.oRecordData.keys():
+            xml_str_list.append(' {0}="{1}"'.format('Index', record.oRecordData['Index']))
+        if 'Enabled' in record.oRecordData.keys():
+            xml_str_list.append(' {0}="{1}"'.format('Enabled', record.oRecordData['Enabled']))
+        if 'Extension' in record.oRecordData.keys():
+            xml_str_list.append(' {0}="{1}"'.format('Extension', record.oRecordData['Extension']))
+        if 'Thermocouple' in record.oRecordData.keys():
+            xml_str_list.append(' {0}="{1}"'.format('Thermocouple', record.oRecordData['Thermocouple']))
 
         xml_str_list.append( ">\n" )
 
 
     for key in record.oRecordData.keys():
         if key not in SKIP_PROPERTY_TAGS:
-            xml_str_list.append( '{0}<{1}>{2}</{1}>\n'.format(create_tab_string(numberTabs+1), key, record.oRecordData[key] ) )
+            if type(record.oRecordData[key]) is list:
+                for v in record.oRecordData[key]:
+                    xml_str_list.append('{0}<{1}>{2}</{1}>\n'.format(create_tab_string(numberTabs + 1),
+                                                                     common_util.strip_trailing_a(key),
+                                                                     v))
+            else:
+                xml_str_list.append( '{0}<{1}>{2}</{1}>\n'.format(create_tab_string(numberTabs+1),
+                                                                  common_util.strip_trailing_a(key),
+                                                                  record.oRecordData[key] ) )
 
     return ''.join(xml_str_list)
 
@@ -88,4 +106,3 @@ def add_mdl_root_tag_attr(mdl_schema):
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\
     xsi:schemaLocation="http://www.wsmr.army.mil/RCC/schemas/MDL {0}">'.format(mdl_schema)
     return mdl_root_str
-

@@ -25,8 +25,7 @@
                 <Manufacturer>VendorB</Manufacturer>
                 <Product>TBD</Product>
                 <ProductVersion>Product Version #1</ProductVersion>
-                <ConfigurationVersion>iDAU: app mu.7115+, kernel #6983 PREEMPT Tue May 19 13:32:41 EDT 2015
-                </ConfigurationVersion>
+                <ConfigurationVersion>iDAU: app mu.7115+, kernel #6983 PREEMPT Tue May 19 13:32:41 EDT 2015</ConfigurationVersion>
                 <TmNSManagementResourcesVersion>SMS v0.8.7</TmNSManagementResourcesVersion>
                 <DirtyBit>false</DirtyBit>
                 <TmNSDAU/>
@@ -410,7 +409,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>20</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch1</Name>
                             <Description>Channel 1 Signal Input</Description>
@@ -430,7 +431,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch2</Name>
                             <Description>Channel 2 Signal Input</Description>
@@ -444,12 +447,6 @@
                             </PinRefs>
                         </Port>
                         <Port ID="Module1A-Ch1-EC" Index="21">
-                            <GenericParameter>
-                                <NameValues>
-                                    <NameValue Name="User" Index="1">BBN</NameValue>
-                                </NameValues>
-                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
-                            </GenericParameter>
                             <Name>Ch1-EC</Name>
                             <Description>Channel 1 Excitation Constant Current Output</Description>
                             <PortDirection>Output</PortDirection>
@@ -462,12 +459,6 @@
                             </PinRefs>
                         </Port>
                         <Port ID="Module1A-Ch2-EC" Index="22">
-                            <GenericParameter>
-                                <NameValues>
-                                    <NameValue Name="User" Index="1">BBN</NameValue>
-                                </NameValues>
-                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
-                            </GenericParameter>
                             <Name>Ch2-EC</Name>
                             <Description>Channel 2 Excitation Constant Current Output</Description>
                             <PortDirection>Output</PortDirection>
@@ -521,9 +512,7 @@
                         </SubModule>
                         <SubModule ID="XVoltageExcitationOnOff12-pos1">
                             <Name>VoltageExcitationOnOff12</Name>
-                            <Description>Set this SubModule Port Enabled to true to turn on Port 1,2 Voltage
-                                Excitation
-                            </Description>
+                            <Description>Set this SubModule Port Enabled to true to turn on Port 1,2 Voltage Excitation</Description>
                             <Manufacturer>VendorB</Manufacturer>
                             <Model/>
                             <SerialID/>
@@ -686,7 +675,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch1</Name>
                             <Description>Channel 1 Signal Input</Description>
@@ -706,7 +697,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch2</Name>
                             <Description>Channel 2 Signal Input</Description>
@@ -720,12 +713,6 @@
                             </PinRefs>
                         </Port>
                         <Port ID="Module1B-Ch1-EC" Index="21">
-                            <GenericParameter>
-                                <NameValues>
-                                    <NameValue Name="User" Index="1">BBN</NameValue>
-                                </NameValues>
-                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
-                            </GenericParameter>
                             <Name>Ch1-EC</Name>
                             <Description>Channel 1 Excitation Constant Current Output</Description>
                             <PortDirection>Output</PortDirection>
@@ -738,12 +725,6 @@
                             </PinRefs>
                         </Port>
                         <Port ID="Module1B-Ch2-EC" Index="22">
-                            <GenericParameter>
-                                <NameValues>
-                                    <NameValue Name="User" Index="1">BBN</NameValue>
-                                </NameValues>
-                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
-                            </GenericParameter>
                             <Name>Ch2-EC</Name>
                             <Description>Channel 2 Excitation Constant Current Output</Description>
                             <PortDirection>Output</PortDirection>
@@ -797,9 +778,7 @@
                         </SubModule>
                         <SubModule ID="XVoltageExcitationOnOff12-pos2">
                             <Name>VoltageExcitationOnOff12</Name>
-                            <Description>Set this SubModule Port Enabled to true to turn on Port 1,2 Voltage
-                                Excitation
-                            </Description>
+                            <Description>Set this SubModule Port Enabled to true to turn on Port 1,2 Voltage Excitation</Description>
                             <Manufacturer>VendorB</Manufacturer>
                             <Model/>
                             <SerialID/>
@@ -962,7 +941,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch1</Name>
                             <Description>Channel 1 Signal Input</Description>
@@ -982,7 +963,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>SignalConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch2</Name>
                             <Description>Channel 2 Signal Input</Description>
@@ -996,12 +979,6 @@
                             </PinRefs>
                         </Port>
                         <Port ID="Module1C-Ch1-EC" Index="21">
-                            <GenericParameter>
-                                <NameValues>
-                                    <NameValue Name="User" Index="1">BBN</NameValue>
-                                </NameValues>
-                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
-                            </GenericParameter>
                             <Name>Ch1-EC</Name>
                             <Description>Channel 1 Excitation Constant Current Output</Description>
                             <PortDirection>Output</PortDirection>
@@ -1014,12 +991,6 @@
                             </PinRefs>
                         </Port>
                         <Port ID="Module1C-Ch2-EC" Index="22">
-                            <GenericParameter>
-                                <NameValues>
-                                    <NameValue Name="User" Index="1">BBN</NameValue>
-                                </NameValues>
-                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
-                            </GenericParameter>
                             <Name>Ch2-EC</Name>
                             <Description>Channel 2 Excitation Constant Current Output</Description>
                             <PortDirection>Output</PortDirection>
@@ -1073,9 +1044,7 @@
                         </SubModule>
                         <SubModule ID="XVoltageExcitationOnOff12-pos3">
                             <Name>VoltageExcitationOnOff12</Name>
-                            <Description>Set this SubModule Port Enabled to true to turn on Port 1,2 Voltage
-                                Excitation
-                            </Description>
+                            <Description>Set this SubModule Port Enabled to true to turn on Port 1,2 Voltage Excitation</Description>
                             <Manufacturer>VendorB</Manufacturer>
                             <Model/>
                             <SerialID/>
@@ -1209,7 +1178,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch1</Name>
                             <Description>Channel 1</Description>
@@ -1232,7 +1203,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch2</Name>
                             <Description>Channel 2</Description>
@@ -1255,7 +1228,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch3</Name>
                             <Description>Channel 3</Description>
@@ -1278,7 +1253,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch4</Name>
                             <Description>Channel 4</Description>
@@ -1367,7 +1344,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch1</Name>
                             <Description>Channel 1</Description>
@@ -1390,7 +1369,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch2</Name>
                             <Description>Channel 2</Description>
@@ -1413,7 +1394,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch3</Name>
                             <Description>Channel 3</Description>
@@ -1436,7 +1419,9 @@
                                 </NameValues>
                                 <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
                                 <DataLength>16</DataLength>
-                                <SampleRate>128,256,512</SampleRate>
+                                <SampleRate>128</SampleRate>
+                                <SampleRate>256</SampleRate>
+                                <SampleRate>512</SampleRate>
                             </GenericParameter>
                             <Name>Ch4</Name>
                             <Description>Channel 4</Description>

@@ -41,51 +41,40 @@ The **Persistent Storage** system will utilize the same image as the **Evaluatio
 In order to facilitate challenge problem execution and validation, a formal structure must be defined. Given our input 
 and output records will be well below the 10MB size where slowdown can become a problem, I propose the following structure:
 
-### Evaluation Input
+### Evaluation Input/Output
 
-A root node class by the name **BBNEvaluationInput** is created to contain input data.
-
-This node must contain one of two things depending on the challenge problem:
-
- * For Scenario 5, it must contain an Containment edge that points to an **MDLRoot** object that should be considered the input configuration to the problem.
- * For Scenario 6, it must contain a **jsonData**  property that contains a UTF-8 encoded JSON configuration.
-
-An example creation of this on an OrientDB instance is as follows:
-
-```sql
-CREATE CLASS BBNEvaluationInput;
-CREATE PROPERTY BBNEvaluationInput.jsonData STRING
-```
-
-### Evaluation Output
-
-A root node class by the name **BBNEvaluationInput** must be created to contain output data.
+A root node class by the name **BBNEvaluationData** must be created to contain input and output data.
 
 The node must contain four properties as of this moment:
 
-**jsonData** : JSON Data in a yet-to-be finalized format to be used to analyze the results of our adaptation.
-**finalState**: A value that indicates the terminal state of the evaluation including errors.
-**finalStateInfo**: A summary of the final state. This may be empty, and is mainly intended to provide simple error investigation when possible.
+**inputJsonData** : JSON Data in a yet-to-be finalized format to be used to start Scenario 6.  
+**outputJsonData** : JSON Data in a yet-to-be finalized format to be used to analyze the results of our adaptation.  
+**currentState**: A value that indicates the current state of the evaluation including errors.  
+**currentStateInfo**: A summary of the current state. This may be empty, and is mainly intended to provide simple error investigation when possible.  
 
-The intent is to contain complex data within the **jsonData** property, but to bubble up some basic summary data such as errors, general resultant state, and perhaps degree of failure for easy analysis.
+For Scenario 5, it must contain an Containment edge that points to an **MDLRoot** object that should be considered the input configuration to the problem.
 
-### finalState
+The intent is to contain complex data within the **outputJsonData** property, but to bubble up some basic summary data such as errors, general resultant state, and perhaps degree of failure for easy analysis.
 
-The finalState will not be updated until the perturbation has reached a terminal state. Although not set in stone, we currently expect the following possible values, and are treating it like an Enum:
- * AdaptationSuccessful
- * AdaptationNotRequired
- * PerturbationInputInvalid
- * AdaptationUnexpectedError
- * AdaptationUnsuccessful
- * AdaptationPartiallySuccessful
+### currentState
+
+The currentState will not be updated by BBN until the perturbation has reached a terminal state. Although not set in stone, we currently expect the following possible values, and are treating it like an Enum:
+ * ReadyForAdaptation  
+ * AdaptationSuccessful  
+ * AdaptationNotRequired  
+ * PerturbationInputInvalid  
+ * AdaptationUnexpectedError  
+ * AdaptationUnsuccessful  
+ * AdaptationPartiallySuccessful  
 
 An example creation of this on an OrientDB Instance is as follows:
 
 ```sql
-CREATE CLASS BBNEvaluationOutput
-CREATE PROPERTY BBNEvaluationOutput.jsonData STRING
-CREATE PROPERTY BBNEvaluationOutput.finalState STRING
-CREATE PROPERTY BBNEvaluationOutput.finalStateInfo STRING
+CREATE CLASS BBNEvaluationData
+CREATE PROPERTY BBNEvaluationOutput.inputJsonData STRING
+CREATE PROPERTY BBNEvaluationOutput.outputJsonData STRING
+CREATE PROPERTY BBNEvaluationOutput.currentState STRING
+CREATE PROPERTY BBNEvaluationOutput.currentStateInfo STRING
 ```
 
 ## Evaluation Execution 
@@ -118,10 +107,40 @@ At this point, the following occurs within the _Evaluation Target_:
 
 In the event of an error, it will be output to the console and an attempt to upload it to OrientDB will be performed if possible.
 
+## Evaluation Workflow
+
+![Evaluation WOrkflow](evaluation_workflow.png)
+
 ## Scenario 5 Details
 
 The primary input and output artifact will be the MDLRoot object contained in the OrientDB repository. Specifics 
 relating to this are documented in [bbn-swri-mdl-requirements](cp_05/bbn-swri-mdl-requirements.md)
+
+### Scenario 5 Data Validation
+
+In order to ensure we receive everything we need to successfully adapt and have adequate understanding of all input scenarios, a validation tool has been created to help validate input XML.
+
+You can feed it any number of XML files and it will validate each one as a DAU Inventory if the root element has a **DAUInventory** tag or as an input configuration if the root element has a **MDLRoot** tag.
+
+Validation is handled through a drools-based rule engine backed by the [CombinedValidationRules.xls](rules/CombinedValidationRules.xls) file.
+
+By default the output is a color chart that indicates the values for the known fields in green or red depending on if they passed or failed. Fields that are not applicable have no coloring. If a value is not present a green or red background will indicate if that violates any expectations. Alternatively it can be run with the '--colorless-mode' flag in which only the faulty values and indicators of missing values will be visible.
+
+Since there are no unique identifiers for DAUs, Modules, or Ports, the left side of the output contains details that will help discover where in the MDL configuration the faulty values are. The format of it is as follows:
+
+"daus[<dau index>(<DAU Manufacturer>/<DAU Model>)].Module[<module index>(<Module Manufacturer>/<Module Model>)].Port[<port index>]
+
+#### Validation Document
+
+The document contains two sections: "RuleTable DAUInventory" and "RuleTable FaultyConfiguration". Each of these is used to validate the values for their respective data type.  The Headers are as follows:
+
+"Validation Mode" - Indicates the mode in which the rules should be utilized.
+"Parent Type" - This indicates the general root object which the attributes are relevant to.  It is basically a version of the MDL structure flattened for ease of constraint solving.
+"Attribute Identifier" - The attribute that is being inspected.
+"Required" - a boolean expression that indicates if the value is required.
+"Not Allowed" a boolean expression that indicates if the value is not allowed.
+"Valid Value Types" - The multiplicity of the value. It may be a "SingleValue", a "Range" (which is an object with a "Min" and a "Max"), or a Set (OrientDB List) of values.
+"Valid Values" - A boolean expression that indicates the valid values. Instances where "value instanceof X" indicate the value should be of the type X. Instances where "Y contains value" are based on MDL enums and indicate the value values for the attribute.
 
 ## Scenario 6 Details
 

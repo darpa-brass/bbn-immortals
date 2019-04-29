@@ -210,6 +210,20 @@ def create_class_sql(target_name, superclass='V', cluster_size=1):
     return ' '.join(query_sql)
 
 
+def create_property_sql(target_name, property_name, property_type, link_type=None):
+    """
+
+    :param target_name:
+    :param property_name:
+    :param property_type:
+    :return:
+    """
+    if link_type == None:
+        link_type = ''
+    query_sql = ['create', 'PROPERTY', target_name+'.'+property_name, property_type, link_type]
+    return ' '.join(query_sql)
+
+
 def insert_sql(target_name, **properties):
     """
     Creates a new vertex or edge of "type" with properties specified by "properties".
@@ -221,18 +235,25 @@ def insert_sql(target_name, **properties):
 
     query_sql = ['insert into', target_name]
 
-    columns=''
-    values=''
+    columns = ''
+    values = ''
     for k in properties.keys():
         if columns != '':
-            columns += ' ,'
+            columns += ', '
         if values != '':
-            values += ' ,'
+            values += ', '
         columns += k
-        values += "'" + str(properties[k]) + "'"
+        value = str(properties[k])
+        if isinstance(properties[k], str):
+            if "'" in value:
+                value = '"' + value + '"'
+            else:
+                value = "'" + value + "'"
+        values += value
+
     query_sql.append('(' + columns + ')')
     query_sql.append('values')
-    query_sql.append( '(' + values + ')')
+    query_sql.append('(' + values + ')')
 
     return ' '.join(query_sql)
 

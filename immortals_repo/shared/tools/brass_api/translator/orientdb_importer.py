@@ -145,9 +145,15 @@ class OrientDBXMLImporter(object):
                     tmp_idx_1_attribute_stack_keys = list(attribute_stack[-1])
                     tmp_idx_2_attribute_stack_keys = list(attribute_stack[-2])
 
-                    attribute_stack[-2][tmp_idx_2_attribute_stack_keys[0]] = dict(
-                        attribute_stack[-2][tmp_idx_2_attribute_stack_keys[0]].items()| attribute_stack[-1][
-                            tmp_idx_1_attribute_stack_keys[0]].items())
+                    #attribute_stack[-2][tmp_idx_2_attribute_stack_keys[0]] = dict(
+                    #    attribute_stack[-2][tmp_idx_2_attribute_stack_keys[0]].items()| attribute_stack[-1][
+                    #        tmp_idx_1_attribute_stack_keys[0]].items())
+
+                    attribute_stack[-2][tmp_idx_2_attribute_stack_keys[0]] = self.merge_attribute_map(
+                                                                                                        attribute_stack[-2][tmp_idx_2_attribute_stack_keys[0]],
+                                                                                                        attribute_stack[-1][tmp_idx_1_attribute_stack_keys[0]]
+                                                                                                      )
+
                     if 'uid' not in attribute_stack[-2][tmp_idx_2_attribute_stack_keys[0]].keys():
                         attribute_stack[-2][tmp_idx_2_attribute_stack_keys[0]]['uid'] = self.assignUniqueId(
                             tmp_idx_2_attribute_stack_keys[0])
@@ -247,6 +253,21 @@ class OrientDBXMLImporter(object):
         if 'uid' in element[list(element)[0]].keys():
             return 1
         return 0
+
+
+    def merge_attribute_map(self, src_map, dest_map):
+        attribute_map = dict(src_map)
+
+        for i in dest_map:
+            if i in attribute_map:
+                if type(attribute_map[i]) is list:
+                    attribute_map[i].append(dest_map[i])
+                else:
+                    attribute_map[i] = list((attribute_map[i], dest_map[i]))
+            else:
+                attribute_map[i] = dest_map[i]
+
+        return attribute_map
 
 
 def main(database, config, mdlfile):

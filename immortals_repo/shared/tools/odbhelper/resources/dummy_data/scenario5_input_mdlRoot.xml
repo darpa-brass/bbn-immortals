@@ -1,4 +1,9 @@
-<MDLRoot xmlns="http://www.wsmr.army.mil/RCC/schemas/MDL" xmlns:tmatsCommon="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsCommonTypes" xmlns:tmatsP="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsPGroup" xmlns:tmatsD="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsDGroup" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wsmr.army.mil/RCC/schemas/MDL MDL_v1_0_0.xsd">
+<MDLRoot xmlns="http://www.wsmr.army.mil/RCC/schemas/MDL"
+         xmlns:tmatsCommon="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsCommonTypes"
+         xmlns:tmatsP="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsPGroup"
+         xmlns:tmatsD="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsDGroup"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.wsmr.army.mil/RCC/schemas/MDL MDL_v1_0_0.xsd">
     <Name>MDLRoot</Name>
     <Description>TBD</Description>
     <DatabaseID/>
@@ -45,12 +50,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Device1_AccelerationX</Name>
                     <Description>MSCD Acceleration X</Description>
@@ -94,12 +105,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Device1_AccelerationZ</Name>
                     <Description>MSCD Acceleration Z</Description>
@@ -143,12 +160,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Device1_AccelerationY</Name>
                     <Description>MSCD Acceleration Y</Description>
@@ -192,12 +215,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Device2_AccelerationX</Name>
                     <Description>MSCD Acceleration X</Description>
@@ -241,12 +270,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Device2_AccelerationZ</Name>
                     <Description>MSCD Acceleration Z</Description>
@@ -290,12 +325,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Device2_AccelerationY</Name>
                     <Description>MSCD Acceleration Y</Description>
@@ -339,12 +380,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Temp1Therm</Name>
                     <Description>MTCD Temperature 1 Thermocouple</Description>
@@ -388,12 +435,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Temp2Therm</Name>
                     <Description>MTCD Temperature 2 Thermocouple</Description>
@@ -437,12 +490,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Temp3Therm</Name>
                     <Description>MTCD Temperature 3 Thermocouple</Description>
@@ -486,12 +545,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Temp4Therm</Name>
                     <Description>MTCD Temperature 4 Thermocouple</Description>
@@ -535,12 +600,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Temp5Therm</Name>
                     <Description>MTCD Temperature 5 Thermocouple</Description>
@@ -584,12 +655,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Temp6Therm</Name>
                     <Description>MTCD Temperature 6 Thermocouple</Description>
@@ -633,12 +710,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Temp7Therm</Name>
                     <Description>MTCD Temperature 7 Thermocouple</Description>
@@ -682,12 +765,18 @@
                         <NameValues>
                             <NameValue Name="User" Index="1">BBN</NameValue>
                         </NameValues>
-                        <BBNMinSampleRate>80</BBNMinSampleRate>
-                        <BBNMaxSampleRate>130</BBNMaxSampleRate>
-                        <BBNMinDataLength>16</BBNMinDataLength>
-                        <BBNMaxDataLength>16</BBNMaxDataLength>
-                        <BBNMinDataRate>0</BBNMinDataRate>
-                        <BBNMaxDataRate>32768</BBNMaxDataRate>
+                        <SampleRate>
+                            <Min>80</Min>
+                            <Max>130</Max>
+                        </SampleRate>
+                        <DataLength>
+                            <Min>16</Min>
+                            <Max>16</Max>
+                        </DataLength>
+                        <DataRate>
+                            <Min>0</Min>
+                            <Max>32768</Max>
+                        </DataRate>
                     </GenericParameter>
                     <Name>Temp8Therm</Name>
                     <Description>MTCD Temperature 8 Thermocouple</Description>
@@ -783,7 +872,6 @@
                                         <NameValues>
                                             <NameValue Name="BBN" Index="0"></NameValue>
                                         </NameValues>
-                                        <BBNModuleFunctionality>IgnoredModule</BBNModuleFunctionality>
                                     </GenericParameter>
                                     <Name>MPPC-500</Name>
                                     <Description>MnACQ-2000 Processor</Description>
@@ -840,7 +928,6 @@
                                         <NameValues>
                                             <NameValue Name="BBN" Index="0"></NameValue>
                                         </NameValues>
-                                        <BBNModuleFunctionality>IgnoredModule</BBNModuleFunctionality>
                                     </GenericParameter>
                                     <Name>MACQ-500</Name>
                                     <Description>MnACQ-2000 Controller</Description>
@@ -1461,7 +1548,6 @@
                                                 <NameValues>
                                                     <NameValue Name="BBN" Index="0"></NameValue>
                                                 </NameValues>
-                                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
                                                 <DataLength>16</DataLength>
                                                 <SampleRate>100</SampleRate>
                                             </GenericParameter>
@@ -1481,7 +1567,6 @@
                                                 <NameValues>
                                                     <NameValue Name="BBN" Index="0"></NameValue>
                                                 </NameValues>
-                                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
                                             </GenericParameter>
                                             <Name>Ch2-EC</Name>
                                             <Description>MSCD Channel 2 Excitation Constant Current Output</Description>
@@ -1499,7 +1584,6 @@
                                                 <NameValues>
                                                     <NameValue Name="BBN" Index="0"></NameValue>
                                                 </NameValues>
-                                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
                                             </GenericParameter>
                                             <Name>Ch3-EC</Name>
                                             <Description>MSCD Channel 3 Excitation Constant Current Output</Description>
@@ -1517,7 +1601,6 @@
                                                 <NameValues>
                                                     <NameValue Name="BBN" Index="0"></NameValue>
                                                 </NameValues>
-                                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
                                             </GenericParameter>
                                             <Name>Ch4-EC</Name>
                                             <Description>MSCD Channel 4 Excitation Constant Current Output</Description>
@@ -1535,7 +1618,6 @@
                                                 <NameValues>
                                                     <NameValue Name="BBN" Index="0"></NameValue>
                                                 </NameValues>
-                                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
                                             </GenericParameter>
                                             <Name>Ch5-EC</Name>
                                             <Description>MSCD Channel 5 Excitation Constant Current Output</Description>
@@ -1553,7 +1635,6 @@
                                                 <NameValues>
                                                     <NameValue Name="BBN" Index="0"></NameValue>
                                                 </NameValues>
-                                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
                                             </GenericParameter>
                                             <Name>Ch6-EC</Name>
                                             <Description>MSCD Channel 6 Excitation Constant Current Output</Description>
@@ -2113,7 +2194,6 @@
                                                 <NameValues>
                                                     <NameValue Name="BBN" Index="0"></NameValue>
                                                 </NameValues>
-                                                <BBNPortFunctionality>IgnoredPort</BBNPortFunctionality>
                                             </GenericParameter>
                                             <Name>Ch9</Name>
                                             <Description>MTCD Channel 9: RJC</Description>
@@ -2734,7 +2814,6 @@
                         <PortRef IDREF="Module1-Ch1"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-1-1"/>
-                            <MeasurementRef IDREF="meas-1-2"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module1-Ch2-Map">
@@ -2744,7 +2823,6 @@
                         <PortRef IDREF="Module1-Ch2"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-1-2"/>
-                            <MeasurementRef IDREF="meas-1-3"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module1-Ch3-Map">
@@ -2754,7 +2832,6 @@
                         <PortRef IDREF="Module1-Ch3"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-1-3"/>
-                            <MeasurementRef IDREF="meas-1-4"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module1-Ch4-Map">
@@ -2764,7 +2841,6 @@
                         <PortRef IDREF="Module1-Ch4"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-1-4"/>
-                            <MeasurementRef IDREF="meas-1-5"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module1-Ch5-Map">
@@ -2774,7 +2850,6 @@
                         <PortRef IDREF="Module1-Ch5"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-1-5"/>
-                            <MeasurementRef IDREF="meas-1-6"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module1-Ch6-Map">
@@ -2784,7 +2859,6 @@
                         <PortRef IDREF="Module1-Ch6"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-1-6"/>
-                            <MeasurementRef IDREF="meas-2-1"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module2-Ch1-Map">
@@ -2794,7 +2868,6 @@
                         <PortRef IDREF="Module2-Ch1"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-2-1"/>
-                            <MeasurementRef IDREF="meas-2-2"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module2-Ch2-Map">
@@ -2804,7 +2877,6 @@
                         <PortRef IDREF="Module2-Ch2"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-2-2"/>
-                            <MeasurementRef IDREF="meas-2-3"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module2-Ch3-Map">
@@ -2814,7 +2886,6 @@
                         <PortRef IDREF="Module2-Ch3"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-2-3"/>
-                            <MeasurementRef IDREF="meas-2-4"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module2-Ch4-Map">
@@ -2824,7 +2895,6 @@
                         <PortRef IDREF="Module2-Ch4"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-2-4"/>
-                            <MeasurementRef IDREF="meas-2-5"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module2-Ch5-Map">
@@ -2834,7 +2904,6 @@
                         <PortRef IDREF="Module2-Ch5"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-2-5"/>
-                            <MeasurementRef IDREF="meas-2-6"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module2-Ch6-Map">
@@ -2844,7 +2913,6 @@
                         <PortRef IDREF="Module2-Ch6"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-2-6"/>
-                            <MeasurementRef IDREF="meas-2-7"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module2-Ch7-Map">
@@ -2854,7 +2922,6 @@
                         <PortRef IDREF="Module2-Ch7"/>
                         <MeasurementRefs>
                             <MeasurementRef IDREF="meas-2-7"/>
-                            <MeasurementRef IDREF="meas-2-8"/>
                         </MeasurementRefs>
                     </PortMapping>
                     <PortMapping ID="Module2-Ch8-Map">

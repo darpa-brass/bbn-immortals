@@ -3,19 +3,15 @@
 import os
 import re
 import subprocess
-from subprocess import Popen
+import time
 from typing import List, Optional
 
-from lxml import etree
-from lxml.etree import ElementTree as ET
 import pyorient as pyorient
-import time
 from pyorient import OrientDB
 
-from odbhelper import resources
 from odbhelper.brass_api_helper import BrassApiHelper
-from odbhelper.datatypes import GraphDetails, STARTUP_TIMEOUT_S, SHUTDOWN_TIMEOUT_S, STDOUT_LOG_BASE_NAME, \
-    STDERR_LOG_BASE_NAME
+from odbhelper.datatypes import STARTUP_TIMEOUT_S, SHUTDOWN_TIMEOUT_S, STDOUT_LOG_BASE_NAME, \
+    STDERR_LOG_BASE_NAME, Scenario, ScenarioType
 
 SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
@@ -70,49 +66,27 @@ def init_bbn_persistent(host: str, port: int, root_password: str):
     client.close()
 
 
-def init_scenario5(host: str, port: int, root_password: str, db_name: str):
+def init_scenario5(host: str, port: int, root_password: str, scenario: Scenario):
+    output_file = 'ORIENTDB_INPUT_DATA.xml'
 
-    # # TODO: This is hacky. I shouldn't have to import it has the child of a GenericParameter and then disconnect it!
-    # ns = {
-    #     None: 'http://www.wsmr.army.mil/RCC/schemas/MDL'
-    #     # 'tmatsCommon': 'http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsCommonTypes',
-    #     # 'tmatsP': 'http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsPGroup',
-    #     # 'tmatsD': 'http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsDGroup'
-    # }
-    # m_tree = etree.parse(os.path.join(SCRIPT_DIRECTORY, 'resources', 'dummy_data', 'scenario5_input_mdlRoot.xml'))
-    #
-    # m_root = m_tree.getroot()
-    # d_tree = etree.parse(os.path.join(SCRIPT_DIRECTORY, 'resources', 'dummy_data', 's5_dauInventory.xml'))
-    # d_root = d_tree.getroot()
-    #
-    # gp = m_root.find('MeasurementDomains/MeasurementDomain/GenericParameter', ns)
-    #
-    # if gp is None:
-    #     md = m_root.find('MeasurementDomains/MeasurementDomain', ns)
-    #     gp = etree.Element('GenericParameter')
-    #     nvs = etree.Element('NameValues')
-    #     nv = etree.Element('NameValue', {'Name': 'BBN', 'Index': '1'})
-    #     nvs.append(nv)
-    #     gp.append(nvs)
-    #     md.insert(0, gp)
-    #
-    # gp.append(d_root)
-    # open(XML_COMBINED_FILE, 'w').write(etree.tostring(m_root, method='xml', pretty_print=True).decode())
-    #
-    # client = init_db_data(host, port, root_password, db_name, [XML_COMBINED_FILE])  # type: OrientDB
-    #
-    # End hacky
+    out = subprocess.run(
+        ['sed', '/<\/NameValues>/{\n r ' + SCRIPT_DIRECTORY + "/" + scenario.xmlInventoryPath + '\n:a\nn\nba\n}',
+         SCRIPT_DIRECTORY + "/" + scenario.xmlMdlrootInputPath],
+        stdout=subprocess.PIPE)
+
+    out_file = open(output_file, 'w')
+    out_file.write(out.stdout.decode())
+    out_file.flush()
+    out_file.close()
 
     client = init_db_data(
-        host, port, root_password, db_name,
+        host, port, root_password, scenario.dbName,
         [
-            os.path.join(SCRIPT_DIRECTORY, 'resources', 'dummy_data', 'scenario5.xml')
-                # SCRIPT_DIRECTORY,
-                # '../../../docs/CP/phase3/cp_05/dummy_data/BRASS_Scenario5_BeforeAdaptation-augmented.xml')
+            output_file
         ]
     )  # type: OrientDB
 
-     # TODO: This is hacky. I shouldn't have to import it has the child of a GenericParameter and then disconnect it!
+    # TODO: This is hacky. I shouldn't have to import it has the child of a GenericParameter and then disconnect it!
     client.command('DELETE EDGE FROM (SELECT FROM DAUInventory)')
 
     input_record = client.record_create(-1, {'@BBNEvaluationInput': {}})
@@ -123,10 +97,10 @@ def init_scenario5(host: str, port: int, root_password: str, db_name: str):
     client.close()
 
 
-def init_scenario6a(host: str, port: int, root_password: str, db_name: str):
-    client = init_db_data(host, port, root_password, db_name)
+def init_scenario6(host: str, port: int, root_password: str, scenario: Scenario):
+    client = init_db_data(host, port, root_password, scenario.dbName)
 
-    json_data = resources.load_s6_advanced()
+    json_data = open(SCRIPT_DIRECTORY + "/" + scenario.jsonInputPath, 'r').read()
 
     client.record_create(
         -1,
@@ -139,32 +113,6 @@ def init_scenario6a(host: str, port: int, root_password: str, db_name: str):
     client.record_create(-1, {'@BBNEvaluationOutput': {}})
 
     client.close()
-
-
-def init_scenario6b(host: str, port: int, root_password: str, db_name: str):
-    client = init_db_data(host, port, root_password, db_name)
-
-    json_data = resources.load_s6_basic()
-
-    client.record_create(
-        -1,
-        {
-            '@BBNEvaluationInput': {
-
-                'jsonData': json_data
-            }
-        }
-    )
-    client.record_create(-1, {'@BBNEvaluationOutput': {}})
-
-    client.close()
-
-
-_init_functions = {
-    GraphDetails.s5: init_scenario5,
-    GraphDetails.s6a: init_scenario6a,
-    GraphDetails.s6b: init_scenario6b
-}
 
 
 class OdbStarter:
@@ -174,7 +122,7 @@ class OdbStarter:
         self.orientdb_home = orientdb_home
         self.orientdb_root_password = orientdb_root_password
         self.start_timestamp = time.strftime('%Y%m%d_%H%M%S')
-        self._odb_process = None  # type: Popen
+        self._odb_process = None
         self._odb_stdout = None
         self._odb_stderr = None
 
@@ -231,7 +179,7 @@ class OdbStarter:
             client.command('CREATE PROPERTY BBNEvaluationOutput.evaluationInstanceIdentifier STRING')
             client.close()
 
-    def init_test_scenarios(self, reset_scenarios: Optional[List[GraphDetails]] = None):
+    def init_test_scenarios(self, reset_scenarios: Optional[List[Scenario]] = None):
         print('Initializing OrientDB Databases...')
 
         client = pyorient.OrientDB(self.host, self.port)
@@ -239,17 +187,18 @@ class OdbStarter:
 
         if reset_scenarios is not None:
             for scenario in reset_scenarios:
-                if client.db_exists(scenario.db_name):
-                    print('Removing database for "' + scenario.display_name + '".')
-                    client.db_drop(scenario.db_name)
-
-        setup_scenarios = \
-            list(filter(lambda x: not client.db_exists(x.db_name), list(dict(GraphDetails.__members__).values())))
+                if client.db_exists(scenario.dbName):
+                    print('Removing database for "' + scenario.dbName + '".')
+                    client.db_drop(scenario.dbName)
 
         client.close()
 
-        for scenario in setup_scenarios:
-            _init_functions[scenario](self.host, self.port, self.orientdb_root_password, scenario.db_name)
+        for scenario in reset_scenarios:
+            if scenario.scenarioType == ScenarioType.Scenario5:
+                init_scenario5(self.host, self.port, self.orientdb_root_password, scenario)
+                pass
+            elif scenario.scenarioType == ScenarioType.Scenario6:
+                init_scenario6(self.host, self.port, self.orientdb_root_password, scenario)
 
         print('Finished initializing OrientDB')
 

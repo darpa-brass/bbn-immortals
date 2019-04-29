@@ -339,6 +339,41 @@ class BrassOrientDBHelper(object):
         except:
             raise BrassException(sys.exc_info()[1], 'BrassOrientDBHelper.delete_nodes_by_rid')
 
+    def set_relationship(self, edgetype=None, destination_rid=None, source_rid=None, destination_conditions=[], source_conditions=[]):
+        """
+        Creates a Containment type of edge between parent node and child node using rids or search condition.
+
+                                        parent_node <- child_node
+        :param str edgetype                 type of edge
+        :param str destination_rid:              rid of parent node
+        :param str source_rid:               rid of child node
+        :param str destination_conditions:       search conditions of destination node
+        :param str source_conditions:        search conditions of source node
+        :return:
+        :raises BrassException:             source of exception is set to the function name
+        """
+        src = None
+        dst = None
+
+        if destination_rid is not None:
+            dst = destination_rid
+        elif len(destination_conditions) > 0:
+            dst = select_sql('V', destination_conditions)
+
+        if source_rid is not None:
+            src = source_rid
+        elif len(source_conditions) > 0:
+            src = select_sql('V', source_conditions)
+
+        if src is not None and dst is not None:
+            sql_cmd = create_edge_sql(edgetype, src, dst)
+            print(sql_cmd)
+            return self._orientdb_client.run_command (
+                sql_cmd
+            )
+        else:
+            return False
+
     def set_containment_relationship (self, parent_rid=None, child_rid=None, parent_conditions=[], child_conditions=[]):
         """
         Creates a Containment type of edge between parent node and child node using rids or search condition.
@@ -352,27 +387,10 @@ class BrassOrientDBHelper(object):
         :return:
         :raises BrassException:             source of exception is set to the function name
         """
-        src = None
-        dst = None
+        return self.set_relationship(edgetype='Containment', destination_rid=parent_rid, source_rid=child_rid, destination_conditions=parent_conditions,
+                                     source_conditions=child_conditions)
 
-        if parent_rid is not None:
-            dst = parent_rid
-        elif len(parent_conditions) > 0:
-            dst = select_sql('V', parent_conditions)
 
-        if child_rid is not None:
-            src = child_rid
-        elif len(child_conditions) > 0:
-            src = select_sql('V', child_conditions)
-
-        if src is not None and dst is not None:
-            sql_cmd = create_edge_sql('Containment', src, dst)
-            print(sql_cmd)
-            return self._orientdb_client.run_command (
-                sql_cmd
-            )
-        else:
-            return False
 
     def set_reference_relationship (self, reference_rid=None, referent_rid=None, reference_condition=[], referent_condition=[]):
         """
@@ -387,27 +405,10 @@ class BrassOrientDBHelper(object):
         :return:
         :raises BrassException:             source of exception is set to the function name
         """
-        src = None
-        dst = None
+        return self.set_relationship(edgetype='Reference', destination_rid=referent_rid, source_rid=reference_rid,
+                                     destination_conditions=referent_condition, source_conditions=reference_condition)
 
-        if referent_rid is not None:
-            dst = referent_rid
-        elif len(referent_condition) > 0:
-            dst = select_sql('V', referent_condition)
 
-        if reference_rid is not None:
-            src = reference_rid
-        elif len(reference_condition) > 0:
-            src = select_sql('V', reference_condition)
-
-        if src is not None and dst is not None:
-            sql_cmd = create_edge_sql('Reference', src, dst)
-            print(sql_cmd)
-            return self._orientdb_client.run_command (
-                sql_cmd
-            )
-        else:
-            return ''
 
     def remove_parent_child_relationship(self, parent_rid=None, child_rid=None, parent_conditions=[], child_conditions=[]):
         """
@@ -534,7 +535,15 @@ class BrassOrientDBHelper(object):
         except:
             raise BrassException(sys.exc_info()[1], 'BrassOrientDBHelper.create_node')
 
-
+    def create_node_property(self, target_name, property_name, property_type, link_type=None):
+        try:
+            sql_cmd = create_property_sql(target_name, property_name, property_type, link_type)
+            print(sql_cmd)
+            self._orientdb_client.run_command(
+                sql_cmd
+            )
+        except:
+            raise BrassException(sys.exc_info()[1], 'BrassOrientDBHelper.create_node_property')
 
     def run_query(self, sql):
         '''

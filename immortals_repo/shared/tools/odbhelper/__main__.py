@@ -3,12 +3,14 @@
 import argparse
 import os
 
-from odbhelper.datatypes import GraphDetails
+from odbhelper import datatypes
 
 _parser = None
 _subparsers = None
 
 DEFAULT_ROOT_PASSWORD = 'g21534bn890cf57b23n405f987vnb23dh789'
+
+scenarios = datatypes.get_scenarios()
 
 
 def init_parser(parent_parser=None):
@@ -23,16 +25,12 @@ def init_parser(parent_parser=None):
 
     start_parser = _subparsers.add_parser("start")
 
-    # _parser.add_argument('--start-orientdb', '-s', action='store_true', help='Start the local OrientDB Server')
-
-    s_choices = list(GraphDetails.__dict__['_member_names_'])
+    s_choices = scenarios.keys()
 
     start_parser.add_argument('--reset-scenario', '-r', action='append', choices=s_choices,
                               help='If provided, the  database for the specified scenario will be deleted ' +
                                    ' and recreated.')
 
-    # start_parser.add_argument('--test-scenario', '-t', action='store', choices=s_choices,
-    #                           help='Preload test scenario data.')
     start_parser.add_argument('--unique-log', '-u', action='store_true',
                               help='If true, timestamped log files will be created instead of replacing the existing ' +
                                    'immortals-orientdb-stderr.log and immortals-orientdb-stdout.log,')
@@ -98,19 +96,19 @@ def main(parser_args):
                                '\tHost: ' + host + '\n' +
                                '\tPort: ' + str(port) + '\n' +
                                '\tWebsite: http://' + host + ':2480\n' +
-                               '\tDatabases:\n' +
-                               '\t\t' + 'remote:' + host + ':' + str(port) + '/' + GraphDetails.s5.db_name + '\n' +
-                               '\t\t' + 'remote:' + host + ':' + str(port) + '/' + GraphDetails.s6a.db_name + '\n' +
-                               '\t\t' + 'remote:' + host + ':' + str(port) + '/' + GraphDetails.s6b.db_name + '\n' +
-                               '\t\t' + 'remote:' + host + ':' + str(port) + '/' + 'BBNPersistent\n'
+                               '\tDatabases:\n'
                                )
 
                 starter.init_bbn_persistent(parser_args.reset_persistent_db)
+                display_msg = display_msg + '\t\t' + 'remote:' + host + ':' + str(port) + '/' + 'BBNPersistent\n'
 
                 if parser_args.reset_scenario is not None:
-                    starter.init_test_scenarios(list(map(lambda x: GraphDetails[x], parser_args.reset_scenario)))
-                else:
-                    starter.init_test_scenarios()
+                    for scenario_identifier in parser_args.reset_scenario:
+                        scenario = scenarios[scenario_identifier]
+                        display_msg = \
+                            display_msg + '\t\t' + 'remote:' + host + ':' + str(port) + '/' + scenario.dbName + '\n'
+
+                    starter.init_test_scenarios(list(map(lambda x: scenarios[x], parser_args.reset_scenario)))
 
                 display_msg = \
                     display_msg + "Press Ctrl-C to halt the OrientDB instance."

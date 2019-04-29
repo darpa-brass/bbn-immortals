@@ -1,0 +1,30 @@
+{
+	"scenarios": [
+		{
+			"name": "s5swri1",
+			"scenarioType": "Scenario5",
+			"dbName": "IMMORTALS_SWRI_1",
+			"xmlInventoryPath": "resources/swri/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
+			"xmlMdlrootInputPath": "resources/swri/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml"
+		},
+		{
+			"name": "s5",
+			"scenarioType": "Scenario5",
+			"dbName": "IMMORTALS_TEST-SCENARIO_5",
+			"xmlInventoryPath": "resources/dummy_data/s5_dauInventory.xml",
+			"xmlMdlrootInputPath": "resources/dummy_data/scenario5_input_mdlRoot.xml"
+		},
+		{
+			"name": "s6knownSchema",
+			"scenarioType": "Scenario6",
+			"dbName": "IMMORTALS_TEST-SCENARIO_6-KNOWN_SCHEMA",
+			"jsonInputPath": "resources/dummy_data/s6_basic.json"
+		},
+		{
+			"name": "s6unknownSchema",
+			"scenarioType": "Scenario6",
+			"dbName": "IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA",
+			"jsonInputPath": "resources/dummy_data/s6_advanced.json"
+		}
+	]
+}
