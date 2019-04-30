@@ -50,8 +50,8 @@ This section covers all the data that is required prior to evaluation that shoul
  Identifier: **BBNPortFunctionality**
  
  * Port Sample Rates - In the DAU Inventory, there will be one or more individual values that are valid sample rates 
-   for each applicable port. These are defined by a parent **SampleRates** element containing n **SampleRate** elements, 
-   each consisting of no more than a single integer as the body that represents a valid sample rate.
+   for each applicable port. These are defined by a number of **SampleRate** elements, each consisting of no more than 
+   a single integer as the body that represents a valid sample rate.
  
  * Port Data Length - The length of that data being sent by the port. Identifier: **DataLength**
 
@@ -93,11 +93,9 @@ Modules, and Ports within the DAU inventory are expected to contain this additio
               <BBNPortFunctionality>ThermocoupleConditionerPort</BBNPortFunctionality>
               <ExcitationPortIsPresent/>
               <DataLength>16</DataLength>
-              <SampleRates>
-                <SampleRate>128</SampleRate>
-                <SampleRate>192</SampleRate>
-                <SampleRate>256</SampleRate>
-              </SampleRates>
+              <SampleRate>128</SampleRate>
+              <SampleRate>192</SampleRate>
+              <SampleRate>256</SampleRate>
             </GenericParameter>
             <Name>Ch1</Name>
             <PortTypes>
