@@ -172,6 +172,12 @@ public class EvaluationProperties{
             "perform adaptation."
             ),
         
+        endEvaluationBeforeStep(
+            "-1",
+            "Iff an integer larger than 0 is specified, the evaluation " +
+            "workflow will terminate at that step"
+            ),
+        
         ;
         
         final String defaultValue;

@@ -13,7 +13,8 @@ import java.util.Stack;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        DataflowAnalyzerPlatform dataflowAnalyzerPlatform = new DataflowAnalyzerPlatform();
+        //TODO out-of-date
+       /* DataflowAnalyzerPlatform dataflowAnalyzerPlatform = new DataflowAnalyzerPlatform();
 
         String pathToProjJar = args[0];
         String pathToADSLJar = args[1];
@@ -28,6 +29,6 @@ public class Main {
         List<Stack<String>> callTraceStackList = dataflowAnalyzerPlatform.parseCallTraceStack(pathToCallTraceFile);
         Set<Stack<DataflowGraphComponent>> dataflowGraphs = dataflowAnalyzerPlatform.processCallTraceStacks(callTraceStackList);
         String outputFilePath = dataflowAnalyzerPlatform.serializeDataflows(dataflowGraphs);
-        System.out.println("Emitted dataflows at: " + outputFilePath);
+        System.out.println("Emitted dataflows at: " + outputFilePath);*/
     }
 }

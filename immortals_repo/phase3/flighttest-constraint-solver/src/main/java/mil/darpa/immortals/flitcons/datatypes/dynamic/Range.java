@@ -1,9 +1,8 @@
 package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
+import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import org.apache.commons.lang.math.NumberUtils;
-
-import javax.annotation.Nonnull;
 
 /**
  * A simple range object
@@ -29,7 +28,7 @@ public class Range implements DuplicateInterface<Range> {
 			}
 
 		} else {
-			throw new RuntimeException("Min and Max must both either be a float or a long!");
+			throw AdaptationnException.input("Min and Max must both either be a float or a long!");
 		}
 	}
 

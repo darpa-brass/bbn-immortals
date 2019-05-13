@@ -16,7 +16,7 @@
     ]
   },
   "dataCollectionInstructions": {
-    "collectedPrimaryProperties": {
+    "collectedChildProperties": {
       "Port": [
         "PortDirection"
       ],
@@ -34,13 +34,7 @@
         "SampleRate",
         "DataRate",
         "DataLength"
-      ]
-    },
-    "collectedExternalProperties": {
-      "GenericParameter": [
-        "SampleRate",
-        "DataRate",
-        "DataLength"
+        //        "PortType"
       ],
       "SampleRate": [
         "Min",
@@ -56,14 +50,14 @@
       ]
     },
     "collectedDebugProperties": {
-      //      "NetworkNode": [
-      //        "Model",
-      //        "Manufacturer"
-      //      ],
-      //      "Module": [
-      //        "Model",
-      //        "Manufacturer"
-      //      ]
+      "NetworkNode": [
+        "Model",
+        "Manufacturer"
+      ],
+      "Module": [
+        "Model",
+        "Manufacturer"
+      ]
     },
     "valuesToDefaultToTrue": [
       "BBNDauFlaggedForReplacement"
@@ -77,56 +71,106 @@
           "SampleRate",
           "DataLength"
         ],
-        "equation": "SampleRate * DataLength"
+        "equation": "@SampleRate * @DataLength"
+      }
+    },
+    "ignoredAttributes": {
+      "Port": [
+        "BBNPortFunctionality"
+      ],
+      "NetworkNode": [
+        "BBNDauMonetaryCost"
+      ]
+    },
+    "parentAttributeTreeClones": [
+      [
+        "GenericParameter",
+        "BBNDauFlaggedForReplacement"
+      ]
+    ],
+    "directNodeAttributeRemappingOptions": {
+      "Port": {
+        "PortType": [
+          [
+            //          "Port",
+            "PortTypes",
+            "PortType",
+            "PortType"
+          ],
+          [
+            "PortTypes",
+            "PortType"
+          ]
+        ]
+      }
+    },
+    "indirectNodeAttributeRemappingOptions": {
+      "Port": {
+        "DataLength": [
+          [
+            "Measurement",
+            "DataAttributes",
+            "DigitalAttributes",
+            "DataLength",
+            "ConditionParameter",
+            "ConditionValue"
+          ]
+        ],
+        "DataRate": [
+          [
+            "Measurement",
+            "DataAttributes",
+            "DigitalAttributes",
+            "DataRate",
+            "ConditionParameter",
+            "ConditionValue"
+          ]
+        ],
+        "SampleRate": [
+          [
+            "Measurement",
+            "DataAttributes",
+            "DigitalAttributes",
+            "SampleRate",
+            "ConditionParameter",
+            "ConditionValue"
+          ]
+        ]
       }
     }
   },
-  "dauInventoryCollection": {
-    "collectedPrimaryProperties": {
-      "Port": [
-        "PortDirection"
+  "transformation": {
+    "shortNodesToParent": {
+      "NetworkNode": [
+        "InternalStructure",
+        "GenericParameter"
       ],
-      "PortType": [
-        "Extension",
-        "Thermocouple"
+      "InternalStructure": [
+        "Modules"
+      ],
+      "Modules": [
+        "Module"
+      ],
+      "Module": [
+        "Ports"
+      ],
+      "Port": [
+        "PortTypes",
+        "GenericParameter",
+        "Measurement"
       ],
       "PortTypes": [
         "PortType"
       ],
+      "Measurement": [
+        "GenericParameter"
+      ],
       "GenericParameter": [
-        "BBNPortFunctionality",
-        "BBNDauFlaggedForReplacement",
-        "DataLength",
-        "SampleRate",
-        "DataRate"
+        "PortType",
+        "Thermocouple"
       ]
     },
-    "collectedExternalProperties": {},
-    "collectedDebugProperties": {
-      // TODO: Property collect module data for validation but omit for dataCollectionInstructions
-      //      "NetworkNode": [
-      //        "Model",
-      //        "Manufacturer"
-      //      ],
-      //      "Module": [
-      //        "Model",
-      //        "Manufacturer"
-      //      ]
-    }
-  },
-  "transformation": {
-    "shortNodesToParent": [
-      "GenericParameter",
-      "InternalStructure",
-      "Measurement",
-      // TODO: Property collect module data for validation but omit for dataCollectionInstructions
-      "Module",
-      "Modules",
-      "PortType",
-      "PortTypes",
-      "Ports"
-    ],
-    "ignoreNodes": [
+    "ignoredNodes": [
       "SubModules",
       "Connectors"
     ],
@@ -141,11 +185,160 @@
       "Port"
     ],
     "combineSquashedChildNodeAttributes": {
-      "PortTypes": {
+      "GenericParameter": {
         "PortType": [
+          "PortType",
+          "Thermocouple"
+        ]
+      },
+      "Port": {
+        "GenericParameter": [
+          "PortType",
           "Thermocouple"
         ]
       }
+    },
+    "calculations": {
+      "Port": [
+        {
+          "targetValueIdentifier": "DataRate",
+          "substitutionValues": [
+            "SampleRate",
+            "DataLength"
+          ],
+          "equation": "@SampleRate * @DataLength"
+        }
+      ]
+    },
+    "ignoredInventoryAttributes": {
+      "Thermocouple": [
+        [
+          "Port",
+          "PortTypes",
+          "PortType"
+        ]
+      ],
+      "PortType": [
+        [
+          "Port",
+          "GenericParameter",
+          "PortType"
+        ]
+      ],
+      "DataLength": [
+        [
+          "Measurement",
+          "GenericParameter"
+        ]
+      ],
+      "SampleRate": [
+        [
+          "Measurement",
+          "GenericParameter"
+        ]
+      ],
+      "ConditionValue": [
+        [
+          "Measurement",
+          "DataAttributes",
+          "DigitalAttributes",
+          "DataRate",
+          "ConditionParameter"
+        ]
+        ]
+    },
+    "ignoredFaultyConfigurationAttributes": {
+      "Thermocouple": [
+        [
+          "Port",
+          "GenericParameter",
+          "PortType"
+        ]
+      ],
+      "PortType": [
+        [
+          "Port",
+          "GenericParameter",
+          "PortType"
+        ]
+      ],
+      "SampleRate": [
+        [
+          "Port",
+          "GenericParameter"
+        ]
+      ],
+      "DataLength": [
+        [
+          "Port",
+          "GenericParameter"
+        ]
+      ],
+      "ConditionValue": [
+        [
+          "Measurement",
+          "DataAttributes",
+          "DigitalAttributes",
+          "DataLength",
+          "ConditionParameter"
+        ],
+        [
+          "Measurement",
+          "DataAttributes",
+          "DigitalAttributes",
+          "SampleRate",
+          "ConditionParameter"
+        ],
+        [
+          "Measurement",
+          "DataAttributes",
+          "DigitalAttributes",
+          "DataRate",
+          "ConditionParameter"
+        ]
+      ]
+    },
+    "ignoredValidConfigurationAttributes": {
+      "Thermocouple": [
+        [
+          "Port",
+          "PortTypes",
+          "PortType"
+        ]
+      ],
+      "PortType": [
+        [
+          "Port",
+          "PortTypes",
+          "PortType"
+        ]
+      ],
+      "ConditionValue": [
+        [
+          "Measurement",
+          "DataAttributes",
+          "DigitalAttributes",
+          "DataLength",
+          "ConditionParameter",
+          "ConditionValue"
+        ],
+        [
+          "Measurement",
+          "DataAttributes",
+          "DigitalAttributes",
+          "SampleRate",
+          "ConditionParameter",
+          "ConditionValue"
+        ],
+        [
+          "Measurement",
+          "DataAttributes",
+          "DigitalAttributes",
+          "DataRate",
+          "ConditionParameter",
+          "ConditionValue"
+        ]
+      ]
     }
   },
   "validation": {

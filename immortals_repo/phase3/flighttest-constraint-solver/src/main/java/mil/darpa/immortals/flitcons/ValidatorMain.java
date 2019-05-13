@@ -1,11 +1,9 @@
 package mil.darpa.immortals.flitcons;
 
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueException;
-import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
+import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataTransformer;
 import mil.darpa.immortals.flitcons.mdl.MdlDataValidator;
 import mil.darpa.immortals.flitcons.mdl.ValidationScenario;
-import mil.darpa.immortals.flitcons.mdl.XmlElementCollector;
+import mil.darpa.immortals.flitcons.mdl.XmlElementDataSource;
 import mil.darpa.immortals.flitcons.validation.ValidationDataContainer;
 import picocli.CommandLine;
 
@@ -29,6 +27,7 @@ public class ValidatorMain {
 	private boolean helpRequested = false;
 
 	public static void main(String[] args) {
+		HierarchicalDataTransformer.ignoreEquations = true;
 		ValidatorMain m = new ValidatorMain();
 		CommandLine.populateCommand(m, args);
 		m.execute();
@@ -40,35 +39,20 @@ public class ValidatorMain {
 			return;
 		}
 
-		try {
-			Configuration config = Configuration.getInstance();
-			for (File xmlFile : inputFiles) {
-				XmlElementCollector xec = new XmlElementCollector(
-						xmlFile,
-						config.dataCollectionInstructions,
-						config.transformation);
+		for (File xmlFile : inputFiles) {
+			XmlElementDataSource xec = new XmlElementDataSource(xmlFile);
+			MdlDataValidator validator = new MdlDataValidator(inputXls, outputDrl, xec);
 
-				if (xec.isInputConfiguration()) {
-					HierarchicalDataContainer dataContainer = xec.getInputConfiguration();
-					DynamicObjectContainer objectContainer = Utils.createDslInterchangeFormat(dataContainer);
-					MdlDataValidator validator = new MdlDataValidator(inputXls, outputDrl);
-					ValidationDataContainer result = validator.validate(ValidationScenario.InputConfiguration, objectContainer);
-					result.printResults(ValidationScenario.InputConfiguration.name(), !colorlessMode);
+			if (xec.isInputConfiguration()) {
+				validator.validateConfiguration(ValidationScenario.InputConfiguration, !colorlessMode);
 
-				} else if (xec.isDauInventory()) {
-					HierarchicalDataContainer dataContainer = xec.getDauInventory();
-					DynamicObjectContainer objectContainer = Utils.createDslInterchangeFormat(dataContainer);
-					MdlDataValidator validator = new MdlDataValidator(inputXls, outputDrl);
-					ValidationDataContainer result = validator.validate(ValidationScenario.DauInventory, objectContainer);
-					result.printResults(ValidationScenario.DauInventory.name(), !colorlessMode);
+			} else if (xec.isDauInventory()) {
+				validator.validateConfiguration(ValidationScenario.DauInventory, !colorlessMode);
 
-				} else {
-					System.err.println("XML File did not contain a 'DAUInventory' or 'MDLRoot' in the root!");
-					System.exit(1);
-				}
+			} else {
+				System.err.println("XML File did not contain a 'DAUInventory' or 'MDLRoot' in the root!");
+				System.exit(1);
 			}
-		} catch (DynamicValueException e) {
-			throw new RuntimeException(e);
 		}
 	}
 }

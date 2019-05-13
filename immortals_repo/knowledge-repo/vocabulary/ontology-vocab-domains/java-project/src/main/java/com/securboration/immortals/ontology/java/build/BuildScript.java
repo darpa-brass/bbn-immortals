@@ -20,15 +20,18 @@ public class BuildScript implements HasUuid {
      */
     private String hash;
 
+    private String projectDir;
+
     /**
      * Uniquely identifies the concept over time
      */
     private String uuid;
 
-    public BuildScript(String buildScriptContents, String hash, String uuid) {
+    public BuildScript(String buildScriptContents, String hash, String uuid, String projectDir) {
 		this.buildScriptContents = buildScriptContents;
 		this.hash = hash;
 		this.uuid = uuid;
+		this.projectDir = projectDir;
 	}
     
     public BuildScript(){
@@ -61,4 +64,11 @@ public class BuildScript implements HasUuid {
         this.uuid = uuid;
     }
 
+    public String getProjectDir() {
+        return projectDir;
+    }
+
+    public void setProjectDir(String projectDir) {
+        this.projectDir = projectDir;
+    }
 }

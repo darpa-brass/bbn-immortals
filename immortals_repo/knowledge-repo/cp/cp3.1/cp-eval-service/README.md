@@ -94,6 +94,8 @@ java -DpathToXsdTranslationServiceJar=./trunk/knowledge-repo/cp/cp3.1/xsd-transl
 ### Evaluation modes
 The harness can be run in one of the following test modes (useful for debugging, exploration and replay):
   * <i>testSanity</i>: the harness will perform an evaluation with no evolutionary pressure
+  * <i>testSanity1</i>: the harness will perform an evaluation with a v1 client and datasource and a v2 server
+  * <i>testSanity2</i>: the harness will perform an evaluation with a v2 client and datasource and a v1 server  
   * <i>testCanned</i>: the harness will perform an evaluation using a canned JSON input specified via the cannedInputJson property (this mode is useful for replaying problematic configurations)
   * <i>testSimple</i>: the harness will perform an evaluation using a configuration captured by the simpleClientSchemaVersion, simpleServerSchemaVersion, and simpleDatasourceSchemaVersion properties.
   * <i>testComplex</i>: the harness will perform an evaluation using a configuration captured by the customDirContainingClientXsds, customDirContainingServerXsds, customDirContainingDatasourceXsds, and customDirContainingDatasourceXml properties.

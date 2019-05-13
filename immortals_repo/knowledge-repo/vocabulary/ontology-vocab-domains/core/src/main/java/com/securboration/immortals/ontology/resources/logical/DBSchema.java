@@ -6,9 +6,7 @@ import com.securboration.immortals.ontology.relationship.Relation;
 public class DBSchema extends Schema implements HumanReadable {
     
     private String name;
-    
-    private String version;
-    
+
     private Table[] tables;
     
     private Relation[] relations;
@@ -17,14 +15,6 @@ public class DBSchema extends Schema implements HumanReadable {
     
     public String getHumanReadableDesc() {
         return humanReadableDesc;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 
     public Relation[] getRelations() {

@@ -6,10 +6,14 @@ import com.securboration.immortals.ontology.constraint.DirectionOfViolationType;
 import com.securboration.immortals.ontology.constraint.XmlResourceImpactType;
 import com.securboration.immortals.ontology.pojos.markup.ConceptInstance;
 import com.securboration.immortals.ontology.property.impact.*;
+import com.securboration.immortals.ontology.property.impact.StructuredDocumentCriterionType;
+import com.securboration.immortals.ontology.property.impact.StructuredDocumentImpact;
+import com.securboration.immortals.ontology.property.impact.StructuredDocumentImpactType;
+import com.securboration.immortals.ontology.property.impact.StructuredDocumentVersionCriterion;
 import com.securboration.immortals.ontology.resources.Client;
-import com.securboration.immortals.ontology.resources.FormattedData;
 import com.securboration.immortals.ontology.resources.Server;
-import com.securboration.immortals.ontology.resources.xml.XmlInstance;
+import com.securboration.immortals.ontology.resources.xml.StructuredDocument;
+import com.securboration.immortals.ontology.resources.xml.XmlDocument;
 
 @ConceptInstance
 public class ServerOrientedFormattedDataConstraint extends ProscriptiveCauseEffectAssertion {
@@ -26,12 +30,12 @@ public class ServerOrientedFormattedDataConstraint extends ProscriptiveCauseEffe
         resourceBindingSiteClient.setResourceType(Client.class);
         this.setAssertionBindingSites(new AssertionBindingSite[]{resourceBindingSiteClient, resourceBindingSiteServer});
 
-        FormattedDataVersionCriterion formattedDataVersionCriterion = new FormattedDataVersionCriterion();
-        formattedDataVersionCriterion.setFormattedData(XmlInstance.class);
-        formattedDataVersionCriterion.setFormattedDataCriterionType(FormattedDataCriterionType.VERSION_DIFFERENT);
-        this.setCriterion(formattedDataVersionCriterion);
+        StructuredDocumentVersionCriterion structuredDocumentVersionCriterion = new StructuredDocumentVersionCriterion();
+        structuredDocumentVersionCriterion.setStructuredDocument(XmlDocument.class);
+        structuredDocumentVersionCriterion.setStructuredDocumentCriterionType(StructuredDocumentCriterionType.VERSION_DIFFERENT);
+        this.setCriterion(structuredDocumentVersionCriterion);
 
-        this.setApplicableDataType(FormattedData.class);
+        this.setApplicableDataType(StructuredDocument.class);
         this.setHumanReadableDescription("Client devices transmitting xml messages to the server must adhere to the version present");
     }
 
@@ -56,17 +60,17 @@ public class ServerOrientedFormattedDataConstraint extends ProscriptiveCauseEffe
 
         public XsltTransformImpact() {
 
-            FormattedDataImpact formattedDataImpact = new FormattedDataImpact();
-            formattedDataImpact.setImpactedData(XmlInstance.class);
-            formattedDataImpact.setImpactType(FormattedDataImpactType.FORMAT_CHANGE);
+            StructuredDocumentImpact structuredDocumentImpact = new StructuredDocumentImpact();
+            structuredDocumentImpact.setImpactedData(XmlDocument.class);
+            structuredDocumentImpact.setImpactType(StructuredDocumentImpactType.FORMAT_CHANGE);
 
             XmlResourceImpact resourceImpact = new XmlResourceImpact();
             resourceImpact.setImpactedResource(Client.class);
             resourceImpact.setTargetResource(Server.class);
             resourceImpact.setXmlResourceImpactType(XmlResourceImpactType.XML_SCHEMA_CHANGE);
-            formattedDataImpact.setApplicableResource(resourceImpact);
+            structuredDocumentImpact.setApplicableResource(resourceImpact);
 
-            this.setImpact(new ImpactStatement[]{formattedDataImpact});
+            this.setImpact(new ImpactStatement[]{structuredDocumentImpact});
         }
     }
 }

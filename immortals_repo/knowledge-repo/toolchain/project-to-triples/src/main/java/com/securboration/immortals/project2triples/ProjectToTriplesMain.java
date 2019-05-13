@@ -3,30 +3,17 @@ package com.securboration.immortals.project2triples;
 import static soot.SootClass.BODIES;
 import static soot.SootClass.SIGNATURES;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.securboration.immortals.exampleDataflows.CPP_ESS_ARCH;
+import com.securboration.immortals.exampleDataflows.ServerOrientedFormattedDataConstraint;
 import com.securboration.immortals.ontology.java.project.AnalysisMetrics;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
@@ -99,7 +86,23 @@ public class ProjectToTriplesMain {
 
 	}
 
-	public static void main(String[] args){}
+	public static void main(String[] args) throws IOException {
+
+
+		//Scene.v().setSootClassPath(Scene.v().getSootClassPath() + File.pathSeparator + "C:/ImmortalsPhase3/knowledge-repo/cp/cp3.1/cp-ess-min/client/target/immortals-cp3.1-client-1.0.0.jar");
+		//Scene.v().loadBasicClasses();
+		//jimplfyClass(Scene.v().loadClassAndSupport("com.securboration.client.MessageListenerClient"));
+
+		CPP_ESS_ARCH cpp_ess_arch = new CPP_ESS_ARCH();
+		ServerOrientedFormattedDataConstraint.XsltImplementationStrategy xsltImplementationStrategy = new ServerOrientedFormattedDataConstraint.XsltImplementationStrategy();
+		ObjectToTriplesConfiguration config = new ObjectToTriplesConfiguration("r2.0.0");
+		Model m = ModelFactory.createDefaultModel();
+		m.add(ObjectToTriples.convert(config, cpp_ess_arch));
+		m.add(ObjectToTriples.convert(config, xsltImplementationStrategy));
+		recordCPElement(OntologyHelper.serializeModel(m, "TTL", false),
+				"C:/cp-ess-min-17-19/ess/ess/etc/arch.ttl");
+
+	}
 
 	public String testFunction(){
 		return "Hello, world!";
@@ -138,16 +141,18 @@ public class ProjectToTriplesMain {
 			sf = new SourceFinder(basedir, svnLocation,sourceFiles);
 		}
 		//buildScript
-		Path ppom = Paths.get(gd.getPathToBuildFile());
+		String buildFilePath = gd.getPathToBuildFile();
+		Path ppom = Paths.get(buildFilePath);
 		BuildScript buildScript;
-		if (ppom.toFile().exists() || ppom.toString().equals("")){
-			buildScript = new BuildScript(null,null,null);
+		if (!ppom.toFile().exists() || ppom.toString().equals("")){
+			buildScript = new BuildScript(null,null,null, null);
 		}
 		else{
 			byte[] pom = Files.readAllBytes(ppom);
 			String buildScriptContents = new String(pom);
 			String buildScriptHash = hash(pom);
-			buildScript = new BuildScript(buildScriptContents,buildScriptHash,uuid);
+			String projectDir = buildFilePath.substring(0, buildFilePath.lastIndexOf(File.separator));
+			buildScript = new BuildScript(buildScriptContents,buildScriptHash,uuid, projectDir);
 		}
 
 		// Initialize data structures that will be used across classpaths
@@ -467,20 +472,20 @@ public class ProjectToTriplesMain {
 		return jimpleClassMappings;
 	}
 
-	private JimpleClassMapping jimplfyClass(SootClass sc) throws IOException {
+	private static JimpleClassMapping jimplfyClass(SootClass sc) throws IOException {
 		String fileName = SourceLocator.v().getFileNameFor(sc, Options.output_format_jimple);
 		OutputStream streamOut = new FileOutputStream(fileName);
 		PrintWriter writerOut = new PrintWriter(new OutputStreamWriter(streamOut));
 		try {
 			Printer.v().printTo(sc, writerOut);
 		} catch (RuntimeException exc) {
-			Scene.v().removeClass(sc);
-			streamOut.close();
+			exc.printStackTrace();
 		}
 		writerOut.flush();
 		streamOut.close();
 
 		JimpleClassMapping jimpleClassMapping = new JimpleClassMapping(new Pair<>(fileName, sc.getName()));
+		System.out.println(fileName);
 		return jimpleClassMapping;
 	}
 

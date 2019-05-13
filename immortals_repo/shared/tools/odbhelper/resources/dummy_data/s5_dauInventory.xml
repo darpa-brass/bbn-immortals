@@ -1181,15 +1181,16 @@
                                 <SampleRate>128</SampleRate>
                                 <SampleRate>256</SampleRate>
                                 <SampleRate>512</SampleRate>
+                                <PortType Thermocouple="J">Thermocouple</PortType>
+                                <PortType Thermocouple="K">Thermocouple</PortType>
+                                <PortType Thermocouple="T">Thermocouple</PortType>
+                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </GenericParameter>
                             <Name>Ch1</Name>
                             <Description>Channel 1</Description>
                             <PortDirection>Input</PortDirection>
                             <PortTypes>
                                 <PortType Thermocouple="J">Thermocouple</PortType>
-                                <PortType Thermocouple="K">Thermocouple</PortType>
-                                <PortType Thermocouple="T">Thermocouple</PortType>
-                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </PortTypes>
                             <PinRefs>
                                 <PinRef IDREF="XPos4-J1-Pin4"/>
@@ -1206,15 +1207,16 @@
                                 <SampleRate>128</SampleRate>
                                 <SampleRate>256</SampleRate>
                                 <SampleRate>512</SampleRate>
+                                <PortType Thermocouple="J">Thermocouple</PortType>
+                                <PortType Thermocouple="K">Thermocouple</PortType>
+                                <PortType Thermocouple="T">Thermocouple</PortType>
+                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </GenericParameter>
                             <Name>Ch2</Name>
                             <Description>Channel 2</Description>
                             <PortDirection>Input</PortDirection>
                             <PortTypes>
                                 <PortType Thermocouple="J">Thermocouple</PortType>
-                                <PortType Thermocouple="K">Thermocouple</PortType>
-                                <PortType Thermocouple="T">Thermocouple</PortType>
-                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </PortTypes>
                             <PinRefs>
                                 <PinRef IDREF="XPos4-J1-Pin3"/>
@@ -1231,15 +1233,16 @@
                                 <SampleRate>128</SampleRate>
                                 <SampleRate>256</SampleRate>
                                 <SampleRate>512</SampleRate>
+                                <PortType Thermocouple="J">Thermocouple</PortType>
+                                <PortType Thermocouple="K">Thermocouple</PortType>
+                                <PortType Thermocouple="T">Thermocouple</PortType>
+                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </GenericParameter>
                             <Name>Ch3</Name>
                             <Description>Channel 3</Description>
                             <PortDirection>Input</PortDirection>
                             <PortTypes>
                                 <PortType Thermocouple="J">Thermocouple</PortType>
-                                <PortType Thermocouple="K">Thermocouple</PortType>
-                                <PortType Thermocouple="T">Thermocouple</PortType>
-                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </PortTypes>
                             <PinRefs>
                                 <PinRef IDREF="XPos4-J1-Pin2"/>
@@ -1256,15 +1259,16 @@
                                 <SampleRate>128</SampleRate>
                                 <SampleRate>256</SampleRate>
                                 <SampleRate>512</SampleRate>
+                                <PortType Thermocouple="J">Thermocouple</PortType>
+                                <PortType Thermocouple="K">Thermocouple</PortType>
+                                <PortType Thermocouple="T">Thermocouple</PortType>
+                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </GenericParameter>
                             <Name>Ch4</Name>
                             <Description>Channel 4</Description>
                             <PortDirection>Input</PortDirection>
                             <PortTypes>
                                 <PortType Thermocouple="J">Thermocouple</PortType>
-                                <PortType Thermocouple="K">Thermocouple</PortType>
-                                <PortType Thermocouple="T">Thermocouple</PortType>
-                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </PortTypes>
                             <PinRefs>
                                 <PinRef IDREF="XPos4-J1-Pin1"/>
@@ -1347,15 +1351,16 @@
                                 <SampleRate>128</SampleRate>
                                 <SampleRate>256</SampleRate>
                                 <SampleRate>512</SampleRate>
+                                <PortType Thermocouple="J">Thermocouple</PortType>
+                                <PortType Thermocouple="K">Thermocouple</PortType>
+                                <PortType Thermocouple="T">Thermocouple</PortType>
+                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </GenericParameter>
                             <Name>Ch1</Name>
                             <Description>Channel 1</Description>
                             <PortDirection>Input</PortDirection>
                             <PortTypes>
                                 <PortType Thermocouple="J">Thermocouple</PortType>
-                                <PortType Thermocouple="K">Thermocouple</PortType>
-                                <PortType Thermocouple="T">Thermocouple</PortType>
-                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </PortTypes>
                             <PinRefs>
                                 <PinRef IDREF="XPos5-J1-Pin4"/>
@@ -1372,15 +1377,16 @@
                                 <SampleRate>128</SampleRate>
                                 <SampleRate>256</SampleRate>
                                 <SampleRate>512</SampleRate>
+                                <PortType Thermocouple="J">Thermocouple</PortType>
+                                <PortType Thermocouple="K">Thermocouple</PortType>
+                                <PortType Thermocouple="T">Thermocouple</PortType>
+                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </GenericParameter>
                             <Name>Ch2</Name>
                             <Description>Channel 2</Description>
                             <PortDirection>Input</PortDirection>
                             <PortTypes>
                                 <PortType Thermocouple="J">Thermocouple</PortType>
-                                <PortType Thermocouple="K">Thermocouple</PortType>
-                                <PortType Thermocouple="T">Thermocouple</PortType>
-                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </PortTypes>
                             <PinRefs>
                                 <PinRef IDREF="XPos5-J1-Pin3"/>
@@ -1397,15 +1403,16 @@
                                 <SampleRate>128</SampleRate>
                                 <SampleRate>256</SampleRate>
                                 <SampleRate>512</SampleRate>
+                                <PortType Thermocouple="J">Thermocouple</PortType>
+                                <PortType Thermocouple="K">Thermocouple</PortType>
+                                <PortType Thermocouple="T">Thermocouple</PortType>
+                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </GenericParameter>
                             <Name>Ch3</Name>
                             <Description>Channel 3</Description>
                             <PortDirection>Input</PortDirection>
                             <PortTypes>
                                 <PortType Thermocouple="J">Thermocouple</PortType>
-                                <PortType Thermocouple="K">Thermocouple</PortType>
-                                <PortType Thermocouple="T">Thermocouple</PortType>
-                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </PortTypes>
                             <PinRefs>
                                 <PinRef IDREF="XPos5-J1-Pin2"/>
@@ -1422,15 +1429,16 @@
                                 <SampleRate>128</SampleRate>
                                 <SampleRate>256</SampleRate>
                                 <SampleRate>512</SampleRate>
+                                <PortType Thermocouple="J">Thermocouple</PortType>
+                                <PortType Thermocouple="K">Thermocouple</PortType>
+                                <PortType Thermocouple="T">Thermocouple</PortType>
+                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </GenericParameter>
                             <Name>Ch4</Name>
                             <Description>Channel 4</Description>
                             <PortDirection>Input</PortDirection>
                             <PortTypes>
                                 <PortType Thermocouple="J">Thermocouple</PortType>
-                                <PortType Thermocouple="K">Thermocouple</PortType>
-                                <PortType Thermocouple="T">Thermocouple</PortType>
-                                <PortType Thermocouple="E">Thermocouple</PortType>
                             </PortTypes>
                             <PinRefs>
                                 <PinRef IDREF="XPos5-J1-Pin1"/>

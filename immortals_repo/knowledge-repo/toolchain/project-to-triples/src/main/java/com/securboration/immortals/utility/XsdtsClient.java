@@ -1,6 +1,7 @@
 package com.securboration.immortals.utility;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,6 +10,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.commons.io.FileUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +35,8 @@ public class XsdtsClient {
     private int responseTimeoutMillis = 5000;
 
     private int connectTimeoutMillis = 5000;
+    
+    private AtomicInteger requestCounter = new AtomicInteger(0);
 
     public XsdtsClient(final String serverUrl){
         this.serverUrl = serverUrl;
@@ -47,14 +55,49 @@ public class XsdtsClient {
     }
 
     public String getXsdTranslation(final TranslationProblemDefinition problem) throws UnsupportedEncodingException, JsonProcessingException, IOException{
-        return new String(
+        String xslt = new String(
                 httpRequest(
                         "POST",
                         getUrlWithPath("translate"),
                         new ObjectMapper().writeValueAsString(problem).getBytes(encoding)
                 ),
                 encoding
-        );
+        ).trim();
+        
+        if(xslt.startsWith("{")){
+            //detect a JSON response from the AQL service impl
+            //(our test service returns XML)
+            Map<String,String> myMap = new HashMap<String, String>();
+    
+            ObjectMapper objectMapper = new ObjectMapper();
+            myMap = objectMapper.readValue(xslt, HashMap.class);
+            
+            final String error = myMap.get("error");
+            if(error.length() > 0) {
+                throw new RuntimeException("The AQL XSD translation service returned an error: " + error);
+            }
+            
+            xslt = myMap.get("xslt")
+                    .trim()//fix whitespace before XML preamble
+                    .replace("mdl:MDLRootType", "mdl:MDLRoot")//fix incorrect node name
+                    ;
+        }
+        
+        {//dump the req/response 
+            final File dir = new File("xsdts-client/" + requestCounter.getAndIncrement());
+            FileUtils.writeStringToFile(
+                new File(dir,"request.json"), 
+                new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(problem),
+                StandardCharsets.UTF_8
+                );
+            FileUtils.writeStringToFile(
+                new File(dir,"response.xslt"), 
+                xslt,
+                StandardCharsets.UTF_8
+                );
+        }
+        
+        return xslt;
     }
 
     private String getUrlWithPath(final String methodName){

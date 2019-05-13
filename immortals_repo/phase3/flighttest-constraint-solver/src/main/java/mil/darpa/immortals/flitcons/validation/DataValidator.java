@@ -2,8 +2,9 @@ package mil.darpa.immortals.flitcons.validation;
 
 import mil.darpa.immortals.flitcons.Configuration;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueException;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
+import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import org.apache.commons.io.FileUtils;
 import org.drools.core.builder.conf.impl.DecisionTableConfigurationImpl;
 import org.drools.decisiontable.DecisionTableProviderImpl;
@@ -23,7 +24,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Set;
 
@@ -37,18 +40,14 @@ public abstract class DataValidator {
 
 	private KieSession session;
 
-	protected void setGlobalVariable(String identifier, Object value) {
-		session.setGlobal(identifier, value);
-	}
-
 	protected DataValidator(@Nullable File inputExcelFile, @Nullable File outputDrlFile) {
 		this.inputExcelFile = inputExcelFile;
 		this.outputDrlFile = outputDrlFile;
 	}
 
-	protected synchronized ValidationDataContainer validate(@Nullable AgendaFilter filter, @Nonnull DynamicObjectContainer root, Configuration.ValidationConfiguration configuration) throws DynamicValueException {
+	protected synchronized ValidationDataContainer validate(@Nullable AgendaFilter filter, @Nonnull DynamicObjectContainer root, Configuration.ValidationConfiguration configuration) throws DynamicValueeException {
 		init();
-		ValidationDataContainer rval = new ValidationDataContainer(root, configuration);
+		ValidationDataContainer rval = ValidationDataContainer.createContainer(root, configuration);
 		Set<ValidationData> vdcs = rval.getAllDataInHierarchy();
 
 		for (ValidationData vdc : vdcs) {
@@ -100,7 +99,7 @@ public abstract class DataValidator {
 				for (Message msg : results.getMessages()) {
 					err.append(msg.toString()).append("\n");
 				}
-				throw new RuntimeException("DRL Creation errors:\n" + err.toString());
+				throw AdaptationnException.internal("DRL Creation errors:\n" + err.toString());
 			}
 
 			KieRepository kr = kieServices.getRepository();
@@ -112,7 +111,7 @@ public abstract class DataValidator {
 			session.setGlobal("Set", DynamicValueMultiplicity.Set);
 			session.setGlobal("Range", DynamicValueMultiplicity.Range);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw AdaptationnException.internal(e);
 		}
 	}
 }

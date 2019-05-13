@@ -106,7 +106,9 @@ class OrientDBXMLImporter(object):
                 # if the last attribute on the stack contains more than one thing, it's a vertex
                 if len(attribute_stack[-1][list(attribute_stack[-1])[0]].keys()) > 1:
                     try:
-                        attribute_stack[-1][list(attribute_stack[-1])[0]].pop(list(attribute_stack[-1])[0])
+                        elemText = attribute_stack[-1][list(attribute_stack[-1])[0]][list(attribute_stack[-1])[0]]
+                        if elemText.isspace():
+                            attribute_stack[-1][list(attribute_stack[-1])[0]].pop(list(attribute_stack[-1])[0])
                     except:
                         pass
 

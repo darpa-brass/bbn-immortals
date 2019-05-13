@@ -242,7 +242,7 @@ public class MineGradleTask extends ImmortalsGradleTask {
         AnnotationParser sourceAnnotParser = new AnnotationParser(sourceAnnotConfig, supplementaryClassFileArray.toArray(new String[supplementaryClassFileArray.size()]));
         for (String mainClassFile : myList) {
             File classFile = new File(mainClassFile);
-            if (classFile.exists()) {
+            if (classFile.exists() && !classFile.getName().endsWith("xml") && !classFile.getName().endsWith("MF")) {
                 byte[] bytecode = new byte[0];
                 try {
                     bytecode = FileUtils.readFileToByteArray(classFile);

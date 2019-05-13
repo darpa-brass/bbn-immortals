@@ -9,6 +9,8 @@ public class EvaluationRunCommand extends EosType {
     private boolean async = false;
     private boolean workingDirAbsolute = false;
     
+    private boolean isCleanupCommand = false;
+    
     public EvaluationRunCommand(){}
     
     public EvaluationRunCommand(String s){
@@ -76,6 +78,16 @@ public class EvaluationRunCommand extends EosType {
     
     public void setWorkingDirAbsolute(boolean workingDirAbsolute) {
         this.workingDirAbsolute = workingDirAbsolute;
+    }
+
+    
+    public boolean isCleanupCommand() {
+        return isCleanupCommand;
+    }
+
+    
+    public void setCleanupCommand(boolean isCleanupCommand) {
+        this.isCleanupCommand = isCleanupCommand;
     }
     
     

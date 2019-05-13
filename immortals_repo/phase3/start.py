@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-import os
-
 import argparse
+import os
 import subprocess
 import sys
 from typing import List
@@ -24,6 +23,8 @@ _parser.add_argument('--odb-user', action='store', type=str, default='admin',
                      help='The user for the evaluation OrientDB server. The default is "admin"')
 _parser.add_argument('--odb-password', action='store', type=str, default='admin',
                      help='The user password for the evaluation OrientDB server. Defaults to "admin"')
+_parser.add_argument('--artifact-directory', action='store', type=str,
+                     help='The directory to use for storage of any artifacts for analysis')
 _parser.add_argument('--start-persistence-server', action='store_true',
                      help='Starts the persistence server for logging data produced by evaluation sessions')
 
@@ -117,6 +118,10 @@ def main():
             env_values = os.environ.copy()
             env_values['ORIENTDB_PERSISTENCE_TARGET'] = 'remote:127.0.0.1:2424/BBNPersistent'
             env_values['ORIENTDB_EVAL_TARGET'] = config[1]
+            artifact_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ARTIFACT_DIR')
+            if not os.path.exists(artifact_dir):
+                os.mkdir(artifact_dir)
+            env_values['IMMORTALS_ARTIFACT_DIRECTORY'] = artifact_dir
             if config[0] == '5':
                 passed = exec_scenario_5(env_values, pass_through_args)
 
@@ -157,15 +162,22 @@ def main():
             print('IMMoRTALS Scenario 5/Scenario 6 Launcher: error: the following arguments are required: --odb-url')
             exit(1)
 
-        if args.persistence_url is None:
+        # if args.persistence_url is None:
+        #     _parser.print_usage()
+        #     print(
+        #         'IMMoRTALS Scenario 5/Scenario 6 Launcher: error: ' +
+        #         'the following arguments are required: --persistence-url')
+        #     exit(1)
+
+        if args.artifact_directory is None:
             _parser.print_usage()
             print(
-                'IMMoRTALS Scenario 5/Scenario 6 Launcher: error: ' +
-                'the following arguments are required: --persistence-url')
+                'IMMoRTALS Scenario 5/Scenario 6 Launcher: error: the following arguments are required: --artifact-directory')
             exit(1)
 
         env_values['ORIENTDB_EVAL_TARGET'] = args.odb_url
-        env_values['ORIENTDB_PERSISTENCE_TARGET'] = args.persistence_url
+        # env_values['ORIENTDB_PERSISTENCE_TARGET'] = args.persistence_url
+        env_values['IMMORTALS_ARTIFACT_DIRECTORY'] = args.artifact_directory
         if args.odb_user is not None:
             env_values['ORIENTDB_EVAL_USER'] = args.odb_user
         if args.odb_password is not None:

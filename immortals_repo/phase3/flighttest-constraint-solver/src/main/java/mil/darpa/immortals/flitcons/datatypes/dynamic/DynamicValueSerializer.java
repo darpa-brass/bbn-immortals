@@ -1,6 +1,7 @@
 package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import com.google.gson.*;
+import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import java.lang.reflect.Type;
 
@@ -17,19 +18,23 @@ public class DynamicValueSerializer implements JsonSerializer<DynamicValue> {
 			return new JsonPrimitive((Boolean) value);
 		} else if (value instanceof Enum) {
 			return new JsonPrimitive(((Enum) value).name());
+		} else if (value instanceof Equation) {
+			JsonObject jo = new JsonObject();
+			jo.addProperty("Equation", ((Equation)value).Equation);
+			return jo;
 		} else if (value instanceof DynamicValue) {
 			return context.serialize(value);
 		} else if (value instanceof DynamicObjectContainer) {
 			return context.serialize(value);
 		}
-		throw new RuntimeException("Unexpected value type of '" + value.getClass().getName() + "'!");
+		throw AdaptationnException.internal("Unexpected value type of '" + value.getClass().getName() + "'!");
 	}
 
 	@Override
 	public JsonElement serialize(DynamicValue src, Type typeOfSrc, JsonSerializationContext context) {
 		if (src.singleValue != null) {
-
 			return getSingleJsonPrimitive(src.singleValue, context);
+
 		} else if (src.valueArray != null) {
 			JsonArray rval = new JsonArray();
 			for (Object val : src.valueArray) {
@@ -44,7 +49,7 @@ public class DynamicValueSerializer implements JsonSerializer<DynamicValue> {
 			return jo;
 
 		} else {
-			throw new RuntimeException("Transformation not supported!");
+			throw AdaptationnException.internal("Transformation not supported!");
 		}
 	}
 }

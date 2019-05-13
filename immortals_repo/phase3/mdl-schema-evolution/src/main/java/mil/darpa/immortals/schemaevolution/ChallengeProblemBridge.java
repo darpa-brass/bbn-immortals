@@ -1,14 +1,19 @@
 package mil.darpa.immortals.schemaevolution;
 
-import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
-import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This class is intended to provide simplified read/write access to OrientDB.
@@ -20,232 +25,248 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 
 	// TODO: Check for uniqueness for identifiers
 
-	private OrientGraphFactory _persistentGraphFactory;
+	private static final String BBNEvaluationDataLabel = "BBNEvaluationData";
+	private static final String inputJsonDataLabel = "inputJsonData";
+	private static final String outputJsonDataLabel = "outputJsonData";
+	private static final String currentStateLabel = "currentState";
+	private static final String currentStateInfoLabel = "currentStateInfo";
+
 	private OrientGraphFactory _evaluationGraphFactory;
 
-	private OrientGraphNoTx getPersistentGraph() throws Exception {
-		init();
-		return _persistentGraphFactory.getNoTx();
-	}
+	private final String odbUser;
+	private final String odbPassword;
+	private final String odbTarget;
+	private final Path artifactDirectory;
 
 	private OrientGraphNoTx getEvaluationGraph() throws Exception {
 		init();
-		return _evaluationGraphFactory.getNoTx();
+		return new OrientGraphNoTx(odbTarget, odbUser, odbPassword);
 	}
 
 	public ChallengeProblemBridge() {
+		odbUser = getEvaluationUser();
+		odbPassword = getEvaluationPassword();
+		odbTarget = getEvaluationTarget();
+		artifactDirectory = getArtifactDirectory();
+	}
+
+	public static String getEvaluationTarget() {
+		if (System.getProperty(JARGS_EVAL_ODB) != null) {
+			return System.getProperty(JARGS_EVAL_ODB);
+
+		} else if (System.getenv().containsKey(ENV_VAR_EVAL_ODB)) {
+			return System.getenv(ENV_VAR_EVAL_ODB);
+		} else {
+			throw new RuntimeException(
+					"No Evaluation OrientDB server could be set! Please set the environment variable '" +
+							ENV_VAR_EVAL_ODB + "' or the JVM argument '" + JARGS_EVAL_ODB + "' to a server url!");
+		}
+	}
+
+	public static String getEvaluationUser() {
+		if (System.getenv().containsKey(ENV_VAR_EVAL_USER)) {
+			return System.getenv(ENV_VAR_EVAL_USER);
+		} else {
+			return "admin";
+		}
+	}
+
+	public static String getEvaluationPassword() {
+
+		if (System.getenv().containsKey(ENV_VAR_EVAL_PASSWORD)) {
+			return System.getenv(ENV_VAR_EVAL_PASSWORD);
+		} else {
+			return "admin";
+		}
+	}
+
+	public static Path getArtifactDirectory() {
+		Path artifactDirectory;
+		if (System.getProperty(JARGS_ARTIFACT_DIRECTORY) != null) {
+			artifactDirectory = Paths.get(System.getProperty(JARGS_ARTIFACT_DIRECTORY));
+
+		} else if (System.getenv(ENV_VAR_ARTIFACT_DIRECTORY) != null) {
+			artifactDirectory = Paths.get(System.getenv(ENV_VAR_ARTIFACT_DIRECTORY));
+		} else {
+			throw new RuntimeException(
+					"No Persistence directory could be set! Please set the environment variable '" +
+							ENV_VAR_ARTIFACT_DIRECTORY + "' or the JVM argument '" + JARGS_ARTIFACT_DIRECTORY + "' to an appropriate directory!!");
+		}
+
+		if (!Files.exists(artifactDirectory)) {
+			throw new RuntimeException("THe specified artifact directory '" + artifactDirectory.toAbsolutePath().toString() + "' does not exist!");
+		}
+		return artifactDirectory;
 	}
 
 	@Override
 	public synchronized void init() throws Exception {
-		String evaluationTarget;
-		String persistenceTarget;
-		String evaluationUser;
-		String evaluationPassword;
+	}
 
-		if (_evaluationGraphFactory == null) {
-			if (System.getProperty(JARGS_EVAL_ODB) != null) {
-				evaluationTarget = System.getProperty(JARGS_EVAL_ODB);
+	public TerminalStatus waitForReadyOrHalt() throws Exception {
+		init();
+		String state = null;
+		System.out.print("Waiting for OirnetDB Ready state...");
+		while (state == null || !(
+				state.equals(TerminalStatus.ReadyForAdaptation.name()) ||
+						state.equals(TerminalStatus.Halt.name()))) {
+			Vertex v = getEvaluationGraph().getVerticesOfClass(BBNEvaluationDataLabel).iterator().next();
+			state = v.getProperty(currentStateLabel);
 
-			} else if (System.getenv().containsKey(ENV_VAR_EVAL_ODB)) {
-				evaluationTarget = System.getenv(ENV_VAR_EVAL_ODB);
-			} else {
-				throw new RuntimeException(
-						"No Evaluation OrientDB server could be set! Please set the environment variable '" +
-								ENV_VAR_EVAL_ODB + "' or the JVM argument '" + JARGS_EVAL_ODB + "' to a server url!");
+			System.out.print(".");
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
 			}
-
-			if (System.getProperty(JARGS_PERS_ODB) != null) {
-				persistenceTarget = System.getProperty(JARGS_PERS_ODB);
-
-			} else if (System.getenv().containsKey(ENV_VAR_PERS_ODB)) {
-				persistenceTarget = System.getenv(ENV_VAR_PERS_ODB);
-
-			} else {
-				throw new RuntimeException(
-						"No Persistence OrientDB server could be set! Please set the environment variable '" +
-								ENV_VAR_PERS_ODB + "' or the JVM argument '" + JARGS_PERS_ODB + "' to a server url!");
-			}
-			
-
-
-			if (System.getenv().containsKey(ENV_VAR_EVAL_USER)) {
-				evaluationUser = System.getenv(ENV_VAR_EVAL_USER);
-			} else {
-				evaluationUser = "admin";
-			}
-
-			if (System.getenv().containsKey(ENV_VAR_EVAL_PASSWORD)) {
-				evaluationPassword = System.getenv(ENV_VAR_EVAL_PASSWORD);
-			} else {
-				evaluationPassword = "admin";
-			}
-
-			_persistentGraphFactory = new OrientGraphFactory(persistenceTarget, "admin", "admin");
-			_evaluationGraphFactory = new OrientGraphFactory(evaluationTarget, evaluationUser, evaluationPassword);
 		}
+		System.out.println();
+		TerminalStatus rval = TerminalStatus.valueOf(state);
+
+		if (rval == TerminalStatus.ReadyForAdaptation) {
+			System.out.println("OrientDB Now Ready.");
+		} else if (rval == TerminalStatus.Halt) {
+			System.out.println("OrientDB Has set the Shutdown signal.");
+		}
+		return rval;
+	}
+
+	public TerminalStatus getState() throws Exception {
+		Vertex v = getEvaluationGraph().getVerticesOfClass(BBNEvaluationDataLabel).iterator().next();
+		String state = v.getProperty(currentStateLabel);
+		return TerminalStatus.valueOf(state);
+	}
+
+	private void saveToFile(@Nonnull String evaluationInstanceIdentifier, @Nonnull byte[] data, @Nonnull String filename) throws IOException {
+		Path subpath = artifactDirectory.resolve(evaluationInstanceIdentifier);
+		if (!Files.exists(subpath)) {
+			Files.createDirectory(artifactDirectory.resolve(evaluationInstanceIdentifier));
+		}
+		FileOutputStream fos = new FileOutputStream(subpath.resolve(filename).toFile());
+		fos.write(data);
+		fos.flush();
+		fos.close();
 	}
 
 	@Override
 	public synchronized String getConfigurationJson(@Nonnull String evaluationInstanceIdentifier) throws Exception {
+		BBNEvaluationData data = getCurrentEvaluationData(evaluationInstanceIdentifier);
+		return data.getInputJsonData();
+	}
+
+	private synchronized Map<String, String> getAddEvaluationDataVertexValues(@Nullable Map<String, String> valuesToSet, @Nullable String... valuesToGet) throws Exception {
+		Map<String, String> rval = new HashMap<>();
+
 		OrientGraphNoTx evaluationGraph = getEvaluationGraph();
+		Iterator<Vertex> vertices = evaluationGraph.getVerticesOfClass(BBNEvaluationDataLabel).iterator();
 
-		Iterator<Vertex> vertices = evaluationGraph.getVerticesOfClass("BBNEvaluationInput").iterator();
-
-		Vertex configuration = vertices.next();
-
-		if (configuration == null) {
-			throw new Exception("No Config found!");
-		} else if (vertices.hasNext()) {
-			throw new Exception("Multiple Configs found!");
+		if (!vertices.hasNext()) {
+			throw new RuntimeException("Evaluation Graph must contain a single " + BBNEvaluationDataLabel + " Node but none were found!");
 		}
 
-		String rval = configuration.getProperty("jsonData");
+		Vertex evaluationVertex = vertices.next();
 
-		if (rval == null || "".equals(rval)) {
-			throw new RuntimeException("No 'jsonData' attached to 'BBNEvaluationInput' node!");
+		if (vertices.hasNext()) {
+			throw new RuntimeException("Evaluation Graph must contain a single " + BBNEvaluationDataLabel + " Node but multiple instances were found!");
 		}
 
-		OrientGraphNoTx persistenceGraph = getPersistentGraph();
-		try {
-			persistenceGraph.begin();
-			OrientVertex ov = persistenceGraph.addVertex("class:BBNEvaluationInput");
-			ov.setProperty("evaluationInstanceIdentifier", evaluationInstanceIdentifier);
-			ov.setProperty("jsonData", rval);
-			persistenceGraph.commit();
+		if (valuesToGet != null) {
+			for (String property : valuesToGet) {
+				String value = evaluationVertex.getProperty(property);
+				rval.put(property, value);
+			}
+		}
 
-		} catch (Exception e) {
-			persistenceGraph.rollback();
-			throw e;
-		} finally {
-			persistenceGraph.shutdown();
+		if (valuesToSet != null) {
+			for (String property : valuesToSet.keySet()) {
+				String newValue = valuesToSet.get(property);
+				evaluationVertex.setProperty(property, newValue);
+				rval.put(property, newValue);
+			}
+			evaluationGraph.commit();
 		}
 
 		evaluationGraph.shutdown();
+
 		return rval;
 	}
 
+	public synchronized void postResultsJson(@Nonnull String evaluationInstanceIdentifier, @Nonnull TerminalStatus finishStatus, @Nonnull String description, @Nonnull String jsonResults) throws Exception {
+		updateCurrentEvaluationData(evaluationInstanceIdentifier,
+				null,
+				jsonResults,
+				finishStatus.name(),
+				description);
 
-	private synchronized Vertex getEvaluationResultsVertex() throws Exception {
-		OrientGraphNoTx evaluationGraph = getEvaluationGraph();
-		Iterator<Vertex> vertices = evaluationGraph.getVerticesOfClass("BBNEvaluationOutput").iterator();
-
-		if (!vertices.hasNext()) {
-			throw new RuntimeException("Evaluation Graph must contain a single BBNEvaluationOutput Node but none were found!");
-		}
-
-		Vertex resultsVertex = vertices.next();
-
-		if (vertices.hasNext()) {
-			throw new RuntimeException("Evaluation Graph must contain a single BBNEvaluationOutput Node but multiple instances were found!");
-		}
-
-		evaluationGraph.shutdown();
-		return resultsVertex;
-	}
-
-	private synchronized Vertex getPutPersistentResultsVertex(@Nonnull String evaluationInstanceIdentifier) throws Exception {
-		OrientGraphNoTx persistenceGraph = getPersistentGraph();
-		Vertex resultsVertex;
-
-		Iterable<Vertex> o = persistenceGraph.command(new OCommandSQL(
-				"SELECT FROM BBNEvaluationOutput WHERE evaluationInstanceIdentifier = '" + evaluationInstanceIdentifier + "'"
-		)).execute();
-
-		Iterator<Vertex> oi = o.iterator();
-
-		if (oi.hasNext()) {
-			return oi.next();
-		}
-
-		try {
-			persistenceGraph.begin();
-			resultsVertex = persistenceGraph.command(new OCommandSQL(
-					"CREATE Vertex BBNEvaluationOutput SET evaluationInstanceIdentifier='" + evaluationInstanceIdentifier + "'"
-			)).execute();
-
-			persistenceGraph.commit();
-		} catch (Exception e) {
-			persistenceGraph.rollback();
-			throw e;
-		} finally {
-			persistenceGraph.shutdown();
-		}
-		return resultsVertex;
 	}
 
 	@Override
 	public synchronized void postResultsJson(@Nonnull String evaluationInstanceIdentifier, @Nonnull TerminalStatus finishStatus, @Nonnull String results) throws Exception {
-		OrientGraphNoTx evaluationGraph = getEvaluationGraph();
-		try {
-			evaluationGraph.begin();
-			Vertex evaluationResultsVertex = getEvaluationResultsVertex();
-			evaluationResultsVertex.setProperty("finalState", finishStatus.name());
-			evaluationResultsVertex.setProperty("resultsJson", results);
-			evaluationGraph.commit();
-		} catch (Exception e) {
-			evaluationGraph.rollback();
-			throw e;
-		} finally {
-			evaluationGraph.shutdown();
-		}
-
-		OrientGraphNoTx persistenceGraph = getPersistentGraph();
-		try {
-			persistenceGraph.begin();
-			Vertex persistentResultsVertex = getPutPersistentResultsVertex(evaluationInstanceIdentifier);
-			persistentResultsVertex.setProperty("finalState", finishStatus.name());
-			persistentResultsVertex.setProperty("resultsJson", results);
-			persistenceGraph.commit();
-		} catch (Exception e) {
-			persistenceGraph.rollback();
-			throw e;
-		} finally {
-			persistenceGraph.shutdown();
-		}
-	}
-
-	private synchronized void innerPostError(OrientGraphNoTx graph, Vertex resultsVertex, @Nonnull String errorDescription, @Nullable String errorData) throws Exception {
-		try {
-			graph.begin();
-
-			resultsVertex.setProperty("finalState", TerminalStatus.AdaptationUnexpectedError);
-			resultsVertex.setProperty("finalStateInfo", errorDescription);
-			if (errorData != null) {
-				resultsVertex.setProperty("resultsJson", errorData);
-			}
-			graph.commit();
-		} catch (Exception e) {
-			graph.rollback();
-			throw e;
-		} finally {
-			graph.shutdown();
-		}
+		updateCurrentEvaluationData(evaluationInstanceIdentifier,
+				null,
+				results,
+				finishStatus.name(),
+				null);
 	}
 
 	@Override
 	public synchronized void postError(@Nonnull String evaluationInstanceIdentifier, @Nonnull String errorDescription, @Nullable String errorData) throws Exception {
-		OrientGraphNoTx evaluationGraph = getEvaluationGraph();
-		Exception evaluationGraphException = null;
-		try {
-			Vertex evaluationResultsVertex = getEvaluationResultsVertex();
-			innerPostError(evaluationGraph, evaluationResultsVertex, errorDescription, errorData);
-		} catch (Exception e) {
-			evaluationGraphException = e;
-		}
+		updateCurrentEvaluationData(evaluationInstanceIdentifier,
+				null,
+				errorData,
+				TerminalStatus.AdaptationUnexpectedError.name(),
+				errorData);
+	}
 
-		OrientGraphNoTx persistenceGraph = getPersistentGraph();
-		Vertex persistenceVertex = getPutPersistentResultsVertex(evaluationInstanceIdentifier);
-		innerPostError(persistenceGraph, persistenceVertex, errorDescription, errorData);
-
-		if (evaluationGraphException != null) {
-			throw evaluationGraphException;
-		}
+	public synchronized void postInvalidInputError(@Nonnull String evaluationInstanceIdentifier, @Nonnull String errorDescription, @Nullable String errorData) throws Exception {
+		updateCurrentEvaluationData(evaluationInstanceIdentifier,
+				null,
+				errorData,
+				TerminalStatus.PerturbationInputInvalid.name(),
+				errorData);
 	}
 
 	@Override
 	public synchronized void storeLargeBinaryData(@Nonnull String evaluationInstanceIdentifier, @Nonnull String artifactIdentifier, @Nonnull byte[] binaryData) throws Exception {
-		init();
-		// TODO: Implement this. There is a direct interface that doesn't need any encoding.
+		if (artifactIdentifier.startsWith("_")) {
+			throw new RuntimeException("Artifact identifiers starting with an underscore cannot be used!");
+		}
+		saveToFile(evaluationInstanceIdentifier, binaryData, artifactIdentifier);
+	}
+
+	public BBNEvaluationData getCurrentEvaluationData(@Nonnull String evaluationInstanceIdentifier) throws Exception {
+		Map<String, String> currentValues = getAddEvaluationDataVertexValues(
+				null, inputJsonDataLabel, outputJsonDataLabel, currentStateLabel, currentStateInfoLabel);
+
+		BBNEvaluationData data = BBNEvaluationData.fromFieldMap(currentValues);
+		saveToFile(evaluationInstanceIdentifier, data.toJsonString().getBytes(), "_bbnEvaluationData.json");
+		return data;
+	}
+
+	private BBNEvaluationData updateCurrentEvaluationData(@Nonnull String evaluationInstanceIdentifier,
+	                                                      @Nullable String inputJsonData,
+	                                                      @Nullable String outputJsonData,
+	                                                      @Nullable String currentState,
+	                                                      @Nullable String currentStateInfo) throws Exception {
+		Map<String, String> valuesToSet = new HashMap<>();
+		if (inputJsonData != null) {
+			valuesToSet.put(inputJsonDataLabel, inputJsonData);
+		}
+		if (outputJsonData != null) {
+			valuesToSet.put(outputJsonDataLabel, outputJsonData);
+		}
+		if (currentState != null) {
+			valuesToSet.put(currentStateLabel, currentState);
+		}
+		if (currentStateInfo != null) {
+			valuesToSet.put(currentStateInfoLabel, currentStateInfo);
+		}
+
+		Map<String, String> outputValues = getAddEvaluationDataVertexValues(valuesToSet, inputJsonDataLabel,
+				outputJsonDataLabel, currentStateLabel, currentStateInfoLabel);
+		BBNEvaluationData data = BBNEvaluationData.fromFieldMap(outputValues);
+		saveToFile(evaluationInstanceIdentifier, data.toJsonString().getBytes(), "_bbnEvaluationData.json");
+		return data;
 	}
 }

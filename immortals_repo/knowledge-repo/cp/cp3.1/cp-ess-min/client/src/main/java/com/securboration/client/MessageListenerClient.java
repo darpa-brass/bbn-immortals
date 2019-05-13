@@ -6,21 +6,38 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.inetprogram.projects.mdl.MDLRootType;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.securboration.mls.wsdl.IngestMessageRequest;
 import com.securboration.mls.wsdl.IngestMessageResponse;
@@ -104,8 +121,17 @@ public class MessageListenerClient {
     	}
     }
     
-    @mil.darpa.immortals.annotation.dsl.ontology.functionality.datatype.BinaryData
     private String serialize(
+    		Object pojoRequest
+    		) throws JAXBException{
+    	if(pojoRequest instanceof IngestMessageRequest) {
+    		return outboundMdlShim(serializeInternal(pojoRequest));
+    	}
+    	
+    	return serializeInternal(pojoRequest);
+    }
+    
+    private String serializeInternal(
     		Object pojoRequest
     		) throws JAXBException{
     	StringWriter writer = new StringWriter();
@@ -118,7 +144,6 @@ public class MessageListenerClient {
     	return writer.toString();
     }
     
-    @mil.darpa.immortals.annotation.dsl.ontology.resources.xml.XmlInstance
     private Object deserialize(
     		final byte[] soapResponseMessage,
     		final Object pojoTemplate
@@ -136,12 +161,173 @@ public class MessageListenerClient {
     		payload = soapResponse.substring(startIndex,endIndex);
     	}
     	
-//    	System.out.println(payload);
+    	if(payload.contains("ingestMessageResponse")) {//TODO: janky
+    		return inboundMdlShim(payload);
+    	}
+    	
+    	//payload looks like <ns5:ingestMessageResponse> ... </ns5:ingestMessageResponse>
     	
 		Unmarshaller u = jaxContext.createUnmarshaller();
 		
 		return u.unmarshal(new ByteArrayInputStream(payload.getBytes(encoding)));
     }
+    
+	/**
+	 * 
+	 * @param mdl an XML document containing a single MDLRoot element
+	 * @return a possibly modified version of the input. An XML document containing
+	 *         a single MDLRoot element.
+	 */
+    private String processMdlReadFromServer(
+    		final String mdl
+    		) {
+    	return mdl;//TODO: XSLT may need to be applied here
+    }
+    
+    /**
+	 * 
+	 * @param mdl an XML document containing a single MDLRoot element
+	 * @return a possibly modified version of the input. An XML document containing
+	 *         a single MDLRoot element.
+	 */
+    private String processMdlSentToServer(
+    		final String mdl
+    		) {
+    	return mdl;//TODO: XSLT may need to be applied here
+    }
+    
+    /**
+     * Emulates application-specific XML parsing logic (DOM API)
+     * 
+     * @param requestElement an XML document containing a single ingestMessageResponse element
+     * @return 
+     */
+    private String outboundMdlShim(
+			final String requestElement
+			) {
+    	try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(new ByteArrayInputStream(requestElement.getBytes(encoding)));
+			
+			final Element root = doc.getDocumentElement();
+			
+			final NodeList nodes = root.getChildNodes();
+			if(nodes.getLength() == 0 || nodes.getLength() > 1) {
+				throw new RuntimeException("expected 1 but got " + nodes.getLength());
+			}
+			
+			final Node message = nodes.item(0);
+			
+			if(!message.getNodeName().equals("message")) {
+				throw new RuntimeException("expected \"message\" but got " + message.getNodeName());
+			}
+			
+			final Node renamedMessage = doc.renameNode(message, null, "MDLRoot");
+			
+			@mil.darpa.immortals.annotation.dsl.ontology.resources.xml.XmlDocument(xmlVersion="1.0", encoding="UTF-8", schemaNamespace="http://inetprogram.org/projects/MDL", schemaVersion = "17")
+			final String processedMdl = processMdlSentToServer(nodeToString(renamedMessage));
+			
+			{
+				final Document result = dbFactory.newDocumentBuilder().newDocument();
+				final Element ingestMessageRequest = result.createElement("ingestMessageRequest");
+				
+				result.appendChild(ingestMessageRequest);
+				
+				{
+					final Document mdl = dbFactory.newDocumentBuilder().parse(new ByteArrayInputStream(processedMdl.getBytes(encoding)));
+					Node messageElement = mdl.getDocumentElement();
+					
+					messageElement = result.adoptNode(messageElement);
+					ingestMessageRequest.appendChild(messageElement);
+					
+					result.renameNode(messageElement, null, "message");
+					result.renameNode(ingestMessageRequest, "http://mls.securboration.com/wsdl", "ingestMessageRequest");
+				}
+				
+				String transformed = nodeToString(result);
+				{//magic
+					transformed = transformed.replace("<ingestMessageRequest xmlns=\"http://mls.securboration.com/wsdl\">", "<wsdlns:ingestMessageRequest xmlns:wsdlns=\"http://mls.securboration.com/wsdl\">");
+					transformed = transformed.replace("</ingestMessageRequest>", "</wsdlns:ingestMessageRequest>");
+				}//magic
+				
+				return transformed;
+			}
+    	} catch(Exception e) {
+    		throw new RuntimeException(e);
+    	}
+	}
+    
+    /**
+     * Emulates application-specific XML parsing logic (DOM API)
+     * 
+     * @param requestElement an XML document containing a single ingestMessageResponse element
+     * @return 
+     */
+    private Object inboundMdlShim(
+			final String requestElement
+			) {
+    	try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(new ByteArrayInputStream(requestElement.getBytes(encoding)));
+			
+			final Element root = doc.getDocumentElement();
+			
+			final NodeList nodes = root.getChildNodes();
+			if(nodes.getLength() == 0 || nodes.getLength() > 1) {
+				return requestElement;
+			}
+			
+			final Node message = nodes.item(0);
+			
+			if(!message.getNodeName().equals("message")) {
+				return requestElement;
+			}
+
+			@mil.darpa.immortals.annotation.dsl.ontology.resources.xml.XmlDocument(xmlVersion="1.0", encoding="UTF-8", schemaNamespace="http://inetprogram.org/projects/MDL", schemaVersion = "17")
+			final String processedMdl = processMdlReadFromServer(
+					nodeToString(
+							doc.renameNode(message, "http://inetprogram.org/projects/MDL", "MDLRoot")
+							)
+					);
+			
+			{
+				final Document result = dbFactory.newDocumentBuilder().parse(new ByteArrayInputStream(requestElement.getBytes(encoding)));
+				
+				Document processedMdlDoc = dbFactory.newDocumentBuilder().parse(new ByteArrayInputStream(processedMdl.getBytes(encoding)));
+				
+				Element e = processedMdlDoc.getDocumentElement();
+				processedMdlDoc.renameNode(e, "http://mls.securboration.com/wsdl", "message");
+				
+				final Node resultMessage = result.getDocumentElement().getFirstChild();
+				
+				resultMessage.getParentNode().removeChild(resultMessage);
+				
+				Node adopted = result.adoptNode(e);
+				result.getDocumentElement().appendChild(adopted);
+				
+				final Unmarshaller u = jaxContext.createUnmarshaller();
+				return u.unmarshal(new ByteArrayInputStream(nodeToString(result).getBytes(encoding)));
+			}
+    	} catch(Exception e) {
+    		throw new RuntimeException(e);
+    	}
+	}
+    
+    private String nodeToString(Node doc) throws UnsupportedEncodingException, TransformerException {
+		TransformerFactory tf = TransformerFactory.newInstance();
+	    Transformer transformer = tf.newTransformer();
+	    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+	    transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+	    
+	    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    transformer.transform(new DOMSource(doc),new StreamResult(new OutputStreamWriter(out, encoding)));
+	    
+	    return new String(out.toByteArray(),StandardCharsets.UTF_8);
+	}
     
     
     
@@ -189,13 +375,26 @@ public class MessageListenerClient {
     private byte[] soapRequest(
     		final String xmlFragment,
     		final String actionUri
-    		) throws IOException {//TODO: dump the request and response from this method
-    	
+    		) throws IOException {
     	final String soapMessage = soapTemplate.replace("${FRAGMENT}", xmlFragment);
     	
 //    	System.out.println("*** " + soapMessage.replace("\r\n", ""));
     	
+    	final File outputDir = new File(messageDir,"interaction-"+messageCounter.incrementAndGet());
+    	
     	final byte[] xmlPayload = soapMessage.getBytes(encoding);
+    	
+    	FileUtils.writeBytesToFile(
+				outputDir.getAbsolutePath(), 
+				"fragment.xml", 
+				xmlFragment.getBytes(StandardCharsets.UTF_8)
+				);
+    	
+    	FileUtils.writeBytesToFile(
+				outputDir.getAbsolutePath(), 
+				"request.xml", 
+				xmlPayload
+				);
     	
     	final byte[] xmlResponse = httpRequest(
     			"POST",
@@ -205,21 +404,27 @@ public class MessageListenerClient {
     			"SOAPAction",actionUri != null ? actionUri : ""
     			);
     	
-    	{
-    		final File outputDir = new File(messageDir,"interaction-"+messageCounter.incrementAndGet());
-    		
-    		FileUtils.writeBytesToFile(
-    				outputDir.getAbsolutePath(), 
-    				"request.xml", 
-    				xmlPayload
-    				);
-    		
-    		FileUtils.writeBytesToFile(
-    				outputDir.getAbsolutePath(), 
-    				"response.xml", 
-    				xmlResponse
-    				);
-    	}
+    	FileUtils.writeBytesToFile(
+				outputDir.getAbsolutePath(), 
+				"response.xml", 
+				xmlResponse
+				);
+    	
+//    	{
+//    		final File outputDir = new File(messageDir,"interaction-"+messageCounter.incrementAndGet());
+//    		
+//    		FileUtils.writeBytesToFile(
+//    				outputDir.getAbsolutePath(), 
+//    				"request.xml", 
+//    				xmlPayload
+//    				);
+//    		
+//    		FileUtils.writeBytesToFile(
+//    				outputDir.getAbsolutePath(), 
+//    				"response.xml", 
+//    				xmlResponse
+//    				);
+//    	}
     	
     	return xmlResponse;
     }

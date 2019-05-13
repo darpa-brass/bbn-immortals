@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>com.securboration</groupId>
+		<artifactId>immortals</artifactId>
+		<version>r2.0.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<artifactId>immortals-bytecode-diff</artifactId>
+	<packaging>jar</packaging>
+	
+	<name>IMMoRTALS bytecode diff tool</name>
+	<url>https://dsl-external.bbn.com/tracsvr/immortals</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>${commons-compress.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>7.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-util</artifactId>
+			<version>7.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.github.java-diff-utils</groupId>
+			<artifactId>java-diff-utils</artifactId>
+			<version>4.0</version>
+		</dependency>
+<dependency>
+<groupId>ca.mcgill.sable</groupId>
+<artifactId>soot</artifactId>
+<version>3.3.0</version>
+<exclusions>
+<exclusion>
+<groupId>org.jboss.logging</groupId>
+<artifactId>jboss-logging-spi</artifactId>
+</exclusion>
+</exclusions>
+</dependency>
+	</dependencies>
+
+	<properties>
+		<!-- blank -->
+	</properties>
+
+	<repositories>
+		<!-- blank -->
+	</repositories>
+
+	<profiles>
+		<!-- blank -->
+	</profiles>
+
+	<build>
+		<!-- blank -->
+	</build>
+
+</project>

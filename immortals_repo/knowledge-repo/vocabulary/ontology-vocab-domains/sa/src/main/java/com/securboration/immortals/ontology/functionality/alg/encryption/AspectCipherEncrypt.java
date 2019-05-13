@@ -27,7 +27,6 @@ public class AspectCipherEncrypt extends DefaultAspectBase {
             AspectCipherDecrypt.class
             );
         super.setImpactStatements(new ImpactStatement[] {encryptImpact()});
-        super.setAspectSpecificResourceDependencies(new Class[] {AspectCipherInitialize.class, AspectCipherConfig.class});
     }
     
     private static DataProperty encrypt(){

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.securboration</groupId>
+	<artifactId>immortals-cp3.1</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0</version>
+	<name>IMMoRTALS Phase III CP 1 (schema evolution)</name>
+	<url>http://www.securboration.com</url>
+
+
+	<properties>
+		<!-- misc -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<compiler-src-version>1.7</compiler-src-version>
+		<compiler-target-version>1.7</compiler-target-version>
+		
+		<!-- libs -->
+		<cp3.1-version>1.0.0</cp3.1-version>
+		<spring-version>2.0.5.RELEASE</spring-version>
+		<wsdl4j-version>1.6.3</wsdl4j-version>
+		<jaxws-rt-version>2.3.0.2</jaxws-rt-version>
+		
+		<jaxws-spring-version>1.9</jaxws-spring-version>
+		
+		<apache-xml-schema-version>2.2.1</apache-xml-schema-version>
+		
+		<!-- plugins -->
+		<properties-plugin-version>1.0.0</properties-plugin-version>
+		<jaxb2-plugin-version>1.6</jaxb2-plugin-version>
+		<compiler-plugin-version>3.1</compiler-plugin-version>
+		<build-helper-plugin-version>1.10</build-helper-plugin-version>
+		<surefire-plugin-version>2.14.1</surefire-plugin-version>
+		
+		<!-- paths -->
+		<!-- NOTE: each modules should override this property -->
+		<root-path>${basedir}</root-path>
+		
+		<schema-path>${root-path}/schema</schema-path>
+	</properties>
+
+	<repositories>
+		<repository>
+		  <snapshots>
+			<enabled>false</enabled>
+		  </snapshots>
+		  <id>central</id>
+		  <name>Maven Repository Switchboard</name>
+		  <url>http://repo1.maven.org/maven2</url>
+		</repository>
+	</repositories>
+
+	<modules>
+		<module>schema-code/client</module>
+		<module>schema-code/server</module>
+		
+		<module>server</module>
+		<module>client</module>
+		
+		<module>dfus/xml-transformer</module>
+	</modules>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire-plugin-version}</version>
+				<configuration>
+					<testFailureIgnore>false</testFailureIgnore>
+					<trimStackTrace>false</trimStackTrace>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler-plugin-version}</version>
+				<configuration>
+					<source>${compiler-src-version}</source>
+					<target>${compiler-target-version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

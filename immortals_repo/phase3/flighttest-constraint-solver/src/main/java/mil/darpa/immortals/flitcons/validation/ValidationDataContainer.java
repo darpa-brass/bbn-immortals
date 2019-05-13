@@ -4,9 +4,10 @@ import mil.darpa.immortals.flitcons.Configuration;
 import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValue;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueException;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
+import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nonnull;
@@ -25,79 +26,73 @@ public class ValidationDataContainer {
 
 	private final TreeMap<String, ValidationData> children = new TreeMap<>();
 
-	private final TreeMap<String, ValidationData> debugChildren = new TreeMap<>();
-
 	private final String debugIdentifier;
 
 	public ValidationData get(@Nonnull String value) {
 		return children.get(value);
 	}
 
-	private void putData(@Nonnull String key, @Nullable DynamicValue val, @Nonnull Map<String, ValidationData> targetContainer, @Nonnull Configuration.ValidationConfiguration configuration) throws DynamicValueException {
-		try {
-			if (val == null) {
-				targetContainer.put(key, new ValidationData(this, key, DynamicValueMultiplicity.NullValue, null));
+	private void putData(@Nonnull String key, @Nullable DynamicValue val, @Nonnull Map<String, ValidationData> targetContainer, @Nonnull Configuration.ValidationConfiguration configuration) throws DynamicValueeException {
+		if (val == null) {
+			targetContainer.put(key, new ValidationData(this, key, DynamicValueMultiplicity.NullValue, null));
 
-			} else if (val.multiplicity == DynamicValueMultiplicity.Set && val.valueArray.length > 0 && val.valueArray[0] instanceof DynamicObjectContainer) {
-				Object[] arr = new Object[val.valueArray.length];
-				Class clazz = val.valueArray[0].getClass();
-				for (int i = 0; i < val.valueArray.length; i++) {
-					if (!val.valueArray[i].getClass().isAssignableFrom(clazz)) {
-						throw new RuntimeException("All values in the array must be of the same type!");
-					}
-					arr[i] = new ValidationDataContainer((DynamicObjectContainer) val.valueArray[i], configuration);
+		} else if (val.multiplicity == DynamicValueMultiplicity.Set && val.valueArray.length > 0 && val.valueArray[0] instanceof DynamicObjectContainer) {
+			Object[] arr = new Object[val.valueArray.length];
+			Class clazz = val.valueArray[0].getClass();
+			for (int i = 0; i < val.valueArray.length; i++) {
+				if (!val.valueArray[i].getClass().isAssignableFrom(clazz)) {
+					throw new DynamicValueeException(key, "All values in the array must be of the same type!");
 				}
-				targetContainer.put(key, new ValidationData(this, key, val.multiplicity, arr));
-
-			} else {
-				targetContainer.put(key, new ValidationData(this, key, val.multiplicity, val.getValue()));
+				arr[i] = new ValidationDataContainer((DynamicObjectContainer) val.valueArray[i], configuration, true);
 			}
-		} catch (DynamicValueException e) {
-			throw e;
+			targetContainer.put(key, new ValidationData(this, key, val.multiplicity, arr));
+
+		} else {
+			targetContainer.put(key, new ValidationData(this, key, val.multiplicity, val.getValue()));
 		}
 	}
 
-	public ValidationDataContainer(@Nonnull DynamicObjectContainer source, Configuration.ValidationConfiguration configuration) throws DynamicValueException {
+	public static ValidationDataContainer createContainer(@Nonnull DynamicObjectContainer source, @Nonnull Configuration.ValidationConfiguration configuration) throws DynamicValueeException {
+		return new ValidationDataContainer(source, configuration, false);
+
+	}
+
+	/**
+	 * @param source        The source of the data
+	 * @param configuration The configuration to use when validating
+	 * @param isWellDefined whether or not it is fully defined with a formal node type and source
+	 * @throws DynamicValueeException
+	 */
+	private ValidationDataContainer(@Nonnull DynamicObjectContainer source, @Nonnull Configuration.ValidationConfiguration configuration, boolean isWellDefined) throws DynamicValueeException {
 
 		Map<String, Set<String>> bootstrapData = configuration.defaultPropertyList;
 
 		this.identifier = source.identifier;
-		this.name = this.identifier.getNodeType();
 
 		for (String key : source.keySet()) {
 			putData(key, source.get(key), children, configuration);
 		}
 
-		for (String key : source.debugAttributes.keySet()) {
-			putData(key, source.debugAttributes.get(key), debugChildren, configuration);
-		}
+		if (isWellDefined) {
+			name = identifier.getNodeType();
+			if (bootstrapData.containsKey(identifier.getNodeType())) {
+				for (String value : bootstrapData.get(identifier.getNodeType())) {
 
-		if (bootstrapData.containsKey(this.name)) {
-			for (String value : bootstrapData.get(this.name)) {
-
-				if (!children.containsKey(value)) {
-					try {
-						children.put(value, new ValidationData(this, value, DynamicValueMultiplicity.NullValue, null));
-					} catch (DynamicValueException e) {
-						e.addPathParent(this.name);
-						throw e;
+					if (!children.containsKey(value)) {
+						try {
+							children.put(value, new ValidationData(this, value, DynamicValueMultiplicity.NullValue, null));
+						} catch (DynamicValueeException e) {
+							e.addPathParent(identifier.getNodeType());
+							throw e;
+						}
 					}
 				}
 			}
+		} else {
+			name = null;
 		}
 
-		StringBuilder debugLabel = null;
-		for (String label : configuration.debugIdentificationValues) {
-			if (source.debugAttributes.containsKey(label)) {
-				if (debugLabel != null) {
-					debugLabel.append("/").append(source.debugAttributes.get(label).getValue().toString());
-				} else {
-					debugLabel = Optional.ofNullable(source.debugAttributes.get(label).getValue().toString()).map(StringBuilder::new).orElse(null);
-				}
-
-			}
-		}
-		debugIdentifier = (debugLabel == null ? null : debugLabel.toString());
+		debugIdentifier = source.debugLabel;
 	}
 
 	private void collectNestedValidationData(ValidationDataContainer container, Set<ValidationData> result) {
@@ -162,7 +157,7 @@ public class ValidationDataContainer {
 								"]", valueContainer, validityContainer);
 
 					} else {
-						throw new RuntimeException("All values in the array must be of the same type!");
+						throw AdaptationnException.input("All values in the array must be of the same type!");
 					}
 
 				}
@@ -257,7 +252,7 @@ public class ValidationDataContainer {
 	public void printResults(String scenarioTitle, boolean useColor) {
 		try {
 
-			File invalidValuesFile = new File(scenarioTitle + "-invalidValues.txt");
+			File invalidValuesFile = new File("validator-" + scenarioTitle.replaceAll(" ", "_") + "-invalidValues.txt");
 
 			List<String> resultLines = makeCombinedColorlessChart();
 			FileUtils.writeLines(invalidValuesFile, resultLines);
@@ -279,7 +274,7 @@ public class ValidationDataContainer {
 			System.out.println("The invalid value results for this execution have also been written to the file '" + invalidValuesFile.getAbsolutePath() + "'.");
 		} catch (
 				IOException e) {
-			throw new RuntimeException(e);
+			throw AdaptationnException.internal(e);
 		}
 	}
 }

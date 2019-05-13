@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This is a heavily modified version of MDL schema v0.8.17 Created by 
+	Securboration, Inc. -->
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://inetprogram.org/projects/MDL"
+	xmlns:mdl="http://inetprogram.org/projects/MDL"
+	targetNamespace="http://inetprogram.org/projects/MDL"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:element name="MDLRoot" type="MDLRootType">
+	</xsd:element>
+
+	<xsd:complexType name="MDLRootType">
+		<xsd:annotation>
+			<xsd:documentation>
+				The MDLRoot element is the root element of any MDL Instance
+				Document.
+			</xsd:documentation>
+			<xsd:documentation>
+				A note on conditional elements: The MDL schema is a
+				system-level description. Not all components require every element to
+				properly configure. In such cases, these elements are conditional.
+				The documentation specifies when the conditional elements must and
+				shall be present and processed. Components not specifically called
+				out in documentation of conditional elements shall not fail to
+				configure if the particular conditional element is not present. In
+				the
+				schema notation, elements and attributes with a minOccurs attribute
+				equal to "0" are conditional.
+			</xsd:documentation>
+			<xsd:documentation>
+				All elements in the schema may contain ReadOnly (type
+				xsd:boolean) and Owner (type xsd:token) elements. The ReadOnly element
+				indicates whether or not its containing element and all its
+				subelements can be modified. A value of "true" indicates that these
+				elements can not be modified. Conversely, a value of "false"
+				indicates that these elements can be modified. The default value of
+				the ReadOnly element is "false".
+			</xsd:documentation>
+			<xsd:documentation>
+				The Owner element, of type xsd:token, is an identifier for the
+				owner or administrator of the containing element in an MDL Instance
+				Document. The rights and access controls associated with the
+				identified owner will determine the ability of MDL Instance Document
+				editors to modify the containing element and all its subelements.
+				The
+				xsd:token type is derived from xsd:string. The XML processor will
+				remove line feeds, carriage returns, tabs, leading and trailing
+				spaces, and multiple spaces from xsd:token types.
+			</xsd:documentation>
+			<xsd:documentation>
+				The MDLRoot element may contain DatabaseID and Checksum
+				elements, both of type xsd:string. The DatabaseID can be used to keep
+				track of which database was used to generate the MDL instance
+				document. The Checksum element contains a single checksum of all
+				elements within the MDLRoot top-level element that follow the Checksum
+				element. The MDL standard does not currently impose constraints on
+				the specific checksum algorithm used.
+			</xsd:documentation>
+			<xsd:documentation>
+				The ConfigurationVersion element, of type xsd:string,
+				describes the unique version number of the MDL instance document.
+				When a TmNS Manageable App (TMA) is configured with an MDL instance
+				document or file, the ConfigurationVersion is saved and maintained
+				on
+				the TMA and reported in accordance with the System Management
+				standard.
+			</xsd:documentation>
+			<xsd:documentation>
+				The DirtyBit element, of type xsd:boolean, is used in
+				conjunction with reporting of the ConfigurationVersion element by a
+				TMA to indicate that one or more values in the reported MDL differ
+				from the MDL file with which the TMA was configured. Differences may
+				be introduced through System Mangement interfaces, or other vendor
+				specific interfaces. The ConfigurationVersion and DirtyBit elements
+				combined faciliate configuration management of TMAs. The DirtyBit
+				shall be set to true in a reported MDL file when configuration
+				changes
+				have been made that cause the MDL representation to differ from the
+				last configuration via MDL.
+			</xsd:documentation>
+			<xsd:documentation>
+				The TestMissions element contains the configuration associated
+				with a particular test including the name, description, date time, a
+				list of the participating networks, and the mission-level quality of
+				service This. configuration element is conditional as described in
+				the MDLRoot documentation. Components that require and shall process
+				this element for configuration are: RFNM, RFNO, Ground Radio, TA
+				Radio, LinkManager.
+			</xsd:documentation>
+			<xsd:documentation>
+				The Units element is a container for all derived units used in
+				describing measurements, data rates, time, etc.
+			</xsd:documentation>
+			<xsd:documentation>
+				The MeasurementDomains element contains a list of
+				MeasurementDomain elements, each of which describes a self-contained
+				set of Measurements, Packages, Messages, and DataStreams. This
+				element is conditional as described in the MDLRoot documentation.
+				Components that require and shall process this element for
+				configuration are: DAU, Recorder, Network Gateway, PCM Gateway, and
+				TmNS Data Services.
+			</xsd:documentation>
+			<xsd:documentation>
+				The NetworkDomains element contains a list of Networks and
+				their interconnections that may be included in a TestMission
+				description. This element is conditional as described in the MDLRoot
+				documentation. Components that require and shall process this
+				element
+				for configuration are: DAU, Recorder, Network Gateway, PCM Gateway,
+				TmNS Data Services, Switch, Encryptor, Voice Gateway, Onboard TA
+				Manager, Ground TA Manager, SST Manager, Radios, RFNM, RFNO, Link
+				Mananger, SST Proxy
+			</xsd:documentation>
+			<xsd:documentation>
+				The RANConfigs element contains a list of RANConfig elements.
+				Each RANConfig element describes the set of basic parameters for a
+				Radio Access Network. This element is conditional as described in the
+				MDLRoot documentation. Components that require and shall process
+				this
+				element for configuration are: Radios, RFNM, RFNO, Link Mananger,
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ReadOnly" type="xsd:boolean"
+				default="false" minOccurs="0" />
+			<xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+			<xsd:element name="DatabaseID" type="xsd:string" />
+			<xsd:element name="Checksum" type="xsd:string" />
+			<xsd:element name="ConfigurationVersion" type="xsd:string" />
+			<xsd:element name="DirtyBit" type="xsd:boolean" />
+			
+			<xsd:element name="AnIntegerElement" type="xsd:int" maxOccurs="1" minOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

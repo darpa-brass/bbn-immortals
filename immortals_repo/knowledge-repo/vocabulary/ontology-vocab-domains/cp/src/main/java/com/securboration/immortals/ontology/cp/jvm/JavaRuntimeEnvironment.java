@@ -21,7 +21,7 @@ public class JavaRuntimeEnvironment extends RuntimeEnvironment {
     /**
      * True iff the export controls on cryptographic strength are disabled
      */
-    private Boolean unlimitedCryptoStrengh;
+    private boolean unlimitedCryptoStrengh;
     
     public JavaRuntimeEnvironment(){
         super();

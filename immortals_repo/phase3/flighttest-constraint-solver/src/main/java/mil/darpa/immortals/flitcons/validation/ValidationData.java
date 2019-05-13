@@ -1,7 +1,7 @@
 package mil.darpa.immortals.flitcons.validation;
 
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueException;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.Range;
 
 import javax.annotation.Nonnull;
@@ -26,7 +26,7 @@ public class ValidationData {
 	}
 
 	public ValidationData(@Nonnull ValidationDataContainer parent, @Nonnull String name, @Nullable DynamicValueMultiplicity multiplicity,
-	                      @Nullable Object value) throws DynamicValueException {
+	                      @Nullable Object value) throws DynamicValueeException {
 		this.parent = parent;
 		this.name = name;
 		this.multiplicity = multiplicity;
@@ -63,40 +63,40 @@ public class ValidationData {
 
 	}
 
-	private static void validate(boolean allowNull, ValidationData data) throws DynamicValueException {
+	private static void validate(boolean allowNull, ValidationData data) throws DynamicValueeException {
 		switch (data.multiplicity) {
 
 			case SingleValue:
 				if (!isValidValue(data.value)) {
-					throw new DynamicValueException(data.name, "Invalid SingleValue value!");
+					throw new DynamicValueeException(data.name, "Invalid SingleValue value!");
 
 				}
 				break;
 
 			case Range:
 				if (!(data.value instanceof Range)) {
-					throw new DynamicValueException(data.name, "Invalid Range value!");
+					throw new DynamicValueeException(data.name, "Invalid Range value!");
 
 				} else {
 					Range r = (Range) data.value;
 					if (!isValidValue(r.Min)) {
-						throw new DynamicValueException(data.name, "Invalid Min Range value!");
+						throw new DynamicValueeException(data.name, "Invalid Min Range value!");
 
 					} else if (!isValidValue(r.Max)) {
-						throw new DynamicValueException(data.name, "Invalid Max Range value!");
+						throw new DynamicValueeException(data.name, "Invalid Max Range value!");
 					}
 				}
 				break;
 
 			case Set:
 				if (!(data.value instanceof Object[])) {
-					throw new DynamicValueException(data.name, "Invalid Set value!");
+					throw new DynamicValueeException(data.name, "Invalid Set value!");
 				} else {
 					Object[] a = (Object[]) data.value;
 
 					for (Object o : a) {
 						if (!isValidValue(o)) {
-							throw new DynamicValueException(data.name, "Invalid Set child value!");
+							throw new DynamicValueeException(data.name, "Invalid Set child value!");
 						}
 					}
 				}

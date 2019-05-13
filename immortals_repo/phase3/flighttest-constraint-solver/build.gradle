@@ -39,7 +39,7 @@ sourceSets {
 			srcDirs = ['src/test/java']
 		}
 		resources {
-			srcDirs = ['src/main/resources']
+			srcDirs = ['src/main/resources', 'src/test/resources']
 		}
 	}
 	solver {
@@ -50,6 +50,10 @@ sourceSets {
 			srcDirs = ['src/solver/java', 'src/solver/groovy']
 		}
 	}
+}
+
+test {
+	useTestNG()
 }
 
 task solverJar(type: ShadowJar) {
@@ -102,9 +106,13 @@ dependencies {
 	solverCompile 'org.codehaus.groovy:groovy-all:2.4.15'
 	solverCompile 'com.orientechnologies:orientdb-core:2.2.24'
 	solverCompile 'com.orientechnologies:orientdb-graphdb:2.2.24'
-	solverCompile 'mil.darpa.immortals:mdl-immortals-bridge:0.1.2'
+	solverCompile 'mil.darpa.immortals:mdl-immortals-bridge:0.2'
 	solverCompile sourceSets.main.output
 	solverCompile sourceSets.main.compileClasspath
 
 	testCompile 'org.testng:testng:6.14.3'
+	testCompile 'com.orientechnologies:orientdb-server:2.2.24'
+	testCompile 'mil.darpa.immortals:mdl-immortals-bridge:0.2'
+	testCompile sourceSets.solver.output
+	testCompile sourceSets.solver.compileClasspath
 }

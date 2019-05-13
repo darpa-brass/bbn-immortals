@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xmlns:mdl="http://inetprogram.org/projects/MDL" 
+         xmlns:tmats="https://wsmrc2vger.wsmr.army.mil/rcc/manuals/106-11" 
+         xsi:schemaLocation="http://inetprogram.org/projects/MDL MDL_v0_8_17.xsd">
+  <DatabaseID>example id string</DatabaseID>
+  <Checksum>not present</Checksum>
+  <ConfigurationVersion>0.0.1</ConfigurationVersion>
+  <DirtyBit>false</DirtyBit>
+  
+  <AnIntegerElement>1234</AnIntegerElement>
+  
+</MDLRoot>

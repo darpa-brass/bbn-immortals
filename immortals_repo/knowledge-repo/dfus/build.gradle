@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+}
+
+group 'com.securboration'
+
+sourceCompatibility = 1.8
+
+apply plugin: 'maven-publish'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'com.securboration'
+            artifactId 'dfus'
+            version 'r2.0.0'
+            from components.java
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url "../../shared/IMMORTALS_REPO"
+        }
+    }
+}
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile("com.securboration:immortals-adsl-generate:r2.0.0")
+}

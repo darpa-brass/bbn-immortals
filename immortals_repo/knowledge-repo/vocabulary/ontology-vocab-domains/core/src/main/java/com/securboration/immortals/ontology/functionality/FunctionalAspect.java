@@ -27,14 +27,12 @@ public class FunctionalAspect {
     @com.securboration.immortals.ontology.annotations.RdfsComment(
         "An ID for this functional aspect")
     private String aspectId;
-    
-    /**
-     * Resources specific to this functional aspect
-     */
-    @com.securboration.immortals.ontology.annotations.RdfsComment(
-        "Resources specific to this functional aspect")
+
+    private AspectConfiguration[] aspectConfigurations;
+
+    @Deprecated
     private Class<? extends Resource>[] aspectSpecificResourceDependencies;
-    
+
     /**
      * Identifies an inverse transformation
      */
@@ -91,15 +89,6 @@ public class FunctionalAspect {
         this.outputs = outputs;
     }
 
-    public Class<? extends Resource>[] getAspectSpecificResourceDependencies() {
-        return aspectSpecificResourceDependencies;
-    }
-
-    public void setAspectSpecificResourceDependencies(
-            Class<? extends Resource>[] aspectSpecificResourceDependencies) {
-        this.aspectSpecificResourceDependencies = aspectSpecificResourceDependencies;
-    }
-
     public String getAspectId() {
         return aspectId;
     }
@@ -136,4 +125,19 @@ public class FunctionalAspect {
         this.impactStatements = impactStatements;
     }
 
+    public AspectConfiguration[] getAspectConfigurations() {
+        return aspectConfigurations;
+    }
+
+    public void setAspectConfigurations(AspectConfiguration[] aspectConfigurations) {
+        this.aspectConfigurations = aspectConfigurations;
+    }
+
+    public Class<? extends Resource>[] getAspectSpecificResourceDependencies() {
+        return aspectSpecificResourceDependencies;
+    }
+
+    public void setAspectSpecificResourceDependencies(Class<? extends Resource>[] aspectSpecificResourceDependencies) {
+        this.aspectSpecificResourceDependencies = aspectSpecificResourceDependencies;
+    }
 }

@@ -2,6 +2,8 @@ package com.securboration.immortals.ontology.analysis;
 
 import com.securboration.immortals.ontology.annotations.RdfsComment;
 
+import java.util.Objects;
+
 public class InterMethodDataflowNode extends InterProcessDataflowNode {
     
     /**
@@ -62,5 +64,23 @@ public class InterMethodDataflowNode extends InterProcessDataflowNode {
 
     public void setLineNumber(int lineNumber) {
         this.lineNumber = lineNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof InterMethodDataflowNode)) {
+            return false;
+        }
+
+        InterMethodDataflowNode methodNode = (InterMethodDataflowNode) o;
+        return lineNumber == methodNode.lineNumber &&
+                Objects.equals(javaMethodName, methodNode.getJavaMethodName()) &&
+                Objects.equals(javaClassName, methodNode.getJavaClassName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lineNumber, javaMethodName, javaClassName);
     }
 }

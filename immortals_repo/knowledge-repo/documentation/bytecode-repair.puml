@@ -1,0 +1,79 @@
+@startuml
+
+header IMMoRTALS
+title Schema Evolution CP Evaluatioon (Sequence Diagram)
+footer Page %page% of %lastpage%
+
+participant "Hiearchical Data \nSource (OrientDB)" as odb
+participant "Test Harness" as testHarness
+participant "Evaluation Server" as evalServer
+
+participant "ESS client" as essClient
+participant "ESS server" as essServer
+
+
+autonumber "<b>[0]"
+
+testHarness -> odb: 				Request evaluation configuration
+odb -> testHarness: 				Return evaluation configuration
+
+testHarness -> testHarness: 		Instantiate templatized Exemplar Software System (ESS) using retrieved config
+
+testHarness -> evalServer: 			Transmit zipped ESS and config to evaluation server
+
+group prepare to evaluate
+	evalServer -> evalServer:			Extract ESS into a temporary working dir
+	evalServer -> evalServer:			build the ESS using Gradle
+end
+
+group determine performance of baseline perturbed system
+	evalServer -> essClient:			invoke client entrypoint
+	loop over all exemplar MDL messages
+		essClient -> essServer:				send MDL (SOAP/XML) request to server
+		essServer -> essClient:				send MDL (SOAP/XML) response to client
+	end
+	essClient -> evalServer:			return baseline results
+end
+
+group discovery
+	group static analysis
+		evalServer -> evalServer:					<i>mine</i> code repository for DFUs
+		evalServer -> evalServer:					<i>analyze</i> structure of ESS
+		evalServer -> evalServer:					<i>ingest</i> domain knowledge
+	end	
+	group dynamic analysis
+		evalServer -> evalServer:			instrument the ESS
+		
+		evalServer -> essClient:			invoke instrumented client entrypoint
+		loop over all exemplar MDL messages
+			essClient -> essServer:				send MDL (SOAP/XML) request to server
+			essServer -> essClient:				send MDL (SOAP/XML) response to client
+		end
+		essClient -> evalServer:			return dynamic analysis results
+	end
+end
+
+
+group repair
+	evalServer -> evalServer:						<font color=red>identify problematic edges
+	evalServer -> evalServer:						<font color=red>identify DFUs that can reconcile the encountered issues
+	evalServer -> evalServer:						<font color=red>synthesize adaptation surfaces
+	evalServer -> evalServer:						<font color=red>inject adaptation surfaces into ESS bytecode
+end
+
+group determine performance of repaired system
+	evalServer -> essClient:			invoke client entrypoint
+	loop over all exemplar MDL messages
+		essClient -> essServer:				send MDL (SOAP/XML) request to server
+		essServer -> essClient:				send MDL (SOAP/XML) response to client
+	end
+	essClient -> evalServer:			return repaired results
+end
+
+evalServer -> evalServer:				compare results from baseline and repaired ESS
+
+evalServer -> odb:						publish evaluation results
+
+
+
+@enduml

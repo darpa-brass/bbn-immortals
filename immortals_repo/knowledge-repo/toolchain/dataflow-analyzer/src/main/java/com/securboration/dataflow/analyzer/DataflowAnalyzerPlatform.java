@@ -1,18 +1,38 @@
 package com.securboration.dataflow.analyzer;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.Position;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MemberValuePair;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.stmt.TryStmt;
 import com.securboration.immortals.o2t.ObjectToTriplesConfiguration;
 import com.securboration.immortals.o2t.analysis.ObjectToTriples;
 import com.securboration.immortals.o2t.ontology.OntologyHelper;
 import com.securboration.immortals.ontology.analysis.*;
+import com.securboration.immortals.ontology.core.Resource;
 import com.securboration.immortals.ontology.functionality.datatype.BinaryData;
 import com.securboration.immortals.ontology.functionality.datatype.DataType;
 import com.securboration.immortals.ontology.resources.Client;
+import com.securboration.immortals.ontology.resources.xml.XmlDocument;
 import com.securboration.immortals.ontology.resources.xml.XmlInstance;
+import com.securboration.immortals.repo.ontology.FusekiClient;
+import com.securboration.immortals.repo.query.ResultSetAggregator;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
 import soot.*;
 import soot.jimple.*;
+import soot.jimple.internal.JimpleLocalBox;
 import soot.tagkit.AnnotationTag;
 import soot.tagkit.LineNumberTag;
 import soot.tagkit.Tag;
@@ -20,6 +40,7 @@ import soot.tagkit.VisibilityAnnotationTag;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.Pair;
+import soot.util.Chain;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,8 +52,19 @@ import java.util.stream.Collectors;
 
 public class DataflowAnalyzerPlatform {
 
+    private FusekiClient fusekiClient;
+    private String graphName;
+    private DataflowAnalysisListener listener = new DataflowAnalysisListener();
+
+    public DataflowAnalyzerPlatform(FusekiClient _fusekiClient, String _graphName) {
+        fusekiClient = _fusekiClient;
+        graphName = _graphName;
+    }
+
     private final Collection<String> outgoingFlowIndicators = Arrays.asList("java/io/OutputStream write ([B)V");
     private final Collection<String> incomingFlowIndicators = Arrays.asList("java/io/InputStream read ([B)I");
+
+    private Set<Pair<String, DataType>> classNamesToNewData = new HashSet<>();
 
     private Collection<Pair<String, Class<? extends DataType>>> classNameToSemantics = Arrays.asList(
             new Pair<>("Lmil/darpa/immortals/annotation/dsl/ontology/resources/xml/XmlInstance;", XmlInstance.class),
@@ -56,37 +88,33 @@ public class DataflowAnalyzerPlatform {
         return outputFile.getAbsolutePath();
     }
 
-    public Set<Stack<DataflowGraphComponent>> processCallTraceStacks(List<Stack<String>> callTraceStacks) {
+    public Set<Stack<DataflowGraphComponent>> processCallTraceStacks(List<Stack<String>> callTraceStacks, Class<? extends Resource> dataflowResource) throws IOException, ClassNotFoundException {
 
         Set<Stack<DataflowGraphComponent>> dataflowStacks = new HashSet<>();
+        Class<? extends DataType> dataBeingObserved = null;
+        String flowUUID = dataflowResource.getName();
 
         for (Stack<String> callTraceStack : callTraceStacks) {
             String terminalNode = callTraceStack.pop();
             if (this.getOutgoingFlowIndicators().stream().anyMatch(outFlow -> outFlow.equals(terminalNode))) {
                 //outgoing stream
-                //TODO reverse flow analysis
-
                 String[] callTraceComponents = terminalNode.split(" ");
                 String callClassOwner = callTraceComponents[0];
-                //TODO currently here, need to parse things like read...
                 String callMethodDesc = convertCallTraceSigToSootSig(callTraceComponents[1], callTraceComponents[2]);
                 SootClass terminalClass = Scene.v().loadClassAndSupport(callClassOwner.replace("/", "."));
                 SootMethod terminalMethod = terminalClass.getMethod(callMethodDesc);
 
                 InterMethodDataflowEdge interProcessEdge = new InterMethodDataflowEdge();
-                interProcessEdge.setDataTypeCommunicated(BinaryData.class);
 
                 InterMethodDataflowNode dataflowNode = new InterMethodDataflowNode();
                 dataflowNode.setJavaClassName(terminalClass.getName());
                 dataflowNode.setJavaMethodName(terminalMethod.getName());
-                dataflowNode.setAbstractResourceTemplate(Client.class);
+                dataflowNode.setAbstractResourceTemplate(dataflowResource);
 
                 interProcessEdge.setProducer(dataflowNode);
 
                 MethodInvocationDataflowEdge dataflowEdge = new MethodInvocationDataflowEdge();
                 dataflowEdge.setConsumer(dataflowNode);
-                dataflowEdge.setDataTypeCommunicated(BinaryData.class);
-
 
                 Stack<DataflowGraphComponent> dataflows = new Stack<>();
                 dataflows.push(interProcessEdge);
@@ -134,6 +162,18 @@ public class DataflowAnalyzerPlatform {
 
                                     for (Value value : virtualInvokeExpr.getArgs()) {
                                         if (value.getType().equals(Scene.v().getType("byte[]"))) {
+
+                                            dataBeingObserved = BinaryData.class;
+
+                                            Iterator<DataflowGraphComponent> graphIter = dataflows.iterator();
+                                            while (graphIter.hasNext()) {
+                                                DataflowGraphComponent dataflowGraphComponent = graphIter.next();
+                                                if (dataflowGraphComponent instanceof DataflowEdge) {
+                                                    DataflowEdge setEdgeData = (DataflowEdge) dataflowGraphComponent;
+                                                    setEdgeData.setDataTypeCommunicated(dataBeingObserved);
+                                                }
+                                            }
+
                                             localOfInterest = (Local) value;
                                             break;
                                         }
@@ -142,13 +182,16 @@ public class DataflowAnalyzerPlatform {
                                     int lineNumber = getLineNumber(u);
                                     dataflowNode.setLineNumber(lineNumber);
 
-                                    // Stack<String> tempCallTrace = cloneTrace(callTraceStack);
-                                    // UnitGraph tempGraph = new ExceptionalUnitGraph(b);
-                                    //Iterator tempIter = graph.iterator();
-                                    //  shiftIter(tempIter, i);
+                                    Map<DataflowAnalysisListener.SemanticProperties, Object> semanticDataProperties = new HashMap<>();
+                                    semanticDataProperties.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
 
+                                    DataflowAnalysisListener.ListenerDataflowNode listenerNode = new DataflowAnalysisListener.ListenerDataflowNode(
+                                            dataflowNode, sClass, sootMethod, invokeStmt, new JimpleLocalBox(localOfInterest));
+
+                                    listener.beginTrace(flowUUID += ("-" + UUID.randomUUID()), semanticDataProperties, listenerNode);
                                     dataflowGraph = reverseFlowAnalysis(graph, localOfInterest,
-                                            callTraceStack, u, dataflows);
+                                            callTraceStack, u, dataflows, dataflowResource, dataBeingObserved);
+                                    listener.endTrace();
                                     break;
 
                                 } else if (invokeStmt instanceof StaticInvokeExpr) {
@@ -166,23 +209,20 @@ public class DataflowAnalyzerPlatform {
 
                 String[] callTraceComponents = terminalNode.split(" ");
                 String callClassOwner = callTraceComponents[0];
-                //TODO currently here, need to parse things like read...
                 String callMethodDesc = convertCallTraceSigToSootSig(callTraceComponents[1], callTraceComponents[2]);
                 SootClass terminalClass = Scene.v().loadClassAndSupport(callClassOwner.replace("/", "."));
                 SootMethod terminalMethod = terminalClass.getMethod(callMethodDesc);
 
                 InterMethodDataflowEdge interProcessEdge = new InterMethodDataflowEdge();
-                interProcessEdge.setDataTypeCommunicated(BinaryData.class);
 
                 InterMethodDataflowNode dataflowNode = new InterMethodDataflowNode();
                 dataflowNode.setJavaClassName(terminalClass.getName());
                 dataflowNode.setJavaMethodName(terminalMethod.getName());
-                dataflowNode.setAbstractResourceTemplate(Client.class);
+                dataflowNode.setAbstractResourceTemplate(dataflowResource);
                 interProcessEdge.setConsumer(dataflowNode);
 
                 MethodInvocationDataflowEdge dataflowEdge = new MethodInvocationDataflowEdge();
                 dataflowEdge.setProducer(dataflowNode);
-                dataflowEdge.setDataTypeCommunicated(BinaryData.class);
 
                 Stack<DataflowGraphComponent> dataflows = new Stack<>();
                 dataflows.push(interProcessEdge);
@@ -213,7 +253,6 @@ public class DataflowAnalyzerPlatform {
 
                     UnitGraph graph = new ExceptionalUnitGraph(b);
                     Iterator gIt = graph.iterator();
-                    int i = 0;
                     while (gIt.hasNext()) {
                         Unit u = (Unit) gIt.next();
                         if (u instanceof AssignStmt) {
@@ -228,6 +267,18 @@ public class DataflowAnalyzerPlatform {
 
                                     for (Value value : virtualInvokeExpr.getArgs()) {
                                         if (value.getType().equals(Scene.v().getType("byte[]"))) {
+
+                                            dataBeingObserved = BinaryData.class;
+
+                                            Iterator<DataflowGraphComponent> graphIter = dataflows.iterator();
+                                            while (graphIter.hasNext()) {
+                                                DataflowGraphComponent dataflowGraphComponent = graphIter.next();
+                                                if (dataflowGraphComponent instanceof DataflowEdge) {
+                                                    DataflowEdge setEdgeData = (DataflowEdge) dataflowGraphComponent;
+                                                    setEdgeData.setDataTypeCommunicated(dataBeingObserved);
+                                                }
+                                            }
+
                                             localOfInterest = (Local) value;
                                             break;
                                         }
@@ -236,14 +287,17 @@ public class DataflowAnalyzerPlatform {
                                     int lineNumber = getLineNumber(u);
                                     dataflowNode.setLineNumber(lineNumber);
 
-                                    // Stack<String> tempCallTrace = cloneTrace(callTraceAnalysis.getCallTraceStack());
-                                    // UnitGraph tempGraph = new ExceptionalUnitGraph(b);
-                                    // Iterator tempIter = graph.iterator();
-                                    // shiftIter(tempIter, i);
                                     DataflowGraphComponent dataflowGraphComponent = dataflows.pop();
 
+                                    Map<DataflowAnalysisListener.SemanticProperties, Object> semanticDataProperties = new HashMap<>();
+                                    semanticDataProperties.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
+
+                                    DataflowAnalysisListener.ListenerDataflowNode listenerNode = new DataflowAnalysisListener.ListenerDataflowNode(
+                                            dataflowNode, sClass, sootMethod, (AssignStmt) u, new JimpleLocalBox(localOfInterest));
+                                    listener.beginTrace(flowUUID += ("-" + UUID.randomUUID()), semanticDataProperties, listenerNode);
                                     dataflowGraph = this.forwardFlowAnalysis(graph, localOfInterest,
-                                            callTraceStack, u, dataflowGraphComponent);
+                                            callTraceStack, u, dataflowGraphComponent, true, dataflowResource, dataBeingObserved);
+                                    listener.endTrace();
                                     dataflowGraph.insertElementAt(dataflows.pop(), 0);
                                     dataflowGraph.insertElementAt(dataflows.pop(), 0);
                                     break;
@@ -265,230 +319,771 @@ public class DataflowAnalyzerPlatform {
     }
 
     private Stack<DataflowGraphComponent> forwardFlowAnalysis(UnitGraph graph, Local localOfInterest, Stack<String> callTraceStack,
-                                                              Unit currentUnit, DataflowGraphComponent edgeGeneric) {
+                                                              Unit currentUnit, DataflowGraphComponent edgeGeneric, boolean incoming,
+                                                              Class<? extends Resource> dataflowResource, Class<? extends DataType> dataBeingObserved) throws IOException, ClassNotFoundException {
 
         Stack<DataflowGraphComponent> currentDataflow = new Stack<>();
         currentDataflow.push(edgeGeneric);
         UnitPatchingChain unitPatchingChain = graph.getBody().getUnits();
+        Stack<Pair<Unit, Local>> fallbackPoints = new Stack<>();
 
-        while(unitPatchingChain.getSuccOf(currentUnit) != null) {
-            currentUnit = unitPatchingChain.getSuccOf(currentUnit);
-            if (currentUnit instanceof AssignStmt) {
-                Value rightValue = ((AssignStmt) currentUnit).getRightOp();
-                Value leftValue = ((AssignStmt) currentUnit).getLeftOp();
+        while (true) {
 
-                if (rightValue instanceof Local && rightValue.equals(localOfInterest)) {
-                    localOfInterest = (Local) leftValue;
-                } else if (rightValue instanceof VirtualInvokeExpr) {
-                    //TODO need check to see if new local of interest occurs in rest of graph...
-                    VirtualInvokeExpr virtualInvokeExpr = (VirtualInvokeExpr) rightValue;
-                    SootMethod invokedMethod = virtualInvokeExpr.getMethod();
-                    if (virtualInvokeExpr.getBase() instanceof Local && virtualInvokeExpr.getBase().equals(localOfInterest)) {
-                        //TODO might need to branch off of any arguments provided
-                        pushVirtualBaseFlowsAndLocalForward(currentUnit, currentDataflow, invokedMethod);
+            while (unitPatchingChain.getSuccOf(currentUnit) != null) {
+                currentUnit = unitPatchingChain.getSuccOf(currentUnit);
+                if (currentUnit instanceof AssignStmt) {
+                    Value rightValue = ((AssignStmt) currentUnit).getRightOp();
+                    Value leftValue = ((AssignStmt) currentUnit).getLeftOp();
+
+                    if (rightValue instanceof Local && rightValue.equals(localOfInterest)) {
+
+                        boolean totalTransform = checkIfTransformIsTotal(unitPatchingChain.getSuccOf(currentUnit), unitPatchingChain, localOfInterest);
+                        if (!totalTransform) {
+                            fallbackPoints.push(new Pair<>(currentUnit, localOfInterest));
+                        }
+
                         localOfInterest = (Local) leftValue;
-                    } /* else if (leftValue.equals(localOfInterest)){
-
-                        MethodInvocationDataflowNode methodInvocationDataflowNode = new MethodInvocationDataflowNode();
-                        methodInvocationDataflowNode.setJavaMethodName(invokedMethod.getName());
-                        methodInvocationDataflowNode.setJavaClassName(invokedMethod.getDeclaringClass().getName());
-                        methodInvocationDataflowNode.setLineNumber(getLineNumber(currentUnit));
-
-                        linkProducerForward(currentDataflow, methodInvocationDataflowNode);
-
-                        MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
-                        methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
-                        methodInvocationDataflowEdge.setDataTypeCommunicated(BinaryData.class);
-
-                        currentDataflow.push(methodInvocationDataflowNode);
-                        currentDataflow.push(methodInvocationDataflowEdge);
-
-                        String objectOfInterest = getObjectOfInterest(invokedMethod, classNameToSemantics);
-                        if (objectOfInterest != null) {
-                            // attempting to transform data, end of data flow analysis???
-                            methodInvocationDataflowEdge.setDataTypeCommunicated(XmlInstance.class);
-                            return currentDataflow;
-                        }
-
-                        List<Local> locals = new ArrayList<>();
-                        for(Value arg : virtualInvokeExpr.getArgs()) {
-                            if (arg instanceof Local) {
-                                locals.add((Local) arg);
+                    } else if (rightValue instanceof VirtualInvokeExpr) {
+                        //TODO need check to see if new local of interest occurs in rest of graph...
+                        VirtualInvokeExpr virtualInvokeExpr = (VirtualInvokeExpr) rightValue;
+                        SootMethod invokedMethod = virtualInvokeExpr.getMethod();
+                        if (virtualInvokeExpr.getBase() instanceof Local && virtualInvokeExpr.getBase().equals(localOfInterest)) {
+                            boolean totalTransform = checkIfTransformIsTotal(unitPatchingChain.getSuccOf(currentUnit), unitPatchingChain, localOfInterest);
+                            if (!totalTransform) {
+                                fallbackPoints.push(new Pair<>(currentUnit, localOfInterest));
                             }
-                        }
+                            pushVirtualBaseFlowsAndLocalForward(currentUnit, currentDataflow, invokedMethod, incoming);
+                            localOfInterest = (Local) leftValue;
+                        } else {
+                            Local finalLocalOfInterest = localOfInterest;
+                            if (virtualInvokeExpr.getArgs().stream().anyMatch(arg -> arg.equals(finalLocalOfInterest))) {
 
-                        if (!locals.isEmpty()) {
-                            for (Local local : locals) {
-                                Collection<DataflowGraphComponent> newGraph = this.reverseFlowAnalysis(graph, local, callTraceStack, currentUnit, currentDataflow);
-                                if (!newGraph.isEmpty()) {
-                                    // branch was correct, return
-                                    return newGraph;
+                                boolean totalTransform = checkIfTransformIsTotal(unitPatchingChain.getSuccOf(currentUnit), unitPatchingChain, localOfInterest);
+                                if (!totalTransform) {
+                                    fallbackPoints.push(new Pair<>(currentUnit, localOfInterest));
+                                }
+
+                                ClassData classData = new ClassData(graph, currentUnit).invoke();
+
+                                MethodInvocationDataflowNode methodInvocationDataflowNode = configureNodeFields(dataflowResource, classData.getCurrentClassName(),
+                                        invokedMethod, getLineNumber(currentUnit));
+
+                                MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
+                                methodInvocationDataflowEdge.setDataTypeCommunicated(dataBeingObserved);
+                                if (incoming) {
+                                    linkProducerForward(currentDataflow, methodInvocationDataflowNode);
+                                    methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
+                                } else {
+                                    linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
+                                    methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
+                                }
+
+                                currentDataflow.push(methodInvocationDataflowNode);
+                                currentDataflow.push(methodInvocationDataflowEdge);
+
+                                Optional<DataType> dataTypeOption = wasDataTransformed(classData.getLineNumber(), classData.getCurrentClassName(), classData.getCurrentMethodName(),
+                                        methodInvocationDataflowEdge);
+
+                                //check source (if possible) for local var annots
+                                if (dataTypeOption.isPresent()) {
+
+                                    DataType dataType = dataTypeOption.get();
+                                    Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                    props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataType.getClass().getCanonicalName());
+                                    if (dataType instanceof XmlDocument) {
+                                        props.put(DataflowAnalysisListener.SemanticProperties.SCHEMA_VERSION, ((XmlDocument) dataType).getSchemaVersion());
+                                    }
+
+                                    alertListener(localOfInterest, (AssignStmt) currentUnit, props, invokedMethod,
+                                            methodInvocationDataflowNode);
+
+                                    return currentDataflow;
+                                } else if (didReturnTerminalType(invokedMethod, methodInvocationDataflowEdge)) {
+                                    return currentDataflow;
+                                } else {
+                                    localOfInterest = (Local) leftValue;
                                 }
                             }
                         }
-                        localOfInterest = (Local) virtualInvokeExpr.getBase();
-                    }*/
-                } else if (rightValue instanceof SpecialInvokeExpr) {
-                    SpecialInvokeExpr specialInvokeExpr = (SpecialInvokeExpr) rightValue;
-                    SootMethod invokedMethod = specialInvokeExpr.getMethod();
+                    } else if (rightValue instanceof SpecialInvokeExpr) {
+                        SpecialInvokeExpr specialInvokeExpr = (SpecialInvokeExpr) rightValue;
+                        SootMethod invokedMethod = specialInvokeExpr.getMethod();
 
-                    Local finalLocalOfInterest1 = localOfInterest;
-                    if (specialInvokeExpr.getArgs().stream().anyMatch(arg -> arg.equals(finalLocalOfInterest1))) {
+                        if (specialInvokeExpr.getBase() instanceof Local && specialInvokeExpr.getBase().equals(localOfInterest)) {
+                            pushVirtualBaseFlowsAndLocalForward(currentUnit, currentDataflow, invokedMethod, incoming);
+                            localOfInterest = (Local) leftValue;
+                        } else {
 
-                        MethodInvocationDataflowNode methodInvocationDataflowNode = new MethodInvocationDataflowNode();
-                        methodInvocationDataflowNode.setJavaMethodName(invokedMethod.getName());
-                        methodInvocationDataflowNode.setJavaClassName(invokedMethod.getDeclaringClass().getName());
-                        methodInvocationDataflowNode.setLineNumber(getLineNumber(currentUnit));
-                        methodInvocationDataflowNode.setAbstractResourceTemplate(Client.class);
+                            Local finalLocalOfInterest1 = localOfInterest;
+                            if (specialInvokeExpr.getArgs().stream().anyMatch(arg -> arg.equals(finalLocalOfInterest1))) {
 
-                        linkProducerForward(currentDataflow, methodInvocationDataflowNode);
+                                boolean totalTransform = checkIfTransformIsTotal(unitPatchingChain.getSuccOf(currentUnit), unitPatchingChain, localOfInterest);
+                                if (!totalTransform) {
+                                    fallbackPoints.push(new Pair<>(currentUnit, localOfInterest));
+                                }
 
-                        MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
-                        methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
-                        methodInvocationDataflowEdge.setDataTypeCommunicated(BinaryData.class);
+                                ClassData classData = new ClassData(graph, currentUnit).invoke();
 
-                        currentDataflow.push(methodInvocationDataflowNode);
-                        currentDataflow.push(methodInvocationDataflowEdge);
+                                MethodInvocationDataflowNode methodInvocationDataflowNode = configureNodeFields(dataflowResource, classData.getCurrentClassName(),
+                                        invokedMethod, getLineNumber(currentUnit));
 
-                        String objectOfInterest = getObjectOfInterest(invokedMethod, classNameToSemantics);
-                        if (objectOfInterest != null) {
-                            // attempting to transform data, end of data flow analysis???
-                            methodInvocationDataflowEdge.setDataTypeCommunicated(XmlInstance.class);
-                            return currentDataflow;
+                                MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
+                                methodInvocationDataflowEdge.setDataTypeCommunicated(dataBeingObserved);
+                                if (incoming) {
+                                    linkProducerForward(currentDataflow, methodInvocationDataflowNode);
+                                    methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
+                                } else {
+                                    linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
+                                    methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
+                                }
+
+                                currentDataflow.push(methodInvocationDataflowNode);
+                                currentDataflow.push(methodInvocationDataflowEdge);
+
+                                Optional<DataType> dataTypeOption = wasDataTransformed(classData.getLineNumber(), classData.getCurrentClassName(),
+                                        classData.getCurrentMethodName(), methodInvocationDataflowEdge);
+
+                                if (dataTypeOption.isPresent()) {
+
+                                    DataType dataType = dataTypeOption.get();
+                                    Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                    props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataType.getClass().getCanonicalName());
+                                    if (dataType instanceof XmlDocument) {
+                                        props.put(DataflowAnalysisListener.SemanticProperties.SCHEMA_VERSION, ((XmlDocument) dataType).getSchemaVersion());
+                                    }
+
+                                    alertListener(localOfInterest, (AssignStmt) currentUnit, props, invokedMethod,
+                                            methodInvocationDataflowNode);
+
+                                    return currentDataflow;
+                                } else if (didReturnTerminalType(invokedMethod, methodInvocationDataflowEdge)) {
+                                    return currentDataflow;
+                                } else {
+                                    //dive into method for further annots
+                                    int argNumb = getArgNumb(finalLocalOfInterest1, specialInvokeExpr);
+                                    boolean withinAnalysisPurview = checkInvokeClass(specialInvokeExpr.getMethod().getDeclaringClass());
+
+                                    if (withinAnalysisPurview) {
+                                        DataflowGraphComponent dataflowGraphComponent = currentDataflow.pop();
+                                        Pair<Unit, Local> unitLocalPair = getLocalAndFirstUnit(specialInvokeExpr.getMethod(), argNumb);
+                                        Stack<DataflowGraphComponent> dataflows = this.forwardFlowAnalysis(new ExceptionalUnitGraph(invokedMethod.retrieveActiveBody()),
+                                                unitLocalPair.getO2(), callTraceStack, unitLocalPair.getO1(), dataflowGraphComponent, incoming, dataflowResource, dataBeingObserved);
+
+                                        if (!dataflows.isEmpty()) {
+                                            currentDataflow.addAll(dataflows);
+                                            return currentDataflow;
+                                        } else {
+                                            currentDataflow.push(dataflowGraphComponent);
+                                        }
+                                    }
+
+                                    Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                    props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
+                                    alertListener(localOfInterest, (AssignStmt) currentUnit, props, invokedMethod,
+                                            methodInvocationDataflowNode);
+
+                                    localOfInterest = (Local) leftValue;
+                                }
+                            }
                         }
+                    } else if (rightValue instanceof CastExpr) {
+                        CastExpr castExpr = (CastExpr) rightValue;
+                        if (castExpr.getOp().equals(localOfInterest)) {
+                            if (leftValue instanceof Local) {
+                                localOfInterest = (Local) leftValue;
+                            }
+                        }
+                    } else if (rightValue instanceof InterfaceInvokeExpr) {
+                        InterfaceInvokeExpr interfaceInvokeExpr = (InterfaceInvokeExpr) rightValue;
+                        SootMethod invokedMethod = interfaceInvokeExpr.getMethod();
+                        if (interfaceInvokeExpr.getBase() instanceof Local) {
+                            Local baseLocal = (Local) interfaceInvokeExpr.getBase();
+                            if (baseLocal.equals(localOfInterest)) {
 
-                        localOfInterest = (Local) leftValue;
+                                boolean totalTransform = checkIfTransformIsTotal(unitPatchingChain.getSuccOf(currentUnit), unitPatchingChain, localOfInterest);
+                                if (!totalTransform) {
+                                    fallbackPoints.push(new Pair<>(currentUnit, localOfInterest));
+                                }
+
+                                if (leftValue instanceof Local) {
+                                    Local assignedValue = (Local) leftValue;
+                                    if (assignedValue.getName().contains("$")) {
+                                        //intermediate value
+                                        //check if intermediate value is just being used for counter
+                                        Unit intermediateCheck = unitPatchingChain.getSuccOf(currentUnit);
+                                        if (intermediateCheck instanceof IfStmt) {
+                                            IfStmt ifStmt = (IfStmt) intermediateCheck;
+                                            if (ifStmt.getCondition() instanceof ConditionExpr) {
+                                                ConditionExpr conditionExpr = (ConditionExpr) ifStmt.getCondition();
+                                                if (!(conditionExpr.getOp1().equals(assignedValue) || conditionExpr.getOp2().equals(assignedValue))) {
+                                                    //intermediate value is NOT a counter
+                                                    localOfInterest = assignedValue;
+                                                }
+                                            }
+                                        } else {
+                                            localOfInterest = assignedValue;
+                                        }
+                                    } else {
+                                        localOfInterest = assignedValue;
+                                    }
+                                }
+                            } else {
+
+                                Local finalLocalOfInterest1 = localOfInterest;
+                                if (interfaceInvokeExpr.getArgs().stream().anyMatch(arg -> arg.equals(finalLocalOfInterest1))) {
+
+                                    boolean totalTransform = checkIfTransformIsTotal(unitPatchingChain.getSuccOf(currentUnit), unitPatchingChain, localOfInterest);
+                                    if (!totalTransform) {
+                                        fallbackPoints.push(new Pair<>(currentUnit, localOfInterest));
+                                    }
+
+                                    ClassData classData = new ClassData(graph, currentUnit).invoke();
+
+                                    MethodInvocationDataflowNode methodInvocationDataflowNode = configureNodeFields(dataflowResource, classData.getCurrentClassName(),
+                                            invokedMethod, getLineNumber(currentUnit));
+
+                                    MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
+                                    methodInvocationDataflowEdge.setDataTypeCommunicated(dataBeingObserved);
+                                    if (incoming) {
+                                        linkProducerForward(currentDataflow, methodInvocationDataflowNode);
+                                        methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
+                                    } else {
+                                        linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
+                                        methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
+                                    }
+
+                                    currentDataflow.push(methodInvocationDataflowNode);
+                                    currentDataflow.push(methodInvocationDataflowEdge);
+
+                                    Optional<DataType> dataTypeOption = wasDataTransformed(classData.getLineNumber(), classData.getCurrentClassName(),
+                                            classData.getCurrentMethodName(), methodInvocationDataflowEdge);
+
+                                    if (dataTypeOption.isPresent()) {
+
+                                        DataType dataType = dataTypeOption.get();
+                                        Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                        props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataType.getClass().getCanonicalName());
+                                        if (dataType instanceof XmlDocument) {
+                                            props.put(DataflowAnalysisListener.SemanticProperties.SCHEMA_VERSION, ((XmlDocument) dataType).getSchemaVersion());
+                                        }
+
+                                        alertListener(localOfInterest, (AssignStmt) currentUnit, props, invokedMethod,
+                                                methodInvocationDataflowNode);
+
+                                        return currentDataflow;
+                                    } else if (didReturnTerminalType(invokedMethod, methodInvocationDataflowEdge)) {
+                                        return currentDataflow;
+                                    } else {
+                                        //dive into method for further annots
+                                        int argNumb = getArgNumb(finalLocalOfInterest1, interfaceInvokeExpr);
+                                        boolean withinAnalysisPurview = checkInvokeClass(interfaceInvokeExpr.getMethod().getDeclaringClass());
+
+                                        if (withinAnalysisPurview) {
+                                            DataflowGraphComponent dataflowGraphComponent = currentDataflow.pop();
+                                            Pair<Unit, Local> unitLocalPair = getLocalAndFirstUnit(interfaceInvokeExpr.getMethod(), argNumb);
+                                            Stack<DataflowGraphComponent> dataflows = this.forwardFlowAnalysis(new ExceptionalUnitGraph(invokedMethod.retrieveActiveBody()),
+                                                    unitLocalPair.getO2(), callTraceStack, unitLocalPair.getO1(), dataflowGraphComponent, incoming,
+                                                    dataflowResource, dataBeingObserved);
+
+                                            if (!dataflows.isEmpty()) {
+                                                currentDataflow.addAll(dataflows);
+                                                return currentDataflow;
+                                            } else {
+                                                currentDataflow.push(dataflowGraphComponent);
+                                            }
+                                        }
+
+                                        Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                        props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
+                                        alertListener(localOfInterest, (AssignStmt) currentUnit, props, invokedMethod,
+                                                methodInvocationDataflowNode);
+
+                                        localOfInterest = (Local) leftValue;
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
-            } else if (currentUnit instanceof InvokeStmt) {
-                InvokeStmt invokeStmt = (InvokeStmt) currentUnit;
-                InvokeExpr invokeExpr = invokeStmt.getInvokeExpr();
-                if (invokeExpr instanceof VirtualInvokeExpr) {
+                } else if (currentUnit instanceof InvokeStmt) {
+                    InvokeStmt invokeStmt = (InvokeStmt) currentUnit;
+                    InvokeExpr invokeExpr = invokeStmt.getInvokeExpr();
+                    if (invokeExpr instanceof VirtualInvokeExpr) {
 
-                    VirtualInvokeExpr virtualInvokeExpr = (VirtualInvokeExpr) invokeExpr;
-                    SootMethod invokedMethod = invokeExpr.getMethod();
+                        VirtualInvokeExpr virtualInvokeExpr = (VirtualInvokeExpr) invokeExpr;
+                        SootMethod invokedMethod = invokeExpr.getMethod();
 
+                        if (virtualInvokeExpr.getBase() instanceof Local && virtualInvokeExpr.getBase().equals(localOfInterest)) {
+                            //TODO might need to branch off of any arguments provided
+                            pushVirtualBaseFlowsAndLocalForward(currentUnit, currentDataflow, invokedMethod, incoming);
+                        } else {
+                            Local finalLocalOfInterest = localOfInterest;
+                            if (virtualInvokeExpr.getArgs().stream().anyMatch(arg -> arg.equals(finalLocalOfInterest))) {
 
+                                boolean totalTransform = checkIfTransformIsTotal(unitPatchingChain.getSuccOf(currentUnit), unitPatchingChain, localOfInterest);
+                                if (!totalTransform) {
+                                    fallbackPoints.push(new Pair<>(currentUnit, localOfInterest));
+                                }
 
-                    if (virtualInvokeExpr.getBase() instanceof Local && virtualInvokeExpr.getBase().equals(localOfInterest)) {
-                        //TODO might need to branch off of any arguments provided
-                        pushVirtualBaseFlowsAndLocalForward(currentUnit, currentDataflow, invokedMethod);
-                    } else {
-                        Local finalLocalOfInterest = localOfInterest;
-                        if (virtualInvokeExpr.getArgs().stream().anyMatch(arg -> arg.equals(finalLocalOfInterest))) {
+                                ClassData classData = new ClassData(graph, currentUnit).invoke();
 
-                            MethodInvocationDataflowNode methodInvocationDataflowNode = new MethodInvocationDataflowNode();
-                            methodInvocationDataflowNode.setJavaMethodName(invokedMethod.getName());
-                            methodInvocationDataflowNode.setJavaClassName(invokedMethod.getDeclaringClass().getName());
-                            methodInvocationDataflowNode.setLineNumber(getLineNumber(currentUnit));
-                            methodInvocationDataflowNode.setAbstractResourceTemplate(Client.class);
+                                MethodInvocationDataflowNode methodInvocationDataflowNode = configureNodeFields(dataflowResource, classData.getCurrentClassName(),
+                                        invokedMethod, getLineNumber(currentUnit));
 
-                            linkProducerForward(currentDataflow, methodInvocationDataflowNode);
+                                MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
+                                methodInvocationDataflowEdge.setDataTypeCommunicated(dataBeingObserved);
+                                if (incoming) {
+                                    linkProducerForward(currentDataflow, methodInvocationDataflowNode);
+                                    methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
+                                } else {
+                                    linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
+                                    methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
+                                }
+
+                                currentDataflow.push(methodInvocationDataflowNode);
+                                currentDataflow.push(methodInvocationDataflowEdge);
+
+                                Optional<DataType> dataTypeOption = wasDataTransformed(classData.getLineNumber(), classData.getCurrentClassName(),
+                                        classData.getCurrentMethodName(), methodInvocationDataflowEdge);
+
+                                //check source (if possible) for local var annots
+                                if (dataTypeOption.isPresent()) {
+
+                                    DataType dataType = dataTypeOption.get();
+                                    Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                    props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataType.getClass().getCanonicalName());
+                                    if (dataType instanceof XmlDocument) {
+                                        props.put(DataflowAnalysisListener.SemanticProperties.SCHEMA_VERSION, ((XmlDocument) dataType).getSchemaVersion());
+                                    }
+
+                                    alertListener(localOfInterest, (InvokeStmt) currentUnit, props, invokedMethod,
+                                            methodInvocationDataflowNode);
+
+                                    return currentDataflow;
+                                } else if (didReturnTerminalType(invokedMethod, methodInvocationDataflowEdge)) {
+                                    return currentDataflow;
+                                } else {
+
+                                    Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                    props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
+                                    alertListener(localOfInterest, (InvokeStmt) currentUnit, props, invokedMethod,
+                                            methodInvocationDataflowNode);
+
+                                    localOfInterest = (Local) virtualInvokeExpr.getBase();
+                                }
+                            }
+                        }
+                    } else if (invokeExpr instanceof SpecialInvokeExpr) {
+                        SpecialInvokeExpr specialInvokeExpr = (SpecialInvokeExpr) invokeExpr;
+                        SootMethod invokedMethod = invokeExpr.getMethod();
+
+                        Local finalLocalOfInterest1 = localOfInterest;
+                        if (specialInvokeExpr.getArgs().stream().anyMatch(arg -> arg.equals(finalLocalOfInterest1))) {
+
+                            boolean totalTransform = checkIfTransformIsTotal(unitPatchingChain.getSuccOf(currentUnit), unitPatchingChain, localOfInterest);
+                            if (!totalTransform) {
+                                fallbackPoints.push(new Pair<>(currentUnit, localOfInterest));
+                            }
+
+                            ClassData classData = new ClassData(graph, currentUnit).invoke();
+
+                            MethodInvocationDataflowNode methodInvocationDataflowNode = configureNodeFields(dataflowResource, classData.getCurrentClassName(),
+                                    invokedMethod, getLineNumber(currentUnit));
 
                             MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
-                            methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
-                            methodInvocationDataflowEdge.setDataTypeCommunicated(BinaryData.class);
+                            methodInvocationDataflowEdge.setDataTypeCommunicated(dataBeingObserved);
+                            if (incoming) {
+                                linkProducerForward(currentDataflow, methodInvocationDataflowNode);
+                                methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
+                            } else {
+                                linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
+                                methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
+                            }
 
                             currentDataflow.push(methodInvocationDataflowNode);
                             currentDataflow.push(methodInvocationDataflowEdge);
 
-                            String objectOfInterest = getObjectOfInterest(invokedMethod, classNameToSemantics);
-                            if (objectOfInterest != null) {
-                                // attempting to transform data, end of data flow analysis???
-                                methodInvocationDataflowEdge.setDataTypeCommunicated(XmlInstance.class);
+                            Optional<DataType> dataTypeOption = wasDataTransformed(classData.getLineNumber(), classData.getCurrentClassName(),
+                                    classData.getCurrentMethodName(), methodInvocationDataflowEdge);
+
+                            if (dataTypeOption.isPresent()) {
+
+                                DataType dataType = dataTypeOption.get();
+                                Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataType.getClass().getCanonicalName());
+                                if (dataType instanceof XmlDocument) {
+                                    props.put(DataflowAnalysisListener.SemanticProperties.SCHEMA_VERSION, ((XmlDocument) dataType).getSchemaVersion());
+                                }
+
+                                alertListener(localOfInterest, (InvokeStmt) currentUnit, props, invokedMethod,
+                                        methodInvocationDataflowNode);
+
+                                return currentDataflow;
+                            } else if (didReturnTerminalType(invokedMethod, methodInvocationDataflowEdge)) {
+                                return currentDataflow;
+                            } else {
+                                if (specialInvokeExpr.getBase() instanceof Local) {
+
+                                    Local baseLocal = (Local) specialInvokeExpr.getBase();
+                                    if (baseLocal.getName().contains("$")) {
+                                        //intermediate value
+                                        localOfInterest = baseLocal;
+
+                                        Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                        props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
+                                        alertListener(localOfInterest, (InvokeStmt) currentUnit, props, invokedMethod,
+                                                methodInvocationDataflowNode);
+                                    }
+                                }
+                            }
+                        }
+                    } else if (invokeExpr instanceof InterfaceInvokeExpr) {
+
+                        InterfaceInvokeExpr interfaceInvokeExpr = (InterfaceInvokeExpr) invokeExpr;
+                        Local finalLocalOfInterest1 = localOfInterest;
+                        SootMethod invokedMethod = invokeExpr.getMethod();
+
+                        if (interfaceInvokeExpr.getBase() instanceof Local && interfaceInvokeExpr.getBase().equals(localOfInterest)) {
+
+                            boolean totalTransform = checkIfTransformIsTotal(unitPatchingChain.getSuccOf(currentUnit), unitPatchingChain, localOfInterest);
+                            if (!totalTransform) {
+                                fallbackPoints.push(new Pair<>(currentUnit, localOfInterest));
+                            }
+
+                            ClassData classData = new ClassData(graph, currentUnit).invoke();
+
+                            MethodInvocationDataflowNode methodInvocationDataflowNode = configureNodeFields(dataflowResource, classData.getCurrentClassName(),
+                                    invokedMethod, getLineNumber(currentUnit));
+
+                            MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
+                            methodInvocationDataflowEdge.setDataTypeCommunicated(dataBeingObserved);
+                            if (incoming) {
+                                linkProducerForward(currentDataflow, methodInvocationDataflowNode);
+                                methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
+                            } else {
+                                linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
+                                methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
+                            }
+
+                            SootClass invokedClass = invokedMethod.getDeclaringClass();
+                            String className = invokedClass.getName();
+                            Class<?> classObject = this.getClass().getClassLoader().loadClass(className);
+
+                            currentDataflow.push(methodInvocationDataflowNode);
+                            currentDataflow.push(methodInvocationDataflowEdge);
+
+                            Optional<DataType> dataTypeOption = wasDataTransformed(classData.getLineNumber(), classData.getCurrentClassName(),
+                                    classData.getCurrentMethodName(), methodInvocationDataflowEdge);
+
+                            if (dataTypeOption.isPresent()) {
+
+                                DataType dataType = dataTypeOption.get();
+                                Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataType.getClass().getCanonicalName());
+                                if (dataType instanceof XmlDocument) {
+                                    props.put(DataflowAnalysisListener.SemanticProperties.SCHEMA_VERSION, ((XmlDocument) dataType).getSchemaVersion());
+                                }
+
+                                alertListener(localOfInterest, (InvokeStmt) currentUnit, props, invokedMethod,
+                                        methodInvocationDataflowNode);
+
+                                return currentDataflow;
+                            } else if (didReturnTerminalType(invokedMethod, methodInvocationDataflowEdge)) {
                                 return currentDataflow;
                             }
 
-                            localOfInterest = (Local) virtualInvokeExpr.getBase();
-                        }
-                    }
-                }
-            } else if (currentUnit instanceof ReturnStmt) {
+                            if (classObject.isAssignableFrom(Collection.class)) {
+                                // collection object, keep current local of interest
+                            } else {
+                                localOfInterest = (Local) interfaceInvokeExpr.getBase();
 
-                ReturnStmt returnStmt = (ReturnStmt) currentUnit;
-                if (returnStmt.getOp().equals(localOfInterest)) {
-                    String nextNode = callTraceStack.pop();
-                    String[] callTraceComponents = nextNode.split(" ");
-                    String callClassOwner = callTraceComponents[0];
-                    //TODO currently here, need to parse things like read...
-                    String callMethodDesc = convertCallTraceSigToSootSig(callTraceComponents[1], callTraceComponents[2]);
-                    SootClass sClass = Scene.v().loadClassAndSupport(callClassOwner.replace("/", "."));
-                    SootMethod sMethod = sClass.getMethod(callMethodDesc);
+                                Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
+                                alertListener(localOfInterest, (InvokeStmt) currentUnit, props, invokedMethod,
+                                        methodInvocationDataflowNode);
+                            }
+                        } else if (interfaceInvokeExpr.getArgs().stream().anyMatch(arg -> arg instanceof Local && arg.equals(finalLocalOfInterest1))) {
 
-                    List<Pair<Unit, Local>> unitLocalPairs = retrieveUnitOfInterestInvokeAssign(graph.getBody().getMethod(), sMethod, null);
-                    DataflowGraphComponent dataflowGraphComponent = currentDataflow.pop();
-                    for (Pair<Unit, Local> unitLocalPair : unitLocalPairs) {
-                        Stack<DataflowGraphComponent> dataflows = this.forwardFlowAnalysis(new ExceptionalUnitGraph(sMethod.retrieveActiveBody()), unitLocalPair.getO2(), callTraceStack,
-                                unitLocalPair.getO1(), dataflowGraphComponent);
+                            boolean totalTransform = checkIfTransformIsTotal(unitPatchingChain.getSuccOf(currentUnit), unitPatchingChain, localOfInterest);
+                            if (!totalTransform) {
+                                fallbackPoints.push(new Pair<>(currentUnit, localOfInterest));
+                            }
 
-                        if (!dataflows.isEmpty()) {
-                            currentDataflow.addAll(dataflows);
-                            return currentDataflow;
-                        } else {
-                            //failed branch
-                        }
-                    }
-                }
-            } else if (currentUnit instanceof ReturnVoidStmt) {
+                            ClassData classData = new ClassData(graph, currentUnit).invoke();
 
-                //return is void, check parameters for object of interest
-                List<IdentityStmt> identityStmts = unitPatchingChain.stream().filter(unit -> unit instanceof IdentityStmt)
-                        .map(unit -> (IdentityStmt) unit).collect(Collectors.toList());
-                for (IdentityStmt identityStmt : identityStmts) {
-                    if (identityStmt.getLeftOp().equals(localOfInterest)) {
+                            MethodInvocationDataflowNode methodInvocationDataflowNode = configureNodeFields(dataflowResource, classData.getCurrentClassName(),
+                                    invokedMethod, getLineNumber(currentUnit));
 
-                        ParameterRef parameterRef = (ParameterRef) identityStmt.getRightOp();
-                        String desc = parameterRef.toString();
-                        Pattern pattern = Pattern.compile("@parameter(\\d):");
-                        Matcher matcher = pattern.matcher(desc);
+                            MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
+                            methodInvocationDataflowEdge.setDataTypeCommunicated(dataBeingObserved);
+                            if (incoming) {
+                                linkProducerForward(currentDataflow, methodInvocationDataflowNode);
+                                methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
+                            } else {
+                                linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
+                                methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
+                            }
 
-                        int paramNumb = -1;
-                        if (matcher.find()) {
-                            paramNumb = Integer.parseInt(matcher.group(1));
-                        }
+                            currentDataflow.push(methodInvocationDataflowNode);
+                            currentDataflow.push(methodInvocationDataflowEdge);
 
-                        String nextNode = callTraceStack.pop();
-                        String[] callTraceComponents = nextNode.split(" ");
-                        String callClassOwner = callTraceComponents[0];
-                        //TODO currently here, need to parse things like read...
-                        String callMethodDesc = convertCallTraceSigToSootSig(callTraceComponents[1], callTraceComponents[2]);
-                        SootClass sClass = Scene.v().loadClassAndSupport(callClassOwner.replace("/", "."));
-                        SootMethod sMethod = sClass.getMethod(callMethodDesc);
+                            Optional<DataType> dataTypeOption = wasDataTransformed(classData.getLineNumber(), classData.getCurrentClassName(),
+                                    classData.getCurrentMethodName(), methodInvocationDataflowEdge);
 
-                        if (paramNumb != -1) {
-                            List<Pair<Unit, Local>> unitLocalPairs = retrieveUnitOfInterestInvokeArg(graph.getBody().getMethod(), sMethod, paramNumb, null);
+                            if (dataTypeOption.isPresent()) {
 
-                            DataflowGraphComponent dataflowGraphComponent = currentDataflow.pop();
-                            for (Pair<Unit, Local> unitLocalPair : unitLocalPairs) {
-                                Stack<DataflowGraphComponent> dataflows = this.forwardFlowAnalysis(new ExceptionalUnitGraph(sMethod.retrieveActiveBody()), unitLocalPair.getO2(), callTraceStack,
-                                        unitLocalPair.getO1(), dataflowGraphComponent);
+                                DataType dataType = dataTypeOption.get();
+                                Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataType.getClass().getCanonicalName());
+                                if (dataType instanceof XmlDocument) {
+                                    props.put(DataflowAnalysisListener.SemanticProperties.SCHEMA_VERSION, ((XmlDocument) dataType).getSchemaVersion());
+                                }
 
-                                if (!dataflows.isEmpty()) {
-                                    currentDataflow.addAll(dataflows);
-                                    return currentDataflow;
-                                } else {
-                                    //failed branch
+                                alertListener(localOfInterest, (InvokeStmt) currentUnit, props, invokedMethod,
+                                        methodInvocationDataflowNode);
+
+                                return currentDataflow;
+                            } else if (didReturnTerminalType(invokedMethod, methodInvocationDataflowEdge)) {
+                                return currentDataflow;
+                            } else {
+                                if (interfaceInvokeExpr.getBase() instanceof Local) {
+
+                                    //if (baseLocal.getName().contains("$")) {
+                                        //intermediate value
+                                        localOfInterest = (Local) interfaceInvokeExpr.getBase();
+
+                                        Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                                        props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
+                                        alertListener(localOfInterest, (InvokeStmt) currentUnit, props, invokedMethod,
+                                                methodInvocationDataflowNode);
+                                   // }
                                 }
                             }
                         }
                     }
-                }
-            } else if (currentUnit instanceof ThrowStmt) {
-                ThrowStmt throwStmt = (ThrowStmt) currentUnit;
-                if (throwStmt.getOp().equals(localOfInterest)) {
-                    if (callTraceStack.isEmpty()) {
-                        // end of call trace, but no transformation found??? No idea what this means
-                    } else {
-                        currentDataflow.clear();
-                        return currentDataflow;
+                } else if (currentUnit instanceof ReturnStmt) {
+
+                    ReturnStmt returnStmt = (ReturnStmt) currentUnit;
+                    if (returnStmt.getOp().equals(localOfInterest)) {
+                        SootMethod sMethod = retrieveNextMethodInTrace(callTraceStack);
+
+                        List<Pair<Unit, Local>> unitLocalPairs = retrieveUnitOfInterestInvokeAssign(graph.getBody().getMethod(), sMethod, null);
+                        DataflowGraphComponent dataflowGraphComponent = currentDataflow.pop();
+                        for (Pair<Unit, Local> unitLocalPair : unitLocalPairs) {
+                            Stack<DataflowGraphComponent> dataflows = this.forwardFlowAnalysis(new ExceptionalUnitGraph(sMethod.retrieveActiveBody()),
+                                    unitLocalPair.getO2(), callTraceStack, unitLocalPair.getO1(), dataflowGraphComponent, incoming, dataflowResource, dataBeingObserved);
+
+                            if (!dataflows.isEmpty()) {
+                                currentDataflow.addAll(dataflows);
+                                return currentDataflow;
+                            }
+                        }
+                        currentDataflow.push(dataflowGraphComponent);
+                    }
+                } else if (currentUnit instanceof ReturnVoidStmt) {
+
+                    //return is void, check parameters for object of interest
+                    List<IdentityStmt> identityStmts = unitPatchingChain.stream().filter(unit -> unit instanceof IdentityStmt)
+                            .map(unit -> (IdentityStmt) unit).collect(Collectors.toList());
+                    for (IdentityStmt identityStmt : identityStmts) {
+                        if (identityStmt.getLeftOp().equals(localOfInterest)) {
+
+                            ParameterRef parameterRef = (ParameterRef) identityStmt.getRightOp();
+                            String desc = parameterRef.toString();
+                            Pattern pattern = Pattern.compile("@parameter(\\d):");
+                            Matcher matcher = pattern.matcher(desc);
+
+                            int paramNumb = -1;
+                            if (matcher.find()) {
+                                paramNumb = Integer.parseInt(matcher.group(1));
+                            }
+
+                            SootMethod sMethod = retrieveNextMethodInTrace(callTraceStack);
+
+                            if (paramNumb != -1) {
+                                List<Pair<Unit, Local>> unitLocalPairs = retrieveUnitOfInterestInvokeArg(graph.getBody().getMethod(), sMethod, paramNumb, null);
+
+                                DataflowGraphComponent dataflowGraphComponent = currentDataflow.pop();
+                                for (Pair<Unit, Local> unitLocalPair : unitLocalPairs) {
+                                    Stack<DataflowGraphComponent> dataflows = this.forwardFlowAnalysis(new ExceptionalUnitGraph(sMethod.retrieveActiveBody()),
+                                            unitLocalPair.getO2(), callTraceStack, unitLocalPair.getO1(), dataflowGraphComponent, incoming, dataflowResource, dataBeingObserved);
+
+                                    if (!dataflows.isEmpty()) {
+                                        currentDataflow.addAll(dataflows);
+                                        return currentDataflow;
+                                    }
+                                }
+                                currentDataflow.push(dataflowGraphComponent);
+                            }
+                        }
+                    }
+                } else if (currentUnit instanceof ThrowStmt) {
+                    ThrowStmt throwStmt = (ThrowStmt) currentUnit;
+                    if (throwStmt.getOp().equals(localOfInterest)) {
+
+                        if (fallbackPoints.isEmpty()) {
+                            break;
+                        } else {
+                            Pair<Unit, Local> fallbackPoint = fallbackPoints.pop();
+                            currentUnit = fallbackPoint.getO1();
+                            localOfInterest = fallbackPoint.getO2();
+                            continue;
+                        }
                     }
                 }
             }
+
+            if (fallbackPoints.isEmpty()) {
+                break;
+            }
+
+            Pair<Unit, Local> fallbackPoint = fallbackPoints.pop();
+            currentUnit = fallbackPoint.getO1();
+            localOfInterest = fallbackPoint.getO2();
         }
 
         //TODO current stop-gap, need to improve dataflow analysis
         currentDataflow.clear();
         return currentDataflow;
+    }
+
+    private SootMethod retrieveNextMethodInTrace(Stack<String> callTraceStack) {
+        String nextNode = callTraceStack.pop();
+        String[] callTraceComponents = nextNode.split(" ");
+        String callClassOwner = callTraceComponents[0];
+        String callMethodDesc = convertCallTraceSigToSootSig(callTraceComponents[1], callTraceComponents[2]);
+        SootClass sClass = Scene.v().loadClassAndSupport(callClassOwner.replace("/", "."));
+        return sClass.getMethod(callMethodDesc);
+    }
+
+    private boolean didReturnTerminalType(SootMethod invokedMethod, MethodInvocationDataflowEdge methodInvocationDataflowEdge) {
+        String objectOfInterest = getObjectOfInterest(invokedMethod, classNameToSemantics);
+        if (objectOfInterest != null) {
+            // attempting to transform data, end of data flow analysis???
+            methodInvocationDataflowEdge.setDataTypeCommunicated(XmlDocument.class);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkIfTransformIsTotal(Unit currentUnit, UnitPatchingChain unitPatchingChain, Local currentLOI) {
+
+        while (currentUnit != null) {
+
+            Unit unitToAnalyze = null;
+            Expr exprToAnalyze = null;
+            if (currentUnit instanceof AssignStmt) {
+                //same process, just apply to both sides
+                Value rightValue = ((AssignStmt) currentUnit).getRightOp();
+
+                try {
+                    unitToAnalyze = (Unit) rightValue;
+                } catch (Exception exc) {// naked expr
+
+                    if (rightValue instanceof Expr) {
+                        exprToAnalyze = (Expr) rightValue;
+                    }
+
+                }
+            } else {
+                unitToAnalyze = currentUnit;
+            }
+
+            if (unitToAnalyze != null) {
+
+                if (unitToAnalyze instanceof Stmt) {
+                    Stmt stmt = (Stmt) unitToAnalyze;
+                    if (stmt instanceof InvokeStmt) {
+                        InvokeExpr expr = stmt.getInvokeExpr();
+
+                        if (expr instanceof StaticInvokeExpr) {
+                            //no base
+                            StaticInvokeExpr staticInvokeExpr = (StaticInvokeExpr) expr;
+                            if (staticInvokeExpr.getArgs().stream().anyMatch(value -> (value instanceof Local) && value.equals(currentLOI))) {
+                                return false;
+                            }
+                        } else {
+                            //has base
+                            InstanceInvokeExpr instanceInvokeExpr = (InstanceInvokeExpr) expr;
+                            if (instanceInvokeExpr.getBase() instanceof Local && instanceInvokeExpr.getBase().equals(currentLOI)) {
+                                return false;
+                            } else if (instanceInvokeExpr.getArgs().stream().anyMatch(value -> (value instanceof Local) && value.equals(currentLOI))) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            } else {
+
+                if (exprToAnalyze instanceof StaticInvokeExpr) {
+                    //no base
+                    StaticInvokeExpr staticInvokeExpr = (StaticInvokeExpr) exprToAnalyze;
+                    if (staticInvokeExpr.getArgs().stream().anyMatch(value -> (value instanceof Local) && value.equals(currentLOI))) {
+                        return false;
+                    }
+                } else if (exprToAnalyze instanceof InstanceInvokeExpr) {
+                    //has base
+                    InstanceInvokeExpr instanceInvokeExpr = (InstanceInvokeExpr) exprToAnalyze;
+                    if (instanceInvokeExpr.getBase() instanceof Local && instanceInvokeExpr.getBase().equals(currentLOI)) {
+                        return false;
+                    } else if (instanceInvokeExpr.getArgs().stream().anyMatch(value -> (value instanceof Local) && value.equals(currentLOI))) {
+                        return false;
+                    }
+                }
+            }
+
+           currentUnit = unitPatchingChain.getSuccOf(currentUnit);
+        }
+
+        return true;
+    }
+
+    private Pair<Unit, Local> getLocalAndFirstUnit(SootMethod method, int argNumb) {
+
+        Local localOfInterest = null;
+        Unit lastIdentityUnit = null;
+
+        Body methodBody = method.retrieveActiveBody();
+        Chain<Unit> units = methodBody.getUnits();
+        boolean foundParamAssignment = false;
+
+        for (Unit unit : units) {
+            if (unit instanceof IdentityStmt && !foundParamAssignment) {
+                IdentityStmt identityStmt = (IdentityStmt) unit;
+                Value value = identityStmt.getRightOpBox().getValue();
+                if (value instanceof ParameterRef) {
+                    ParameterRef parameterRef = (ParameterRef) value;
+                    if (parameterRef.getIndex() == argNumb) {
+                        //FOUND OBJECT OF INTEREST
+                        foundParamAssignment = true;
+                        value = identityStmt.getLeftOpBox().getValue();
+                        if (value instanceof Local) {
+                            localOfInterest = (Local) value;
+                        }
+                    }
+                }
+            } else if (!(unit instanceof IdentityStmt) && !foundParamAssignment) {
+                // no idea how this happens...
+                throw new RuntimeException("UNABLE TO FIND PARAM IN METHOD BODY");
+            } else if (!(unit instanceof IdentityStmt) && foundParamAssignment) {
+                lastIdentityUnit = units.getPredOf(unit);
+                break;
+            }
+        }
+
+        if (localOfInterest != null && lastIdentityUnit != null) {
+            return new Pair<>(lastIdentityUnit, localOfInterest);
+        }
+
+        return null;
+    }
+
+    private boolean checkInvokeClass(SootClass declaringClass) {
+        String queryDeclaringClass = "";
+        //TODO temp... write actual query
+        if (declaringClass.getName().contains("MessageListenerClient")) {
+            return true;
+        }
+        return false;
     }
 
     private static List<Pair<Unit, Local>> retrieveUnitOfInterestInvokeAssign(SootMethod currentMethod, SootMethod methodOfInterest,
@@ -541,18 +1136,70 @@ public class DataflowAnalyzerPlatform {
         return unitToLocalPairs;
     }
 
-    private void pushVirtualBaseFlowsAndLocalForward(Unit currentUnit, Stack<DataflowGraphComponent> currentDataflow, SootMethod invokedMethod) {
+
+    @Deprecated
+    private static List<Pair<Unit, Local>> retrieveUnitOfInterestInvokeAssign(SootMethod currentMethod, SootMethod methodOfInterest) {
+
+        List<Pair<Unit, Local>> unitToLocalPairs = new ArrayList<>();
+        Body b = methodOfInterest.retrieveActiveBody();
+
+        UnitGraph graph = new ExceptionalUnitGraph(b);
+        Iterator gIt = graph.iterator();
+        while (gIt.hasNext()) {
+            Unit u = (Unit) gIt.next();
+            if (u instanceof AssignStmt) {
+
+                Value rightValue = ((AssignStmt) u).getRightOp();
+                Value leftValue = ((AssignStmt) u).getLeftOp();
+
+                if (rightValue instanceof VirtualInvokeExpr) {
+
+                } else if (rightValue instanceof SpecialInvokeExpr) {
+
+                    SpecialInvokeExpr specialInvokeExpr = (SpecialInvokeExpr) rightValue;
+                    if (specialInvokeExpr.getMethod().equals(currentMethod) && leftValue instanceof Local) {
+                        unitToLocalPairs.add(new Pair<>(u, (Local) leftValue));
+                    }
+
+                } else if (rightValue instanceof StaticInvokeExpr) {
+
+                }
+
+            } else if (u instanceof InvokeStmt) {
+
+            } else if (u instanceof ReturnStmt) {
+                ReturnStmt returnStmt = (ReturnStmt) u;
+                Value returnValue = returnStmt.getOp();
+
+                if (returnValue instanceof SpecialInvokeExpr) {
+                    SpecialInvokeExpr specialInvokeExpr = (SpecialInvokeExpr) returnValue;
+                    if (specialInvokeExpr.getMethod().equals(currentMethod)) {
+                        // dataflowNode.setLineNumber(getLineNumber(u));
+                        // return new Pair<>(u, (Local) specialInvokeExpr.getArg(paramNumb));
+                    }
+                }
+            }
+        }
+
+        return unitToLocalPairs;
+    }
+
+    private void pushVirtualBaseFlowsAndLocalForward(Unit currentUnit, Stack<DataflowGraphComponent> currentDataflow, SootMethod invokedMethod, boolean incoming) {
         MethodInvocationDataflowNode methodInvocationDataflowNode = new MethodInvocationDataflowNode();
         methodInvocationDataflowNode.setJavaMethodName(invokedMethod.getName());
         methodInvocationDataflowNode.setJavaClassName(invokedMethod.getDeclaringClass().getName());
         methodInvocationDataflowNode.setLineNumber(getLineNumber(currentUnit));
         methodInvocationDataflowNode.setAbstractResourceTemplate(Client.class);
 
-        linkProducerForward(currentDataflow, methodInvocationDataflowNode);
-
         MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
-        methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
         methodInvocationDataflowEdge.setDataTypeCommunicated(BinaryData.class);
+        if (incoming) {
+            linkProducerForward(currentDataflow, methodInvocationDataflowNode);
+            methodInvocationDataflowEdge.setProducer(methodInvocationDataflowNode);
+        } else {
+            linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
+            methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
+        }
 
         currentDataflow.push(methodInvocationDataflowNode);
         currentDataflow.push(methodInvocationDataflowEdge);
@@ -621,7 +1268,8 @@ public class DataflowAnalyzerPlatform {
     }
 
     private Stack<DataflowGraphComponent> reverseFlowAnalysis(UnitGraph graph, Local localOfInterest, Stack<String> callTraceStack,
-                                                              Unit currentUnit, Stack<DataflowGraphComponent> currentDataflow) {
+                                                              Unit currentUnit, Stack<DataflowGraphComponent> currentDataflow,
+                                                              Class<? extends Resource> dataflowResource, Class<? extends DataType> dataBeingObserved) throws IOException, ClassNotFoundException {
 
         UnitPatchingChain unitPatchingChain = graph.getBody().getUnits();
 
@@ -643,63 +1291,82 @@ public class DataflowAnalyzerPlatform {
 
                     } else if (leftValue.equals(localOfInterest)){
 
+                        ClassData classData = new ClassData(graph, currentUnit).invoke();
 
-                        MethodInvocationDataflowNode methodInvocationDataflowNode = new MethodInvocationDataflowNode();
-                        methodInvocationDataflowNode.setJavaMethodName(invokedMethod.getName());
-                        methodInvocationDataflowNode.setJavaClassName(invokedMethod.getDeclaringClass().getName());
-                        methodInvocationDataflowNode.setLineNumber(getLineNumber(currentUnit));
-                        methodInvocationDataflowNode.setAbstractResourceTemplate(Client.class);
+                        MethodInvocationDataflowNode methodInvocationDataflowNode = configureNodeFields(dataflowResource, classData.getCurrentClassName(),
+                                invokedMethod, classData.getLineNumber());
 
                         linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
 
                         MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
                         methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
-                        methodInvocationDataflowEdge.setDataTypeCommunicated(BinaryData.class);
+                        methodInvocationDataflowEdge.setDataTypeCommunicated(dataBeingObserved);
 
                         currentDataflow.push(methodInvocationDataflowNode);
                         currentDataflow.push(methodInvocationDataflowEdge);
 
-                        String objectOfInterest = getObjectOfInterest(invokedMethod, classNameToSemantics);
-                        if (objectOfInterest != null) {
-                            // attempting to transform data, end of data flow analysis???
-                            methodInvocationDataflowEdge.setDataTypeCommunicated(XmlInstance.class);
-                            return currentDataflow;
-                        }
+                        Optional<DataType> dataTypeOption = wasDataTransformed(classData.getLineNumber(), classData.getCurrentClassName(),
+                                classData.getCurrentMethodName(), methodInvocationDataflowEdge);
 
-                        List<Local> locals = new ArrayList<>();
-                        for(Value arg : virtualInvokeExpr.getArgs()) {
-                            if (arg instanceof Local) {
-                                locals.add((Local) arg);
+                        if (dataTypeOption.isPresent()) {
+
+                            DataType dataType = dataTypeOption.get();
+                            Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                            props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataType.getClass().getCanonicalName());
+                            if (dataType instanceof XmlDocument) {
+                                props.put(DataflowAnalysisListener.SemanticProperties.SCHEMA_VERSION, ((XmlDocument) dataType).getSchemaVersion());
                             }
-                        }
 
-                        if (!locals.isEmpty()) {
-                            for (Local local : locals) {
-                                Stack<DataflowGraphComponent> newGraph = this.reverseFlowAnalysis(graph, local, callTraceStack, currentUnit, currentDataflow);
-                                if (!newGraph.isEmpty()) {
-                                    // branch was correct, return
-                                    return newGraph;
+                            alertListener(localOfInterest, (AssignStmt) currentUnit, props, invokedMethod,
+                                    methodInvocationDataflowNode);
+
+                            return currentDataflow;
+                        } else if (didReturnTerminalType(invokedMethod, methodInvocationDataflowEdge)) {
+                            return currentDataflow;
+                        } else {
+                            List<Local> locals = new ArrayList<>();
+                            for(Value arg : virtualInvokeExpr.getArgs()) {
+                                if (arg instanceof Local) {
+                                    locals.add((Local) arg);
                                 }
                             }
+
+                            if (!locals.isEmpty()) {
+                                for (Local local : locals) {
+                                    Stack<DataflowGraphComponent> newGraph = this.reverseFlowAnalysis(graph, local, callTraceStack, currentUnit,
+                                            currentDataflow, dataflowResource, dataBeingObserved);
+                                    if (!newGraph.isEmpty()) {
+                                        // branch was correct, return
+                                        return newGraph;
+                                    }
+                                }
+                            }
+
+                            localOfInterest = (Local) virtualInvokeExpr.getBase();
+
+                            Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                            props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
+                            alertListener(localOfInterest, (AssignStmt) currentUnit, props, invokedMethod,
+                                    methodInvocationDataflowNode);
                         }
-
-                        localOfInterest = (Local) virtualInvokeExpr.getBase();
-
                     } else {
                         int argNumb = getArgNumb(localOfInterest, virtualInvokeExpr);
                         if (argNumb != -1) {
+                            String currentClassName = graph.getBody().getMethod().getDeclaringClass().getName();
                             //used by invoke
-                            MethodInvocationDataflowNode methodInvocationDataflowNode = new MethodInvocationDataflowNode();
-                            methodInvocationDataflowNode.setJavaMethodName(invokedMethod.getName());
-                            methodInvocationDataflowNode.setJavaClassName(invokedMethod.getDeclaringClass().getName());
-                            methodInvocationDataflowNode.setLineNumber(getLineNumber(currentUnit));
-                            methodInvocationDataflowNode.setAbstractResourceTemplate(Client.class);
+                            MethodInvocationDataflowNode methodInvocationDataflowNode = configureNodeFields(dataflowResource, currentClassName,
+                                    invokedMethod, getLineNumber(currentUnit));
 
                             linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
 
                             MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
                             methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
-                            methodInvocationDataflowEdge.setDataTypeCommunicated(BinaryData.class);
+                            methodInvocationDataflowEdge.setDataTypeCommunicated(dataBeingObserved);
+
+                            Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                            props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
+                            alertListener(localOfInterest, (AssignStmt) currentUnit, props, invokedMethod,
+                                    methodInvocationDataflowNode);
 
                             localOfInterest = (Local) leftValue;
                         }
@@ -710,49 +1377,93 @@ public class DataflowAnalyzerPlatform {
                 } else if (rightValue instanceof SpecialInvokeExpr) {
 
                     if (leftValue.equals(localOfInterest)){
+
+                        ClassData classData = new ClassData(graph, currentUnit).invoke();
+
                         SpecialInvokeExpr specialInvokeExpr = (SpecialInvokeExpr) rightValue;
                         SootMethod specialInvokeMethod = specialInvokeExpr.getMethod();
-                        //TODO need logic for checking if object of interest is undergoing transformations i.e. is passed to annotated method
-                        MethodInvocationDataflowNode methodInvocationDataflowNode = new MethodInvocationDataflowNode();
-                        methodInvocationDataflowNode.setJavaMethodName(specialInvokeMethod.getName());
-                        methodInvocationDataflowNode.setJavaClassName(specialInvokeMethod.getDeclaringClass().getName());
-                        methodInvocationDataflowNode.setLineNumber(getLineNumber(currentUnit));
-                        methodInvocationDataflowNode.setAbstractResourceTemplate(Client.class);
+
+                        MethodInvocationDataflowNode methodInvocationDataflowNode = configureNodeFields(dataflowResource, classData.getCurrentClassName(),
+                                specialInvokeMethod, getLineNumber(currentUnit));
 
                         linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
 
                         MethodInvocationDataflowEdge methodInvocationDataflowEdge = new MethodInvocationDataflowEdge();
                         methodInvocationDataflowEdge.setConsumer(methodInvocationDataflowNode);
-                        methodInvocationDataflowEdge.setDataTypeCommunicated(BinaryData.class);
+                        methodInvocationDataflowEdge.setDataTypeCommunicated(dataBeingObserved);
 
                         currentDataflow.push(methodInvocationDataflowNode);
                         currentDataflow.push(methodInvocationDataflowEdge);
 
-                        String objectOfInterest = getObjectOfInterest(specialInvokeMethod, classNameToSemantics);
-                        if (objectOfInterest != null) {
-                            // attempting to transform data, end of data flow analysis???
-                            methodInvocationDataflowEdge.setDataTypeCommunicated(XmlInstance.class);
-                            return currentDataflow;
-                        }
+                        Optional<DataType> dataTypeOption = wasDataTransformed(classData.getLineNumber(), classData.getCurrentClassName(),
+                                classData.getCurrentMethodName(), methodInvocationDataflowEdge);
 
-                        List<Local> locals = new ArrayList<>();
-                        for(Value arg : specialInvokeExpr.getArgs()) {
-                            if (arg instanceof Local) {
-                                locals.add((Local) arg);
+                        if (dataTypeOption.isPresent()) {
+
+                            DataType dataType = dataTypeOption.get();
+                            Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                            props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataType.getClass().getCanonicalName());
+                            if (dataType instanceof XmlDocument) {
+                                props.put(DataflowAnalysisListener.SemanticProperties.SCHEMA_VERSION, ((XmlDocument) dataType).getSchemaVersion());
                             }
-                        }
 
-                        if (!locals.isEmpty()) {
-                            for (Local local : locals) {
-                                Stack<DataflowGraphComponent> newGraph = this.reverseFlowAnalysis(graph, local, callTraceStack, currentUnit, currentDataflow);
-                                if (!newGraph.isEmpty()) {
-                                    // branch was correct, return
-                                    return newGraph;
+                            alertListener(localOfInterest, (AssignStmt) currentUnit, props, specialInvokeMethod,
+                                    methodInvocationDataflowNode);
+
+                            return currentDataflow;
+                        } else if (didReturnTerminalType(specialInvokeMethod, methodInvocationDataflowEdge)) {
+                            return currentDataflow;
+                        } else {
+                            List<Local> locals = new ArrayList<>();
+                            for(Value arg : specialInvokeExpr.getArgs()) {
+                                if (arg instanceof Local) {
+                                    locals.add((Local) arg);
                                 }
                             }
-                        }
 
-                        localOfInterest = (Local) specialInvokeExpr.getBase();
+                            if (!locals.isEmpty()) {
+                                for (Local local : locals) {
+
+                                    int argNumb = getArgNumb(local, specialInvokeExpr);
+                                    boolean withinAnalysisPurview = checkInvokeClass(specialInvokeExpr.getMethod().getDeclaringClass());
+
+                                    if (withinAnalysisPurview) {
+                                        DataflowGraphComponent dataflowGraphComponent = currentDataflow.pop();
+                                        Pair<Unit, Local> unitLocalPair = getLocalAndFirstUnit(specialInvokeExpr.getMethod(), argNumb);
+                                        Stack<DataflowGraphComponent> dataflows = this.forwardFlowAnalysis(new ExceptionalUnitGraph(specialInvokeMethod.retrieveActiveBody()),
+                                                unitLocalPair.getO2(), callTraceStack, unitLocalPair.getO1(), dataflowGraphComponent, false,
+                                                dataflowResource, dataBeingObserved);
+
+                                        if (!dataflows.isEmpty()) {
+
+                                            //dataflows = reverseDataflowStructure(dataflows);
+                                            //TODO the combination of reverse + forward analysis results in the order of nodes to incorrect,
+                                            //TODO after looking more closely, it might be as simple as reversing after a forward dive
+                                            //TODO no idea what's happening... they now appear to be in the correct order after removing the reversal...
+                                            currentDataflow.addAll(dataflows);
+                                            return currentDataflow;
+                                        } else {
+                                            currentDataflow.push(dataflowGraphComponent);
+                                        }
+                                    }
+
+                                    Stack<DataflowGraphComponent> newGraph = this.reverseFlowAnalysis(graph, local, callTraceStack, currentUnit, currentDataflow,
+                                            dataflowResource, dataBeingObserved);
+                                    if (!newGraph.isEmpty()) {
+                                        // branch was correct, return
+                                        return newGraph;
+                                    }
+                                }
+                            }
+
+                            localOfInterest = (Local) specialInvokeExpr.getBase();
+
+                            Map<DataflowAnalysisListener.SemanticProperties, Object> props = new HashMap<>();
+                            props.put(DataflowAnalysisListener.SemanticProperties.SEMANTIC_TYPE, dataBeingObserved.getCanonicalName());
+                            alertListener(localOfInterest, (AssignStmt) currentUnit, props, specialInvokeMethod,
+                                    methodInvocationDataflowNode);
+
+                        }
                     }
                 } else if (rightValue instanceof CastExpr) {
 
@@ -772,6 +1483,32 @@ public class DataflowAnalyzerPlatform {
                 }
             } else if (currentUnit instanceof InvokeStmt) {
 
+                InvokeStmt invokeStmt = (InvokeStmt) currentUnit;
+                if (invokeStmt instanceof InterfaceInvokeExpr) {
+                    InterfaceInvokeExpr interfaceInvokeExpr = (InterfaceInvokeExpr) invokeStmt;
+                    if (interfaceInvokeExpr.getMethod().getSignature().equals("java.util.List: boolean add(java.lang.Object)")) {
+                        //our local of interest was passed info via another source...
+                        List<Local> locals = new ArrayList<>();
+                        for(Value arg : interfaceInvokeExpr.getArgs()) {
+                            if (arg instanceof Local) {
+                                locals.add((Local) arg);
+                            }
+                        }
+
+                        if (!locals.isEmpty()) {
+                            for (Local local : locals) {
+                                Stack<DataflowGraphComponent> newGraph = this.reverseFlowAnalysis(graph, local, callTraceStack, currentUnit,
+                                        currentDataflow, dataflowResource, dataBeingObserved);
+                                if (!newGraph.isEmpty()) {
+                                    // branch was correct, return
+                                    return newGraph;
+                                }
+                            }
+                        }
+                    }
+                }
+
+
             } else if (currentUnit instanceof ReturnStmt) {
 
             } else if (currentUnit instanceof IdentityStmt) {
@@ -780,7 +1517,7 @@ public class DataflowAnalyzerPlatform {
 
                 if (identityStmt.getLeftOp().equals(localOfInterest)) {
                     //found parameter ref of local of interest
-
+                    String currentClassName = graph.getBody().getMethod().getDeclaringClass().getName();
                     ParameterRef parameterRef = (ParameterRef) identityStmt.getRightOp();
                     String desc = parameterRef.toString();
                     Pattern pattern = Pattern.compile("@parameter(\\d):");
@@ -795,21 +1532,16 @@ public class DataflowAnalyzerPlatform {
                     MethodInvocationDataflowNode methodInvocationDataflowNode = new MethodInvocationDataflowNode();
                     methodInvocationDataflowNode.setJavaMethodName(currentMethod.getName());
                     methodInvocationDataflowNode.setJavaClassName(currentMethod.getDeclaringClass().getName());
-                    methodInvocationDataflowNode.setAbstractResourceTemplate(Client.class);
+                    methodInvocationDataflowNode.setAbstractResourceTemplate(dataflowResource);
+                    methodInvocationDataflowNode.setEnclosingClassName(currentClassName);
 
                     linkProducerReverse(currentDataflow, methodInvocationDataflowNode);
 
                     MethodInvocationDataflowEdge dataflowEdge = new MethodInvocationDataflowEdge();
-                    dataflowEdge.setDataTypeCommunicated(BinaryData.class);
+                    dataflowEdge.setDataTypeCommunicated(dataBeingObserved);
                     dataflowEdge.setConsumer(methodInvocationDataflowNode);
 
-                    String nextNode = callTraceStack.pop();
-                    String[] callTraceComponents = nextNode.split(" ");
-                    String callClassOwner = callTraceComponents[0];
-                    //TODO currently here, need to parse things like read...
-                    String callMethodDesc = convertCallTraceSigToSootSig(callTraceComponents[1], callTraceComponents[2]);
-                    SootClass sClass = Scene.v().loadClassAndSupport(callClassOwner.replace("/", "."));
-                    SootMethod sMethod = sClass.getMethod(callMethodDesc);
+                    SootMethod sMethod = retrieveNextMethodInTrace(callTraceStack);
 
                     currentDataflow.push(methodInvocationDataflowNode);
                     currentDataflow.push(dataflowEdge);
@@ -818,10 +1550,8 @@ public class DataflowAnalyzerPlatform {
                         List<Pair<Unit, Local>> unitLocalPairs = retrieveUnitOfInterestInvokeArg(graph.getBody().getMethod(), sMethod, paramNumb, methodInvocationDataflowNode);
                         for (Pair<Unit, Local> unitLocalPair : unitLocalPairs) {
 
-                            //TODO check if this is necessary... not actually cloning graph, just copying references
-                            Stack<DataflowGraphComponent> tempGraph = cloneGraph(currentDataflow);
                             Stack<DataflowGraphComponent> dataflows = this.reverseFlowAnalysis(new ExceptionalUnitGraph(sMethod.retrieveActiveBody()), unitLocalPair.getO2(), callTraceStack,
-                                    unitLocalPair.getO1(), tempGraph);
+                                    unitLocalPair.getO1(), currentDataflow, dataflowResource, dataBeingObserved);
                             if (!dataflows.isEmpty()) {
                                 return dataflows;
                             }
@@ -833,23 +1563,377 @@ public class DataflowAnalyzerPlatform {
         return new Stack<>();
     }
 
-    private Stack<DataflowGraphComponent> cloneGraph(Stack<DataflowGraphComponent> currentDataflow) {
+    private void alertListener(Local localOfInterest, Stmt currentUnit,  Map<DataflowAnalysisListener.SemanticProperties, Object> props, SootMethod invokedMethod, MethodInvocationDataflowNode methodInvocationDataflowNode) {
+        DataflowAnalysisListener.ListenerDataflowNode listenerNode = new DataflowAnalysisListener.ListenerDataflowNode(
+                methodInvocationDataflowNode, invokedMethod.getDeclaringClass(), invokedMethod, currentUnit,
+                new JimpleLocalBox(localOfInterest));
+        listener.visitTraceNode(props, listenerNode);
+    }
 
+    private Stack<DataflowGraphComponent> reverseDataflowStructure(Stack<DataflowGraphComponent> dataflows) {
 
-        Stack<DataflowGraphComponent> tempCallStack = new Stack<>();
-
-        ListIterator<DataflowGraphComponent> stackIter = currentDataflow.listIterator();
-        while (stackIter.hasNext()) {
-            DataflowGraphComponent graphNode = stackIter.next();
-            tempCallStack.push(graphNode);
+        DataflowGraphComponent dataflowGraphComponent = dataflows.pop();
+        Stack<DataflowGraphComponent> newStack = new Stack<>();
+        DataflowEdge dataflowEdge = null;
+        if (dataflowGraphComponent instanceof DataflowEdge) {
+             dataflowEdge = (DataflowEdge) dataflowGraphComponent;
+             dataflowEdge.setProducer(null);
         }
 
-        return tempCallStack;
+        while (!dataflows.isEmpty()) {
+            DataflowGraphComponent node = dataflows.pop();
+            dataflowEdge.setConsumer((DataflowNode) node);
+            newStack.push(dataflowEdge);
+            newStack.push(node);
+
+            dataflowEdge = (DataflowEdge) dataflows.pop();
+            dataflowEdge.setProducer((DataflowNode) node);
+        }
+
+        newStack.push(dataflowEdge);
+        return newStack;
+    }
+
+    private MethodInvocationDataflowNode configureNodeFields(Class<? extends Resource> dataflowResource, String currentClassName, SootMethod specialInvokeMethod, int lineNumber2) {
+        MethodInvocationDataflowNode methodInvocationDataflowNode = new MethodInvocationDataflowNode();
+        methodInvocationDataflowNode.setJavaMethodName(specialInvokeMethod.getName());
+        methodInvocationDataflowNode.setJavaClassName(specialInvokeMethod.getDeclaringClass().getName());
+        methodInvocationDataflowNode.setLineNumber(lineNumber2);
+        methodInvocationDataflowNode.setAbstractResourceTemplate(dataflowResource);
+        methodInvocationDataflowNode.setEnclosingClassName(currentClassName);
+        return methodInvocationDataflowNode;
+    }
+
+    private Optional<DataType> wasDataTransformed(int lineNumber, String currentClassName, String currentMethodName, MethodInvocationDataflowEdge methodInvocationDataflowEdge) throws IOException {
+        DataType transformedData = checkForTransform(lineNumber - 1, currentClassName, currentMethodName);
+        if (transformedData != null) {
+            getClassNamesToNewData().add(new Pair<>(currentClassName, transformedData));
+            methodInvocationDataflowEdge.setDataTypeCommunicated(transformedData.getClass());
+            return Optional.of(transformedData);
+        }
+        return Optional.empty();
+    }
+
+    private DataType checkForTransform(int lineNumber, String currentClassName, String currentMethodName) throws IOException {
+
+        String getSourceFile = "prefix IMMoRTALS: <http://darpa.mil/immortals/ontology/r2.0.0#>\n" +
+                "\n" +
+                "select ?sourceFilePath where {\n" +
+                "\tgraph<http://localhost:3030/ds/data/???GRAPH_NAME???> {\n" +
+                "\t\n" +
+                "\t    ?sourceFile IMMoRTALS:hasAbsoluteFilePath ?sourceFilePath\n" +
+                "\t\t; IMMoRTALS:hasCorrespondingClass ?classArtifact .\n" +
+                "\t\t\n" +
+                "\t\t?classArtifact IMMoRTALS:hasClassModel ?aClass .\n" +
+                "\t\t\n" +
+                "\t\t?aClass IMMoRTALS:hasClassName \"???CLASS_NAME???\"\n" +
+                "\t\t; IMMoRTALS:hasMethods ?methods .\n" +
+                "\t\t\n" +
+                "\t\t?methods IMMoRTALS:hasMethodName \"???METHOD_NAME???\" .\n" +
+                "\t}\n" +
+                "}";
+        getSourceFile = getSourceFile.replace("???GRAPH_NAME???", graphName).replace("???CLASS_NAME???", currentClassName.replace(".", "/"))
+                .replace("???METHOD_NAME???", currentMethodName);
+        ResultSetAggregator sourceFileResults = new ResultSetAggregator();
+        fusekiClient.executeSelectQuery(getSourceFile, sourceFileResults);
+
+        if (!sourceFileResults.getSolutions().isEmpty()) {
+            Map<String, RDFNode> solution = sourceFileResults.getSolutions().get(0);
+            RDFNode node = solution.get("sourceFilePath");
+
+            String sourceFilePath = node.asLiteral().getLexicalForm();
+            File sourceFile = new File(sourceFilePath);
+            if (sourceFile.exists()) {
+                CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
+
+                Optional<ClassOrInterfaceDeclaration> optionalDeclaration = compilationUnit.getClassByName(currentClassName.substring
+                        (currentClassName.lastIndexOf(".") + 1));
+                if (optionalDeclaration.isPresent()) {
+                    ClassOrInterfaceDeclaration classDeclaration = optionalDeclaration.get();
+                    for (MethodDeclaration methodDeclaration : classDeclaration.getMethods()) {
+                        Optional<BlockStmt> methodBody = methodDeclaration.getBody();
+
+                        if (methodBody.isPresent()) {
+                            BlockStmt blockStmt = methodBody.get();
+
+                            for (Statement statement : blockStmt.getStatements()) {
+
+                                if (statement.isExpressionStmt()) {
+                                    ExpressionStmt expressionStmt = (ExpressionStmt) statement;
+                                    Expression expression = expressionStmt.getExpression();
+                                    if (expression.isVariableDeclarationExpr()) {
+                                        VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) expression;
+                                        for (AnnotationExpr annotationExpr : variableDeclarationExpr.getAnnotations()) {
+
+                                            Optional<Position> positionOptional = annotationExpr.getBegin();
+                                            if (positionOptional.isPresent()) {
+                                                Position position = positionOptional.get();
+                                                if (position.line == lineNumber) {
+                                                    if (annotationExpr.getName().getIdentifier().contains("XmlDocument")) {
+
+                                                        //TODO need to derive this somehow... don't think this is a given
+                                                        XmlDocument xmlDocument = new XmlDocument();
+
+                                                        for (Node childNode : annotationExpr.getChildNodes()) {
+
+                                                            if (childNode instanceof MemberValuePair) {
+
+                                                                MemberValuePair memberValuePair = (MemberValuePair) childNode;
+                                                                String valueString = memberValuePair.getValue().toString();
+                                                                switch (memberValuePair.getNameAsString()) {
+                                                                    case "schemaVersion":
+                                                                        xmlDocument.setSchemaVersion(valueString);
+                                                                        break;
+                                                                    case "schemaNamespace":
+                                                                        xmlDocument.setSchemaNamespace(valueString);
+                                                                        break;
+                                                                    case "encoding":
+                                                                        xmlDocument.setEncoding(valueString);
+                                                                        break;
+                                                                    case "xmlVersion":
+                                                                        xmlDocument.setXmlVersion(valueString);
+                                                                        break;
+                                                                    default:
+                                                                        break;
+
+                                                                }
+                                                            }
+                                                        }
+
+                                                        return xmlDocument;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else if (statement.isIfStmt()) {
+                                    DataType xmlDocument = parseJavaIf(lineNumber, (com.github.javaparser.ast.stmt.IfStmt) statement);
+                                    if (xmlDocument != null) return xmlDocument;
+                                } else if (statement.isTryStmt()) {
+
+                                    TryStmt tryStmt = (TryStmt) statement;
+                                    BlockStmt tryBlockStmt = tryStmt.getTryBlock();
+
+                                    for (Statement tryStatement : tryBlockStmt.getStatements()) {
+                                        if (tryStatement.isExpressionStmt()) {
+                                            ExpressionStmt expressionStmt = (ExpressionStmt) tryStatement;
+                                            Expression expression = expressionStmt.getExpression();
+                                            if (expression.isVariableDeclarationExpr()) {
+                                                VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) expression;
+                                                for (AnnotationExpr annotationExpr : variableDeclarationExpr.getAnnotations()) {
+                                                    Optional<Position> positionOptional = annotationExpr.getBegin();
+                                                    if (positionOptional.isPresent()) {
+                                                        Position position = positionOptional.get();
+                                                        if (position.line == lineNumber) {
+                                                            if (annotationExpr.getName().getIdentifier().contains("XmlDocument")) {
+                                                                XmlDocument xmlDocument = new XmlDocument();
+
+                                                                for (Node childNode : annotationExpr.getChildNodes()) {
+
+                                                                    if (childNode instanceof MemberValuePair) {
+
+                                                                        MemberValuePair memberValuePair = (MemberValuePair) childNode;
+                                                                        String valueString = memberValuePair.getValue().toString();
+                                                                        switch (memberValuePair.getNameAsString()) {
+                                                                            case "schemaVersion":
+                                                                                xmlDocument.setSchemaVersion(valueString);
+                                                                                break;
+                                                                            case "schemaNamespace":
+                                                                                xmlDocument.setSchemaNamespace(valueString);
+                                                                                break;
+                                                                            case "encoding":
+                                                                                xmlDocument.setEncoding(valueString);
+                                                                                break;
+                                                                            case "xmlVersion":
+                                                                                xmlDocument.setXmlVersion(valueString);
+                                                                                break;
+                                                                            default:
+                                                                                break;
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                return xmlDocument;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else if (tryStatement.isIfStmt()) {
+                                            DataType xmlDocument = parseJavaIf(lineNumber, (com.github.javaparser.ast.stmt.IfStmt) tryStatement);
+                                            if (xmlDocument != null) return xmlDocument;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private DataType parseJavaIf(int lineNumber, com.github.javaparser.ast.stmt.IfStmt statement) {
+
+        com.github.javaparser.ast.stmt.IfStmt ifStmt = statement;
+        Statement thenStmt = ifStmt.getThenStmt();
+        if (thenStmt.isBlockStmt()) {
+            for (Statement ifBlockStmt : thenStmt.asBlockStmt().getStatements()) {
+
+                if (ifBlockStmt.isReturnStmt()) {
+                    com.github.javaparser.ast.stmt.ReturnStmt returnStmt = (com.github.javaparser.ast.stmt.ReturnStmt) ifBlockStmt;
+                    if (returnStmt.getExpression().isPresent()) {
+                        Expression expression = returnStmt.getExpression().get();
+                        if (expression.isVariableDeclarationExpr()) {
+                            VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) expression;
+                            for (AnnotationExpr annotationExpr : variableDeclarationExpr.getAnnotations()) {
+                                Optional<Position> positionOptional = annotationExpr.getBegin();
+                                if (positionOptional.isPresent()) {
+                                    Position position = positionOptional.get();
+                                    if (position.line == lineNumber) {
+                                        if (annotationExpr.getName().getIdentifier().contains("XmlDocument")) {
+                                            XmlDocument xmlDocument = new XmlDocument();
+
+                                            for (Node childNode : annotationExpr.getChildNodes()) {
+
+                                                if (childNode instanceof MemberValuePair) {
+
+                                                    MemberValuePair memberValuePair = (MemberValuePair) childNode;
+                                                    String valueString = memberValuePair.getValue().toString();
+                                                    switch (memberValuePair.getNameAsString()) {
+                                                        case "schemaVersion":
+                                                            xmlDocument.setSchemaVersion(valueString);
+                                                            break;
+                                                        case "schemaNamespace":
+                                                            xmlDocument.setSchemaNamespace(valueString);
+                                                            break;
+                                                        case "encoding":
+                                                            xmlDocument.setEncoding(valueString);
+                                                            break;
+                                                        case "xmlVersion":
+                                                            xmlDocument.setXmlVersion(valueString);
+                                                            break;
+                                                        default:
+                                                            break;
+                                                    }
+                                                }
+                                            }
+
+                                            return xmlDocument;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+
+                if (ifBlockStmt.isExpressionStmt()) {
+                    ExpressionStmt expressionStmt = (ExpressionStmt) ifBlockStmt;
+                    Expression expression = expressionStmt.getExpression();
+                    if (expression.isVariableDeclarationExpr()) {
+                        VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) expression;
+                        for (AnnotationExpr annotationExpr : variableDeclarationExpr.getAnnotations()) {
+                            Optional<Position> positionOptional = annotationExpr.getBegin();
+                            if (positionOptional.isPresent()) {
+                                Position position = positionOptional.get();
+                                if (position.line == lineNumber) {
+                                    if (annotationExpr.getName().getIdentifier().contains("XmlDocument")) {
+                                        XmlDocument xmlDocument = new XmlDocument();
+
+                                        for (Node childNode : annotationExpr.getChildNodes()) {
+
+                                            if (childNode instanceof MemberValuePair) {
+
+                                                MemberValuePair memberValuePair = (MemberValuePair) childNode;
+                                                String valueString = memberValuePair.getValue().toString();
+                                                switch (memberValuePair.getNameAsString()) {
+                                                    case "schemaVersion":
+                                                        xmlDocument.setSchemaVersion(valueString);
+                                                        break;
+                                                    case "schemaNamespace":
+                                                        xmlDocument.setSchemaNamespace(valueString);
+                                                        break;
+                                                    case "encoding":
+                                                        xmlDocument.setEncoding(valueString);
+                                                        break;
+                                                    case "xmlVersion":
+                                                        xmlDocument.setXmlVersion(valueString);
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                            }
+                                        }
+
+                                        return xmlDocument;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (ifStmt.getElseStmt().isPresent() && ifStmt.getElseStmt().get().isBlockStmt()) {
+            for (Statement blockElseStmt : ifStmt.getElseStmt().get().asBlockStmt().getStatements()) {
+                if (blockElseStmt.isExpressionStmt()) {
+                    ExpressionStmt expressionStmt = (ExpressionStmt) blockElseStmt;
+                    Expression expression = expressionStmt.getExpression();
+                    if (expression.isVariableDeclarationExpr()) {
+                        VariableDeclarationExpr variableDeclarationExpr = (VariableDeclarationExpr) expression;
+                        for (AnnotationExpr annotationExpr : variableDeclarationExpr.getAnnotations()) {
+                            Optional<Position> positionOptional = annotationExpr.getBegin();
+                            if (positionOptional.isPresent()) {
+                                Position position = positionOptional.get();
+                                if (position.line == lineNumber) {
+                                    if (annotationExpr.getName().getIdentifier().contains("XmlDocument")) {
+                                        XmlDocument xmlDocument = new XmlDocument();
+
+                                        for (Node childNode : annotationExpr.getChildNodes()) {
+
+                                            if (childNode instanceof MemberValuePair) {
+
+                                                MemberValuePair memberValuePair = (MemberValuePair) childNode;
+                                                String valueString = memberValuePair.getValue().toString();
+                                                switch (memberValuePair.getNameAsString()) {
+                                                    case "schemaVersion":
+                                                        xmlDocument.setSchemaVersion(valueString);
+                                                        break;
+                                                    case "schemaNamespace":
+                                                        xmlDocument.setSchemaNamespace(valueString);
+                                                        break;
+                                                    case "encoding":
+                                                        xmlDocument.setEncoding(valueString);
+                                                        break;
+                                                    case "xmlVersion":
+                                                        xmlDocument.setXmlVersion(valueString);
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                            }
+                                        }
+
+                                        return xmlDocument;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private static List<Pair<Unit, Local>> retrieveUnitOfInterestInvokeArg(SootMethod currentMethod, SootMethod methodOfInterest, int paramNumb,
                                                                            MethodInvocationDataflowNode dataflowNode) {
-
 
         List<Pair<Unit, Local>> invokeArgPairs = new ArrayList<>();
 
@@ -1107,5 +2191,41 @@ public class DataflowAnalyzerPlatform {
 
     public Collection<String> getIncomingFlowIndicators() {
         return incomingFlowIndicators;
+    }
+
+    public Set<Pair<String, DataType>> getClassNamesToNewData() {
+        return classNamesToNewData;
+    }
+
+    private class ClassData {
+        private UnitGraph graph;
+        private Unit currentUnit;
+        private int lineNumber;
+        private String currentClassName;
+        private String currentMethodName;
+
+        public ClassData(UnitGraph graph, Unit currentUnit) {
+            this.graph = graph;
+            this.currentUnit = currentUnit;
+        }
+
+        public int getLineNumber() {
+            return lineNumber;
+        }
+
+        public String getCurrentClassName() {
+            return currentClassName;
+        }
+
+        public String getCurrentMethodName() {
+            return currentMethodName;
+        }
+
+        public ClassData invoke() {
+            lineNumber = DataflowAnalyzerPlatform.getLineNumber(currentUnit);
+            currentClassName = graph.getBody().getMethod().getDeclaringClass().getName();
+            currentMethodName = graph.getBody().getMethod().getName();
+            return this;
+        }
     }
 }

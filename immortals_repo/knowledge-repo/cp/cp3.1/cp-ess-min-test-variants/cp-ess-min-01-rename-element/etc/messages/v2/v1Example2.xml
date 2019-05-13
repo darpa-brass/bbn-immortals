@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xmlns:mdl="http://inetprogram.org/projects/MDL" 
+         xmlns:tmats="https://wsmrc2vger.wsmr.army.mil/rcc/manuals/106-11" 
+         xsi:schemaLocation="http://inetprogram.org/projects/MDL MDL_v0_8_19.xsd">
+  <ReadOnly>true</ReadOnly>
+  <DatabaseID>example id string</DatabaseID>
+  <Checksum>SHA-1:da39a3ee5e6b4b0d3255bfef95601890afd80709</Checksum>
+  <ConfigurationVersion>1.0.1</ConfigurationVersion>
+  <DirtyBit>true</DirtyBit>
+  
+  <ARenamedIntegerElement>5678</ARenamedIntegerElement>
+  
+</MDLRoot>

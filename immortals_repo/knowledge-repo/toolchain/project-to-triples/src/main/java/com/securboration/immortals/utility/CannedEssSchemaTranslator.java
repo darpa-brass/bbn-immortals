@@ -1,9 +1,15 @@
 package com.securboration.immortals.utility;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.xml.sax.SAXException;
 
 /**
  * This is a placeholder API for translating XML documents passed along dataflow
@@ -14,11 +20,78 @@ import org.apache.commons.io.FileUtils;
  *
  */
 public class CannedEssSchemaTranslator {
+    
+    public static void main(String[] args) throws IOException{
+        final String endpoint = "http://192.168.9.107:8090/xsdsts";
+        
+        final File outDir = new File("translations/" + System.currentTimeMillis());
+        final File xsdstsClientOutput = new File("xsdts-client");
+        final File essDir = new File("C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\xsd-translation-service-tests");
+        
+        for(File ess:essDir.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY)){
+            System.out.println(ess.getAbsolutePath());
+            
+            final String xslt = translateClientToServer(true, ess,endpoint);
+            FileUtils.moveDirectory(xsdstsClientOutput, new File(outDir,ess.getName()));
+            
+            for(File xml:FileUtils.listFiles(new File(ess,"dataset"), null, true)){
+//                final String xmlContent = 
+            }
+        }
+    }
+    
+    private static File findMdlSchema(final File schemaDir){
+        for(File f:FileUtils.listFiles(schemaDir, new String[]{"xsd"}, true)){
+            final String name = f.getName().toLowerCase();
+            
+            if(name.startsWith("mdl")){
+                return f;
+            }
+        }
+        
+        throw new RuntimeException("could not find MDL schema definition in " + schemaDir.getAbsolutePath());
+    }
+    
+    private static File createMinimizedClientSchema(
+            final File essMinDir
+            ) throws IOException, TransformerException, SAXException, ParserConfigurationException{
+        final File lightenerXslt = new File(essMinDir,"etc/lightener/SchemaLightener1.xslt");
+        final File schemaToLighten = new File(essMinDir,"schema/client/");
+        final File exemplarDocumentDir = new File(essMinDir,"datasource");
+        final File schemaOutputDir = new File(essMinDir,"analysis/client/schema-minimized");
+        
+        SchemaMinimizer.minimizeSchema(
+            lightenerXslt,
+            findMdlSchema(schemaToLighten),
+            exemplarDocumentDir,
+            schemaOutputDir
+            );
+        
+        return schemaOutputDir;
+    }
+    
+    private static File createMinimizedServerSchema(
+            final File essMinDir
+            ) throws IOException, TransformerException, SAXException, ParserConfigurationException{
+        
+        //TODO: it is unclear what, exactly, we should use as exemplar 
+        //       documents for the server schema's utilization
+        
+        //client schema: use datasource as exemplar documents
+        //server schema: use full schema for now, eventually use something similar to etc/messages/v2?
+        
+        return new File(essMinDir,"schema/server/");//TODO
+    }
+    
 
     /**
      * Returns an XSLT for translating client documents into a format that works
      * for the server, or null if no translation is needed.
      *
+     * @param minimizeSchema
+     *            iff true, the client schema will be minimized using exemplar
+     *            documents to determine the portion of the schema that is
+     *            actually used
      * @param essMinBaseDir
      *            points to the base of an ess-min directory containing
      *            build.gradle
@@ -30,18 +103,29 @@ public class CannedEssSchemaTranslator {
      *             if anything goes awry
      */
     public static String translateClientToServer(
+            final boolean minimizeSchema,
             final File essMinBaseDir,
             final String translationServiceEndpointUrl
     ) throws IOException{
-        final DocumentSet src = getDocumentSetFromDirectory(
-                new File(essMinBaseDir,"schema/client")
-        );
+        final File srcSchema;
+        
+        if(minimizeSchema){
+            try {
+                srcSchema = createMinimizedClientSchema(essMinBaseDir);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            srcSchema = new File(essMinBaseDir,"schema/client");
+        }
+        
+        final DocumentSet srcDocumentSet = getDocumentSetFromDirectory(srcSchema);
 
-        final DocumentSet dst = getDocumentSetFromDirectory(
+        final DocumentSet dstDocumentSet = getDocumentSetFromDirectory(
                 new File(essMinBaseDir,"schema/server")
         );
 
-        return translate(translationServiceEndpointUrl,src,dst);
+        return translate(translationServiceEndpointUrl,srcDocumentSet,dstDocumentSet);
     }
 
 
@@ -49,6 +133,10 @@ public class CannedEssSchemaTranslator {
      * Returns an XSLT for translating server documents into a format that works
      * for the client, or null if no translation is needed.
      *
+     * @param minimizeSchema
+     *            iff true, the client schema will be minimized using exemplar
+     *            documents to determine the portion of the schema that is
+     *            actually used
      * @param essMinBaseDir
      *            points to the base of an ess-min directory containing
      *            build.gradle
@@ -60,27 +148,31 @@ public class CannedEssSchemaTranslator {
      *             if anything goes awry
      */
     public static String translateServerToClient(
+            final boolean minimizeSchema,
             final String translationServiceEndpointUrl,
             final File essMinBaseDir
     ) throws IOException{
-        final DocumentSet src = getDocumentSetFromDirectory(
-                new File(essMinBaseDir,"schema/server")
-        );
+        final File srcSchema;
+        
+        if(minimizeSchema){
+            try {
+                srcSchema = createMinimizedServerSchema(essMinBaseDir);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            srcSchema = new File(essMinBaseDir,"schema/server");
+        }
+        
+        final DocumentSet srcDocumentSet = getDocumentSetFromDirectory(srcSchema);
 
-        final DocumentSet dst = getDocumentSetFromDirectory(
+        final DocumentSet dstDocumentSet = getDocumentSetFromDirectory(
                 new File(essMinBaseDir,"schema/client")
         );
 
-        return translate(translationServiceEndpointUrl,src,dst);
+        return translate(translationServiceEndpointUrl,srcDocumentSet,dstDocumentSet);
     }
-
-//    public static String translateDatasourceToClient(final File essMinBaseDir){
-//
-//    }
-//
-//    public static String translateClientToDatasource(final File essMinBaseDir){
-//
-//    }
+    
 
     private static String translate(
             final String translationEndpoint,

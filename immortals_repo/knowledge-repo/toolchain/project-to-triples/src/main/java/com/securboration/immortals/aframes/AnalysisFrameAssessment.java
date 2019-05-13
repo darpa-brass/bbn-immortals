@@ -907,7 +907,7 @@ public class AnalysisFrameAssessment {
         }
 
         // each dfu has different configuration parameters... encode these in the request pojo
-        Class[] aspectSpecificDependencies = instantiateAspect.getAspectSpecificResourceDependencies();
+        /*Class[] aspectSpecificDependencies = instantiateAspect.getAspectSpecificResourceDependencies();
         if (aspectSpecificDependencies.length != 0) {
             List<FunctionalAspect> aspectDependencies = new ArrayList<>();
             for (Class clazz : aspectSpecificDependencies) {
@@ -926,7 +926,7 @@ public class AnalysisFrameAssessment {
                     exc.printStackTrace();
                 }
             }
-        }
+        }*/
 
         DataType[] dataTypeArr = new DataType[typesOfParameters.size()];
         for (int i = 0; i < dataTypeArr.length; i++) {
@@ -1940,7 +1940,7 @@ public class AnalysisFrameAssessment {
             exc.printStackTrace();
         }
 
-        Class[] aspectSpecificDependencies = instantiateAspect.getAspectSpecificResourceDependencies();
+        /*Class[] aspectSpecificDependencies = instantiateAspect.getAspectSpecificResourceDependencies();
         if (aspectSpecificDependencies.length != 0) {
             List<FunctionalAspect> aspectDependencies = new ArrayList<>();
             for (Class clazz : aspectSpecificDependencies) {
@@ -1961,7 +1961,7 @@ public class AnalysisFrameAssessment {
             }
         } else {
             return null;
-        }
+        }*/
 
         DataType[] dataTypeArr = new DataType[typesOfParameters.size()];
         for (int i = 0; i < dataTypeArr.length; i++) {

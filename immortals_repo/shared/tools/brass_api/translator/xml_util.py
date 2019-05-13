@@ -50,10 +50,11 @@ def orient_record_to_xml(record, numberTabs):
             xml_str_list.append( add_mdl_root_tag_attr(record.oRecordData['schema']) )
         else:
             xml_str_list.append('<MDLRoot>')
-        xml_str_list.append('\n')
+        #xml_str_list.append('\n')
     else:
-        xml_str_list.append( "{0}<{1}".format(create_tab_string(numberTabs), common_util.strip_trailing_a(record._class)) )
+        xml_str_list.append( "\n{0}<{1}".format(create_tab_string(numberTabs), common_util.strip_trailing_a(record._class)) )
 
+        # serialize as attributes
         if 'ID' in record.oRecordData.keys():
             xml_str_list.append(' {0}="{1}"'.format('ID', record.oRecordData['ID']) )
         if 'IDREF' in record.oRecordData.keys():
@@ -67,18 +68,38 @@ def orient_record_to_xml(record, numberTabs):
         if 'Thermocouple' in record.oRecordData.keys():
             xml_str_list.append(' {0}="{1}"'.format('Thermocouple', record.oRecordData['Thermocouple']))
 
-        xml_str_list.append( ">\n" )
+        xml_str_list.append(">")
 
+    count = 0
+    for key in record.oRecordData.keys():
+        if key not in SKIP_PROPERTY_TAGS:
+            count+=1
 
     for key in record.oRecordData.keys():
         if key not in SKIP_PROPERTY_TAGS:
             if type(record.oRecordData[key]) is list:
+                """
+                    <BBNSampleRate>128</BBNSampleRate>
+                    <BBNSampleRate>256</BBNSampleRate>
+                    <BBNSampleRate>512</BBNSampleRate>
+                """
+
                 for v in record.oRecordData[key]:
-                    xml_str_list.append('{0}<{1}>{2}</{1}>\n'.format(create_tab_string(numberTabs + 1),
+                    xml_str_list.append('\n{0}<{1}>{2}</{1}>'.format(create_tab_string(numberTabs + 1),
                                                                      common_util.strip_trailing_a(key),
                                                                      v))
             else:
-                xml_str_list.append( '{0}<{1}>{2}</{1}>\n'.format(create_tab_string(numberTabs+1),
+                if key == record._class:
+                    """
+                    Special Case
+                    < PortType Thermocouple = "J" >Thermocouple< / PortType >
+                    < PortType Thermocouple = "K" >Thermocouple< / PortType >
+                    < PortType Thermocouple = "T" >Thermocouple< / PortType >
+                    """
+
+                    xml_str_list.append('{0}'.format(record.oRecordData[key]))
+                else:
+                    xml_str_list.append( '\n{0}<{1}>{2}</{1}>'.format(create_tab_string(numberTabs+1),
                                                                   common_util.strip_trailing_a(key),
                                                                   record.oRecordData[key] ) )
 

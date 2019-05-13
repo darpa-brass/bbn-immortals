@@ -7,7 +7,6 @@ import com.securboration.immortals.ontology.functionality.Output;
 public class DefaultAspectBase extends FunctionalAspect{
     public DefaultAspectBase(final String name){
         super.setAspectId(name);
-        super.setAspectSpecificResourceDependencies(new Class[]{});
         super.setInputs(new Input[]{});
         super.setOutputs(new Output[]{});
     }
@@ -18,12 +17,10 @@ public class DefaultAspectBase extends FunctionalAspect{
     
     public DefaultAspectBase(
             final String name, 
-            Class[] aspectSpecificResourceDependencies, 
-            Input[] inputs, 
+            Input[] inputs,
             Output[] outputs
             ){
         super.setAspectId(name);
-        super.setAspectSpecificResourceDependencies(aspectSpecificResourceDependencies);
         super.setInputs(inputs);
         super.setOutputs(outputs);
     }

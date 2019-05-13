@@ -91,7 +91,6 @@ if [[ ${DO_SCENARIO_5} == true ]];then
     cd "${SCRIPT_DIR}/../dsl/resource-dsl/"
     stack setup
     stack build
-    stack exec resource-dsl -- swap-dau --init
     cd "${PPWD}"
 
     mkdir "${ARTIFACT_ROOT}/phase3"

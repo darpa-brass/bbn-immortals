@@ -8,7 +8,7 @@ repositories {
 }
 
 group 'mil.darpa.immortals'
-version '0.1.2'
+version '0.2'
 
 sourceCompatibility = 1.8
 
@@ -45,6 +45,8 @@ task integrationTest(type: Test) {
 	testClassesDirs = sourceSets.integrationTest.output.classesDirs
 	classpath = sourceSets.integrationTest.runtimeClasspath
 }
+
+jar.finalizedBy(getTasksByName("publishToMavenLocal", true))
 
 dependencies {
 	compile 'com.orientechnologies:orientdb-core:2.2.24'

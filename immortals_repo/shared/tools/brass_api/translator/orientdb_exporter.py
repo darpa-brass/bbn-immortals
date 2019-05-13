@@ -62,12 +62,18 @@ class OrientDBXMLExporter(object):
             self.print_node(v, numberTabs + 1)
 
         # write out closing xml tag
+        if len(self.orientDB_helper.get_child_nodes(record._rid)) > 0:
+            self.xmlFile.write(
+                '\n{0}'.format(
+                    xml_util.create_tab_string(numberTabs),
+                )
+            )
         self.xmlFile.write(
-            '{0}</{1}>\n'.format(
-                xml_util.create_tab_string(numberTabs),
+            '</{0}>'.format(
                 common_util.strip_trailing_a(record._class)
             )
         )
+
 
 
     def export_xml(self):

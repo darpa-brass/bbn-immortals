@@ -11,11 +11,17 @@ import javax.annotation.Nullable;
  */
 public interface ChallengeProblemBridgeInterface {
 
-	String ENV_VAR_EVAL_ODB = "ORIENTDB_EVAL_TARGET";
+	public String ENV_VAR_EVAL_ODB = "ORIENTDB_EVAL_TARGET";
+	public String ENV_VAR_EVAL_USER = "ORIENTDB_EVAL_USER";
+	public String ENV_VAR_EVAL_PASSWORD = "ORIENTDB_EVAL_PASSWORD";
+	public String ENV_VAR_ARTIFACT_DIRECTORY = "IMMORTALS_ARTIFACT_DIRECTORY";
+	public String JARGS_ARTIFACT_DIRECTORY = "mil.darpa.immortals.artifactdirectory";
+	public String JARGS_EVAL_ODB = "mil.darpa.immortals.evaluationserver";
+
+	@Deprecated
 	String ENV_VAR_PERS_ODB = "ORIENTDB_PERSISTENCE_TARGET";
-	String ENV_VAR_EVAL_USER = "ORIENTDB_EVAL_USER";
-	String ENV_VAR_EVAL_PASSWORD = "ORIENTDB_EVAL_PASSWORD";
-	String JARGS_EVAL_ODB = "mil.darpa.immortals.evaluationserver";
+
+	@Deprecated
 	String JARGS_PERS_ODB = "mil.darpa.immoertals.persistenceserver";
 
 	/**
@@ -54,6 +60,15 @@ public interface ChallengeProblemBridgeInterface {
 	 */
 	void postError(@Nonnull String evaluationInstanceIdentifier, @Nonnull String errorDescription, @Nullable String errorData) throws Exception;
 
+	/**
+	 * Posts The invalid input error Finish state to the persistent and/or evaluation server. The caller should shut down after this is done!
+	 *
+	 * @param evaluationInstanceIdentifier A unique Identifier to act as a key for this evaluation execution
+	 * @param errorDescription             A brief description of the error
+	 * @param errorData                    Additional information to help debug the error, if available
+	 * @throws Exception
+	 */
+	void postInvalidInputError(@Nonnull String evaluationInstanceIdentifier, @Nonnull String errorDescription, @Nullable String errorData) throws Exception;
 
 	/**
 	 * Used to store large binary data in excess of a couple megabytes.

@@ -1,5 +1,7 @@
 package com.securboration.immortals.ontology.java.project;
 
+import com.securboration.immortals.ontology.bytecode.BytecodeArtifactCoordinate;
+
 public class AnalysisMetrics {
 
     private int baseVocabTriples;
@@ -30,7 +32,7 @@ public class AnalysisMetrics {
 
     private String[] newMethods;
 
-    private String[] newDependencies;
+    private BytecodeArtifactCoordinate[] newDependencies;
 
     public int getBaseVocabTriples() {
         return baseVocabTriples;
@@ -144,11 +146,11 @@ public class AnalysisMetrics {
         this.newMethods = newMethods;
     }
 
-    public String[] getNewDependencies() {
+    public BytecodeArtifactCoordinate[] getNewDependencies() {
         return newDependencies;
     }
 
-    public void setNewDependencies(String[] newDependencies) {
+    public void setNewDependencies(BytecodeArtifactCoordinate[] newDependencies) {
         this.newDependencies = newDependencies;
     }
 }

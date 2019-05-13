@@ -23,6 +23,11 @@ public class BytecodeArtifactCoordinate {
      * A version identifier
      */
     private String version;
+
+    /**
+     * Path to repository where library is found; null if unknown
+     */
+    private String repositoryPath;
     
     /**
      * A gradle-style coordinate string that uniquely identifies this artifact.
@@ -60,7 +65,6 @@ public class BytecodeArtifactCoordinate {
         return "[" + groupId + "] " + artifactId + " : " + version;
     }
 
-    
     public String getCoordinateTag() {
         return coordinateTag;
     }
@@ -68,5 +72,13 @@ public class BytecodeArtifactCoordinate {
     
     public void setCoordinateTag(String coordinateTag) {
         this.coordinateTag = coordinateTag;
+    }
+
+    public String getRepositoryPath() {
+        return repositoryPath;
+    }
+
+    public void setRepositoryPath(String repositoryPath) {
+        this.repositoryPath = repositoryPath;
     }
 }

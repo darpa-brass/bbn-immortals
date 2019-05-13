@@ -4,19 +4,17 @@ import com.securboration.immortals.utility.GradleTaskHelper;
 import com.securboration.immortals.project2triples.GradleData;
 import com.securboration.immortals.project2triples.ProjectToTriplesMain;
 import com.securboration.immortals.repo.etc.WebServiceStrings;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
+
 import org.gradle.api.Project;
-import org.gradle.api.UnknownDomainObjectException;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.artifacts.ProjectDependency;
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
-import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency;
 import org.gradle.api.tasks.TaskAction;
+
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -208,7 +206,7 @@ public class BytecodeGradleTask extends ImmortalsGradleTask {
         data.setClasspathNameToClasspathList(cp2c);
 
         data.setCompiledProjectName(p.getName());
-        data.setPathToBuildFile(p.getBuildFile().getAbsolutePath());
+        data.setPathToBuildFile(p.getBuildscript().getSourceFile().getAbsolutePath());
         data.setBaseDir(p.getRootDir().getAbsolutePath());
         data.setProperties(p.getProperties());
         System.out.println(p.getRootDir().getAbsolutePath());

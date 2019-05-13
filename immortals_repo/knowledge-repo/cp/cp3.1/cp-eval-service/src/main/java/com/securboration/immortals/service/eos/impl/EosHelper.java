@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 
@@ -85,6 +87,17 @@ public class EosHelper {
             final String... parts
             ) {
         return cmd(name,workingDirRelativeToExtracted,false,async,parts);
+    }
+    
+    private static EvaluationRunCommand cmdCleanup(
+            final String name,
+            final String workingDirRelativeToExtracted, 
+            final boolean async,
+            final String... parts
+            ) {
+        EvaluationRunCommand cmd = cmd(name,workingDirRelativeToExtracted,false,async,parts);
+        cmd.setCleanupCommand(true);
+        return cmd;
     }
     
     private static EvaluationRunCommand cmdAbsoluteWorkDir(
@@ -211,10 +224,14 @@ public class EosHelper {
         final String gradlew = getGradlewExecutable();
         
         if(SystemUtils.IS_OS_WINDOWS){
-            return new String[]{"cmd.exe","/C",gradlew,"clean","build"};
+            return new String[]{"cmd.exe","/C",gradlew,"clean","build","--no-daemon"};
         } else {
-            return new String[]{"bash",gradlew,"clean","build"};
+            return new String[]{"bash",gradlew,"clean","build","--no-daemon"};
         }
+    }
+    
+    private static String[] getBuildPublishArgs(){
+        return merge(getBuildArgs(),new String[]{"publish"});
     }
     
     private static String[] getGradleStopArgs(){
@@ -234,12 +251,12 @@ public class EosHelper {
         
         if(SystemUtils.IS_OS_WINDOWS){
             return merge(
-                new String[]{"cmd.exe","/C",gradlew,"--debug","bytecode"},
+                new String[]{"cmd.exe","/C",gradlew,"--debug","bytecode","--no-daemon"},
                 getPluginProperties(properties)
                 );
         } else {
             return merge(
-                new String[]{"bash",gradlew,"--debug","bytecode"},
+                new String[]{"bash",gradlew,"--debug","bytecode","--no-daemon"},
                 getPluginProperties(properties)
                 );
         }
@@ -251,12 +268,12 @@ public class EosHelper {
         
         if(SystemUtils.IS_OS_WINDOWS){
             return merge(
-                new String[]{"cmd.exe","/C",gradlew,"--debug","mine"},
+                new String[]{"cmd.exe","/C",gradlew,"--debug","mine","--no-daemon"},
                 getPluginProperties(properties)
                 );
         } else {
             return merge(
-                new String[]{"bash",gradlew,"--debug","mine"},
+                new String[]{"bash",gradlew,"--debug","mine","--no-daemon"},
                 getPluginProperties(properties)
                 );
         }
@@ -276,12 +293,12 @@ public class EosHelper {
         
         if(SystemUtils.IS_OS_WINDOWS){
             return merge(
-                new String[]{"cmd.exe","/C",gradlew,"--debug","--stacktrace","ingest"},
+                new String[]{"cmd.exe","/C",gradlew,"--debug","--stacktrace","ingest","--no-daemon"},
                 getPluginProperties(properties)
                 );
         } else {
             return merge(
-                new String[]{"bash",gradlew,"--debug","--stacktrace","ingest"},
+                new String[]{"bash",gradlew,"--debug","--stacktrace","ingest","--no-daemon"},
                 getPluginProperties(properties)
                 );
         }
@@ -293,12 +310,12 @@ public class EosHelper {
         
         if(SystemUtils.IS_OS_WINDOWS){
             return merge(
-                new String[]{"cmd.exe","/C",gradlew,"--debug","--stacktrace","adapt"},
+                new String[]{"cmd.exe","/C",gradlew,"--debug","--stacktrace","adapt","--no-daemon"},
                 getPluginProperties(properties)
                 );
         } else {
             return merge(
-                new String[]{"bash",gradlew,"--debug","--stacktrace","adapt"},
+                new String[]{"bash",gradlew,"--debug","--stacktrace","adapt","--no-daemon"},
                 getPluginProperties(properties)
                 );
         }
@@ -356,15 +373,14 @@ public class EosHelper {
         
         final String relativePathToCompiledClient = 
                 "./client/target/immortals-cp3.1-client-1.0.0.jar";
+        final String relativePathToModifiedClient = 
+                "./client/target/immortals-cp3.1-client-1.0.0MODIFIED.jar";
         
         final String relativePathToInstrumentedClient = 
                 "./client/target/immortals-cp3.1-client-1.0.0-INST.jar";
         
         final String relativePathToClientInputDir = 
                 "./datasource/";
-        
-        final String relativePathToDynamicAnalysisDir = 
-                "./rampartData";
         
         final int xsdstsPort = Integer.parseInt(properties.get(EvaluationPropertyKey.xsdTranslationServicePort));
         
@@ -543,6 +559,17 @@ public class EosHelper {
                     
                     getBuildArgs()
                     )
+                );
+            }
+            
+            {//build the DFU code module
+                config.getEvaluationCommands().add(cmd(
+                    "build DFUs",
+                    workingDir + "/dfus/all",
+                    false,
+                    
+                    getBuildPublishArgs()
+                    )//TODO
                 );
             }
             
@@ -737,7 +764,7 @@ public class EosHelper {
                     "-DREPORT_DIR=reports/evaluationRun",
                     "-DMESSAGES_TO_SEND_DIR="+relativePathToClientInputDir,
                     "-DSERVER_ENDPOINT_URL=http://localhost:" + freePortForTesting + "/ws",
-                    "-jar",relativePathToCompiledClient
+                    "-jar",relativePathToModifiedClient
                     )
                 );
             
@@ -760,17 +787,6 @@ public class EosHelper {
                 );
             }
             
-            {//stop gradle daemon
-                config.getEvaluationCommands().add(cmd(
-                    "gradlew --stop",
-                    workingDir,
-                    false,
-                    
-                    getGradleStopArgs()
-                    )
-                );
-            }
-            
             {//sleep
                 config.getEvaluationCommands().add(cmd(
                     "wait a few seconds before cleanup...",
@@ -783,7 +799,35 @@ public class EosHelper {
             }
         }
         
+        addEarlyTermination(properties,config);
+        
         return config;
+    }
+    
+    private static void addEarlyTermination(
+            EvaluationProperties properties,
+            EvaluationRunConfiguration config
+            ){
+        final int earlyTerminationIndex = Integer.parseInt(
+            properties.get(EvaluationPropertyKey.endEvaluationBeforeStep)
+            ) - 1;
+        
+        if(earlyTerminationIndex < 0){
+            return;
+        }
+        
+        //step 1 (index 0
+        //step 2 (index 1)
+        //...
+        //step N (index N-1)
+        
+        List<EvaluationRunCommand> commands = new ArrayList<>();
+        for(int i=0;i<earlyTerminationIndex && i<config.getEvaluationCommands().size();i++){
+            commands.add(config.getEvaluationCommands().get(i));
+        }
+        
+        config.getEvaluationCommands().clear();
+        config.getEvaluationCommands().addAll(commands);
     }
     
     private static String[] getInstrumentationParts(
@@ -807,7 +851,7 @@ public class EosHelper {
                 "-DRampartConfig.rampartDataDir=./rampartData",
 
                 "-DDynamicAnalysisConfig.dumpDaDictionaryTo=client.dict",
-                "-DDynamicAnalysisConfig.daBlacklist=org/springframework/boot/,org/springframework/util/,org/springframework/asm/,org/springframework/cglib/,org/springframework/core/annotation/,org/springframework/core/ResolvableType,org/apache/commons/logging,org/apache/logging,org/slf4j,ch/qos",
+                "-DDynamicAnalysisConfig.daBlacklist=net/sf/saxon,org/springframework/boot/,org/springframework/util/,org/springframework/asm/,org/springframework/cglib/,org/springframework/core/annotation/,org/springframework/core/ResolvableType,org/apache/commons/logging,org/apache/logging,org/slf4j,ch/qos",
                 "-DDynamicAnalysisConfig.entrypointPrefix=enter@ com/securboration/client/ClientRunner clientAction",
                 //end properties
                 

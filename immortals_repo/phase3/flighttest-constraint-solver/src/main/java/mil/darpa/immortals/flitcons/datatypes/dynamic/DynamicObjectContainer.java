@@ -2,8 +2,10 @@ package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
+import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -11,27 +13,57 @@ import java.util.*;
 
 import static mil.darpa.immortals.flitcons.Utils.GLOBALLY_UNIQUE_ID;
 
-public class DynamicObjectContainer extends TreeMap<String, DynamicValue> implements DuplicateInterface<DynamicObjectContainer> {
+public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectContainer> {
+
+	public static final Map<String, String> aliases = new HashMap<>();
 
 	public final HierarchicalIdentifier identifier;
 
 	private final int hashCode = UUID.randomUUID().hashCode();
 
-	public final TreeMap<String, DynamicValue> debugAttributes = new TreeMap<>();
+	public final String debugLabel;
 
-//	public final String name;
+	public final TreeMap<String, DynamicValue> children = new TreeMap<>();
 
-	public DynamicObjectContainer(HierarchicalIdentifier identifier) {
-		super();
+	public DynamicObjectContainer(@Nonnull HierarchicalIdentifier identifier, @Nullable String debugLabel) {
+		this.debugLabel = debugLabel;
 		this.identifier = identifier;
+		if (debugLabel != null) {
+			aliases.put(identifier.getUniqueSessionIdentifier(), debugLabel);
+		}
 	}
 
-	public DynamicObjectContainer(HierarchicalIdentifier identifier, SortedMap<String, ? extends DynamicValue> sortedMap) {
-		super(sortedMap);
+	DynamicObjectContainer(@Nonnull HierarchicalIdentifier identifier, @Nonnull SortedMap<String, ? extends DynamicValue> sortedMap) {
+		children.putAll(sortedMap);
 		this.identifier = identifier;
+		this.debugLabel = aliases.get(identifier.getUniqueSessionIdentifier());
 	}
 
-	public Set<String> createGroupingHashes(@Nonnull Collection<String> equationValues) {
+	public Set<String> keySet() {
+		return children.keySet();
+	}
+
+	public DynamicValue get(@Nonnull String key) {
+		return children.get(key);
+	}
+
+	public Set<Map.Entry<String, DynamicValue>> entrySet() {
+		return children.entrySet();
+	}
+
+	public DynamicValue put(@Nonnull String key, @Nonnull DynamicValue value) {
+		return children.put(key, value);
+	}
+
+	public boolean containsKey(@Nonnull String key) {
+		return children.containsKey(key);
+	}
+
+	public void remove(@Nonnull String key) {
+		children.remove(key);
+	}
+
+	public Set<String> createGroupingHashes(@Nonnull Collection<String> equationValues) throws DynamicValueeException {
 		try {
 
 			Set<String> rval = new HashSet<>();
@@ -93,7 +125,7 @@ public class DynamicObjectContainer extends TreeMap<String, DynamicValue> implem
 								break;
 
 							default:
-								throw new RuntimeException("Invalid multiplicity '" + val.multiplicity.name() + "' detected!");
+								throw new DynamicValueeException(key, "Invalid multiplicity '" + val.multiplicity.name() + "' detected!");
 
 						}
 					}
@@ -110,7 +142,7 @@ public class DynamicObjectContainer extends TreeMap<String, DynamicValue> implem
 			}
 			return rval;
 		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
+			throw AdaptationnException.internal(e);
 		}
 	}
 
@@ -121,7 +153,7 @@ public class DynamicObjectContainer extends TreeMap<String, DynamicValue> implem
 
 	@Override
 	public DynamicObjectContainer duplicate() {
-		DynamicObjectContainer newDoc = new DynamicObjectContainer(identifier);
+		DynamicObjectContainer newDoc = new DynamicObjectContainer(identifier, debugLabel);
 		for (Map.Entry<String, DynamicValue> attrEntry : entrySet()) {
 			newDoc.put(attrEntry.getKey(), attrEntry.getValue().duplicate());
 		}

@@ -1,0 +1,354 @@
+<ns5:ingestMessageResponse
+	xmlns:ns2="http://inetprogram.org/projects/MDL"
+	xmlns:ns3="https://wsmrc2vger.wsmr.army.mil/rcc/manuals/106-11"
+	xmlns:ns5="http://mls.securboration.com/wsdl">
+	<message>
+		<ns2:DatabaseID>example id string</ns2:DatabaseID>
+		<ns2:Checksum>not present</ns2:Checksum>
+		<ns2:ConfigurationVersion>-TBD-</ns2:ConfigurationVersion>
+		<ns2:DirtyBit>false</ns2:DirtyBit>
+		<ns2:TestMissions>
+			<ns2:TestMission>
+				<ns2:Name>Selecting Bus Measurements Example</ns2:Name>
+				<ns2:Description>description to be added</ns2:Description>
+				<ns2:TmNSCompleteness>false</ns2:TmNSCompleteness>
+				<ns2:TmNSCompletenessDescription>-TBD-</ns2:TmNSCompletenessDescription>
+				<ns2:NetworkReferences>
+					<ns2:NetworkRef IDREF="ExampleNetworkID" />
+				</ns2:NetworkReferences>
+			</ns2:TestMission>
+		</ns2:TestMissions>
+		<ns2:MeasurementDomains>
+			<ns2:MeasurementDomain>
+				<ns2:Name>Example Measurement Domain</ns2:Name>
+				<ns2:Description>unused</ns2:Description>
+				<ns2:Measurements>
+					<ns2:Measurement ID="Meas_CaptureAll">
+						<ns2:Name>CAPALL</ns2:Name>
+						<ns2:Description>A Measurement to demonstrate how to capture all
+							ARINC 429 messages from a bus</ns2:Description>
+						<ns2:MeasurementID>0x00000004</ns2:MeasurementID>
+						<ns2:MeasurementType>DigitalBus</ns2:MeasurementType>
+						<ns2:MeasurementActive>true</ns2:MeasurementActive>
+						<ns2:DeliveryClass>FlightSafety</ns2:DeliveryClass>
+						<ns2:DataAttributes>
+							<ns2:SIUnits>Counts</ns2:SIUnits>
+							<ns2:DigitalAttributes>
+								<ns2:DataLength>
+									<ns2:ConditionParameter>
+										<ns2:ConditionOperation>==</ns2:ConditionOperation>
+										<ns2:ConditionValueFlex>32</ns2:ConditionValueFlex>
+										<ns2:SIUnits>Bit</ns2:SIUnits>
+									</ns2:ConditionParameter>
+								</ns2:DataLength>
+								<ns2:Endianness>BigEndian</ns2:Endianness>
+								<ns2:DigitalEncoding>UnsignedBinary</ns2:DigitalEncoding>
+							</ns2:DigitalAttributes>
+						</ns2:DataAttributes>
+					</ns2:Measurement>
+				</ns2:Measurements>
+				<ns2:DataStreams>
+					<ns2:DataStream ID="ARINC429_Bus_1">
+						<ns2:Name>ARINC429_Bus_1</ns2:Name>
+						<ns2:Description>ARINC 429 Bus 1 description</ns2:Description>
+						<ns2:ARINC429Messages>
+							<ns2:ARINC429Message
+								ID="ARINC429_Bus_1_CaptureAll">
+								<ns2:Name>CaptureAll</ns2:Name>
+								<ns2:Description>Message definition to demonstrate message
+									selection and masks</ns2:Description>
+								<ns2:DataStructure
+									ID="ARINC429_Bus_1_CaptureAll_STRUCT">
+									<ns2:Name>unused</ns2:Name>
+									<ns2:Description>unused</ns2:Description>
+									<ns2:PackageDataField
+										ID="ARINC429_Bus_1_CaptureAll_Field">
+										<ns2:Name>unused</ns2:Name>
+										<ns2:Description>unused</ns2:Description>
+										<ns2:FieldLocation
+											ID="ARINC429_Bus_1_CaptureAll_Field_Loc">
+											<ns2:FieldOffset>
+												<ns2:OffsetValue>
+													<ns2:FlexValue>0</ns2:FlexValue>
+													<ns2:SIUnits>Bit</ns2:SIUnits>
+												</ns2:OffsetValue>
+											</ns2:FieldOffset>
+											<ns2:FieldWidth>
+												<ns2:FlexValue>32</ns2:FlexValue>
+												<ns2:SIUnits>Bit</ns2:SIUnits>
+											</ns2:FieldWidth>
+										</ns2:FieldLocation>
+										<ns2:FieldEncoding>
+											<ns2:Endianness>BigEndian</ns2:Endianness>
+											<ns2:DigitalEncoding>UnsignedBinary</ns2:DigitalEncoding>
+										</ns2:FieldEncoding>
+										<ns2:FieldRepetitions>0</ns2:FieldRepetitions>
+									</ns2:PackageDataField>
+								</ns2:DataStructure>
+								<ns2:DataMap>
+									<ns2:DataWordToFieldMap>
+										<ns2:DataWord>
+											<ns2:Name>unused</ns2:Name>
+											<ns2:Description>unused</ns2:Description>
+											<ns2:DataWordWidth>
+												<ns2:FlexValue>32</ns2:FlexValue>
+												<ns2:SIUnits>Bit</ns2:SIUnits>
+											</ns2:DataWordWidth>
+											<ns2:Syllable>
+												<ns2:Name>unused</ns2:Name>
+												<ns2:Description>unused</ns2:Description>
+												<ns2:MeasurementRef
+													IDREF="Meas_CaptureAll" />
+												<ns2:SyllableMask>0xffffffff</ns2:SyllableMask>
+												<ns2:SyllableWidth>
+													<ns2:FlexValue>32</ns2:FlexValue>
+													<ns2:SIUnits>Bit</ns2:SIUnits>
+												</ns2:SyllableWidth>
+												<ns2:SyllableStartBit>1</ns2:SyllableStartBit>
+												<ns2:DataWordOffset>0</ns2:DataWordOffset>
+											</ns2:Syllable>
+										</ns2:DataWord>
+										<ns2:PackageDataFieldRef
+											IDREF="ARINC429_Bus_1_CaptureAll_Field" />
+										<ns2:TimeOrder>Unspecified</ns2:TimeOrder>
+									</ns2:DataWordToFieldMap>
+								</ns2:DataMap>
+							</ns2:ARINC429Message>
+						</ns2:ARINC429Messages>
+					</ns2:DataStream>
+				</ns2:DataStreams>
+			</ns2:MeasurementDomain>
+		</ns2:MeasurementDomains>
+		<ns2:NetworkDomains>
+			<ns2:Network ID="ExampleNetworkID">
+				<ns2:Name>Example Network</ns2:Name>
+				<ns2:Description>TBD description</ns2:Description>
+				<ns2:NetworkType>TmNS</ns2:NetworkType>
+				<ns2:NetworkNode ID="Dau1">
+					<ns2:Name>Dau1</ns2:Name>
+					<ns2:Description>TBD description</ns2:Description>
+					<ns2:InventoryID>Dau1</ns2:InventoryID>
+					<ns2:HostName>TBD hostname</ns2:HostName>
+					<ns2:Manufacturer>TBD Vendor Co</ns2:Manufacturer>
+					<ns2:Model>TBD WhizzBang</ns2:Model>
+					<ns2:ModelVersion>1.0</ns2:ModelVersion>
+					<ns2:SerialIdentifier>TBD-4567-8912-RA</ns2:SerialIdentifier>
+					<ns2:IEEE1588Version>2008e2e</ns2:IEEE1588Version>
+					<ns2:TmNSManageableApps>
+						<ns2:TmNSManageableApp ID="DAU1App">
+							<ns2:Name>TBD name</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:RoleID>Dau1</ns2:RoleID>
+							<ns2:LoggingLevels>
+								<ns2:Trace>true</ns2:Trace>
+								<ns2:Debug>false</ns2:Debug>
+								<ns2:Info>true</ns2:Info>
+								<ns2:Warning>false</ns2:Warning>
+								<ns2:Error>false</ns2:Error>
+								<ns2:Critical>false</ns2:Critical>
+							</ns2:LoggingLevels>
+							<ns2:Manufacturer>TBD Vendor Co</ns2:Manufacturer>
+							<ns2:Product>TBD App</ns2:Product>
+							<ns2:ProductVersion>1.0</ns2:ProductVersion>
+							<ns2:ConfigurationVersion>-TBD-</ns2:ConfigurationVersion>
+							<ns2:TmNSStandardsVersion>TBD version</ns2:TmNSStandardsVersion>
+							<ns2:DirtyBit>false</ns2:DirtyBit>
+							<ns2:LaunchCommand>unused</ns2:LaunchCommand>
+							<ns2:TmNSDAU>
+								<ns2:Module>
+									<ns2:Name>TBD Module Name</ns2:Name>
+									<ns2:Description>TBD Module Description</ns2:Description>
+									<ns2:Manufacturer>TBD Vendor Co</ns2:Manufacturer>
+									<ns2:ModelNumber>TBD Model Number</ns2:ModelNumber>
+									<ns2:SerialNumber>12345-988775</ns2:SerialNumber>
+									<ns2:InventoryID>InvID-192837</ns2:InventoryID>
+									<ns2:Position>1</ns2:Position>
+									<ns2:Connector>
+										<ns2:Name>Analog Connector</ns2:Name>
+										<ns2:Description>TBD description</ns2:Description>
+										<ns2:Pin ID="Pin1ID" Index="1">
+											<ns2:Name>TBD name</ns2:Name>
+											<ns2:Description>This is the first analog input pin on the
+												card</ns2:Description>
+											<ns2:Designator>1</ns2:Designator>
+										</ns2:Pin>
+									</ns2:Connector>
+									<ns2:Ports>
+										<ns2:Port ID="Dau1Pin1InputPort" Index="1">
+											<ns2:Name>TBD name</ns2:Name>
+											<ns2:Description>TBD description</ns2:Description>
+											<ns2:PortDirection>Input</ns2:PortDirection>
+											<ns2:PinRef IDREF="Pin1ID" />
+										</ns2:Port>
+									</ns2:Ports>
+								</ns2:Module>
+							</ns2:TmNSDAU>
+						</ns2:TmNSManageableApp>
+					</ns2:TmNSManageableApps>
+					<ns2:NetworkInterface ID="Dau1IFace">
+						<ns2:Name>Eth0</ns2:Name>
+						<ns2:DHCPEnable>false</ns2:DHCPEnable>
+						<ns2:IPAddress>192.168.0.21</ns2:IPAddress>
+						<ns2:Netmask>255.255.255.0</ns2:Netmask>
+						<ns2:Gateway>192.168.0.1</ns2:Gateway>
+						<ns2:MACAddress>00:00:00:00:00:00</ns2:MACAddress>
+						<ns2:PhysicalNetworkPort
+							ID="Dau1PhysNetPort1">
+							<ns2:Name>Dau1PhysNetPort1</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:Medium>Copper</ns2:Medium>
+							<ns2:PortNumber>1</ns2:PortNumber>
+							<ns2:PortDataRate>
+								<ns2:FloatValue>1.0E8</ns2:FloatValue>
+								<ns2:SIUnits>BitPerSecond</ns2:SIUnits>
+							</ns2:PortDataRate>
+						</ns2:PhysicalNetworkPort>
+					</ns2:NetworkInterface>
+					<ns2:Ports>
+						<ns2:Port ID="Dau1NetworkPort" Index="2">
+							<ns2:Name>Dau1Port</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:PortDirection>Bidirectional</ns2:PortDirection>
+							<ns2:PhysicalNetworkPortRef
+								IDREF="Dau1PhysNetPort1" />
+						</ns2:Port>
+					</ns2:Ports>
+				</ns2:NetworkNode>
+				<ns2:NetworkNode ID="Switch1">
+					<ns2:Name>Switch 1</ns2:Name>
+					<ns2:Description>TBD description</ns2:Description>
+					<ns2:InventoryID>Switch1</ns2:InventoryID>
+					<ns2:HostName>TBD hostname</ns2:HostName>
+					<ns2:Manufacturer>TBD Vendor Co</ns2:Manufacturer>
+					<ns2:Model>TBD WhizzBang</ns2:Model>
+					<ns2:ModelVersion>1.0</ns2:ModelVersion>
+					<ns2:SerialIdentifier>4567-8912-RA</ns2:SerialIdentifier>
+					<ns2:IEEE1588Version>2008e2e</ns2:IEEE1588Version>
+					<ns2:TmNSManageableApps>
+						<ns2:TmNSManageableApp ID="Switch1App">
+							<ns2:Name>TBD name</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:RoleID>Switch1</ns2:RoleID>
+							<ns2:LoggingLevels>
+								<ns2:Trace>true</ns2:Trace>
+								<ns2:Debug>false</ns2:Debug>
+								<ns2:Info>true</ns2:Info>
+								<ns2:Warning>false</ns2:Warning>
+								<ns2:Error>false</ns2:Error>
+								<ns2:Critical>false</ns2:Critical>
+							</ns2:LoggingLevels>
+							<ns2:Manufacturer>TBD Vendor Co</ns2:Manufacturer>
+							<ns2:Product>TBD App</ns2:Product>
+							<ns2:ProductVersion>1.0</ns2:ProductVersion>
+							<ns2:ConfigurationVersion>-TBD-</ns2:ConfigurationVersion>
+							<ns2:TmNSStandardsVersion>TBD version</ns2:TmNSStandardsVersion>
+							<ns2:DirtyBit>false</ns2:DirtyBit>
+							<ns2:LaunchCommand>unused</ns2:LaunchCommand>
+							<ns2:TmNSNetworkFabricDevice>
+								<ns2:MulticastRoutingMode>Dynamic</ns2:MulticastRoutingMode>
+								<ns2:IGMPQuerier>Off</ns2:IGMPQuerier>
+								<ns2:IGMPQuerierInterval>0</ns2:IGMPQuerierInterval>
+							</ns2:TmNSNetworkFabricDevice>
+						</ns2:TmNSManageableApp>
+					</ns2:TmNSManageableApps>
+					<ns2:NetworkInterface ID="Switch1IFace">
+						<ns2:Name>Eth0</ns2:Name>
+						<ns2:DHCPEnable>false</ns2:DHCPEnable>
+						<ns2:IPAddress>192.168.0.254</ns2:IPAddress>
+						<ns2:Netmask>255.255.255.0</ns2:Netmask>
+						<ns2:Gateway>192.168.0.254</ns2:Gateway>
+						<ns2:MACAddress>00:00:00:00:00:00</ns2:MACAddress>
+						<ns2:PhysicalNetworkPort
+							ID="Sw1PhyNetPort1">
+							<ns2:Name>Sw1PhyNetPort1</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:Medium>Copper</ns2:Medium>
+							<ns2:PortNumber>1</ns2:PortNumber>
+							<ns2:PortDataRate>
+								<ns2:FloatValue>1.0E9</ns2:FloatValue>
+								<ns2:SIUnits>BitPerSecond</ns2:SIUnits>
+							</ns2:PortDataRate>
+						</ns2:PhysicalNetworkPort>
+						<ns2:PhysicalNetworkPort
+							ID="Sw1PhyNetPort2">
+							<ns2:Name>Sw1PhyNetPort2</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:Medium>Copper</ns2:Medium>
+							<ns2:PortNumber>2</ns2:PortNumber>
+							<ns2:PortDataRate>
+								<ns2:FloatValue>1.0E9</ns2:FloatValue>
+								<ns2:SIUnits>BitPerSecond</ns2:SIUnits>
+							</ns2:PortDataRate>
+						</ns2:PhysicalNetworkPort>
+						<ns2:PhysicalNetworkPort
+							ID="Sw1PhyNetPort3">
+							<ns2:Name>Sw1PhyNetPort3</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:Medium>Copper</ns2:Medium>
+							<ns2:PortNumber>3</ns2:PortNumber>
+							<ns2:PortDataRate>
+								<ns2:FloatValue>1.0E9</ns2:FloatValue>
+								<ns2:SIUnits>BitPerSecond</ns2:SIUnits>
+							</ns2:PortDataRate>
+						</ns2:PhysicalNetworkPort>
+						<ns2:PhysicalNetworkPort
+							ID="Sw1PhyNetPort4">
+							<ns2:Name>Sw1PhyNetPort4</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:Medium>Copper</ns2:Medium>
+							<ns2:PortNumber>4</ns2:PortNumber>
+							<ns2:PortDataRate>
+								<ns2:FloatValue>1.0E9</ns2:FloatValue>
+								<ns2:SIUnits>BitPerSecond</ns2:SIUnits>
+							</ns2:PortDataRate>
+						</ns2:PhysicalNetworkPort>
+					</ns2:NetworkInterface>
+					<ns2:Ports>
+						<ns2:Port ID="Switch1Port1" Index="1">
+							<ns2:Name>Switch1Port1</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:PortDirection>Bidirectional</ns2:PortDirection>
+							<ns2:PhysicalNetworkPortRef
+								IDREF="Sw1PhyNetPort1" />
+						</ns2:Port>
+						<ns2:Port ID="Switch1Port2" Index="2">
+							<ns2:Name>Switch1Port2</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:PortDirection>Bidirectional</ns2:PortDirection>
+							<ns2:PhysicalNetworkPortRef
+								IDREF="Sw1PhyNetPort2" />
+						</ns2:Port>
+						<ns2:Port ID="Switch1Port3" Index="3">
+							<ns2:Name>Switch1Port3</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:PortDirection>Bidirectional</ns2:PortDirection>
+							<ns2:PhysicalNetworkPortRef
+								IDREF="Sw1PhyNetPort3" />
+						</ns2:Port>
+						<ns2:Port ID="Switch1Port4" Index="4">
+							<ns2:Name>Switch1Port4</ns2:Name>
+							<ns2:Description>TBD description</ns2:Description>
+							<ns2:PortDirection>Bidirectional</ns2:PortDirection>
+							<ns2:PhysicalNetworkPortRef
+								IDREF="Sw1PhyNetPort4" />
+						</ns2:Port>
+					</ns2:Ports>
+				</ns2:NetworkNode>
+				<ns2:PortMappings>
+					<ns2:PortMapping ID="PM1">
+						<ns2:Name>TBD name</ns2:Name>
+						<ns2:Description>TBD description</ns2:Description>
+						<ns2:PortRef IDREF="Dau1NetworkPort" />
+						<ns2:PortRef IDREF="Switch1Port1" />
+					</ns2:PortMapping>
+					<ns2:PortMapping ID="PM2">
+						<ns2:Name>TBD name</ns2:Name>
+						<ns2:Description>TBD description</ns2:Description>
+						<ns2:PortRef IDREF="Dau1Pin1InputPort" />
+						<ns2:DataStreamRef IDREF="ARINC429_Bus_1" />
+					</ns2:PortMapping>
+				</ns2:PortMappings>
+			</ns2:Network>
+		</ns2:NetworkDomains>
+	</message>
+</ns5:ingestMessageResponse>

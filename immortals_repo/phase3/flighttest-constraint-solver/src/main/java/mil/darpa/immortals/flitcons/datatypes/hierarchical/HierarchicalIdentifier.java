@@ -1,55 +1,109 @@
 package mil.darpa.immortals.flitcons.datatypes.hierarchical;
 
 
+import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The intent of this object is to facilitate a comparable immutable standard identifier for nodes.
  * The identifier and nodeType value are used as a pair to strictly identify the node in most circumstances
  * <p>
  * Since XML isn't aware of the relationship between the ID and IDREF fields of MDL the  referenceIdentifier is
- * also supplied as a shortcut for gathering references that can be properly associated after {@Link HierarcicalData}
+ * also supplied as a shortcut for gathering references that can be properly associated after {@link HierarchicalData}
  * collection.
  */
 @Immutable
 public class HierarchicalIdentifier implements Comparator<HierarchicalIdentifier>, Comparable<HierarchicalIdentifier> {
-	private final String identifier;
-	private final String nodeType;
-	public final String referenceIdentifier;
 
-	public static final HierarchicalIdentifier UNDEFINED  = new HierarchicalIdentifier("UNDEFINED", "UNDEFINED");
+	private static Set<HierarchicalIdentifier> identifierDatastore = new HashSet<>();
 
-	public String getIdentifier() {
-		if (this == UNDEFINED) {
-			throw new RuntimeException("The identifier for the specified node is undefined!");
+	private static AtomicInteger tagCounter = new AtomicInteger(1248576);
+
+	/**
+	 * An identifier that can be used to match this with the corresponding node in the original data source
+	 */
+	private String sourceIdentifier;
+
+	/**
+	 * An identifier that provides a concrete reference for this node to be used globally in this session
+	 */
+	private final String uniqueSessionIdentifier;
+
+	/**
+	 * The type of the node
+	 */
+	private String nodeType;
+
+	/**
+	 * The reference identifier for this node, if any
+	 */
+	public String referenceIdentifier;
+
+	public String getSourceIdentifier() {
+		if (sourceIdentifier == null) {
+			throw AdaptationnException.internal("No source identifier exists for this object!");
 		}
-		return identifier;
+		return sourceIdentifier;
+	}
+
+	public String getUniqueSessionIdentifier() {
+		return uniqueSessionIdentifier;
 	}
 
 	public String getNodeType() {
-		if (this == UNDEFINED) {
-			throw new RuntimeException("The identifier for the specified node is undefined!");
+		if (nodeType == null) {
+			throw AdaptationnException.internal("NodeType not specified!");
 		}
 		return nodeType;
 	}
 
-	public HierarchicalIdentifier(@Nonnull String identifier, @Nonnull String nodeType) {
-		this.identifier = identifier;
-		this.nodeType = nodeType;
-		this.referenceIdentifier = null;
+	public static HierarchicalIdentifier createBlankNode() {
+		return new HierarchicalIdentifier(null, null, null);
 	}
 
-	public HierarchicalIdentifier(@Nonnull String referenceIdentifier) {
-		this.identifier = null;
-		this.nodeType = null;
-		this.referenceIdentifier = referenceIdentifier;
+	public static HierarchicalIdentifier createReferenceNode(@Nonnull String referenceIdentifier, @Nullable String nodeType) {
+		Optional<HierarchicalIdentifier> candidate = identifierDatastore.stream().filter(x ->
+				referenceIdentifier.equals(x.referenceIdentifier) && (nodeType == null || x.nodeType == null || nodeType.equals(x.nodeType))).findFirst();
+
+		if (candidate.isPresent()) {
+			HierarchicalIdentifier val = candidate.get();
+			if (val.nodeType == null) {
+				val.nodeType = nodeType;
+			}
+			return val;
+		} else {
+			return new HierarchicalIdentifier(null, nodeType, referenceIdentifier);
+		}
 	}
 
-	public HierarchicalIdentifier(@Nonnull String identifier, @Nonnull String nodeType, @Nonnull String referenceIdentifier) {
-		this.identifier = identifier;
+	public static HierarchicalIdentifier produceTraceableNode(@Nonnull String identifier, @Nullable String nodeType) {
+		Optional<HierarchicalIdentifier> candidate = identifierDatastore.stream().filter(x ->
+				identifier.equals(x.sourceIdentifier) && (nodeType == null || x.nodeType == null || nodeType.equals(x.nodeType))).findFirst();
+
+		if (candidate.isPresent()) {
+			HierarchicalIdentifier val = candidate.get();
+			if (val.nodeType == null) {
+				val.nodeType = nodeType;
+			}
+			return val;
+		} else {
+			return new HierarchicalIdentifier(identifier, nodeType, null);
+		}
+	}
+
+	private HierarchicalIdentifier(@Nullable String identifier, @Nullable String nodeType, @Nullable String referenceIdentifier) {
+		this.sourceIdentifier = identifier;
+		this.uniqueSessionIdentifier = identifier == null ? ("I" + Integer.toHexString(tagCounter.incrementAndGet())) : identifier;
 		this.nodeType = nodeType;
 		this.referenceIdentifier = referenceIdentifier;
+		identifierDatastore.add(this);
 	}
 
 	@Override
@@ -69,15 +123,18 @@ public class HierarchicalIdentifier implements Comparator<HierarchicalIdentifier
 			if (t1 == null) {
 				return 1;
 			} else {
-				if (o.getIdentifier().equals(t1.getIdentifier())) {
-					if (o.getNodeType().equals(t1.getNodeType())) {
+				if (o.getUniqueSessionIdentifier().equals(t1.getUniqueSessionIdentifier())) {
+					return 0;
+
+				} else if (o.sourceIdentifier != null && o.sourceIdentifier.equals(t1.sourceIdentifier)) {
+					if (o.getNodeType().equals(t1.getNodeType()) || o.getNodeType().equals(t1.getNodeType())) {
 						return 0;
 					} else {
-						throw new RuntimeException("Comparison of node with identifier '" + o.getIdentifier() + "' has indicated multiple node types of '" + o.getNodeType() + "' and '" + t1.getNodeType() + "'!");
+						throw AdaptationnException.internal("Comparison of node with identifier '" + o.toString() + "' has indicated multiple node types of '" + o.nodeType + "' and '" + t1.nodeType + "'!");
 					}
 
 				} else {
-					return o.getIdentifier().compareTo(t1.getIdentifier());
+					return -1;
 				}
 			}
 		}
@@ -85,15 +142,17 @@ public class HierarchicalIdentifier implements Comparator<HierarchicalIdentifier
 
 	@Override
 	public int hashCode() {
-		return (identifier + nodeType).hashCode();
+		return (getUniqueSessionIdentifier()).hashCode();
 	}
 
 	public String toString() {
-		String nodeTypeStr = getNodeType() == null ? "?" : getNodeType();
-		String identifierStr = getIdentifier() == null ? "?" : getIdentifier();
-		String rval = "v(" + nodeTypeStr + ")[" + identifierStr + "]";
-		if (referenceIdentifier != null) {
-			rval = rval + "{ID=" + referenceIdentifier + "}";
+		String nodeTypeStr = nodeType == null ? "?" : nodeType;
+		String identifierStr = sourceIdentifier == null ? "?" : sourceIdentifier;
+		String rval = "v(" + nodeTypeStr + ")[" + identifierStr + "]{uniqueSessionIdentifier=" + uniqueSessionIdentifier;
+		if (referenceIdentifier == null) {
+			rval = rval + "}";
+		} else {
+			rval = rval + ",ID=" + referenceIdentifier + "}";
 		}
 		return rval;
 	}

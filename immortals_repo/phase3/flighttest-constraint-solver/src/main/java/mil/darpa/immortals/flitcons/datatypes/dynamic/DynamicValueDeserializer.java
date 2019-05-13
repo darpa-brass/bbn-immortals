@@ -2,18 +2,23 @@ package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import com.google.gson.*;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
+import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static mil.darpa.immortals.flitcons.Utils.GLOBALLY_UNIQUE_ID;
+
 public class DynamicValueDeserializer implements JsonDeserializer<DynamicValue> {
 
-	private static DynamicValue getDynamicValue(JsonElement element) throws DynamicValueException {
+	private static DynamicValue getDynamicValue(JsonElement element) throws DynamicValueeException {
 		if (element.isJsonPrimitive()) {
 			Object value = getSinglePrimitive(element);
 			if (value instanceof Range) {
 				return new DynamicValue((Range) value, null, null);
+			} else if (value instanceof Equation) {
+				return new DynamicValue(null, null, null, value);
 			} else {
 				return new DynamicValue(null, null, getSinglePrimitive(element));
 			}
@@ -22,6 +27,8 @@ public class DynamicValueDeserializer implements JsonDeserializer<DynamicValue> 
 			Object innerValue = getSinglePrimitive(element);
 			if (innerValue instanceof Range) {
 				return new DynamicValue((Range) innerValue, null, null);
+			} else if (innerValue instanceof Equation) {
+				return new DynamicValue(null, null, innerValue);
 			} else {
 				return new DynamicValue(null, null, innerValue);
 			}
@@ -38,11 +45,11 @@ public class DynamicValueDeserializer implements JsonDeserializer<DynamicValue> 
 			return new DynamicValue(null, val, null);
 
 		} else {
-			throw new RuntimeException("Unexpected Json element class '" + element.getClass().toString() + "!");
+			throw AdaptationnException.internal("Unexpected Json element class '" + element.getClass().toString() + "!");
 		}
 	}
 
-	private static Object getSinglePrimitive(JsonElement value) throws DynamicValueException {
+	private static Object getSinglePrimitive(JsonElement value) throws DynamicValueeException {
 
 		if (value.isJsonObject()) {
 			JsonObject jo = value.getAsJsonObject();
@@ -52,13 +59,21 @@ public class DynamicValueDeserializer implements JsonDeserializer<DynamicValue> 
 						getSinglePrimitive(jo.get("Min").getAsJsonPrimitive()),
 						getSinglePrimitive(jo.get("Max").getAsJsonPrimitive()));
 
+			} else if (jo.has("Equation")) {
+				return new Equation(jo.get("Equation").getAsString());
+
 			} else {
 				TreeMap<String, DynamicValue> containerData = new TreeMap<>();
 
 				for (Map.Entry<String, JsonElement> entry : jo.entrySet()) {
 					containerData.put(entry.getKey(), getDynamicValue(entry.getValue()));
 				}
-				return new DynamicObjectContainer(HierarchicalIdentifier.UNDEFINED, containerData);
+
+				if (containerData.containsKey(GLOBALLY_UNIQUE_ID)) {
+					return new DynamicObjectContainer(HierarchicalIdentifier.produceTraceableNode(containerData.get(GLOBALLY_UNIQUE_ID).parseString(), null), containerData);
+				} else {
+					return new DynamicObjectContainer(HierarchicalIdentifier.createBlankNode(), containerData);
+				}
 			}
 
 		} else if (value.isJsonPrimitive()) {
@@ -78,10 +93,10 @@ public class DynamicValueDeserializer implements JsonDeserializer<DynamicValue> 
 				return value.getAsBoolean();
 
 			} else {
-				throw new RuntimeException("Unexpected primitive type!");
+				throw AdaptationnException.internal("Unexpected primitive type!");
 			}
 		} else {
-			throw new RuntimeException("Unexpected Json element class '" + value.getClass().toString() + "!");
+			throw AdaptationnException.internal("Unexpected Json element class '" + value.getClass().toString() + "!");
 		}
 	}
 
@@ -89,8 +104,8 @@ public class DynamicValueDeserializer implements JsonDeserializer<DynamicValue> 
 	public DynamicValue deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 		try {
 			return getDynamicValue(json);
-		} catch (DynamicValueException e) {
-			throw new RuntimeException(e);
+		} catch (DynamicValueeException e) {
+			throw AdaptationnException.internal(e);
 		}
 	}
 }

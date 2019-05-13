@@ -72,7 +72,8 @@ public class Bridge {
             
             FileUtils.writeByteArrayToFile(
                 new File(dir,artifactId), 
-                data
+                data,
+                true
                 );
         }
         
@@ -93,6 +94,40 @@ public class Bridge {
                     schemaFromTag("v1"), 
                     schemaFromTag("v1"), 
                     schemaFromTag("v1"),
+                    createCheatArchive()
+                    );
+            } else if(props.get(EvaluationPropertyKey.evalType).equals("testSanity1")){
+                final File templateDir = new File(props.get(EvaluationPropertyKey.essTemplateDir));
+                
+                if(!templateDir.exists()){
+                    throw new RuntimeException("template dir " + templateDir.getAbsolutePath() + " does not exist");
+                }
+                if(!templateDir.isDirectory()){
+                    throw new RuntimeException("template dir " + templateDir.getAbsolutePath() + " is not a directory");
+                }
+                
+                return EvaluationPackageBuilder.createEvaluationPackageSimple(
+                    templateDir, 
+                    schemaFromTag("v1"), 
+                    schemaFromTag("v2"), 
+                    schemaFromTag("v1"),
+                    createCheatArchive()
+                    );
+            } else if(props.get(EvaluationPropertyKey.evalType).equals("testSanity2")){
+                final File templateDir = new File(props.get(EvaluationPropertyKey.essTemplateDir));
+                
+                if(!templateDir.exists()){
+                    throw new RuntimeException("template dir " + templateDir.getAbsolutePath() + " does not exist");
+                }
+                if(!templateDir.isDirectory()){
+                    throw new RuntimeException("template dir " + templateDir.getAbsolutePath() + " is not a directory");
+                }
+                
+                return EvaluationPackageBuilder.createEvaluationPackageSimple(
+                    templateDir, 
+                    schemaFromTag("v2"), 
+                    schemaFromTag("v1"), 
+                    schemaFromTag("v2"),
                     createCheatArchive()
                     );
             } else if(props.get(EvaluationPropertyKey.evalType).equals("testSimple")){
@@ -191,7 +226,7 @@ public class Bridge {
                 ) throws Exception {
             write(
                 evaluationInstanceIdentifier,
-                "error." + System.currentTimeMillis() + ".log",
+                "error.log",
                 (errorDesc + "\n" + errorData).getBytes(StandardCharsets.UTF_8)
                 );
         }

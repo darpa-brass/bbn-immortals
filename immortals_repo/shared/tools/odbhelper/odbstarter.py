@@ -7,11 +7,10 @@ import time
 from typing import List, Optional
 
 import pyorient as pyorient
-from pyorient import OrientDB
-
 from odbhelper.brass_api_helper import BrassApiHelper
 from odbhelper.datatypes import STARTUP_TIMEOUT_S, SHUTDOWN_TIMEOUT_S, STDOUT_LOG_BASE_NAME, \
     STDERR_LOG_BASE_NAME, Scenario, ScenarioType
+from pyorient import OrientDB
 
 SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
@@ -47,13 +46,11 @@ def init_db_data(host: str, port: int, root_password: str, db_name: str,
         client.db_create(db_name, pyorient.DB_TYPE_GRAPH, pyorient.STORAGE_TYPE_MEMORY)
 
     client.db_open(db_name, 'admin', 'admin')
-    client.command('CREATE CLASS BBNEvaluationInput EXTENDS V')
-    client.command('CREATE PROPERTY BBNEvaluationInput.jsonData STRING')
-
-    client.command('CREATE CLASS BBNEvaluationOutput EXTENDS V')
-    client.command('CREATE PROPERTY BBNEvaluationOutput.jsonData STRING')
-    client.command('CREATE PROPERTY BBNEvaluationOutput.finalState STRING')
-    client.command('CREATE PROPERTY BBNEvaluationOutput.finalStateInfo STRING')
+    client.command('CREATE CLASS BBNEvaluationData EXTENDS V')
+    client.command('CREATE PROPERTY BBNEvaluationData.inputJsonData STRING')
+    client.command('CREATE PROPERTY BBNEvaluationData.outputJsonData STRING')
+    client.command('CREATE PROPERTY BBNEvaluationData.currentState STRING')
+    client.command('CREATE PROPERTY BBNEvaluationData.currentStateInfo STRING')
 
     # client.coommand('CREATE CLASS DAUInventory EXTENDS V')
     return client
@@ -61,8 +58,7 @@ def init_db_data(host: str, port: int, root_password: str, db_name: str,
 
 def init_bbn_persistent(host: str, port: int, root_password: str):
     client = init_db_data(host, port, root_password, BBN_PERSISTENT_DB_NAME)
-    client.command('CREATE PROPERTY BBNEvaluationInput.evaluationInstanceIdentifier STRING')
-    client.command('CREATE PROPERTY BBNEvaluationOutput.evaluationInstanceIdentifier STRING')
+    client.command('CREATE PROPERTY BBNEvaluationData.evaluationInstanceIdentifier STRING')
     client.close()
 
 
@@ -89,11 +85,11 @@ def init_scenario5(host: str, port: int, root_password: str, scenario: Scenario)
     # TODO: This is hacky. I shouldn't have to import it has the child of a GenericParameter and then disconnect it!
     client.command('DELETE EDGE FROM (SELECT FROM DAUInventory)')
 
-    input_record = client.record_create(-1, {'@BBNEvaluationInput': {}})
+    input_record = client.record_create(-1, {'@BBNEvaluationData': {}})
     mdl_record = client.query('SELECT FROM MDLRoot')[0]
     client.command('CREATE EDGE Containment FROM ' + input_record._rid + ' TO ' + mdl_record._rid)
-    client.record_create(-1, {'@BBNEvaluationOutput': {}})
 
+    client.command("UPDATE BBNEvaluationData Set currentState = 'ReadyForAdaptation'")
     client.close()
 
 
@@ -105,13 +101,12 @@ def init_scenario6(host: str, port: int, root_password: str, scenario: Scenario)
     client.record_create(
         -1,
         {
-            '@BBNEvaluationInput': {
-                'jsonData': json_data
+            '@BBNEvaluationData': {
+                'inputJsonData': json_data
             }
         }
     )
-    client.record_create(-1, {'@BBNEvaluationOutput': {}})
-
+    client.command("UPDATE BBNEvaluationData Set currentState = 'ReadyForAdaptation'")
     client.close()
 
 
@@ -175,12 +170,11 @@ class OdbStarter:
         if not db_exists:
             print('Initializing ' + BBN_PERSISTENT_DB_NAME + ' database.')
             client = init_db_data(self.host, self.port, self.orientdb_root_password, BBN_PERSISTENT_DB_NAME)
-            client.command('CREATE PROPERTY BBNEvaluationInput.evaluationInstanceIdentifier STRING')
-            client.command('CREATE PROPERTY BBNEvaluationOutput.evaluationInstanceIdentifier STRING')
+            client.command('CREATE PROPERTY BBNEvaluationData.evaluationInstanceIdentifier STRING')
             client.close()
 
     def init_test_scenarios(self, reset_scenarios: Optional[List[Scenario]] = None):
-        print('Initializing OrientDB Databases...')
+        print('Initializing OrientDB Databases 0n ' + self.host + ':' + str(self.port) + '...')
 
         client = pyorient.OrientDB(self.host, self.port)
         client.connect("root", self.orientdb_root_password)

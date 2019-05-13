@@ -1,5 +1,7 @@
 package com.securboration.immortals.ontology.cp.java;
 
+import com.securboration.immortals.ontology.core.Resource;
+
 /**
  * A resource on a classpath.  I.e., something that can be accessed by a 
  * classloader.
@@ -7,7 +9,7 @@ package com.securboration.immortals.ontology.cp.java;
  * @author Securboration
  *
  */
-public class ClasspathResource {
+public class ClasspathResource extends Resource {
 
     /**
      * The actual resource bytes

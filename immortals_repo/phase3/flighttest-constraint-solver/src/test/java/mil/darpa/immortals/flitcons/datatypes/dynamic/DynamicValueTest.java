@@ -28,6 +28,8 @@ public class DynamicValueTest {
 						value.parseFloat();
 					} else if (classTest == Boolean.class) {
 						value.parseBoolean();
+					} else if (classTest == Equation.class) {
+						value.parseEquation();
 					} else {
 						throw new RuntimeException("Unexpected class type '" + classTest.getName() + "'!");
 					}
@@ -92,6 +94,9 @@ public class DynamicValueTest {
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.Set, false);
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.Range, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.SingleValue, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.Set, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.Range, false);
 
 			JsonElement je = gson.toJsonTree(set);
 			Assert.assertTrue(je instanceof JsonArray);
@@ -109,7 +114,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(dv.valueArray[2], long2);
 			Assert.assertEquals(dv.valueArray[3], long3);
 
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -133,6 +138,9 @@ public class DynamicValueTest {
 			innerParserTest(Boolean.class, range, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(Boolean.class, range, DynamicValueMultiplicity.Set, false);
 			innerParserTest(Boolean.class, range, DynamicValueMultiplicity.Range, false);
+			innerParserTest(Equation.class, range, DynamicValueMultiplicity.SingleValue, false);
+			innerParserTest(Equation.class, range, DynamicValueMultiplicity.Set, false);
+			innerParserTest(Equation.class, range, DynamicValueMultiplicity.Range, false);
 
 			JsonElement je = gson.toJsonTree(range);
 			Assert.assertTrue(je instanceof JsonObject);
@@ -147,7 +155,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(dv.range.Min, long0);
 			Assert.assertEquals(dv.range.Max, long1);
 
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -170,6 +178,9 @@ public class DynamicValueTest {
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.Set, false);
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.Range, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.SingleValue, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.Set, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.Range, false);
 
 			JsonElement je = gson.toJsonTree(value);
 			Assert.assertTrue(je instanceof JsonPrimitive);
@@ -180,7 +191,7 @@ public class DynamicValueTest {
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
 			Assert.assertEquals(dv.singleValue, long0);
 
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -208,6 +219,9 @@ public class DynamicValueTest {
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.Set, false);
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.Range, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.SingleValue, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.Set, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.Range, false);
 
 			JsonElement je = gson.toJsonTree(set);
 			Assert.assertTrue(je instanceof JsonArray);
@@ -225,7 +239,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(dv.valueArray[2], float2);
 			Assert.assertEquals(dv.valueArray[3], float3);
 
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -249,6 +263,9 @@ public class DynamicValueTest {
 			innerParserTest(Boolean.class, range, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(Boolean.class, range, DynamicValueMultiplicity.Set, false);
 			innerParserTest(Boolean.class, range, DynamicValueMultiplicity.Range, false);
+			innerParserTest(Equation.class, range, DynamicValueMultiplicity.SingleValue, false);
+			innerParserTest(Equation.class, range, DynamicValueMultiplicity.Set, false);
+			innerParserTest(Equation.class, range, DynamicValueMultiplicity.Range, false);
 
 			JsonElement je = gson.toJsonTree(range);
 			Assert.assertTrue(je instanceof JsonObject);
@@ -263,7 +280,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(dv.range.Min, float0);
 			Assert.assertEquals(dv.range.Max, float1);
 
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -286,6 +303,9 @@ public class DynamicValueTest {
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.Set, false);
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.Range, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.SingleValue, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.Set, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.Range, false);
 
 			JsonElement je = gson.toJsonTree(value);
 			Assert.assertTrue(je instanceof JsonPrimitive);
@@ -296,7 +316,7 @@ public class DynamicValueTest {
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
 			Assert.assertEquals(dv.singleValue, float0);
 
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -324,6 +344,9 @@ public class DynamicValueTest {
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.Set, true);
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.Range, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.SingleValue, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.Set, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.Range, false);
 
 			JsonElement je = gson.toJsonTree(set);
 			Assert.assertTrue(je instanceof JsonArray);
@@ -341,7 +364,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(dv.valueArray[2], boolean2);
 			Assert.assertEquals(dv.valueArray[3], boolean3);
 
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -366,6 +389,9 @@ public class DynamicValueTest {
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.SingleValue, true);
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.Set, false);
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.Range, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.SingleValue, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.Set, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.Range, false);
 
 			JsonElement je = gson.toJsonTree(value);
 			Assert.assertTrue(je instanceof JsonPrimitive);
@@ -376,7 +402,7 @@ public class DynamicValueTest {
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
 			Assert.assertEquals(dv.singleValue, boolean0);
 
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -404,6 +430,9 @@ public class DynamicValueTest {
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.Set, false);
 			innerParserTest(Boolean.class, set, DynamicValueMultiplicity.Range, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.SingleValue, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.Set, false);
+			innerParserTest(Equation.class, set, DynamicValueMultiplicity.Range, false);
 
 			JsonElement je = gson.toJsonTree(set);
 			Assert.assertTrue(je instanceof JsonArray);
@@ -421,7 +450,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(str2, dv.valueArray[2]);
 			Assert.assertEquals(str3, dv.valueArray[3]);
 
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -429,15 +458,15 @@ public class DynamicValueTest {
 	// String ranges not supported
 
 	@Test
-	public void stringValueTest() {
+	public void equationValueTest() {
 		try {
-			String str0 = "Hello Major this is Tom.";
-			DynamicValue value = new DynamicValue(null, null, str0);
+			Equation eq0 = new Equation("Hello Major this is Tom.");
+			DynamicValue value = new DynamicValue(null, null, eq0);
 
 			innerParserTest(Long.class, value, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(Long.class, value, DynamicValueMultiplicity.Set, false);
 			innerParserTest(Long.class, value, DynamicValueMultiplicity.Range, false);
-			innerParserTest(String.class, value, DynamicValueMultiplicity.SingleValue, true);
+			innerParserTest(String.class, value, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(String.class, value, DynamicValueMultiplicity.Set, false);
 			innerParserTest(String.class, value, DynamicValueMultiplicity.Range, false);
 			innerParserTest(Float.class, value, DynamicValueMultiplicity.SingleValue, false);
@@ -446,18 +475,59 @@ public class DynamicValueTest {
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.SingleValue, false);
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.Set, false);
 			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.Range, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.SingleValue, true);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.Set, false);
+			innerParserTest(Equation.class, value, DynamicValueMultiplicity.Range, false);
 
 			JsonElement je = gson.toJsonTree(value);
-			Assert.assertTrue(je instanceof JsonPrimitive);
-			JsonPrimitive jp = (JsonPrimitive) je;
-			Assert.assertTrue(jp.isString());
-			Assert.assertEquals(str0, jp.getAsString());
+			Assert.assertTrue(je instanceof JsonObject);
+			JsonObject jo = je.getAsJsonObject();
+			Assert.assertNotNull(jo.get("Equation"));
+			Assert.assertEquals(jo.get("Equation").getAsString(), eq0.Equation);
 
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
-			Assert.assertEquals(dv.singleValue, str0);
+			Assert.assertTrue(dv.singleValue instanceof Equation);
+			Assert.assertTrue(eq0.Equation.equals(((Equation)dv.singleValue).Equation));
 
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			throw new RuntimeException(e);
 		}
 	}
+
+
+
+	// Equation ranges not supported
+
+//	@Test
+//	public void stringValueTest() {
+//		try {
+//			String str0 = "Hello Major this is Tom.";
+//			DynamicValue value = new DynamicValue(null, null, str0, null);
+//
+//			innerParserTest(Long.class, value, DynamicValueMultiplicity.SingleValue, false);
+//			innerParserTest(Long.class, value, DynamicValueMultiplicity.Set, false);
+//			innerParserTest(Long.class, value, DynamicValueMultiplicity.Range, false);
+//			innerParserTest(String.class, value, DynamicValueMultiplicity.SingleValue, true);
+//			innerParserTest(String.class, value, DynamicValueMultiplicity.Set, false);
+//			innerParserTest(String.class, value, DynamicValueMultiplicity.Range, false);
+//			innerParserTest(Float.class, value, DynamicValueMultiplicity.SingleValue, false);
+//			innerParserTest(Float.class, value, DynamicValueMultiplicity.Set, false);
+//			innerParserTest(Float.class, value, DynamicValueMultiplicity.Range, false);
+//			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.SingleValue, false);
+//			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.Set, false);
+//			innerParserTest(Boolean.class, value, DynamicValueMultiplicity.Range, false);
+//
+//			JsonElement je = gson.toJsonTree(value);
+//			Assert.assertTrue(je instanceof JsonPrimitive);
+//			JsonPrimitive jp = (JsonPrimitive) je;
+//			Assert.assertTrue(jp.isString());
+//			Assert.assertEquals(str0, jp.getAsString());
+//
+//			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
+//			Assert.assertEquals(dv.singleValue, str0);
+//
+//		} catch (DynamicValueeException e) {
+//			throw new RuntimeException(e);
+//		}
+//	}
 }

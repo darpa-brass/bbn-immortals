@@ -6,11 +6,31 @@ import mil.darpa.immortals.schemaevolution.datatypes.InputData;
 import mil.darpa.immortals.schemaevolution.datatypes.KnownMdlSchemaVersions;
 import mil.darpa.immortals.schemaevolution.datatypes.OutputData;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 public class BBNIntegrationTests {
+
+	private static final String persistenceLocation = "BBNPersistent";
+
+	@BeforeClass
+	public void init() {
+		Path persistencePath = Paths.get(persistenceLocation);
+		if (!Files.exists(persistencePath)) {
+
+			try {
+				Files.createDirectory(persistencePath);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
 
 	@Test
 	public void scenario6BasicTest() {
@@ -19,7 +39,7 @@ public class BBNIntegrationTests {
 
 			ChallengeProblemBridge cpb;
 			System.setProperty(ChallengeProblemBridge.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-KNOWN_SCHEMA");
-			System.setProperty(ChallengeProblemBridge.JARGS_PERS_ODB, "remote:127.0.0.1/BBNPersistent");
+			System.setProperty(ChallengeProblemBridge.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
 
 			cpb = new ChallengeProblemBridge();
 
@@ -50,7 +70,7 @@ public class BBNIntegrationTests {
 
 			ChallengeProblemBridge cpb;
 			System.setProperty(ChallengeProblemBridge.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA");
-			System.setProperty(ChallengeProblemBridge.JARGS_PERS_ODB, "remote:127.0.0.1/BBNPersistent");
+			System.setProperty(ChallengeProblemBridge.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
 
 			cpb = new ChallengeProblemBridge();
 
@@ -79,7 +99,7 @@ public class BBNIntegrationTests {
 		try {
 			ChallengeProblemBridge cpb;
 			System.setProperty(ChallengeProblemBridge.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA");
-			System.setProperty(ChallengeProblemBridge.JARGS_PERS_ODB, "remote:127.0.0.1/BBNPersistent");
+			System.setProperty(ChallengeProblemBridge.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
 
 			cpb = new ChallengeProblemBridge();
 
@@ -100,7 +120,7 @@ public class BBNIntegrationTests {
 		try {
 			ChallengeProblemBridge cpb;
 			System.setProperty(ChallengeProblemBridge.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMAx");
-			System.setProperty(ChallengeProblemBridge.JARGS_PERS_ODB, "remote:127.0.0.1/BBNPersistent");
+			System.setProperty(ChallengeProblemBridge.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
 
 			cpb = new ChallengeProblemBridge();
 
@@ -119,26 +139,19 @@ public class BBNIntegrationTests {
 	}
 
 	@Test
-	public void scenario6ErrorTestBadPersistentServer() {
+	public void scenario6ErrorTestBadPersistenceLocation() {
 		boolean configExceptionHit = false;
 
 		try {
 			ChallengeProblemBridge cpb;
 			System.setProperty(ChallengeProblemBridge.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA");
-			System.setProperty(ChallengeProblemBridge.JARGS_PERS_ODB, "remote:127.0.0.1/BBNPersistentx");
+			System.setProperty(ChallengeProblemBridge.JARGS_ARTIFACT_DIRECTORY, persistenceLocation + "x");
 
 			cpb = new ChallengeProblemBridge();
-
-			String evaluationInstanceIdentifier = UUID.randomUUID().toString();
-
-			cpb.postError(evaluationInstanceIdentifier, "Error 0", null);
-		} catch (OConfigurationException e) {
-			Assert.assertTrue(e.getMessage().contains("BBNPersistentx"));
-			configExceptionHit = true;
-
+			cpb.init();
 		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail(e.getMessage());
+			System.err.println(e.getMessage());
+			configExceptionHit = true;
 		}
 		Assert.assertTrue(configExceptionHit);
 	}

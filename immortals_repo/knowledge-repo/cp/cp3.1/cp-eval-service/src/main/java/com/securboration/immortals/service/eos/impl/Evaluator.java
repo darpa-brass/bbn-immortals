@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
@@ -84,6 +86,8 @@ public class Evaluator {
         } finally{
             
             try{
+                runCleanupCommands(contextLock,workingDir);
+                
                 synchronized(contextLock){
                     
                     {//kill all processes in the context
@@ -105,6 +109,15 @@ public class Evaluator {
                 Thread.sleep(5000L);//give the process streams a chance to quiesce
                 
                 FileUtils.deleteDirectory(workingDir);
+                
+                if(false){
+                    deleteDir(
+                        workingDir,//dir to delete
+                        null,//max # retries
+                        20000L,//max retry time
+                        2000L//delay between retries
+                        );
+                }
             } catch(Exception ee){
                 stdout("errors during post-evaluation cleanup");
                 
@@ -120,6 +133,94 @@ public class Evaluator {
                     } else {
                         context.setCurrentStatus(EvaluationRunStatus.COMPLETED_OK);
                     }
+                }
+            }
+        }
+    }
+    
+    private void runCleanupCommands(
+            final Object contextLock, 
+            final File workingDir
+            ) throws Exception{
+        final Set<EvaluationRunCommand> cleanupsToRun = new LinkedHashSet<>();
+        
+        {//get cleanup commands
+            for(EvaluationRunCommand command:config.getEvaluationCommands()){
+                final boolean isCleanup = command.isCleanupCommand();
+                
+                if(isCleanup){
+                    cleanupsToRun.add(command);
+                }
+            }
+        }
+        
+        {//remove cleanup commands that already ran
+            for(EvaluationRunCommandResult result:context.getCommandResults()){
+                try{
+                    cleanupsToRun.remove(result.getCommand());
+                } catch(Exception e){
+                    throw new RuntimeException("error during cleanup",e);
+                }
+            }
+        }
+        
+        for(EvaluationRunCommand cleanupToRun:cleanupsToRun){
+            stderr.println(
+                "discovered a cleanup step that didn't run due " +
+                "to an earlier error (running it now): " + cleanupToRun.getName()
+                );
+            
+            final String tag = 
+                    String.format(
+                        "command-CLEANUP----- (%s)",
+                        cleanupToRun.getName()
+                        );
+            
+            evaluate(contextLock,workingDir,tag,cleanupToRun);
+        }
+    }
+    
+    private static void deleteDir(
+            final File dir, 
+            final Integer maxRetries, 
+            final Long maxTimeMillis,
+            final Long delayBetweenRetries
+            ) throws IOException{
+        if(maxRetries == null && maxTimeMillis == null){
+            throw new RuntimeException(
+                "you must specify either a max # of retries or " +
+                "a max duration in millis"
+                );
+        }
+        
+        final long startTime = System.currentTimeMillis();
+        int iterations = 0;
+        
+        while(true){
+            try{
+                iterations++;
+                FileUtils.deleteDirectory(dir);
+                return;
+            } catch(IOException e){
+                final long elapsed = System.currentTimeMillis() - startTime;
+                
+                if( (elapsed > 60000L)//1-minute watchdog
+                    ||
+                    (maxTimeMillis != null && elapsed > maxTimeMillis) 
+                    || 
+                    (maxRetries != null && iterations > maxRetries)
+                    ){
+                    throw new IOException("unable to delete " + dir.getAbsolutePath() + " after " + iterations + " attempts (" + elapsed + "ms)",e);
+                } else {
+                    if(delayBetweenRetries != null){
+                        try{
+                            Thread.sleep(delayBetweenRetries);
+                        }catch(InterruptedException ie){
+                            throw new RuntimeException(ie);
+                        }
+                    }
+                    
+                    iterations++;
                 }
             }
         }

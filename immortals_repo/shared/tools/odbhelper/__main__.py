@@ -44,6 +44,12 @@ def init_parser(parent_parser=None):
     start_parser.add_argument('--use-default-root-password', action='store_true',
                               help='Uses a default root password for the OrientDB instance')
 
+    start_parser.add_argument('--host', type=str,
+                              help='If provided, a connection will be made to this host instead of starting a new one.')
+
+    start_parser.add_argument('--port', type=int,
+                              help='The port to connect to the ODB server on.')
+
 
 def main(parser_args):
     from odbhelper.odbstarter import OdbStarter
@@ -72,8 +78,8 @@ def main(parser_args):
         raise Exception('Please set the "ORIENTDB_ROOT_PASSWORD" environment variable to your OrientDB root ' +
                         'password! If you have not started OrientDB yet this password will be used to initialize it!')
 
-    host = '127.0.0.1'
-    port = 2424
+    host = '127.0.0.1' if parser_args.host is None else parser_args.host
+    port = 2424 if parser_args.port is None else parser_args.port
 
     if parser_args.selected_parser == 'start':
         starter = None
@@ -81,7 +87,8 @@ def main(parser_args):
         try:
             if parser_args.persistence_only:
                 starter = OdbStarter(host, port, orientdb_home, orientdb_root_password)
-                starter.start_db(True)
+                if parser_args.host is None:
+                    starter.start_db(True)
                 starter.init_bbn_persistent(parser_args.reset_persistent_db)
                 print("The Persistence DB is now running. Press Ctrl-C to halt it.")
                 starter.wait()
@@ -90,16 +97,17 @@ def main(parser_args):
 
                 starter = OdbStarter(host, port, orientdb_home, orientdb_root_password)
 
-                starter.start_db(parser_args.unique_log)
+                if parser_args.host is None:
+                    starter.start_db(parser_args.unique_log)
 
                 display_msg = ('OrientDB is now ready for use. Details:\n' +
                                '\tHost: ' + host + '\n' +
                                '\tPort: ' + str(port) + '\n' +
-                               '\tWebsite: http://' + host + ':2480\n' +
+                               '\tWebsite: http://' + host + ':' + str(port) + '\n' +
                                '\tDatabases:\n'
                                )
 
-                starter.init_bbn_persistent(parser_args.reset_persistent_db)
+                # starter.init_bbn_persistent(parser_args.reset_persistent_db)
                 display_msg = display_msg + '\t\t' + 'remote:' + host + ':' + str(port) + '/' + 'BBNPersistent\n'
 
                 if parser_args.reset_scenario is not None:
@@ -110,8 +118,8 @@ def main(parser_args):
 
                     starter.init_test_scenarios(list(map(lambda x: scenarios[x], parser_args.reset_scenario)))
 
-                display_msg = \
-                    display_msg + "Press Ctrl-C to halt the OrientDB instance."
+                if parser_args.host is None:
+                    display_msg = display_msg + "Press Ctrl-C to halt the OrientDB instance."
 
                 print(display_msg)
                 starter.wait()

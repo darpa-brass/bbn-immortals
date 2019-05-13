@@ -14,9 +14,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>ca.mcgill.sable</groupId>
-            <artifactId>soot</artifactId>
-            <version>3.3.0</version>
+                <groupId>ca.mcgill.sable</groupId>
+                <artifactId>soot</artifactId>
+                <version>3.3.0</version>
+            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.ow2.asm</groupId>
@@ -50,6 +51,18 @@
             <artifactId>immortals-ontologies-functional</artifactId>
             <version>${immortals.version}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-core</artifactId>
+            <version>3.5.13</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.securboration</groupId>
+            <artifactId>immortals-repository-api</artifactId>
+            <version>r2.0.0</version>
         </dependency>
     </dependencies>
 

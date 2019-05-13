@@ -1,30 +1,51 @@
 {
 	"scenarios": [
 		{
-			"name": "s5swri1",
+			"shortName": "s5",
+			"prettyName": "Scenario 5 Basic",
+			"dbName": "IMMORTALS_s5",
 			"scenarioType": "Scenario5",
-			"dbName": "IMMORTALS_SWRI_1",
-			"xmlInventoryPath": "resources/swri/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
-			"xmlMdlrootInputPath": "resources/swri/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml"
-		},
-		{
-			"name": "s5",
-			"scenarioType": "Scenario5",
-			"dbName": "IMMORTALS_TEST-SCENARIO_5",
 			"xmlInventoryPath": "resources/dummy_data/s5_dauInventory.xml",
-			"xmlMdlrootInputPath": "resources/dummy_data/scenario5_input_mdlRoot.xml"
+			"xmlMdlrootInputPath": "resources/dummy_data/s5_input_mdlRoot.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
 		},
 		{
-			"name": "s6knownSchema",
-			"scenarioType": "Scenario6",
-			"dbName": "IMMORTALS_TEST-SCENARIO_6-KNOWN_SCHEMA",
-			"jsonInputPath": "resources/dummy_data/s6_basic.json"
+			"shortName": "s5s",
+			"prettyName": "Scenario 5 Basic Sequential",
+			"dbName": "IMMORTALS_s5s",
+			"scenarioType": "Scenario5",
+			"xmlInventoryPath": "resources/dummy_data/s5s_dauInventory.xml",
+			"xmlMdlrootInputPath": "resources/dummy_data/s5_input_mdlRoot.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
 		},
 		{
-			"name": "s6unknownSchema",
+			"shortName": "s6k",
+			"prettyName": "Scenario 6 - Basic Known Schema",
+			"dbName": "IMMORTALS_s6k",
 			"scenarioType": "Scenario6",
-			"dbName": "IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA",
-			"jsonInputPath": "resources/dummy_data/s6_advanced.json"
+			"jsonInputPath": "resources/dummy_data/s6_basic.json",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
+		},
+		{
+			"shortName": "s6u",
+			"prettyName": "Scenario 6 - Basic Unknown Schema",
+			"dbName": "IMMORTALS_s6u",
+			"scenarioType": "Scenario6",
+			"jsonInputPath": "resources/dummy_data/s6_advanced.json",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
 		}
 	]
 }

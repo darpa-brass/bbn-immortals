@@ -11,6 +11,7 @@ Author: Di Yao (di.yao@vanderbilt.edu)
 import sys
 import json
 import pyorient
+from pyorient import utils as pyorient_utils
 from brass_api.common.exception_class import BrassException
 
 class BrassOrientDBClient(object):
@@ -140,6 +141,24 @@ class BrassOrientDBClient(object):
         """
         return self._client.command(query_str)
 
+    def run_transaction(self, record=None, n=0, transaction_type=None, cluster_id=None, rid=None, version=None):
+        tx = self._client.tx_commit()
+        tx.begin()
+        try:
+            if transaction_type == 'Create':
+                tx.attach(self._client.record_create(cluster_id, record))
+            elif transaction_type == 'Update':
+                cluster_position = pyorient_utils.parse_cluster_position(rid)
+                tx.attach(self._client.record_update(rid, cluster_position, record, version))
+            elif transaction_type == 'Delete':
+                tx.attach(self._client.record_delete(cluster_id, rid))
+        except Exception as e:
+            tx.rollback()
+            n+=1
+            if n > 10:
+                raise BrassOrientDBClient(sys.exit(sys.exc_info()[1]), 'BrassOrientDBClient.run_transaction')
+            self.run_transaction(record, n=n, transaction_type=transaction_type, cluster_id=cluster_id, rid=rid, version=version)
+        return tx.commit()
 
 
 '''

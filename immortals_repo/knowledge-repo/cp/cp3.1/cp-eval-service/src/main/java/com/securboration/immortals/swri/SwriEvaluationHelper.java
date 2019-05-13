@@ -10,6 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -17,6 +19,7 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.securboration.immortals.bcd.BytecodeDiff;
 import com.securboration.immortals.bridge.BridgePojo;
 import com.securboration.immortals.service.eos.api.types.EosType;
 import com.securboration.immortals.service.eos.api.types.EvaluationConfiguration;
@@ -114,7 +117,9 @@ public class SwriEvaluationHelper {
             
             println("executing evaluation workflow");
             {
-                final String json = bridge.getConfigurationJson(uuid);
+                final String json = 
+//                        FileUtils.readFileToString(new File("test2.json"));
+                        bridge.getConfigurationJson(uuid);
                 
                 final EvaluationConfiguration config;
                 if(props.get(EvaluationPropertyKey.evalType).equals("live")){
@@ -124,7 +129,7 @@ public class SwriEvaluationHelper {
                     
                     config = translate(pojo);
                 } else {
-                    config = new EvaluationConfiguration(json);
+                    config = EosType.fromJson(json, EvaluationConfiguration.class);
                 }
                 
                 try{
@@ -362,6 +367,30 @@ public class SwriEvaluationHelper {
         
         //if we're here, we know the evaluation run completed successfully
         
+        {
+            //immortals-bytecode-diff
+            final byte[] original = ZipHelper.getZipEntry(evalZip, "ess/ess/client/target/immortals-cp3.1-client-1.0.0.jar");
+            final byte[] modified = ZipHelper.getZipEntry(evalZip, "ess/ess/client/target/immortals-cp3.1-client-1.0.0MODIFIED.jar");
+            
+            final File originalJar = new File("./tmp/immortals-cp3.1-ess.jar");
+            final File adaptedJar = new File("./tmp/immortals-cp3.1-ess.REPAIRED.jar");
+            try{
+                FileUtils.writeByteArrayToFile(originalJar, original);
+                FileUtils.writeByteArrayToFile(adaptedJar, modified);
+                
+                final String diff = BytecodeDiff.diffJars(originalJar, adaptedJar);
+                
+                bridge.storeLargeBinaryData(
+                    uuid, 
+                    "bytecode.diff", 
+                    diff.getBytes(StandardCharsets.UTF_8)
+                    );
+            } finally {
+                FileUtils.forceDelete(originalJar);
+                FileUtils.forceDelete(adaptedJar);
+            }
+        }
+        
         final EvaluationReport report = new EvaluationReport();
         
         {//status rollup section
@@ -454,7 +483,20 @@ public class SwriEvaluationHelper {
             report.getCategories().add(diff);
         }
         
-        {//add mock sections
+        {//add analysis metrics
+            final byte[] entry = ZipHelper.getZipEntry(
+                evalZip, 
+                "ess/ess/immortals-gradle-plugin-output/AnalysisReport.txt"
+                );
+            
+            report.getCategories().add(
+                getAnalysisMetrics(
+                    new String(entry,StandardCharsets.UTF_8)
+                    )
+                );
+        }
+        
+        if(false){//add mock sections
             
             report.getCategories().add(getMockEvalSection(
                 "# triples",
@@ -577,6 +619,44 @@ public class SwriEvaluationHelper {
         } else {
             throw new RuntimeException("updatedMdlSchema and updatedMdlVersion fields cannot both be null (but are)");
         }
+    }
+    
+    private static EvaluationMetricCategory getAnalysisMetrics(
+            final String metricsFileContent
+            ){
+        final Map<String,String> map = new LinkedHashMap<>();
+        
+        {
+            final String[] lines = metricsFileContent.split("\\r?\\n");
+            for(String line:lines){
+                if(!line.contains(" -> ")){
+                    continue;
+                }
+                
+                line = line.replace("===", "").trim();
+                
+                String[] parts = line.split(" -> ");
+                
+                final String key = parts[0].trim();
+                final String value = parts.length == 1 ? "" : parts[1].trim();
+                
+                map.put(key, value);
+            }
+        }
+        
+        final EvaluationMetricCategory c = new EvaluationMetricCategory();
+        c.setCategoryDesc("analysis metrics");
+        for(final String field:map.keySet()){
+            final String value = map.get(field);
+            
+            EvaluationMetricCostOfAdaptation metric = new EvaluationMetricCostOfAdaptation();
+            metric.setMetricType(field);
+            metric.setMetricValue(value);
+            
+            c.getMetricsForCategory().add(metric);
+        }
+        
+        return c;
     }
 
 }

@@ -1,74 +1,155 @@
 package mil.darpa.immortals.flitcons;
 
+import com.google.gson.JsonObject;
+import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataTransformer;
 import mil.darpa.immortals.flitcons.mdl.FlighttestConstraintSolver;
-import mil.darpa.immortals.flitcons.validation.ValidationDataContainer;
+import mil.darpa.immortals.flitcons.mdl.MdlDataValidator;
+import mil.darpa.immortals.flitcons.mdl.OrientVertexDataSource;
+import mil.darpa.immortals.flitcons.mdl.ValidationScenario;
+import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.schemaevolution.ChallengeProblemBridge;
+import mil.darpa.immortals.schemaevolution.TerminalStatus;
 import picocli.CommandLine;
 
-import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class SolverMain {
 
-	@CommandLine.Option(names = "--validate", description = "Validates the OrientDB setup instead of adapting it")
-	boolean validateOrientdb = false;
+	private static String jsonifyException(@Nonnull Throwable t) {
+		JsonObject jo = new JsonObject();
 
-	@CommandLine.Option(names = {"-C", ValidationDataContainer.COLORLESS_FLAG}, description = "Results in the validation result only displaying invalid values instead of displaying all values as green or red depending on pass or fail")
-	boolean colorlessMode = false;
+		if (t instanceof AdaptationnException) {
+			AdaptationnException ae = (AdaptationnException) t;
+			jo.addProperty("adaptationStatus", ae.result.name());
+		}
 
-	@CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Display Help")
-	private boolean helpRequested = false;
+		jo.addProperty("message", t.getMessage());
 
-	@CommandLine.Option(hidden = true, names = {"--simple-solver"})
-	private boolean useSimpleSolver = false;
-
-	public static void main(String[] args) {
-		SolverMain m = new SolverMain();
-		CommandLine.populateCommand(m, args);
-		m.execute();
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		t.printStackTrace(pw);
+		pw.flush();
+		pw.close();
+		jo.addProperty("stacktrace", sw.toString());
+		return jo.toString();
 	}
 
-	private void execute() {
+	public static void main(String[] args) {
+		HierarchicalDataTransformer.ignoreEquations = true;
+		SolverConfiguration config = SolverConfiguration.getInstance();
 		ChallengeProblemBridge cpb = new ChallengeProblemBridge();
-		String evaluationInstanceIdentifier = UUID.randomUUID().toString();
+		String evaluationInstanceIdentifier = "UNDEFINED";
 
 		try {
-			if (helpRequested) {
-				CommandLine.usage(this, System.out);
-				return;
-			}
+			CommandLine.populateCommand(config, args);
 
-
-			if (!validateOrientdb) {
-				FlighttestConstraintSolver fcs = new FlighttestConstraintSolver(useSimpleSolver);
-				fcs.solve(!colorlessMode);
+			if (config.helpRequested) {
+				CommandLine.usage(config, System.out);
+			} else if (config.validateOrientdb) {
+				validate(config);
 			} else {
-				FlighttestConstraintSolver fcs = new FlighttestConstraintSolver(useSimpleSolver);
-				boolean inputIsValid = fcs.validateInputConfiguration(!colorlessMode).isValid();
-				boolean inventoryIsValid = fcs.validateDauInventory(!colorlessMode).isValid();
+				TerminalStatus state;
 
-				String inputResult = inputIsValid ? "PASSED" : "FAILED";
-				String inventoryResult = inventoryIsValid ? "PASSED" : "FAILED";
+				while ((state = cpb.waitForReadyOrHalt()) != TerminalStatus.Halt) {
+					if (state == TerminalStatus.ReadyForAdaptation) {
+						evaluationInstanceIdentifier = config.evaluationIdentifier == null ? ("I" + System.currentTimeMillis()) : config.evaluationIdentifier;
+						execute(config, cpb, evaluationInstanceIdentifier);
+						evaluationInstanceIdentifier = "UNDEFINED";
+					}
+				}
+			}
+		} catch (Exception e) {
+			exceptionHandler(cpb, e, "UNDEFINED");
+		}
+	}
 
-				boolean somethingFailed = inputResult.equals("FAILED") || inventoryResult.equals("FAILED");
+	static void execute(@Nonnull SolverConfiguration config, @Nonnull ChallengeProblemBridge cpb, @Nonnull String evaluationInstanceIdentifier) throws Exception {
+		try {
+			FlighttestConstraintSolver fcs = new FlighttestConstraintSolver();
+			fcs.solve();
+			fcs.shutdown();
+			cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.AdaptationSuccessful, "");
+		} catch (Exception e) {
+			exceptionHandler(cpb, e, evaluationInstanceIdentifier);
+		}
+	}
 
-				String result = "\n\tInput Configuration: " + inputResult + "\n\tDAU Inventory: " + inventoryResult;
+	private static void validate(@Nonnull SolverConfiguration config) {
+		OrientVertexDataSource dataSource = new OrientVertexDataSource();
+		MdlDataValidator validator = new MdlDataValidator(null, null, dataSource);
+		boolean inputIsValid = validator.validateConfiguration(ValidationScenario.InputConfiguration, !config.colorlessMode).isValid();
+		boolean inventoryIsValid = validator.validateConfiguration(ValidationScenario.DauInventory, !config.colorlessMode).isValid();
 
-				if (somethingFailed) {
-					System.err.println("VALIDATION FAILED:" + result);
-					System.exit(101);
-				} else {
-					System.out.println("Validation Succeeded:" + result);
+		String inputResult = inputIsValid ? "PASSED" : "FAILED";
+		String inventoryResult = inventoryIsValid ? "PASSED" : "FAILED";
+
+		boolean somethingFailed = inputResult.equals("FAILED") || inventoryResult.equals("FAILED");
+
+		String result = "\n\tInput Configuration: " + inputResult + "\n\tDAU Inventory: " + inventoryResult;
+
+		if (somethingFailed) {
+			System.err.println("VALIDATION FAILED:" + result);
+			System.exit(101);
+		} else {
+			System.out.println("Validation Succeeded:" + result);
+		}
+	}
+
+	private static void exceptionHandler(@Nonnull ChallengeProblemBridge cpb, @Nonnull Throwable e, @Nonnull String evaluationInstanceIdentifier) {
+		System.err.println(e.getMessage());
+		e.printStackTrace(System.err);
+
+
+		if (e instanceof AdaptationnException) {
+			try {
+				AdaptationnException ae = (AdaptationnException) e;
+
+				switch (ae.result) {
+					case ReadyForAdaptation:
+					case AdaptationSuccessful:
+						cpb.postError(evaluationInstanceIdentifier, "Unexpected exception state '" +
+								ae.result.name() + "'!", jsonifyException(e));
+						break;
+
+					case PerturbationInputInvalid:
+						cpb.postInvalidInputError(evaluationInstanceIdentifier,
+								"The perturbation input was invalid.", jsonifyException(e));
+						break;
+
+					case AdaptationNotRequired:
+					case AdaptationPartiallySuccessful:
+					case AdaptationUnsuccessful:
+						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), null);
+						break;
+
+					case AdaptationInternalError:
+					case AdaptationUnexpectedError:
+						cpb.postError(evaluationInstanceIdentifier, "Unexpected Internal Error!",
+								jsonifyException(e));
+						break;
+				}
+			} catch (Exception e2) {
+				System.err.println(e2.getMessage());
+				try {
+					cpb.postError(evaluationInstanceIdentifier, e2.getMessage(), "{}");
+				} catch (Exception e3) {
+					System.err.println(e3.getMessage());
+					throw new RuntimeException(e);
 				}
 			}
 
-		} catch (Exception e) {
+		} else {
+
 			try {
 				String msg = e.getMessage();
 
 				if (msg == null) {
 					System.err.println("EXCEPTION WITH NO MESSAGE!!");
 					e.printStackTrace();
-					cpb.postError(evaluationInstanceIdentifier, "UNDEFINED", null);
+					cpb.postError(evaluationInstanceIdentifier, "UNDEFINED", jsonifyException(e));
 
 				} else {
 					System.err.println(e.getMessage());

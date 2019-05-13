@@ -14,10 +14,8 @@ apply plugin: 'com.securboration.p2t'
 ext{
 	pluginOutput="${projectDir}/../immortals-gradle-plugin-output"//a directory to dump analysis results into
 	callTraces="${projectDir}/../immortals-gradle-plugin-input/trace.dat" //a DA trace file
-	localRepo="${projectDir}/target" //a directory to mine for DFUs
+	localRepo="${projectDir}/../immortals-gradle-plugin-input/.m2" //a directory to mine for DFUs
 }
-
-//System.out.println(">>>> " + ${projectDir});//TODO
 
 repositories {
 	mavenCentral()
@@ -27,10 +25,15 @@ repositories {
 dependencies {
 	compile project(":schema-code:client")
 	compile("com.securboration:immortals-adsl-generate:r2.0.0")
+	compile("net.sf.saxon:Saxon-HE:9.9.1-1")
 }
 
 jar {
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
 	manifest { 
+		//attributes "Main-Class": "com.securboration.main.TestTranslationDfu"
 		attributes "Main-Class": "com.securboration.main.Main"
 	}
 	
@@ -44,6 +47,12 @@ jar {
 		from("${projectDir}/../schema-code/client/build/classes/jaxb"){
 			//include everything
 		}
+		
+		from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+		
+		exclude "META-INF/*.SF"
+		exclude "META-INF/*.DSA"
+		exclude "META-INF/*.RSA"
 	}
 	
 	baseName 'immortals-cp3.1-client'

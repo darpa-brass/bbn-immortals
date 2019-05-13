@@ -1,0 +1,57 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+  http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>com.securboration</groupId>
+		<artifactId>immortals-cp3.1</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+
+	<artifactId>immortals-cp3.1-dfus-xmlt</artifactId>
+	<name>XML transformation DFU</name>
+	<packaging>jar</packaging>
+	<modelVersion>4.0.0</modelVersion>
+
+	<properties>
+		<root-path>../</root-path>
+	</properties>
+	
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-adsl-generate</artifactId>
+			<version>r2.0.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>Saxon-HE</artifactId>
+			<version>9.9.1-1</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler-plugin-version}</version>
+				<configuration>
+					<source>${compiler-src-version}</source>
+					<target>${compiler-target-version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+
+</project>
+
+

@@ -1,7 +1,7 @@
 import json
 import os
 from enum import Enum
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 from pkg_resources import resource_string
 
@@ -14,16 +14,6 @@ STDOUT_LOG_BASE_NAME = 'immortals-orientdb%s-out.log'
 STDERR_LOG_BASE_NAME = 'immortals-orientdb%s-err.log'
 
 
-class GraphDetails(Enum):
-    s5 = ('IMMORTALS_TEST-SCENARIO_5', 'Scenario 5')
-    s6a = ('IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA', 'Scenario 6 - Unknown Schema')
-    s6b = ('IMMORTALS_TEST-SCENARIO_6-KNOWN_SCHEMA', 'Scenario 6 - Known Schema')
-
-    def __init__(self, db_name: str, display_name: str):
-        self.db_name = db_name
-        self.display_name = display_name
-
-
 class ScenarioType(Enum):
     Scenario5 = 5
     Scenario6 = 6
@@ -32,11 +22,14 @@ class ScenarioType(Enum):
 # noinspection PyPep8Naming
 class Scenario:
 
-    def __init__(self, name: str, scenarioType: str, dbName: str, xmlInventoryPath: Optional[str] = None,
+    def __init__(self, shortName: str, prettyName: str, scenarioType: str, dbName: str,
+                 expectedStatusSequence: List[str], xmlInventoryPath: Optional[str] = None,
                  xmlMdlrootInputPath: Optional[str] = None, jsonInputPath: Optional[str] = None):
-        self.name = name
+        self.shortName = shortName
+        self.prettyName = prettyName
         self.scenarioType = ScenarioType[scenarioType]
         self.dbName = dbName
+        self.expectedStatusSequence = expectedStatusSequence
         self.xmlInventoryPath = xmlInventoryPath
         self.xmlMdlrootInputPath = xmlMdlrootInputPath
         self.jsonInputPath = jsonInputPath
@@ -56,7 +49,7 @@ def get_scenarios() -> Dict[str, Scenario]:
     scenarios = dict()
     scenario_json = json.loads(resource_string('odbhelper.resources', 'scenarios.json').decode())  # type: Dict
     for scenario_json in scenario_json['scenarios']:
-        scenarios[scenario_json['name']] = Scenario(**scenario_json)
+        scenarios[scenario_json['shortName']] = Scenario(**scenario_json)
     return scenarios
 
 

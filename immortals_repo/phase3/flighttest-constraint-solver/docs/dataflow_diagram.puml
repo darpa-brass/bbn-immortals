@@ -1,0 +1,45 @@
+@startuml
+
+hide empty description
+
+[*] -down-> OrientDB
+
+state OrientDB {
+
+    state MDLRoot {
+        state NetworkNodes
+        state Measurements
+        state PortMappings
+    }
+
+    state DAUInventory
+}
+
+NetworkNodes -d-> HierarchicalInputData
+Measurements -d-> HierarchicalInputData
+PortMappings -d-> HierarchicalInputData
+
+DAUInventory -d-> HierarchicalInventory
+
+HierarchicalInputData -d-> SquashedHierarchicalInputData
+HierarchicalInventory -d-> SquashedHierarchicalInventory
+
+SquashedHierarchicalInputData -d-> SolverInputData
+
+SquashedHierarchicalInventory -d-> SolverInventory
+
+SolverInputData -d-> Solver
+
+SolverInventory -d-> Solver
+
+Solver -d-> SolverOutputData
+
+SolverOutputData -d-> AdaptationMappingAndData
+SquashedHierarchicalInputData -d-> AdaptationMappingAndData
+SquashedHierarchicalInventory -d-> AdaptationMappingAndData
+HierarchicalInputData -d-> AdaptationMappingAndData
+HierarchicalInventory -d-> AdaptationMappingAndData
+
+AdaptationMappingAndData -d-> Result
+
+@enduml

@@ -4,19 +4,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.*;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.*;
-import org.apache.commons.io.FileUtils;
+import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
  * Created by awellman@bbn.com on 1/11/18.
  */
 public class Utils {
+	public static File SOLVER_INPUT_FILE = new File("solver-input-configuration.json");
+	public static File SOLVER_DAUINVENTORY_FILE = new File("solver-dau-inventory.json");
+	public static File SOLVER_OUTPUT_FILE = new File("solver-output.configuration.json");
 
 	public static final String GLOBALLY_UNIQUE_ID = "GloballyUniqueId";
 	public static final String SUPERSEDED_GLOBALLY_UNIQUE_ID = "SupersededGloballyUniqueId";
@@ -25,6 +26,8 @@ public class Utils {
 	public static final String PARENT_LABEL = "daus";
 	public static final String CHILD_LABEL = "Port";
 	public static final String FLAGGED_FOR_REPLACEMENT = "BBNDauFlaggedForReplacement";
+
+	public static final String ATTRIBUTE_DEBUG_LABEL_IDENTIFIER = "a3ca039f1626_debugLabel";
 
 	private static final Gson gson;
 	private static final Gson nonHtmlEscapingGson;
@@ -49,6 +52,7 @@ public class Utils {
 		difGson = new GsonBuilder().setPrettyPrinting()
 				.registerTypeAdapter(DynamicValue.class, new DynamicValueSerializer())
 				.registerTypeAdapter(DynamicValue.class, new DynamicValueDeserializer())
+				.registerTypeAdapter(DynamicObjectContainer.class, new DynamicObjectContainerSerializer())
 				.registerTypeAdapter(DynamicObjectContainer.class, new DynamicObjectContainerDeserializer())
 				.create();
 
@@ -61,14 +65,14 @@ public class Utils {
 			return obj;
 
 		} else if (obj instanceof DuplicateInterface) {
-			return (T)((DuplicateInterface<?>) obj).duplicate();
+			return (T) ((DuplicateInterface<?>) obj).duplicate();
 
 		} else if (obj instanceof List<?>) {
 			List<?> objList = (List) obj;
 			return (T) new LinkedList<>(objList);
 
 		} else {
-			throw new RuntimeException(
+			throw AdaptationnException.internal(
 					"Cannot duplicate object that does not extend DuplicateInterface or declare itself to be " +
 							"immutable with the 'mil.darpa.immortals.flitcons.datatypes.hierarchical.Immutable' annotation!");
 		}
@@ -194,7 +198,7 @@ public class Utils {
 							colorString = null;
 
 						} else {
-							throw new RuntimeException("String values in the chart must have a corresponding ANSI color code!");
+							throw AdaptationnException.internal("String values in the chart must have a corresponding ANSI color code!");
 						}
 
 					} else {
@@ -221,20 +225,20 @@ public class Utils {
 		return rval;
 	}
 
-	private static DynamicValue parseDynamicValueFromAttribute(HierarchicalData source, String attributeName, boolean isDebugAttribute) throws DynamicValueException {
-		Object value = isDebugAttribute ? source.getDebugAttribute(attributeName) : source.getAttribute(attributeName);
+	private static DynamicValue parseDynamicValueFromAttribute(HierarchicalData source, String attributeName) throws DynamicValueeException {
+		Object value = source.getAttribute(attributeName);
 
 		if (value instanceof Object[]) {
 			try {
 				return new DynamicValue(source.node, null, (Object[]) value, null);
-			} catch (DynamicValueException e) {
+			} catch (DynamicValueeException e) {
 				e.addPathParent(attributeName + "[*]");
 				throw e;
 			}
 		} else if (value instanceof String || value instanceof Number || value instanceof Boolean) {
 			try {
 				return new DynamicValue(source.node, null, null, value);
-			} catch (DynamicValueException e) {
+			} catch (DynamicValueeException e) {
 				e.addPathParent(attributeName);
 				throw e;
 			}
@@ -242,33 +246,24 @@ public class Utils {
 		} else if (value instanceof List) {
 			try {
 				return new DynamicValue(source.node, null, ((List) value).toArray(), null);
-			} catch (DynamicValueException e) {
+			} catch (DynamicValueeException e) {
 				e.addPathParent(attributeName);
 				throw e;
 			}
 		} else {
-			throw new RuntimeException("Unsupported attribute type '" + value.getClass().toString() + "'!");
+			throw new DynamicValueeException(source.node.toString(), "Unsupported attribute type '" + value.getClass().toString() + "'!");
 		}
 	}
 
-	private static DynamicObjectContainer produceDynamicObjectContainer(HierarchicalData source) throws DynamicValueException {
-		DynamicObjectContainer target = new DynamicObjectContainer(source.node);
+	private static DynamicObjectContainer produceDynamicObjectContainer(HierarchicalData source) throws DynamicValueeException {
+		DynamicObjectContainer target = new DynamicObjectContainer(source.node, source.getDebugLabel());
 		boolean containsData = false;
 
 		for (String label : source.getAttributeNames()) {
-			DynamicValue dynamicValue = parseDynamicValueFromAttribute(source, label, false);
+			DynamicValue dynamicValue = parseDynamicValueFromAttribute(source, label);
 			target.put(label, dynamicValue);
 			containsData = true;
 		}
-
-		for (Map.Entry<String, Object> entry : source.getDebugAttributes().entrySet()) {
-			String label = entry.getKey();
-
-			DynamicValue dynamicValue = parseDynamicValueFromAttribute(source, label, true);
-			target.debugAttributes.put(label, dynamicValue);
-			containsData = true;
-		}
-
 
 		Iterator<String> childTypeIter = source.getChildrenClassIterator();
 		while (childTypeIter.hasNext()) {
@@ -287,10 +282,10 @@ public class Utils {
 					Object min = data.getAttribute("Min");
 					Object max = data.getAttribute("Max");
 					if (min == null || max == null) {
-						throw new DynamicValueException(source.toString(), "A Min cannot be defined without a Max!");
+						throw new DynamicValueeException(source.toString(), "A Min cannot be defined without a Max!");
 					}
 					if (data.getChildrenClassIterator().hasNext()) {
-						throw new DynamicValueException(source.toString(), "A Range object cannot have child attributes!");
+						throw new DynamicValueeException(source.toString(), "A Range object cannot have child attributes!");
 					}
 					target.put(childType, new DynamicValue(source.node, new Range(min, max), null, null));
 					containsData = true;
@@ -307,7 +302,7 @@ public class Utils {
 				if (containsChildData) {
 					try {
 						target.put(childType, new DynamicValue(source.node, null, values.toArray(), null));
-					} catch (DynamicValueException e) {
+					} catch (DynamicValueeException e) {
 						e.addPathParent(childType);
 						throw e;
 					}
@@ -322,8 +317,8 @@ public class Utils {
 		}
 	}
 
-	public static DynamicObjectContainer createDslInterchangeFormat(HierarchicalDataContainer inputData) throws DynamicValueException {
-		DynamicObjectContainer target = new DynamicObjectContainer(new HierarchicalIdentifier("TOP_LEVEL_" + UUID.randomUUID().toString().substring(0,8), "UNDEFINED"));
+	public static DynamicObjectContainer createDslInterchangeFormat(HierarchicalDataContainer inputData) throws DynamicValueeException {
+		DynamicObjectContainer target = new DynamicObjectContainer(HierarchicalIdentifier.createBlankNode(), null);
 		Object[] daus = new Object[inputData.getDauRootNodes().size()];
 
 		int idx = 0;
@@ -331,7 +326,7 @@ public class Utils {
 		for (HierarchicalData dau : inputData.getDauRootNodes()) {
 			try {
 				daus[idx++] = Utils.produceDynamicObjectContainer(dau);
-			} catch (DynamicValueException e) {
+			} catch (DynamicValueeException e) {
 				e.addPathParent("daus");
 				throw e;
 			}
@@ -339,18 +334,46 @@ public class Utils {
 
 		try {
 			target.put("daus", new DynamicValue(null, null, daus, null));
-		} catch (DynamicValueException e) {
+		} catch (DynamicValueeException e) {
 			e.addPathParent("daus");
 			throw e;
 		}
 
-		try {
-			String json = Utils.difGson.toJson(target);
-			FileUtils.writeStringToFile(new File("new-dsl-input.json"), json, Charset.defaultCharset());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
 		return target;
+	}
+
+
+	public static boolean stringListContains(@Nonnull Set<String> listToValidateAgainst, @Nonnull Object object) {
+		if (object instanceof Object[]) {
+			Object[] objArray = (Object[]) object;
+			for (Object obj : objArray) {
+				if (!(obj instanceof String)) {
+					throw AdaptationnException.internal("Values being tested should be Strings!");
+				}
+				if (!stringListContains(listToValidateAgainst, obj)) {
+					return false;
+				}
+			}
+
+		} else if (object instanceof Collection) {
+			Collection coll = (Collection) object;
+			for (Object obj : coll) {
+				if (!(obj instanceof String)) {
+					throw AdaptationnException.internal("Values being tested should be Strings!");
+				}
+				if (!stringListContains(listToValidateAgainst, obj)) {
+					return false;
+				}
+			}
+
+		} else {
+			if (!(object instanceof String)) {
+				throw AdaptationnException.internal("Values being tested should be Strings!");
+			}
+			if (!listToValidateAgainst.contains(object)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -14,10 +14,9 @@ public class InitAspectBase extends DefaultAspectBase {
     
     public InitAspectBase(
             final String name, 
-            Class[] aspectSpecificResourceDependencies, 
-            Input[] inputs, 
+            Input[] inputs,
             Output[] outputs
             ){
-        super(name,aspectSpecificResourceDependencies,inputs,outputs);
+        super(name,inputs,outputs);
     }
 }

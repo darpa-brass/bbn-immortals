@@ -66,6 +66,7 @@
 		<junit.version>4.12</junit.version>
 		<log4j2.version>2.0.1</log4j2.version>
 		<tomcat.version>8.0.26</tomcat.version>
+		<saxon.version>9.9.1-1</saxon.version>
 		
 		
 		<!-- plugin properties -->
@@ -154,6 +155,9 @@
 		
 		<module>toolchain/constraint-analysis</module>
 		
+		<!-- diff bytecode artifacts -->
+		<module>toolchain/bytecode-diff</module>
+		
 		<!-- exaples -->
 		<module>examples/atak-example</module>
 		
@@ -162,6 +166,8 @@
 		
 		
 		<module>cp/cp3.1/cp-eval-service</module>
+		
+		<module>cp/cp3.1/cp-ess-min-precursor</module>
 		
 	</modules>
 

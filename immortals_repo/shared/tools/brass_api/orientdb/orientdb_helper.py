@@ -8,6 +8,7 @@ Author: Di Yao (di.yao@vanderbilt.edu)
 
 import sys
 import os
+import logging
 
 from brass_api.orientdb.brass_orientdb_client import BrassOrientDBClient
 from brass_api.common.exception_class import BrassException
@@ -29,9 +30,8 @@ class BrassOrientDBHelper(object):
             if not os.path.exists(config_file):
                 raise BrassException('config file [{0}] does NOT exist'.format(config_file), 'BrassOrientDBHelper.__init__')
 
-
             self._orientdb_client = BrassOrientDBClient(database_name, config_file)
-
+        self.log = logging.getLogger(__name__)
 
     def close_database(self):
         """
@@ -50,6 +50,13 @@ class BrassOrientDBHelper(object):
         :return:                        None
         """
         self._orientdb_client.open_database(over_write)
+
+    def drop_database(self):
+        """
+        Drops a database from the server.
+        :return:                        None
+        """
+        self._orientdb_client.drop_database()
 
     def get_connected_nodes(self, targetNode_rid, direction='in', edgetype='Containment', maxdepth=1, filterdepth=None, strategy='DEPTH_FIRST'):
         '''
@@ -93,7 +100,7 @@ class BrassOrientDBHelper(object):
             return None
 
         if filterdepth > maxdepth:
-            print("[WARNING] filterdepth is greater than maxdepth. No results will be returned from query. [SOURCE] BrassOrientDBHelper.get_connected_nodes")
+            self.log.warning("[WARNING] filterdepth is greater than maxdepth. No results will be returned from query. [SOURCE] BrassOrientDBHelper.get_connected_nodes")
             return None
 
         if filterdepth is None:
@@ -108,13 +115,12 @@ class BrassOrientDBHelper(object):
         #    filterdepth_condition
         #)
 
-
         try:
             sql_cmd = select_sql(
                  traverse_sql(targetNode_rid, direction=direction, edgetype=edgetype, maxdepth=maxdepth),
                  [filterdepth_condition]
                  )
-            print(sql_cmd)
+            self.log.debug(sql_cmd)
             return self._orientdb_client.run_command(
                  sql_cmd
              )
@@ -141,7 +147,7 @@ class BrassOrientDBHelper(object):
 
         try:
             sql_cmd = select_sql(type)
-            print(sql_cmd)
+            self.log.debug(sql_cmd)
             return self._orientdb_client.run_command(
                 sql_cmd
             )
@@ -164,7 +170,7 @@ class BrassOrientDBHelper(object):
 
         try:
             sql_cmd = select_sql('V', [condition_str('rid', targetNode_rid)])
-            print(sql_cmd)
+            self.log.debug(sql_cmd)
             return self._orientdb_client.run_command(
                 sql_cmd
             )
@@ -183,7 +189,7 @@ class BrassOrientDBHelper(object):
         """
         try:
             sql_cmd = select_sql(property_conditions)
-            print(sql_cmd)
+            self.log.debug(sql_cmd)
             return self._orientdb_client.run_command(
                 sql_cmd
             )
@@ -269,14 +275,31 @@ class BrassOrientDBHelper(object):
         except:
             raise BrassException(sys.exc_info()[1], 'BrassOrientDBHelper.get_referent_node')
 
+    # def get_node_version(self, targetNode_rid=None):
+    #     try:
+    #         return self.get_node_by_rid(targetNode_rid)._version
+    #     except:
+    #         raise BrassException(sys.exc_info()[1], 'BrassOrientDBHelper.get_node_version')
 
-    def update_node(self, targetNode_rid, *args):
+    def get_class(self, odb_class):
+        try:
+            target_name = '(select expand(classes) from metadata:schema)'
+            class_condition = condition_str('name', odb_class)
+            sql_cmd = select_sql(target_name, [class_condition])
+            return self._orientdb_client.run_command(
+                sql_cmd
+            )
+        except:
+            raise BrassException(sys.exc_info()[1], 'BrassOrientDBHelper.get_class')
+
+    def update_node(self, targetNode_rid, *args, node_type=None, transaction=False, version=None):
         '''
         Updates the target record/vertex (targetNode_rid) by the properties and corresponding values
         specified in args.
 
         :param str targetNode_rid:      The record/vertex to update.
         :param list args:               List of strings that contains the properties and values to set (e.g. EncryptionKeyID='gabah gabah', Name='gabah gabah')
+        :param list args:               List of dicts that contain the properties and values to be set if using transactions (e.g. {'EncryptionKeyID':'gabah gabah'}, {'Name':'gabah gabah'}
         :return:                        None
         :raises BrassException:         source of exception is set to the function name
         '''
@@ -285,18 +308,29 @@ class BrassOrientDBHelper(object):
         #print update_sql(targetNode_rid, *args)
 
         try:
-            sql_cmd = update_sql(targetNode_rid, *args)
-            print(sql_cmd)
-            self._orientdb_client.run_command(
-                sql_cmd
-            )
-            return True
+            if not transaction:
+                sql_cmd = update_sql(targetNode_rid, *args)
+                self.log.debug(sql_cmd)
+                self._orientdb_client.run_command(
+                    sql_cmd
+                )
+                return True
+            elif transaction:
+                data = {}
+                class_name = '@%s' % node_type
+                properties = {}
+                for i in args:
+                    for key in i:
+                        properties[key] = i[key]
+                data[class_name] = properties
+                self.log.debug(data)
+                self._orientdb_client.run_transaction(record=data, transaction_type='Update', rid=targetNode_rid, version=version)
 
         except:
             raise BrassException(sys.exc_info()[1], 'BrassOrientDBHelper.update_node')
 
 
-    def delete_node_by_rid(self, rid=None):
+    def delete_node_by_rid(self, rid=None, transaction=False, cluster_id=None):
         """
         Removes a node from the database with rid.
         rid is a string that begins with a # followed by 2 numbers separated by a colon.
@@ -307,15 +341,18 @@ class BrassOrientDBHelper(object):
         """
         try:
             if len(self.get_node_by_rid(rid)) == 0:
-                print('[ERROR] Unable to delete node {0} because it does not exist in the database [SOURCE] {1}'.\
+                self.log.warning('[ERROR] Unable to delete node {0} because it does not exist in the database [SOURCE] {1}'.\
                     format(rid, 'BrassOrientDBHelper.delete_node_by_rid'))
                 return False
             else:
-                sql_cmd = delete_v_sql(rid)
-                print(sql_cmd)
-                return self._orientdb_client.run_command(
-                    sql_cmd
-                )
+                if not transaction:
+                    sql_cmd = delete_v_sql(rid)
+                    self.log.debug(sql_cmd)
+                    return self._orientdb_client.run_command(
+                        sql_cmd
+                    )
+                elif transaction:
+                    return self._orientdb_client.run_transaction(cluster_id=cluster_id, rid=rid, transaction_type='Delete')
         except:
             raise BrassException(sys.exc_info()[1], 'BrassOrientDBHelper.delete_node_by_rid')
 
@@ -367,7 +404,7 @@ class BrassOrientDBHelper(object):
 
         if src is not None and dst is not None:
             sql_cmd = create_edge_sql(edgetype, src, dst)
-            print(sql_cmd)
+            self.log.debug(sql_cmd)
             return self._orientdb_client.run_command (
                 sql_cmd
             )
@@ -439,7 +476,7 @@ class BrassOrientDBHelper(object):
 
         if src is not None and dst is not None:
             sql_cmd = delete_e_sql('Containment', src, dst)
-            print(sql_cmd)
+            self.log.debug(sql_cmd)
             self._orientdb_client.run_command(
                 sql_cmd
             )
@@ -474,7 +511,7 @@ class BrassOrientDBHelper(object):
 
         if src is not None and dst is not None:
             sql_cmd = delete_e_sql('Reference', src, dst)
-            print(sql_cmd)
+            self.log.debug(sql_cmd)
             self._orientdb_client.run_command(
                 sql_cmd
             )
@@ -492,7 +529,7 @@ class BrassOrientDBHelper(object):
         """
         try:
             sql_cmd = create_class_sql(name, 'V')
-            print(sql_cmd)
+            self.log.debug(sql_cmd)
             self._orientdb_client.run_command(
                 sql_cmd
             )
@@ -510,35 +547,44 @@ class BrassOrientDBHelper(object):
         """
         try:
             sql_cmd = create_class_sql(name, 'E')
-            print(sql_cmd)
+            self.log.debug(sql_cmd)
             self._orientdb_client.run_command(
                 sql_cmd
             )
         except:
             raise BrassException(sys.exc_info()[1], 'BrassOrientDBHelper.create_edge_class')
 
-    def create_node(self, node_type, properties={}):
+    def create_node(self, node_type, properties={}, transaction=False, cluster_id=None):
         """
         Creates a new node of a specific vertex type and with the properties defined by properties dictionary.
 
         :param str node_type:                    string that specifies the type of vertex class
         :param dictionary properties:       dictionary containing properties and values to set for the new node
+        :param bool transaction             boolean that defines if node is created via sql or record transactions
+        :param int cluster_id               integer that defines which cluster the node should be stored
         :return:
         :raises BrassException:             source of exception is set to the function name
         """
         try:
-            sql_cmd = insert_sql(node_type, **properties)
-            print(sql_cmd)
-            self._orientdb_client.run_command(
-                sql_cmd
-            )
+            if not transaction:
+                sql_cmd = insert_sql(node_type, **properties)
+                self.log.debug(sql_cmd)
+                self._orientdb_client.run_command(
+                    sql_cmd
+                )
+            elif transaction:
+                data = {}
+                class_name = '@%s' % node_type
+                data[class_name] = properties
+                self._orientdb_client.run_transaction(record=data, transaction_type='Create', cluster_id=cluster_id)
         except:
             raise BrassException(sys.exc_info()[1], 'BrassOrientDBHelper.create_node')
+
 
     def create_node_property(self, target_name, property_name, property_type, link_type=None):
         try:
             sql_cmd = create_property_sql(target_name, property_name, property_type, link_type)
-            print(sql_cmd)
+            self.log.debug(sql_cmd)
             self._orientdb_client.run_command(
                 sql_cmd
             )

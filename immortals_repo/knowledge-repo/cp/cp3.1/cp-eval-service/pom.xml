@@ -36,7 +36,14 @@
 		<dependency>
 			<groupId>mil.darpa.immortals</groupId>
 			<artifactId>mdl-schema-evolution-bridge</artifactId>
-			<version>0.1.2</version>
+			<version>0.2</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.securboration</groupId>
+			<artifactId>immortals-bytecode-diff</artifactId>
+			<version>${immortals.version}</version>
 			<scope>compile</scope>
 		</dependency>
 	
