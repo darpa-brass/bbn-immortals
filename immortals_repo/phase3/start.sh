@@ -43,9 +43,11 @@ if [ -d "${HOME}/.immortals/anaconda" ];then
     _CONDA_ROOT="${HOME}/.immortals/anaconda"
     \. "$_CONDA_ROOT/etc/profile.d/conda.sh" || return $?
     _conda_activate
+
+    if [ -d "${HOME}/.immortals/anaconda/envs/aql" ]; then
+        conda activate aql
+        pip3 install lxml
+    fi
 fi
 
-
-python3 start.py $@
-
-source ~/.bashrc
+python3 ${SCRIPT_DIR}start.py $@

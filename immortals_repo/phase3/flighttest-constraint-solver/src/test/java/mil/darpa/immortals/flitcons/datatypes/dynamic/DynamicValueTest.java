@@ -16,7 +16,6 @@ public class DynamicValueTest {
 	}
 
 	private void innerParserTest(Class classTest, DynamicValue value, DynamicValueMultiplicity multiplicity, boolean shouldPass) {
-		Boolean pass = null;
 		try {
 			switch (multiplicity) {
 				case SingleValue:

@@ -54,6 +54,13 @@ sourceSets {
 
 test {
 	useTestNG()
+	systemProperty "mil.darpa.immortals.test.test_databases.dir", projectDir.toPath().resolve("../test_databases").toFile().getCanonicalFile().absolutePath
+    systemProperty "mil.darpa.immortals.artifactdirectory", buildDir.toPath().resolve("tmp/test").toFile().getCanonicalFile().absolutePath
+	setWorkingDir(buildDir.toPath().resolve("tmp/test").toFile())
+	reports {
+		junitXml.enabled = true
+		html.enabled = true
+	}
 }
 
 task solverJar(type: ShadowJar) {
@@ -99,6 +106,7 @@ dependencies {
 
 	compile 'org.drools:drools-decisiontables:7.19.0.Final'
 	compile 'org.drools:drools-core:7.19.0.Final'
+	compile 'mil.darpa.immortals:mdl-immortals-bridge:0.2'
 
 	solverCompile 'com.tinkerpop.gremlin:gremlin-groovy:2.6.0'
 	solverCompile 'com.tinkerpop.gremlin:gremlin-java:2.6.0'
@@ -106,7 +114,7 @@ dependencies {
 	solverCompile 'org.codehaus.groovy:groovy-all:2.4.15'
 	solverCompile 'com.orientechnologies:orientdb-core:2.2.24'
 	solverCompile 'com.orientechnologies:orientdb-graphdb:2.2.24'
-	solverCompile 'mil.darpa.immortals:mdl-immortals-bridge:0.2'
+
 	solverCompile sourceSets.main.output
 	solverCompile sourceSets.main.compileClasspath
 

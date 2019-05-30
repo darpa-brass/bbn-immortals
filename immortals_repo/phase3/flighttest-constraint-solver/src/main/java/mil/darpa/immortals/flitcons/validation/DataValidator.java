@@ -32,22 +32,31 @@ import java.util.Set;
 
 public abstract class DataValidator {
 
+	public static String SOLVER_INPUT_USAGE_FILE = "validation-input-usage.json";
+	public static String SOLVER_INPUT_REQUIREMENTS_FILE = "validation-input-requirements.json";
+	public static String SOLVER_DAUINVENTORY_FILE = "validation-input-inventory.json";
+	public static String SOLVER_OUTPUT_USAGE_FILE = "validation-output-usage.json";
+
 	private static final Logger log = LoggerFactory.getLogger(DataValidator.class);
 
 	private final File inputExcelFile;
 
 	private final File outputDrlFile;
 
+	private final Configuration.ValidationConfiguration validationConfiguration;
+
 	private KieSession session;
 
 	protected DataValidator(@Nullable File inputExcelFile, @Nullable File outputDrlFile) {
 		this.inputExcelFile = inputExcelFile;
 		this.outputDrlFile = outputDrlFile;
+		this.validationConfiguration = Configuration.getInstance().validation;
+
 	}
 
-	protected synchronized ValidationDataContainer validate(@Nullable AgendaFilter filter, @Nonnull DynamicObjectContainer root, Configuration.ValidationConfiguration configuration) throws DynamicValueeException {
+	protected synchronized ValidationDataContainer validate(@Nullable AgendaFilter filter, @Nonnull DynamicObjectContainer root) throws DynamicValueeException {
 		init();
-		ValidationDataContainer rval = ValidationDataContainer.createContainer(root, configuration);
+		ValidationDataContainer rval = ValidationDataContainer.createContainer(root, validationConfiguration);
 		Set<ValidationData> vdcs = rval.getAllDataInHierarchy();
 
 		for (ValidationData vdc : vdcs) {

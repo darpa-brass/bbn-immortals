@@ -8,17 +8,12 @@ import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
 import java.util.*;
 
 /**
  * Created by awellman@bbn.com on 1/11/18.
  */
 public class Utils {
-	public static File SOLVER_INPUT_FILE = new File("solver-input-configuration.json");
-	public static File SOLVER_DAUINVENTORY_FILE = new File("solver-dau-inventory.json");
-	public static File SOLVER_OUTPUT_FILE = new File("solver-output.configuration.json");
-
 	public static final String GLOBALLY_UNIQUE_ID = "GloballyUniqueId";
 	public static final String SUPERSEDED_GLOBALLY_UNIQUE_ID = "SupersededGloballyUniqueId";
 	public static final String SUPERSEDED_GLOBALLY_UNIQUE_IDS = "SupersededGloballyUniqueIds";
@@ -89,6 +84,29 @@ public class Utils {
 			for (V vd : nodeDataEntry.getValue()) {
 				duplicateData.add(duplicateObject(vd));
 			}
+		}
+		return rval;
+	}
+
+	public static <T, V> Map<T, List<V>> duplicateListMap(Map<T, List<V>> source) {
+		Map<T, List<V>> rval = new HashMap<>();
+
+		for (Map.Entry<T, List<V>> nodeDataEntry : source.entrySet()) {
+			List<V> duplicateData = new LinkedList<>();
+
+			rval.put(duplicateObject(nodeDataEntry.getKey()), duplicateData);
+
+			for (V vd : nodeDataEntry.getValue()) {
+				duplicateData.add(duplicateObject(vd));
+			}
+		}
+		return rval;
+	}
+
+	public static <T> List<List<T>> duplicateListList(List<List<T>> source) {
+		List<List<T>> rval = new LinkedList<>();
+		for (List<T> sourceData : source) {
+			rval.add(duplicateObject(sourceData));
 		}
 		return rval;
 	}
@@ -290,8 +308,11 @@ public class Utils {
 					target.put(childType, new DynamicValue(source.node, new Range(min, max), null, null));
 					containsData = true;
 
-				} else {
+				} else if (data.getAttribute("Equation") != null) {
+					target.put(childType, new DynamicValue(source.node, null, null, new Equation((String) data.getAttribute("Equation"))));
+					containsData = true;
 
+				} else {
 					Object value = produceDynamicObjectContainer(data);
 					if (value != null) {
 						values.add(value);

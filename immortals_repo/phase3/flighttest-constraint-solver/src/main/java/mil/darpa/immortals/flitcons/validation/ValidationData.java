@@ -2,6 +2,7 @@ package mil.darpa.immortals.flitcons.validation;
 
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.Equation;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.Range;
 
 import javax.annotation.Nonnull;
@@ -58,8 +59,8 @@ public class ValidationData {
 	}
 
 	private static boolean isValidValue(@Nonnull Object value) {
-		return (value instanceof ValidationData || value instanceof ValidationDataContainer ||
-				value instanceof Long || value instanceof Float || value instanceof Boolean || value instanceof String);
+		return (value instanceof ValidationData || value instanceof ValidationDataContainer || value instanceof Long ||
+				value instanceof Float || value instanceof Boolean || value instanceof String || value instanceof Equation);
 
 	}
 

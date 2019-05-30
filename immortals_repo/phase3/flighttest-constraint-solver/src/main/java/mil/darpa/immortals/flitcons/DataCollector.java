@@ -16,7 +16,6 @@ import java.util.Set;
 
 public class DataCollector<T> {
 
-	private final Configuration.TransformationInstructions transformationInstructions;
 
 	private HierarchicalDataContainer rawDauInventoryContainer;
 	private HierarchicalDataContainer rawInputConfigurationContainer;
@@ -25,19 +24,18 @@ public class DataCollector<T> {
 
 	private final DataSourceInterface<T> dataSource;
 
-	public DataCollector(@Nonnull DataSourceInterface<T> dataSource, @Nonnull Configuration.TransformationInstructions transformationInstructions) {
+	public DataCollector(@Nonnull DataSourceInterface<T> dataSource) {
 		config = Configuration.getInstance();
 		this.dataSource = dataSource;
-		this.transformationInstructions = transformationInstructions;
 	}
 
-	public synchronized HierarchicalDataContainer getRawFaultyConfiguration() {
+	private synchronized HierarchicalDataContainer getRawInputConfiguration() {
 		dataSource.init();
 		if (rawInputConfigurationContainer == null) {
 			LinkedHashMap<T, List<T>> dauVertices = dataSource.collectRawDauData();
-			rawInputConfigurationContainer = dataSource.createContainer(DataType.FaultyConfiguration_Raw, dauVertices, config.dataCollectionInstructions);
+			rawInputConfigurationContainer = dataSource.createContainer(DataType.RawInputConfigurationData, dauVertices, config.dataCollectionInstructions);
 			MdlHacks.fixHierarchicalData(rawInputConfigurationContainer.getDataIterator());
-			if (rawInputConfigurationContainer.dataType != DataType.FaultyConfiguration_Raw) {
+			if (rawInputConfigurationContainer.dataType != DataType.RawInputConfigurationData) {
 				throw new RuntimeException("BAD TYPE!");
 			}
 		}
@@ -48,10 +46,10 @@ public class DataCollector<T> {
 		dataSource.init();
 		if (rawMeasurementContainer == null) {
 			LinkedHashMap<T, List<T>> measurementVertices = dataSource.collectRawMeasurementData();
-			rawMeasurementContainer = dataSource.createContainer(DataType.FaultyConfigurationExternalData_Raw, measurementVertices, config.dataCollectionInstructions);
+			rawMeasurementContainer = dataSource.createContainer(DataType.RawInputExternalData, measurementVertices, config.dataCollectionInstructions);
 			MdlHacks.fixHierarchicalData(rawMeasurementContainer.getDataIterator());
 		}
-		if (rawMeasurementContainer.dataType != DataType.FaultyConfigurationExternalData_Raw) {
+		if (rawMeasurementContainer.dataType != DataType.RawInputExternalData) {
 			throw new RuntimeException("BAD TYPE!");
 		}
 		return rawMeasurementContainer;
@@ -66,10 +64,10 @@ public class DataCollector<T> {
 		Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> relationMap = dataSource.convertOneToManyMap(dataSource.collectRawDauMeasurementIndirectRelations());
 
 		HierarchicalDataTransformer transformer = new HierarchicalDataTransformer(
-				getRawFaultyConfiguration(), transformationInstructions, false, getRawFaultyConfigurationExternalsContainer(), relationMap);
+				getRawInputConfiguration(), false, getRawFaultyConfigurationExternalsContainer(), relationMap);
 
 		HierarchicalDataContainer rval = transformer.produceInterconnectedResult();
-		if (rval.dataType != DataType.FaultyConfiguration_Interconnected) {
+		if (rval.dataType != DataType.InputInterconnectedData) {
 			throw new RuntimeException("BAD TYPE!");
 		}
 		return rval;
@@ -79,10 +77,10 @@ public class DataCollector<T> {
 		dataSource.init();
 		if (rawDauInventoryContainer == null) {
 			LinkedHashMap<T, List<T>> dauInventoryVertices = dataSource.collectRawDauInventoryData();
-			rawDauInventoryContainer = dataSource.createContainer(DataType.Inventory_Raw, dauInventoryVertices, config.dataCollectionInstructions);
+			rawDauInventoryContainer = dataSource.createContainer(DataType.RawInventory, dauInventoryVertices, config.dataCollectionInstructions);
 			MdlHacks.fixHierarchicalData(rawDauInventoryContainer.getDataIterator());
 		}
-		if (rawDauInventoryContainer.dataType != DataType.Inventory_Raw) {
+		if (rawDauInventoryContainer.dataType != DataType.RawInventory) {
 			throw new RuntimeException("BAD TYPE!");
 		}
 		return rawDauInventoryContainer;
@@ -97,23 +95,77 @@ public class DataCollector<T> {
 		Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> relationMap = dataSource.convertOneToManyMap(dataSource.collectRawDauMeasurementIndirectRelations());
 
 		HierarchicalDataTransformer transformer = new HierarchicalDataTransformer(
-				getRawFaultyConfiguration(), transformationInstructions, preserveDebugRelations, getRawFaultyConfigurationExternalsContainer(), relationMap);
+				getRawInputConfiguration(), preserveDebugRelations, getRawFaultyConfigurationExternalsContainer(), relationMap);
 
-		HierarchicalDataContainer rval = transformer.produceTransformedInterconnectedResult();
-		if (rval.dataType != DataType.FaultyConfiguration_InterconnectedTransformed) {
+		HierarchicalDataContainer rval = transformer.produceInterconnectedRequirements();
+		if (rval.dataType != DataType.InputInterconnectedRequirementsData) {
 			throw new RuntimeException("BAD TYPE!");
 		}
 		return rval;
 	}
 
+	public synchronized HierarchicalDataContainer getInterconnectedInputConfigurationUsage(boolean preserveDebugRelations) {
+		dataSource.init();
+		if (!dataSource.isInputConfiguration()) {
+			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "The provided data is not an input configuration!");
+		}
+
+		Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> relationMap = dataSource.convertOneToManyMap(dataSource.collectRawDauMeasurementIndirectRelations());
+
+		HierarchicalDataTransformer transformer = new HierarchicalDataTransformer(
+				getRawInputConfiguration(), preserveDebugRelations, getRawFaultyConfigurationExternalsContainer(), relationMap);
+
+		HierarchicalDataContainer rval = transformer.produceInterconnectedUsage();
+		if (rval.dataType != DataType.InputInterconnectedUsageData) {
+			throw new RuntimeException("BAD TYPE!");
+		}
+		return rval;
+	}
+
+	public synchronized HierarchicalDataContainer getInterconnectedTransformedInputConfigurationUsage(boolean preserveDebugRelations) {
+		dataSource.init();
+		if (!dataSource.isInputConfiguration()) {
+			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "The provided data is not an input configuration!");
+		}
+
+		Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> relationMap = dataSource.convertOneToManyMap(dataSource.collectRawDauMeasurementIndirectRelations());
+
+		HierarchicalDataTransformer transformer = new HierarchicalDataTransformer(
+				getRawInputConfiguration(), preserveDebugRelations, getRawFaultyConfigurationExternalsContainer(), relationMap);
+
+		HierarchicalDataContainer rval = transformer.produceInterconnectedUsage();
+		if (rval.dataType != DataType.InputInterconnectedUsageData) {
+			throw new RuntimeException("BAD TYPE!");
+		}
+		return rval;
+	}
+
+//	public synchronized HierarchicalDataContainer getInterconnectedTransformedValidConfiguration(boolean preserveDebugRelations) {
+//		dataSource.init();
+//		if (!dataSource.isInputConfiguration()) {
+//			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "The provided data is not an input configuration!");
+//		}
+//
+//		Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> relationMap = dataSource.convertOneToManyMap(dataSource.collectRawDauMeasurementIndirectRelations());
+//
+//		HierarchicalDataTransformer transformer = new HierarchicalDataTransformer(
+//				getRawValidConfiguration(), transformationInstructions, preserveDebugRelations, getRawFaultyConfigurationExternalsContainer(), relationMap);
+//
+//		HierarchicalDataContainer rval = transformer.produceTransformedInterconnectedResult();
+//		if (rval.dataType != DataType.InputInterconnectedUsageData) {
+//			throw new RuntimeException("BAD TYPE!");
+//		}
+//		return rval;
+//	}
+
 	public HierarchicalDataContainer getTransformedDauInventory(boolean preserveDebugRelations) {
 		dataSource.init();
 
 		HierarchicalDataTransformer transformer = new HierarchicalDataTransformer(
-				getRawDauInventoryContainer(), transformationInstructions, preserveDebugRelations, null, null);
+				getRawDauInventoryContainer(), preserveDebugRelations, null, null);
 
-		HierarchicalDataContainer rval = transformer.produceTransformedInterconnectedResult();
-		if (rval.dataType != DataType.Inventory_Transformed) {
+		HierarchicalDataContainer rval = transformer.produceInterconnectedRequirements();
+		if (rval.dataType != DataType.InventoryRequirementsData) {
 			throw new RuntimeException("BAD TYPE!");
 		}
 		return rval;

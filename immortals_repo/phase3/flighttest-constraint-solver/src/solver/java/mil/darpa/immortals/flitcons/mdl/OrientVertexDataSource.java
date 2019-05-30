@@ -91,7 +91,6 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 					Object rval = newNode.getGraph().command(new OCommandSQL(
 							"UPDATE GenericParameter SET " + FLAGGED_FOR_REPLACEMENT + " = true WHERE @rid == '" + chld.getId().toString() + "'"
 					)).execute();
-					System.out.println("MEH");
 				}
 			}
 			newNode.addEdge("Containment", parentNode);

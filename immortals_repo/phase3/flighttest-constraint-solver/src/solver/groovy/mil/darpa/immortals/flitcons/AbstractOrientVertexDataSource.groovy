@@ -9,7 +9,7 @@ import com.tinkerpop.pipes.Pipe
 import com.tinkerpop.pipes.branch.LoopPipe
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException
-import mil.darpa.immortals.schemaevolution.ChallengeProblemBridge
+import mil.darpa.immortals.schemaevolution.ProvidedData
 
 abstract class AbstractOrientVertexDataSource implements DataSourceInterface<OrientVertex> {
 
@@ -190,16 +190,12 @@ abstract class AbstractOrientVertexDataSource implements DataSourceInterface<Ori
 	@Override
 	void init() {
 		if (testFlightConfigurationGraph == null) {
-			String odbUser = ChallengeProblemBridge.getEvaluationUser()
-			String odbPassword = ChallengeProblemBridge.getEvaluationPassword()
-			String odbTarget = ChallengeProblemBridge.getEvaluationTarget()
-
-			System.out.println("Connecting to '" + odbTarget + "'.")
+			System.out.println("Connecting to '" + ProvidedData.odbEvaluationTarget + "'.")
 
 			testFlightConfigurationGraph = new OrientGraph(
-					odbTarget,
-					odbUser == null ? "admin" : odbUser,
-					odbPassword == null ? "admin" : odbPassword)
+					ProvidedData.odbEvaluationTarget,
+					ProvidedData.odbEvaluationUser,
+					ProvidedData.odbEvaluationPassword)
 //			testFlightConfigurationGraph.setKeepInMemoryReferences(true)
 		}
 	}

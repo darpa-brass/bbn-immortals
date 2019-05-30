@@ -10,23 +10,40 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TestScenario {
+public class FlitconsTestScenario {
 
+	public static final String JARGS_TEST_DATABASE_BACKUP_DIR = "mil.darpa.immortals.test.test_databases.dir";
 
-	private static final Path databaseBackupDir = Paths.get("test_databases").toAbsolutePath();
+	private final static String DB_NAME_PREFIX = "IMMORTALS_";
 
-	private static final Map<String, TestScenario> testScenarios;
+	private static final Path databaseBackupDir;
+
+	private static Map<String, FlitconsTestScenario> testScenarios;
 
 	private static class TestScenarios {
-		public final Set<TestScenario> scenarios;
+		public final Set<FlitconsTestScenario> scenarios;
 
-		public TestScenarios(@Nonnull Set<TestScenario> scenarios) {
+		public TestScenarios(@Nonnull Set<FlitconsTestScenario> scenarios) {
 			this.scenarios = scenarios;
 		}
 	}
 
 	static {
-		TestScenarios s = Utils.getGson().fromJson(new InputStreamReader(TestScenario.class.getClassLoader().getResourceAsStream("scenarios.json")), TestScenarios.class);
+		String databaseBackupDirProp = System.getProperty(JARGS_TEST_DATABASE_BACKUP_DIR);
+		if (databaseBackupDirProp == null) {
+			Path p = Paths.get("PRODUCED_TEST_DATABASES");
+			if (!Files.exists(p)) {
+				try {
+					Files.createDirectory(p);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			databaseBackupDir = p;
+		} else {
+			databaseBackupDir = Paths.get(databaseBackupDirProp);
+		}
+		TestScenarios s = Utils.getGson().fromJson(new InputStreamReader(FlitconsTestScenario.class.getClassLoader().getResourceAsStream("scenarios.json")), TestScenarios.class);
 		testScenarios = s.scenarios.stream().collect(Collectors.toMap(x -> x.shortName, x -> x));
 	}
 
@@ -34,11 +51,11 @@ public class TestScenario {
 		return new TreeSet<>(testScenarios.keySet());
 	}
 
-	public static Map<String, TestScenario> getTestScenarios() {
+	public static Map<String, FlitconsTestScenario> getTestScenarios() {
 		return testScenarios;
 	}
 
-	public static TestScenario getTestScenario(@Nonnull String shortName) {
+	public static FlitconsTestScenario getTestScenario(@Nonnull String shortName) {
 		return testScenarios.get(shortName);
 	}
 
@@ -53,9 +70,9 @@ public class TestScenario {
 	private final LinkedList<String> expectedStatusSequence;
 
 
-	public TestScenario(@Nonnull String shortName, @Nonnull String prettyName, @Nonnull String scenarioType,
-	                    @Nonnull String dbName, @Nonnull String xmlInventoryPath, @Nonnull String xmlMdlrootInputPath,
-	                    @Nonnull String jsonInputPath, @Nonnull List<String> expectedStatusSequence) {
+	public FlitconsTestScenario(@Nonnull String shortName, @Nonnull String prettyName, @Nonnull String scenarioType,
+	                            @Nonnull String dbName, @Nonnull String xmlInventoryPath, @Nonnull String xmlMdlrootInputPath,
+	                            @Nonnull String jsonInputPath, @Nonnull List<String> expectedStatusSequence) {
 		this.shortName = shortName;
 		this.prettyName = prettyName;
 		this.scenarioType = scenarioType;

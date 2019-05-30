@@ -4,6 +4,8 @@ import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Equation implements DuplicateInterface<Equation>, Comparator<Equation>, Comparable<Equation> {
 	public final String Equation;
@@ -39,5 +41,23 @@ public class Equation implements DuplicateInterface<Equation>, Comparator<Equati
 			return -1;
 		}
 		return equation.compareTo(t1);
+	}
+
+	public Set<String> getVariables() {
+		Set<String> values = new HashSet<>();
+
+		int startIdx = Equation.indexOf("@");
+
+		while (startIdx >= 0) {
+			int endIdx = Equation.indexOf(" ", startIdx + 1);
+			if (endIdx < 0) {
+				endIdx = Equation.length();
+			}
+
+			String value = Equation.substring(startIdx + 1, endIdx);
+			values.add(value);
+			startIdx = Equation.indexOf("@", endIdx);
+		}
+		return values;
 	}
 }

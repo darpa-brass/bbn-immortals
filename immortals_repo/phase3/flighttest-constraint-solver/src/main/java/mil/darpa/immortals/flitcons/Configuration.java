@@ -1,11 +1,10 @@
 package mil.darpa.immortals.flitcons;
 
+import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
+
 import javax.annotation.Nonnull;
 import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Configuration {
 
@@ -46,7 +45,7 @@ public class Configuration {
 	/**
 	 * A calculation that must be performed to determined undefined values
 	 */
-	public static class Calculation {
+	public static class Calculation implements DuplicateInterface<Calculation> {
 
 		/**
 		 * The identifier for the value that will be calculated
@@ -62,17 +61,21 @@ public class Configuration {
 		 * A javascript equation that consists of variables defined in {@link Calculation#substitutionValues}
 		 */
 		public String equation;
+
+		@Override
+		public Calculation duplicate() {
+			Calculation rval = new Calculation();
+			rval.targetValueIdentifier = targetValueIdentifier;
+			rval.substitutionValues = new HashSet<>(substitutionValues);
+			rval.equation = equation;
+			return rval;
+		}
 	}
 
 	/**
 	 * Details needed to perform an adapation
 	 */
 	public static class AdaptationConfiguration {
-		/**
-		 * Calculations that will be used to fill in values
-		 */
-		Map<String, Calculation> calculations;
-
 		/**
 		 * A NodeType-AttributeNames dictionary of attributes that shouldn't be inserted into the final solution
 		 */
@@ -165,12 +168,11 @@ public class Configuration {
 	 */
 	public boolean haltOnUnsupportedPortFunctionality;
 
-
 	/**
 	 * Rules used to govern trimming down the data collected through the graph for much easier conversion into something
 	 * for the DSL.
 	 */
-	public static class TransformationInstructions {
+	public static class TransformationInstructions implements DuplicateInterface<TransformationInstructions> {
 		/**
 		 * Any MDL types in this set will have their attributes and children linked to the parent and then be removed
 		 * from the graph
@@ -181,36 +183,18 @@ public class Configuration {
 		 * Any MDL types and their children in this set will be iremoved prior to DSL conversion, thus being "ignored"
 		 * by the DSL.
 		 */
-		public Set<String> ignoredNodes;
+		public List<List<String>> ignoredNodes;
+
+		/**
+		 * A List of node paths followed by an attribute name. If a path and attribute name is found it should be
+		 * removed when collecting requirements data.
+		 */
+		public List<List<String>> ignoredAttributes;
 
 		/**
 		 * Calculations that will be used to fill in values
 		 */
 		public Map<String, List<Calculation>> calculations;
-
-		/**
-		 * Format: Map<AttributeName, ListOfPathSourcesToIgnore>
-		 *
-		 * Attributes that should be specifically ignored when assembling a flattened inventory.
-		 * For example, we do not want the preconfigured values in place for the DAUs to be MDL compliant to impact
-		 * the value selections
-		 */
-		public Map<String, List<List<String>>> ignoredInventoryAttributes;
-
-		/**
-		 * Format: Map<AttributeName, ListOfPathSourcesToIgnore>
-		 *
-		 * Attributes that should be specifically ignored for the faulty configuration. For example, we don't want the
-		 * valid DAU attributes or the currently selected values (if more are possible) to impact the possible selections
-		 */
-		public Map<String, List<List<String>>> ignoredFaultyConfigurationAttributes;
-
-		/**
-		 * Format: Map<AttributeName, ListOfPathSourcesToIgnore>
-		 *
-		 * Attributes that should be specifically ignored when validating a valid dau configuration
-		 */
-		public Map<String, List<List<String>>> ignoredValidConfigurationAttributes;
 
 		/**
 		 * Any parent (key) node types that do not have the corresponding chain of children will be ignored.
@@ -223,10 +207,94 @@ public class Configuration {
 		public Set<String> taggedNodes;
 
 		/**
+		 * If the Path the key maps to exists and the last value is an attribute, rename it to the key value
+		 */
+		public Map<String, List<String>> renameAttributes;
+
+		/**
 		 * for an object type of the first key value, if it contains multiple children of the second key value,
 		 * combine each listed child identifier into individual sets of values
 		 */
 		public Map<String, Map<String, Set<String>>> combineSquashedChildNodeAttributes;
+
+		private static TransformationInstructions mergeTransformationInstructions(
+				@Nonnull TransformationInstructions globalInstructions,
+				@Nonnull TransformationInstructions specificInstructions) {
+			TransformationInstructions rval = globalInstructions.duplicate();
+
+			if (specificInstructions.shortNodesToParent != null) {
+				for (String key : specificInstructions.shortNodesToParent.keySet()) {
+					Set<String> nodeSet = rval.shortNodesToParent.computeIfAbsent(key, k -> new HashSet<>());
+					nodeSet.addAll(specificInstructions.shortNodesToParent.get(key));
+				}
+			}
+
+			if (specificInstructions.ignoredNodes != null) {
+				for (List<String> l : specificInstructions.ignoredNodes) {
+					rval.ignoredNodes.add(new LinkedList<>(l));
+				}
+			}
+
+			if (specificInstructions.ignoredAttributes != null) {
+				for (List<String> l : specificInstructions.ignoredAttributes) {
+					rval.ignoredAttributes.add(new LinkedList<>(l));
+				}
+			}
+
+			if (specificInstructions.calculations != null) {
+				for (String key : specificInstructions.calculations.keySet()) {
+					List<Calculation> targetCalculationList = rval.calculations.computeIfAbsent(key, k -> new LinkedList<>());
+					for (Calculation c : specificInstructions.calculations.get(key)) {
+						targetCalculationList.add(c.duplicate());
+					}
+				}
+			}
+
+			if (specificInstructions.renameAttributes != null) {
+				for (String key : specificInstructions.renameAttributes.keySet()) {
+					rval.renameAttributes.put(key, new LinkedList<>(specificInstructions.renameAttributes.get(key)));
+				}
+			}
+
+			if (specificInstructions.ignoreParentsWithoutProperties != null) {
+				throw new RuntimeException("Not adding support for this unless needed!");
+			}
+
+			if (specificInstructions.taggedNodes != null) {
+				throw new RuntimeException("Not adding support for this unless needed!");
+			}
+
+			if (specificInstructions.combineSquashedChildNodeAttributes != null) {
+				throw new RuntimeException("Not adding support for this unless needed!");
+			}
+			return rval;
+		}
+
+		@Override
+		public TransformationInstructions duplicate() {
+			TransformationInstructions rval = new TransformationInstructions();
+
+			rval.shortNodesToParent = Utils.duplicateSetMap(shortNodesToParent);
+			rval.ignoredNodes = Utils.duplicateListList(ignoredNodes);
+			rval.ignoredAttributes = Utils.duplicateListList(ignoredAttributes);
+			rval.calculations = Utils.duplicateMap(calculations);
+			rval.ignoreParentsWithoutProperties = Utils.duplicateMap(ignoreParentsWithoutProperties);
+			rval.taggedNodes = new HashSet<>(taggedNodes);
+			rval.renameAttributes = Utils.duplicateListMap(renameAttributes);
+
+			rval.combineSquashedChildNodeAttributes = new HashMap<>();
+
+			for (String parentObjType : combineSquashedChildNodeAttributes.keySet()) {
+				Map<String, Set<String>> origChildObjMap = combineSquashedChildNodeAttributes.get(parentObjType);
+				Map<String, Set<String>> cloneChildObjMap = new HashMap<>();
+				rval.combineSquashedChildNodeAttributes.put(parentObjType, cloneChildObjMap);
+
+				for (String childObjType : origChildObjMap.keySet()) {
+					cloneChildObjMap.put(childObjType, new HashSet<>(origChildObjMap.get(childObjType)));
+				}
+			}
+			return rval;
+		}
 	}
 
 	/**
@@ -253,7 +321,28 @@ public class Configuration {
 	/**
 	 * Data related to the DSL Transformation
 	 */
-	public TransformationInstructions transformation;
+	private TransformationInstructions globalTransformation;
+	private TransformationInstructions inventoryTransformation;
+	private TransformationInstructions usageTransformation;
+	private TransformationInstructions requirementsTransformation;
+
+
+	public TransformationInstructions getInventoryTransformationInstructions() {
+		return TransformationInstructions.mergeTransformationInstructions(globalTransformation, inventoryTransformation);
+	}
+
+	public TransformationInstructions getUsageTransformationInstructions() {
+		return TransformationInstructions.mergeTransformationInstructions(globalTransformation, usageTransformation);
+	}
+
+	public TransformationInstructions getRequirementsTransformationInstructions() {
+		return TransformationInstructions.mergeTransformationInstructions(globalTransformation, requirementsTransformation);
+	}
+
+	public TransformationInstructions getGlobalTransformationInstructions() {
+		return globalTransformation.duplicate();
+	}
+
 
 	public ValidationConfiguration validation;
 

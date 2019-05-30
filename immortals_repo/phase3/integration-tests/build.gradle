@@ -1,0 +1,49 @@
+plugins {
+	id 'java'
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+group 'mil.darpa.immortals'
+
+sourceCompatibility = 1.8
+
+sourceSets {
+	integrationTest {
+		java {
+			srcDirs = ['src/integrationtest/java']
+		}
+		resources {
+			srcDirs = ['src/integrationtest/resources']
+		}
+	}
+}
+
+task integrationTest(type: Test) {
+	useTestNG()
+	group = 'Verification'
+	description = 'Executes integration tests. Requires properly set up local OrientDB instance to pass'
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+	systemProperty "mil.darpa.immortals.test.test_databases.dir", projectDir.toPath().resolve("../test_databases").toFile().getCanonicalFile().absolutePath
+	systemProperty "mil.darpa.immoratls.test.sut.script", projectDir.toPath().resolve("../start.sh").toFile().getCanonicalFile().absolutePath
+    systemProperty "mil.darpa.immortals.artifactdirectory", buildDir.toPath().resolve("tmp/integrationTest").toFile().getCanonicalFile().absolutePath
+    setWorkingDir(buildDir.toPath().resolve("tmp/integrationTest").toFile())
+	reports.junitXml.enabled = true
+	reports.html.enabled = true
+}
+
+dependencies {
+	integrationTestCompile 'com.orientechnologies:orientdb-core:2.2.24'
+	integrationTestCompile 'com.orientechnologies:orientdb-graphdb:2.2.24'
+	integrationTestCompile 'com.orientechnologies:orientdb-server:2.2.24'
+	integrationTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
+
+	integrationTestCompile project(':')
+	integrationTestCompile 'org.testng:testng:6.14.3'
+	integrationTestCompile 'com.google.code.gson:gson:2.7'
+	integrationTestCompile 'mil.darpa.immortals:mdl-immortals-bridge:0.2'
+}

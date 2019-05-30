@@ -31,10 +31,6 @@ newtype Env k v = Env { envAsMap :: Map k v }
 
 type VEnv k v = Env k (VOpt v)
 
--- | Apply a function to the map that implements this environment.
-envOnMap :: (Map a b -> Map c d) -> Env a b -> Env c d
-envOnMap f (Env m) = Env (f m)
-
 -- | Error thrown when a name is not found in the environment.
 data NotFound = forall k. (Eq k, Show k, Typeable k) => NotFound k [k]
 
@@ -512,12 +508,12 @@ type Block = SegList Stmt
 
 -- | Statement in an application model.
 data Stmt
-     = Do Path Effect       -- ^ apply an effect
+     = Do Path Effect           -- ^ apply an effect
      | If (V Expr) Block Block  -- ^ conditional statement
-     | In Path Block        -- ^ do work in a sub-environment
+     | In Path Block            -- ^ do work in a sub-environment
      | For Var (V Expr) Block   -- ^ loop over indexed sub-environments
      | Let Var (V Expr) Block   -- ^ extend the variable environment
-     | Load (V Expr) [V Expr]     -- ^ load a sub-model or profile
+     | Load (V Expr) [V Expr]   -- ^ load a sub-model or profile
   deriving (Eq,Show,Data,Read)
 
 -- | Kinds of errors that can occur in statements.

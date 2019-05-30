@@ -36,5 +36,8 @@ public class SolverConfiguration {
 	@CommandLine.Option(hidden = true, names = {"--simple-solver"})
 	public boolean useSimpleSolver = false;
 
+	@CommandLine.Option(names = "--stop-on-finish", description = "Indicates it should always stop when it has completed a single adaptation.")
+	public boolean stopOnFinish;
+
 	public String evaluationIdentifier;
 }

@@ -6,6 +6,8 @@ import subprocess
 import sys
 from typing import List
 
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+
 _parser = argparse.ArgumentParser('IMMoRTALS Scenario 5/Scenario 6 Launcher', add_help=True)
 
 _parser.add_argument('--scenario', action='store', choices=['5', '6'],
@@ -15,8 +17,6 @@ _parser.add_argument('--scenario-help', action='store', choices=['5', '6'],
 _parser.add_argument('--odb-url', action='store', type=str,
                      help='The URL of the evaluation OrientDB server. Example: \n' +
                           '"remote:OrientDB.example.com:2424/GratefulDeadConcerts"')
-_parser.add_argument('--persistence-url', action='store', type=str,
-                     help="The URL of the persistence OrientDB server.")
 _parser.add_argument('--local-test', action='append', choices=['s5', 's6a', 's6b', 'all'],
                      help="Starts a (properly set up) local OrientDB server and runs through some sanity tests.")
 _parser.add_argument('--odb-user', action='store', type=str, default='admin',
@@ -25,10 +25,9 @@ _parser.add_argument('--odb-password', action='store', type=str, default='admin'
                      help='The user password for the evaluation OrientDB server. Defaults to "admin"')
 _parser.add_argument('--artifact-directory', action='store', type=str,
                      help='The directory to use for storage of any artifacts for analysis')
-_parser.add_argument('--start-persistence-server', action='store_true',
-                     help='Starts the persistence server for logging data produced by evaluation sessions')
 
-_scenario_5_cmd = ['java', '-jar', 'flighttest-constraint-solver/flighttest-constraint-solver.jar']
+_scenario_5_cmd = ['java', '-jar',
+                   os.path.join(SCRIPT_DIR, 'flighttest-constraint-solver/flighttest-constraint-solver.jar')]
 _scenario_6_cmd = [
     'java', '-DevalType=live',
     '-DcannedInputJson=../knowledge-repo/cp/cp3.1/cp-eval-service/examples/sanityCheck.json',
@@ -92,11 +91,7 @@ def exec_scenario6_help() -> str:
 def main():
     args, pass_through_args = _parser.parse_known_args()
 
-    if args.start_persistence_server:
-        subprocess.run(
-            ['bash', '../shared/tools.sh', 'odbhelper', 'start', '--persistence-only', '--use-default-root-password'])
-
-    elif args.scenario_help is not None:
+    if args.scenario_help is not None:
         if args.scenario_help == '5':
             print(exec_scenario5_help())
         elif args.scenario_help == '6':
@@ -162,24 +157,15 @@ def main():
             print('IMMoRTALS Scenario 5/Scenario 6 Launcher: error: the following arguments are required: --odb-url')
             exit(1)
 
-        # if args.persistence_url is None:
-        #     _parser.print_usage()
-        #     print(
-        #         'IMMoRTALS Scenario 5/Scenario 6 Launcher: error: ' +
-        #         'the following arguments are required: --persistence-url')
-        #     exit(1)
-
-        if args.artifact_directory is None:
-            _parser.print_usage()
-            print(
-                'IMMoRTALS Scenario 5/Scenario 6 Launcher: error: the following arguments are required: --artifact-directory')
-            exit(1)
-
         env_values['ORIENTDB_EVAL_TARGET'] = args.odb_url
-        # env_values['ORIENTDB_PERSISTENCE_TARGET'] = args.persistence_url
-        env_values['IMMORTALS_ARTIFACT_DIRECTORY'] = args.artifact_directory
+        env_values['IMMORTALS_RESOURCE_DSL'] = os.path.abspath(os.path.join(SCRIPT_DIR, '../dsl/resource-dsl'))
+
+        if args.artifact_directory is not None:
+            env_values['IMMORTALS_ARTIFACT_DIRECTORY'] = args.artifact_directory
+
         if args.odb_user is not None:
             env_values['ORIENTDB_EVAL_USER'] = args.odb_user
+
         if args.odb_password is not None:
             env_values['ORIENTDB_EVAL_PASSWORD'] = args.odb_password
 

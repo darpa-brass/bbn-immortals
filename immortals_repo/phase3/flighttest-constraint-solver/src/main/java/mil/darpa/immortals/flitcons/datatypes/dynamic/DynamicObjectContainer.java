@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static mil.darpa.immortals.flitcons.Utils.GLOBALLY_UNIQUE_ID;
 
@@ -63,8 +64,15 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 		children.remove(key);
 	}
 
-	public Set<String> createGroupingHashes(@Nonnull Collection<String> equationValues) throws DynamicValueeException {
+	public Set<String> createGroupingHashes() throws DynamicValueeException {
 		try {
+
+			Set<Equation> equations = children.values().stream().filter(x -> x.getValue() instanceof Equation).map(x -> (Equation) x.getValue()).collect(Collectors.toSet());
+			Set<String> equationValues = new HashSet<>();
+
+			for (Equation eq : equations) {
+				equationValues.addAll(eq.getVariables());
+			}
 
 			Set<String> rval = new HashSet<>();
 
@@ -83,7 +91,7 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 				if (!key.equals(GLOBALLY_UNIQUE_ID)) {
 
 					if (equationValues.contains(key)) {
-						references.peek().append(key).append("=").append("VALUE");
+						references.peek().append(key).append("=VALUE,");
 					} else {
 
 						DynamicValue val = get(key);
@@ -91,7 +99,11 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 						switch (val.multiplicity) {
 
 							case SingleValue:
-								references.peek().append(key).append("=").append(URLEncoder.encode(val.getValue().toString(), StandardCharsets.UTF_8.toString())).append(",");
+								if (val.getValue() instanceof Equation) {
+									references.peek().append(key).append("=VALUE,");
+								} else {
+									references.peek().append(key).append("=").append(val.getValue()).append(",");
+								}
 								break;
 
 							case Set:
@@ -122,6 +134,7 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 								break;
 
 							case Range:
+								references.peek().append(key).append("=VALUE,");
 								break;
 
 							default:

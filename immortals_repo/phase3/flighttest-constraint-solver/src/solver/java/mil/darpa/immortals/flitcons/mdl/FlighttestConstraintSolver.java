@@ -6,23 +6,13 @@ import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
-import mil.darpa.immortals.flitcons.validation.DataValidator;
-import mil.darpa.immortals.flitcons.validation.ValidationDataContainer;
-import org.apache.commons.io.FileUtils;
 
-import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Set;
 
-import static mil.darpa.immortals.flitcons.Utils.*;
+import static mil.darpa.immortals.flitcons.Utils.CHILD_LABEL;
+import static mil.darpa.immortals.flitcons.Utils.PARENT_LABEL;
 
 public class FlighttestConstraintSolver {
-
-	private static File solverInputFile = new File("solver-input-configuration.json");
-	private static File solverDauInventoryFile = new File("solver-dau-inventory.json");
-	private static File solverOutputFile = new File("solver-output.configuration.json");
 
 	private final DataSourceInterface dataSource;
 	private final DataCollector collector;
@@ -31,10 +21,8 @@ public class FlighttestConstraintSolver {
 	private final SolverInterface solver;
 
 	public FlighttestConstraintSolver() {
-		Configuration config = Configuration.getInstance();
-
 		dataSource = new OrientVertexDataSource();
-		collector = new DataCollector(dataSource, config.transformation);
+		collector = new DataCollector(dataSource);
 		validator = new MdlDataValidator(null, null, dataSource);
 
 		if (SolverConfiguration.getInstance().useSimpleSolver) {
@@ -48,7 +36,10 @@ public class FlighttestConstraintSolver {
 		boolean useColor = !SolverConfiguration.getInstance().colorlessMode;
 
 		try {
-			validator.validateConfiguration(ValidationScenario.InputConfiguration, useColor);
+
+			validator.validateConfiguration(ValidationScenario.InputConfigurationUsage, useColor);
+
+			validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements, useColor);
 			validator.validateConfiguration(ValidationScenario.DauInventory, useColor);
 
 			HierarchicalDataContainer inputContainer = collector.getInterconnectedTransformedFaultyConfiguration(false);
@@ -64,8 +55,6 @@ public class FlighttestConstraintSolver {
 				throw new AdaptationnException(ResultEnum.AdaptationUnsuccessful, "Could not find a valid adaptation.");
 			}
 
-			FileUtils.writeStringToFile(solverOutputFile, Utils.difGson.toJson(solution), Charset.defaultCharset());
-
 			SolutionPreparer preparer = new SolutionPreparer(
 					collector.getInterconnectedFaultyConfiguration(),
 					collector.getInterconnectedTransformedFaultyConfiguration(false),
@@ -76,7 +65,10 @@ public class FlighttestConstraintSolver {
 
 			SolutionInjector injector = new SolutionInjector(dataSource, adaptation);
 			injector.injectSolution();
-		} catch (DynamicValueeException | IOException e) {
+
+			validator.validateConfiguration(ValidationScenario.OutputConfigurationUsage, useColor);
+
+		} catch (DynamicValueeException e) {
 			throw AdaptationnException.internal(e);
 		}
 	}

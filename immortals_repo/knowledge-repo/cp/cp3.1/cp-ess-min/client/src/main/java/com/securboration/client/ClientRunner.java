@@ -80,6 +80,30 @@ public class ClientRunner {
         
     }
     
+    private static int countSubstringOccurrences(final String s, final String substring) {
+    	if(!s.contains(substring)) {
+    		return 0;
+    	}
+    	
+    	int index = 0;
+    	int count = 0;
+    	
+    	boolean stop = false;
+    	while(!stop) {
+    		int matchIndex = s.indexOf(substring, index);
+    		
+    		if(matchIndex < 0) {
+    			stop = true;
+    		} else {
+    			index = matchIndex + substring.length();
+    			count++;
+    		}
+    	}
+    	
+    	return count;
+    }
+    
+    
     private void clientActionInternal(Report report) throws IOException {
         {
             System.out.println("client injected @" + Key.SERVER_ENDPOINT_URL.getValue());
@@ -102,6 +126,10 @@ public class ClientRunner {
         
         int testCount = 0;
         int passCount = 0;
+        
+        double totalBadnessWeighted = 0d;
+        double totalBadnessNormalized = 0d;
+        double badElements = 0d;
         for(int i=0;i<3;i++) {//TODO
         	System.out.println("test " + i);//TODO
         for(File messageToSend:FileUtils.listFiles(messagesDir, "xml")) {
@@ -126,6 +154,30 @@ public class ClientRunner {
             } catch(Exception e) {
                 e.printStackTrace();
                 
+                {
+                	final String s = e.toString();
+//                	final String s = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Server</faultcode><faultstring xml:lang=\"en\">1 errors/fatals found in document:  FATAL @line 33 \"&lt;ns3:DeliveryClass&gt;BestEffort&lt;/ns3:DeliveryClass&gt;\" in 1-line element spanning [33,33] \"&lt;ns3:DeliveryClass&gt;BestEffort&lt;/ns3:DeliveryClass&gt;\" ... \"&lt;ns3:DeliveryClass&gt;BestEffort&lt;/ns3:DeliveryClass&gt;\" with message \"cvc-complex-type.2.4.a: Invalid content was found starting with element 'ns3:DeliveryClass'. One of '{\"http://inetprogram.org/projects/MDL\":ProperName}' is expected.\"document's [normalized, weighted] badness scores are [0.0017, 1.0000]</faultstring></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+                	
+                	final String sigil = "document's [normalized, weighted] badness scores are [";
+                	
+                	if(s.contains(sigil)) {
+                		final String suffix = s.substring(s.lastIndexOf(sigil));
+                		
+                		final String[] parts = suffix.split("badness scores are ");
+                		final String scores = parts[1].substring(1,parts[1].indexOf("]"));
+                		
+                		final String[] scoresSplit = scores.split(",");
+                		
+                		final double normalizedScore = Double.parseDouble(scoresSplit[0]);
+                		final double weightedScore = Double.parseDouble(scoresSplit[1]);
+                		
+                		totalBadnessWeighted += weightedScore;
+                		totalBadnessNormalized += normalizedScore;
+                	}
+                	
+                	badElements += countSubstringOccurrences(s, "FATAL ");
+                }
+                
                 report.put(testName + " result", "test FAILED due to an exception of type " + e.getClass().getName() + " with message " + e.getMessage());
             }
         }
@@ -137,7 +189,12 @@ public class ClientRunner {
         report.put("# tests that failed", testCount - passCount);
         report.put("pass rate", testCount == 0 ? 1d : (1d*passCount)/(1d*testCount));
         report.put("fail rate", testCount == 0 ? 0d : (1d*(testCount - passCount))/(1d*testCount));
+        
         report.put("score", testCount == 0 ? 1d : (1d*passCount)/(1d*testCount));
+        
+        report.put("mean bad document fraction (lower is better)", testCount == 0 ? 0d : totalBadnessNormalized/(1d*testCount));
+        report.put("mean bad lines per document (lower is better)", testCount == 0 ? 0d : totalBadnessWeighted/(1d*testCount));
+        report.put("mean bad elements per document (lower is better)",testCount == 0 ? 0d : badElements/(1d*testCount));
     }
     
     /**

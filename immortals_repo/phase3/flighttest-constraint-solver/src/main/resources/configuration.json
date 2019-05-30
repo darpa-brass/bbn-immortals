@@ -47,6 +47,9 @@
       "DataLength": [
         "Min",
         "Max"
+      ],
+      "ConditionParameter": [
+        "ConditionValue"
       ]
     },
     "collectedDebugProperties": {
@@ -64,16 +67,6 @@
     ]
   },
   "adaptation": {
-    "calculations": {
-      "Port": {
-        "targetValueIdentifier": "DataRate",
-        "substitutionValues": [
-          "SampleRate",
-          "DataLength"
-        ],
-        "equation": "@SampleRate * @DataLength"
-      }
-    },
     "ignoredAttributes": {
       "Port": [
         "BBNPortFunctionality"
@@ -139,7 +132,7 @@
       }
     }
   },
-  "transformation": {
+  "globalTransformation": {
     "shortNodesToParent": {
       "NetworkNode": [
         "InternalStructure",
@@ -171,9 +164,22 @@
       ]
     },
     "ignoredNodes": [
-      "SubModules",
-      "Connectors"
+      [
+        //        "NetworkNode",
+        "InternalStructure",
+        "Modules",
+        "Module",
+        "Connectors"
+      ],
+      [
+        //        "NetworkNode",
+        "InternalStructure",
+        "Modules",
+        "Module",
+        "SubModules"
+      ]
     ],
+    "ignoredAttributes": [],
     "ignoreParentsWithoutProperties": {
       "Port": [
         "GenericParameter",
@@ -198,6 +204,42 @@
         ]
       }
     },
+    "calculations": {},
+    "renameAttributes": {}
+  },
+  "inventoryTransformation": {
+    "ignoredAttributes": [
+      [
+        "Port",
+        "PortTypes",
+        "PortType",
+        "Thermocouple"
+      ],
+      [
+        "Port",
+        "GenericParameter",
+        "PortType",
+        "PortType"
+      ],
+      [
+        "Measurement",
+        "GenericParameter",
+        "DataLength"
+      ],
+      [
+        "Measurement",
+        "GenericParameter",
+        "SampleRate"
+      ],
+      [
+        "Measurement",
+        "DataAttributes",
+        "DigitalAttributes",
+        "DataRate",
+        "ConditionParameter",
+        "ConditionValue"
+      ]
+    ],
     "calculations": {
       "Port": [
         {
@@ -209,135 +251,184 @@
           "equation": "@SampleRate * @DataLength"
         }
       ]
-    },
-    "ignoredInventoryAttributes": {
-      "Thermocouple": [
-        [
-          "Port",
-          "PortTypes",
-          "PortType"
-        ]
+    }
+  },
+  "requirementsTransformation": {
+    "ignoredAttributes": [
+      [
+        "Port",
+        "GenericParameter",
+        "PortType",
+        "Thermocouple"
       ],
-      "PortType": [
-        [
-          "Port",
-          "GenericParameter",
-          "PortType"
-        ]
+      [
+        "Port",
+        "GenericParameter",
+        "PortType",
+        "PortType"
       ],
+      [
+        "Port",
+        "GenericParameter",
+        "SampleRate"
+      ],
+      [
+        "Port",
+        "GenericParameter",
+        "DataLength"
+      ],
+      [
+        "Measurement",
+        "DataAttributes",
+        "DigitalAttributes",
+        "DataLength",
+        "ConditionParameter",
+        "ConditionValue"
+      ],
+      [
+        "Measurement",
+        "DataAttributes",
+        "DigitalAttributes",
+        "SampleRate",
+        "ConditionParameter",
+        "ConditionValue"
+      ],
+      [
+        "Measurement",
+        "DataAttributes",
+        "DigitalAttributes",
+        "DataRate",
+        "ConditionParameter",
+        "ConditionValue"
+      ]
+    ]
+  },
+  "usageTransformation": {
+    "ignoredAttributes": [
+      [
+        "Port",
+        "GenericParameter",
+        "PortType",
+        "PortType"
+      ],
+      [
+        "Port",
+        "GenericParameter",
+        "PortType",
+        "Thermocouple"
+      ],
+      [
+        "Measurement",
+        "GenericParameter",
+        "DataLength"
+      ],
+      [
+        "Port",
+        "GenericParameter",
+        "DataLength"
+      ],
+      [
+        "Measurement",
+        "GenericParameter",
+        "DataRate"
+      ],
+      [
+        "Port",
+        "GenericParameter",
+        "DataRate"
+      ],
+      [
+        "Measurement",
+        "GenericParameter",
+        "SampleRate"
+      ],
+      [
+        "Port",
+        "GenericParameter",
+        "SampleRate"
+      ]
+    ],
+    "ignoredNodes": [
+      [
+        "Measurement",
+        "GenericParameter",
+        "DataLength"
+      ],
+      [
+        "Port",
+        "GenericParameter",
+        "DataLength"
+      ],
+      [
+        "Measurement",
+        "GenericParameter",
+        "DataRate"
+      ],
+      [
+        "Port",
+        "GenericParameter",
+        "DataRate"
+      ],
+      [
+        "Measurement",
+        "GenericParameter",
+        "SampleRate"
+      ],
+      [
+        "Port",
+        "GenericParameter",
+        "SampleRate"
+      ]
+    ],
+    "renameAttributes": {
       "DataLength": [
-        [
-          "Measurement",
-          "GenericParameter"
-        ]
+        "Measurement",
+        "DataAttributes",
+        "DigitalAttributes",
+        "DataLength",
+        "ConditionParameter",
+        "ConditionValue"
       ],
       "SampleRate": [
-        [
-          "Measurement",
-          "GenericParameter"
-        ]
+        "Measurement",
+        "DataAttributes",
+        "DigitalAttributes",
+        "SampleRate",
+        "ConditionParameter",
+        "ConditionValue"
       ],
-      "ConditionValue": [
-        [
-          "Measurement",
-          "DataAttributes",
-          "DigitalAttributes",
-          "DataRate",
-          "ConditionParameter"
-        ]
-        ]
-    },
-    "ignoredFaultyConfigurationAttributes": {
-      "Thermocouple": [
-        [
-          "Port",
-          "GenericParameter",
-          "PortType"
-        ]
-      ],
-      "PortType": [
-        [
-          "Port",
-          "GenericParameter",
-          "PortType"
-        ]
-      ],
-      "SampleRate": [
-        [
-          "Port",
-          "GenericParameter"
-        ]
-      ],
-      "DataLength": [
-        [
-          "Port",
-          "GenericParameter"
-        ]
-      ],
-      "ConditionValue": [
-        [
-          "Measurement",
-          "DataAttributes",
-          "DigitalAttributes",
-          "DataLength",
-          "ConditionParameter"
-        ],
-        [
-          "Measurement",
-          "DataAttributes",
-          "DigitalAttributes",
-          "SampleRate",
-          "ConditionParameter"
-        ],
-        [
-          "Measurement",
-          "DataAttributes",
-          "DigitalAttributes",
-          "DataRate",
-          "ConditionParameter"
-        ]
+      "DataRate": [
+        "Measurement",
+        "DataAttributes",
+        "DigitalAttributes",
+        "DataRate",
+        "ConditionParameter",
+        "ConditionValue"
       ]
     },
-    "ignoredValidConfigurationAttributes": {
-      "Thermocouple": [
-        [
-          "Port",
-          "PortTypes",
-          "PortType"
-        ]
+    "shortNodesToParent": {
+      "Measurement": [
+        "DataAttributes"
       ],
-      "PortType": [
-        [
-          "Port",
-          "PortTypes",
-          "PortType"
-        ]
+      "DataAttributes": [
+        "DigitalAttributes"
       ],
-      "ConditionValue": [
-        [
-          "Measurement",
-          "DataAttributes",
-          "DigitalAttributes",
-          "DataLength",
-          "ConditionParameter",
-          "ConditionValue"
-        ],
-        [
-          "Measurement",
-          "DataAttributes",
-          "DigitalAttributes",
-          "SampleRate",
-          "ConditionParameter",
-          "ConditionValue"
-        ],
-        [
-          "Measurement",
-          "DataAttributes",
-          "DigitalAttributes",
-          "DataRate",
-          "ConditionParameter",
-          "ConditionValue"
-        ]
+      "DigitalAttributes": [
+        "DataRate",
+        "DataLength",
+        "SampleRate"
+      ],
+      "DataRate": [
+        "ConditionParameter"
+      ],
+      "DataLength": [
+        "ConditionParameter"
+      ],
+      "SampleRate": [
+        "ConditionParameter"
+      ],
+      "Port": [
+        "DataAttributes"
       ]
     }
   },

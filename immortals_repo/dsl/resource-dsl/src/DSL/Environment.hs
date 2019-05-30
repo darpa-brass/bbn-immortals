@@ -5,6 +5,7 @@ import Data.Composition ((.:))
 import Data.Typeable
 import Data.List (union)
 
+import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 
 import DSL.Types
@@ -76,7 +77,16 @@ composeModels (Model ps1 b1) (Model ps2 b2) =
 instance MergeDup Model where
   mergeDup = composeModels
 
+
 -- ** Operations
+
+-- | Convert an environment into an association list.
+envToList :: Env k v -> [(k,v)]
+envToList (Env m) = Map.toList m
+
+-- | Apply a function to the map that implements this environment.
+envOnMap :: (Map a b -> Map c d) -> Env a b -> Env c d
+envOnMap f (Env m) = Env (f m)
 
 -- | Check whether an environment contains a particular name.
 envHas :: Ord k => k -> Env k v -> Bool
@@ -106,7 +116,6 @@ envLookup k (Env m) = (maybe notFound Right . Map.lookup k) m
 -- | Lookup a binding in an environment, returning an optional value.
 envLookup' :: (Ord k) => k -> Env k v -> Maybe v
 envLookup' k (Env m) = Map.lookup k m
-
 
 -- | Apply a result-less monadic action to all key-value pairs.
 envMapM_ :: Monad m => (k -> v -> m ()) -> Env k v -> m ()

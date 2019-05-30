@@ -1,7 +1,10 @@
 package com.securboration.server;
 
 
+import java.io.File;
 import java.util.List;
+
+import javax.xml.transform.Source;
 
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -11,6 +14,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.ws.config.annotation.EnableWs;
 import org.springframework.ws.config.annotation.WsConfigurerAdapter;
+import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.server.EndpointInterceptor;
 import org.springframework.ws.server.endpoint.adapter.DefaultMethodEndpointAdapter;
 import org.springframework.ws.soap.server.endpoint.interceptor.PayloadValidatingInterceptor;
@@ -18,6 +22,9 @@ import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition;
 import org.springframework.xml.xsd.XsdSchemaCollection;
 import org.springframework.xml.xsd.commons.CommonsXsdSchemaCollection;
+
+import schemavalidator.BadnessReport;
+import schemavalidator.SchemaComplianceChecker;
 
 @EnableWs
 @Configuration
@@ -87,6 +94,52 @@ public class Config extends WsConfigurerAdapter {
     public void addInterceptors(List<EndpointInterceptor> interceptors) {
         //this interceptor validates that messages conform to the schema
         
+
+    	interceptors.add(new EndpointInterceptor() {
+
+			@Override
+			public boolean handleRequest(
+					MessageContext messageContext, 
+					Object endpoint
+					) throws Exception {
+				Source s = messageContext.getRequest().getPayloadSource();
+				
+				BadnessReport report = SchemaComplianceChecker.getDocumentBadnessScore(
+						new File("./schema/server").getCanonicalFile(),
+//						new File("C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\cp-ess-min\\etc\\schemas\\v2"), 
+						s
+						);
+				
+	            if(report.getBadnessScore() > 0) {
+	            	System.out.println("found a fault " + messageContext.getClass().getName());
+	            	System.out.println("badness = " + report.getBadnessScore());
+					System.out.println(report);
+		            System.out.println();
+	            	
+	            	throw new RuntimeException(report.toString());
+	            }
+				
+				return true;
+			}
+
+			@Override
+			public boolean handleResponse(MessageContext messageContext, Object endpoint) throws Exception {
+				return true;
+			}
+
+			@Override
+			public boolean handleFault(MessageContext messageContext, Object endpoint) throws Exception {
+				
+				return true;
+			}
+
+			@Override
+			public void afterCompletion(MessageContext messageContext, Object endpoint, Exception ex) throws Exception {
+				
+			}
+    		
+    	});
+    	
         PayloadValidatingInterceptor validatingInterceptor = new PayloadValidatingInterceptor();
         validatingInterceptor.setValidateRequest(true);
         validatingInterceptor.setValidateResponse(true);

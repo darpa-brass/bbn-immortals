@@ -6,11 +6,11 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,70 +33,12 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 
 	private OrientGraphFactory _evaluationGraphFactory;
 
-	private final String odbUser;
-	private final String odbPassword;
-	private final String odbTarget;
-	private final Path artifactDirectory;
-
 	private OrientGraphNoTx getEvaluationGraph() throws Exception {
 		init();
-		return new OrientGraphNoTx(odbTarget, odbUser, odbPassword);
+		return new OrientGraphNoTx(ProvidedData.getOdbEvaluationTarget(), ProvidedData.getOdbEvaluationUser(), ProvidedData.getOdbEvaluationPassword());
 	}
 
 	public ChallengeProblemBridge() {
-		odbUser = getEvaluationUser();
-		odbPassword = getEvaluationPassword();
-		odbTarget = getEvaluationTarget();
-		artifactDirectory = getArtifactDirectory();
-	}
-
-	public static String getEvaluationTarget() {
-		if (System.getProperty(JARGS_EVAL_ODB) != null) {
-			return System.getProperty(JARGS_EVAL_ODB);
-
-		} else if (System.getenv().containsKey(ENV_VAR_EVAL_ODB)) {
-			return System.getenv(ENV_VAR_EVAL_ODB);
-		} else {
-			throw new RuntimeException(
-					"No Evaluation OrientDB server could be set! Please set the environment variable '" +
-							ENV_VAR_EVAL_ODB + "' or the JVM argument '" + JARGS_EVAL_ODB + "' to a server url!");
-		}
-	}
-
-	public static String getEvaluationUser() {
-		if (System.getenv().containsKey(ENV_VAR_EVAL_USER)) {
-			return System.getenv(ENV_VAR_EVAL_USER);
-		} else {
-			return "admin";
-		}
-	}
-
-	public static String getEvaluationPassword() {
-
-		if (System.getenv().containsKey(ENV_VAR_EVAL_PASSWORD)) {
-			return System.getenv(ENV_VAR_EVAL_PASSWORD);
-		} else {
-			return "admin";
-		}
-	}
-
-	public static Path getArtifactDirectory() {
-		Path artifactDirectory;
-		if (System.getProperty(JARGS_ARTIFACT_DIRECTORY) != null) {
-			artifactDirectory = Paths.get(System.getProperty(JARGS_ARTIFACT_DIRECTORY));
-
-		} else if (System.getenv(ENV_VAR_ARTIFACT_DIRECTORY) != null) {
-			artifactDirectory = Paths.get(System.getenv(ENV_VAR_ARTIFACT_DIRECTORY));
-		} else {
-			throw new RuntimeException(
-					"No Persistence directory could be set! Please set the environment variable '" +
-							ENV_VAR_ARTIFACT_DIRECTORY + "' or the JVM argument '" + JARGS_ARTIFACT_DIRECTORY + "' to an appropriate directory!!");
-		}
-
-		if (!Files.exists(artifactDirectory)) {
-			throw new RuntimeException("THe specified artifact directory '" + artifactDirectory.toAbsolutePath().toString() + "' does not exist!");
-		}
-		return artifactDirectory;
 	}
 
 	@Override
@@ -138,15 +80,17 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 		return TerminalStatus.valueOf(state);
 	}
 
-	private void saveToFile(@Nonnull String evaluationInstanceIdentifier, @Nonnull byte[] data, @Nonnull String filename) throws IOException {
-		Path subpath = artifactDirectory.resolve(evaluationInstanceIdentifier);
+	public String saveToFile(@Nonnull String evaluationInstanceIdentifier, @Nonnull byte[] data, @Nonnull String filename) throws IOException {
+		Path subpath = ProvidedData.getEvaluationArtifactDirectory().resolve(evaluationInstanceIdentifier);
 		if (!Files.exists(subpath)) {
-			Files.createDirectory(artifactDirectory.resolve(evaluationInstanceIdentifier));
+			Files.createDirectory(ProvidedData.getEvaluationArtifactDirectory().resolve(evaluationInstanceIdentifier));
 		}
-		FileOutputStream fos = new FileOutputStream(subpath.resolve(filename).toFile());
+		File target = subpath.resolve(filename).toFile();
+		FileOutputStream fos = new FileOutputStream(target);
 		fos.write(data);
 		fos.flush();
 		fos.close();
+		return target.toString();
 	}
 
 	@Override
@@ -241,6 +185,13 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 
 		BBNEvaluationData data = BBNEvaluationData.fromFieldMap(currentValues);
 		saveToFile(evaluationInstanceIdentifier, data.toJsonString().getBytes(), "_bbnEvaluationData.json");
+		return data;
+	}
+
+	public BBNEvaluationData getCurrentEvaluationDataNoSave() throws Exception {
+		Map<String, String> currentValues = getAddEvaluationDataVertexValues(
+				null, inputJsonDataLabel, outputJsonDataLabel, currentStateLabel, currentStateInfoLabel);
+		BBNEvaluationData data = BBNEvaluationData.fromFieldMap(currentValues);
 		return data;
 	}
 

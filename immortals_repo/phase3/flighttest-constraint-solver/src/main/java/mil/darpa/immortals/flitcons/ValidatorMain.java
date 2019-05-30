@@ -1,6 +1,5 @@
 package mil.darpa.immortals.flitcons;
 
-import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataTransformer;
 import mil.darpa.immortals.flitcons.mdl.MdlDataValidator;
 import mil.darpa.immortals.flitcons.mdl.ValidationScenario;
 import mil.darpa.immortals.flitcons.mdl.XmlElementDataSource;
@@ -27,7 +26,6 @@ public class ValidatorMain {
 	private boolean helpRequested = false;
 
 	public static void main(String[] args) {
-		HierarchicalDataTransformer.ignoreEquations = true;
 		ValidatorMain m = new ValidatorMain();
 		CommandLine.populateCommand(m, args);
 		m.execute();
@@ -44,7 +42,8 @@ public class ValidatorMain {
 			MdlDataValidator validator = new MdlDataValidator(inputXls, outputDrl, xec);
 
 			if (xec.isInputConfiguration()) {
-				validator.validateConfiguration(ValidationScenario.InputConfiguration, !colorlessMode);
+				validator.validateConfiguration(ValidationScenario.InputConfigurationUsage, !colorlessMode);
+				validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements, !colorlessMode);
 
 			} else if (xec.isDauInventory()) {
 				validator.validateConfiguration(ValidationScenario.DauInventory, !colorlessMode);

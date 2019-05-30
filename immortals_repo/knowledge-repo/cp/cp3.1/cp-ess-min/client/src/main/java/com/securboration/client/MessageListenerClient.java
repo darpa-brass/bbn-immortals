@@ -225,34 +225,34 @@ public class MessageListenerClient {
 			
 			final Node renamedMessage = doc.renameNode(message, null, "MDLRoot");
 			
-			@mil.darpa.immortals.annotation.dsl.ontology.resources.xml.XmlDocument(xmlVersion="1.0", encoding="UTF-8", schemaNamespace="http://inetprogram.org/projects/MDL", schemaVersion = "17")
-			final String processedMdl = processMdlSentToServer(nodeToString(renamedMessage));
-			
-			{
-				final Document result = dbFactory.newDocumentBuilder().newDocument();
-				final Element ingestMessageRequest = result.createElement("ingestMessageRequest");
-				
-				result.appendChild(ingestMessageRequest);
+				@mil.darpa.immortals.annotation.dsl.ontology.resources.xml.XmlDocument(xmlVersion="1.0", encoding="UTF-8", schemaNamespace="http://inetprogram.org/projects/MDL", schemaVersion = "17")
+				final String processedMdl = processMdlSentToServer(nodeToString(renamedMessage));
 				
 				{
-					final Document mdl = dbFactory.newDocumentBuilder().parse(new ByteArrayInputStream(processedMdl.getBytes(encoding)));
-					Node messageElement = mdl.getDocumentElement();
+					final Document result = dbFactory.newDocumentBuilder().newDocument();
+					final Element ingestMessageRequest = result.createElement("ingestMessageRequest");
 					
-					messageElement = result.adoptNode(messageElement);
-					ingestMessageRequest.appendChild(messageElement);
+					result.appendChild(ingestMessageRequest);
 					
-					result.renameNode(messageElement, null, "message");
-					result.renameNode(ingestMessageRequest, "http://mls.securboration.com/wsdl", "ingestMessageRequest");
+					{
+						final Document mdl = dbFactory.newDocumentBuilder().parse(new ByteArrayInputStream(processedMdl.getBytes(encoding)));
+						Node messageElement = mdl.getDocumentElement();
+						
+						messageElement = result.adoptNode(messageElement);
+						ingestMessageRequest.appendChild(messageElement);
+						
+						result.renameNode(messageElement, null, "message");
+						result.renameNode(ingestMessageRequest, "http://mls.securboration.com/wsdl", "ingestMessageRequest");
+					}
+					
+					String transformed = nodeToString(result);
+					{//magic
+						transformed = transformed.replace("<ingestMessageRequest xmlns=\"http://mls.securboration.com/wsdl\">", "<wsdlns:ingestMessageRequest xmlns:wsdlns=\"http://mls.securboration.com/wsdl\">");
+						transformed = transformed.replace("</ingestMessageRequest>", "</wsdlns:ingestMessageRequest>");
+					}//magic
+					
+					return transformed;
 				}
-				
-				String transformed = nodeToString(result);
-				{//magic
-					transformed = transformed.replace("<ingestMessageRequest xmlns=\"http://mls.securboration.com/wsdl\">", "<wsdlns:ingestMessageRequest xmlns:wsdlns=\"http://mls.securboration.com/wsdl\">");
-					transformed = transformed.replace("</ingestMessageRequest>", "</wsdlns:ingestMessageRequest>");
-				}//magic
-				
-				return transformed;
-			}
     	} catch(Exception e) {
     		throw new RuntimeException(e);
     	}
@@ -483,11 +483,19 @@ public class MessageListenerClient {
             try{
                 final int responseCode = connection.getResponseCode();
                 
+                ByteArrayOutputStream err = new ByteArrayOutputStream();
+                
+                if(connection.getErrorStream() != null) {
+	                try(InputStream errStream = connection.getErrorStream()){
+	                	copy(errStream, err);
+	                }
+                }
+                
                 if(responseCode != 200){
                     throw new RuntimeException(
                         "for " + desc +
                         " response was " + responseCode + 
-                        " but expected 200, with message \"" + connection.getResponseMessage() + "\""
+                        " but expected 200, with message \"" + connection.getResponseMessage() + "\" and error \"" + new String(err.toByteArray(),encoding) + "\""
                         );
                 }
             } catch(IOException e){

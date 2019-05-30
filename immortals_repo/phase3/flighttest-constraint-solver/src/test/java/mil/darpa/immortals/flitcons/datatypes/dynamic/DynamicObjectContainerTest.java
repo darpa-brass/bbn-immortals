@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -191,6 +193,12 @@ public class DynamicObjectContainerTest {
 
 		DynamicObjectContainer container1 = gson.fromJson(json1, DynamicObjectContainer.class);
 		dynamicObjectContainerValidator(container0, container1);
+
+		try {
+			Files.delete(Paths.get("dsl-input-test.json"));
+		} catch (IOException e) {
+			throw new RuntimeException("Error removing artifact!");
+		}
 	}
 
 	@Test
@@ -221,6 +229,11 @@ public class DynamicObjectContainerTest {
 
 		DynamicObjectContainer container1 = gson.fromJson(json1, DynamicObjectContainer.class);
 		dynamicObjectContainerValidator(container0, container1);
+		try {
+			Files.delete(Paths.get("dsl-input-test.json"));
+		} catch (IOException e) {
+			throw new RuntimeException("Error removing artifact!");
+		}
 	}
 }
 

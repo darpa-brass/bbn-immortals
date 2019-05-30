@@ -36,7 +36,7 @@ public class XsdtsClient {
 
     private int connectTimeoutMillis = 5000;
     
-    private AtomicInteger requestCounter = new AtomicInteger(0);
+    private static AtomicInteger requestCounter = new AtomicInteger(0);
 
     public XsdtsClient(final String serverUrl){
         this.serverUrl = serverUrl;
@@ -64,23 +64,35 @@ public class XsdtsClient {
                 encoding
         ).trim();
         
+        String rawResponse = xslt;
+        final Map<String,String> responseProperties = new HashMap<>();
         if(xslt.startsWith("{")){
             //detect a JSON response from the AQL service impl
             //(our test service returns XML)
-            Map<String,String> myMap = new HashMap<String, String>();
+            Map<String,Object> myMap = new HashMap<>();
     
             ObjectMapper objectMapper = new ObjectMapper();
             myMap = objectMapper.readValue(xslt, HashMap.class);
             
-            final String error = myMap.get("error");
-            if(error.length() > 0) {
-                throw new RuntimeException("The AQL XSD translation service returned an error: " + error);
-            }
+//            if(myMap.containsKey("error")){
+//                final String error = myMap.get("error");
+//                if(error.length() > 0) {
+//                    throw new RuntimeException("The AQL XSD translation service returned an error: " + error);
+//                }
+//            }
             
-            xslt = myMap.get("xslt")
+            xslt = ((String)myMap.get("xslt"))
                     .trim()//fix whitespace before XML preamble
                     .replace("mdl:MDLRootType", "mdl:MDLRoot")//fix incorrect node name
                     ;
+            
+            if(myMap.containsKey("translationMetrics")){//get the translation metrics
+                final File metricsFile = new File("xsdts-client/metrics");
+                
+                final String s = myMap.get("translationMetrics").toString();
+                
+                FileUtils.writeStringToFile(metricsFile, s + "\n", true);
+            }
         }
         
         {//dump the req/response 
@@ -93,6 +105,12 @@ public class XsdtsClient {
             FileUtils.writeStringToFile(
                 new File(dir,"response.xslt"), 
                 xslt,
+                StandardCharsets.UTF_8
+                );
+            
+            FileUtils.writeStringToFile(
+                new File(dir,"response.json"), 
+                rawResponse,
                 StandardCharsets.UTF_8
                 );
         }

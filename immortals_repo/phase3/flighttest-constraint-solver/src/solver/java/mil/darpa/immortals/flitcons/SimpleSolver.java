@@ -1,12 +1,10 @@
 package mil.darpa.immortals.flitcons;
 
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValue;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.Range;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.*;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
+import mil.darpa.immortals.schemaevolution.ProvidedData;
 
 import javax.annotation.Nonnull;
 import javax.script.ScriptEngine;
@@ -14,14 +12,17 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static mil.darpa.immortals.flitcons.Utils.*;
 
 public class SimpleSolver implements SolverInterface {
+
+
+	private static final String SWAP_REQUEST = "simple-swap-request.json";
+	private static final String SWAP_INVENTORY = "simple-swap-inventory.json";
+	private static final String SWAP_RESPONSE = "simple-swap-response.json";
 
 	private DynamicObjectContainer dauInventory;
 
@@ -34,35 +35,41 @@ public class SimpleSolver implements SolverInterface {
 	public void loadData(@Nonnull DynamicObjectContainer inputConfiguration, @Nonnull DynamicObjectContainer inventory) {
 		this.inputConfiguration = inputConfiguration;
 		this.dauInventory = inventory;
+
+		DynamicObjectContainer inputConfigurationClone = inputConfiguration.duplicate();
+		DynamicObjectContainer inventoryClone = inventory.duplicate();
+
+		try {
+			ProvidedData.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfigurationClone).getBytes());
+			ProvidedData.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(inventoryClone).getBytes());
+		} catch (Exception e) {
+			throw AdaptationnException.internal(e);
+		}
 	}
 
 	@Override
 	public DynamicObjectContainer solve() {
 		try {
-			Map<String, Configuration.Calculation> calculations = Configuration.getInstance().adaptation.calculations;
+			GroupingsContainer dauInventoryPorts = GroupingsContainer.create(dauInventory);
 
-			GroupingsContainer dauInventoryPorts = GroupingsContainer.create(dauInventory, calculations);
+			GroupingsContainer inputConfigurationPorts = GroupingsContainer.create(inputConfiguration);
 
-			GroupingsContainer inputConfigurationPorts = GroupingsContainer.create(inputConfiguration, calculations);
-
-			DynamicObjectContainer solution = dauInventoryPorts.produceSolution(inputConfigurationPorts, calculations);
+			DynamicObjectContainer solution = dauInventoryPorts.produceSolution(inputConfigurationPorts);
 
 			if (solution == null) {
 				throw new AdaptationnException(ResultEnum.AdaptationUnsuccessful, "Could not produce a solution!");
 			}
 
-			FileWriter fw = new FileWriter(new File("simplesolver-output.json"));
-			difGson.toJson(solution, fw);
-			fw.flush();
-			fw.close();
+			String outValue = difGson.toJson(solution);
+			String outputPath = ProvidedData.storeFile(SWAP_RESPONSE, outValue.getBytes());
 
-			FileReader fr = new FileReader(new File("simplesolver-output.json"));
+			FileReader fr = new FileReader(new File(outputPath));
 			return difGson.fromJson(fr, DynamicObjectContainer.class);
 
 		} catch (DynamicValueeException e) {
 			throw AdaptationnException.input(e);
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw AdaptationnException.internal(e);
 		}
 	}
@@ -70,8 +77,7 @@ public class SimpleSolver implements SolverInterface {
 	public static class GroupingsContainer {
 		public final Set<GroupingsChildContainer> allParentContainers = new HashSet<>();
 
-		public DynamicObjectContainer produceSolution(@Nonnull GroupingsContainer inputConfiguration,
-		                                              @Nonnull Map<String, Configuration.Calculation> calculations) {
+		public DynamicObjectContainer produceSolution(@Nonnull GroupingsContainer inputConfiguration) {
 			Map<DynamicObjectContainer, Set<DynamicObjectContainer>> resultParentChildren = new HashMap<>();
 			Map<DynamicObjectContainer, DynamicObjectContainer> newOldObjectMap = new HashMap<>();
 			Map<DynamicObjectContainer, DynamicObjectContainer> oldChildOldParentMap = new HashMap<>();
@@ -88,7 +94,7 @@ public class SimpleSolver implements SolverInterface {
 							DynamicObjectContainer parent = null;
 							for (GroupingsChildContainer inventoryChildContainer : allParentContainers) {
 								try {
-									result = inventoryChildContainer.attemptCreateAndRemoveReplacement(inputGroup, inputValue, calculations);
+									result = inventoryChildContainer.attemptCreateAndRemoveReplacement(inputGroup, inputValue);
 									if (result != null) {
 										parent = inventoryChildContainer.parent;
 										break;
@@ -147,7 +153,7 @@ public class SimpleSolver implements SolverInterface {
 
 		}
 
-		public static GroupingsContainer create(DynamicObjectContainer dauInventory, Map<String, Configuration.Calculation> calculations) throws DynamicValueeException {
+		public static GroupingsContainer create(DynamicObjectContainer dauInventory) throws DynamicValueeException {
 			GroupingsContainer rval = new GroupingsContainer();
 
 			Set<DynamicObjectContainer> parentSet = dauInventory.get(PARENT_LABEL).parseDynamicObjectContainerArray();
@@ -157,9 +163,8 @@ public class SimpleSolver implements SolverInterface {
 					rval.allParentContainers.add(targetChildContainer);
 
 					for (DynamicObjectContainer child : parent.get(CHILD_LABEL).parseDynamicObjectContainerArray()) {
-						Set<String> calculationValues = calculations.get(CHILD_LABEL).substitutionValues;
 						try {
-							Set<String> groupingValues = child.createGroupingHashes(calculationValues);
+							Set<String> groupingValues = child.createGroupingHashes();
 							for (String value : groupingValues) {
 								targetChildContainer.add(value, child);
 							}
@@ -219,15 +224,14 @@ public class SimpleSolver implements SolverInterface {
 		}
 
 		public synchronized DynamicObjectContainer attemptCreateAndRemoveReplacement(@Nonnull String grouping,
-		                                                                             @Nonnull DynamicObjectContainer originalContainer,
-		                                                                             @Nonnull Map<String, Configuration.Calculation> calculations) throws DynamicValueeException {
+		                                                                             @Nonnull DynamicObjectContainer originalContainer) throws DynamicValueeException {
 			DynamicObjectContainer candidateInventoryContainer = get(grouping);
 			if (candidateInventoryContainer == null) {
 				return null;
 			}
 
 
-			DynamicObjectContainer rval = attemptCreateAndRemoveChildContainer(originalContainer, candidateInventoryContainer, calculations);
+			DynamicObjectContainer rval = attemptCreateAndRemoveChildContainer(originalContainer, candidateInventoryContainer);
 			if (rval != null) {
 				remove(candidateInventoryContainer);
 			}
@@ -235,119 +239,143 @@ public class SimpleSolver implements SolverInterface {
 		}
 
 		public synchronized Map<String, Long> attemptValueComputations(@Nonnull DynamicObjectContainer originalChildContainer,
-		                                                               @Nonnull DynamicObjectContainer inventoryContainer,
-		                                                               @Nonnull Configuration.Calculation calculation) throws DynamicValueeException {
-			// Get the valid ranges
-			Map<String, Range> validSubstitutionRanges =
-					originalChildContainer.entrySet().stream().filter(x -> calculation.substitutionValues.contains(x.getKey()))
-							.collect(
-									Collectors.toMap(
-											Map.Entry::getKey,
-											x -> {
-												try {
-													return x.getValue().parseLongRange();
-												} catch (DynamicValueeException e) {
-													throw AdaptationnException.internal(e);
-												}
-											}));
-
-			Optional<Map.Entry<String, DynamicValue>> tmpRange = originalChildContainer.entrySet().stream().filter(x -> calculation.targetValueIdentifier.equals(x.getKey())).findFirst();
-			if (!tmpRange.isPresent()) {
-				throw new DynamicValueeException(inventoryContainer.identifier.toString() + "." + calculation.targetValueIdentifier,
-						"Superseded node '" + originalChildContainer.identifier.toString() + "Does not contain this attribute!");
-			}
-
-			Range validTargetRange = tmpRange.get().getValue().parseLongRange();
-
-			// Get the potential values
-			Map<String, List<Long>> potentialValues =
-					inventoryContainer.keySet().stream().filter(x -> calculation.substitutionValues.contains(x))
-							.collect(Collectors.toMap(x -> x, x ->
-							{
-								try {
-									return new ArrayList<>(inventoryContainer.get(x).parseLongSingleValueOrSet());
-								} catch (DynamicValueeException e) {
-									throw AdaptationnException.internal(e);
-								}
-							}));
-
-
-			// Generate the possible combinations of values
-
-			List<Map<String, Long>> valueCombinationList = new LinkedList<>();
-
-			for (String key : potentialValues.keySet()) {
-				if (valueCombinationList.isEmpty()) {
-					for (Long value : potentialValues.get(key)) {
-						Map<String, Long> newMap = new HashMap<>();
-						newMap.put(key, value);
-						valueCombinationList.add(newMap);
-					}
-				} else {
-					List<Map<String, Long>> oldList = valueCombinationList;
-					List<Map<String, Long>> newList = new LinkedList<>();
-
-					for (Long value : potentialValues.get(key)) {
-						for (Map<String, Long> oldMap : oldList) {
-							Map<String, Long> newMap = new HashMap<>(oldMap);
-							newMap.put(key, value);
-							newList.add(newMap);
-						}
-					}
-					valueCombinationList = newList;
-				}
-			}
-
-			// Test the possible combinations of values
-			for (Map<String, Long> combination : valueCombinationList) {
-				boolean isValid = true;
-				for (String key : validSubstitutionRanges.keySet()) {
-					if (!validSubstitutionRanges.get(key).fits(combination.get(key))) {
-						isValid = false;
-						break;
-
-					}
-
-				}
-				if (isValid) {
-					String expression = calculation.equation;
-
-					for (String key : validSubstitutionRanges.keySet()) {
-						expression = expression.replace("@" + key, Long.toString(combination.get(key)));
-					}
-					try {
-						Object output = javascriptEngine.eval(expression);
-						Long value;
-
-						if (output instanceof Integer) {
-							value = Long.parseLong(Integer.toString((Integer) output));
-
-						} else if (output instanceof Long) {
-							value = (Long) output;
-
-						} else {
-							throw new DynamicValueeException(inventoryContainer.identifier.toString() + "." + calculation.targetValueIdentifier,
-									"Unexpected output '" + output + "' from javascript evaluation of calculation '" + expression + "'!");
-						}
-
-						if (validTargetRange.fits(value)) {
-							combination.put(calculation.targetValueIdentifier, value);
-							return combination;
-						} else {
-							combination.put(calculation.targetValueIdentifier, null);
-						}
-					} catch (ScriptException e) {
-						throw AdaptationnException.internal(e);
-					}
-				}
-
-			}
+		                                                               @Nonnull DynamicObjectContainer inventoryContainer) throws DynamicValueeException {
 
 			Map<String, Long> rval = new HashMap<>();
-			rval.put(calculation.targetValueIdentifier, null);
-			for (String value : calculation.substitutionValues) {
-				rval.put(value, null);
+
+			Map<String, Equation> equationsMap = inventoryContainer.children.keySet().stream()
+					.filter(x -> inventoryContainer.children.get(x).getValue() instanceof Equation)
+					.collect(Collectors.toMap(x -> x, x -> (Equation) inventoryContainer.children.get(x).getValue()));
+
+//			Set<Equation> equations = inventoryContainer.children.values().stream().filter(x -> x.getValue() instanceof Equation).map(x -> (Equation) x.getValue()).collect(Collectors.toSet());
+
+			for (String targetVariable : equationsMap.keySet()) {
+				Equation equation = equationsMap.get(targetVariable);
+				Set<String> variables = equation.getVariables();
+				Range targetRange = originalChildContainer.children.get(targetVariable).parseLongRange();
+
+				Map<String, List<String>> valueMap = new HashMap<>();
+				Map<String, Range> rangeMap = new HashMap<>();
+
+				for (String variable : variables) {
+					if (!inventoryContainer.children.containsKey(variable)) {
+						throw new RuntimeException("The equation does not have a variable!");
+					} else if (!originalChildContainer.children.containsKey(variable) && originalChildContainer.children.get(variable).getValue() instanceof Range) {
+						throw new RuntimeException("Could not find a range value for '" + variable + "' in input configuration!");
+					}
+
+
+					rangeMap.put(variable, (Range) originalChildContainer.children.get(variable).getValue());
+
+					DynamicValue value = inventoryContainer.get(variable);
+
+					switch (value.multiplicity) {
+
+						case Range:
+							throw AdaptationnException.input("Found a range value within the inventory! Ranges are only valid in the input configuration!");
+
+						case NullValue:
+							throw AdaptationnException.input("Found a null value within the inventory for '" + variable + "'!");
+
+						case SingleValue:
+							valueMap.computeIfAbsent(variable, k -> new LinkedList<>()).add(value.getValue().toString());
+							break;
+
+						case Set:
+							valueMap.computeIfAbsent(variable, k -> new LinkedList<>()).addAll(
+									value.parseLongArray().stream().map(Object::toString).collect(Collectors.toSet()));
+							break;
+					}
+				}
+
+				Set<Map<String, String>> tempValueCombinationSet;
+				Set<Map<String, String>> valueCombinationSet = new HashSet<>();
+
+				for (String key : valueMap.keySet()) {
+
+					if (valueMap.get(key).size() == 1) {
+						if (valueCombinationSet.isEmpty()) {
+							Map<String, String> tmpMap = new HashMap<>();
+							tmpMap.put(key, valueMap.get(key).get(0));
+							valueCombinationSet.add(tmpMap);
+
+						} else {
+							for (Map<String, String> map : valueCombinationSet) {
+								map.put(key, valueMap.get(key).get(0));
+							}
+						}
+
+					} else {
+						tempValueCombinationSet = valueCombinationSet;
+						valueCombinationSet = new HashSet<>();
+
+						for (String value : valueMap.get(key)) {
+							if (tempValueCombinationSet.isEmpty()) {
+								Map<String, String> innerValueMap = new HashMap<>();
+								innerValueMap.put(key, value);
+								valueCombinationSet.add(innerValueMap);
+
+							} else {
+								for (Map<String, String> val : tempValueCombinationSet) {
+									Map<String, String> tmpMap = new HashMap<>(val);
+									tmpMap.put(key, value);
+									valueCombinationSet.add(new HashMap<>(tmpMap));
+								}
+							}
+						}
+					}
+				}
+
+				for (Map<String, String> valueSet : valueCombinationSet) {
+					String javascriptEquation = equation.Equation;
+					Map<String, String> potentialValues = new HashMap<>();
+					boolean executeEquation = true;
+
+					for (Map.Entry<String, String> entry : valueSet.entrySet()) {
+						String variableName = entry.getKey();
+						String variableValue = entry.getValue();
+						if (rangeMap.get(variableName).fits(Long.parseLong(variableValue))) {
+							javascriptEquation = javascriptEquation.replaceAll("@" + entry.getKey(), variableValue);
+							potentialValues.put(entry.getKey(), variableValue);
+						} else {
+							executeEquation = false;
+							break;
+						}
+					}
+
+					if (executeEquation) {
+						try {
+							Object output = javascriptEngine.eval(javascriptEquation);
+							Long value;
+
+							if (output instanceof Integer) {
+								value = Long.parseLong(Integer.toString((Integer) output));
+
+							} else if (output instanceof Long) {
+								value = (Long) output;
+
+							} else {
+								throw new DynamicValueeException(inventoryContainer.identifier.toString() + "." + targetVariable,
+										"Unexpected output '" + output + "' from javascript evaluation of calculation '" + javascriptEquation + "'!");
+							}
+
+							if (targetRange.fits(value)) {
+								rval.put(targetVariable, value);
+								for (Map.Entry<String, String> variableValue : potentialValues.entrySet()) {
+									rval.put(variableValue.getKey(), Long.parseLong(variableValue.getValue()));
+								}
+								break;
+							}
+						} catch (ScriptException e) {
+							throw AdaptationnException.internal(e);
+						}
+					}
+				}
+				if (!rval.containsKey(targetVariable)) {
+					throw new AdaptationnException(ResultEnum.AdaptationUnsuccessful, "Could not find valid values matching the constraints for a '" + targetVariable + "' usage!");
+				}
 			}
+
 			return rval;
 		}
 
@@ -376,9 +404,7 @@ public class SimpleSolver implements SolverInterface {
 		}
 
 		public synchronized DynamicObjectContainer attemptCreateAndRemoveChildContainer(@Nonnull DynamicObjectContainer originalContainer,
-		                                                                                @Nonnull DynamicObjectContainer candidateInventoryContainer,
-		                                                                                @Nonnull Map<String, Configuration.Calculation> calculations) throws DynamicValueeException {
-
+		                                                                                @Nonnull DynamicObjectContainer candidateInventoryContainer) throws DynamicValueeException {
 			try {
 				// Determine attributes that are not suitable in their current form
 				Set<String> problematicValues = determineMissingOrInvalidValues(originalContainer, candidateInventoryContainer);
@@ -387,16 +413,11 @@ public class SimpleSolver implements SolverInterface {
 				DynamicObjectContainer possibleResult = candidateInventoryContainer.duplicate();
 
 				// Calculate the values for any attributes that have corresponding resolution strategies
-				Map<String, Long> calculatedValues = new HashMap<>();
-				if (calculations.containsKey(originalContainer.identifier.getNodeType())) {
-					Configuration.Calculation calculation = calculations.get(originalContainer.identifier.getNodeType());
-					calculatedValues = attemptValueComputations(originalContainer, candidateInventoryContainer, calculation);
-				}
+				Map<String, Long> calculatedValues = attemptValueComputations(originalContainer, candidateInventoryContainer);
 
 				// Then for each problematic value, try to make it work.
 				for (String key : problematicValues) {
 					DynamicValue candidateValue = candidateInventoryContainer.get(key);
-
 
 					// And it has a calculated value
 					if (calculatedValues.containsKey(key)) {

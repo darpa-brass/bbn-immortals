@@ -1,18 +1,17 @@
 package mil.darpa.immortals.flitcons;
 
 import com.google.gson.JsonObject;
-import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataTransformer;
 import mil.darpa.immortals.flitcons.mdl.FlighttestConstraintSolver;
 import mil.darpa.immortals.flitcons.mdl.MdlDataValidator;
 import mil.darpa.immortals.flitcons.mdl.OrientVertexDataSource;
 import mil.darpa.immortals.flitcons.mdl.ValidationScenario;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.schemaevolution.ChallengeProblemBridge;
+import mil.darpa.immortals.schemaevolution.ProvidedData;
 import mil.darpa.immortals.schemaevolution.TerminalStatus;
 import picocli.CommandLine;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -38,7 +37,6 @@ public class SolverMain {
 	}
 
 	public static void main(String[] args) {
-		HierarchicalDataTransformer.ignoreEquations = true;
 		SolverConfiguration config = SolverConfiguration.getInstance();
 		ChallengeProblemBridge cpb = new ChallengeProblemBridge();
 		String evaluationInstanceIdentifier = "UNDEFINED";
@@ -56,7 +54,11 @@ public class SolverMain {
 				while ((state = cpb.waitForReadyOrHalt()) != TerminalStatus.Halt) {
 					if (state == TerminalStatus.ReadyForAdaptation) {
 						evaluationInstanceIdentifier = config.evaluationIdentifier == null ? ("I" + System.currentTimeMillis()) : config.evaluationIdentifier;
-						execute(config, cpb, evaluationInstanceIdentifier);
+						cpb = ProvidedData.initializeChallengeProblemBridge(evaluationInstanceIdentifier);
+						execute(cpb, evaluationInstanceIdentifier);
+						if (config.stopOnFinish) {
+							System.exit(0);
+						}
 						evaluationInstanceIdentifier = "UNDEFINED";
 					}
 				}
@@ -66,7 +68,7 @@ public class SolverMain {
 		}
 	}
 
-	static void execute(@Nonnull SolverConfiguration config, @Nonnull ChallengeProblemBridge cpb, @Nonnull String evaluationInstanceIdentifier) throws Exception {
+	static void execute(@Nonnull ChallengeProblemBridge cpb, @Nonnull String evaluationInstanceIdentifier) throws Exception {
 		try {
 			FlighttestConstraintSolver fcs = new FlighttestConstraintSolver();
 			fcs.solve();
@@ -80,7 +82,7 @@ public class SolverMain {
 	private static void validate(@Nonnull SolverConfiguration config) {
 		OrientVertexDataSource dataSource = new OrientVertexDataSource();
 		MdlDataValidator validator = new MdlDataValidator(null, null, dataSource);
-		boolean inputIsValid = validator.validateConfiguration(ValidationScenario.InputConfiguration, !config.colorlessMode).isValid();
+		boolean inputIsValid = validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements, !config.colorlessMode).isValid();
 		boolean inventoryIsValid = validator.validateConfiguration(ValidationScenario.DauInventory, !config.colorlessMode).isValid();
 
 		String inputResult = inputIsValid ? "PASSED" : "FAILED";
@@ -133,6 +135,7 @@ public class SolverMain {
 				}
 			} catch (Exception e2) {
 				System.err.println(e2.getMessage());
+				e2.printStackTrace(System.err);
 				try {
 					cpb.postError(evaluationInstanceIdentifier, e2.getMessage(), "{}");
 				} catch (Exception e3) {

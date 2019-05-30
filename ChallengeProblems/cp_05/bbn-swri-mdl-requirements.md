@@ -9,8 +9,6 @@ requirements.
  * Although we will do our best to provide a suitable replacement and consider all data available, unless properly documented 
  by SwRI in a central location we are aware of it is possible some properties may not be considered for DAU selection!
 
- * Measurements have been excluded from this draft until we receive a response to the [Measurements Clarification Issue](https://git.isis.vanderbilt.edu/SwRI/BBN/bbn-immortals/issues/50)
- 
  * The general idea for how we are handling additional data that does not follow the MDL spec is as follows:
    1.  It is defined as an element of the GenericParameter
    2.  During our internal processing, it is brought into the parent object (such as a port or DAU), replacing any 
@@ -52,6 +50,10 @@ This section covers all the data that is required prior to evaluation that shoul
  * Port Sample Rates - In the DAU Inventory, there will be one or more individual values that are valid sample rates 
    for each applicable port. These are defined by a number of **SampleRate** elements, each consisting of no more than 
    a single integer as the body that represents a valid sample rate.
+ 
+ * Port Types - In the DAU Inventory, there will be one or more individual values that are valid Port Type configurations 
+   for each applicable port. These are defined by a number of **PortType** elements that reflect the existing official 
+   SwRI **PortType** structure.
  
  * Port Data Length - The length of that data being sent by the port. Identifier: **DataLength**
 
@@ -96,12 +98,13 @@ Modules, and Ports within the DAU inventory are expected to contain this additio
               <SampleRate>128</SampleRate>
               <SampleRate>192</SampleRate>
               <SampleRate>256</SampleRate>
+              <PortType Thermocouple="J">Thermocouple</PortType>
+              <PortType Thermocouple="K">Thermocouple</PortType>
+              <PortType Thermocouple="T">Thermocouple</PortType>
             </GenericParameter>
             <Name>Ch1</Name>
             <PortTypes>
               <PortType Thermocouple="J">Thermocouple</PortType>
-              <PortType Thermocouple="K">Thermocouple</PortType>
-              <PortType Thermocouple="T">Thermocouple</PortType>
             </PortTypes>
           </Port>
         </Ports>
@@ -117,7 +120,7 @@ The purpose of evaluation is to replace faulty DAUs with suitable replacements. 
 initial example it will initially be a 1-1 swap. This section covers the additional metadata that is expected to be 
 part of the input Test Configuration.
 
-A sample we are using for internal testing based on the initial example gone over during the last PI Meeting can be found [here](../../../../shared/tools/odbhelper/resources/dummy_data/scenario5_input_mdlRoot.xml)
+A sample we are using for internal testing based on the initial example gone over during the last PI Meeting can be found [here](../../../../shared/tools/odbhelper/resources/dummy_data/s5_input_mdlRoot.xml)
 
 ### Required Information
 

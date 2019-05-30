@@ -6,26 +6,24 @@ import org.kie.api.runtime.rule.AgendaFilter;
 import javax.annotation.Nonnull;
 
 public enum ValidationScenario {
-	InputConfiguration(
+	InputConfigurationRequirements(
 			"Input MDLRoot Configuration",
-			match -> "FaultyConfiguration".equals(match.getRule().getMetaData().get("ValidationMode")),
-			Configuration.getInstance().validation),
+			match -> "FaultyConfiguration".equals(match.getRule().getMetaData().get("ValidationMode"))),
 	DauInventory(
-			"DAU Inventory",
-			match -> "DAUInventory".equals(match.getRule().getMetaData().get("ValidationMode")),
-			Configuration.getInstance().validation),
-	ResultantConfiguration(
-			"Output MDLRoot Configuration",
-			match -> "FixedConfiguration".equals(match.getRule().getMetaData().get("ValidationMode")),
-			Configuration.getInstance().validation);
+			"Input DAU Inventory",
+			match -> "DAUInventory".equals(match.getRule().getMetaData().get("ValidationMode"))),
+	OutputConfigurationUsage(
+			"Output MDL Requirements Configuration",
+			match -> "ValidConfiguration".equals(match.getRule().getMetaData().get("ValidationMode"))),
+	InputConfigurationUsage(
+			"Input MDLRoot Configuration",
+			match -> "ValidConfiguration".equals(match.getRule().getMetaData().get("ValidationMode")));
 
 	public final String title;
 	public final AgendaFilter filter;
-	public final Configuration.ValidationConfiguration configuration;
 
-	ValidationScenario(@Nonnull String title, @Nonnull AgendaFilter filter, Configuration.ValidationConfiguration configuration) {
+	ValidationScenario(@Nonnull String title, @Nonnull AgendaFilter filter) {
 		this.title = title;
 		this.filter = filter;
-		this.configuration = configuration;
 	}
 }

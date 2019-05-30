@@ -59,30 +59,32 @@ The intent is to contain complex data within the **outputJsonData** property, bu
 ### currentState
 
 The currentState will not be updated by BBN until the perturbation has reached a terminal state. Although not set in stone, we currently expect the following possible values, and are treating it like an Enum:
- * ReadyForAdaptation  
- * AdaptationSuccessful  
- * AdaptationNotRequired  
- * PerturbationInputInvalid  
- * AdaptationUnexpectedError  
- * AdaptationUnsuccessful  
- * AdaptationPartiallySuccessful  
+
+| Label                         | Fatal for Scenario 5  | Fatal for Scenario 6  | Description                                                               |
+|-------------------------------|-----------------------|-----------------------|---------------------------------------------------------------------------|
+| ReadyForAdaptation            | false                 | false                 | Set by the Evaluator to signal to the SUT that it should begin adaptation |
+| AdaptationSuccessful          | false                 | true                  | Set by the SUT to indicate a successful adaptation                        |
+| AdaptationNotRequired         | true                  | true                  | Set by the SUT to indicate no adaptation is required                      |
+| PerturbationInputInvalid      | true                  | true                  | Set by the SUT to indicate the input is invalid                           |
+| AdaptationUnexpectedError     | true                  | true                  | Set by the SUT to indicate it encountered an unexpected error             |
+| AdaptationUnsuccessful        | true                  | true                  | Set by the SUT to indicate adaptation was not successful                  |
+| AdaptationPartiallySuccessful | false                 | true                  | Set by the SUT to indicate adaptation was only partially successful       |
+| Halt                          | true                  | true                  | Set by the Evaluation to signal the SUT to shutdown.                      |
 
 An example creation of this on an OrientDB Instance is as follows:
 
 ```sql
 CREATE CLASS BBNEvaluationData
-CREATE PROPERTY BBNEvaluationOutput.inputJsonData STRING
-CREATE PROPERTY BBNEvaluationOutput.outputJsonData STRING
-CREATE PROPERTY BBNEvaluationOutput.currentState STRING
-CREATE PROPERTY BBNEvaluationOutput.currentStateInfo STRING
+CREATE PROPERTY BBNEvaluationData.inputJsonData STRING
+CREATE PROPERTY BBNEvaluationData.outputJsonData STRING
+CREATE PROPERTY BBNEvaluationData.currentState STRING
+CREATE PROPERTY BBNEvaluationData.currentStateInfo STRING
 ```
 
 ## Evaluation Execution 
 The steps performed by the evaluator to execute evaluation will be as follows:
 
-1.  The **Persistent Storage** must be started if not already running (executed in the root immortals folder):
-    `./shared/tools.sh odbhelper start --persistence-only --use-default-root-password`
-3.  The evaluator opens a shell on the AWS instance for the **Evaluation Target** and starts our evaluation as follows:
+1.  The evaluator opens a shell on the AWS instance for the **Evaluation Target** and starts our evaluation as follows:
 `bash ~/immortals_repo/phase3/start.sh --scenario <scenarioIdentifier> --odb-url <odbUrl> --odb-user <<odbUser> --odb-password <odbPassword> --odb-persistence-url <odbPersistanceUrl>`
 
 Where the parameters are the following:
@@ -91,12 +93,9 @@ Where the parameters are the following:
 |:------------------|----------------------|----------------------------------------------------------------------------------------------------------------|
 | --scenario        | <scenarioIdentifier> | The identifier for the scenario that is being executed. Valid values: '5' or '6'                               |
 | --odb-url         | <odbUrl>             | The Url of the OrientDB instance and graph. example: 'remote:OrientDB.example.com:2424/GratefulDeadConcerts'   |
-| --persistence-url | <persistenceUrl>     | The Url of the persistent storage                                                                              |
 | --odb-user        | <odbUser>            | The OrientDB user name                                                                                         |
 | --odb-password    | <odbPassword>        | The OrientDB user password                                                                                     |
 
-As an example, if the **Persistent Storage** vm has an ip of '10.26.55.41', the _persistanceUrl would be the following:  
-`remote:10.26.55.41:2424/BBNPersistent`
 
 At this point, the following occurs within the _Evaluation Target_:  
 

@@ -7,10 +7,12 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -483,6 +485,24 @@ public class SwriEvaluationHelper {
             report.getCategories().add(diff);
         }
         
+        {//
+            final byte[] data = ZipHelper.getZipEntry(
+                evalZip, 
+                "ess/ess/xsdts-client/metrics"
+                );
+            
+            final String translationMetrics = 
+                    new String(data,StandardCharsets.UTF_8);
+            
+            final String[] lines = translationMetrics.split("\\r?\\n");
+            
+            final EvaluationMetricCategory translationCategory = new EvaluationMetricCategory();
+            translationCategory.setCategoryDesc("metrics related to schema translation");
+            
+            report.getCategories().add(getMetricsFromMapDump("fidelity of client->server translation",lines[0]));
+            report.getCategories().add(getMetricsFromMapDump("fidelity of server->client translation",lines[1]));
+        }
+        
         {//add analysis metrics
             final byte[] entry = ZipHelper.getZipEntry(
                 evalZip, 
@@ -545,6 +565,34 @@ public class SwriEvaluationHelper {
             getTerminalStatus(status,evalZip),
             json
             );
+    }
+    
+    private static EvaluationMetricCategory getMetricsFromMapDump(
+            final String categoryDesc,
+            final String dump
+            ){
+        final List<EvaluationMetricCostOfAdaptation> metrics = new ArrayList<>();
+        
+        final String sanitized = dump.replace("{", "").replace("}", "");
+        
+        for(String kv:sanitized.split(",")){
+            final String[] parts = kv.split("=");
+            
+            final String key = parts[0].trim();
+            final String value = parts[1].trim();
+            
+            EvaluationMetricCostOfAdaptation metric = new EvaluationMetricCostOfAdaptation();
+            metric.setMetricType(key);
+            metric.setMetricValue(value);
+            
+            metrics.add(metric);
+        }
+        
+        final EvaluationMetricCategory category = new EvaluationMetricCategory();
+        category.setCategoryDesc(categoryDesc);
+        category.getMetricsForCategory().addAll(metrics);
+        
+        return category;
     }
     
     private static TerminalStatus getTerminalStatus(

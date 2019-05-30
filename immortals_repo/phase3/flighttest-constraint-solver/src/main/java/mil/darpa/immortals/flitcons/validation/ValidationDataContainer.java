@@ -8,12 +8,10 @@ import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
-import org.apache.commons.io.FileUtils;
+import mil.darpa.immortals.schemaevolution.ProvidedData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class ValidationDataContainer {
@@ -252,10 +250,11 @@ public class ValidationDataContainer {
 	public void printResults(String scenarioTitle, boolean useColor) {
 		try {
 
-			File invalidValuesFile = new File("validator-" + scenarioTitle.replaceAll(" ", "_") + "-invalidValues.txt");
-
+			String invalidValuesFile = "validator-" + scenarioTitle.replaceAll(" ", "_") + ".txt";
 			List<String> resultLines = makeCombinedColorlessChart();
-			FileUtils.writeLines(invalidValuesFile, resultLines);
+			String targetFile = ProvidedData.storeFile(
+					"invalid_fields-" + scenarioTitle.replaceAll(" ", "_") + ".txt",
+					String.join("\n", resultLines).getBytes());
 
 			System.out.println(Utils.padCenter(scenarioTitle + " Validation Result", 80, '#'));
 			if (useColor) {
@@ -271,9 +270,9 @@ public class ValidationDataContainer {
 						"If it does not display in color you can use the '" + COLORLESS_FLAG + "' flag to utilize a colorless chart.");
 			}
 
-			System.out.println("The invalid value results for this execution have also been written to the file '" + invalidValuesFile.getAbsolutePath() + "'.");
+			System.out.println("The invalid value results for this execution have also been written to the file '" + targetFile + "'.");
 		} catch (
-				IOException e) {
+				Exception e) {
 			throw AdaptationnException.internal(e);
 		}
 	}

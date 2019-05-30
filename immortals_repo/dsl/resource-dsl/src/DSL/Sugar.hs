@@ -3,15 +3,30 @@ module DSL.Sugar where
 import qualified Data.Text as T
 import qualified Data.Set as S
 
+import Data.SBV (Boolean(..))
+
 import DSL.Name
 import DSL.Types
-import DSL.Primitive
 import DSL.Parser
 
 
 --
 -- * Syntactic Sugar
 --
+
+-- ** Variational values
+
+-- | Construct a binary choice in the given dimension.
+chc :: Var -> a -> a -> V a
+chc d l r = Chc (BRef d) (One l) (One r)
+
+-- | Construct an n-ary choice by cascading binary choices drawn from the
+--   given list of dimensions.
+chcN :: [Var] -> [a] -> V a
+chcN _      [a]    = One a
+chcN (d:ds) (a:as) = Chc (BRef d) (One a) (chcN ds as)
+chcN _ _ = error "chcN: illegal arguments"
+
 
 -- ** Types
 
@@ -25,6 +40,14 @@ tSymbol = One TSymbol
 
 
 -- ** Expressions
+
+-- | Non-variational literals.
+lit :: PVal -> V Expr
+lit = One . Lit . One
+
+-- | Non-variational integer.
+int :: Int -> V Expr
+int = lit . I
 
 -- | Non-variational variable reference.
 ref :: Var -> V Expr
@@ -71,6 +94,10 @@ modify' p t e = Do p (Modify (Fun (Param "$val" t) e))
 
 modify :: Path -> PType -> V Expr -> Stmt
 modify p t e = modify' p (One t) e
+
+-- | Conditional statement.
+if' :: V Expr -> [Stmt] -> [Stmt] -> Stmt
+if' c t e = If c [Elems t] [Elems e]
 
 -- | Reference the current value of a resource.
 --   For use with the 'check' and 'modify' smart constructors.

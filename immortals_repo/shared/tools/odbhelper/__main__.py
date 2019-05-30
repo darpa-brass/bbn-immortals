@@ -103,7 +103,7 @@ def main(parser_args):
                 display_msg = ('OrientDB is now ready for use. Details:\n' +
                                '\tHost: ' + host + '\n' +
                                '\tPort: ' + str(port) + '\n' +
-                               '\tWebsite: http://' + host + ':' + str(port) + '\n' +
+                               '\tWebsite: http://' + host + ':2480\n' +
                                '\tDatabases:\n'
                                )
 

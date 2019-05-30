@@ -1,0 +1,22 @@
+{
+	"scenarios": [
+		{
+			"shortName": "s5",
+			"prettyName": "Scenario 5 Basic",
+			"xmlInventoryPath": "resources/dummy_data/s5_dauInventory.xml",
+			"xmlMdlrootInputPath": "resources/dummy_data/s5_input_mdlRoot.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			]
+		},
+		{
+			"shortName": "s5s",
+			"prettyName": "Scenario 5 Basic Sequential",
+			"xmlInventoryPath": "resources/dummy_data/s5s_dauInventory.xml",
+			"xmlMdlrootInputPath": "resources/dummy_data/s5_input_mdlRoot.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			]
+		}
+	]
+}

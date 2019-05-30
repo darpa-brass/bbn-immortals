@@ -145,8 +145,6 @@ def xsd_to_aql(xsd, schema_namespace, schema_name='Schema'):
             if r.hasAttribute('base'):
                 simpleTypes[simple_name] = r.getAttribute('base')
 
-
-
     complex = xmldoc.getElementsByTagName("xsd:complexType")
     for c in complex:
         try:

@@ -6,6 +6,7 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OConcurrentResultSet;
+import mil.darpa.immortals.schemaevolution.ProvidedData;
 import mil.darpa.immortals.schemaevolution.TerminalStatus;
 import org.testng.Assert;
 
@@ -17,17 +18,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static mil.darpa.immortals.schemaevolution.ChallengeProblemBridgeInterface.JARGS_ARTIFACT_DIRECTORY;
-import static mil.darpa.immortals.schemaevolution.ChallengeProblemBridgeInterface.JARGS_EVAL_ODB;
+import static mil.darpa.immortals.schemaevolution.ProvidedData.JARGS_ARTIFACT_DIRECTORY;
+import static mil.darpa.immortals.schemaevolution.ProvidedData.JARGS_EVAL_ODB;
 
-public abstract class AbstractOdbServer {
+public abstract class AbstractFlitconsOdbServer {
 
-	protected final TestScenario scenario;
+	protected final FlitconsTestScenario scenario;
 	private String storageMode;
 	private String host;
 	private int port;
 
-	public AbstractOdbServer(@Nonnull TestScenario scenario) {
+	public AbstractFlitconsOdbServer(@Nonnull FlitconsTestScenario scenario) {
 		this.scenario = scenario;
 	}
 
@@ -106,7 +107,7 @@ public abstract class AbstractOdbServer {
 				System.setProperty(JARGS_EVAL_ODB, storageMode + ":" + scenario.getDbName());
 			}
 
-			Path artifactDir = Paths.get("").resolve("ARTIFACT_DIRECTORY").toAbsolutePath();
+			Path artifactDir = ProvidedData.getEvaluationArtifactDirectory().toAbsolutePath();
 			System.setProperty(JARGS_ARTIFACT_DIRECTORY, artifactDir.toString());
 			if (!Files.exists(artifactDir)) {
 				Files.createDirectory(artifactDir);

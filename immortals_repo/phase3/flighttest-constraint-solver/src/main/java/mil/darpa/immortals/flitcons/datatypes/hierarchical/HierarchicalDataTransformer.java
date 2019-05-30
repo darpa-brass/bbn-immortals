@@ -5,18 +5,21 @@ import mil.darpa.immortals.flitcons.datatypes.DataType;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.Equation;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
-import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
 
 public class HierarchicalDataTransformer {
 
-	private final Configuration.TransformationInstructions transformInstructions;
+	private enum TargetTransformation {
+		Usage,
+		Requirements,
+		Interconnection
+	}
+
+//	private final Configuration.TransformationInstructions transformInstructions;
 
 	private final HierarchicalDataContainer primaryData;
 
@@ -26,15 +29,12 @@ public class HierarchicalDataTransformer {
 
 	private final boolean preserveDebugRelations;
 
-	public static boolean ignoreEquations = false;
-
 	public HierarchicalDataTransformer(@Nonnull HierarchicalDataContainer primaryData,
-	                                   @Nonnull Configuration.TransformationInstructions transformInstructions,
 	                                   boolean preserveDebugRelations,
 	                                   @Nullable HierarchicalDataContainer externalData,
 	                                   @Nullable Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> primaryExternalRelationsMap) {
 		this.primaryData = primaryData;
-		this.transformInstructions = transformInstructions;
+//		this.transformInstructions = Configuration.getInstance().transformation;
 		this.preserveDebugRelations = preserveDebugRelations;
 		this.externalData = externalData;
 		this.primaryExternalRelationsMap = primaryExternalRelationsMap;
@@ -73,95 +73,47 @@ public class HierarchicalDataTransformer {
 		return added;
 	}
 
-
-	/**
-	 * Removes nodes that are of specific types of nodes that should be ignored
-	 */
 	private static void trimIgnoredNodeTrees(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
-		List<HierarchicalData> nodesToRemove = new LinkedList<>();
+		for (List<String> originalList : instructions.ignoredNodes) {
 
-		Set<String> ignoreNodes = instructions.ignoredNodes;
+			List<String> pathList = new ArrayList<>(originalList);
+			String tail = pathList.remove(pathList.size() - 1);
+			Set<HierarchicalData> dataSet = data.getNodesAtPath(pathList);
 
-		for (HierarchicalData root : data.getDauRootNodes()) {
-			collectNodesDFS(root, nodesToRemove, false, a ->
-					ignoreNodes.contains(a.getNodeType())
-			);
-		}
-
-		for (HierarchicalData node : nodesToRemove) {
-			data.removeNodeTree(node);
+			for (HierarchicalData parentData : dataSet) {
+				Iterator<HierarchicalData> iter = parentData.getChildrenDataIterator(tail);
+				while (iter.hasNext()) {
+					data.removeNodeTree(iter.next());
+				}
+			}
 		}
 		data.validate();
 	}
 
-	//	todo: finish making sure conflicting values here are properly removed!
 	private static void trimIgnoredAttributes(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
+		for (List<String> originalList : instructions.ignoredAttributes) {
 
-		Map<String, List<List<String>>> ignoredAttributeMapping;
+			List<String> pathList = new ArrayList<>(originalList);
+			String tail = pathList.remove(pathList.size() - 1);
+			Set<HierarchicalData> dataSet = data.getNodesAtPath(pathList);
 
-		if (data.dataType.isValidConfiguration) {
-			ignoredAttributeMapping = instructions.ignoredValidConfigurationAttributes;
-
-		} else if (data.dataType.isFaultyConfiguration) {
-			ignoredAttributeMapping = instructions.ignoredFaultyConfigurationAttributes;
-
-		} else if (data.dataType.isInventory) {
-			ignoredAttributeMapping = instructions.ignoredInventoryAttributes;
-
-		} else {
-			throw AdaptationnException.internal("Cannot trim ignored attributes on type '" + data.dataType.name() + "'!");
+			for (HierarchicalData parentData : dataSet) {
+				parentData.removeAttribute(tail);
+			}
 		}
+		data.validate();
+	}
 
-		if (data.dataType.isRaw) {
-			throw AdaptationnException.internal("Raw data should not be trimmed!");
-		}
-
-		List<HierarchicalData> allNodes = new LinkedList<>();
-
-		for (HierarchicalData root : data.getDauRootNodes()) {
-			collectNodesDFS(root, allNodes, false, a -> true);
-		}
-
-		Set<String> attrs = new HashSet<>();
-
-		for (HierarchicalData node : allNodes) {
-			attrs.clear();
-			attrs.addAll(node.getAttributeNames());
-
-			attrLoop:
-			for (String attributeName : attrs) {
-				if (ignoredAttributeMapping.containsKey(attributeName)) {
-					treeloop:
-					for (List<String> ignoredTree : ignoredAttributeMapping.get(attributeName)) {
-
-						if (ignoredTree.get(ignoredTree.size() - 1).equals(node.getNodeType())) {
-
-							ListIterator<String> iterator = ignoredTree.listIterator(ignoredTree.size() - 1);
-
-							HierarchicalData currentNode = node;
-							String currentCheckValue;
-
-							while (iterator.hasPrevious()) {
-								if (currentNode.parentNode == null) {
-									continue treeloop;
-
-								} else {
-									currentNode = currentNode.getParentData();
-									currentCheckValue = iterator.previous();
-
-
-									if (currentCheckValue.equals(currentNode.getNodeType())) {
-										if (!iterator.hasPrevious()) {
-											node.removeAttribute(attributeName);
-										}
-
-									} else {
-										continue treeloop;
-									}
-								}
-							}
-						}
-					}
+	private static void renameAttributes(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
+		for (String targetAttributeName : instructions.renameAttributes.keySet()) {
+			List<String> nodePath = new LinkedList<>(instructions.renameAttributes.get(targetAttributeName));
+			String tail = nodePath.remove(nodePath.size() - 1);
+			Set<HierarchicalData> nodes = data.getNodesAtPath(nodePath);
+			for (HierarchicalData node : nodes) {
+				Object val;
+				if ((val = node.getAttribute(tail)) != null) {
+					node.removeAttribute(tail);
+					node.addAttribute(HierarchicalIdentifier.createBlankNode(), targetAttributeName, val);
 				}
 			}
 		}
@@ -218,7 +170,7 @@ public class HierarchicalDataTransformer {
 	/**
 	 * recursively squashes the properties of specific nodes into their parent to remove redundant layering
 	 */
-	private void squashData(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
+	private static void squashData(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions, boolean preserveDebugRelations) {
 		LinkedList<HierarchicalData> markedForSquashing = new LinkedList<>();
 		boolean modified = true;
 
@@ -318,134 +270,118 @@ public class HierarchicalDataTransformer {
 	 * Produces a {@link HierarchicalDataContainer} that has the external data connected to the primary data
 	 */
 	public HierarchicalDataContainer produceInterconnectedResult() {
-		return produceResult(false);
+		return produceResult(TargetTransformation.Interconnection);
 	}
 
-	/**
-	 * Produces a {@link HierarchicalDataContainer} that has the external data connected to the primary data and has
-	 * all transformations applied to it
-	 */
-	public HierarchicalDataContainer produceTransformedInterconnectedResult() {
-		return produceResult(true);
+	public HierarchicalDataContainer produceInterconnectedRequirements() {
+		return produceResult(TargetTransformation.Requirements);
 	}
 
-	private HierarchicalDataContainer produceResult(boolean applyTransformation) {
+	public HierarchicalDataContainer produceInterconnectedUsage() {
+		return produceResult(TargetTransformation.Usage);
+	}
+
+	private static void transform(@Nonnull HierarchicalDataContainer data,
+	                              @Nonnull Configuration.TransformationInstructions instructions,
+	                              boolean preserveDebugRelations) {
+		trimOmittedNodeTrees(data, instructions);
+		trimIgnoredNodeTrees(data, instructions);
+		trimIgnoredAttributes(data, instructions);
+		renameAttributes(data, instructions);
+		squashData(data, instructions, preserveDebugRelations);
+		trimEmptyBranches(data);
+		injectCalculations(data, instructions);
+		tagData(data, instructions);
+	}
+
+	private HierarchicalDataContainer produceResult(@Nonnull TargetTransformation targetTransformation) {
+
 		DataType targetType;
+		Configuration.TransformationInstructions specificInstructions;
+		HierarchicalDataContainer primaryClone;
+		HierarchicalDataContainer externalClone;
+
+
 		switch (primaryData.dataType) {
-			case Inventory_Raw:
-				if (externalData != null) {
-					throw new AdaptationnException(ResultEnum.AdaptationUnexpectedError,
-							"Inventory cannot be transformed using external data!");
-				}
-				targetType = DataType.Inventory_Transformed;
-				break;
 
-			case FaultyConfiguration_Raw:
-				if (externalData == null) {
-					throw new AdaptationnException(ResultEnum.AdaptationUnexpectedError,
-							"Faulty Configuration data must be accompanied by external data!");
-				} else if (externalData.dataType != DataType.FaultyConfigurationExternalData_Raw) {
-					throw new AdaptationnException(ResultEnum.AdaptationUnexpectedError,
-							"Faulty Configuration must be accompanied by raw external data!");
-				}
-				if (applyTransformation) {
-					targetType = DataType.FaultyConfiguration_InterconnectedTransformed;
-				} else {
-					targetType = DataType.FaultyConfiguration_Interconnected;
-				}
-
-				break;
-
-			case FaultyConfigurationExternalData_Raw:
-			case FaultyConfigurationExternalData_Transformed:
-			case ValidConfigurationExternalData_Raw:
-			case ValidConfigurationExternalData_Transformed:
+			case RawInputExternalData:
 				throw new AdaptationnException(ResultEnum.AdaptationUnexpectedError,
 						"External data cannot be transformed independently of a configuration!");
 
-			case ValidConfiguration_Raw:
+			case RawInputConfigurationData:
 				if (externalData == null) {
 					throw new AdaptationnException(ResultEnum.AdaptationUnexpectedError,
-							"Valid Configuration data must be accompanied by external data!");
-				} else if (externalData.dataType != DataType.ValidConfigurationExternalData_Raw) {
-					throw new AdaptationnException(ResultEnum.AdaptationUnexpectedError,
-							"Valid Configuration must be accompanied by raw external data!");
+							"Input Configuration with transformation " + targetTransformation.name() +
+									" must be accompanied by external data!");
+				} else if (externalData.dataType != DataType.RawInputExternalData) {
+					throw AdaptationnException.internal("External data must be raw!");
+
+				} else if (primaryExternalRelationsMap == null) {
+					throw AdaptationnException.input("Cannot provide an external data hierarchy without external mapping information!");
 				}
-				if (applyTransformation) {
-					targetType = DataType.ValidConfiguration_InterconnectedTransformed;
-				} else {
-					targetType = DataType.ValidConfiguration_Interconnected;
+
+				switch (targetTransformation) {
+					case Usage:
+						targetType = DataType.InputInterconnectedUsageData;
+//						specificInstructions = Configuration.getInstance() transformInstructions.usageTransformation;
+						specificInstructions = Configuration.getInstance().getUsageTransformationInstructions();
+						externalClone = externalData.duplicate(DataType.InputExternalUsageData);
+						break;
+
+					case Requirements:
+						targetType = DataType.InputInterconnectedRequirementsData;
+//						specificInstructions = transformInstructions.requirementsTransformation;
+						specificInstructions = Configuration.getInstance().getRequirementsTransformationInstructions();
+						externalClone = externalData.duplicate(DataType.InputExternalRequirementsData);
+						break;
+
+					case Interconnection:
+						targetType = DataType.InputInterconnectedData;
+						externalClone = externalData.duplicate();
+						specificInstructions = Configuration.getInstance().getGlobalTransformationInstructions();
+						break;
+
+					default:
+						throw AdaptationnException.internal("Unexpected target transformation '" + targetTransformation.name() + "'!");
 				}
 				break;
 
-			case Inventory_Transformed:
-			case FaultyConfiguration_Interconnected:
-			case FaultyConfiguration_InterconnectedTransformed:
-			case ValidConfiguration_Interconnected:
-			case ValidConfiguration_InterconnectedTransformed:
-				throw new AdaptationnException(ResultEnum.AdaptationUnexpectedError,
-						"Cannot transform previously interconnected or transformed data type '" + primaryData.dataType + "'!");
+			case RawInventory:
+				if (externalData != null) {
+					throw AdaptationnException.internal("Inventory cannot be transformed using external data!");
+				}
+
+				if (targetTransformation == TargetTransformation.Requirements) {
+					targetType = DataType.InventoryRequirementsData;
+//					specificInstructions = transformInstructions.inventoryTransformation;
+					specificInstructions = Configuration.getInstance().getInventoryTransformationInstructions();
+					externalClone = null;
+				} else {
+					throw AdaptationnException.internal("Inventory Has no " + targetTransformation.name() +
+							" transformation! Did you perhaps mean to use the Requirements transformation?");
+				}
+				break;
 
 			default:
 				throw new AdaptationnException(ResultEnum.AdaptationUnexpectedError,
-						"No valid transformation could be found for configuration=" + primaryData.dataType.name() +
-								", externalData=" + (externalData == null ? "null" : externalData.dataType.name()) + "!");
+						"Cannot transform previously interconnected or transformed data type '" + primaryData.dataType + "'!");
 		}
 
-		HierarchicalDataContainer primaryClone = primaryData.duplicate(targetType);
-		HierarchicalDataContainer externalClone;
+		primaryClone = primaryData.duplicate(targetType);
 
-		if (externalData != null || primaryExternalRelationsMap != null) {
-			if (externalData == null) {
-				throw AdaptationnException.input("Cannot provide external mapping information without an external data hierarchy!");
-			}
-
-			if (primaryExternalRelationsMap == null) {
-				throw AdaptationnException.input("Cannot provide an external data hierarchy without external mapping information!");
-			}
-
-
-			if (externalData.dataType == DataType.FaultyConfigurationExternalData_Raw) {
-				externalClone = externalData.duplicate(DataType.FaultyConfigurationExternalData_Transformed);
-
-			} else if (externalData.dataType == DataType.ValidConfigurationExternalData_Raw) {
-				externalClone = externalData.duplicate(DataType.ValidConfigurationExternalData_Transformed);
-
-			} else {
-				throw AdaptationnException.internal("Invalid external data of type '" + externalData.dataType.name() + "'!");
-			}
-
-			if (applyTransformation) {
-				trimIgnoredAttributes(externalClone, transformInstructions);
-				trimOmittedNodeTrees(externalClone, transformInstructions);
-				squashData(externalClone, transformInstructions);
-				trimEmptyBranches(externalClone);
-				trimIgnoredNodeTrees(externalClone, transformInstructions);
-				if (!ignoreEquations) {
-					injectCalculations(externalClone, transformInstructions);
-				}
-				tagData(externalClone, transformInstructions);
-			}
-
-			pullExternalDataIntoDaus(primaryClone, externalClone, primaryExternalRelationsMap);
+		if (externalClone != null && targetTransformation != TargetTransformation.Interconnection) {
+			transform(externalClone, specificInstructions, preserveDebugRelations);
 		}
 
-		if (applyTransformation) {
-			trimIgnoredAttributes(primaryClone, transformInstructions);
-			trimOmittedNodeTrees(primaryClone, transformInstructions);
-			squashData(primaryClone, transformInstructions);
-			trimEmptyBranches(primaryClone);
-			trimIgnoredNodeTrees(primaryClone, transformInstructions);
-			if (!ignoreEquations) {
-				injectCalculations(primaryClone, transformInstructions);
-			}
-			tagData(primaryClone, transformInstructions);
-		}
+		pullExternalDataIntoDaus(primaryClone, externalClone, primaryExternalRelationsMap);
 
+		if (targetTransformation != TargetTransformation.Interconnection) {
+			transform(primaryClone, specificInstructions, preserveDebugRelations);
+		}
 		return primaryClone;
 	}
 
-	public static void injectCalculations(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
+	private static void injectCalculations(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
 		Map<String, List<Configuration.Calculation>> calculationsMap = instructions.calculations;
 
 		Iterator<HierarchicalData> originalDataIter = data.getDataIterator();
@@ -545,37 +481,6 @@ public class HierarchicalDataTransformer {
 			HierarchicalData parentNode = entry.getKey();
 			for (HierarchicalData externalChild : entry.getValue()) {
 				primaryStructure.cloneTreeIntoContainer(externalChild, parentNode);
-			}
-		}
-	}
-
-	public static void displayHierarchicalDataContainer(HierarchicalDataContainer container, @Nullable File targetFile) {
-		List<String> lines = new LinkedList<>();
-		for (HierarchicalData dauNode : container.getDauRootNodes()) {
-			System.out.println(dauNode.toString());
-			lines.add(dauNode.toString());
-			Collection<HierarchicalData> nds = container.getDauNodes(dauNode);
-
-			for (HierarchicalData nd : nds) {
-				StringBuilder pathStringBuilder = new StringBuilder();
-
-				for (HierarchicalData hn : nd.getPathAsData()) {
-					pathStringBuilder.append(hn.toString()).append(".");
-				}
-				String pathString = pathStringBuilder.append(nd.toString()).append(".").toString();
-
-				for (String key : nd.getAttributeNames()) {
-					lines.add("\t" + pathString + key + " = " + nd.getAttribute(key));
-					System.out.println("\t" + pathString + key + " = " + nd.getAttribute(key));
-				}
-			}
-		}
-		if (targetFile != null) {
-			try {
-				Collections.sort(lines);
-				FileUtils.writeLines(targetFile, lines);
-			} catch (IOException e) {
-				throw AdaptationnException.internal(e);
 			}
 		}
 	}

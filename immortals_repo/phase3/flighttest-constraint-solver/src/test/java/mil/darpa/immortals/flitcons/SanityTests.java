@@ -1,60 +1,64 @@
 package mil.darpa.immortals.flitcons;
 
-import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataTransformer;
 import mil.darpa.immortals.schemaevolution.BBNEvaluationData;
 import mil.darpa.immortals.schemaevolution.ChallengeProblemBridge;
+import mil.darpa.immortals.schemaevolution.ProvidedData;
 import mil.darpa.immortals.schemaevolution.TerminalStatus;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class IntegrationTests {
+public class SanityTests {
 
 	public static final String JARGS_EXTERNAL_SERVER_PORT = "mil.darpa.immortals.flitcons.test.server.external.port";
 	public static final String JARGS_EXTERNAL_SERVER_HOST = "mil.darpa.immortals.flitcons.test.server.external.host";
 
-	static {
-		HierarchicalDataTransformer.ignoreEquations = true;
-	}
+	public AbstractFlitconsOdbServer createServerInstance(@Nonnull FlitconsTestScenario scenario) {
 
-	public AbstractOdbServer createServerInstance(@Nonnull TestScenario scenario) {
+		System.out.println("PATH: " + Paths.get("").toAbsolutePath().toString());
 
 		if (System.getProperty(JARGS_EXTERNAL_SERVER_HOST) == null) {
 			if (System.getProperty(JARGS_EXTERNAL_SERVER_PORT) == null) {
-				return new OdbEmbeddedServer(scenario);
+				return new FlitconsOdbEmbeddedServer(scenario);
 			} else {
-				return new OdbRemoteServer(scenario, Integer.valueOf(System.getProperty(JARGS_EXTERNAL_SERVER_PORT)));
+				return new FlitconsOdbRemoteServer(scenario, Integer.valueOf(System.getProperty(JARGS_EXTERNAL_SERVER_PORT)));
 			}
 		} else {
 			if (System.getProperty(JARGS_EXTERNAL_SERVER_PORT) == null) {
-				return new OdbRemoteServer(scenario, System.getProperty(JARGS_EXTERNAL_SERVER_HOST));
+				return new FlitconsOdbRemoteServer(scenario, System.getProperty(JARGS_EXTERNAL_SERVER_HOST));
 			} else {
-				return new OdbRemoteServer(scenario, System.getProperty(JARGS_EXTERNAL_SERVER_HOST),
+				return new FlitconsOdbRemoteServer(scenario, System.getProperty(JARGS_EXTERNAL_SERVER_HOST),
 						Integer.valueOf(System.getProperty(JARGS_EXTERNAL_SERVER_PORT)));
 			}
 		}
 	}
 
-	public void runTest(@Nonnull TestScenario scenario,
+	public void runTest(@Nonnull FlitconsTestScenario scenario, boolean useSimpleSolver,
 	                    @Nullable Integer serverDelay) {
-		AbstractOdbServer server = createServerInstance(scenario);
+		String baseIdentifier = "TEST-" + scenario.getShortName();
+		int iterationCount = 0;
+
+		AbstractFlitconsOdbServer server = createServerInstance(scenario);
 
 
 		try {
 			List<String> expectedStates = new ArrayList<>(scenario.getExpectedStatusSequence());
 			server.init();
-			ChallengeProblemBridge cpb = new ChallengeProblemBridge();
+
 			TerminalStatus expectedState;
 			TerminalStatus currentState;
 
 			do {
-				String evaluationId = "I" + System.currentTimeMillis();
+				String evaluationId = baseIdentifier + "-iteration" + iterationCount++;
+				ChallengeProblemBridge cpb = ProvidedData.initializeChallengeProblemBridge(evaluationId);
+
 				expectedState = TerminalStatus.valueOf(expectedStates.remove(0));
 
 				BBNEvaluationData data = cpb.getCurrentEvaluationData(evaluationId);
@@ -64,9 +68,8 @@ public class IntegrationTests {
 				Assert.assertNull(data.getOutputJsonData());
 
 				SolverConfiguration config = SolverConfiguration.getInstance();
-				config.useSimpleSolver = true;
+				config.useSimpleSolver = useSimpleSolver;
 				config.evaluationIdentifier = evaluationId;
-
 
 				if (serverDelay != null) {
 					server.clearState();
@@ -82,7 +85,7 @@ public class IntegrationTests {
 					}, serverDelay);
 				}
 
-				SolverMain.execute(config, cpb, evaluationId);
+				SolverMain.execute(cpb, evaluationId);
 
 				BBNEvaluationData resultData = cpb.getCurrentEvaluationData(evaluationId);
 				currentState = TerminalStatus.valueOf(resultData.getCurrentState());
@@ -101,28 +104,18 @@ public class IntegrationTests {
 		}
 	}
 
-//	@Test
-//	public void testInvalidInputPropagation() {
-//
-//	}
-//
-//	@Test
-//	public void testUnexpectedErrorPropagation() {
-//
-//	}
-
 	@Test
 	public void testServerWaitForReady() {
-		runTest(TestScenario.getTestScenario("s5"), 4000);
+		runTest(FlitconsTestScenario.getTestScenario("s5"), true, 4000);
 	}
 
 	@Test
 	public void testServerReady() {
-		runTest(TestScenario.getTestScenario("s5"), null);
+		runTest(FlitconsTestScenario.getTestScenario("s5"), true, null);
 	}
 
 	@Test
 	public void testServerSequential() {
-		runTest(TestScenario.getTestScenario("s5s"), null);
+		runTest(FlitconsTestScenario.getTestScenario("s5s"), true, null);
 	}
 }

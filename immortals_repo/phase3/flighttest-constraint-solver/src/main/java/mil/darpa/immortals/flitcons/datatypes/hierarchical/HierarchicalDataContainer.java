@@ -413,6 +413,28 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 		existingDataIdentifierMap.put(equationData.node, equationData);
 		superParentChildElements.get(parentData.getRootNode()).add(equationData);
 		parentData.addChildNode(equationData.node);
-		System.out.println("MEH");
 	}
+
+	public Set<HierarchicalData> getNodesAtPath(@Nonnull List<String> path) {
+		List<String> pathList = new ArrayList<>(path);
+		String head = pathList.remove(0);
+		Set<HierarchicalData> dataSet = existingDataIdentifierMap.values().stream().filter(x -> x.getNodeType().equals(head)).collect(Collectors.toSet());
+		dataSet.addAll(
+				superParentChildElements.keySet().stream().filter(x -> x.getNodeType().equals(head)).collect(Collectors.toSet())
+		);
+
+		for (String nextValue : pathList) {
+			Set<HierarchicalData> children = new HashSet<>();
+
+			for (HierarchicalData parentData : dataSet) {
+				Iterator<HierarchicalData> childIter = parentData.getChildrenDataIterator(nextValue);
+				while (childIter.hasNext()) {
+					children.add(childIter.next());
+				}
+			}
+			dataSet = children;
+		}
+		return dataSet;
+	}
+
 }

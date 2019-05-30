@@ -4,6 +4,8 @@ set -e
 
 IMMORTALSRC_PATH=""
 
+pip3 install lxml
+
 PPWD="`pwd`"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )/"
 
@@ -108,7 +110,9 @@ if [[ ${DO_SCENARIO_6} == true ]];then
 
     cd "${SCRIPT_DIR}/../knowledge-repo/cp/cp3.1/xsd-tranlsation-service-aql/aql/"
     source ~/.immortals/anaconda/bin/activate
-    if [ ! -d "${HOME}/.immortals/anaconda/envs/aql" ]; then
+    if [ -d "${HOME}/.immortals/anaconda/envs/aql" ]; then
+        conda env update -f environment.yml
+    else
         conda env create -f environment.yml
     fi
     cd "${PPWD}"

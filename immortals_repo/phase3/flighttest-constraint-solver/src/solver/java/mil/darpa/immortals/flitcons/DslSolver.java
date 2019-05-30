@@ -1,36 +1,50 @@
 package mil.darpa.immortals.flitcons;
 
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
+import mil.darpa.immortals.schemaevolution.ProvidedData;
 import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nonnull;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class DslSolver implements SolverInterface {
 
+	public static final String ARGS_DSL_PATH = "IMMORTALS_RESOURCE_DSL";
+
+	private static final String SWAP_REQUEST = "dsl-swap-request.json";
+	private static final String SWAP_INVENTORY = "dsl-swap-inventory.json";
+	private static final String SWAP_RESPONSE = "dsl-swap-response.json";
+
 	private final Path dslDirectory;
+
+	private String requestPath;
+	private String inventoryPath;
+	private Path responsePath;
 
 	public DslSolver() {
 		try {
-			String dslPath = SolverConfiguration.getInstance().dslPath;
+			String envPath;
 			Path cwd = Paths.get(DslSolver.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-			if (dslPath == null) {
-				dslDirectory = cwd.getParent().getParent().getParent().resolve("dsl").resolve("resource-dsl").toAbsolutePath().normalize();
+			if ((envPath = System.getenv(ARGS_DSL_PATH)) != null) {
+				dslDirectory = Paths.get(envPath);
+
 			} else {
-				dslDirectory = cwd.resolve(dslPath).toAbsolutePath().normalize();
+				dslDirectory = cwd.getParent().getParent().getParent().resolve("dsl").resolve("resource-dsl").toAbsolutePath().normalize();
 			}
 
 			if (!Files.exists(dslDirectory)) {
-				throw AdaptationnException.internal("Path '" + dslDirectory.toString() + "' does not exist!");
+				if (envPath == null) {
+					throw AdaptationnException.internal("No path for the DSL provided and relative path '" + dslDirectory.toAbsolutePath() + "' does not exist!");
+				} else {
+					throw AdaptationnException.internal("Provided DSL path '" + dslDirectory.toString() + "' does not exist!");
+				}
 			}
 
 		} catch (URISyntaxException e) {
@@ -43,35 +57,14 @@ public class DslSolver implements SolverInterface {
 		try {
 			DynamicObjectContainer inputConfigurationClone = inputConfiguration.duplicate();
 			DynamicObjectContainer inventoryClone = inventory.duplicate();
-			applyHacks(inputConfigurationClone, inventoryClone);
 
-			FileUtils.writeStringToFile(dslDirectory.resolve("inbox").resolve("swap-request.json").toFile(), Utils.difGson.toJson(inputConfigurationClone), Charset.defaultCharset());
-			FileUtils.writeStringToFile(dslDirectory.resolve("inbox").resolve("swap-inventory.json").toFile(), Utils.difGson.toJson(inventoryClone), Charset.defaultCharset());
+			requestPath = ProvidedData.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfigurationClone).getBytes());
+			inventoryPath = ProvidedData.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(inventoryClone).getBytes());
+			responsePath = Paths.get(ProvidedData.storeFile(SWAP_RESPONSE, new byte[0]));
+			Files.delete(responsePath);
 			FileUtils.forceMkdir(dslDirectory.resolve("outbox").toFile());
 
-		} catch (IOException e) {
-			throw AdaptationnException.internal(e);
-		}
-	}
-
-	private void applyHacks(@Nonnull DynamicObjectContainer inputConfiguration, @Nonnull DynamicObjectContainer inventory) {
-		try {
-			for (DynamicObjectContainer dau : inputConfiguration.get("daus").parseDynamicObjectContainerArray()) {
-				for (DynamicObjectContainer port : dau.get("Port").parseDynamicObjectContainerArray()) {
-					port.remove("DataRate");
-					port.remove("SampleRate");
-					port.remove("DataLength");
-				}
-			}
-
-			for (DynamicObjectContainer dau : inventory.get("daus").parseDynamicObjectContainerArray()) {
-				for (DynamicObjectContainer port : dau.get("Port").parseDynamicObjectContainerArray()) {
-					port.remove("DataRate");
-					port.remove("SampleRate");
-					port.remove("DataLength");
-				}
-			}
-		} catch (DynamicValueeException e) {
+		} catch (Exception e) {
 			throw AdaptationnException.internal(e);
 		}
 	}
@@ -79,30 +72,34 @@ public class DslSolver implements SolverInterface {
 	@Override
 	public DynamicObjectContainer solve() {
 		try {
-			System.out.println("########################START DSL OUTPUT HERE########################");
+			System.out.println(Utils.padCenter("DSL COMMAND", 80, '#'));
 
 			ProcessBuilder pb = new ProcessBuilder()
 					.inheritIO()
 					.directory(dslDirectory.toFile())
-					.command("stack", "exec", "resource-dsl", "--", "swap-dau", "--run");
+					.command("stack", "exec", "resource-dsl", "--", "swap-dau", "--run",
+							"--inventory-file", inventoryPath, "--request-file", requestPath,
+							"--response-file", responsePath.toString());
+
+			System.out.println(String.join(" ", pb.command()));
+
+			System.out.println(Utils.padCenter("DSL OUTPUT", 80, '#'));
 
 			Process p = pb.start();
-
 			int rval = p.waitFor();
-
 
 			System.out.println("########################END DSL OUTPUT HERE########################");
 
 			if (rval == 0) {
 
 
-				Path dslOutputFile = dslDirectory.resolve("outbox").resolve("swap-response.json");
+//				Path dslOutputFile = dslDirectory.resolve("outbox").resolve("swap-response.json");
 
-				if (!Files.exists(dslOutputFile)) {
+				if (!Files.exists(responsePath)) {
 					throw AdaptationnException.internal("DSL Output file not found!");
 				}
 
-				FileReader fr = new FileReader(dslOutputFile.toFile());
+				FileReader fr = new FileReader(responsePath.toFile());
 				return Utils.difGson.fromJson(fr, DynamicObjectContainer.class);
 
 			} else if (rval == 1) {
