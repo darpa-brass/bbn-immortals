@@ -30,8 +30,8 @@ task integrationTest(type: Test) {
 	classpath = sourceSets.integrationTest.runtimeClasspath
 	systemProperty "mil.darpa.immortals.test.test_databases.dir", projectDir.toPath().resolve("../test_databases").toFile().getCanonicalFile().absolutePath
 	systemProperty "mil.darpa.immoratls.test.sut.script", projectDir.toPath().resolve("../start.sh").toFile().getCanonicalFile().absolutePath
-    systemProperty "mil.darpa.immortals.artifactdirectory", buildDir.toPath().resolve("tmp/integrationTest").toFile().getCanonicalFile().absolutePath
-    setWorkingDir(buildDir.toPath().resolve("tmp/integrationTest").toFile())
+	systemProperty "mil.darpa.immortals.artifactdirectory", buildDir.toPath().resolve("tmp/integrationTest").toFile().getCanonicalFile().absolutePath
+	setWorkingDir(buildDir.toPath().resolve("tmp/integrationTest").toFile())
 	reports.junitXml.enabled = true
 	reports.html.enabled = true
 }
@@ -46,4 +46,5 @@ dependencies {
 	integrationTestCompile 'org.testng:testng:6.14.3'
 	integrationTestCompile 'com.google.code.gson:gson:2.7'
 	integrationTestCompile 'mil.darpa.immortals:mdl-immortals-bridge:0.2'
+	integrationTestCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
 }

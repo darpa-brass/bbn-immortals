@@ -173,7 +173,11 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 			throw AdaptationnException.internal("Cannot insert and clone a node from the same database!");
 
 		} else if (existingDataIdentifierMap.containsKey(sourceData.node)) {
-			throw AdaptationnException.internal("Already exists!");
+			if (sourceData.node.referenceIdentifier != null) {
+				throw AdaptationnException.input("Multiple references to the ID '" + sourceData.node.referenceIdentifier + "' detected!");
+			} else {
+				throw AdaptationnException.internal("Already exists!");
+			}
 		}
 
 		// Duplicate the node

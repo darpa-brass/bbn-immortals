@@ -1,0 +1,4 @@
+<configuration xmlns="http://ch.qos.logback/xml/ns/logback">
+    <logger name="org.kie" level="ERROR"/>
+</configuration>
+

@@ -1,6 +1,6 @@
 package mil.darpa.immortals.testing.flitcons;
 
-import mil.darpa.immortals.testing.TestScenarioRunner;
+import mil.darpa.immortals.testing.tools.TestScenarioRunner;
 import org.testng.annotations.Test;
 
 public class FlitconsIntegrationTests {

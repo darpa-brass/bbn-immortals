@@ -281,7 +281,7 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 				}
 				elementNodes.add((Element) child);
 
-			} else {
+			} else if (!(child instanceof Comment)) {
 				throw AdaptationnException.internal("Unexpected node type '" + child.getClass().getName() + "'!");
 			}
 		}

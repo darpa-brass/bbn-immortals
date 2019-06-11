@@ -1,0 +1,31 @@
+@startuml
+
+hide empty description
+
+[*] -down-> OrientDB
+
+state OrientDB {
+
+    state MDLRoot {
+        state NetworkNodes
+        state Measurements
+        state PortMappings
+    }
+
+    state DAUInventory
+}
+
+NetworkNodes -d-> RawInputConfigurationData
+Measurements -d-> RawInputExternalData
+
+DAUInventory -d-> RawInventoryData
+RawInventoryData -d-> InventoryRequirementsData
+
+RawInputConfigurationData -d-> InputInterconnectedData
+PortMappings -d-> InputInterconnectedData
+RawInputExternalData -d-> InputInterconnectedData
+
+InputInterconnectedData -d-> InputInterconnectedRequirementsData
+InputInterconnectedData -d-> InputInterconnectedUsageData
+
+@enduml

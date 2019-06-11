@@ -11,7 +11,8 @@
       // The expected terminal status. Only provide a single status for scenario 6!
       "expectedStatusSequence": [
         "AdaptationSuccessful"
-      ]
+      ],
+      "expectedJsonOutputStructure": {}
     },
     {
       "shortName": "s6bu",
@@ -19,7 +20,8 @@
       "jsonInputPath": "../shared/tools/odbhelper/resources/dummy_data/s6_basic.json",
       "expectedStatusSequence": [
         "AdaptationSuccessful"
-      ]
+      ],
+      "expectedJsonOutputStructure": {}
     }
   ]
 }

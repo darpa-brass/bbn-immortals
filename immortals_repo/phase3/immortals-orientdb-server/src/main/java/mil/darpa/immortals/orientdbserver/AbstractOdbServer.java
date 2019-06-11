@@ -1,4 +1,4 @@
-package mil.darpa.immortals.testing.tools;
+package mil.darpa.immortals.orientdbserver;
 
 import com.orientechnologies.orient.client.remote.OServerAdmin;
 import com.orientechnologies.orient.core.command.OCommandOutputListener;
@@ -8,7 +8,6 @@ import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OConcurrentResultSet;
 import mil.darpa.immortals.schemaevolution.ProvidedData;
 import mil.darpa.immortals.schemaevolution.TerminalStatus;
-import org.testng.Assert;
 
 import javax.annotation.Nonnull;
 import java.io.FileInputStream;
@@ -72,7 +71,7 @@ public abstract class AbstractOdbServer {
 				}
 
 				if (tools == null) {
-					Assert.fail("Could not find tools directory to populate server!");
+					throw new RuntimeException("Could not find tools directory to populate server!");
 				}
 
 				// TODO: Port Scenario6 setup logic from python to this since it should be trivial
@@ -103,7 +102,7 @@ public abstract class AbstractOdbServer {
 						backupDatabase();
 					}
 				} else {
-					Assert.fail("Invalid Server Setup exit code '" + p.exitValue() + "'!");
+					throw new RuntimeException("Invalid Server Setup exit code '" + p.exitValue() + "'!");
 				}
 			}
 
@@ -120,9 +119,7 @@ public abstract class AbstractOdbServer {
 			}
 
 		} catch (Exception e) {
-			Assert.fail("Unexpected exception starting server!", e);
 			throw new RuntimeException(e);
-
 		}
 	}
 

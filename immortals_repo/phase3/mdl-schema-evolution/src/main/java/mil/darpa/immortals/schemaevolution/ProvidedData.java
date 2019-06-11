@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Logger;
 
 public class ProvidedData {
+
+	private static final Logger logger = Logger.getLogger(ProvidedData.class.getName());
+
 	private static final String ENV_VAR_EVAL_ODB = "ORIENTDB_EVAL_TARGET";
 	private static final String ENV_VAR_EVAL_USER = "ORIENTDB_EVAL_USER";
 	private static final String ENV_VAR_EVAL_PASSWORD = "ORIENTDB_EVAL_PASSWORD";
@@ -78,16 +82,21 @@ public class ProvidedData {
 	}
 
 	public static final String storeFile(@Nonnull String filename, byte[] data) throws Exception {
-		return challengeProblemBridge.saveToFile(evaluationIdentifier, data, filename);
+		if (challengeProblemBridge != null) {
+			return challengeProblemBridge.saveToFile(evaluationIdentifier, data, filename);
+		} else {
+			Path target = getEvaluationArtifactDirectory().resolve(filename);
+			Files.write(target, data);
+			return target.toString();
+		}
 	}
 
 	static {
-		System.out.println("---------------------------------INIT VARIABLES---------------------------------");
-		System.out.println("odbEvaluationTarget='" + getOdbEvaluationTarget() + "'");
-		System.out.println("odbEvaluationUser='" + getOdbEvaluationUser() + "'");
-		System.out.println("odbEvaluationPassword='" + getOdbEvaluationPassword() + "'");
-		System.out.println("evaluationArtifactDirectory='" + getEvaluationArtifactDirectory() + "'");
-		System.out.println("--------------------------------------------------------------------------------");
+		logger.config("---------------------------------INIT VARIABLES---------------------------------");
+		logger.config("odbEvaluationTarget='" + getOdbEvaluationTarget() + "'");
+		logger.config("odbEvaluationUser='" + getOdbEvaluationUser() + "'");
+		logger.config("odbEvaluationPassword='" + getOdbEvaluationPassword() + "'");
+		logger.config("evaluationArtifactDirectory='" + getEvaluationArtifactDirectory() + "'");
+		logger.config("--------------------------------------------------------------------------------");
 	}
-
 }

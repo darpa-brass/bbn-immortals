@@ -1,4 +1,4 @@
-package mil.darpa.immortals.testing.tools;
+package mil.darpa.immortals.orientdbserver;
 
 import mil.darpa.immortals.schemaevolution.ProvidedData;
 
@@ -50,6 +50,11 @@ public class ProvidedTestingData {
 		return testDatabaseDirectory;
 	}
 
+	private static boolean hasSutStartupScript() {
+		String sutStartupScript = System.getProperty(JARGS_SUT_START_SCRIPT);
+		return  sutStartupScript != null;
+	}
+
 	public static String getSutStartupScript() {
 		String sutStartupScript;
 		sutStartupScript = System.getProperty(JARGS_SUT_START_SCRIPT);
@@ -64,7 +69,11 @@ public class ProvidedTestingData {
 	static {
 		System.out.println("---------------------------------INIT VARIABLES---------------------------------");
 		System.out.println("testDatabaseDirectory='" + getTestDatabaseDirectory() + "'");
-		System.out.println("sutStartupScript='" + getSutStartupScript() + "'");
+		if (hasSutStartupScript()) {
+			System.out.println("sutStartupScript='" + getSutStartupScript() + "'");
+		} else {
+			System.out.println("sutStartupScript='NOT PROVIDED'");
+		}
 		System.out.println("odbExternalServerPort='" + (getOdbExternalServerPort() == null ? "<NONE>" : getOdbExternalServerPort()));
 		System.out.println("odbExternalServerHost='" + (getOdbExternalServerHost() == null ? "<NONE>" : getOdbExternalServerHost()));
 		System.out.println("--------------------------------------------------------------------------------");

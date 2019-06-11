@@ -90,7 +90,7 @@ public abstract class DataValidator {
 				}
 
 			} else {
-				System.out.println("Loading rules from internal data");
+				log.debug("Loading rules from internal data");
 				InputStream drl = DataValidator.class.getClassLoader().getResourceAsStream("CombinedValidationRules.drl");
 				rs = ResourceFactory.newInputStreamResource(drl);
 				rs.setSourcePath("/CombinedValidationRules.drl");

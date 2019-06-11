@@ -1,10 +1,12 @@
-package mil.darpa.immortals.testing;
+package mil.darpa.immortals.testing.tools;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import mil.darpa.immortals.orientdbserver.*;
 import mil.darpa.immortals.schemaevolution.BBNEvaluationData;
 import mil.darpa.immortals.schemaevolution.ChallengeProblemBridge;
 import mil.darpa.immortals.schemaevolution.ProvidedData;
 import mil.darpa.immortals.schemaevolution.TerminalStatus;
-import mil.darpa.immortals.testing.tools.*;
 import org.testng.Assert;
 
 import javax.annotation.Nonnull;
@@ -125,6 +127,12 @@ public class TestScenarioRunner {
 			startScenario(scenario, server);
 			BBNEvaluationData resultData = cpb.getCurrentEvaluationDataNoSave();
 			Assert.assertEquals(resultData.getCurrentState(), expectedState.name());
+			String resultJsonString = resultData.getOutputJsonData();
+			if (resultJsonString != null) {
+				Gson gson = new Gson();
+				JsonObject resultJson = gson.fromJson(resultJsonString, JsonObject.class);
+				scenario.validateJsonOutputStructure(resultJson);
+			}
 
 		} catch (Exception e) {
 			Assert.fail(e.getMessage(), e);

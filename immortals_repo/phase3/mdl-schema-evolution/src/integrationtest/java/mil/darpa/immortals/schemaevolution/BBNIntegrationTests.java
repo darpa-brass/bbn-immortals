@@ -38,8 +38,8 @@ public class BBNIntegrationTests {
 			Gson gson = new Gson();
 
 			ChallengeProblemBridge cpb;
-			System.setProperty(ChallengeProblemBridge.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-KNOWN_SCHEMA");
-			System.setProperty(ChallengeProblemBridge.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
+			System.setProperty(ProvidedData.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-KNOWN_SCHEMA");
+			System.setProperty(ProvidedData.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
 
 			cpb = new ChallengeProblemBridge();
 
@@ -69,8 +69,8 @@ public class BBNIntegrationTests {
 			Gson gson = new Gson();
 
 			ChallengeProblemBridge cpb;
-			System.setProperty(ChallengeProblemBridge.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA");
-			System.setProperty(ChallengeProblemBridge.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
+			System.setProperty(ProvidedData.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA");
+			System.setProperty(ProvidedData.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
 
 			cpb = new ChallengeProblemBridge();
 
@@ -98,8 +98,8 @@ public class BBNIntegrationTests {
 	public void scenario6ErrorTest() {
 		try {
 			ChallengeProblemBridge cpb;
-			System.setProperty(ChallengeProblemBridge.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA");
-			System.setProperty(ChallengeProblemBridge.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
+			System.setProperty(ProvidedData.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA");
+			System.setProperty(ProvidedData.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
 
 			cpb = new ChallengeProblemBridge();
 
@@ -119,8 +119,8 @@ public class BBNIntegrationTests {
 
 		try {
 			ChallengeProblemBridge cpb;
-			System.setProperty(ChallengeProblemBridge.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMAx");
-			System.setProperty(ChallengeProblemBridge.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
+			System.setProperty(ProvidedData.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMAx");
+			System.setProperty(ProvidedData.JARGS_ARTIFACT_DIRECTORY, persistenceLocation);
 
 			cpb = new ChallengeProblemBridge();
 
@@ -144,8 +144,8 @@ public class BBNIntegrationTests {
 
 		try {
 			ChallengeProblemBridge cpb;
-			System.setProperty(ChallengeProblemBridge.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA");
-			System.setProperty(ChallengeProblemBridge.JARGS_ARTIFACT_DIRECTORY, persistenceLocation + "x");
+			System.setProperty(ProvidedData.JARGS_EVAL_ODB, "remote:127.0.0.1/IMMORTALS_TEST-SCENARIO_6-UNKNOWN_SCHEMA");
+			System.setProperty(ProvidedData.JARGS_ARTIFACT_DIRECTORY, persistenceLocation + "x");
 
 			cpb = new ChallengeProblemBridge();
 			cpb.init();

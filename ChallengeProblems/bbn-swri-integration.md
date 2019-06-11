@@ -143,17 +143,26 @@ The document contains two sections: "RuleTable DAUInventory" and "RuleTable Faul
 
 ## Scenario 6 Details
 
-We propose that a specific node contains a property containing a JSON String.
+For Scenario 6 the input will be a JSON object placed in the **BBNEvaluationData**'s _inputJsonData_ node.
 
-The initial draft of this JSON object has the following three fields:
+The contents of that object are as follows:
 
 | Identifier        | Type      | Valid Values           | Description                                                                                                                   |
 |:------------------|-----------|------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| initialMdlVersion | String    | ["V0_8_17", "V0_8_19"] | The initial MDL version. This will be taken from a list of predefined values agreed upon prior to evaluation                  |
-| updatedMdlVersion | String    | ["V0_8_17", "V0_8_19"] | The new MDL version. This must be later than the initial version and will be taken from the same list of predefined values    |
+| initialMdlVersion | String    | See Below              | The initial MDL version. This will be taken from a list of predefined values agreed upon prior to evaluation                  |
+| updatedMdlVersion | String    | See Below              | The new MDL version. This must be later than the initial version and will be taken from the same list of predefined values    |
 | updatedMdlSchema  | String    | A valid MDL XSD schema | The new MDL schema document to upgrade to. It must be less than 1 MB It should follow appropriate JSON escaping as necessary  |
 
 The **initialMdlVersion** is mandatory. The **updatedMdlVersion** and **updatedMdlSchema** are mutually exclusive.
+
+The valid values for **initialMdlVersion** and **updatedMdlVersion** may be any of the following:
+
+"v0_8_7", "v0_8_8", "v0_8_9", "v0_8_10", "v0_8_11", "v0_8_12", "v0_8_13", "v0_8_14", "v0_8_16", "v0_8_17", "v0_8_19"
+
+
+
+
+
 
 ### Examples
 
@@ -177,26 +186,8 @@ Ellipses are used in place of a new MDL schema for readability.
 }
 ```
 
-## Local Smoke Test
+## Integration Tests
 
-A local smoke test can be executed on the server from the 'phase3' directory after a prepared image has been saved. 
-
-For Scenario 5 we are using [this](../../../../shared/tools/odbhelper/resources/dummy_data/scenario5_input_mdlRoot.xml) 
-input configuration and [this](../../../../shared/tools/odbhelper/resources/dummy_data/scenario5_input_mdlRoot.xml) 
-dau inventory.
-
-For Scenario 6 we are using the above examples, with the schema for V0_8_19 as the updatedMdlSchema.
-
-The steps are as follows (it requires two terminals, one for the OrientDB instance and another for the evaluation target):
-
-1. From the immortals root directory start the OrientDB server and wait for it to finish loading:
-   `./shared/tools.sh odbhelper start --use-default-root-password`
-2. From the phase3 directory execute one of the following commands (There is an "all" option but there are some issues related to running the tests consecutively that we are still debugging)): 
-   `./start.sh --local-test s5`
-   `./start.sh --local-test s6a`
-   `./start.sh --local-test s6b`
-
-After it has finished you will see the results of the tests.
-
-
-
+Integration tests have been wrapped into a gradle project that runs an embedded OrientDB server. they can be executed 
+by navigating to the [integration-tests](../../../phase3/integration-tests) directory and executing the following command:  
+`./gradlew integrationTest`

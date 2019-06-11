@@ -16,22 +16,27 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 
-import static mil.darpa.immortals.flitcons.Utils.*;
+import static mil.darpa.immortals.flitcons.Utils.FLAGGED_FOR_REPLACEMENT;
+import static mil.darpa.immortals.flitcons.Utils.difGson;
 
 public class MdlDataValidator extends DataValidator {
 
 	private final DataCollector collector;
 
+	private boolean saveResults = true;
+
 	public MdlDataValidator(@Nullable File inputExcelFile, @Nullable File outputDrlFile, DataSourceInterface dataSource) {
 		super(inputExcelFile, outputDrlFile);
 		this.collector = new DataCollector(dataSource);
+	}
 
+	public void setSaveResults(boolean value) {
+		saveResults = value;
 	}
 
 	public void init() {
 		super.init();
 	}
-
 
 	public ValidationDataContainer validateConfiguration(@Nonnull ValidationScenario scenario, boolean useColor) {
 		try {
@@ -74,12 +79,13 @@ public class MdlDataValidator extends DataValidator {
 			String dynamnicDataString = difGson.toJson(dynamicData);
 
 			try {
-				ProvidedData.storeFile(outputFile, dynamnicDataString.getBytes());
+				if (saveResults) {
+					ProvidedData.storeFile(outputFile, dynamnicDataString.getBytes());
+				}
 			} catch (Exception e) {
 				throw AdaptationnException.internal(e);
 			}
 
-			init();
 			ValidationDataContainer results = super.validate(scenario.filter, dynamicData);
 			results.printResults(scenario.title, useColor);
 			return results;

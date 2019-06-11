@@ -1,0 +1,29 @@
+{
+  "container": {
+    "testJsonData": {
+      "one": {
+        "test0": 1,
+        "test1": 2.22,
+        "test3": 3.333333333333,
+        "test4": 2.3335e6,
+        "test5": 2.3335e5
+      },
+      "two": {
+        "three": {
+          "four": {
+            "num1": "hello",
+            "num2": "bye"
+          },
+          "five": {},
+          "six": [
+            "the",
+            "quick",
+            "brown",
+            "fox"
+          ]
+        }
+      },
+      "attr": "test"
+    }
+  }
+}

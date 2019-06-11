@@ -1,6 +1,4 @@
-package mil.darpa.immortals.testing.tools;
-
-import org.testng.Assert;
+package mil.darpa.immortals.orientdbserver;
 
 import javax.annotation.Nonnull;
 
@@ -32,7 +30,6 @@ public class OdbRemoteServer extends AbstractOdbServer {
 		try {
 			super.init("remote", host, port);
 		} catch (Exception e) {
-			Assert.fail("Unexpected exception starting server!", e);
 			throw new RuntimeException(e);
 		}
 	}

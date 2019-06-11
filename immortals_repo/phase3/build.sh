@@ -86,7 +86,9 @@ mkdir "$ARTIFACT_ROOT"
 if [[ ${DO_SCENARIO_5} == true ]];then
     echo Building Scenario 5!
 
-    "${SCRIPT_DIR}/mdl-schema-evolution/gradlew" --build-file "${SCRIPT_DIR}/mdl-schema-evolution/build.gradle" clean build publishImmortalsMseLibPublicationToMavenLocal publishMseLibPublicationToMavenLocal
+    "${SCRIPT_DIR}/mdl-schema-evolution/gradlew" --build-file "${SCRIPT_DIR}/mdl-schema-evolution/build.gradle" clean build publish
+
+    "${SCRIPT_DIR}/immortals-orientdb-server/gradlew" --build-file "${SCRIPT_DIR}/immortals-orientdb-server/build.gradle" clean build publish
 
     "${SCRIPT_DIR}/flighttest-constraint-solver/gradlew" --build-file "${SCRIPT_DIR}/flighttest-constraint-solver/build.gradle" clean build
 
@@ -103,6 +105,7 @@ if [[ ${DO_SCENARIO_5} == true ]];then
     cp "${SCRIPT_DIR}/start.sh" "${ARTIFACT_ROOT}/phase3/"
 
     cp -R "${SCRIPT_DIR}/../dsl" "${ARTIFACT_ROOT}/"
+    echo Scenario 5 Finished Building.
 fi
 
 if [[ ${DO_SCENARIO_6} == true ]];then
@@ -124,6 +127,7 @@ if [[ ${DO_SCENARIO_6} == true ]];then
     mvn -f "${SCRIPT_DIR}/../knowledge-repo/cp/cp3.1/xsd-translation-service/pom.xml" clean install -DskipTests
 
     cp -R "${SCRIPT_DIR}/../knowledge-repo" "${ARTIFACT_ROOT}/"
+    echo Scenario 6 Finished Building.
 fi
 
 mkdir -p "${ARTIFACT_ROOT}/shared"

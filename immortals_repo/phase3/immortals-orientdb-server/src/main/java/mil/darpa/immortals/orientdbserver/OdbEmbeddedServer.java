@@ -1,9 +1,12 @@
-package mil.darpa.immortals.testing.tools;
+package mil.darpa.immortals.orientdbserver;
 
 import com.orientechnologies.orient.server.OServer;
 import com.orientechnologies.orient.server.OServerMain;
+import com.orientechnologies.orient.server.config.OServerConfiguration;
+import com.orientechnologies.orient.server.config.OServerConfigurationManager;
+import com.orientechnologies.orient.server.config.OServerNetworkConfiguration;
+import com.orientechnologies.orient.server.config.OServerUserConfiguration;
 import com.orientechnologies.orient.server.network.protocol.binary.ONetworkProtocolBinary;
-import org.testng.Assert;
 
 import javax.annotation.Nonnull;
 
@@ -34,7 +37,6 @@ public class OdbEmbeddedServer extends AbstractOdbServer {
 			}
 
 		} catch (Exception e) {
-			Assert.fail("Unexpected exception starting server!", e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -44,5 +46,9 @@ public class OdbEmbeddedServer extends AbstractOdbServer {
 		if (server != null) {
 			server.shutdown();
 		}
+	}
+
+	public synchronized void waitForShutdown() {
+		server.waitForShutdown();
 	}
 }

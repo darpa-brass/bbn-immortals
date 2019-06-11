@@ -1,0 +1,78 @@
+buildscript {
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
+	}
+}
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+plugins {
+	id 'java'
+	id 'maven-publish'
+	id "com.github.johnrengelman.shadow" version "4.0.4"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+group 'mil.darpa.immortals'
+version '0.2'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/main/java']
+		}
+		resources {
+			srcDirs = ['src/main/resources']
+		}
+	}
+}
+
+publishing {
+	publications {
+		immortalsOdbServer(MavenPublication) {
+			artifactId = 'immortals-orientdb-server'
+			from components.java
+		}
+	}
+}
+
+task serverJar(type: ShadowJar) {
+	group = "Shadow tasks"
+	manifest {
+		attributes("Implementation-Title": "Immortals-OrientDbServer",
+				"Main-Class": "mil.darpa.immortals.orientdbserver.ImmortalsOdbServerMain")
+	}
+	from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+	configurations = [project.configurations.runtime]
+//	destinationDir = file('../')
+//	archiveName = 'immortals-orientdb-server.jar'
+}
+jar.finalizedBy(serverJar)
+jar.finalizedBy(getTasksByName('publishToMavenLocal', true))
+
+//clean.delete('../immortals-orientdb-server.jar')
+
+dependencies {
+	compile 'info.picocli:picocli:3.9.0'
+	compile 'com.google.code.findbugs:jsr305:3.0.1'
+	compile 'com.google.code.gson:gson:2.7'
+	compile 'org.slf4j:slf4j-api:1.7.5'
+	compile 'com.orientechnologies:orientdb-core:2.2.24'
+	compile 'com.orientechnologies:orientdb-graphdb:2.2.24'
+	compile 'com.orientechnologies:orientdb-server:2.2.24'
+	compile 'mil.darpa.immortals:mdl-immortals-bridge:0.2'
+	compile 'com.tinkerpop.gremlin:gremlin-groovy:2.6.0'
+}
