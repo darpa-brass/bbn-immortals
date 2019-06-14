@@ -1,0 +1,821 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xmlns:mdl="http://inetprogram.org/projects/MDL" 
+         xsi:schemaLocation="http://inetprogram.org/projects/MDL MDL_v0_8_13.xsd">
+  <ConfigurationVersion>-TBD-</ConfigurationVersion>
+  <TestMissions>
+    <TestMission>
+      <Name>Extracting Bus Measurements Example</Name>
+      <TmNSCompleteness>false</TmNSCompleteness>
+      <TmNSCompletenessDescription>-TBD-</TmNSCompletenessDescription>
+      <NetworkReferences>
+        <NetworkRef IDREF="ExampleNetworkID"/>
+      </NetworkReferences>
+    </TestMission>
+  </TestMissions>
+  <Units>
+    <DerivedUnit ID="Word16">
+      <Name>16-bit Words</Name>
+      <Symbol>W16</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>16</NumericalConstant>
+        <SIUnits>Bit</SIUnits>
+      </UnitsNumerator>
+    </DerivedUnit>
+  </Units>
+  <MeasurementDomains>
+    <MeasurementDomain>
+      <Name>Example Measurement Domain</Name>
+      <Measurements>
+        <Measurement ID="Meas_AIRSPD">
+          <Name>AIRSPD</Name>
+          <MeasurementID>0x00000004</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <DataAttributes>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="AIRSPD_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>16</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>50</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </DataAttributes>
+        </Measurement>
+        <Measurement ID="Meas_HEADNG">
+          <Name>HEADNG</Name>
+          <MeasurementID>0x00000005</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <DataAttributes>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="HEADNG_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>16</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>50</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </DataAttributes>
+        </Measurement>
+        <Measurement ID="Meas_ALT">
+          <Name>ALT</Name>
+          <MeasurementID>0x00000006</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <DataAttributes>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="ALT_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>19</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>50</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </DataAttributes>
+        </Measurement>
+        <Measurement ID="Meas_ROLRATE">
+          <Name>ROLRATE</Name>
+          <MeasurementID>0x00000007</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <DataAttributes>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="ROLRATE_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>16</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>20</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </DataAttributes>
+        </Measurement>
+        <Measurement ID="Meas_PTCHRATE">
+          <Name>PTCHRATE</Name>
+          <MeasurementID>0x00000008</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <DataAttributes>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="PTCHRATE_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>16</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>20</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </DataAttributes>
+        </Measurement>
+        <Measurement ID="Meas_LATPSN">
+          <Name>LATPSN</Name>
+          <MeasurementID>0x00000009</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <DataAttributes>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="LATPSN_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>12</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>10</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </DataAttributes>
+        </Measurement>
+      </Measurements>
+      <DataStreams>
+
+        <DataStream ID="MS1553_Bus_AV1">
+          <Name>1553 Bus AV1</Name>
+          <MILSTD1553Messages>
+            <MILSTD1553Message ID="MS1553_Bus_AV1_MSG1">
+              <MILSTD1553MessageType>RemoteTerminalToRemoteTerminal</MILSTD1553MessageType>
+              <MILSTD1553RemoteTerminal>1</MILSTD1553RemoteTerminal>
+              <MILSTD1553SubaddressOrMode>4</MILSTD1553SubaddressOrMode>
+              <MILSTD1553TransmitReceive>Transmit</MILSTD1553TransmitReceive>
+              <MILSTD1553WordCountOrModeCode>30</MILSTD1553WordCountOrModeCode>
+              <DataStructure ID="MS1553_Bus_AV1_MSG1_STRUCT">
+                <!-- NOTE: Structure includes additional PackageDataFields not included in this example -->
+                <PackageDataField ID="MS1553_Bus_AV1_MSG_Field2">
+                  <FieldLocation ID="MS1553_Bus_AV1_MSG_Field2_Loc">
+                    <FieldOffset>
+                      <OffsetValue>
+                        <FlexValue>2</FlexValue>
+                        <UnitsRef IDREF="Word16"/>
+                      </OffsetValue>
+                    </FieldOffset>
+                    <FieldWidth>
+                      <FlexValue>1</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </FieldWidth>
+                  </FieldLocation>
+                  <FieldEncoding>
+                    <Endianness>BigEndian</Endianness>
+                    <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                  </FieldEncoding>
+                  <FieldRepetitions>1</FieldRepetitions>
+                </PackageDataField>
+                <PackageDataField ID="MS1553_Bus_AV1_MSG_Field3">
+                  <FieldLocation ID="MS1553_Bus_AV1_MSG_Field3_Loc">
+                    <FieldOffset>
+                      <OffsetValue>
+                        <FlexValue>3</FlexValue> <!--Word 3-->
+                        <UnitsRef IDREF="Word16"/>
+                      </OffsetValue>
+                    </FieldOffset>
+                    <FieldWidth>
+                      <FlexValue>1</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </FieldWidth>
+                  </FieldLocation>
+                  <FieldEncoding>
+                    <Endianness>BigEndian</Endianness>
+                    <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                  </FieldEncoding>
+                  <FieldRepetitions>1</FieldRepetitions>
+                </PackageDataField>
+              </DataStructure>
+              <DataMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>1</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_AIRSPD"/>
+                      <SyllableMask>0xffff</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>1</FlexValue>
+                        <UnitsRef IDREF="Word16"/>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>0</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldRef IDREF="MS1553_Bus_AV1_MSG_Field2"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>1</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_HEADNG"/>
+                      <SyllableMask>0xffff</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>1</FlexValue>
+                        <UnitsRef IDREF="Word16"/>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>0</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldRef IDREF="MS1553_Bus_AV1_MSG_Field3"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+              </DataMap>
+            </MILSTD1553Message>
+          </MILSTD1553Messages>
+        </DataStream>
+
+        <DataStream ID="MS1553_Bus_AV3">
+          <Name>1553 Bus AV3</Name>
+          <MILSTD1553Messages>
+            <MILSTD1553Message ID="MS1553_Bus_AV3_MSG1">
+              <MILSTD1553MessageType>RemoteTerminalToRemoteTerminal</MILSTD1553MessageType>
+              <MILSTD1553RemoteTerminal>1</MILSTD1553RemoteTerminal>
+              <MILSTD1553SubaddressOrMode>4</MILSTD1553SubaddressOrMode>
+              <MILSTD1553TransmitReceive>Transmit</MILSTD1553TransmitReceive>
+              <MILSTD1553WordCountOrModeCode>30</MILSTD1553WordCountOrModeCode>
+              <DataStructure ID="MS1553_Bus_AV3_MSG1_STRUCT">
+                <!-- NOTE: Structure includes additional Fields not included in this example -->
+                <PackageDataFieldSet ID="MS1553_Bus_AV3_MSG_Field11_12Set">
+                  <PackageDataField ID="MS1553_Bus_AV3_MSG_Field11">
+                    <FieldLocation ID="MS1553_Bus_AV3_MSG_Field11_Loc">
+                      <FieldOffset>
+                        <OffsetValue>
+                          <FlexValue>11</FlexValue>
+                          <UnitsRef IDREF="Word16"/>
+                        </OffsetValue>
+                      </FieldOffset>
+                      <FieldWidth>
+                        <FlexValue>1</FlexValue>
+                        <UnitsRef IDREF="Word16"/>
+                      </FieldWidth>
+                    </FieldLocation>
+                    <FieldEncoding>
+                      <Endianness>BigEndian</Endianness>
+                      <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                    </FieldEncoding>
+                    <FieldRepetitions>1</FieldRepetitions>
+                  </PackageDataField>
+                  <PackageDataField ID="MS1553_Bus_AV3_MSG_Field12">
+                    <FieldLocation ID="MS1553_Bus_AV3_MSG_Field12_Loc">
+                      <FieldOffset>
+                        <OffsetValue>
+                          <FlexValue>12</FlexValue>
+                          <UnitsRef IDREF="Word16"/>
+                        </OffsetValue>
+                      </FieldOffset>
+                      <FieldWidth>
+                        <FlexValue>1</FlexValue>
+                        <UnitsRef IDREF="Word16"/>
+                      </FieldWidth>
+                    </FieldLocation>
+                    <FieldEncoding>
+                      <Endianness>BigEndian</Endianness>
+                      <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                    </FieldEncoding>
+                    <FieldRepetitions>1</FieldRepetitions>
+                  </PackageDataField>
+                </PackageDataFieldSet>
+              </DataStructure>
+              <DataMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>2</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_ALT"/>
+                      <SyllableMask>0x7FFFF</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>19</FlexValue>
+                        <SIUnits>Bit</SIUnits>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>13</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldSetRef IDREF="MS1553_Bus_AV3_MSG_Field11_12Set"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+              </DataMap>
+            </MILSTD1553Message>
+          </MILSTD1553Messages>
+        </DataStream>
+
+        <DataStream ID="MS1553_Bus_NAV">
+          <Name>1553 Bus NAV</Name>
+          <MILSTD1553Messages>
+            <MILSTD1553Message ID="MS1553_Bus_NAV_MSG1">
+              <MILSTD1553MessageType>RemoteTerminalToRemoteTerminal</MILSTD1553MessageType>
+              <MILSTD1553RemoteTerminal>13</MILSTD1553RemoteTerminal>
+              <MILSTD1553SubaddressOrMode>7</MILSTD1553SubaddressOrMode>
+              <MILSTD1553TransmitReceive>Receive</MILSTD1553TransmitReceive>
+              <MILSTD1553WordCountOrModeCode>30</MILSTD1553WordCountOrModeCode>
+              <DataStructure ID="MS1553_Bus_NAV_MSG1_STRUCT">
+                <!-- NOTE: Structure includes additional Fields not included in this example -->
+                <PackageDataField ID="MS1553_Bus_NAV_MSG_Field8">
+                  <FieldLocation ID="MS1553_Bus_NAV_MSG_Field8_Loc">
+                    <FieldOffset>
+                      <OffsetValue>
+                        <FlexValue>8</FlexValue>
+                        <UnitsRef IDREF="Word16"/>
+                      </OffsetValue>
+                    </FieldOffset>
+                    <FieldWidth>
+                      <FlexValue>1</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </FieldWidth>
+                  </FieldLocation>
+                  <FieldEncoding>
+                    <Endianness>BigEndian</Endianness>
+                    <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                  </FieldEncoding>
+                  <FieldRepetitions>1</FieldRepetitions>
+                </PackageDataField>
+                <PackageDataField ID="MS1553_Bus_NAV_MSG_Field9">
+                  <FieldLocation ID="MS1553_Bus_NAV_MSG_Field9_Loc">
+                    <FieldOffset>
+                      <OffsetValue>
+                        <FlexValue>9</FlexValue>
+                        <UnitsRef IDREF="Word16"/>
+                      </OffsetValue>
+                    </FieldOffset>
+                    <FieldWidth>
+                      <FlexValue>1</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </FieldWidth>
+                  </FieldLocation>
+                  <FieldEncoding>
+                    <Endianness>BigEndian</Endianness>
+                    <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                  </FieldEncoding>
+                  <FieldRepetitions>1</FieldRepetitions>
+                </PackageDataField>
+              </DataStructure>
+              <DataMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>1</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_ROLRATE"/>
+                      <SyllableMask>0xffff</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>1</FlexValue>
+                        <UnitsRef IDREF="Word16"/>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>0</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldRef IDREF="MS1553_Bus_NAV_MSG_Field8"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>1</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_PTCHRATE"/>
+                      <SyllableMask>0xffff</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>1</FlexValue>
+                        <UnitsRef IDREF="Word16"/>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>0</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldRef IDREF="MS1553_Bus_NAV_MSG_Field9"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+              </DataMap>
+            </MILSTD1553Message>
+          </MILSTD1553Messages>
+        </DataStream>
+
+        <DataStream ID="MS1553_Bus_GPS">
+          <Name>1553 Bus GPS</Name>
+          <MILSTD1553Messages>
+            <MILSTD1553Message ID="MS1553_Bus_GPS_MSG1">
+              <MILSTD1553MessageType>RemoteTerminalToRemoteTerminal</MILSTD1553MessageType>
+              <MILSTD1553RemoteTerminal>25</MILSTD1553RemoteTerminal>
+              <MILSTD1553SubaddressOrMode>10</MILSTD1553SubaddressOrMode>
+              <MILSTD1553TransmitReceive>Receive</MILSTD1553TransmitReceive>
+              <MILSTD1553WordCountOrModeCode>30</MILSTD1553WordCountOrModeCode>
+              <DataStructure ID="MS1553_Bus_GPS_MSG1_STRUCT">
+                <!-- NOTE: Structure includes additional Fields not included in this example -->
+                <PackageDataField ID="MS1553_Bus_GPS_MSG_Field28">
+                  <FieldLocation ID="MS1553_Bus_GPS_MSG_Field28_Loc">
+                    <FieldOffset>
+                      <OffsetValue>
+                        <FlexValue>28</FlexValue>
+                        <UnitsRef IDREF="Word16"/>
+                      </OffsetValue>
+                    </FieldOffset>
+                    <FieldWidth>
+                      <FlexValue>1</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </FieldWidth>
+                  </FieldLocation>
+                  <FieldEncoding>
+                    <Endianness>BigEndian</Endianness>
+                    <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                  </FieldEncoding>
+                  <FieldRepetitions>1</FieldRepetitions>
+                </PackageDataField>
+              </DataStructure>
+              <DataMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>1</FlexValue>
+                      <UnitsRef IDREF="Word16"/>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_LATPSN"/>
+                      <SyllableMask>0x0fff</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>12</FlexValue>
+                        <SIUnits>Bit</SIUnits>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>0</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldRef IDREF="MS1553_Bus_GPS_MSG_Field28"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+              </DataMap>
+            </MILSTD1553Message>
+          </MILSTD1553Messages>
+        </DataStream>
+
+      </DataStreams>
+      <DataOperations>
+        <DataOperation ID="AIRSPD_EU_CONV">
+          <Name>Airspeed EU Conversion</Name>
+          <Method ID="AirspeedMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.5</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Knots</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+        <DataOperation ID="HEADNG_EU_CONV">
+          <Name>Heading EU Conversion</Name>
+          <Method ID="HeadingMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.25</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Degree</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+        <DataOperation ID="ALT_EU_CONV">
+          <Name>Altitude EU Conversion</Name>
+          <Method ID="AltitudeMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.005</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Feet</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+        <DataOperation ID="ROLRATE_EU_CONV">
+          <Name>Roll Rate EU Conversion</Name>
+          <Method ID="ROLRATEMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.25</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>DegreePerSecond</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+        <DataOperation ID="PTCHRATE_EU_CONV">
+          <Name>Pitch Rate EU Conversion</Name>
+          <Method ID="PTCHRATEMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.125</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>DegreePerSecond</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+        <DataOperation ID="LATPSN_EU_CONV">
+          <Name>Latitude Position EU Conversion</Name>
+          <Method ID="LATPSNMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.5</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Degree</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+      </DataOperations>
+    </MeasurementDomain>
+  </MeasurementDomains>
+  <NetworkDomains>
+    <Network ID="ExampleNetworkID">
+      <Name>Example Network</Name>
+      <NetworkType>TmNS</NetworkType>
+      <NetworkServices/>
+      <NetworkNode ID="Dau1">
+        <Name>Dau1</Name>
+        <InventoryID>Dau1</InventoryID> 
+        <InternalStructure></InternalStructure>
+        <LogicalLocation></LogicalLocation>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="DAU1App">
+            <RoleID>Dau1</RoleID>
+            <LoggingLevels>
+              <Trace>true</Trace>
+              <Debug>false</Debug>
+              <Info>true</Info>
+              <Warning>false</Warning>
+              <Error>false</Error>
+              <Critical>false</Critical>
+            </LoggingLevels>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSDAU/>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="Dau1IFace">
+          <Name>Eth0</Name>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.21</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="Dau1PhysNetPort1">
+            <Name>Dau1PhysNetPort1</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e8</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Pins>
+          <Pin ID="Pin1ID" Index="1">
+            <Description>This is the first analog input pin on the card</Description>
+          </Pin>
+        </Pins>
+        <Ports>
+          <Port ID="Dau1Pin1InputPort">
+            <PortDirection>Input</PortDirection>
+            <PinRef IDREF="Pin1ID"/>
+          </Port>
+          <Port ID="Dau1NetworkPort">
+            <Name>Dau1Port</Name>
+            <PortDirection>Bidirectional</PortDirection>
+          </Port>
+        </Ports>
+      </NetworkNode>
+      <NetworkNode ID="Switch1">
+        <Name>Switch 1</Name>
+        <InventoryID>Switch1</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="Switch1App">
+            <RoleID>Switch1</RoleID>
+            <LoggingLevels>
+              <Trace>true</Trace>
+              <Debug>false</Debug>
+              <Info>true</Info>
+              <Warning>false</Warning>
+              <Error>false</Error>
+              <Critical>false</Critical>
+            </LoggingLevels>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSNetworkFabricDevice/>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="Switch1IFace">
+          <Name>Eth0</Name>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.254</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.254</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="Sw1PhyNetPort1">
+            <Name>Sw1PhyNetPort1</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+          <PhysicalNetworkPort ID="Sw1PhyNetPort2">
+            <Name>Sw1PhyNetPort2</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>2</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+          <PhysicalNetworkPort ID="Sw1PhyNetPort3">
+            <Name>Sw1PhyNetPort3</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>3</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+          <PhysicalNetworkPort ID="Sw1PhyNetPort4">
+            <Name>Sw1PhyNetPort4</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>4</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="Switch1Port1">
+            <Name>Switch1Port1</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="Sw1PhyNetPort1"/>
+          </Port>
+          <Port ID="Switch1Port2">
+            <Name>Switch1Port2</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="Sw1PhyNetPort2"/>
+          </Port>
+          <Port ID="Switch1Port3">
+            <Name>Switch1Port3</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="Sw1PhyNetPort3"/>
+          </Port>
+          <Port ID="Switch1Port4">
+            <Name>Switch1Port4</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="Sw1PhyNetPort4"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+      <PortMappings>
+        <PortMapping ID="PM1">
+          <PortRef IDREF="Dau1NetworkPort"/>
+          <PortRef IDREF="Switch1Port1"/>
+        </PortMapping>
+        <PortMapping ID="PM2">
+          <PortRef IDREF="Dau1Pin1InputPort"/>
+          <DataStreamRef IDREF="MS1553_Bus_AV1"/>
+        </PortMapping>
+      </PortMappings>
+    </Network>
+  </NetworkDomains>
+</MDLRoot>

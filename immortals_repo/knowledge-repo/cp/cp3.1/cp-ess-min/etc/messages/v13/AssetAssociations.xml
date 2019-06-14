@@ -1,0 +1,478 @@
+<?xml version="1.0"?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xmlns:mdl="http://inetprogram.org/projects/MDL" 
+         xmlns:tmats="https://wsmrc2vger.wsmr.army.mil/rcc/manuals/106-11" 
+         xsi:schemaLocation="http://inetprogram.org/projects/MDL MDL_v0_8_13.xsd">
+  <ConfigurationVersion>0.0.1</ConfigurationVersion>
+  <TestMissions>
+    <TestMission>
+      <Name>Asset Associations Example</Name>
+      <TmNSCompleteness>false</TmNSCompleteness>
+      <TmNSCompletenessDescription>4 Dau Test</TmNSCompletenessDescription>
+      <NetworkReferences>
+        <NetworkRef IDREF="TestArticleNetworkID"/>
+        <NetworkRef IDREF="GroundNetworkID"/>
+      </NetworkReferences>
+      <AssetAssociations>
+        <SSTAssoc>
+          <Name>SSTA1</Name>
+          <Description>SST Association 1</Description>
+          <Active>true</Active>
+          <SSTChannelRef IDREF="SSTTx1Chan1"/>
+          <SSTChannelRef IDREF="SSTRx1Chan1"/>
+        </SSTAssoc>
+        <SSTAssoc>
+          <Name>SSTA2</Name>
+          <Description>SST Association 2</Description>
+          <Active>true</Active>
+          <SSTChannelRef IDREF="SSTTx2Chan1"/>
+          <SSTChannelRef IDREF="SSTRx2Chan1"/>
+        </SSTAssoc>
+        <RadioAssoc>
+          <Name>RA1</Name>
+          <Description>Radio Association 1</Description>
+          <Active>true</Active>
+          <ManageableAppRef IDREF="TARadioApp"/>
+          <ManageableAppRef IDREF="GroundRadioApp"/>
+        </RadioAssoc>
+      </AssetAssociations>
+    </TestMission>
+  </TestMissions>
+
+  <NetworkDomains>
+    <Network ID="TestArticleNetworkID">
+      <Name>Test Article Network</Name>
+      <Description>TA network</Description>
+      <NetworkType>TestArticleNetwork</NetworkType>
+      <NetworkServices/>
+
+      <NetworkNode ID="TARadio">
+        <Name>TARadio</Name>
+        <InventoryID>TARadioInvID</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="TARadioApp">
+            <RoleID>TARadio-001</RoleID>
+            <LoggingLevels>
+              <Trace>true</Trace>
+              <Debug>false</Debug>
+              <Info>true</Info>
+              <Warning>false</Warning>
+              <Error>false</Error>
+              <Critical>false</Critical>
+            </LoggingLevels>
+            <ConfigurationVersion>0.0.1</ConfigurationVersion>
+            <TmNSRadio>
+              <RadioType>TA Radio</RadioType>
+              <RFAddress>24</RFAddress>
+            </TmNSRadio>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="TARadioIFace">
+          <Name>eth0</Name>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.7</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="TARadioPhyNetPort">
+            <Name>TARadio Phy Net Port</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="TARadioPort">
+            <Name>TARadioPort</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="TARadioPhyNetPort"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+
+      <NetworkNode ID="SSTTransmitter1">
+        <Name>SST Transmitter 1</Name>
+        <InventoryID>SST-00010</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="SSTTx1App">
+            <RoleID>TmNS-SSTTx-00010</RoleID>
+            <LoggingLevels>
+              <Trace>true</Trace>
+              <Debug>false</Debug>
+              <Info>true</Info>
+              <Warning>false</Warning>
+              <Error>false</Error>
+              <Critical>false</Critical>
+            </LoggingLevels>
+            <ConfigurationVersion>0.0.1</ConfigurationVersion>
+            <TmNSSSTTx>
+              <SSTTxRCCVersion>TBD</SSTTxRCCVersion>
+              <Channel ID="SSTTx1Chan1">
+                <ChannelNumber>30</ChannelNumber>
+                <CenterFrequency>
+                  <FloatValue>1800e6</FloatValue>
+                  <SIUnits>Hertz</SIUnits>
+                </CenterFrequency>
+                <RFHighPowerEnable>true</RFHighPowerEnable>
+              </Channel>
+            </TmNSSSTTx>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="SSTTx1IFace">
+          <Name>eth0</Name>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.8</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="SSTTx1PhyNetPort">
+            <Name>SST Tx 1 Phy Net Port</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="SSTTx1Port">
+            <Name>SSTTx1Port</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="SSTTx1PhyNetPort"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+
+      <NetworkNode ID="SSTTransmitter2">
+        <Name>SST Transmitter 2</Name>
+        <InventoryID>SST-00020</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="SSTTx2App">
+            <RoleID>TmNS-SSTTx-00011</RoleID>
+            <LoggingLevels>
+              <Trace>true</Trace>
+              <Debug>false</Debug>
+              <Info>true</Info>
+              <Warning>false</Warning>
+              <Error>false</Error>
+              <Critical>false</Critical>
+            </LoggingLevels>
+            <ConfigurationVersion>0.0.1</ConfigurationVersion>
+            <TmNSSSTTx>
+              <SSTTxRCCVersion>TBD</SSTTxRCCVersion>
+              <Channel ID="SSTTx2Chan1">
+                <ChannelNumber>31</ChannelNumber>
+                <CenterFrequency>
+                  <FloatValue>1850e6</FloatValue>
+                  <SIUnits>Hertz</SIUnits>
+                </CenterFrequency>
+                <RFHighPowerEnable>true</RFHighPowerEnable>
+              </Channel>
+            </TmNSSSTTx>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="SSTTx2IFace">
+          <Name>eth0</Name>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.9</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="SSTTx2PhyNetPort">
+            <Name>SST Tx 2 Phy Net Port</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="SSTTx2Port">
+            <Name>SSTTx2Port</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="SSTTx2PhyNetPort"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+
+      <Devices>
+        <Antenna>
+          <Name>TA Antenna 1</Name>
+          <Description>TA Antenna 1</Description>
+          <SSTTxs>
+            <ManageableAppRef IDREF="SSTTx1App"/>
+            <ManageableAppRef IDREF="SSTTx2App"/>
+          </SSTTxs>
+          <Radios>
+            <ManageableAppRef IDREF="TARadioApp"/>
+          </Radios>
+        </Antenna>
+      </Devices>
+    </Network>
+
+    <Network ID="GroundNetworkID">
+      <Name>Ground Network</Name>
+      <Description>Ground Network</Description>
+      <NetworkType>GroundNetwork</NetworkType>
+      <NetworkServices/>
+
+      <NetworkNode ID="GroundRadio">
+        <Name>GroundRadio</Name>
+        <InventoryID>GroundRadioInvID</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="GroundRadioApp">
+            <RoleID>GroundRadio-001</RoleID>
+            <LoggingLevels>
+              <Trace>true</Trace>
+              <Debug>false</Debug>
+              <Info>true</Info>
+              <Warning>false</Warning>
+              <Error>false</Error>
+              <Critical>false</Critical>
+            </LoggingLevels>
+            <ConfigurationVersion>0.0.1</ConfigurationVersion>
+            <TmNSRadio>
+              <RadioType>Ground Radio</RadioType>
+              <RFAddress>24</RFAddress>
+            </TmNSRadio>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="GroundRadioIFace">
+          <Name>eth0</Name>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.7</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="GroundRadioPhyNetPort">
+            <Name>GroundRadio Phy Net Port</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="GroundRadioPort">
+            <Name>GroundRadioPort</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="GroundRadioPhyNetPort"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+
+      <NetworkNode ID="SSTReceiver">
+        <Name>SST Receiver</Name>
+        <InventoryID>SST-RX-00010</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="SSTRxApp1">
+            <Name>Receiver1</Name>
+            <RoleID>TmNS-SSTRx-00010</RoleID>
+            <LoggingLevels>
+              <Trace>true</Trace>
+              <Debug>false</Debug>
+              <Info>true</Info>
+              <Warning>false</Warning>
+              <Error>false</Error>
+              <Critical>false</Critical>
+            </LoggingLevels>
+            <ConfigurationVersion>0.0.1</ConfigurationVersion>
+            <TmNSSSTRx>
+              <Channel ID="SSTRx1Chan1">
+                <ChannelNumber>30</ChannelNumber>
+                <CenterFrequency>
+                  <FloatValue>1800e6</FloatValue>
+                  <SIUnits>Hertz</SIUnits>
+                </CenterFrequency>
+              </Channel>
+              <Channel ID="SSTRx1Chan2">
+                <ChannelNumber>33</ChannelNumber>
+                <CenterFrequency>
+                  <FloatValue>1950e6</FloatValue>
+                  <SIUnits>Hertz</SIUnits>
+                </CenterFrequency>
+              </Channel>
+            </TmNSSSTRx>
+          </TmNSManageableApp>
+          <TmNSManageableApp ID="SSTRxApp2">
+            <Name>Receiver2</Name>
+            <RoleID>TmNS-SSTRx-00011</RoleID>
+            <LoggingLevels>
+              <Trace>true</Trace>
+              <Debug>false</Debug>
+              <Info>true</Info>
+              <Warning>false</Warning>
+              <Error>false</Error>
+              <Critical>false</Critical>
+            </LoggingLevels>
+            <ConfigurationVersion>0.0.1</ConfigurationVersion>
+            <TmNSSSTRx>
+              <Channel ID="SSTRx2Chan1">
+                <ChannelNumber>31</ChannelNumber>
+                <CenterFrequency>
+                  <FloatValue>1850e6</FloatValue>
+                  <SIUnits>Hertz</SIUnits>
+                </CenterFrequency>
+              </Channel>
+              <Channel ID="SSTRx2Chan2">
+                <ChannelNumber>32</ChannelNumber>
+                <CenterFrequency>
+                  <FloatValue>1900e6</FloatValue>
+                  <SIUnits>Hertz</SIUnits>
+                </CenterFrequency>
+              </Channel>
+            </TmNSSSTRx>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="SSTRxIFace">
+          <Name>eth0</Name>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.10</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="SSTRxPhyNetPort">
+            <Name>SST Tx Phy Net Port</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="SSTRxPort">
+            <Name>SSTRxPort</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="SSTRxPhyNetPort"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+
+      <NetworkNode ID="ACU1">
+        <Name>ACU1</Name>
+        <InventoryID>ACU-00010</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="ACUApp">
+            <RoleID>TmNS-ACU</RoleID>
+            <LoggingLevels>
+              <Trace>true</Trace>
+              <Debug>false</Debug>
+              <Info>true</Info>
+              <Warning>false</Warning>
+              <Error>false</Error>
+              <Critical>false</Critical>
+            </LoggingLevels>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSACU>
+              <TrackingReceiver>
+                <ManageableAppRef IDREF="SSTRxApp2"/>
+              </TrackingReceiver>
+            </TmNSACU>
+            <SNMPInterface>
+              <SNMPVersion>3</SNMPVersion>
+              <DSCPTableEntryRef IDREF="DiffservLTC"/>
+              <NetworkInterfaceRef IDREF="ACUComputerIFace"/>
+            </SNMPInterface>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="ACUComputerIFace">
+          <Name>eth0</Name>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.7</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="ACUComputerPhyNetPort">
+            <Name>ACU Computer PhyNetPort</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="ACUComputerPort">
+            <Name>ACU Computer Port</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="ACUComputerPhyNetPort"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+
+      <Devices>
+        <Antenna>
+          <Name>Ground Antenna 1</Name>
+          <Description>Antenna Site Bravo</Description>
+          <ACU>
+            <ManageableAppRef IDREF="ACUApp"/>
+          </ACU>
+          <SSTRxs>
+            <ManageableAppRef IDREF="SSTRxApp1"/>
+            <ManageableAppRef IDREF="SSTRxApp2"/>
+          </SSTRxs>
+          <Radios>
+            <ManageableAppRef IDREF="GroundRadioApp"/>
+          </Radios>
+        </Antenna>
+      </Devices>
+    </Network>
+  </NetworkDomains>
+
+  <DSCPTable>
+    <ReadOnly>true</ReadOnly>
+    <Owner>SDD Range Rules</Owner>
+    <DSCPTableEntry ID="DiffservLTC">
+      <Name>Diffserv LTC (Best Effort)</Name>
+      <Description>Diffserv LTC (Best Effort PHB)</Description>
+      <DSCPValue>0b000000</DSCPValue>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservRCLow">
+      <Name>Diffserv RC Low (Assured Forwarding DSCP 8)</Name>
+      <Description>Diffserv RC Low (Assured Forwarding DSCP 8)</Description>
+      <DSCPValue>0b001000</DSCPValue>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservRCMed">
+      <Name>Diffserv RC Med (Assured Forwarding DSCP 16)</Name>
+      <Description>Diffserv RC Med (Assured Forwarding DSCP 16)</Description>
+      <DSCPValue>0b010000</DSCPValue>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservRCHigh">
+      <Name>Diffserv RC High (Assured Forwarding DSCP 24)</Name>
+      <Description>Diffserv RC High (Assured Forwarding DSCP 24)</Description>
+      <DSCPValue>0b011000</DSCPValue>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservVideo">
+      <Name>Diffserv Video (Assured Forwarding DSCP 32)</Name>
+      <Description>Diffserv Video (Assured Forwarding DSCP 32)</Description>
+      <DSCPValue>0b100000</DSCPValue>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservVoice">
+      <Name>Diffserv Voice (Expedited Forwarding DSCP 40)</Name>
+      <Description>Diffserv Voice (Expedited Forwarding PHB)</Description>
+      <DSCPValue>0b101000</DSCPValue>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservLMLow">
+      <Name>Diffserv Link Manager Low (DSCP 48)</Name>
+      <Description>Diffserv Link Manager Low (DSCP 48)</Description>
+      <DSCPValue>0b110000</DSCPValue>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservLMHigh">
+      <Name>Diffserv Link Manager High (DSCP 56)</Name>
+      <Description>Diffserv Link Manager High (DSCP 56)</Description>
+      <DSCPValue>0b111000</DSCPValue>
+    </DSCPTableEntry>
+  </DSCPTable>
+</MDLRoot>

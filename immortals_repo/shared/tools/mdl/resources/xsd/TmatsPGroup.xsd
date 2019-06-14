@@ -1,0 +1,1571 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by Bob Comperini (Sparta Inc.) -->
+<!-- edited with XMLSpy v2009 (http://www.altova.com) by Timothy Darr (KBSI) -->
+<xs:schema xmlns="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsPGroup" xmlns:TmatsD="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsDGroup" xmlns:TmatsCommon="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsCommonTypes" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:TmatsB="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsBGroup" targetNamespace="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsPGroup" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:appinfo>
+			<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+				<annotations:changeLog>
+					<annotations:date>2016-04-26</annotations:date>
+					<annotations:version>106-17</annotations:version>
+					<annotations:author>Tim Darr</annotations:author>
+					<annotations:description>Changed namespaces and imports from 106-15 to 106-17</annotations:description>
+					<annotations:source>Normal maintenance for each release</annotations:source>
+				</annotations:changeLog>
+				<annotations:changeLog>
+					<annotations:date>2017-03-29</annotations:date>
+					<annotations:version>106-17</annotations:version>
+					<annotations:author>Tim Darr</annotations:author>
+					<annotations:description>Removed the TMATS version attribute per discussion at March 2017 RCC-TG DM meeting. Task RCC_TG_DM-13.</annotations:description>
+					<annotations:source>RCC-TG Data Multiplex Commmittee</annotations:source>
+				</annotations:changeLog>
+			</annotations:annotations>
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:import namespace="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsCommonTypes" schemaLocation="TmatsCommonTypes.xsd"/>
+	<xs:import namespace="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsDGroup" schemaLocation="TmatsDGroup.xsd"/>
+	<xs:import namespace="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsBGroup" schemaLocation="TmatsBGroup.xsd"/>
+	<xs:complexType name="AlternateTagDataType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="NumberOfTags" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ALT\N</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BitsInTag" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ALT1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BitsInDataWord" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ALT2</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FirstTagLocation" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ALT3</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Sequence" type="TmatsCommon:NormalReversedType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ALT4</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AsyncEmbeddedFormatType">
+		<xs:sequence>
+			<xs:element name="DataLinkName" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\AEF\DLN-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Supercom" type="TmatsCommon:NonNegativeIntegerOrNo" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\AEF1-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LocationDefinition" type="TmatsCommon:PCMLocationDefinitionType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\AEF2-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Location" type="xs:positiveInteger" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\AEF3-n-w</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Interval" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\AEF4-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WordLength" type="xs:positiveInteger" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\AEF5-n-w</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Mask" type="TmatsCommon:BinaryType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\AEF6-n-w</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Subcommutation" type="SubcommutationType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\AEF7-n-w, P-d\AEF8-n-w-m, P-d\AEF9-n-w-m, P-d\AEF10</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Chapter7FormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>P</annotations:group>
+						<annotations:code>P-d\C7\N</annotations:code>
+						<annotations:derivationMethod>inferred</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+					<annotations:changeLog>
+						<annotations:date>2016-11-30</annotations:date>
+						<annotations:version>106-17</annotations:version>
+						<annotations:author>Tim Darr</annotations:author>
+						<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-2</annotations:description>
+						<annotations:source>Committee input</annotations:source>
+					</annotations:changeLog>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Chapter7FirstWordOfSegment" type="xs:positiveInteger">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\C7FW-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Chapter7NumberOfPCMWordsInSegment" type="xs:positiveInteger">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\C7NW-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AsynchronousDataMergeFormatType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="Name" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM\DMN-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaskAndPattern" type="MaskAndPatternType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM\MP-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Supercom" type="TmatsCommon:NonNegativeIntegerOrNo" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM1-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LocationDefinition" type="TmatsCommon:PCMLocationDefinitionType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM2-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Location" type="xs:string" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM3-n-w</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Interval" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM4-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Length" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM5-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MSBLocation" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM6-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parity" type="TmatsCommon:OddEvenNoneType" default="None" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM7-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Subcommutation" type="SubcommutationType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM8-n-w, P-d\ADM9-n-w-m, P-d\ADM10-n-w-m, P-d\ADM11</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="BusParityOddNoneType">
+		<xs:union memberTypes="TmatsCommon:OddType TmatsCommon:NoneType"/>
+	</xs:simpleType>
+	<xs:complexType name="CRCType">
+		<xs:sequence>
+			<xs:element name="Type" default="None" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\CRC</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="CRC-16-ANSI"/>
+						<xs:enumeration value="CRC-16-CCITT"/>
+						<xs:enumeration value="CRC-32-ANSI"/>
+						<xs:enumeration value="None"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="CheckWordStartingBit" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\CRCCB</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DataStartBit" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\CRCDB</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DataNumberOfBits" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\CRCDN</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PBusAttributesType">
+		<xs:complexContent>
+			<xs:extension base="TmatsB:BusAttributesCommonType">
+				<xs:sequence>
+					<xs:element name="Bus" type="PBusType" maxOccurs="16"/>
+					<xs:element name="BusParity" type="BusParityOddNoneType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PBusType">
+		<xs:complexContent>
+			<xs:extension base="TmatsB:BusType">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:changeLog>
+								<annotations:date>2017-08-04</annotations:date>
+								<annotations:version>106-17</annotations:version>
+								<annotations:author>Tim Darr</annotations:author>
+								<annotations:description>Extended from TmatsB:BusType so that messages are included. Task RCC_TG_DM-14.</annotations:description>
+								<annotations:source>Paul Fleischer</annotations:source>
+							</annotations:changeLog>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:sequence minOccurs="0">
+					<xs:element name="UserDefined" type="UserDefinedType" minOccurs="0"/>
+					<xs:element name="MeasurementName" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FormatChangeType">
+		<xs:sequence>
+			<xs:element name="FrameFormatIdentifier" type="FrameFormatIdentifierType" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="MeasurementListChange" type="MeasurementListChangeType" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:appinfo>
+							<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+								<annotations:chapter9Reference>
+									<annotations:group>P</annotations:group>
+									<annotations:code>P-d\MLC\N</annotations:code>
+									<annotations:derivationMethod>direct</annotations:derivationMethod>
+								</annotations:chapter9Reference>
+							</annotations:annotations>
+						</xs:appinfo>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="FormatStructureChange" type="FormatStructureChangeType" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:appinfo>
+							<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+								<annotations:chapter9Reference>
+									<annotations:group>P</annotations:group>
+									<annotations:code>P-d\FSC\N</annotations:code>
+									<annotations:derivationMethod>direct</annotations:derivationMethod>
+								</annotations:chapter9Reference>
+							</annotations:annotations>
+						</xs:appinfo>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FormatStructureChangeType">
+		<xs:sequence>
+			<xs:element name="FFIPattern" type="TmatsCommon:BinaryType">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\FSC1-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DataLinkName" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\FSC2-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FormatType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="TypeFormat" type="TmatsCommon:PCMTypeFormatType" default="Class 1" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\TF</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CommonWordLength" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\F1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:nonNegativeInteger">
+						<xs:minInclusive value="4"/>
+						<xs:maxInclusive value="64"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WordTransferOrder" type="TmatsCommon:MSBLSBFirstType" default="MSB First" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\F2</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parity" type="TmatsCommon:OddEvenNoneType" default="None" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\F3</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParityTransferOrder" type="TmatsCommon:ParityTransferOrderType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\F4</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CRC" type="CRCType" minOccurs="0"/>
+			<xs:element name="MinorFrame" type="MinorFrameType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FrameFormatIdentifierType">
+		<xs:sequence>
+			<xs:element name="Location" type="xs:positiveInteger">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\FFI1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Mask" type="TmatsCommon:BinaryType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\FFI2</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="IDCounterType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="Name" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ISF1-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SyncType" type="TmatsCommon:PCMSubframeSyncTypeType" default="ID Counter" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ISF2-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Location" type="xs:nonNegativeInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\IDC1-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CounterStartingBitLocation" type="xs:nonNegativeInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\IDC3-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CounterLength" type="xs:nonNegativeInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\IDC4-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransferOrder" type="TmatsCommon:TransferOrderType" default="Default" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\IDC5-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InitialValue" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\IDC6-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InitialMinorFrameNumber" type="xs:positiveInteger" default="1" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\IDC7-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EndValue" type="xs:integer" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\IDC8-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EndMinorFrameNumber" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\IDC9-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CountDirection" type="TmatsCommon:IDCountDirectionType" default="Increasing" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\IDC10-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InputDataType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="PCMCode" type="TmatsCommon:PCMCodeType" default="NRZ-L" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BitRate" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D2</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:double">
+						<xs:minInclusive value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Encrypted" type="TmatsCommon:EncryptedType" default="Unencrypted" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D3</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Polarity" type="TmatsCommon:PolarityType" default="Normal" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D4</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AutoPolarityCorrection" type="TmatsCommon:YesNoType" default="No" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D5</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DataDirection" type="TmatsCommon:NormalReversedType" default="Normal" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D6</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DataRandomized" type="TmatsCommon:YesNoType" default="No" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D7</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RandomizerLength" type="TmatsCommon:RandomizerLengthType" default="Standard" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D8</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InSyncType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="Criteria" type="TmatsCommon:NonNegativeIntegerOrNotSpecified" default="Not Specified" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\SYNC1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NumberOfFSPBits" type="xs:nonNegativeInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\SYNC2</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MaskAndPatternType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="OverheadMask" type="TmatsCommon:BinaryType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM\OHM-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FreshDataPattern" type="TmatsCommon:BinaryType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM\FDP-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DataOverflowPattern" type="TmatsCommon:BinaryType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM\DOP-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StaleDataPattern" type="TmatsCommon:BinaryType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM\SDP-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UserDefinedPattern" type="TmatsCommon:BinaryType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ADM\UDP-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MeasurementListChangeType">
+		<xs:sequence>
+			<xs:element name="FFIPattern" type="TmatsCommon:BinaryType">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\MLC1-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MeasurementListName" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\MLC2-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MinorFrameType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="NumberOfMinorFrames" default="1">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\MF\N</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:nonNegativeInteger">
+						<xs:maxInclusive value="256"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="WordsPerMinorFrame" type="xs:nonNegativeInteger">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\MF1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BitsPerMinorFrame" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\MF2</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:nonNegativeInteger">
+						<xs:maxInclusive value="16384"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SyncType" type="TmatsCommon:PCMSyncTypeType" default="Fixed Pattern" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\MF3</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SyncPattern" type="TmatsCommon:BinaryWithDontCareType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\MF4, P-d\MF5</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OutOfSyncType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="NumberOfDisagrees" type="TmatsCommon:NonNegativeIntegerOrNotSpecified" default="Not Specified" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\SYNC3</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NumberOfFSPBits" type="xs:nonNegativeInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\SYNC4</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FillBits" type="xs:nonNegativeInteger" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\SYNC5</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RecordingDescriptionType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="TrackSequence" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\TS-i-k</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubcommutationType">
+		<xs:sequence>
+			<xs:element name="StartFrame" type="xs:positiveInteger" default="1" minOccurs="0"/>
+			<xs:element name="FrameInterval" type="xs:nonNegativeInteger" default="1" minOccurs="0"/>
+			<xs:element name="EndFrame" type="xs:positiveInteger" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>If absent, number of frames in PCM format is assumed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubframeSynchronizationType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="IDCounter" type="IDCounterType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SyncCriteriaType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="InSync" type="InSyncType" minOccurs="0"/>
+			<xs:element name="OutOfSync" type="OutOfSyncType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UniqueWordSizeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>P</annotations:group>
+						<annotations:code>P-d\MFW1\N</annotations:code>
+						<annotations:derivationMethod>inferred</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+					<annotations:changeLog>
+						<annotations:date>2016-12-01</annotations:date>
+						<annotations:version>106-17</annotations:version>
+						<annotations:author>Tim Darr</annotations:author>
+						<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-7</annotations:description>
+						<annotations:source>Committee input</annotations:source>
+					</annotations:changeLog>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="WordNumber" type="xs:positiveInteger">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\MFW1-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+							<annotations:changeLog>
+								<annotations:date>2016-12-01</annotations:date>
+								<annotations:version>106-17</annotations:version>
+								<annotations:author>Tim Darr</annotations:author>
+								<annotations:description>Modified the name and code per Chapter 9 106-17, TENA issue RCC_TG_DM-7</annotations:description>
+								<annotations:source>Committee input</annotations:source>
+							</annotations:changeLog>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NumberOfBitsInWord" type="xs:positiveInteger">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\MFW2-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+							<annotations:changeLog>
+								<annotations:date>2016-12-01</annotations:date>
+								<annotations:version>106-17</annotations:version>
+								<annotations:author>Tim Darr</annotations:author>
+								<annotations:description>Modified the name and code per Chapter 9 106-17, TENA issue RCC_TG_DM-7</annotations:description>
+								<annotations:source>Committee input</annotations:source>
+							</annotations:changeLog>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VariableWordLengthType">
+		<xs:sequence>
+			<xs:element name="UniqueWordSize" type="UniqueWordSizeType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\MFW\N</annotations:code>
+								<annotations:derivationMethod>inferred</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+							<annotations:changeLog>
+								<annotations:date>2016-12-01</annotations:date>
+								<annotations:version>106-17</annotations:version>
+								<annotations:author>Tim Darr</annotations:author>
+								<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-7</annotations:description>
+								<annotations:source>Committee input</annotations:source>
+							</annotations:changeLog>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="UserDefinedType">
+		<xs:sequence minOccurs="0">
+			<xs:element name="Word1" type="Word1Type" minOccurs="0"/>
+			<xs:element name="Word2" type="Word2Type" minOccurs="0"/>
+			<xs:element name="Word3" type="Word3Type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Word1Type">
+		<xs:sequence minOccurs="0">
+			<xs:element name="MeasurementName" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\UMN1-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parity" type="TmatsCommon:OddEvenNoneType" default="None" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U1P-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParityTransferOrder" type="TmatsCommon:ParityTransferOrderType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U1PT-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BitMask" type="TmatsCommon:MeasurementBitMaskType" default="Full Word" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U1M-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransferOrder" type="TmatsCommon:TransferOrderType" default="MSB First" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U1T-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Word2Type">
+		<xs:sequence minOccurs="0">
+			<xs:element name="MeasurementName" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\UMN2-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parity" type="TmatsCommon:OddEvenNoneType" default="None" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U2P-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParityTransferOrder" type="TmatsCommon:ParityTransferOrderType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U2PT-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BitMask" type="TmatsCommon:MeasurementBitMaskType" default="Full Word" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U2M-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransferOrder" type="TmatsCommon:TransferOrderType" default="MSB First" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U2T-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Word3Type">
+		<xs:sequence minOccurs="0">
+			<xs:element name="MeasurementName" type="xs:string">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\UMN3-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parity" type="TmatsCommon:OddEvenNoneType" default="None" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U3P-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParityTransferOrder" type="TmatsCommon:ParityTransferOrderType" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U3PT-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BitMask" type="TmatsCommon:MeasurementBitMaskType" default="Full Word" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U3M-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransferOrder" type="TmatsCommon:TransferOrderType" default="MSB First" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>B</annotations:group>
+								<annotations:code>B-x\U3T-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PCMFormatAttributesType">
+		<xs:annotation>
+			<xs:documentation>TMATS P-Group</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="InputData" type="InputDataType" minOccurs="0"/>
+			<xs:element name="Format" type="FormatType" minOccurs="0"/>
+			<xs:element name="SyncCriteria" type="SyncCriteriaType" minOccurs="0"/>
+			<xs:element name="VariableWordLength" type="VariableWordLengthType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SubframeSynchronization" type="SubframeSynchronizationType" minOccurs="0"/>
+			<xs:element name="AsyncEmbeddedFormat" type="AsyncEmbeddedFormatType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="FormatChange" type="FormatChangeType" minOccurs="0"/>
+			<xs:element name="AlternateTagData" type="AlternateTagDataType" minOccurs="0"/>
+			<xs:element name="AsynchronousDataMergeFormat" type="AsynchronousDataMergeFormatType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Chapter7Format" type="Chapter7FormatType" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:changeLog>
+								<annotations:date>2016-11-30</annotations:date>
+								<annotations:version>106-17</annotations:version>
+								<annotations:author>Tim Darr</annotations:author>
+								<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-2</annotations:description>
+								<annotations:source>Committee input</annotations:source>
+							</annotations:changeLog>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comments" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\COM</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Based upon value of TypeFormat</xs:documentation>
+				</xs:annotation>
+				<xs:element name="PCMMeasurements" type="TmatsD:PCMMeasurementsType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>TMATS D Group</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="BusAttributes" type="PBusAttributesType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>TMATS B Group</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute ref="TmatsCommon:ID" use="required">
+			<xs:annotation>
+				<xs:documentation>Added in 106-15 at the request of MDL for C,D,P,B groups</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

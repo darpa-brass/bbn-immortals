@@ -1,5 +1,7 @@
 <DAUInventory>
   <NetworkNode ID="XTTCDAU">
+    <Name>VendorB_DAU</Name>
+    <Description>TA1 VendorB DAU Network Node</Description>
     <GenericParameter>
       <NameValues>
         <NameValue Name="User" Index="1">BBN</NameValue>
@@ -7,8 +9,6 @@
       <BBNDauMonetaryCost>80000</BBNDauMonetaryCost>
       <BBNDauOpportunityCost>2345</BBNDauOpportunityCost>
     </GenericParameter>
-    <Name>VendorB_DAU</Name>
-    <Description>TA1 VendorB DAU Network Node</Description>
     <InventoryID>TA1-VendorB-DAU1</InventoryID>
     <HostName>VendorB</HostName>
     <Manufacturer>VendorB</Manufacturer>
@@ -41,12 +41,6 @@
     <InternalStructure>
       <Modules>
         <Module ID="xmodule-101">
-          <GenericParameter>
-            <NameValues>
-              <NameValue Name="User" Index="1">BBN</NameValue>
-            </NameValues>
-            <BBNModuleFunctionality>IgnoredModule</BBNModuleFunctionality>
-          </GenericParameter>
           <Name>VendorB Module101</Name>
           <Description>VendorB Processor</Description>
           <Manufacturer>VendorB</Manufacturer>
@@ -98,12 +92,6 @@
           </Ports>
         </Module>
         <Module ID="xmodule-102">
-          <GenericParameter>
-            <NameValues>
-              <NameValue Name="User" Index="1">BBN</NameValue>
-            </NameValues>
-            <BBNModuleFunctionality>IgnoredModule</BBNModuleFunctionality>
-          </GenericParameter>
           <Name>VendorB Module102</Name>
           <Description>VendorB Controller</Description>
           <Manufacturer>VendorB</Manufacturer>
@@ -310,14 +298,14 @@
           </Ports>
         </Module>
         <Module ID="xmodule-1A">
+          <Name>Card A at Position 1</Name>
+          <Description>2-channel Simultaneous Sampling Signal Conditioner</Description>
           <GenericParameter>
             <NameValues>
               <NameValue Name="User" Index="1">BBN</NameValue>
             </NameValues>
-            <BBNModuleFunctionality>SignalConditionerModule</BBNModuleFunctionality>
+            <BBNModuleFunctionality>SignalConditioner</BBNModuleFunctionality>
           </GenericParameter>
-          <Name>Card A at Position 1</Name>
-          <Description>2-channel Simultaneous Sampling Signal Conditioner</Description>
           <Manufacturer>VendorB</Manufacturer>
           <Model>VendorB</Model>
           <SerialID>250020</SerialID>
@@ -403,6 +391,8 @@
           </Connectors>
           <Ports>
             <Port Enabled="true" ID="Module1A-Ch1" Index="1">
+              <Name>Ch1</Name>
+              <Description>Channel 1 Signal Input</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -413,8 +403,6 @@
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
               </GenericParameter>
-              <Name>Ch1</Name>
-              <Description>Channel 1 Signal Input</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Analog</PortType>
@@ -425,6 +413,8 @@
               </PinRefs>
             </Port>
             <Port Enabled="true" ID="Module1A-Ch2" Index="2">
+              <Name>Ch2</Name>
+              <Description>Channel 2 Signal Input</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -435,8 +425,6 @@
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
               </GenericParameter>
-              <Name>Ch2</Name>
-              <Description>Channel 2 Signal Input</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Analog</PortType>
@@ -576,14 +564,14 @@
           </SubModules>
         </Module>
         <Module ID="xmodule-1B">
+          <Name>Card B at Position 2</Name>
+          <Description>2-channel Simultaneous Sampling Signal Conditioner</Description>
           <GenericParameter>
             <NameValues>
               <NameValue Name="User" Index="1">BBN</NameValue>
             </NameValues>
-            <BBNModuleFunctionality>SignalConditionerModule</BBNModuleFunctionality>
+            <BBNModuleFunctionality>SignalConditioner</BBNModuleFunctionality>
           </GenericParameter>
-          <Name>Card B at Position 2</Name>
-          <Description>2-channel Simultaneous Sampling Signal Conditioner</Description>
           <Manufacturer>VendorB</Manufacturer>
           <Model>VendorB</Model>
           <SerialID>250020</SerialID>
@@ -669,6 +657,8 @@
           </Connectors>
           <Ports>
             <Port Enabled="true" ID="Module1B-Ch1" Index="1">
+              <Name>Ch1</Name>
+              <Description>Channel 1 Signal Input</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -679,8 +669,6 @@
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
               </GenericParameter>
-              <Name>Ch1</Name>
-              <Description>Channel 1 Signal Input</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Analog</PortType>
@@ -691,6 +679,8 @@
               </PinRefs>
             </Port>
             <Port Enabled="true" ID="Module1B-Ch2" Index="2">
+              <Name>Ch2</Name>
+              <Description>Channel 2 Signal Input</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -701,8 +691,6 @@
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
               </GenericParameter>
-              <Name>Ch2</Name>
-              <Description>Channel 2 Signal Input</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Analog</PortType>
@@ -842,14 +830,14 @@
           </SubModules>
         </Module>
         <Module ID="xmodule-1C">
+          <Name>Card C at Position 3</Name>
+          <Description>2-channel Simultaneous Sampling Signal Conditioner</Description>
           <GenericParameter>
             <NameValues>
               <NameValue Name="User" Index="1">BBN</NameValue>
             </NameValues>
-            <BBNModuleFunctionality>SignalConditionerModule</BBNModuleFunctionality>
+            <BBNModuleFunctionality>SignalConditioner</BBNModuleFunctionality>
           </GenericParameter>
-          <Name>Card C at Position 3</Name>
-          <Description>2-channel Simultaneous Sampling Signal Conditioner</Description>
           <Manufacturer>VendorB</Manufacturer>
           <Model>VendorB</Model>
           <SerialID>250020</SerialID>
@@ -935,6 +923,8 @@
           </Connectors>
           <Ports>
             <Port Enabled="true" ID="Module1C-Ch1" Index="1">
+              <Name>Ch1</Name>
+              <Description>Channel 1 Signal Input</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -945,8 +935,6 @@
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
               </GenericParameter>
-              <Name>Ch1</Name>
-              <Description>Channel 1 Signal Input</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Analog</PortType>
@@ -957,6 +945,8 @@
               </PinRefs>
             </Port>
             <Port Enabled="true" ID="Module1C-Ch2" Index="2">
+              <Name>Ch2</Name>
+              <Description>Channel 2 Signal Input</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -967,8 +957,6 @@
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
               </GenericParameter>
-              <Name>Ch2</Name>
-              <Description>Channel 2 Signal Input</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Analog</PortType>
@@ -1108,14 +1096,14 @@
           </SubModules>
         </Module>
         <Module ID="xmodule-2A">
+          <Name>Position 4</Name>
+          <Description>4-channel thermocouple conditioner</Description>
           <GenericParameter>
             <NameValues>
               <NameValue Name="User" Index="1">BBN</NameValue>
             </NameValues>
-            <BBNModuleFunctionality>ThermocoupleConditionerModule</BBNModuleFunctionality>
+            <BBNModuleFunctionality>ThermocoupleConditioner</BBNModuleFunctionality>
           </GenericParameter>
-          <Name>Position 4</Name>
-          <Description>4-channel thermocouple conditioner</Description>
           <Manufacturer>VendorB</Manufacturer>
           <Model>TBD</Model>
           <SerialID>251874</SerialID>
@@ -1172,6 +1160,8 @@
           </Connectors>
           <Ports>
             <Port Enabled="true" ID="Module2A-Ch1" Index="1">
+              <Name>Ch1</Name>
+              <Description>Channel 1</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -1186,8 +1176,6 @@
                 <PortType Thermocouple="T">Thermocouple</PortType>
                 <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
-              <Name>Ch1</Name>
-              <Description>Channel 1</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType Thermocouple="J">Thermocouple</PortType>
@@ -1198,6 +1186,8 @@
               </PinRefs>
             </Port>
             <Port Enabled="true" ID="Module2A-Ch2" Index="2">
+              <Name>Ch2</Name>
+              <Description>Channel 2</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -1212,8 +1202,6 @@
                 <PortType Thermocouple="T">Thermocouple</PortType>
                 <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
-              <Name>Ch2</Name>
-              <Description>Channel 2</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType Thermocouple="J">Thermocouple</PortType>
@@ -1224,6 +1212,8 @@
               </PinRefs>
             </Port>
             <Port Enabled="true" ID="Module2A-Ch3" Index="3">
+              <Name>Ch3</Name>
+              <Description>Channel 3</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -1238,8 +1228,6 @@
                 <PortType Thermocouple="T">Thermocouple</PortType>
                 <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
-              <Name>Ch3</Name>
-              <Description>Channel 3</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType Thermocouple="J">Thermocouple</PortType>
@@ -1250,6 +1238,8 @@
               </PinRefs>
             </Port>
             <Port Enabled="true" ID="Module2A-Ch4" Index="4">
+              <Name>Ch4</Name>
+              <Description>Channel 4</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -1264,8 +1254,6 @@
                 <PortType Thermocouple="T">Thermocouple</PortType>
                 <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
-              <Name>Ch4</Name>
-              <Description>Channel 4</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType Thermocouple="J">Thermocouple</PortType>
@@ -1278,14 +1266,14 @@
           </Ports>
         </Module>
         <Module ID="xmodule-2B">
+          <Name>Position 5</Name>
+          <Description>4-channel thermocouple conditioner</Description>
           <GenericParameter>
             <NameValues>
               <NameValue Name="User" Index="1">BBN</NameValue>
             </NameValues>
-            <BBNModuleFunctionality>ThermocoupleConditionerModule</BBNModuleFunctionality>
+            <BBNModuleFunctionality>ThermocoupleConditioner</BBNModuleFunctionality>
           </GenericParameter>
-          <Name>Position 5</Name>
-          <Description>4-channel thermocouple conditioner</Description>
           <Manufacturer>VendorB</Manufacturer>
           <Model>TBD</Model>
           <SerialID>251874</SerialID>
@@ -1342,6 +1330,8 @@
           </Connectors>
           <Ports>
             <Port Enabled="true" ID="Module2B-Ch1" Index="1">
+              <Name>Ch1</Name>
+              <Description>Channel 1</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -1356,8 +1346,6 @@
                 <PortType Thermocouple="T">Thermocouple</PortType>
                 <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
-              <Name>Ch1</Name>
-              <Description>Channel 1</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType Thermocouple="J">Thermocouple</PortType>
@@ -1368,6 +1356,8 @@
               </PinRefs>
             </Port>
             <Port Enabled="true" ID="Module2B-Ch2" Index="2">
+              <Name>Ch2</Name>
+              <Description>Channel 2</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -1382,8 +1372,6 @@
                 <PortType Thermocouple="T">Thermocouple</PortType>
                 <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
-              <Name>Ch2</Name>
-              <Description>Channel 2</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType Thermocouple="J">Thermocouple</PortType>
@@ -1394,6 +1382,8 @@
               </PinRefs>
             </Port>
             <Port Enabled="true" ID="Module2B-Ch3" Index="3">
+              <Name>Ch3</Name>
+              <Description>Channel 3</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -1408,8 +1398,6 @@
                 <PortType Thermocouple="T">Thermocouple</PortType>
                 <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
-              <Name>Ch3</Name>
-              <Description>Channel 3</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType Thermocouple="J">Thermocouple</PortType>
@@ -1420,6 +1408,8 @@
               </PinRefs>
             </Port>
             <Port Enabled="true" ID="Module2B-Ch4" Index="4">
+              <Name>Ch4</Name>
+              <Description>Channel 4</Description>
               <GenericParameter>
                 <NameValues>
                   <NameValue Name="User" Index="1">BBN</NameValue>
@@ -1434,8 +1424,6 @@
                 <PortType Thermocouple="T">Thermocouple</PortType>
                 <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
-              <Name>Ch4</Name>
-              <Description>Channel 4</Description>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType Thermocouple="J">Thermocouple</PortType>

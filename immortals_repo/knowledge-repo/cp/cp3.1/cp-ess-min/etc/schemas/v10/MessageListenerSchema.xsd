@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:mdl="http://inetprogram.org/projects/MDL"
+    targetNamespace="http://mls.securboration.com/wsdl">
+
+    <xs:import namespace="http://inetprogram.org/projects/MDL"
+        schemaLocation="MDL_v0_8_10.xsd" />
+
+    <xs:element name="ingestMessageRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="message" type="mdl:MDLRootType" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="ingestMessageResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="message" type="mdl:MDLRootType" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  
+  <xs:element name="pingResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="delta" type="xs:long" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="pingRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="timestamp" type="xs:long" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  
+
+</xs:schema>

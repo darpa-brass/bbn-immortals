@@ -24,8 +24,22 @@ import com.securboration.immortals.service.eos.api.types.SchemaDefinition;
 public class EvaluationPackageBuilder {
 
     public static enum MdlSchemaVersion{
-        MDL_V0_8_17("v1","v17","V0_8_17"),
-        MDL_V0_8_19("v2","v19","V0_8_19"),
+//        MDL_V0_8_17("v1","v17","V0_8_17"),
+//        MDL_V0_8_19("v2","v19","V0_8_19"),
+        
+        
+        MDL_V0_8_7("v7","v7","V0_8_7","v0_8_7"),
+        MDL_V0_8_8("v8","v8","V0_8_8","v0_8_8"),
+        MDL_V0_8_9("v9","v9","V0_8_9","v0_8_9"),
+        MDL_V0_8_10("v10","v10","V0_8_10","v0_8_10"),
+        MDL_V0_8_11("v11","v11","V0_8_11","v0_8_11"),
+        MDL_V0_8_12("v12","v12","V0_8_12","v0_8_12"),
+        MDL_V0_8_13("v13","v13","V0_8_13","v0_8_13"),
+        MDL_V0_8_14("v14","v14","V0_8_14","v0_8_14"),
+        MDL_V0_8_16("v16","v16","V0_8_16","v0_8_16"),
+        MDL_V0_8_17("v17","v17","V0_8_17","v0_8_17"),
+        MDL_V0_8_19("v19","v19","V0_8_19","v0_8_19"),
+        
         ;
         
         private final String tag;
@@ -372,6 +386,128 @@ public class EvaluationPackageBuilder {
         return config;
     }
     
+    
+//    public static void main(String[] args) throws Exception {
+//        final File mdlArchive = new File("C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\etc\\mdl\\mdl-clean.zip");
+//        
+//        final File extracted = extract(mdlArchive.getCanonicalPath());
+//        final File out = new File("./configs.zip");
+//        
+//        try(
+//                FileOutputStream fos = new FileOutputStream(out);
+//                ZipOutputStream zos = new ZipOutputStream(fos);
+//                ){
+//            
+//            System.out.printf("%s\n", extracted.getCanonicalPath());
+//            for(final File src:extracted.listFiles()){
+//                if(!src.isDirectory()){
+//                    continue;
+//                }
+//                
+//                for(final File dst:extracted.listFiles()){
+//                    if(!dst.isDirectory()){
+//                        continue;
+//                    }
+//                    
+//                    for(final File ds:extracted.listFiles()){
+//                        if(!ds.isDirectory()){
+//                            continue;
+//                        }
+//                        
+//                        if(!ds.getName().equals(src.getName())){
+//                            continue;
+//                        }//TODO: this skips over all cases where datasource != dst
+//                        
+//                        final String tag = String.format(
+//                            "client=%sdatasource=%sserver=%s", 
+//                            src.getName(),
+//                            ds.getName(),
+//                            dst.getName()
+//                            );
+//                        
+//                        
+//                        System.out.printf("\t%s\n",tag);
+//                        
+//                        //dir
+//                        // datasource
+//                        // schema
+//                        //  client
+//                        //  datasource
+//                        //  server
+//
+//                        final File datasourceDir = new File(ds,"datasource");
+//                        final File datasourceSchemaDir = new File(ds,"schema");
+//                        final File clientSchemaDir = new File(src,"schema");
+//                        final File serverSchemaDir = new File(dst,"schema");
+//                        
+//                        final EvaluationConfiguration config = createCustomEvaluationPackage(
+//                                clientSchemaDir,//final File dirContainingClientXsds,
+//                                serverSchemaDir,//final File dirContainingServerXsds,
+//                                datasourceSchemaDir,//final File dirContainingDatasourceXsds,
+//                                datasourceDir,//final File dirContainingDatasourceXmlDocs,
+//                                null//final byte[] cheatZip
+//                                );
+//
+//                        final String json = new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(config);
+//                        
+//                        ZipEntry e = new ZipEntry("configs/" + tag);
+//                        {
+//                            zos.putNextEntry(e);
+//                            IOUtils.write(json.getBytes(StandardCharsets.UTF_8), zos);
+//                            zos.closeEntry();
+//                        }
+//                    }
+//                }
+//            }
+//            
+//        }
+//        
+//        
+//    }
+    
+    
+//    private static File extract(final String zipPath) throws IOException{
+//        final File zipInput = new File(zipPath);
+//        final File unzippedOutput = new File("./tmp");
+//        
+//        {
+//            if(unzippedOutput.exists()){
+//                FileUtils.deleteDirectory(unzippedOutput);
+//            }
+//            FileUtils.forceMkdir(unzippedOutput);
+//            unzippedOutput.deleteOnExit();
+//        }
+//
+//        System.out.printf("unzipping %s into %s\n", zipInput, unzippedOutput.getCanonicalPath());
+//        {
+//            try (
+//                    java.util.zip.ZipFile zipFile = new ZipFile(zipInput);
+//                    ) {
+//                final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+//                while (entries.hasMoreElements()) {
+//                    final ZipEntry entry = entries.nextElement();
+//                    final File entryDestination = new File(unzippedOutput, entry.getName());
+//                    if (entry.isDirectory()) {
+//                        entryDestination.mkdirs();
+//                        System.out.printf("\t%s\n",entry.getName());
+//                    } else {
+//                        entryDestination.getParentFile().mkdirs();
+//                        try (
+//                                final InputStream in = zipFile.getInputStream(entry);
+//                                final OutputStream out = new FileOutputStream(entryDestination);
+//                                ) {
+//                            IOUtils.copy(in, out);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        System.out.printf("done unzipping into %s\n", unzippedOutput.getCanonicalPath());
+//        
+//        return new File(unzippedOutput,"mdl-clean");
+//    }
+//    
+//    
 //    public static void main(String[] args) throws IOException{
 //        
 //        final File templateDir = new File("../cp-ess");

@@ -1,0 +1,2525 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by Bob Comperini (Sparta Inc.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsCommonTypes" targetNamespace="http://www.wsmr.army.mil/RCC/schemas/TMATS/TmatsCommonTypes" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:annotation>
+		<xs:appinfo>
+			<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+				<annotations:changeLog>
+					<annotations:date>2016-04-26</annotations:date>
+					<annotations:version>106-17</annotations:version>
+					<annotations:author>Tim Darr</annotations:author>
+					<annotations:description>Changed namespaces and imports from 106-15 to 106-17</annotations:description>
+					<annotations:source>Normal maintenance for each release</annotations:source>
+				</annotations:changeLog>
+				<annotations:changeLog>
+					<annotations:date>2017-03-29</annotations:date>
+					<annotations:version>106-17</annotations:version>
+					<annotations:author>Tim Darr</annotations:author>
+					<annotations:description>Removed the TMATS version attribute per discussion at March 2017 RCC-TG DM meeting. Task RCC_TG_DM-13.</annotations:description>
+					<annotations:source>RCC-TG Data Multiplex Commmittee</annotations:source>
+				</annotations:changeLog>
+			</annotations:annotations>
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:attribute name="ID" type="xs:ID">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:changeLog>
+						<annotations:date>2015-04-26</annotations:date>
+						<annotations:version>106-15</annotations:version>
+						<annotations:author>Tim Darr</annotations:author>
+						<annotations:description>Added this element</annotations:description>
+						<annotations:source>Added in 106-15 at the request of MDL for C,D,P,B groups</annotations:source>
+					</annotations:changeLog>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:simpleType name="AFCAPCType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>T</annotations:group>
+						<annotations:code>T-x\GST5</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Automatic Frequency Control"/>
+			<xs:enumeration value="Automatic Phase Control"/>
+			<xs:enumeration value="None"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AnalogAudioFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\AVF</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Raw"/>
+			<xs:enumeration value="WAV"/>
+			<xs:enumeration value="LPCM"/>
+			<xs:enumeration value="AC3"/>
+			<xs:enumeration value="PreD"/>
+			<xs:enumeration value="PstD"/>
+			<xs:enumeration value="CvsD">
+				<xs:annotation>
+					<xs:documentation>Added in 106-15</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AnalogAudioType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\AV</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Audio Present"/>
+			<xs:enumeration value="Audio Not Present"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AnalogCouplingType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\ACP</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AC"/>
+			<xs:enumeration value="DC"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AnalogDataPackingOptionType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\ADP</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Packed"/>
+			<xs:enumeration value="Unpacked"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AnalogDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\ATF</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (Reserved)"/>
+			<xs:enumeration value="Format 1 (Analog Data)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AnalogInputTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\AIT</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Single Ended"/>
+			<xs:enumeration value="Differential"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AnalogRecordedFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\AF</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="One's Complement"/>
+			<xs:enumeration value="Two's Complement"/>
+			<xs:enumeration value="Sign and Magnitude Binary (+=0)"/>
+			<xs:enumeration value="Sign and Magnitude Binary (+=1)"/>
+			<xs:enumeration value="Offset Binary"/>
+			<xs:enumeration value="Unsigned Binary"/>
+			<xs:enumeration value="IEEE 754 Single Precision"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Arinc429DataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\ABTF</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (ARINC 429 Data)"/>
+			<xs:enumeration value="Format 1 (Reserved)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ArincMessageDefinitionCodeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>B</annotations:group>
+						<annotations:code>B-x\SDI</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALL SDI"/>
+			<xs:enumeration value="SDI Code 0"/>
+			<xs:enumeration value="SDI Code 1"/>
+			<xs:enumeration value="SDI Code 2"/>
+			<xs:enumeration value="SDI Code 3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BasebandSignalTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>M</annotations:group>
+						<annotations:code>M-x\BSG1</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:union memberTypes="LinkTypeType">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="None"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="BinaryType">
+		<xs:annotation>
+			<xs:documentation>Any Binary field (Bitmasks, etc), made up of 1's and 0's only</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-1]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BinaryFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>C</annotations:group>
+						<annotations:code>C-d\BFM</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Integer"/>
+			<xs:enumeration value="Unsigned Binary"/>
+			<xs:enumeration value="Sign and Magnitude Binary (+=0)"/>
+			<xs:enumeration value="Sign and Magnitude Binary (+=1)"/>
+			<xs:enumeration value="One's Complement"/>
+			<xs:enumeration value="Two's Complement"/>
+			<xs:enumeration value="Offset Binary"/>
+			<xs:enumeration value="Floating Point"/>
+			<xs:enumeration value="Binary Coded Decimal"/>
+			<xs:enumeration value="Bit Weight"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BinaryWithDontCareType">
+		<xs:annotation>
+			<xs:documentation>Generic binary type with don't care character. Legal values, 0,1,X</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-1|X]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BitWeightValueType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>C</annotations:group>
+						<annotations:code>C-d\BWTV</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:union memberTypes="xs:double">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="S"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="BlocksToAllocateType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\VLBA</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="All"/>
+			<xs:enumeration value="Available"/>
+			<xs:enumeration value="Number of Blocks"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BusDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\BTF</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (Reserved)"/>
+			<xs:enumeration value="Format 1 (MIL-STD-1553B Data)"/>
+			<xs:enumeration value="Format 2 (16PP194 Bus)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BusTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>B</annotations:group>
+						<annotations:code>B-x\BT-i</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1553"/>
+			<xs:enumeration value="ARINC 429"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CanBusDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\CBTF</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (Can Bus)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Ch8MeasurementTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>B</annotations:group>
+						<annotations:code>B-x\MT-i-n-p</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Data Word"/>
+			<xs:enumeration value="Command Word"/>
+			<xs:enumeration value="Status Word"/>
+			<xs:enumeration value="Time Word"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ChannelDataTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\CDT</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PCM Input"/>
+			<xs:enumeration value="Analog Input"/>
+			<xs:enumeration value="Discrete Input"/>
+			<xs:enumeration value="Time Input"/>
+			<xs:enumeration value="Video Input"/>
+			<xs:enumeration value="UART Input"/>
+			<xs:enumeration value="1553 Input"/>
+			<xs:enumeration value="ARINC-429 Input"/>
+			<xs:enumeration value="Message Data Input"/>
+			<xs:enumeration value="Image Data Input"/>
+			<xs:enumeration value="IEEE 1394 Input"/>
+			<xs:enumeration value="Parallel Input"/>
+			<xs:enumeration value="Ethernet Input"/>
+			<xs:enumeration value="TSPI/CTS Input"/>
+			<xs:enumeration value="Can Bus Input"/>
+			<xs:enumeration value="Fibre Channel Input">
+				<xs:annotation>
+					<xs:documentation>Added in 106-15</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Telemetry Output">
+				<xs:annotation>
+					<xs:documentation>Added in 106-15</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CommandWordTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>B</annotations:group>
+						<annotations:code>B-x\CWE-i-n</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\CWE-n-m</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+					<annotations:chapter9Reference>
+						<annotations:group>B</annotations:group>
+						<annotations:code>B-x\RCWE-i-n</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\RCWE-n-m</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Command Word"/>
+			<xs:enumeration value="Address Fields"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DataConversionType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>C</annotations:group>
+						<annotations:code>C-d\DCT</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="None"/>
+			<xs:enumeration value="Pair Sets"/>
+			<xs:enumeration value="Coefficients"/>
+			<xs:enumeration value="Coefficients (Negative Powers Of X)"/>
+			<xs:enumeration value="Derived"/>
+			<xs:enumeration value="Discrete"/>
+			<xs:enumeration value="PCM Time"/>
+			<xs:enumeration value="1553 Time"/>
+			<xs:enumeration value="Voice"/>
+			<xs:enumeration value="Video"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DataDirectionType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\TK3</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Forward"/>
+			<xs:enumeration value="Reverse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DataPackingDensityType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\TC7</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Intermediate Band"/>
+			<xs:enumeration value="Wide Band"/>
+			<xs:enumeration value="Double Density"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DataSourceType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>G</annotations:group>
+						<annotations:code>G\DST</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="RF"/>
+			<xs:enumeration value="Tape"/>
+			<xs:enumeration value="Storage"/>
+			<xs:enumeration value="Distributed Source"/>
+			<xs:enumeration value="Direct Source"/>
+			<xs:enumeration value="Reproducer"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DefaultType">
+		<xs:annotation>
+			<xs:documentation>Any element, with "Default" as the enumerated value</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Default"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DerivedAlgorithmType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>C</annotations:group>
+						<annotations:code>C-d\DPAT</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Name Of Algorithm"/>
+			<xs:enumeration value="Algorithm"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DigitalVoiceEncodingMethodType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>C</annotations:group>
+						<annotations:code>C-d\VOI\E</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CVSD"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DiscreteDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\DTF</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (Reserved)"/>
+			<xs:enumeration value="Format 1 (Discrete Data)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DiscreteModeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\DMOD</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Event Mode"/>
+			<xs:enumeration value="Sample Mode"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DynamicImageAcquisitionModeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\DIAM</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Single Frame"/>
+			<xs:enumeration value="Multi Frame"/>
+			<xs:enumeration value="Continuous"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DynamicImageFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\DIF</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Mono 8"/>
+			<xs:enumeration value="Mono 8 Signed"/>
+			<xs:enumeration value="Mono 10"/>
+			<xs:enumeration value="Mono 10 Packed"/>
+			<xs:enumeration value="Mono 12"/>
+			<xs:enumeration value="Mono 12 Packed"/>
+			<xs:enumeration value="Mono 14"/>
+			<xs:enumeration value="Mono 16"/>
+			<xs:enumeration value="Bayer GR8"/>
+			<xs:enumeration value="Bayer RG8"/>
+			<xs:enumeration value="Bayer GB8"/>
+			<xs:enumeration value="Bayer BG8"/>
+			<xs:enumeration value="Bayer GR10"/>
+			<xs:enumeration value="Bayer RG10"/>
+			<xs:enumeration value="Bayer GB10"/>
+			<xs:enumeration value="Bayer BG10"/>
+			<xs:enumeration value="Bayer GR12"/>
+			<xs:enumeration value="Bayer RG12"/>
+			<xs:enumeration value="Bayer GB12"/>
+			<xs:enumeration value="Bayer BG12"/>
+			<xs:enumeration value="Bayer GR10 Packed"/>
+			<xs:enumeration value="Bayer RG10 Packed"/>
+			<xs:enumeration value="Bayer GB10 Packed"/>
+			<xs:enumeration value="Bayer BG10 Packed"/>
+			<xs:enumeration value="Bayer GR12 Packed"/>
+			<xs:enumeration value="Bayer RG12 Packed"/>
+			<xs:enumeration value="Bayer GB12 Packed"/>
+			<xs:enumeration value="Bayer BG12 Packed"/>
+			<xs:enumeration value="Bayer GR16"/>
+			<xs:enumeration value="Bayer RG16"/>
+			<xs:enumeration value="Bayer GB16"/>
+			<xs:enumeration value="Bayer BG16"/>
+			<xs:enumeration value="RGB 8 Packed"/>
+			<xs:enumeration value="BGR 8 Packed"/>
+			<xs:enumeration value="RGB A8 Packed"/>
+			<xs:enumeration value="BGR A8 Packed"/>
+			<xs:enumeration value="RGB 10 Packed"/>
+			<xs:enumeration value="BGR 10 Packed"/>
+			<xs:enumeration value="RGB 12 Packed"/>
+			<xs:enumeration value="BGR 12 Packed"/>
+			<xs:enumeration value="RGB 16 Packed"/>
+			<xs:enumeration value="BGR 16 Packed"/>
+			<xs:enumeration value="RGB 10V1 Packed"/>
+			<xs:enumeration value="BGR 10V1 Packed"/>
+			<xs:enumeration value="RGB 10V2 Packed"/>
+			<xs:enumeration value="BGR 10V2 Packed"/>
+			<xs:enumeration value="RGB 12V1 Packed"/>
+			<xs:enumeration value="RGB 565 Packed"/>
+			<xs:enumeration value="BGR 565 Packed"/>
+			<xs:enumeration value="YUV 411 Packed"/>
+			<xs:enumeration value="YUV 422 Packed"/>
+			<xs:enumeration value="YUV 444 Packed"/>
+			<xs:enumeration value="YUY V Packed"/>
+			<xs:enumeration value="RGB 8 Planar"/>
+			<xs:enumeration value="RGB 10 Planar"/>
+			<xs:enumeration value="RGB 12 Planar"/>
+			<xs:enumeration value="RGB 16 Planar"/>
+			<xs:enumeration value="Device Specific"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EncryptedType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>P</annotations:group>
+						<annotations:code>P-d\D3</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Encrypted"/>
+			<xs:enumeration value="Unencrypted"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EndianType">
+		<xs:annotation>
+			<xs:documentation>Generic Big/Little Endian type</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Big Endian"/>
+			<xs:enumeration value="Little Endian"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EthernetDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\ENTF</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (Ethernet Data)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EthernetType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\EIT</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Reserved"/>
+			<xs:enumeration value="Download"/>
+			<xs:enumeration value="Data Streaming"/>
+			<xs:enumeration value="Data Streaming, Download"/>
+			<xs:enumeration value="Control and Status"/>
+			<xs:enumeration value="Control and Status, Download"/>
+			<xs:enumeration value="Control and Status, Data Streaming"/>
+			<xs:enumeration value="Control and Status, Data Streaming, Download"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EUSecurityClassificationType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>C</annotations:group>
+						<annotations:code>C-d\TRD4</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Unclassified"/>
+			<xs:enumeration value="Confidential"/>
+			<xs:enumeration value="Secret"/>
+			<xs:enumeration value="Top Secret"/>
+			<xs:enumeration value="Other"/>
+			<xs:enumeration value="Counts Unclassified"/>
+			<xs:enumeration value="Counts Confidential"/>
+			<xs:enumeration value="Counts Secret"/>
+			<xs:enumeration value="Counts Top Secret"/>
+			<xs:enumeration value="Counts Other"/>
+			<xs:enumeration value="EU Unclassified"/>
+			<xs:enumeration value="EU Confidential"/>
+			<xs:enumeration value="EU Secret"/>
+			<xs:enumeration value="EU Top Secret"/>
+			<xs:enumeration value="EU Other"/>
+			<xs:enumeration value="Counts And EU Unclassified"/>
+			<xs:enumeration value="Counts And EU Confidential"/>
+			<xs:enumeration value="Counts And EU Secret"/>
+			<xs:enumeration value="Counts And EU Top Secret"/>
+			<xs:enumeration value="Counts And EU Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EventCaptureModeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\EV\CM</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Mode 1"/>
+			<xs:enumeration value="Mode 2"/>
+			<xs:enumeration value="Mode 3"/>
+			<xs:enumeration value="Mode 4"/>
+			<xs:enumeration value="Mode 5"/>
+			<xs:enumeration value="Mode 6"/>
+			<xs:enumeration value="Mode 7"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EventPriorityModeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\EV\P</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Priority 1"/>
+			<xs:enumeration value="Priority 2"/>
+			<xs:enumeration value="Priority 3"/>
+			<xs:enumeration value="Priority 4"/>
+			<xs:enumeration value="Priority 5"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EvenType">
+		<xs:annotation>
+			<xs:documentation>For Parity related elements</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Even"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FilterOverwriteTagType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>D</annotations:group>
+						<annotations:code>D-x\SMF\MFOT</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Overwrite"/>
+			<xs:enumeration value="Filter"/>
+			<xs:enumeration value="Neither"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FilterType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\MFD\FDT</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Inclusive Filtering"/>
+			<xs:enumeration value="Exclusive Filtering"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FloatingPointFormatType">
+		<xs:annotation>
+			<xs:documentation>Restrictions for various floating point format elements</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="IEEE 754 Single Precision"/>
+			<xs:enumeration value="IEEE 754 Double Precision"/>
+			<xs:enumeration value="MIL STD 1750A Single Precision"/>
+			<xs:enumeration value="MIL STD 1750A Double Precision"/>
+			<xs:enumeration value="DEC Single Precision"/>
+			<xs:enumeration value="DEC Double Precision"/>
+			<xs:enumeration value="DEC G Double Precision"/>
+			<xs:enumeration value="IBM Single Precision"/>
+			<xs:enumeration value="IBM Double Precision"/>
+			<xs:enumeration value="TI Single Precision"/>
+			<xs:enumeration value="TI Extended Precision"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="GeneralSecurityClassificationType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>G</annotations:group>
+						<annotations:code>G\SC</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Unclassified"/>
+			<xs:enumeration value="Confidential"/>
+			<xs:enumeration value="Secret"/>
+			<xs:enumeration value="Top Secret"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="HexType">
+		<xs:annotation>
+			<xs:documentation>Generic hexidecimal data</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9|A-F]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="HousingType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\TC5</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="10.5"/>
+			<xs:enumeration value="14.0"/>
+			<xs:enumeration value="15.0"/>
+			<xs:enumeration value="16.0"/>
+			<xs:enumeration value="12.65"/>
+			<xs:enumeration value="19.0"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IDCountDirectionType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>P</annotations:group>
+						<annotations:code>P-d\IDC10</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Increasing"/>
+			<xs:enumeration value="Decreasing"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IEEE1394DataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\IETF</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (IEEE-1394 Trans)"/>
+			<xs:enumeration value="Format 1 (IEEE-1394 Phy)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ImageDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\ITF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (Image)"/>
+			<xs:enumeration value="Format 1 (Still Imagery)"/>
+			<xs:enumeration value="Format 2 (Dynamic Imagery)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ImageTimeStampModeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\ITSM-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Image Capture Time"/>
+			<xs:enumeration value="Image Packetization Time"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="InputTerminationType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\ITM-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Low-Z"/>
+			<xs:enumeration value="High-Z"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IPAddressType">
+		<xs:annotation>
+			<xs:documentation>The IPAddressType data type is an xsd:string of decimal digits separated by '.' (period) characters.  It represents the 32-bit dot-decimal notation of IPv4 addresses.  Valid IPv4 addresses contain a series of four one-byte long decimal numbers (0 - 255) separated by the '.' character (a total of three '.' characters appear).  A valid value of the mdl:IPv4Address data type is "212.23.123.0".  See RFC 790 in Section 2.2.2 for further details on IPv4 addresses.
+	      </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LinkTypeType">
+		<xs:annotation>
+			<xs:documentation>Generic enumeration</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Analog"/>
+			<xs:enumeration value="PCM"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MeasurementBitMaskType">
+		<xs:annotation>
+			<xs:documentation>Measurement related bitmask, made up of 1's and 0's or the string "Full Word"</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-1]*"/>
+			<xs:pattern value="Full Word"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MediaLocationType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\RML</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Internal"/>
+			<xs:enumeration value="External"/>
+			<xs:enumeration value="Both Internal And External"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MessageDataMeasurementDataType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>S</annotations:group>
+								<annotations:code>S-d\MBFM-i-n-p</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ASCII"/>
+			<xs:enumeration value="Float"/>
+			<xs:enumeration value="Signed"/>
+			<xs:enumeration value="Unsigned"/>
+			<xs:enumeration value="Hex"/>
+			<xs:enumeration value="Octal"/>
+			<xs:enumeration value="Binary"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MessageDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\MTF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (Message Data)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MessageDelimiterType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>S</annotations:group>
+								<annotations:code>S-d\MDEL-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:union memberTypes="HexType">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="CRLF"/>
+					<xs:enumeration value="CR"/>
+					<xs:enumeration value="LF"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="MessageFieldDelimiterType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>S</annotations:group>
+								<annotations:code>S-d\FDEL-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:union memberTypes="HexType">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value=","/>
+					<xs:enumeration value="|"/>
+					<xs:enumeration value="Blank"/>
+					<xs:enumeration value="Tab"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="MessageRecordControlTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\MRC\RCT</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Stop-Start"/>
+			<xs:enumeration value="Pause-Resume"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MessageStreamLayoutType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>S</annotations:group>
+								<annotations:code>S-d\MDL-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Delimited"/>
+			<xs:enumeration value="Fixed"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MessageStreamTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>S</annotations:group>
+								<annotations:code>S-d\MDT-i</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ASCII"/>
+			<xs:enumeration value="Binary"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MessageType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\MFD\MT</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="RT/RT"/>
+			<xs:enumeration value="RT/BC"/>
+			<xs:enumeration value="BC/RT"/>
+			<xs:enumeration value="Mode Code"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ModulationType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>T</annotations:group>
+								<annotations:code>T-x\RF4</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FM"/>
+			<xs:enumeration value="PM"/>
+			<xs:enumeration value="BPSK"/>
+			<xs:enumeration value="DPSK"/>
+			<xs:enumeration value="QPSK"/>
+			<xs:enumeration value="FQPSK-B"/>
+			<xs:enumeration value="FQPSK-JR"/>
+			<xs:enumeration value="SOQPSK-TG"/>
+			<xs:enumeration value="MULTI-H CPM"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MSBLSBFirstType">
+		<xs:annotation>
+			<xs:documentation>Generic Transfer Order (MSB First/LSB First)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="MSB First"/>
+			<xs:enumeration value="LSB First"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NoneType">
+		<xs:annotation>
+			<xs:documentation>For Parity related elements</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="None"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NonNegativeIntegerOrNo">
+		<xs:annotation>
+			<xs:documentation>Generic non-negative integer, or the word "No"</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="xs:nonNegativeInteger">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="No"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="NonNegativeIntegerOrNone">
+		<xs:annotation>
+			<xs:documentation>Generic non-negative integer, or the word "None"</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="xs:nonNegativeInteger">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="None"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="NonNegativeIntegerOrNotSpecified">
+		<xs:annotation>
+			<xs:documentation>Generic non-negative integer, or the word "Not Specified"</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="xs:nonNegativeInteger">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Not Specified"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="NormalReversedType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D6, P-d\ALT4</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Normal"/>
+			<xs:enumeration value="Reversed"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OddEvenNoneType">
+		<xs:annotation>
+			<xs:documentation>For Parity related elements</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="OddType EvenType NoneType"/>
+	</xs:simpleType>
+	<xs:simpleType name="OddType">
+		<xs:annotation>
+			<xs:documentation>For Parity related elements</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Odd"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OnOffType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Off"/>
+			<xs:enumeration value="On"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OverwriteTagType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\SMF\MFOT-n-m, R-x\SME\MFOT-n-m</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Overwrite"/>
+			<xs:enumeration value="No Overwriting"/>
+			<xs:enumeration value=""/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PairSetsType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>C</annotations:group>
+								<annotations:code>C-d\PS1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Polynomial Curve Fit"/>
+			<xs:enumeration value="Table Lookup"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ParallelDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\PLTF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (Parallel)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ParityTransferOrderType">
+		<xs:annotation>
+			<xs:documentation>Generic Parity Transfer Order</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Leads Word"/>
+			<xs:enumeration value="Trails Word"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PCMCodeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NRZ-L"/>
+			<xs:enumeration value="NRZ-M"/>
+			<xs:enumeration value="NRZ-S"/>
+			<xs:enumeration value="BIO-L"/>
+			<xs:enumeration value="BIO-M"/>
+			<xs:enumeration value="BIO-S"/>
+			<xs:enumeration value="RNRZ-L"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PCMDataClockEdgeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\ICE-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="0 Degrees"/>
+			<xs:enumeration value="180 Degrees"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PCMDataInputSignalTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\IST-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Single Ended"/>
+			<xs:enumeration value="Differential"/>
+			<xs:enumeration value="RS-422 Standard Differential"/>
+			<xs:enumeration value="Single Ended With TTL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PCMDataPackingOptionType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\PDP-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Unpacked"/>
+			<xs:enumeration value="Packed With Frame Sync"/>
+			<xs:enumeration value="Throughput Mode"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PCMDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\PDTF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (Reserved)"/>
+			<xs:enumeration value="Format 1 (IRIG 106 Ch 4/8)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PCMLocationDefinitionType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\AEF2, P-d\ADM2-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="First Word And Interval"/>
+			<xs:enumeration value="Every Location"/>
+			<xs:enumeration value="Contiguous Words"/>
+			<xs:enumeration value="Not Applicable"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PCMMeasurementLocationTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>D</annotations:group>
+								<annotations:code>D-x\LT-y-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Word and Frame"/>
+			<xs:enumeration value="Tagged Data"/>
+			<xs:enumeration value="Relative"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PCMSubframeSyncTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\ISF2-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ID Counter"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PCMSyncTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>P</annotations:group>
+						<annotations:code>P-d\MF3</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Fixed Pattern"/>
+			<xs:enumeration value="Alternating Code Complement">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:changeLog>
+								<annotations:date>2016-11-30</annotations:date>
+								<annotations:version>106-17</annotations:version>
+								<annotations:author>Tim Darr</annotations:author>
+								<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-8</annotations:description>
+								<annotations:source>Committee input</annotations:source>
+							</annotations:changeLog>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PCMTimeType">
+		<xs:annotation>
+				<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>C</annotations:group>
+								<annotations:code>C-d\PTM</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:union memberTypes="xs:double">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="High Order Time"/>
+					<xs:enumeration value="Low Order Time"/>
+					<xs:enumeration value="Microsecond Time"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="PCMTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\TF</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Class 1"/>
+			<xs:enumeration value="Class 2"/>
+			<xs:enumeration value="Alternate Tag And Data"/>
+			<xs:enumeration value="1553 Bus"/>
+			<xs:enumeration value="Bus"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="PointOfContactType">
+		<xs:annotation>
+			<xs:documentation>Generic</xs:documentation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>Generic</annotations:group>
+								<annotations:code>POC1, POC2, POC3, POC4</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="xs:string" minOccurs="0"/>
+			<xs:element name="Agency" type="xs:string" minOccurs="0"/>
+			<xs:element name="Address" type="xs:string" minOccurs="0"/>
+			<xs:element name="Telephone" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="PolarityType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D4</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Normal"/>
+			<xs:enumeration value="Inverted"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PolarizationType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>T</annotations:group>
+								<annotations:code>T-x\GST6</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Right Hand Circular Polarization"/>
+			<xs:enumeration value="Left Hand Circular Polarization"/>
+			<xs:enumeration value="Both"/>
+			<xs:enumeration value="Both And Pre-Detection"/>
+			<xs:enumeration value="Both And Post-Detection"/>
+			<xs:enumeration value="Pre-Detection"/>
+			<xs:enumeration value="Post-Detection"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PositiveNegative">
+		<xs:annotation>
+			<xs:documentation>Generic enumeration with values: "Positive" or "Negative"</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Positive"/>
+			<xs:enumeration value="Negative"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PostProcessModificationType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>T</annotations:group>
+								<annotations:code>T-x\GST7</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Time Subset"/>
+			<xs:enumeration value="Channel Subset"/>
+			<xs:enumeration value="Time - Channel Subset"/>
+			<xs:enumeration value="Channel Superset"/>
+			<xs:enumeration value="Time Subset - Channel Superset"/>
+			<xs:enumeration value="Filter"/>
+			<xs:enumeration value="Overwrite"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PostProcessOverwriteAndFilteringTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\POF\T-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Minor Frame"/>
+			<xs:enumeration value="Selected Measurement"/>
+			<xs:enumeration value="Both"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PremodFilterType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>T</annotations:group>
+								<annotations:code>T-x\PMF3</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Constant Amplitude"/>
+			<xs:enumeration value="Constant Delay"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RandomizerLengthType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>P</annotations:group>
+								<annotations:code>P-d\D8</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Standard"/>
+			<xs:enumeration value="Other"/>
+			<xs:enumeration value="Not Applicable"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RecorderCharacteristicsType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\TC1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Analog"/>
+			<xs:enumeration value="Cassette"/>
+			<xs:enumeration value="HDDR"/>
+			<xs:enumeration value="Parallel"/>
+			<xs:enumeration value="Solid State Recorder"/>
+			<xs:enumeration value="Magnetic Disk"/>
+			<xs:enumeration value="None"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RecordingEventType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\EV\T-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="External"/>
+			<xs:enumeration value="Measurement Discrete"/>
+			<xs:enumeration value="Measurement Limit"/>
+			<xs:enumeration value="Recorder"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RecordingIndexTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\IDX\IT</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Time"/>
+			<xs:enumeration value="Count"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RecordingTechniqueType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\TK2-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FM/FM"/>
+			<xs:enumeration value="HDDR"/>
+			<xs:enumeration value="Pre-Detection"/>
+			<xs:enumeration value="Direct"/>
+			<xs:enumeration value="FM Wide Band Group 1"/>
+			<xs:enumeration value="FM Wide band Group 2"/>
+			<xs:enumeration value="FM Intermediate Band"/>
+			<xs:enumeration value="FM Narrow Band"/>
+			<xs:enumeration value="Double Density"/>
+			<xs:enumeration value="Rotary Single Track"/>
+			<xs:enumeration value="Rotary Multiplexed"/>
+			<xs:enumeration value="Solid State"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RMMBusSpeedType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\ERBS</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Auto"/>
+			<xs:enumeration value="S100"/>
+			<xs:enumeration value="S200"/>
+			<xs:enumeration value="S400"/>
+			<xs:enumeration value="S800"/>
+			<xs:enumeration value="S1600"/>
+			<xs:enumeration value="S3200"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SecondaryHeaderTimeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>T</annotations:group>
+								<annotations:code>T-x\SHTF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="IRIG-106 Chapter 4 BCD"/>
+			<xs:enumeration value="IEEE-1588"/>
+			<xs:enumeration value="ERTC"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SetupSourceType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\RSS</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Setup File On RMM Only"/>
+			<xs:enumeration value="Command Setup File Only"/>
+			<xs:enumeration value="RMM Primary - Command Secondary"/>
+			<xs:enumeration value="Command Primary - RMM Secondary"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SignalStructureTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>M</annotations:group>
+								<annotations:code>M-x\BB1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PCM"/>
+			<xs:enumeration value="Analog"/>
+			<xs:enumeration value="SCO's"/>
+			<xs:enumeration value="ANA/SCO"/>
+			<xs:enumeration value="PCM/SCO"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="StillImageTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\SIT-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NITF"/>
+			<xs:enumeration value="JPEG"/>
+			<xs:enumeration value="JPEG2"/>
+			<xs:enumeration value="PNG"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="StringBeginningWithAlpha">
+		<xs:annotation>
+			<xs:documentation>Generic string that begins with an alpha character</xs:documentation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+					<annotations:changeLog>
+						<annotations:date>2016-04-12</annotations:date>
+						<annotations:version>106-17</annotations:version>
+						<annotations:author>Tim Darr</annotations:author>
+						<annotations:description>If "MUA" is input, it fails. If only "M" is input, it works. Changed the regular expression from [A-Z]|[a-z].* to [a-zA-Z][a-zA-Z0-9.,$;]*</annotations:description>
+						<annotations:source>Reported by Paul Fleischer</annotations:source>
+					</annotations:changeLog>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[a-zA-Z][a-zA-Z0-9]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TestImageTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>T</annotations:group>
+								<annotations:code>T-x\TIT-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Off"/>
+			<xs:enumeration value="Black"/>
+			<xs:enumeration value="White"/>
+			<xs:enumeration value="Grey Horizontal Ramp"/>
+			<xs:enumeration value="Grey Vertical Ramp"/>
+			<xs:enumeration value="Grey Horizontal Ramp Moving"/>
+			<xs:enumeration value="Grey Vertical Ramp Moving"/>
+			<xs:enumeration value="Horizontal Line Moving"/>
+			<xs:enumeration value="Vertical Line Moving"/>
+			<xs:enumeration value="Color Bar"/>
+			<xs:enumeration value="Frame Counter"/>
+			<xs:enumeration value="Device Specific"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Time1553Type">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>C</annotations:group>
+								<annotations:code>C-d\BTM</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:union memberTypes="PCMTimeType">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Response Time"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:simpleType name="TimeDataTimeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\TFMT-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="IRIG A"/>
+			<xs:enumeration value="IRIG B"/>
+			<xs:enumeration value="IRIG G"/>
+			<xs:enumeration value="Internal"/>
+			<xs:enumeration value="Native GPS Time"/>
+			<xs:enumeration value="UTC Time From GPS"/>
+			<xs:enumeration value="None"/>
+			<xs:enumeration value="Network Time Protocol Version 3 RFC-1305">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:changeLog>
+								<annotations:date>2016-11-30</annotations:date>
+								<annotations:version>106-17</annotations:version>
+								<annotations:author>Tim Darr</annotations:author>
+								<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-5</annotations:description>
+								<annotations:source>Committee input</annotations:source>
+							</annotations:changeLog>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="IEEE Std 1588-2002">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:changeLog>
+								<annotations:date>2016-11-30</annotations:date>
+								<annotations:version>106-17</annotations:version>
+								<annotations:author>Tim Darr</annotations:author>
+								<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-5</annotations:description>
+								<annotations:source>Committee input</annotations:source>
+							</annotations:changeLog>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="IEEE Std 1588-2008">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:changeLog>
+								<annotations:date>2016-11-30</annotations:date>
+								<annotations:version>106-17</annotations:version>
+								<annotations:author>Tim Darr</annotations:author>
+								<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-5</annotations:description>
+								<annotations:source>Committee input</annotations:source>
+							</annotations:changeLog>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TimeDataTimeSourceType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\TSRC-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Internal"/>
+			<xs:enumeration value="External"/>
+			<xs:enumeration value="Internal From RMM"/>
+			<xs:enumeration value="None"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TimeDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\TTF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (Reserved)"/>
+			<xs:enumeration value="Format 1 (Time Data)"/>
+			<xs:enumeration value="Format 2 (Network Time)">
+				<xs:annotation>
+					<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:changeLog>
+								<annotations:date>2016-12-01</annotations:date>
+								<annotations:version>106-17</annotations:version>
+								<annotations:author>Tim Darr</annotations:author>
+								<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-10</annotations:description>
+								<annotations:source>Committee input</annotations:source>
+							</annotations:changeLog>
+						</annotations:annotations>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RecorderPolaritySettingType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+					<annotations:chapter9Reference>
+						<annotations:group>R</annotations:group>
+						<annotations:code>R-x\RPS-n</annotations:code>
+						<annotations:derivationMethod>direct</annotations:derivationMethod>
+					</annotations:chapter9Reference>
+					<annotations:changeLog>
+						<annotations:date>2016-12-01</annotations:date>
+						<annotations:version>106-17</annotations:version>
+						<annotations:author>Tim Darr</annotations:author>
+						<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-4</annotations:description>
+						<annotations:source>Committee input</annotations:source>
+					</annotations:changeLog>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Normal - Do not invert data prior to recording"/>
+			<xs:enumeration value="Invert data prior to recording"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TransferOrderType">
+		<xs:annotation>
+			<xs:documentation>Generic. (MSB First/LSB First/Default)</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="MSBLSBFirstType DefaultType"/>
+	</xs:simpleType>
+	<xs:simpleType name="TransmitAntennaType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>T</annotations:group>
+								<annotations:code>T-x\AN1</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Right Hand Circular Polarization"/>
+			<xs:enumeration value="Left Hand Circular Polarization"/>
+			<xs:enumeration value="Linear"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TransmitReceiveModeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R, B</annotations:group>
+								<annotations:code>R-x\MFD\TRM-n-m, B-x\TRM-i-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Transmit"/>
+			<xs:enumeration value="Receive"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TrueFalseType">
+		<xs:annotation>
+			<xs:documentation>For any element with "True" and "False" enumerations</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="True"/>
+			<xs:enumeration value="False"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TSPIDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\TDTF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (NMEA-RTCM)"/>
+			<xs:enumeration value="Format 1 (EAG ACMI)"/>
+			<xs:enumeration value="Format 2 (ACTTS)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TypeOfTrackType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\TT</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Longitudinal"/>
+			<xs:enumeration value="Rotary"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="UARTDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\UTF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0"/>
+			<xs:enumeration value="Format 1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="UARTInterfaceType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\UCIN-n-m</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Other"/>
+			<xs:enumeration value="RS-232"/>
+			<xs:enumeration value="RS-422"/>
+			<xs:enumeration value="RS-485"/>
+			<xs:enumeration value="TTL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="UARTStopBitsType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\UCS-n-m</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1.0"/>
+			<xs:enumeration value="1.5"/>
+			<xs:enumeration value="2.0"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VideoDataTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\VTF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Format 0 (MPEG-2/H.264)"/>
+			<xs:enumeration value="Format 1 (MPEG-2 ISO 13818)"/>
+			<xs:enumeration value="Format 2 (MPEG-4 ISO 14496)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VideoMPEG2FormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\VXF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="2ON2 (MPEG-2)"/>
+			<xs:enumeration value="264ON2 (H.264)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VideoOverlayBackgroundType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\VCO\OBG-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Black On Transparent"/>
+			<xs:enumeration value="White On Transparent"/>
+			<xs:enumeration value="Black On White"/>
+			<xs:enumeration value="White On Black"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VideoOverlayFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\VCO\OLF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Day And Time"/>
+			<xs:enumeration value="Time Only"/>
+			<xs:enumeration value="Time And Milliseconds"/>
+			<xs:enumeration value="Day, Time And Milliseconds"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VideoSignalFormatTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\VSF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Auto Detect"/>
+			<xs:enumeration value="NTSC"/>
+			<xs:enumeration value="PAL"/>
+			<xs:enumeration value="ATSC"/>
+			<xs:enumeration value="DVB"/>
+			<xs:enumeration value="ISDB"/>
+			<xs:enumeration value="SECAM"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VideoSignalTypeType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\VST-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Auto Detect"/>
+			<xs:enumeration value="Composite"/>
+			<xs:enumeration value="YUV"/>
+			<xs:enumeration value="S-Video"/>
+			<xs:enumeration value="DVI"/>
+			<xs:enumeration value="RGB"/>
+			<xs:enumeration value="SDI"/>
+			<xs:enumeration value="VGA"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VideoTypeFormatType">
+		<xs:annotation>
+			<xs:appinfo>
+						<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+							<annotations:chapter9Reference>
+								<annotations:group>R</annotations:group>
+								<annotations:code>R-x\PTF-n</annotations:code>
+								<annotations:derivationMethod>direct</annotations:derivationMethod>
+							</annotations:chapter9Reference>
+						</annotations:annotations>
+					</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="None"/>
+			<xs:enumeration value="MPEG1"/>
+			<xs:enumeration value="MPEG2"/>
+			<xs:enumeration value="H261"/>
+			<xs:enumeration value="WAVE"/>
+			<xs:enumeration value="Other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="YesNoType">
+		<xs:annotation>
+			<xs:documentation>For any element with "Yes" and "No" enumerations</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Yes"/>
+			<xs:enumeration value="No"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SamplingModeType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+					<annotations:changeLog>
+						<annotations:date>2016-11-30</annotations:date>
+						<annotations:version>106-17</annotations:version>
+						<annotations:author>Tim Darr</annotations:author>
+						<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-9</annotations:description>
+						<annotations:source>Committee input</annotations:source>
+					</annotations:changeLog>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Normal"/>
+			<xs:enumeration value="Simultaneous Sample"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SampleOnType">
+		<xs:annotation>
+			<xs:appinfo>
+				<annotations:annotations xmlns:annotations="http://schemas.kbsi.com/templ/annotations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.kbsi.com/templ/annotations ../src/main/resources/schema/AnnotationsSchema.xsd ">
+					<annotations:changeLog>
+						<annotations:date>2016-11-30</annotations:date>
+						<annotations:version>106-17</annotations:version>
+						<annotations:author>Tim Darr</annotations:author>
+						<annotations:description>Added per Chapter 9 106-17, TENA issue RCC_TG_DM-9</annotations:description>
+						<annotations:source>Committee input</annotations:source>
+					</annotations:changeLog>
+				</annotations:annotations>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Measurement"/>
+			<xs:enumeration value="Word/Frame"/>
+			<xs:enumeration value="On Minor Frame"/>
+			<xs:enumeration value="On Major Frame"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

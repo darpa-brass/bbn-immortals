@@ -6,6 +6,7 @@ import buildsystem
 import installer
 import integrationtest
 import odbhelper
+import mdl
 
 _parser = argparse.ArgumentParser()
 _subparsers = _parser.add_subparsers(dest='cmd')
@@ -15,6 +16,8 @@ if __name__ == '__main__':
     integrationtest_parser = integrationtest.init_parser(_subparsers)
     installer_parser = installer.init_parser(_subparsers)
     odbhelper_parser = odbhelper.init_parser(_subparsers)
+    mdl_parser = mdl.init_parser(_subparsers)
+    
     args = _parser.parse_args()
 
     if args.cmd is None:
@@ -27,3 +30,5 @@ if __name__ == '__main__':
         installer.main(args)
     elif args.cmd == 'odbhelper':
         odbhelper.main(args)
+    elif args.cmd == 'mdl':
+        mdl.main(args)

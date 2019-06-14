@@ -1,0 +1,848 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xmlns:mdl="http://inetprogram.org/projects/MDL" 
+         xsi:schemaLocation="http://inetprogram.org/projects/MDL MDL_v0_8_9.xsd">
+  <ConfigurationVersion>-TBD-</ConfigurationVersion>
+  <TestMissions>
+    <TestMission>
+      <Name>Networking Example</Name>
+      <TmNSCompleteness>true</TmNSCompleteness>
+      <TmNSCompletenessDescription>Complete</TmNSCompletenessDescription>
+      <NetworkReferences>
+      </NetworkReferences>
+    </TestMission>
+  </TestMissions>
+  <Units>
+    <DerivedUnit ID="Bits16EU">
+      <Name>Two Bytes</Name>
+      <Description>16 binary digits (2 bytes)</Description>
+      <Symbol>W16</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>16</NumericalConstant>
+        <SIUnits>Bit</SIUnits>
+      </UnitsNumerator>
+    </DerivedUnit>
+  </Units>
+  <MeasurementDomains>
+    <MeasurementDomain>
+      <Name>Example Measurement Domain</Name>
+      <Packages>
+        <PackageDefinition ID="PCM_Ex1_Definition">
+          <PackageDefinitionID>0x00001001</PackageDefinitionID>
+          <StandardPackageHeader>true</StandardPackageHeader>
+          <PackageHeaderDefinition>
+            <PackageHeaderStructure>
+              <PackageLengthField>
+                <FixedPackageLength>
+                  <FlexValue>70</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FixedPackageLength>
+              </PackageLengthField>
+            </PackageHeaderStructure>
+          </PackageHeaderDefinition>
+          <PackageStructureRef IDREF="PCM_Ex1_Major_Frame"/>
+          <DataMap>
+            <DataWordToFieldMap>
+              <DataWord>
+                <DataWordWidth>
+                  <FlexValue>32</FlexValue>
+                  <SIUnits>Bit</SIUnits>
+                </DataWordWidth>
+                <Syllable>
+                  <ConstantValue>0x40404040</ConstantValue>
+                </Syllable>
+              </DataWord>
+              <PackageDataFieldRef IDREF="FrameSync_PDF"/>
+              <TimeOrder>IncreasingTemporal</TimeOrder>
+            </DataWordToFieldMap>
+            <DataWordToFieldMap>
+              <DataWord>
+                <DataWordWidth>
+                  <FlexValue>16</FlexValue>
+                  <SIUnits>Bit</SIUnits>
+                </DataWordWidth>
+              </DataWord>
+              <PackageDataFieldRef IDREF="SubframeID_PDF"/>
+              <TimeOrder>IncreasingTemporal</TimeOrder>
+            </DataWordToFieldMap>
+          </DataMap>
+          <AggregateRate>
+            <AverageRate>1000</AverageRate>
+            <PeakRate>2000</PeakRate>
+            <SIUnits>Hertz</SIUnits>
+          </AggregateRate>
+        </PackageDefinition>
+        <PackageDefinition ID="PCM_Ex2_Definition">
+          <PackageDefinitionID>0x00002002</PackageDefinitionID>
+          <StandardPackageHeader>true</StandardPackageHeader>
+          <PackageHeaderDefinition>
+            <PackageHeaderStructure>
+              <PackageLengthField>
+                <FixedPackageLength>
+                  <FlexValue>54</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FixedPackageLength>
+              </PackageLengthField>
+            </PackageHeaderStructure>
+          </PackageHeaderDefinition>
+          <PackageStructureRef IDREF="PCM_Ex2_Major_Frame"/>
+          <DataMap>
+            <DataWordToFieldMap>
+              <DataWord>
+                <DataWordWidth>
+                  <FlexValue>2</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </DataWordWidth>
+                <Syllable>
+                  <ConstantValue>0x3F3F3F3F</ConstantValue>
+                </Syllable>
+              </DataWord>
+              <PackageDataFieldRef IDREF="FrameSync_PDF_2"/>
+              <TimeOrder>IncreasingTemporal</TimeOrder>
+            </DataWordToFieldMap>
+            <DataWordToFieldMap>
+              <DataWord>
+                <DataWordWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </DataWordWidth>
+              </DataWord>
+              <PackageDataFieldRef IDREF="SubframeID_PDF_2"/>
+              <TimeOrder>IncreasingTemporal</TimeOrder>
+            </DataWordToFieldMap>
+          </DataMap>
+          <AggregateRate>
+            <AverageRate>1000</AverageRate>
+            <PeakRate>2000</PeakRate>
+            <SIUnits>Hertz</SIUnits>
+          </AggregateRate>
+        </PackageDefinition>
+        <PackageStructure ID="PCM_Ex1_Major_Frame">
+          <Name>PCM Major Frame Example 1</Name>
+          <Description>Description of PCM Major Frame # 1assuming a standard PackageHeader</Description>
+          <PackageDataField ID="FrameSync_PDF">
+            <Name>FrameSync</Name>
+            <FieldLocation ID="FieldLoc1">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>6</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>2</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>4</FieldRepetitions>
+            <FieldOffsetIncrement>
+              <FlexValue>14</FlexValue>
+              <UnitsRef IDREF="Bits16EU"/>
+            </FieldOffsetIncrement>
+          </PackageDataField>
+          <PackageDataField ID="SubframeID_PDF">
+            <Name>SubFrameID</Name>
+            <FieldLocation ID="FieldLoc2">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>8</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>1</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>4</FieldRepetitions>
+            <FieldOffsetIncrement>
+              <FlexValue>15</FlexValue>
+              <UnitsRef IDREF="Bits16EU"/>
+            </FieldOffsetIncrement>
+          </PackageDataField>
+          <PackageDataField ID="PDF_C">
+            <Name>PDF_C</Name>
+            <FieldLocation ID="FieldLoc3">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>11</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>1</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>1</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="PDF_D">
+            <Name>PDF_D</Name>
+            <FieldLocation ID="FieldLoc4">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>12</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>1</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>4</FieldRepetitions>
+            <FieldOffsetIncrement>
+              <FlexValue>15</FlexValue>
+              <UnitsRef IDREF="Bits16EU"/>
+            </FieldOffsetIncrement>
+          </PackageDataField>
+          <PackageDataField ID="PDF_G">
+            <Name>PDF_G</Name>
+            <FieldLocation ID="FieldLoc5">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>15</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>1</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>1</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="PDF_H">
+            <Name>PDF_H</Name>
+            <FieldLocation ID="FieldLoc6">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>18</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>1</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>4</FieldRepetitions>
+            <FieldOffsetIncrement>
+              <FlexValue>15</FlexValue>
+              <UnitsRef IDREF="Bits16EU"/>
+            </FieldOffsetIncrement>
+          </PackageDataField>
+          <PackageDataFieldSet ID="PDF_A">
+            <PackageDataField ID="PDF_A_W2">
+              <Name>PDF_A</Name>
+              <FieldLocation ID="FieldLoc7">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>9</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>2</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>31</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+            <PackageDataField ID="PDF_A_W9">
+              <Name>PDF_A</Name>
+              <FieldLocation ID="FieldLoc8">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>16</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>2</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>31</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+          </PackageDataFieldSet>
+          <PackageDataFieldSet ID="PDF_E">
+            <PackageDataField ID="PDF_E_W6">
+              <Name>PDF_E</Name>
+              <FieldLocation ID="FieldLoc9">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>13</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>4</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>15</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+            <PackageDataField ID="PDF_E_W13">
+              <Name>PDF_E</Name>
+              <FieldLocation ID="FieldLoc10">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>20</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>4</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>15</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+          </PackageDataFieldSet>
+          <PackageDataFieldSet ID="PDF_F">
+            <PackageDataField ID="PDF_F_W7">
+              <Name>PDF_F</Name>
+              <FieldLocation ID="FieldLoc11">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>14</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>4</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>15</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+            <PackageDataField ID="PDF_F_W14">
+              <Name>PDF_F</Name>
+              <FieldLocation ID="FieldLoc12">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>21</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>4</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>15</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+          </PackageDataFieldSet>
+          <PackageDataFieldSet ID="PDF_B">
+            <PackageDataField ID="PDF_B_W3">
+              <Name>PDF_B</Name>
+              <FieldLocation ID="FieldLoc13">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>26</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>2</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>31</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+            <PackageDataField ID="PDF_B_W10">
+              <Name>PDF_B</Name>
+              <FieldLocation ID="FieldLoc14">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>33</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>2</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>31</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+          </PackageDataFieldSet>
+        </PackageStructure>
+        <PackageStructure ID="PCM_Ex2_Major_Frame">
+          <Name>PCM Major Frame Example 2</Name>
+          <Description>Description of PCM Major Frame #2 assuming a standard PackageHeader</Description>
+          <PackageDataField ID="FrameSync_PDF_2">
+            <Name>FrameSync</Name>
+            <FieldLocation ID="FieldLoc15">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>6</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>2</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>3</FieldRepetitions>
+            <FieldOffsetIncrement>
+              <FlexValue>14</FlexValue>
+              <UnitsRef IDREF="Bits16EU"/>
+            </FieldOffsetIncrement>
+          </PackageDataField>
+          <PackageDataField ID="SubframeID_PDF_2">
+            <Name>SubFrameID</Name>
+            <FieldLocation ID="FieldLoc16">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>8</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>1</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>3</FieldRepetitions>
+            <FieldOffsetIncrement>
+              <FlexValue>15</FlexValue>
+              <UnitsRef IDREF="Bits16EU"/>
+            </FieldOffsetIncrement>
+          </PackageDataField>
+          <PackageDataField ID="PDF_O">
+            <Name>PDF_O</Name>
+            <FieldLocation ID="FieldLoc17">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>30</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>3</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>1</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="PDF_P">
+            <Name>PDF_P</Name>
+            <FieldLocation ID="FieldLoc18">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>21</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>1</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>2</FieldRepetitions>
+            <FieldOffsetIncrement>
+              <FlexValue>31</FlexValue>
+              <UnitsRef IDREF="Bits16EU"/>
+            </FieldOffsetIncrement>
+          </PackageDataField>
+          <PackageDataFieldSet ID="PDF_M">
+            <PackageDataField ID="PDF_M_W2">
+              <Name>PDF_M</Name>
+              <FieldLocation ID="FieldLoc19">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>9</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>2</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>31</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+            <PackageDataField ID="PDF_M_W9">
+              <Name>PDF_M</Name>
+              <FieldLocation ID="FieldLoc20">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>16</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>2</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>31</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+          </PackageDataFieldSet>
+          <PackageDataFieldSet ID="PDF_N">
+            <PackageDataField ID="PDF_N_W3">
+              <Name>PDF_N</Name>
+              <FieldLocation ID="FieldLoc21">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>10</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>2</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>31</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+            <PackageDataField ID="PDF_N_W10">
+              <Name>PDF_N</Name>
+              <FieldLocation ID="FieldLoc22">
+                <FieldOffset>
+                  <OffsetValue>
+                    <FlexValue>17</FlexValue>
+                    <UnitsRef IDREF="Bits16EU"/>
+                  </OffsetValue>
+                </FieldOffset>
+                <FieldWidth>
+                  <FlexValue>1</FlexValue>
+                  <UnitsRef IDREF="Bits16EU"/>
+                </FieldWidth>
+              </FieldLocation>
+              <FieldEncoding>
+                <Endianness>BigEndian</Endianness>
+                <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              </FieldEncoding>
+              <FieldRepetitions>2</FieldRepetitions>
+              <FieldOffsetIncrement>
+                <FlexValue>31</FlexValue>
+                <UnitsRef IDREF="Bits16EU"/>
+              </FieldOffsetIncrement>
+            </PackageDataField>
+          </PackageDataFieldSet>
+        </PackageStructure>
+      </Packages>
+      <Messages>
+        <MessageDefinition ID="PCM_Ex1_Message">
+          <MessageDefinitionID>0x00010001</MessageDefinitionID>
+          <DSCPTableEntryRef IDREF="dscp-af1"/>
+          <DestinationAddress>239.255.0.1</DestinationAddress>
+          <AggregateRate>
+            <AverageRate>1000</AverageRate>
+            <PeakRate>2000</PeakRate>
+            <SIUnits>Hertz</SIUnits>
+          </AggregateRate>
+          <MaximumMessageLength>
+            <FlexValue>500</FlexValue>
+            <UnitsRef IDREF="Bits16EU"/>
+          </MaximumMessageLength>
+          <MaximumMessageLatency>
+            <FloatValue>3</FloatValue>
+            <SIUnits>Second</SIUnits>
+          </MaximumMessageLatency>
+          <FixedPackageOrder>true</FixedPackageOrder>
+          <FixedNumberOfPackages>false</FixedNumberOfPackages>
+          <PackageInstance Index="1">
+            <PackageDefinitionRef IDREF="PCM_Ex1_Definition"/>
+          </PackageInstance>
+        </MessageDefinition>
+        <MessageDefinition ID="PCM_Ex2_Message">
+          <MessageDefinitionID>0x00020002</MessageDefinitionID>
+          <DSCPTableEntryRef IDREF="dscp-af2"/>
+          <DestinationAddress>239.255.0.2</DestinationAddress>
+          <AggregateRate>
+            <AverageRate>1000</AverageRate>
+            <PeakRate>2000</PeakRate>
+            <SIUnits>Hertz</SIUnits>
+          </AggregateRate>
+          <MaximumMessageLength>
+            <FlexValue>500</FlexValue>
+            <UnitsRef IDREF="Bits16EU"/>
+          </MaximumMessageLength>
+          <MaximumMessageLatency>
+            <FloatValue>3</FloatValue>
+            <SIUnits>Second</SIUnits>
+          </MaximumMessageLatency>
+          <FixedPackageOrder>true</FixedPackageOrder>
+          <FixedNumberOfPackages>false</FixedNumberOfPackages>
+          <PackageInstance Index="1">
+            <PackageDefinitionRef IDREF="PCM_Ex2_Definition"/>
+          </PackageInstance>
+        </MessageDefinition>
+        <MessageDefinition ID="PCM_Ex3_Message">
+          <MessageDefinitionID>0x00030003</MessageDefinitionID>
+          <DSCPTableEntryRef IDREF="dscp-af2"/>
+          <DestinationAddress>239.255.0.3</DestinationAddress>
+          <AggregateRate>
+            <AverageRate>1000</AverageRate>
+            <PeakRate>2000</PeakRate>
+            <SIUnits>Hertz</SIUnits>
+          </AggregateRate>
+          <MaximumMessageLength>
+            <FlexValue>144</FlexValue>
+            <UnitsRef IDREF="Bits16EU"/>
+          </MaximumMessageLength>
+          <MaximumMessageLatency>
+            <FloatValue>3</FloatValue>
+            <SIUnits>Second</SIUnits>
+          </MaximumMessageLatency>
+          <FixedMessageLength>
+            <FlexValue>144</FlexValue>
+            <UnitsRef IDREF="Bits16EU"/>
+          </FixedMessageLength>
+          <FixedPackageOrder>true</FixedPackageOrder>
+          <FixedNumberOfPackages>true</FixedNumberOfPackages>
+          <PackageInstance Index="1">
+            <PackageDefinitionRef IDREF="PCM_Ex1_Definition"/>
+          </PackageInstance>
+          <PackageInstance Index="2">
+            <PackageDefinitionRef IDREF="PCM_Ex2_Definition"/>
+          </PackageInstance>
+        </MessageDefinition>
+      </Messages>
+      <DataOperations>
+        <DataOperation ID="PolynomialExample">
+          <Name>Polynomial Example</Name>
+          <Description>Produces the equation y=3x^2 + 4x + 2</Description>
+          <Method ID="Method1">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>3</Coefficient>
+                  <Exponent>2</Exponent>
+                </Term>
+                <Term>
+                  <Coefficient>4</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+                <Term>
+                  <Coefficient>2</Coefficient>
+                  <Exponent>0</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+        </DataOperation>
+      </DataOperations>
+    </MeasurementDomain>
+  </MeasurementDomains>
+  <NetworkDomains>
+    <Network ID="ExampleNetworkID">
+      <Name>Example Network</Name>
+      <NetworkType>TmNS</NetworkType>
+      <NetworkNode ID="dauSIM_Node">
+        <Name>DAU Sim Node</Name>
+        <InventoryID>ID1</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="DauSIMApp">
+            <RoleID>dauSIM</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>0.0.1</ConfigurationVersion>
+            <TmNSDAU/>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="NI_1">
+          <InterfaceName>Eth0</InterfaceName>
+          <DHCPEnable>true</DHCPEnable>
+          <IPAddress>192.168.0.201</IPAddress>
+          <Netmask>255.255.0.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <PhysicalNetworkPort ID="PhysNetPort1">
+            <Name>PhysNetPort1</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+      </NetworkNode>
+      <NetworkNode ID="recorderSIM_Node">
+        <Name>Recorder Sim Node</Name>
+        <InventoryID>ID2</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="RecorderSimApp">
+            <RoleID>recorderSIM</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>0.0.1</ConfigurationVersion>
+            <TmNSRecorder/>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="NI_2">
+          <InterfaceName>Eth0</InterfaceName>
+          <DHCPEnable>true</DHCPEnable>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="PhysNetPort2">
+            <Name>PhysNetPort2</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+      </NetworkNode>
+    </Network>
+  </NetworkDomains>
+  <DSCPTable>
+    <DSCPTableEntry ID="dscp-be">
+      <DSCPValue>0b000000</DSCPValue>
+      <DSCPDescription>Best Effort</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="dscp-ef">
+      <DSCPValue>0b101110</DSCPValue>
+      <DSCPDescription>Expedited Forwarding</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="dscp-af1">
+      <DSCPValue>0b001000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 1</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="dscp-af2">
+      <DSCPValue>0b010000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 2</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="dscp-af3">
+      <DSCPValue>0b011000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 3</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="dscp-af4">
+      <DSCPValue>0b100000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 4</DSCPDescription>
+    </DSCPTableEntry>
+  </DSCPTable>
+</MDLRoot>

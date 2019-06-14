@@ -1,0 +1,864 @@
+<?xml version="1.0"?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xsi:schemaLocation="http://inetprogram.org/projects/MDL MDL_v0_8_11.xsd">
+  <ConfigurationVersion>-TBD-</ConfigurationVersion>
+
+  <Units>
+    <DerivedUnit ID="GForceUnits">
+      <Name>G Force</Name>
+      <Symbol>G</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>9.80665</NumericalConstant>
+        <SIUnits>MeterPerSecondSquared</SIUnits>
+      </UnitsNumerator>
+    </DerivedUnit>
+  </Units>
+
+  <NetworkDomains>
+    <Network ID="TANetwork">
+      <Name>SDD CONOP TA Network</Name>
+      <Description>TA Network for the SDD CONOP</Description>
+      <NetworkType>TestArticleNetwork</NetworkType>
+      <NetworkServices/>
+
+      <Network ID="TARedNetwork">
+        <Name>SDD CONOP TA Red Network</Name>
+        <Description>TA Red-Side Network for the SDD CONOP</Description>
+        <NetworkType>TestArticleNetwork</NetworkType>
+        <NetworkServices/>
+
+
+        <NetworkNode ID="AnalogDau1">
+          <Name>AnalogDau1</Name>
+          <InventoryID>Analog-Dau-000100</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="AnalogDAU1App">
+              <RoleID>AnalogDau1</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSDAU/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="AnalogDau1IFace">
+            <Name>AnalogDau1IFace</Name>
+            <InterfaceName>Eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="AnalogDau1PhyNetPort">
+              <Name>AnalogDau1PhyNetPort</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Pins>
+            <Pin ID="AnalogDau1Pin1" Index="1"/>
+            <Pin ID="AnalogDau1Pin2" Index="2"/>
+            <Pin ID="AnalogDau1Pin3" Index="3"/>
+            <Pin ID="AnalogDau1Pin4" Index="4"/>
+            <Pin ID="AnalogDau1Pin5" Index="5"/>
+            <Pin ID="AnalogDau1Pin6" Index="6"/>
+            <Pin ID="AnalogDau1Pin7" Index="7"/>
+            <Pin ID="AnalogDau1Pin8" Index="8"/>
+            <Pin ID="AnalogDau1Pin9" Index="9"/>
+            <Pin ID="AnalogDau1Pin10" Index="10"/>
+            <Pin ID="AnalogDau1Pin11" Index="11"/>
+            <Pin ID="AnalogDau1Pin12" Index="12"/>
+            <Pin ID="AnalogDau1Pin13" Index="13"/>
+            <Pin ID="AnalogDau1Pin14" Index="14"/>
+            <Pin ID="AnalogDau1Pin15" Index="15"/>
+            <Pin ID="AnalogDau1Pin16" Index="16"/>
+          </Pins>
+          <Ports>
+            <Port ID="AnalogDau1NetworkPort">
+              <Name>AnalogDau1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="AnalogDau1PhyNetPort"/>
+            </Port>
+            <Port ID="AnalogDau1Port1">
+              <PortDirection>Input</PortDirection>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="MS1553BusDau1">
+          <Name>MS1553BusDau1</Name>
+          <InventoryID>MS1553Bus-Dau-000100</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="MS1553BusDAU1App">
+              <RoleID>MS1553BusDau1</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSDAU/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="MS1553BusDau1IFace">
+            <Name>MS1553BusDau1IFace</Name>
+            <InterfaceName>Eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="MS1553BusDau1PhyNetPort">
+              <Name>MS1553BusDau1PhyNetPort</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="MS1553BusDau1NetworkPort">
+              <Name>MS1553BusDau1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="MS1553BusDau1PhyNetPort"/>
+            </Port>
+            <Port ID="MS1553BusDau1Port1">
+              <PortDirection>Input</PortDirection>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="TARecorder1">
+          <Name>TARecorder1</Name>
+          <InventoryID>TARecorder1</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="TARecorder1App">
+              <RoleID>TARecorder1</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSRecorder/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="TARecorder1IFace">
+            <Name>TARecorder1IFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="TARecorder1PhyNetPort">
+              <Name>TARecorder1PhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="TARecorder1Port">
+              <Name>TARecorder1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="TARecorder1PhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="MFD">
+          <Name>Multi-Function Display</Name>
+          <InventoryID>MFD</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="MFDApp">
+              <RoleID>MFD</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSLTCDataSink/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="MFDIFace">
+            <Name>MFDIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="MFDPhyNetPort">
+              <Name>MFDPhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="MFDPort">
+              <Name>MFDPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="MFDPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="OnboardTAManagerRed">
+          <Name>OnboardTAManagerRed</Name>
+          <InventoryID>Manager-Computer-0003</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="OnboardTAManagerRedApp">
+              <RoleID>OnboardTAManagerRed</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSConsolidatedManager>
+              </TmNSConsolidatedManager>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="OnboardTAManagerRedIFace">
+            <Name>OnboardTAManagerRedIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="OnboardTAManagerRedPhyNetPort">
+              <Name>OnboardTAManagerRedPhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="OnboardTAManagerRedNetworkPort">
+              <Name>Onboard TA Manager Black Network Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="OnboardTAManagerRedPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="TAVoiceGateway">
+          <Name>TA Voice Gateway</Name>
+          <InventoryID>TA-Voice-Gate-DAU-00011</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="TAVoiceGatewayApp">
+              <RoleID>TA-Voice-Gate-DAU-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSVoiceGateway>
+                <CodecPriorities>
+                  <CodecPriority Index="1">G.711</CodecPriority>
+                  <CodecPriority Index="2">G.726</CodecPriority>
+                  <CodecPriority Index="3">G.729a</CodecPriority>
+                </CodecPriorities>
+              </TmNSVoiceGateway>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="TAVoiceGatewayIFace">
+            <Name>TAVoiceGatewayIFace</Name>
+            <InterfaceName>TAVoiceGatewayIFace</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="TAVoiceGatewayPhyNetPort">
+              <Name>Network Gateway Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="TAVoiceGatewayPort">
+              <Name>TAVoiceGatewayPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="TAVoiceGatewayPhyNetPort"/>
+            </Port>
+            <Port ID="TAVoiceGatewayInputPort">
+              <Name>Voice Input Port</Name>
+              <PortDirection>Input</PortDirection>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="NetworkGateway">
+          <Name>Network Gateway</Name>
+          <InventoryID>Network-Gate-DAU-00011</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="NetworkGatewayApp">
+              <RoleID>Network-Gate-DAU-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSLTCDataSink/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="NetworkGatewayIFace">
+            <Name>NetworkGatewayIFace</Name>
+            <InterfaceName>NetworkGatewayIFace</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="NetworkGatewayPhyNetPort">
+              <Name>Network Gateway Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="NetworkGatewayPort">
+              <Name>NetworkGatewayPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="NetworkGatewayPhyNetPort"/>
+            </Port>
+            <Port ID="NetworkGatewayInputPort">
+              <Name>SST Output Port</Name>
+              <PortDirection>Output</PortDirection>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="PCMGateway">
+          <Name>PCM Gateway DAU</Name>
+          <InventoryID>PCM-Gate-DAU-00011</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="PCMGatewayApp">
+              <RoleID>PCM-Gate-DAU-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSLTCDataSource>
+                <TTL>255</TTL>
+              </TmNSLTCDataSource>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="PCMGatewayIFace">
+            <Name>PCMGatewayIFace</Name>
+            <InterfaceName>PCMGatewayIFace</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="PCMGatewayPhyNetPort">
+              <Name>PCM Gateway Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="PCMGatewayPort">
+              <Name>PCMGatewayPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="PCMGatewayPhyNetPort"/>
+            </Port>
+            <Port ID="PCMGatewayInputPort">
+              <Name>SST Input Port</Name>
+              <PortDirection>Input</PortDirection>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="RedSwitch1">
+          <Name>Red Switch 1</Name>
+          <InventoryID>8-Port-Switch-ID-000010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="RedSwitch1App">
+              <RoleID>RedSwitch1</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="RedSwitch1IFace">
+            <Name>RedSwitch1IFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort1">
+              <Name>RedSwitch1PhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort2">
+              <Name>RedSwitch1PhyNetPort2</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>2</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort3">
+              <Name>RedSwitch1PhyNetPort3</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>3</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort4">
+              <Name>RedSwitch1PhyNetPort4</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>4</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort5">
+              <Name>RedSwitch1PhyNetPort5</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>5</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort6">
+              <Name>RedSwitch1PhyNetPort6</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>6</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort7">
+              <Name>RedSwitch1PhyNetPort7</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>7</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort8">
+              <Name>RedSwitch1PhyNetPort8</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>8</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="RedSwitch1Port1">
+              <Name>Switch1Port1</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort1"/>
+            </Port>
+            <Port ID="RedSwitch1Port2">
+              <Name>Switch1Port2</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort2"/>
+            </Port>
+            <Port ID="RedSwitch1Port3">
+              <Name>Switch1Port3</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort3"/>
+            </Port>
+            <Port ID="RedSwitch1Port4">
+              <Name>Switch1Port4</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort4"/>
+            </Port>
+            <Port ID="RedSwitch1Port5">
+              <Name>Switch1Port5</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort5"/>
+            </Port>
+            <Port ID="RedSwitch1Port6">
+              <Name>Switch1Port6</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort6"/>
+            </Port>
+            <Port ID="RedSwitch1Port7">
+              <Name>Switch1Port7</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort7"/>
+            </Port>
+            <Port ID="RedSwitch1Port8">
+              <Name>Switch1Port8</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort8"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="RedSwitch2">
+          <Name>Red Switch 2</Name>
+          <InventoryID>8-Port-Switch-ID-000011</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="RedSwitch2App">
+              <RoleID>RedSwitch2</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="RedSwitch2IFace">
+            <Name>RedSwitch2IFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort1">
+              <Name>RedSwitch2PhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort2">
+              <Name>RedSwitch2PhyNetPort2</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>2</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort3">
+              <Name>RedSwitch2PhyNetPort3</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>3</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort4">
+              <Name>RedSwitch2PhyNetPort4</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>4</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort5">
+              <Name>RedSwitch2PhyNetPort5</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>5</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort6">
+              <Name>RedSwitch2PhyNetPort6</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>6</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort7">
+              <Name>RedSwitch2PhyNetPort7</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>7</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort8">
+              <Name>RedSwitch2PhyNetPort8</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>8</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="RedSwitch2Port1">
+              <Name>Switch2Port1</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort1"/>
+            </Port>
+            <Port ID="RedSwitch2Port2">
+              <Name>Switch2Port2</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort2"/>
+            </Port>
+            <Port ID="RedSwitch2Port3">
+              <Name>Switch2Port3</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort3"/>
+            </Port>
+            <Port ID="RedSwitch2Port4">
+              <Name>Switch2Port4</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort4"/>
+            </Port>
+            <Port ID="RedSwitch2Port5">
+              <Name>Switch2Port5</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort5"/>
+            </Port>
+            <Port ID="RedSwitch2Port6">
+              <Name>Switch2Port6</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort6"/>
+            </Port>
+            <Port ID="RedSwitch2Port7">
+              <Name>Switch2Port7</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort7"/>
+            </Port>
+            <Port ID="RedSwitch2Port8">
+              <Name>Switch2Port8</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort8"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <Devices>
+          <Device ID="GearVibTransducer">
+            <Name>Gear Vibration Accelerometer Transducer</Name>
+            <Description>This operation represents the accelerometer transducer transfer function.</Description>
+            <Manufacturer>Endevco</Manufacturer>
+            <ModelNumber>752-500</ModelNumber>
+            <SerialNumber>000125</SerialNumber>
+            <InventoryID>03928-2934820-2934</InventoryID>
+            <DeviceType>Accelerometer</DeviceType>
+            <Ports>
+              <Port ID="GearVibTransducerOutputPort">
+                <PortDirection>Output</PortDirection>
+              </Port>
+            </Ports>
+            <Excitation>
+              <ConditionOperation>==</ConditionOperation>
+              <ConditionValueFloat>24</ConditionValueFloat>
+              <SIUnits>Volt</SIUnits>
+            </Excitation>
+            <Calibration>
+              <CalibrationDate>2010-10-24</CalibrationDate>
+              <CalibrationPair>
+                <InputValue>
+                  <FloatValue>-3</FloatValue>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </InputValue>
+                <OutputValue>
+                  <FloatValue>-1.43</FloatValue>
+                  <SIUnits>Volt</SIUnits>
+                </OutputValue>
+              </CalibrationPair>
+              <CalibrationPair>
+                <InputValue>
+                  <FloatValue>3</FloatValue>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </InputValue>
+                <OutputValue>
+                  <FloatValue>1.52</FloatValue>
+                  <SIUnits>Volt</SIUnits>
+                </OutputValue>
+              </CalibrationPair>
+            </Calibration>
+          </Device>
+
+        </Devices>
+
+      </Network>
+
+      <Network ID="TABlackNetwork">
+        <Name>SDD CONOP TA Black Network</Name>
+        <Description>TA Black-Side Network for the SDD CONOP</Description>
+        <NetworkType>TestArticleNetwork</NetworkType>
+        <NetworkServices/>
+
+        <NetworkNode ID="OnboardTAManagerBlack">
+          <Name>OnboardTAManagerBlack</Name>
+          <InventoryID>Manager-Computer-0002</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="OnboardTAManagerBlackApp">
+              <RoleID>OnboardTAManagerBlack</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSConsolidatedManager>
+              </TmNSConsolidatedManager>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="OnboardTAManagerBlackIFace">
+            <Name>OnboardTAManagerBlackIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="OnboardTAManagerBlackPhyNetPort">
+              <Name>OnboardTAManagerBlackPhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="OnboardTAManagerBlackNetworkPort">
+              <Name>Onboard TA Manager Black Network Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="OnboardTAManagerBlackPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="TARadio">
+          <Name>TARadio</Name>
+          <InventoryID>TARadioInvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="TARadioApp">
+              <RoleID>TARadio-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSRadio>
+                <RadioType>TA Radio</RadioType>
+                <TransceiverID>24</TransceiverID>
+              </TmNSRadio>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="TARadioIFace">
+            <Name>TARadio1IFace</Name>
+            <InterfaceName>TARadio1IFace</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="TARadioPhyNetPort">
+              <Name>TARadio Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="TARadioPort">
+              <Name>TARadioPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="TARadioPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="SSTTransmitter1">
+          <Name>SST Transmitter 1</Name>
+          <InventoryID>SST-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="SSTTx1App">
+              <RoleID>TmNS-SSTTx-00010</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTTx>
+                <SSTTxRCCVersion>TBD</SSTTxRCCVersion>
+                <Channel ID="SSTTx1Chan1">
+                  <ChannelNumber>30</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1800e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                  <RFHighPowerEnable>true</RFHighPowerEnable>
+                </Channel>
+              </TmNSSSTTx>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="SSTTx1IFace">
+            <Name>SSTTx 1 Interface</Name>
+            <InterfaceName>SSTTx1IFace</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="SSTTx1PhyNetPort">
+              <Name>SST Tx 1 Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="SSTTx1Port">
+              <Name>SSTTx1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="SSTTx1PhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+
+        <NetworkNode ID="BlackSwitch1">
+          <Name>Black Switch 1</Name>
+          <InventoryID>8-Port-Switch-ID-000012</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="BlackSwitch1App">
+              <RoleID>BlackSwitch1</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="BlackSwitch1IFace">
+            <Name>BlackSwitch1IFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort1">
+              <Name>BlackSwitch1PhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort2">
+              <Name>BlackSwitch1PhyNetPort2</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>2</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort3">
+              <Name>BlackSwitch1PhyNetPort3</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>3</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort4">
+              <Name>BlackSwitch1PhyNetPort4</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>4</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort5">
+              <Name>BlackSwitch1PhyNetPort5</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>5</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort6">
+              <Name>BlackSwitch1PhyNetPort6</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>6</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort7">
+              <Name>BlackSwitch1PhyNetPort7</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>7</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort8">
+              <Name>BlackSwitch1PhyNetPort8</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>8</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="BlackSwitch1Port1">
+              <Name>Switch1Port1</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort1"/>
+            </Port>
+            <Port ID="BlackSwitch1Port2">
+              <Name>Switch1Port2</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort2"/>
+            </Port>
+            <Port ID="BlackSwitch1Port3">
+              <Name>Switch1Port3</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort3"/>
+            </Port>
+            <Port ID="BlackSwitch1Port4">
+              <Name>Switch1Port4</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort4"/>
+            </Port>
+            <Port ID="BlackSwitch1Port5">
+              <Name>Switch1Port5</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort5"/>
+            </Port>
+            <Port ID="BlackSwitch1Port6">
+              <Name>Switch1Port6</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort6"/>
+            </Port>
+            <Port ID="BlackSwitch1Port7">
+              <Name>Switch1Port7</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort7"/>
+            </Port>
+            <Port ID="BlackSwitch1Port8">
+              <Name>Switch1Port8</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort8"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+      <Devices>
+        <Antenna>
+          <Name>TA Antenna 1</Name>
+          <Description>TA Antenna 1</Description>
+        </Antenna>
+      </Devices>
+
+      </Network>
+
+      <NetworkNode ID="Encryptor1">
+        <Name>Encryptor1</Name>
+        <InventoryID>Encryptor1</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="Encryptor1App">
+            <RoleID>Encryptor1</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSEncryptor>
+              <RedNetworkInterfaceRef IDREF="EncryptorRedIFace"/>
+              <BlackNetworkInterfaceRef IDREF="EncryptorBlackIFace"/>
+            </TmNSEncryptor>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="EncryptorRedIFace">
+          <Name>Encryptor Red Network Interface</Name>
+          <InterfaceName>Eth0</InterfaceName>
+          <DHCPEnable>false</DHCPEnable>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="EncryptorRedPhyNetPort">
+            <Name>EncryptorRedPhyNetPort</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <NetworkInterface ID="EncryptorBlackIFace">
+          <Name>Encryptor Network Interface</Name>
+          <InterfaceName>Eth0</InterfaceName>
+          <DHCPEnable>false</DHCPEnable>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="EncryptorBlackPhyNetPort">
+            <Name>EncryptorBlackPhyNetPort</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="EncryptorBlackPort">
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="EncryptorBlackPhyNetPort"/>
+          </Port>
+          <Port ID="EncryptorRedPort">
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="EncryptorRedPhyNetPort"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+
+    </Network>
+  </NetworkDomains>
+
+</MDLRoot>

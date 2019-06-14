@@ -1,0 +1,3884 @@
+<?xml version="1.0"?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xsi:schemaLocation="http://inetprogram.org/projects/MDL MDL_v0_8_10.xsd">
+  <ConfigurationVersion>-TBD-</ConfigurationVersion>
+
+  <TestMissions>
+    <TestMission>
+      <Name>SDD Conop Test Mission</Name>
+      <TmNSCompleteness>false</TmNSCompleteness>
+      <TmNSCompletenessDescription>this is not yet the complete example</TmNSCompletenessDescription>
+      <NetworkReferences>
+        <NetworkRef IDREF="TANetwork"/>
+        <NetworkRef IDREF="GroundNetworkID"/>
+      </NetworkReferences>
+      <!-- TBD MissionQoS -->
+      <AssetAssociations>
+        <SSTAssoc>
+          <Name>SSTA1</Name>
+          <Description>SST Association 1</Description>
+          <Active>true</Active>
+          <SSTChannelRef IDREF="SSTTx1Chan1"/>
+          <SSTChannelRef IDREF="Site1Antenna1SSTRx1Chan1"/>
+        </SSTAssoc>
+        <RadioAssoc>
+          <Name>RA1</Name>
+          <Description>Radio Association 1</Description>
+          <Active>true</Active>
+          <ManageableAppRef IDREF="TARadioApp"/>
+          <ManageableAppRef IDREF="Site1Antenna1Radio1App"/>
+        </RadioAssoc>
+      </AssetAssociations>
+    </TestMission>
+  </TestMissions>
+
+  <Units>
+    <ReadOnly>true</ReadOnly>
+    <Owner>Instrumentation Person</Owner>
+    <DerivedUnit ID="GForceUnits">
+      <Name>G Force</Name>
+      <Symbol>G</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>9.80665</NumericalConstant>
+        <SIUnits>MeterPerSecondSquared</SIUnits>
+      </UnitsNumerator>
+    </DerivedUnit>
+    <DerivedUnit ID="PercentVoltUnits">
+      <Name>Percent of full scale voltage</Name>
+      <Symbol>%V</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>100</NumericalConstant>
+        <SIUnits>Volt</SIUnits>
+      </UnitsNumerator>
+      <UnitsDenominator>
+        <NumericalConstant>1</NumericalConstant>
+        <SIUnits>Volt</SIUnits>
+      </UnitsDenominator>
+    </DerivedUnit>
+  </Units>
+
+
+  <MeasurementDomains>
+    <ReadOnly>true</ReadOnly>
+    <Owner>Instrumentation Person</Owner>
+    <MeasurementDomain>
+      <Name>SDD CONOP Measurement Domain</Name>
+      <Measurements>
+
+        <Measurement ID="GearVibeMeas">
+          <Name>GEARVIBE</Name>
+          <Description>Gear Box Vibration</Description>
+          <MeasurementID>0x00000001</MeasurementID>
+          <MeasurementType>Analog</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>BestEffort</DeliveryClass>
+          <Requirements>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="GearVibeCountsToGsConversion"/>
+            </UnitsConversions>
+            <Uncertainty>
+              <ConfidenceInterval>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.2</ConditionValueFloat>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </ConfidenceInterval>
+              <ConfidenceLevel>95</ConfidenceLevel>
+            </Uncertainty>
+            <AnalogAttributes>
+              <SignalRange>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFloat>-1.5</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFloat>1.5</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFlex>-3</ConditionValueFlex>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFlex>3</ConditionValueFlex>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </SignalRange>
+              <Resolution>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.025</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.05</ConditionValueFloat>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </Resolution>
+              <FrequencyContent>
+                <FrequencyBand>
+                  <BandType>PassBand</BandType>
+                  <EdgeFrequency>
+                    <ConditionParameter>
+                      <ConditionOperation>==</ConditionOperation>
+                      <ConditionValueFlex>200</ConditionValueFlex>
+                      <SIUnits>Hertz</SIUnits>
+                    </ConditionParameter>
+                  </EdgeFrequency>
+                </FrequencyBand>
+                <PercentSignal>99</PercentSignal>
+              </FrequencyContent>
+            </AnalogAttributes>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFloat>12</ConditionValueFloat>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>SignedBinary</DigitalEncoding>
+              <ActiveInputRange>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFloat>98.3</ConditionValueFloat>
+                  <UnitsRef IDREF="PercentVoltUnits"/>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFloat>1.17</ConditionValueFloat>
+                  <UnitsRef IDREF="PercentVoltUnits"/>
+                </ConditionParameter>
+              </ActiveInputRange>
+            </DigitalAttributes>
+          </Requirements>
+          <Implementation>
+            <MeasurementSource/> <!--TBD MeasurementSource-->
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="GearVibeCountsToGsConversion"/>
+            </UnitsConversions>
+            <Uncertainty>
+              <ConfidenceInterval>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.2</ConditionValueFloat>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </ConfidenceInterval>
+              <ConfidenceLevel>95</ConfidenceLevel>
+            </Uncertainty>
+            <AnalogAttributes>
+              <SignalRange>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFloat>-1.5</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFloat>1.5</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFlex>-3</ConditionValueFlex>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFlex>3</ConditionValueFlex>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </SignalRange>
+              <Resolution>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.025</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.05</ConditionValueFloat>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </Resolution>
+              <FrequencyContent>
+                <FrequencyBand>
+                  <BandType>PassBand</BandType>
+                  <EdgeFrequency>
+                    <ConditionParameter>
+                      <ConditionOperation>==</ConditionOperation>
+                      <ConditionValueFlex>200</ConditionValueFlex>
+                      <SIUnits>Hertz</SIUnits>
+                    </ConditionParameter>
+                  </EdgeFrequency>
+                </FrequencyBand>
+                <PercentSignal>99</PercentSignal>
+              </FrequencyContent>
+            </AnalogAttributes>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFloat>12</ConditionValueFloat>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>SignedBinary</DigitalEncoding>
+              <ActiveInputRange>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFloat>98.3</ConditionValueFloat>
+                  <UnitsRef IDREF="PercentVoltUnits"/>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFloat>1.17</ConditionValueFloat>
+                  <UnitsRef IDREF="PercentVoltUnits"/>
+                </ConditionParameter>
+              </ActiveInputRange>
+            </DigitalAttributes>
+          </Implementation>
+        </Measurement>
+
+        <Measurement ID="FrameID">
+          <Name>FRAMEID</Name>
+          <Description>Placeholder for the frameID</Description>
+          <MeasurementID>0x00000002</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>BestEffort</DeliveryClass>
+          <Requirements>
+            <SIUnits>Counts</SIUnits>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFloat>16</ConditionValueFloat>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>SignedBinary</DigitalEncoding>
+            </DigitalAttributes>
+          </Requirements>
+          <Implementation>
+            <MeasurementSource/> <!--TBD MeasurementSource-->
+            <SIUnits>Counts</SIUnits>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFloat>16</ConditionValueFloat>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>SignedBinary</DigitalEncoding>
+            </DigitalAttributes>
+          </Implementation>
+        </Measurement>
+
+        <Measurement ID="Meas_AIRSPD">
+          <Name>AIRSPD</Name>
+          <MeasurementID>0x00000004</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <Implementation>
+            <MeasurementSource/>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="AIRSPD_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>16</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>50</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </Implementation>
+        </Measurement>
+
+        <Measurement ID="Meas_HEADNG">
+          <Name>HEADNG</Name>
+          <MeasurementID>0x00000005</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <Implementation>
+            <MeasurementSource/>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="HEADNG_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>16</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>50</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </Implementation>
+        </Measurement>
+
+        <Measurement ID="Meas_ALT">
+          <Name>ALT</Name>
+          <MeasurementID>0x00000006</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <Implementation>
+            <MeasurementSource/>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="ALT_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>19</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>50</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </Implementation>
+        </Measurement>
+
+        <Measurement ID="Meas_ROLRATE">
+          <Name>ROLRATE</Name>
+          <MeasurementID>0x00000007</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <Implementation>
+            <MeasurementSource/>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="ROLRATE_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>16</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>20</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </Implementation>
+        </Measurement>
+
+        <Measurement ID="Meas_PTCHRATE">
+          <Name>PTCHRATE</Name>
+          <MeasurementID>0x00000008</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <Implementation>
+            <MeasurementSource/>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="PTCHRATE_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>16</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>20</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </Implementation>
+        </Measurement>
+
+        <Measurement ID="Meas_LATPSN">
+          <Name>LATPSN</Name>
+          <MeasurementID>0x00000009</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>FlightSafety</DeliveryClass>
+          <Implementation>
+            <MeasurementSource/>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="LATPSN_EU_CONV"/>
+            </UnitsConversions>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>12</ConditionValueFlex>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>Two'sComplement</DigitalEncoding>
+              <DataRate>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFlex>10</ConditionValueFlex>
+                  <SIUnits>Hertz</SIUnits>
+                </ConditionParameter>
+              </DataRate>
+            </DigitalAttributes>
+          </Implementation>
+        </Measurement>
+      </Measurements>
+
+
+      <Packages>
+        <PackageDefinition ID="PackageDefinition2">
+          <PackageDefinitionID>0x00000011</PackageDefinitionID>
+          <StandardPackageHeader>true</StandardPackageHeader>
+          <DataStreamRef IDREF="MS1553_Bus_GPS"/>
+        </PackageDefinition>
+
+        <PackageDefinition ID="PackageDefinition3">
+          <PackageDefinitionID>0x00000012</PackageDefinitionID>
+          <StandardPackageHeader>true</StandardPackageHeader>
+          <DataStreamRef IDREF="MS1553_Bus_NAV"/>
+        </PackageDefinition>
+
+        <PackageDefinition ID="PackageDefinition4">
+          <PackageDefinitionID>0x00000013</PackageDefinitionID>
+          <StandardPackageHeader>true</StandardPackageHeader>
+          <DataStreamRef IDREF="MS1553_Bus_AV3"/>
+        </PackageDefinition>
+
+        <PackageDefinition ID="PackageDefinition5">
+          <PackageDefinitionID>0x00000014</PackageDefinitionID>
+          <StandardPackageHeader>true</StandardPackageHeader>
+          <DataStreamRef IDREF="MS1553_Bus_AV1"/>
+        </PackageDefinition>
+
+        <PackageDefinition ID="PackageDefinition1">
+          <PackageDefinitionID>0x00000010</PackageDefinitionID>
+          <StandardPackageHeader>true</StandardPackageHeader>
+          <PackageStructureRef IDREF="PackageStructure1"/>
+          <DataMap>
+            <DataWordToFieldMap>
+              <DataWord>
+                <DataWordWidth>
+                  <FlexValue>4</FlexValue>
+                  <SIUnits>Byte</SIUnits>
+                </DataWordWidth>
+                <Syllable>
+                  <ConstantValue>0x5050D0D0</ConstantValue>
+                </Syllable>
+              </DataWord>
+              <PackageDataFieldRef IDREF="Package1_Field1_FrameSync"/>
+              <TimeOrder>IncreasingTemporal</TimeOrder>
+            </DataWordToFieldMap>
+            <DataWordToFieldMap>
+              <DataWord>
+                <DataWordWidth>
+                  <FlexValue>2</FlexValue>
+                  <SIUnits>Byte</SIUnits>
+                </DataWordWidth>
+                <Syllable>
+                  <MeasurementRef IDREF="FrameID"/>
+                </Syllable>
+              </DataWord>
+              <PackageDataFieldRef IDREF="Package1_Field2_FrameID"/>
+              <TimeOrder>IncreasingTemporal</TimeOrder>
+            </DataWordToFieldMap>
+            <DataWordToFieldMap>
+              <DataWord>
+                <DataWordWidth>
+                  <FlexValue>12</FlexValue>
+                  <SIUnits>Bit</SIUnits>
+                </DataWordWidth>
+                <Syllable>
+                  <MeasurementRef IDREF="GearVibeMeas"/>
+                  <SyllableMask>0x0FFF</SyllableMask>
+                  <SyllableWidth>
+                    <FlexValue>12</FlexValue>
+                    <SIUnits>Bit</SIUnits>
+                  </SyllableWidth>
+                  <SyllableStartBit>1</SyllableStartBit>
+                  <DataWordOffset>0</DataWordOffset>
+                </Syllable>
+              </DataWord>
+              <PackageDataFieldRef IDREF="Package1_Field3"/>
+              <TimeOrder>IncreasingTemporal</TimeOrder>
+            </DataWordToFieldMap>
+          </DataMap>
+        </PackageDefinition>
+        <PackageStructure ID="PackageStructure1">
+          <PackageDataField ID="Package1_Field1_FrameSync">
+            <FieldLocation ID="Package1_Field1_Location">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>12</FlexValue> <!--offset from the start of the message.  Standard header is 12 bytes -->
+                  <SIUnits>Byte</SIUnits>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>4</FlexValue>
+                <SIUnits>Byte</SIUnits>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>1</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="Package1_Field2_FrameID">
+            <FieldLocation ID="Package1_Field2_Location">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>16</FlexValue> <!--offset from the start of the message.  Standard header is 12 bytes-->
+                  <SIUnits>Byte</SIUnits>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>2</FlexValue>
+                <SIUnits>Byte</SIUnits>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>1</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="Package1_Field3">
+            <FieldLocation ID="Package1_Field3_Location">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>18</FlexValue> <!--offset from the start of the message.  Standard header is 12 bytes-->
+                  <SIUnits>Byte</SIUnits>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>2</FlexValue>
+                <SIUnits>Byte</SIUnits>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>1</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="Package1_Field4">
+            <FieldLocation ID="Package1_Field4_Location">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>20</FlexValue> <!--offset from the start of the message.  Standard header is 12 bytes-->
+                  <SIUnits>Byte</SIUnits>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>2</FlexValue>
+                <SIUnits>Byte</SIUnits>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>1</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="Package1_Field5">
+            <FieldLocation ID="Package1_Field5_Location">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>22</FlexValue> <!--offset from the start of the message.  Standard header is 12 bytes-->
+                  <SIUnits>Byte</SIUnits>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>2</FlexValue>
+                <SIUnits>Byte</SIUnits>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>1</FieldRepetitions>
+          </PackageDataField>
+        </PackageStructure>
+      </Packages>
+
+      <Messages>
+        <MessageDefinition ID="MessageDefinition1">
+          <MessageDefinitionID>0x08000001</MessageDefinitionID>
+          <DSCPTableEntryRef IDREF="DiffservLTC"/>
+          <DestinationAddress>239.192.0.1</DestinationAddress>
+          <DestinationPort>21403</DestinationPort>
+          <MaximumMessageLength>
+            <FlexValue>512</FlexValue>
+            <SIUnits>Byte</SIUnits>
+          </MaximumMessageLength>
+          <FixedPackageOrder>true</FixedPackageOrder>
+          <FixedNumberOfPackages>false</FixedNumberOfPackages>
+          <PackageInstance Index="1">
+            <PackageDefinitionRef IDREF="PackageDefinition1"/>
+          </PackageInstance>
+          <!-- Additional PackageInstances may be added -->
+        </MessageDefinition>
+
+        <MessageDefinition ID="MessageDefinition2">
+          <MessageDefinitionID>0x08000002</MessageDefinitionID>
+          <DSCPTableEntryRef IDREF="DiffservLTC"/>
+          <DestinationAddress>239.192.0.2</DestinationAddress>
+          <DestinationPort>21403</DestinationPort>
+          <MaximumMessageLength>
+            <FlexValue>512</FlexValue>
+            <SIUnits>Byte</SIUnits>
+          </MaximumMessageLength>
+          <FixedPackageOrder>true</FixedPackageOrder>
+          <FixedNumberOfPackages>false</FixedNumberOfPackages>
+          <PackageInstance Index="1">
+            <PackageDefinitionRef IDREF="PackageDefinition4"/>
+          </PackageInstance>
+          <PackageInstance Index="2">
+            <PackageDefinitionRef IDREF="PackageDefinition5"/>
+          </PackageInstance>
+        </MessageDefinition>
+
+        <MessageDefinition ID="MessageDefinition3">
+          <MessageDefinitionID>0x08000003</MessageDefinitionID>
+          <DSCPTableEntryRef IDREF="DiffservLTC"/>
+          <DestinationAddress>239.192.0.3</DestinationAddress>
+          <DestinationPort>21403</DestinationPort>
+          <MaximumMessageLength>
+            <FlexValue>512</FlexValue>
+            <SIUnits>Byte</SIUnits>
+          </MaximumMessageLength>
+          <FixedPackageOrder>true</FixedPackageOrder>
+          <FixedNumberOfPackages>false</FixedNumberOfPackages>
+          <PackageInstance Index="1">
+            <PackageDefinitionRef IDREF="PackageDefinition3"/>
+          </PackageInstance>
+        </MessageDefinition>
+
+        <MessageDefinition ID="MessageDefinition4">
+          <MessageDefinitionID>0x08000004</MessageDefinitionID>
+          <DSCPTableEntryRef IDREF="DiffservLTC"/>
+          <DestinationAddress>239.192.0.4</DestinationAddress>
+          <DestinationPort>21403</DestinationPort>
+          <MaximumMessageLength>
+            <FlexValue>512</FlexValue>
+            <SIUnits>Byte</SIUnits>
+          </MaximumMessageLength>
+          <FixedPackageOrder>true</FixedPackageOrder>
+          <FixedNumberOfPackages>false</FixedNumberOfPackages>
+          <PackageInstance Index="1">
+            <PackageDefinitionRef IDREF="PackageDefinition2"/>
+          </PackageInstance>
+        </MessageDefinition>
+      </Messages>
+
+      <DataStreams>
+        <DataStream ID="MS1553_Bus_AV1">
+          <DataStreamID>1553 Bus AV1</DataStreamID>
+          <DataStreamType>MILSTD1553</DataStreamType>
+          <MILSTD1553Messages>
+            <MILSTD1553Message ID="MS1553_Bus_AV1_MSG1">
+              <MILSTD1553MessageType>RemoteTerminalToRemoteTerminal</MILSTD1553MessageType>
+              <MILSTD1553RemoteTerminal>1</MILSTD1553RemoteTerminal>
+              <MILSTD1553SubaddressOrMode>4</MILSTD1553SubaddressOrMode>
+              <MILSTD1553TransmitReceive>Transmit</MILSTD1553TransmitReceive>
+              <MILSTD1553WordCountOrModeCode>30</MILSTD1553WordCountOrModeCode>
+              <DataStructure ID="MS1553_Bus_AV1_MSG1_STRUCT">
+                <!-- NOTE: Structure includes additional PackageDataFields not included in this example -->
+                <PackageDataField ID="MS1553_Bus_AV1_MSG_Field2">
+                  <FieldLocation ID="MS1553_Bus_AV1_MSG_Field2_Loc">
+                    <FieldOffset>
+                      <OffsetValue>
+                        <FlexValue>2</FlexValue>
+                        <SIUnits>Word16</SIUnits>
+                      </OffsetValue>
+                    </FieldOffset>
+                    <FieldWidth>
+                      <FlexValue>1</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </FieldWidth>
+                  </FieldLocation>
+                  <FieldEncoding>
+                    <Endianness>BigEndian</Endianness>
+                    <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                  </FieldEncoding>
+                  <FieldRepetitions>1</FieldRepetitions>
+                </PackageDataField>
+                <PackageDataField ID="MS1553_Bus_AV1_MSG_Field3">
+                  <FieldLocation ID="MS1553_Bus_AV1_MSG_Field3_Loc">
+                    <FieldOffset>
+                      <OffsetValue>
+                        <FlexValue>3</FlexValue> <!--Word 3-->
+                        <SIUnits>Word16</SIUnits>
+                      </OffsetValue>
+                    </FieldOffset>
+                    <FieldWidth>
+                      <FlexValue>1</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </FieldWidth>
+                  </FieldLocation>
+                  <FieldEncoding>
+                    <Endianness>BigEndian</Endianness>
+                    <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                  </FieldEncoding>
+                  <FieldRepetitions>1</FieldRepetitions>
+                </PackageDataField>
+              </DataStructure>
+              <DataMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>1</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_AIRSPD"/>
+                      <SyllableMask>0xffff</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>1</FlexValue>
+                        <SIUnits>Word16</SIUnits>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>0</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldRef IDREF="MS1553_Bus_AV1_MSG_Field2"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>1</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_HEADNG"/>
+                      <SyllableMask>0xffff</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>1</FlexValue>
+                        <SIUnits>Word16</SIUnits>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>0</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldRef IDREF="MS1553_Bus_AV1_MSG_Field3"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+              </DataMap>
+            </MILSTD1553Message>
+          </MILSTD1553Messages>
+        </DataStream>
+
+        <DataStream ID="MS1553_Bus_AV3">
+          <DataStreamID>1553 Bus AV3</DataStreamID>
+          <DataStreamType>MILSTD1553</DataStreamType>
+          <MILSTD1553Messages>
+            <MILSTD1553Message ID="MS1553_Bus_AV3_MSG1">
+              <MILSTD1553MessageType>RemoteTerminalToRemoteTerminal</MILSTD1553MessageType>
+              <MILSTD1553RemoteTerminal>1</MILSTD1553RemoteTerminal>
+              <MILSTD1553SubaddressOrMode>4</MILSTD1553SubaddressOrMode>
+              <MILSTD1553TransmitReceive>Transmit</MILSTD1553TransmitReceive>
+              <MILSTD1553WordCountOrModeCode>30</MILSTD1553WordCountOrModeCode>
+              <DataStructure ID="MS1553_Bus_AV3_MSG1_STRUCT">
+                <!-- NOTE: Structure includes additional Fields not included in this example -->
+                <PackageDataFieldSet ID="MS1553_Bus_AV3_MSG_Field11_12Set">
+                  <PackageDataField ID="MS1553_Bus_AV3_MSG_Field11">
+                    <FieldLocation ID="MS1553_Bus_AV3_MSG_Field11_Loc">
+                      <FieldOffset>
+                        <OffsetValue>
+                          <FlexValue>11</FlexValue>
+                          <SIUnits>Word16</SIUnits>
+                        </OffsetValue>
+                      </FieldOffset>
+                      <FieldWidth>
+                        <FlexValue>1</FlexValue>
+                        <SIUnits>Word16</SIUnits>
+                      </FieldWidth>
+                    </FieldLocation>
+                    <FieldEncoding>
+                      <Endianness>BigEndian</Endianness>
+                      <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                    </FieldEncoding>
+                    <FieldRepetitions>1</FieldRepetitions>
+                  </PackageDataField>
+                  <PackageDataField ID="MS1553_Bus_AV3_MSG_Field12">
+                    <FieldLocation ID="MS1553_Bus_AV3_MSG_Field12_Loc">
+                      <FieldOffset>
+                        <OffsetValue>
+                          <FlexValue>12</FlexValue>
+                          <SIUnits>Word16</SIUnits>
+                        </OffsetValue>
+                      </FieldOffset>
+                      <FieldWidth>
+                        <FlexValue>1</FlexValue>
+                        <SIUnits>Word16</SIUnits>
+                      </FieldWidth>
+                    </FieldLocation>
+                    <FieldEncoding>
+                      <Endianness>BigEndian</Endianness>
+                      <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                    </FieldEncoding>
+                    <FieldRepetitions>1</FieldRepetitions>
+                  </PackageDataField>
+                </PackageDataFieldSet>
+              </DataStructure>
+              <DataMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>2</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_ALT"/>
+                      <SyllableMask>0x7FFFF</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>19</FlexValue>
+                        <SIUnits>Bit</SIUnits>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>13</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldSetRef IDREF="MS1553_Bus_AV3_MSG_Field11_12Set"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+              </DataMap>
+            </MILSTD1553Message>
+          </MILSTD1553Messages>
+        </DataStream>
+
+        <DataStream ID="MS1553_Bus_NAV">
+          <DataStreamID>1553 Bus NAV</DataStreamID>
+          <DataStreamType>MILSTD1553</DataStreamType>
+          <MILSTD1553Messages>
+            <MILSTD1553Message ID="MS1553_Bus_NAV_MSG1">
+              <MILSTD1553MessageType>RemoteTerminalToRemoteTerminal</MILSTD1553MessageType>
+              <MILSTD1553RemoteTerminal>13</MILSTD1553RemoteTerminal>
+              <MILSTD1553SubaddressOrMode>7</MILSTD1553SubaddressOrMode>
+              <MILSTD1553TransmitReceive>Receive</MILSTD1553TransmitReceive>
+              <MILSTD1553WordCountOrModeCode>30</MILSTD1553WordCountOrModeCode>
+              <DataStructure ID="MS1553_Bus_NAV_MSG1_STRUCT">
+                <!-- NOTE: Structure includes additional Fields not included in this example -->
+                <PackageDataField ID="MS1553_Bus_NAV_MSG_Field8">
+                  <FieldLocation ID="MS1553_Bus_NAV_MSG_Field8_Loc">
+                    <FieldOffset>
+                      <OffsetValue>
+                        <FlexValue>8</FlexValue>
+                        <SIUnits>Word16</SIUnits>
+                      </OffsetValue>
+                    </FieldOffset>
+                    <FieldWidth>
+                      <FlexValue>1</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </FieldWidth>
+                  </FieldLocation>
+                  <FieldEncoding>
+                    <Endianness>BigEndian</Endianness>
+                    <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                  </FieldEncoding>
+                  <FieldRepetitions>1</FieldRepetitions>
+                </PackageDataField>
+                <PackageDataField ID="MS1553_Bus_NAV_MSG_Field9">
+                  <FieldLocation ID="MS1553_Bus_NAV_MSG_Field9_Loc">
+                    <FieldOffset>
+                      <OffsetValue>
+                        <FlexValue>9</FlexValue>
+                        <SIUnits>Word16</SIUnits>
+                      </OffsetValue>
+                    </FieldOffset>
+                    <FieldWidth>
+                      <FlexValue>1</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </FieldWidth>
+                  </FieldLocation>
+                  <FieldEncoding>
+                    <Endianness>BigEndian</Endianness>
+                    <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                  </FieldEncoding>
+                  <FieldRepetitions>1</FieldRepetitions>
+                </PackageDataField>
+              </DataStructure>
+              <DataMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>1</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_ROLRATE"/>
+                      <SyllableMask>0xffff</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>1</FlexValue>
+                        <SIUnits>Word16</SIUnits>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>0</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldRef IDREF="MS1553_Bus_NAV_MSG_Field8"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>1</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_PTCHRATE"/>
+                      <SyllableMask>0xffff</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>1</FlexValue>
+                        <SIUnits>Word16</SIUnits>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>0</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldRef IDREF="MS1553_Bus_NAV_MSG_Field9"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+              </DataMap>
+            </MILSTD1553Message>
+          </MILSTD1553Messages>
+        </DataStream>
+
+        <DataStream ID="MS1553_Bus_GPS">
+          <DataStreamID>1553 Bus GPS</DataStreamID>
+          <DataStreamType>MILSTD1553</DataStreamType>
+          <MILSTD1553Messages>
+            <MILSTD1553Message ID="MS1553_Bus_GPS_MSG1">
+              <MILSTD1553MessageType>RemoteTerminalToRemoteTerminal</MILSTD1553MessageType>
+              <MILSTD1553RemoteTerminal>25</MILSTD1553RemoteTerminal>
+              <MILSTD1553SubaddressOrMode>10</MILSTD1553SubaddressOrMode>
+              <MILSTD1553TransmitReceive>Receive</MILSTD1553TransmitReceive>
+              <MILSTD1553WordCountOrModeCode>30</MILSTD1553WordCountOrModeCode>
+              <DataStructure ID="MS1553_Bus_GPS_MSG1_STRUCT">
+                <!-- NOTE: Structure includes additional Fields not included in this example -->
+                <PackageDataField ID="MS1553_Bus_GPS_MSG_Field28">
+                  <FieldLocation ID="MS1553_Bus_GPS_MSG_Field28_Loc">
+                    <FieldOffset>
+                      <OffsetValue>
+                        <FlexValue>28</FlexValue>
+                        <SIUnits>Word16</SIUnits>
+                      </OffsetValue>
+                    </FieldOffset>
+                    <FieldWidth>
+                      <FlexValue>1</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </FieldWidth>
+                  </FieldLocation>
+                  <FieldEncoding>
+                    <Endianness>BigEndian</Endianness>
+                    <DigitalEncoding>Two'sComplement</DigitalEncoding>
+                  </FieldEncoding>
+                  <FieldRepetitions>1</FieldRepetitions>
+                </PackageDataField>
+              </DataStructure>
+              <DataMap>
+                <DataWordToFieldMap>
+                  <DataWord>
+                    <DataWordWidth>
+                      <FlexValue>1</FlexValue>
+                      <SIUnits>Word16</SIUnits>
+                    </DataWordWidth>
+                    <Syllable>
+                      <MeasurementRef IDREF="Meas_LATPSN"/>
+                      <SyllableMask>0x0fff</SyllableMask>
+                      <SyllableWidth>
+                        <FlexValue>12</FlexValue>
+                        <SIUnits>Bit</SIUnits>
+                      </SyllableWidth>
+                      <SyllableStartBit>1</SyllableStartBit>
+                      <DataWordOffset>0</DataWordOffset>
+                    </Syllable>
+                  </DataWord>
+                  <PackageDataFieldRef IDREF="MS1553_Bus_GPS_MSG_Field28"/>
+                  <TimeOrder>Unspecified</TimeOrder>
+                </DataWordToFieldMap>
+              </DataMap>
+            </MILSTD1553Message>
+          </MILSTD1553Messages>
+        </DataStream>
+      </DataStreams>
+
+
+      <DataOperations>
+        <DataOperation ID="AccelerometerTransducerDataOp">
+          <Name>Accelerometer Transducer</Name>
+          <Description>This operation represents the accelerometer transducer transfer function.</Description>
+          <Method ID="Method1">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.4917</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+                <Term>
+                  <Coefficient>0.045</Coefficient>
+                  <Exponent>0</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <UnitsRef IDREF="GForceUnits"/>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Volt</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+
+        <DataOperation ID="GearVibeCountsToGsConversion">
+          <DataOperation ID="IUBitWeighting" SubOperationOrderIndex="1">
+            <Method ID="IUBitWeightingMethod">
+              <Name>IU Bit Weighting</Name>
+              <Description>This operation represents the conversion from Counts to Volts.</Description>
+              <MathematicalExpression>
+                <PolynomialNumerator>
+                  <Term>
+                    <Coefficient>0.000732</Coefficient>
+                    <Exponent>1</Exponent>
+                  </Term>
+                </PolynomialNumerator>
+              </MathematicalExpression>
+            </Method>
+            <InputUnits>
+              <SIUnits>Counts</SIUnits>
+            </InputUnits>
+            <OutputUnits>
+              <SIUnits>Volt</SIUnits>
+            </OutputUnits>
+          </DataOperation>
+          <DataOperation ID="InverseTransducer" SubOperationOrderIndex="2">
+            <Method ID="InverseTransducerMethod">
+              <Name>Inverse Transducer</Name>
+              <Description>This operation represents the inverse of the transducer to convert from volts to G's.  
+              The equation is  G's = (Vin - 0.045) / 0.4917</Description>
+              <MathematicalExpression>
+                <PolynomialNumerator>
+                  <Term>
+                    <Coefficient>1.0</Coefficient>
+                    <Exponent>1</Exponent>
+                  </Term>
+                  <Term>
+                    <Coefficient>-0.045</Coefficient>
+                    <Exponent>0</Exponent>
+                  </Term>
+                </PolynomialNumerator>
+                <PolynomialDenominator>
+                  <Term>
+                    <Coefficient>0.4917</Coefficient>
+                    <Exponent>0</Exponent>
+                  </Term>
+                </PolynomialDenominator>
+              </MathematicalExpression>
+            </Method>
+            <InputUnits>
+              <SIUnits>Volt</SIUnits>
+            </InputUnits>
+            <OutputUnits>
+              <UnitsRef IDREF="GForceUnits"/>
+            </OutputUnits>
+          </DataOperation>
+        </DataOperation>
+
+        <DataOperation ID="AIRSPD_EU_CONV">
+          <Name>Airspeed EU Conversion</Name>
+          <Method ID="AirspeedMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.5</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Knots</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+
+        <DataOperation ID="HEADNG_EU_CONV">
+          <Name>Heading EU Conversion</Name>
+          <Method ID="HeadingMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.25</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Degree</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+
+        <DataOperation ID="ALT_EU_CONV">
+          <Name>Altitude EU Conversion</Name>
+          <Method ID="AltitudeMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.005</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Feet</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+
+        <DataOperation ID="ROLRATE_EU_CONV">
+          <Name>Roll Rate EU Conversion</Name>
+          <Method ID="ROLRATEMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.25</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>DegreePerSecond</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+
+        <DataOperation ID="PTCHRATE_EU_CONV">
+          <Name>Pitch Rate EU Conversion</Name>
+          <Method ID="PTCHRATEMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.125</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>DegreePerSecond</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+
+        <DataOperation ID="LATPSN_EU_CONV">
+          <Name>Latitude Position EU Conversion</Name>
+          <Method ID="LATPSNMethod">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.5</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <SIUnits>Counts</SIUnits>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Degree</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+
+      </DataOperations>
+    </MeasurementDomain>
+  </MeasurementDomains>
+
+  <NetworkDomains>
+    <Network ID="TANetwork">
+      <ReadOnly>true</ReadOnly>
+      <Owner>Instrumentation Person</Owner>
+      <Name>SDD CONOP TA Network</Name>
+      <Description>TA Network for the SDD CONOP</Description>
+      <NetworkType>TestArticleNetwork</NetworkType>
+      <NetworkServices/>
+
+      <Network ID="TARedNetwork">
+        <Name>SDD CONOP TA Red Network</Name>
+        <Description>TA Red-Side Network for the SDD CONOP</Description>
+        <NetworkType>TestArticleNetwork</NetworkType>
+        <NetworkServices/>
+
+
+        <NetworkNode ID="AnalogDau1">
+          <Name>AnalogDau1</Name>
+          <InventoryID>Analog-Dau-000100</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="AnalogDAU1App">
+              <RoleID>AnalogDau1</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSDAU/>
+              <TmNSLTCDataSource>
+                <TTL>255</TTL>
+                <Requirements>
+                  <MessageDefinitionRef IDREF="MessageDefinition1"/>
+                </Requirements>
+                <Implementation>
+                  <MessageDefinitionRef IDREF="MessageDefinition1"/>
+                </Implementation>
+              </TmNSLTCDataSource>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="AnalogDau1IFace">
+            <Name>AnalogDau1IFace</Name>
+            <InterfaceName>Eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.67.100</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="AnalogDau1PhyNetPort">
+              <Name>AnalogDau1PhyNetPort</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Pins>
+            <Pin ID="AnalogDau1Pin1" Index="1"/>
+            <Pin ID="AnalogDau1Pin2" Index="2"/>
+            <Pin ID="AnalogDau1Pin3" Index="3"/>
+            <Pin ID="AnalogDau1Pin4" Index="4"/>
+            <Pin ID="AnalogDau1Pin5" Index="5"/>
+            <Pin ID="AnalogDau1Pin6" Index="6"/>
+            <Pin ID="AnalogDau1Pin7" Index="7"/>
+            <Pin ID="AnalogDau1Pin8" Index="8"/>
+            <Pin ID="AnalogDau1Pin9" Index="9"/>
+            <Pin ID="AnalogDau1Pin10" Index="10"/>
+            <Pin ID="AnalogDau1Pin11" Index="11"/>
+            <Pin ID="AnalogDau1Pin12" Index="12"/>
+            <Pin ID="AnalogDau1Pin13" Index="13"/>
+            <Pin ID="AnalogDau1Pin14" Index="14"/>
+            <Pin ID="AnalogDau1Pin15" Index="15"/>
+            <Pin ID="AnalogDau1Pin16" Index="16"/>
+          </Pins>
+          <Ports>
+            <Port ID="AnalogDau1NetworkPort">
+              <Name>AnalogDau1NetworkPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="AnalogDau1PhyNetPort"/>
+            </Port>
+            <Port ID="AnalogDau1Port1">
+              <PortDirection>Input</PortDirection>
+              <PinRef IDREF="AnalogDau1Pin1"/>
+              <PinRef IDREF="AnalogDau1Pin2"/>
+              <PinRef IDREF="AnalogDau1Pin5"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="MS1553BusDau1">
+          <Name>MS1553BusDau1</Name>
+          <InventoryID>MS1553Bus-Dau-000100</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="MS1553BusDAU1App">
+              <RoleID>MS1553BusDau1</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSDAU/>
+              <TmNSLTCDataSource>
+                <TTL>255</TTL>
+                <Requirements>
+                  <MessageDefinitionRef IDREF="MessageDefinition2"/>
+                  <MessageDefinitionRef IDREF="MessageDefinition3"/>
+                  <MessageDefinitionRef IDREF="MessageDefinition4"/>
+                </Requirements>
+                <Implementation>
+                  <MessageDefinitionRef IDREF="MessageDefinition2"/>
+                  <MessageDefinitionRef IDREF="MessageDefinition3"/>
+                  <MessageDefinitionRef IDREF="MessageDefinition4"/>
+                </Implementation>
+              </TmNSLTCDataSource>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="MS1553BusDau1IFace">
+            <Name>MS1553BusDau1IFace</Name>
+            <InterfaceName>Eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.67.101</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="MS1553BusDau1PhyNetPort">
+              <Name>MS1553BusDau1PhyNetPort</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="MS1553BusDau1NetworkPort">
+              <Name>MS1553BusDau1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="MS1553BusDau1PhyNetPort"/>
+            </Port>
+            <Port ID="MS1553BusDau1Port1">
+              <Name>Port1</Name>
+              <PortDirection>Input</PortDirection>
+            </Port>
+            <Port ID="MS1553BusDau1Port2">
+              <Name>Port2</Name>
+              <PortDirection>Input</PortDirection>
+            </Port>
+            <Port ID="MS1553BusDau1Port3">
+              <Name>Port3</Name>
+              <PortDirection>Input</PortDirection>
+            </Port>
+            <Port ID="MS1553BusDau1Port4">
+              <Name>Port4</Name>
+              <PortDirection>Input</PortDirection>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="TARecorder1">
+          <Name>TARecorder1</Name>
+          <InventoryID>TARecorder1</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="TARecorder1App">
+              <RoleID>TARecorder1</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSRecorder/>
+              <TmNSLTCDataSink>
+                <MessageDefinitionRef IDREF="MessageDefinition1"/>
+                <MessageDefinitionRef IDREF="MessageDefinition2"/>
+                <MessageDefinitionRef IDREF="MessageDefinition3"/>
+                <MessageDefinitionRef IDREF="MessageDefinition4"/>
+              </TmNSLTCDataSink>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="TARecorder1IFace">
+            <Name>TARecorder1IFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.67.102</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="TARecorder1PhyNetPort">
+              <Name>TARecorder1PhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="TARecorder1NetworkPort">
+              <Name>TARecorder1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="TARecorder1PhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="MFD">
+          <Name>Multi-Function Display</Name>
+          <InventoryID>MFD</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="MFDApp">
+              <RoleID>MFD</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSLTCDataSink/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="MFDIFace">
+            <Name>MFDIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.67.103</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="MFDPhyNetPort">
+              <Name>MFDPhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="MFDNetworkPort">
+              <Name>MFDPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="MFDPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="OnboardTAManagerRed">
+          <Name>OnboardTAManagerRed</Name>
+          <InventoryID>Manager-Computer-0003</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="OnboardTAManagerRedApp">
+              <RoleID>OnboardTAManagerRed</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSConsolidatedManager>
+                <ManagedApps>
+                  <ManageableAppRef IDREF="AnalogDAU1App"/>
+                  <ManageableAppRef IDREF="MS1553BusDAU1App"/>
+                  <ManageableAppRef IDREF="NetworkGatewayApp"/>
+                  <ManageableAppRef IDREF="PCMGatewayApp"/>
+                  <ManageableAppRef IDREF="TAVoiceGatewayApp"/>
+                  <ManageableAppRef IDREF="MFDApp"/>
+                  <ManageableAppRef IDREF="TARecorder1App"/>
+                </ManagedApps>
+              </TmNSConsolidatedManager>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="OnboardTAManagerRedIFace">
+            <Name>OnboardTAManagerRedIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.67.104</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="OnboardTAManagerRedPhyNetPort">
+              <Name>OnboardTAManagerRedPhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="OnboardTAManagerRedNetworkPort">
+              <Name>Onboard TA Manager Black Network Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="OnboardTAManagerRedPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="TAVoiceGateway">
+          <Name>TA Voice Gateway</Name>
+          <InventoryID>TA-Voice-Gate-DAU-00011</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="TAVoiceGatewayApp">
+              <RoleID>TA-Voice-Gate-DAU-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSVoiceGateway>
+                <VoiceDSCPTableEntryRef IDREF="DiffservVoice"/>
+                <ControlDSCPTableEntryRef IDREF="DiffservVoice"/>
+                <CodecPriorities>
+                  <CodecPriority Index="1">G.711</CodecPriority>
+                  <CodecPriority Index="2">G.726</CodecPriority>
+                  <CodecPriority Index="3">G.729a</CodecPriority>
+                </CodecPriorities>
+                <PhoneNumberMappings>
+                  <PhoneNumberMapping>
+                    <IPAddress>123.45.67.10</IPAddress>
+                    <PhoneNumber>12345</PhoneNumber>
+                  </PhoneNumberMapping>
+                </PhoneNumberMappings>
+              </TmNSVoiceGateway>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="TAVoiceGatewayIFace">
+            <Name>TAVoiceGatewayIFace</Name>
+            <InterfaceName>TAVoiceGatewayIFace</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.67.105</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="TAVoiceGatewayPhyNetPort">
+              <Name>Network Gateway Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="TAVoiceGatewayNetworkPort">
+              <Name>TAVoiceGatewayPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="TAVoiceGatewayPhyNetPort"/>
+            </Port>
+            <Port ID="TAVoiceGatewayInputPort">
+              <Name>Voice Input Port</Name>
+              <PortDirection>Input</PortDirection>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="NetworkGateway">
+          <Name>Network Gateway</Name>
+          <InventoryID>Network-Gate-DAU-00011</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="NetworkGatewayApp">
+              <RoleID>Network-Gate-DAU-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSLTCDataSink/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="NetworkGatewayIFace">
+            <Name>NetworkGatewayIFace</Name>
+            <InterfaceName>NetworkGatewayIFace</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.67.106</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="NetworkGatewayPhyNetPort">
+              <Name>Network Gateway Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="NetworkGatewayNetworkPort">
+              <Name>NetworkGatewayPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="NetworkGatewayPhyNetPort"/>
+            </Port>
+            <Port ID="NetworkGatewayInputPort">
+              <Name>SST Output Port</Name>
+              <PortDirection>Output</PortDirection>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="PCMGateway">
+          <Name>PCM Gateway DAU</Name>
+          <InventoryID>PCM-Gate-DAU-00011</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="PCMGatewayApp">
+              <RoleID>PCM-Gate-DAU-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSLTCDataSource>
+                <TTL>255</TTL>
+              </TmNSLTCDataSource>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="PCMGatewayIFace">
+            <Name>PCMGatewayIFace</Name>
+            <InterfaceName>PCMGatewayIFace</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.67.107</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="PCMGatewayPhyNetPort">
+              <Name>PCM Gateway Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="PCMGatewayNetworkPort">
+              <Name>PCMGatewayPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="PCMGatewayPhyNetPort"/>
+            </Port>
+            <Port ID="PCMGatewayInputPort">
+              <Name>SST Input Port</Name>
+              <PortDirection>Input</PortDirection>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="RedSwitch1">
+          <Name>Red Switch 1</Name>
+          <InventoryID>8-Port-Switch-ID-000010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="RedSwitch1App">
+              <RoleID>RedSwitch1</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="RedSwitch1IFace">
+            <Name>RedSwitch1IFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.67.108</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort1">
+              <Name>RedSwitch1PhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort2">
+              <Name>RedSwitch1PhyNetPort2</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>2</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort3">
+              <Name>RedSwitch1PhyNetPort3</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>3</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort4">
+              <Name>RedSwitch1PhyNetPort4</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>4</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort5">
+              <Name>RedSwitch1PhyNetPort5</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>5</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort6">
+              <Name>RedSwitch1PhyNetPort6</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>6</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort7">
+              <Name>RedSwitch1PhyNetPort7</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>7</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch1PhyNetPort8">
+              <Name>RedSwitch1PhyNetPort8</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>8</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="RedSwitch1Port1">
+              <Name>Switch1Port1</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort1"/>
+            </Port>
+            <Port ID="RedSwitch1Port2">
+              <Name>Switch1Port2</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort2"/>
+            </Port>
+            <Port ID="RedSwitch1Port3">
+              <Name>Switch1Port3</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort3"/>
+            </Port>
+            <Port ID="RedSwitch1Port4">
+              <Name>Switch1Port4</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort4"/>
+            </Port>
+            <Port ID="RedSwitch1Port5">
+              <Name>Switch1Port5</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort5"/>
+            </Port>
+            <Port ID="RedSwitch1Port6">
+              <Name>Switch1Port6</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort6"/>
+            </Port>
+            <Port ID="RedSwitch1Port7">
+              <Name>Switch1Port7</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort7"/>
+            </Port>
+            <Port ID="RedSwitch1Port8">
+              <Name>Switch1Port8</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch1PhyNetPort8"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="RedSwitch2">
+          <Name>Red Switch 2</Name>
+          <InventoryID>8-Port-Switch-ID-000011</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="RedSwitch2App">
+              <RoleID>RedSwitch2</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="RedSwitch2IFace">
+            <Name>RedSwitch2IFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.67.109</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort1">
+              <Name>RedSwitch2PhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort2">
+              <Name>RedSwitch2PhyNetPort2</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>2</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort3">
+              <Name>RedSwitch2PhyNetPort3</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>3</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort4">
+              <Name>RedSwitch2PhyNetPort4</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>4</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort5">
+              <Name>RedSwitch2PhyNetPort5</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>5</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort6">
+              <Name>RedSwitch2PhyNetPort6</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>6</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort7">
+              <Name>RedSwitch2PhyNetPort7</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>7</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="RedSwitch2PhyNetPort8">
+              <Name>RedSwitch2PhyNetPort8</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>8</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="RedSwitch2Port1">
+              <Name>Switch2Port1</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort1"/>
+            </Port>
+            <Port ID="RedSwitch2Port2">
+              <Name>Switch2Port2</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort2"/>
+            </Port>
+            <Port ID="RedSwitch2Port3">
+              <Name>Switch2Port3</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort3"/>
+            </Port>
+            <Port ID="RedSwitch2Port4">
+              <Name>Switch2Port4</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort4"/>
+            </Port>
+            <Port ID="RedSwitch2Port5">
+              <Name>Switch2Port5</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort5"/>
+            </Port>
+            <Port ID="RedSwitch2Port6">
+              <Name>Switch2Port6</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort6"/>
+            </Port>
+            <Port ID="RedSwitch2Port7">
+              <Name>Switch2Port7</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort7"/>
+            </Port>
+            <Port ID="RedSwitch2Port8">
+              <Name>Switch2Port8</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RedSwitch2PhyNetPort8"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <Devices>
+          <Device ID="GearVibTransducer">
+            <Name>Gear Vibration Accelerometer Transducer</Name>
+            <Description>This operation represents the accelerometer transducer transfer function.</Description>
+            <Manufacturer>Endevco</Manufacturer>
+            <ModelNumber>752-500</ModelNumber>
+            <SerialNumber>000125</SerialNumber>
+            <InventoryID>03928-2934820-2934</InventoryID>
+            <DeviceType>Accelerometer</DeviceType>
+            <Ports>
+              <Port ID="GearVibTransducerOutputPort">
+                <PortDirection>Output</PortDirection>
+              </Port>
+            </Ports>
+            <Excitation>
+              <ConditionOperation>==</ConditionOperation>
+              <ConditionValueFloat>24</ConditionValueFloat>
+              <SIUnits>Volt</SIUnits>
+            </Excitation>
+            <Calibration>
+              <CalibrationDate>2010-10-24</CalibrationDate>
+              <CalibrationPair>
+                <InputValue>
+                  <FloatValue>-3</FloatValue>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </InputValue>
+                <OutputValue>
+                  <FloatValue>-1.43</FloatValue>
+                  <SIUnits>Volt</SIUnits>
+                </OutputValue>
+              </CalibrationPair>
+              <CalibrationPair>
+                <InputValue>
+                  <FloatValue>3</FloatValue>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </InputValue>
+                <OutputValue>
+                  <FloatValue>1.52</FloatValue>
+                  <SIUnits>Volt</SIUnits>
+                </OutputValue>
+              </CalibrationPair>
+            </Calibration>
+          </Device>
+
+        </Devices>
+
+        <PortMappings>
+          <PortMapping ID="RedPM1">
+            <PortRef IDREF="RedSwitch1Port1"/>
+            <PortRef IDREF="RedSwitch2Port1"/>
+          </PortMapping>
+          <PortMapping ID="RedPM2">
+            <PortRef IDREF="RedSwitch1Port2"/>
+            <PortRef IDREF="TAVoiceGatewayNetworkPort"/>
+          </PortMapping>
+          <PortMapping ID="RedPM3">
+            <PortRef IDREF="RedSwitch1Port3"/>
+            <PortRef IDREF="OnboardTAManagerRedNetworkPort"/>
+          </PortMapping>
+          <PortMapping ID="RedPM4">
+            <PortRef IDREF="RedSwitch1Port4"/>
+            <PortRef IDREF="MFDNetworkPort"/>
+          </PortMapping>
+          <PortMapping ID="RedPM5">
+            <PortRef IDREF="RedSwitch1Port5"/>
+            <PortRef IDREF="TARecorder1NetworkPort"/>
+          </PortMapping>
+          <PortMapping ID="RedPM6">
+            <PortRef IDREF="RedSwitch2Port2"/>
+            <PortRef IDREF="PCMGatewayNetworkPort"/>
+          </PortMapping>
+          <PortMapping ID="RedPM7">
+            <PortRef IDREF="RedSwitch2Port3"/>
+            <PortRef IDREF="NetworkGatewayNetworkPort"/>
+          </PortMapping>
+          <PortMapping ID="RedPM8">
+            <PortRef IDREF="RedSwitch2Port4"/>
+            <PortRef IDREF="MS1553BusDau1NetworkPort"/>
+          </PortMapping>
+          <PortMapping ID="RedPM9">
+            <PortRef IDREF="RedSwitch2Port5"/>
+            <PortRef IDREF="AnalogDau1NetworkPort"/>
+          </PortMapping>
+          <PortMapping ID="RedPM10">
+            <PortRef IDREF="GearVibTransducerOutputPort"/>
+            <PortRef IDREF="AnalogDau1Port1"/>
+            <MeasurementRef IDREF="GearVibeMeas"/>
+          </PortMapping>
+          <PortMapping ID="RedPM11">
+            <PortRef IDREF="MS1553BusDau1Port1"/>
+            <DataStreamRef IDREF="MS1553_Bus_AV1"/>
+          </PortMapping>
+          <PortMapping ID="RedPM12">
+            <PortRef IDREF="MS1553BusDau1Port2"/>
+            <DataStreamRef IDREF="MS1553_Bus_AV3"/>
+          </PortMapping>
+          <PortMapping ID="RedPM13">
+            <PortRef IDREF="MS1553BusDau1Port3"/>
+            <DataStreamRef IDREF="MS1553_Bus_NAV"/>
+          </PortMapping>
+          <PortMapping ID="RedPM14">
+            <PortRef IDREF="MS1553BusDau1Port4"/>
+            <DataStreamRef IDREF="MS1553_Bus_GPS"/>
+          </PortMapping>
+        </PortMappings>
+
+      </Network>
+
+      <Network ID="TABlackNetwork">
+        <Name>SDD CONOP TA Black Network</Name>
+        <Description>TA Black-Side Network for the SDD CONOP</Description>
+        <NetworkType>TestArticleNetwork</NetworkType>
+        <NetworkServices/>
+
+        <NetworkNode ID="OnboardTAManagerBlack">
+          <Name>OnboardTAManagerBlack</Name>
+          <InventoryID>Manager-Computer-0002</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="OnboardTAManagerBlackApp">
+              <RoleID>OnboardTAManagerBlack</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSConsolidatedManager>
+                <ManagedApps>
+                  <ManageableAppRef IDREF="TARadioApp"/>
+                  <ManageableAppRef IDREF="SSTTx1App"/>
+                </ManagedApps>
+              </TmNSConsolidatedManager>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="OnboardTAManagerBlackIFace">
+            <Name>OnboardTAManagerBlackIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.68.10</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="OnboardTAManagerBlackPhyNetPort">
+              <Name>OnboardTAManagerBlackPhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="OnboardTAManagerBlackNetworkPort">
+              <Name>Onboard TA Manager Black Network Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="OnboardTAManagerBlackPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="TARadio">
+          <Name>TARadio</Name>
+          <InventoryID>TARadioInvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="TARadioApp">
+              <RoleID>TARadio-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSRadio>
+                <RadioType>TA Radio</RadioType>
+                <TransceiverID>24</TransceiverID>
+              </TmNSRadio>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="TARadioIFace">
+            <Name>TARadio1IFace</Name>
+            <InterfaceName>TARadio1IFace</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.68.11</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="TARadioPhyNetPort">
+              <Name>TARadio Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="TARadioNetworkPort">
+              <Name>TARadioNetworkPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="TARadioPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+        <NetworkNode ID="SSTTransmitter1">
+          <Name>SST Transmitter 1</Name>
+          <InventoryID>SST-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="SSTTx1App">
+              <RoleID>TmNS-SSTTx-00010</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTTx>
+                <SSTTxRCCVersion>TBD</SSTTxRCCVersion>
+                <Channel ID="SSTTx1Chan1">
+                  <ChannelNumber>30</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1800e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                  <RFHighPowerEnable>true</RFHighPowerEnable>
+                </Channel>
+              </TmNSSSTTx>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="SSTTx1IFace">
+            <Name>SSTTx 1 Interface</Name>
+            <InterfaceName>SSTTx1IFace</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.68.12</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="SSTTx1PhyNetPort">
+              <Name>SST Tx 1 Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="SSTTx1NetworkPort">
+              <Name>SSTTx1NetworkPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="SSTTx1PhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+
+
+        <NetworkNode ID="BlackSwitch1">
+          <Name>Black Switch 1</Name>
+          <InventoryID>8-Port-Switch-ID-000012</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="BlackSwitch1App">
+              <RoleID>BlackSwitch1</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="BlackSwitch1IFace">
+            <Name>BlackSwitch1IFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>123.45.68.13</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>123.45.67.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort1">
+              <Name>BlackSwitch1PhyNetPort1</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort2">
+              <Name>BlackSwitch1PhyNetPort2</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>2</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort3">
+              <Name>BlackSwitch1PhyNetPort3</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>3</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort4">
+              <Name>BlackSwitch1PhyNetPort4</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>4</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort5">
+              <Name>BlackSwitch1PhyNetPort5</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>5</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort6">
+              <Name>BlackSwitch1PhyNetPort6</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>6</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort7">
+              <Name>BlackSwitch1PhyNetPort7</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>7</PortNumber>
+            </PhysicalNetworkPort>
+            <PhysicalNetworkPort ID="BlackSwitch1PhyNetPort8">
+              <Name>BlackSwitch1PhyNetPort8</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>8</PortNumber>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="BlackSwitch1Port1">
+              <Name>Switch1Port1</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort1"/>
+            </Port>
+            <Port ID="BlackSwitch1Port2">
+              <Name>Switch1Port2</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort2"/>
+            </Port>
+            <Port ID="BlackSwitch1Port3">
+              <Name>Switch1Port3</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort3"/>
+            </Port>
+            <Port ID="BlackSwitch1Port4">
+              <Name>Switch1Port4</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort4"/>
+            </Port>
+            <Port ID="BlackSwitch1Port5">
+              <Name>Switch1Port5</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort5"/>
+            </Port>
+            <Port ID="BlackSwitch1Port6">
+              <Name>Switch1Port6</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort6"/>
+            </Port>
+            <Port ID="BlackSwitch1Port7">
+              <Name>Switch1Port7</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort7"/>
+            </Port>
+            <Port ID="BlackSwitch1Port8">
+              <Name>Switch1Port8</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="BlackSwitch1PhyNetPort8"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <Devices>
+          <Antenna>
+            <Name>TA Antenna 1</Name>
+            <Description>TA Antenna 1</Description>
+            <SSTTxs>
+              <ManageableAppRef IDREF="SSTTx1App"/>
+            </SSTTxs>
+            <Radios>
+              <ManageableAppRef IDREF="TARadioApp"/>
+            </Radios>
+          </Antenna>
+        </Devices>
+
+        <PortMappings>
+          <PortMapping ID="BlackPM1">
+            <PortRef IDREF="BlackSwitch1Port1"/>
+            <PortRef IDREF="OnboardTAManagerBlackNetworkPort"/>
+          </PortMapping>
+          <PortMapping ID="BlackPM2">
+            <PortRef IDREF="BlackSwitch1Port6"/>
+            <PortRef IDREF="SSTTx1NetworkPort"/>
+          </PortMapping>
+          <PortMapping ID="BlackPM3">
+            <PortRef IDREF="BlackSwitch1Port7"/>
+            <PortRef IDREF="TARadioNetworkPort"/>
+          </PortMapping>
+        </PortMappings>
+
+      </Network>
+
+      <NetworkNode ID="Encryptor1">
+        <Name>Encryptor1</Name>
+        <InventoryID>Encryptor1</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="Encryptor1App">
+            <RoleID>Encryptor1</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSEncryptor>
+              <RedNetworkInterfaceRef IDREF="EncryptorRedIFace"/>
+              <BlackNetworkInterfaceRef IDREF="EncryptorBlackIFace"/>
+            </TmNSEncryptor>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="EncryptorRedIFace">
+          <Name>Encryptor Red Network Interface</Name>
+          <InterfaceName>Eth0</InterfaceName>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>123.45.67.110</IPAddress> <!--TBD IP address config for encryptor-->
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>123.45.67.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="EncryptorRedPhyNetPort">
+            <Name>EncryptorRedPhyNetPort</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <NetworkInterface ID="EncryptorBlackIFace">
+          <Name>Encryptor Network Interface</Name>
+          <InterfaceName>Eth0</InterfaceName>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>123.45.68.14</IPAddress> <!--TBD IP Address config for encryptor-->
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>123.45.68.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="EncryptorBlackPhyNetPort">
+            <Name>EncryptorBlackPhyNetPort</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="EncryptorBlackNetworkPort">
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="EncryptorBlackPhyNetPort"/>
+          </Port>
+          <Port ID="EncryptorRedNetworkPort">
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="EncryptorRedPhyNetPort"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+
+      <PortMappings>
+        <PortMapping ID="TAPM1">
+          <PortRef IDREF="BlackSwitch1Port8"/>
+          <PortRef IDREF="EncryptorBlackNetworkPort"/>
+        </PortMapping>
+        <PortMapping ID="TAPM2">
+          <PortRef IDREF="RedSwitch1Port8"/>
+          <PortRef IDREF="EncryptorRedNetworkPort"/>
+        </PortMapping>
+      </PortMappings>
+
+    </Network>
+
+
+    <Network ID="GroundNetworkID">
+      <ReadOnly>true</ReadOnly>
+      <Owner>SDD Range Rules</Owner>
+      <Name>Ground Network</Name>
+      <Description>Ground Network</Description>
+      <NetworkType>GroundNetwork</NetworkType>
+
+      <NetworkServices>
+        <NetworkService>
+          <DSCPTableEntryRef IDREF="DiffservVoice"/>
+          <CommittedRate>
+            <FloatValue>50e3</FloatValue>
+            <SIUnits>BitPerSecond</SIUnits>
+          </CommittedRate>
+        </NetworkService>
+        <NetworkService>
+          <DSCPTableEntryRef IDREF="DiffservRCHigh"/>
+          <CommittedRate>
+            <FloatValue>1e6</FloatValue>
+            <SIUnits>BitPerSecond</SIUnits>
+          </CommittedRate>
+        </NetworkService>
+      </NetworkServices>
+
+      <Network ID="AntennaSite1Network">
+        <Name>Antenna Site1 Network</Name>
+        <Description>Antenna Site1 Network</Description>
+        <NetworkType>GroundNetwork</NetworkType>
+        <NetworkServices/>
+
+        <NetworkNode ID="Site1Antenna1Radio1">
+          <Name>Site1 Antenna1 Radio1</Name>
+          <InventoryID>Site1Antenna1Radio1-InvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site1Antenna1Radio1App">
+              <RoleID>Site1Antenna1Radio1-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSRadio>
+                <RadioType>Ground Radio</RadioType>
+                <TransceiverID>24</TransceiverID>
+              </TmNSRadio>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site1Antenna1Radio1IFace">
+            <Name>RadioIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.1.2</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.1.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site1Antenna1Radio1PhyNetPort">
+              <Name>Network Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site1Antenna1Radio1Port">
+              <Name>Site1Antenna1Radio1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site1Antenna1Radio1PhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site1Antenna1SSTReceivers">
+          <Name>Site1Antenna1 SST Receivers</Name>
+          <InventoryID>Site1-Antenna1-SSTRx-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site1Antenna1SSTRx1">
+              <Name>Receiver1</Name>
+              <RoleID>Site1-Antenna1-SSTRx-00010</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site1Antenna1SSTRx1Chan1">
+                  <ChannelNumber>30</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1800e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site1Antenna1SSTRx1Chan2">
+                  <ChannelNumber>33</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1950e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+            <TmNSManageableApp ID="Site1Antenna1SSTRx2">
+              <Name>Receiver2</Name>
+              <RoleID>Site1-Antenna1-SSTRx2-00011</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site1Antenna1SSTRx2Chan1">
+                  <ChannelNumber>31</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1850e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site1Antenna1SSTRx2Chan2">
+                  <ChannelNumber>32</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1900e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site1Antenna1SSTRxIFace">
+            <Name>SSTRxIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.1.3</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.1.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site1Antenna1SSTRxPhyNetPort">
+              <Name>SST Tx Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <NetworkInterface ID="Site1Antenna1SSTRxPrivateIFace">
+            <Name>SSTRxPrivateIFace</Name>
+            <InterfaceName>eth1</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.1.3</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.1.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site1Antenna1SSTRxPrivatePhyNetPort">
+              <Name>SST Tx Private Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site1Antenna1SSTRxPort">
+              <Name>SSTRxPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site1Antenna1SSTRxPhyNetPort"/>
+            </Port>
+            <Port ID="Site1Antenna1SSTRxPrivatePort">
+              <Name>SSTRxPrivatePort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site1Antenna1SSTRxPrivatePhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site1Antenna1ACU">
+          <Name>Site1Antenna1ACU</Name>
+          <InventoryID>Site1-Antenna1-ACU-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site1Antenna1ACUApp">
+              <RoleID>Site1-Antenna1-ACU</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSACU>
+                <TrackingReceiver>
+                  <ManageableAppRef IDREF="Site1Antenna1SSTRx2"/>
+                </TrackingReceiver>
+              </TmNSACU>
+              <SNMPInterface>
+                <SNMPVersion>3</SNMPVersion>
+                <DSCPTableEntryRef IDREF="DiffservLTC"/>
+                <NetworkInterfaceRef IDREF="Site1Antenna1ACUIFace"/>
+              </SNMPInterface>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site1Antenna1ACUIFace">
+            <Name>ACU Computer Interface</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.1.4</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.1.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site1Antenna1ACUPhyNetPort">
+              <Name>ACU Computer PhyNetPort</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site1Antenna1ACUPort">
+              <Name>ACU Computer Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site1Antenna1ACUPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site1Antenna2Radio1">
+          <Name>Site1 Antenna2 Radio1</Name>
+          <InventoryID>Site1Antenna2Radio1-InvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site1Antenna2Radio1App">
+              <RoleID>Site1Antenna2Radio1-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSRadio>
+                <RadioType>Ground Radio</RadioType>
+                <TransceiverID>24</TransceiverID>
+              </TmNSRadio>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site1Antenna2Radio1IFace">
+            <Name>RadioIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.1.5</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.1.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site1Antenna2Radio1PhyNetPort">
+              <Name>Network Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site1Antenna2Radio1Port">
+              <Name>Site1Antenna2Radio1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site1Antenna2Radio1PhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site1Antenna2SSTReceivers">
+          <Name>Site1Antenna2 SST Receivers</Name>
+          <InventoryID>Site1-Antenna2-SSTRx-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site1Antenna2SSTRx1">
+              <Name>Receiver1</Name>
+              <RoleID>Site1-Antenna2-SSTRx-00010</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site1Antenna2SSTRx1Chan1">
+                  <ChannelNumber>30</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1800e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site1Antenna2SSTRx1Chan2">
+                  <ChannelNumber>33</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1950e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+            <TmNSManageableApp ID="Site1Antenna2SSTRx2">
+              <Name>Receiver2</Name>
+              <RoleID>Site1-Antenna2-SSTRx2-00011</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site1Antenna2SSTRx2Chan1">
+                  <ChannelNumber>31</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1850e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site1Antenna2SSTRx2Chan2">
+                  <ChannelNumber>32</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1900e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site1Antenna2SSTRxIFace">
+            <Name>SSTRxIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.1.6</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.1.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site1Antenna2SSTRxPhyNetPort">
+              <Name>SST Tx Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <NetworkInterface ID="Site1Antenna2SSTRxPrivateIFace">
+            <Name>SSTRxPrivateIFace</Name>
+            <InterfaceName>eth1</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.1.6</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.1.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site1Antenna2SSTRxPrivatePhyNetPort">
+              <Name>SST Tx Private Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site1Antenna2SSTRxPort">
+              <Name>SSTRxPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site1Antenna2SSTRxPhyNetPort"/>
+            </Port>
+            <Port ID="Site1Antenna2SSTRxPrivatePort">
+              <Name>SSTRxPrivatePort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site1Antenna2SSTRxPrivatePhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site1Antenna2ACU">
+          <Name>Site1Antenna2ACU</Name>
+          <InventoryID>Site1Antenna2ACU-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site1Antenna2ACUApp">
+              <RoleID>Site1Antenna2-ACU</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSACU>
+                <TrackingReceiver>
+                  <ManageableAppRef IDREF="Site1Antenna2SSTRx2"/>
+                </TrackingReceiver>
+              </TmNSACU>
+              <SNMPInterface>
+                <SNMPVersion>3</SNMPVersion>
+                <DSCPTableEntryRef IDREF="DiffservLTC"/>
+                <NetworkInterfaceRef IDREF="Site1Antenna2ACUIFace"/>
+              </SNMPInterface>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site1Antenna2ACUIFace">
+            <Name>ACU Computer Interface</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.1.7</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.1.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site1Antenna2ACUPhyNetPort">
+              <Name>ACU Computer PhyNetPort</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site1Antenna2ACUPort">
+              <Name>ACU Computer Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site1Antenna2ACUPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <Devices>
+          <Antenna>
+            <Name>Site1Antenna1</Name>
+            <Description>Site1 Antenna1</Description>
+            <ACU>
+              <ManageableAppRef IDREF="Site1Antenna1ACUApp"/>
+            </ACU>
+            <SSTRxs>
+              <ManageableAppRef IDREF="Site1Antenna1SSTRx1"/>
+              <ManageableAppRef IDREF="Site1Antenna1SSTRx2"/>
+            </SSTRxs>
+            <Radios>
+              <ManageableAppRef IDREF="Site1Antenna1Radio1App"/>
+            </Radios>
+          </Antenna>
+          <Antenna>
+            <Name>Site1Antenna2</Name>
+            <Description>Site1 Antenna2</Description>
+            <ACU>
+              <ManageableAppRef IDREF="Site1Antenna2ACUApp"/>
+            </ACU>
+            <SSTRxs>
+              <ManageableAppRef IDREF="Site1Antenna2SSTRx1"/>
+              <ManageableAppRef IDREF="Site1Antenna2SSTRx2"/>
+            </SSTRxs>
+            <Radios>
+              <ManageableAppRef IDREF="Site1Antenna2Radio1App"/>
+            </Radios>
+          </Antenna>
+        </Devices>
+      </Network>  <!--End of Antenna Site1 Network-->
+
+      <Network ID="AntennaSite2Network">
+        <Name>Antenna Site2 Network</Name>
+        <Description>Antenna Site2 Network</Description>
+        <NetworkType>GroundNetwork</NetworkType>
+        <NetworkServices/>
+
+        <NetworkNode ID="Site2Antenna1Radio1">
+          <Name>Site2 Antenna1 Radio1</Name>
+          <InventoryID>Site2Antenna1Radio1-InvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site2Antenna1Radio1App">
+              <RoleID>Site2Antenna1Radio1-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSRadio>
+                <RadioType>Ground Radio</RadioType>
+                <TransceiverID>24</TransceiverID>
+              </TmNSRadio>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site2Antenna1Radio1IFace">
+            <Name>RadioIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.2.2</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.2.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site2Antenna1Radio1PhyNetPort">
+              <Name>Network Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site2Antenna1Radio1Port">
+              <Name>Site2Antenna1Radio1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site2Antenna1Radio1PhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site2Antenna1SSTReceivers">
+          <Name>Site2Antenna1 SST Receivers</Name>
+          <InventoryID>Site2-Antenna1-SSTRx-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site2Antenna1SSTRx1">
+              <Name>Receiver1</Name>
+              <RoleID>Site2-Antenna1-SSTRx-00010</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site2Antenna1SSTRx1Chan1">
+                  <ChannelNumber>30</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1800e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site2Antenna1SSTRx1Chan2">
+                  <ChannelNumber>33</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1950e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+            <TmNSManageableApp ID="Site2Antenna1SSTRx2">
+              <Name>Receiver2</Name>
+              <RoleID>Site2-Antenna1-SSTRx2-00011</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site2Antenna1SSTRx2Chan1">
+                  <ChannelNumber>31</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1850e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site2Antenna1SSTRx2Chan2">
+                  <ChannelNumber>32</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1900e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site2Antenna1SSTRxIFace">
+            <Name>SSTRxIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.2.3</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.2.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site2Antenna1SSTRxPhyNetPort">
+              <Name>SST Tx Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <NetworkInterface ID="Site2Antenna1SSTRxPrivateIFace">
+            <Name>SSTRxPrivateIFace</Name>
+            <InterfaceName>eth1</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.2.3</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.2.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site2Antenna1SSTRxPrivatePhyNetPort">
+              <Name>SST Tx Private Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site2Antenna1SSTRxPort">
+              <Name>SSTRxPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site2Antenna1SSTRxPhyNetPort"/>
+            </Port>
+            <Port ID="Site2Antenna1SSTRxPrivatePort">
+              <Name>SSTRxPrivatePort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site2Antenna1SSTRxPrivatePhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site2Antenna1ACU">
+          <Name>Site2Antenna1ACU</Name>
+          <InventoryID>Site2-Antenna1-ACU-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site2Antenna1ACUApp">
+              <RoleID>Site2-Antenna1-ACU</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSACU>
+                <TrackingReceiver>
+                  <ManageableAppRef IDREF="Site2Antenna1SSTRx2"/>
+                </TrackingReceiver>
+              </TmNSACU>
+              <SNMPInterface>
+                <SNMPVersion>3</SNMPVersion>
+                <DSCPTableEntryRef IDREF="DiffservLTC"/>
+                <NetworkInterfaceRef IDREF="Site2Antenna1ACUIFace"/>
+              </SNMPInterface>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site2Antenna1ACUIFace">
+            <Name>ACU Computer Interface</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.2.4</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.2.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site2Antenna1ACUPhyNetPort">
+              <Name>ACU Computer PhyNetPort</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site2Antenna1ACUPort">
+              <Name>ACU Computer Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site2Antenna1ACUPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site2Antenna2Radio1">
+          <Name>Site2 Antenna2 Radio1</Name>
+          <InventoryID>Site2Antenna2Radio1-InvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site2Antenna2Radio1App">
+              <RoleID>Site2Antenna2Radio1-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSRadio>
+                <RadioType>Ground Radio</RadioType>
+                <TransceiverID>24</TransceiverID>
+              </TmNSRadio>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site2Antenna2Radio1IFace">
+            <Name>RadioIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.2.5</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.2.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site2Antenna2Radio1PhyNetPort">
+              <Name>Network Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site2Antenna2Radio1Port">
+              <Name>Site2Antenna2Radio1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site2Antenna2Radio1PhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site2Antenna2SSTReceivers">
+          <Name>Site2Antenna2 SST Receivers</Name>
+          <InventoryID>Site2-Antenna2-SSTRx-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site2Antenna2SSTRx1">
+              <Name>Receiver1</Name>
+              <RoleID>Site2-Antenna2-SSTRx-00010</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site2Antenna2SSTRx1Chan1">
+                  <ChannelNumber>30</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1800e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site2Antenna2SSTRx1Chan2">
+                  <ChannelNumber>33</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1950e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+            <TmNSManageableApp ID="Site2Antenna2SSTRx2">
+              <Name>Receiver2</Name>
+              <RoleID>Site2-Antenna2-SSTRx2-00011</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site2Antenna2SSTRx2Chan1">
+                  <ChannelNumber>31</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1850e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site2Antenna2SSTRx2Chan2">
+                  <ChannelNumber>32</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1900e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site2Antenna2SSTRxIFace">
+            <Name>SSTRxIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.2.6</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.2.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site2Antenna2SSTRxPhyNetPort">
+              <Name>SST Tx Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <NetworkInterface ID="Site2Antenna2SSTRxPrivateIFace">
+            <Name>SSTRxPrivateIFace</Name>
+            <InterfaceName>eth1</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.2.6</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.2.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site2Antenna2SSTRxPrivatePhyNetPort">
+              <Name>SST Tx Private Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site2Antenna2SSTRxPort">
+              <Name>SSTRxPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site2Antenna2SSTRxPhyNetPort"/>
+            </Port>
+            <Port ID="Site2Antenna2SSTRxPrivatePort">
+              <Name>SSTRxPrivatePort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site2Antenna2SSTRxPrivatePhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site2Antenna2ACU">
+          <Name>Site2Antenna2ACU</Name>
+          <InventoryID>Site2Antenna2ACU-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site2Antenna2ACUApp">
+              <RoleID>Site2Antenna2-ACU</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSACU>
+                <TrackingReceiver>
+                  <ManageableAppRef IDREF="Site2Antenna2SSTRx2"/>
+                </TrackingReceiver>
+              </TmNSACU>
+              <SNMPInterface>
+                <SNMPVersion>3</SNMPVersion>
+                <DSCPTableEntryRef IDREF="DiffservLTC"/>
+                <NetworkInterfaceRef IDREF="Site2Antenna2ACUIFace"/>
+              </SNMPInterface>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site2Antenna2ACUIFace">
+            <Name>ACU Computer Interface</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.2.7</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.2.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site2Antenna2ACUPhyNetPort">
+              <Name>ACU Computer PhyNetPort</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site2Antenna2ACUPort">
+              <Name>ACU Computer Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site2Antenna2ACUPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <Devices>
+          <Antenna>
+            <Name>Site2Antenna1</Name>
+            <Description>Site2 Antenna1</Description>
+            <ACU>
+              <ManageableAppRef IDREF="Site2Antenna1ACUApp"/>
+            </ACU>
+            <SSTRxs>
+              <ManageableAppRef IDREF="Site2Antenna1SSTRx1"/>
+              <ManageableAppRef IDREF="Site2Antenna1SSTRx2"/>
+            </SSTRxs>
+            <Radios>
+              <ManageableAppRef IDREF="Site2Antenna1Radio1App"/>
+            </Radios>
+          </Antenna>
+          <Antenna>
+            <Name>Site2Antenna2</Name>
+            <Description>Site2 Antenna2</Description>
+            <ACU>
+              <ManageableAppRef IDREF="Site2Antenna2ACUApp"/>
+            </ACU>
+            <SSTRxs>
+              <ManageableAppRef IDREF="Site2Antenna2SSTRx1"/>
+              <ManageableAppRef IDREF="Site2Antenna2SSTRx2"/>
+            </SSTRxs>
+            <Radios>
+              <ManageableAppRef IDREF="Site2Antenna2Radio1App"/>
+            </Radios>
+          </Antenna>
+        </Devices>
+      </Network>  <!--End of Antenna Site2 Network-->
+
+      <Network ID="AntennaSite3Network">
+        <Name>Antenna Site3 Network</Name>
+        <Description>Antenna Site3 Network</Description>
+        <NetworkType>GroundNetwork</NetworkType>
+        <NetworkServices/>
+
+        <NetworkNode ID="Site3Antenna1Radio1">
+          <Name>Site3 Antenna1 Radio1</Name>
+          <InventoryID>Site3-Antenna1-Radio1-InvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site3Antenna1Radio1App">
+              <RoleID>Site3Antenna1Radio1-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSRadio>
+                <RadioType>Ground Radio</RadioType>
+                <TransceiverID>24</TransceiverID>
+              </TmNSRadio>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site3Antenna1Radio1IFace">
+            <Name>RadioIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.3.2</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.3.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site3Antenna1Radio1PhyNetPort">
+              <Name>Network Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site3Antenna1Radio1Port">
+              <Name>Site3Antenna1Radio1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site3Antenna1Radio1PhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site3Antenna1SSTReceivers">
+          <Name>Site3Antenna1 SST Receivers</Name>
+          <InventoryID>Site3-Antenna1-SSTRx-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site3Antenna1SSTRx1">
+              <Name>Receiver1</Name>
+              <RoleID>Site3-Antenna1-SSTRx-00010</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site3Antenna1SSTRx1Chan1">
+                  <ChannelNumber>30</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1800e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site3Antenna1SSTRx1Chan2">
+                  <ChannelNumber>33</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1950e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+            <TmNSManageableApp ID="Site3Antenna1SSTRx2">
+              <Name>Receiver2</Name>
+              <RoleID>Site3-Antenna1-SSTRx2-00011</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site3Antenna1SSTRx2Chan1">
+                  <ChannelNumber>31</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1850e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site3Antenna1SSTRx2Chan2">
+                  <ChannelNumber>32</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1900e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site3Antenna1SSTRxIFace">
+            <Name>SSTRxIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.3.3</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.3.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site3Antenna1SSTRxPhyNetPort">
+              <Name>SST Tx Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <NetworkInterface ID="Site3Antenna1SSTRxPrivateIFace">
+            <Name>SSTRxPrivateIFace</Name>
+            <InterfaceName>eth1</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.3.3</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.3.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site3Antenna1SSTRxPrivatePhyNetPort">
+              <Name>SST Tx Private Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site3Antenna1SSTRxPort">
+              <Name>SSTRxPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site3Antenna1SSTRxPhyNetPort"/>
+            </Port>
+            <Port ID="Site3Antenna1SSTRxPrivatePort">
+              <Name>SSTRxPrivatePort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site3Antenna1SSTRxPrivatePhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site3Antenna1ACU">
+          <Name>Site3Antenna1ACU</Name>
+          <InventoryID>Site3-Antenna1-ACU-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site3Antenna1ACUApp">
+              <RoleID>Site3-Antenna1-ACU</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSACU>
+                <TrackingReceiver>
+                  <ManageableAppRef IDREF="Site3Antenna1SSTRx2"/>
+                </TrackingReceiver>
+              </TmNSACU>
+              <SNMPInterface>
+                <SNMPVersion>3</SNMPVersion>
+                <DSCPTableEntryRef IDREF="DiffservLTC"/>
+                <NetworkInterfaceRef IDREF="Site3Antenna1ACUIFace"/>
+              </SNMPInterface>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site3Antenna1ACUIFace">
+            <Name>ACU Computer Interface</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.3.4</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.3.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site3Antenna1ACUPhyNetPort">
+              <Name>ACU Computer PhyNetPort</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site3Antenna1ACUPort">
+              <Name>ACU Computer Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site3Antenna1ACUPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <Devices>
+          <Antenna>
+            <Name>Site3Antenna1</Name>
+            <Description>Site3 Antenna1</Description>
+            <ACU>
+              <ManageableAppRef IDREF="Site3Antenna1ACUApp"/>
+            </ACU>
+            <SSTRxs>
+              <ManageableAppRef IDREF="Site3Antenna1SSTRx1"/>
+              <ManageableAppRef IDREF="Site3Antenna1SSTRx2"/>
+            </SSTRxs>
+            <Radios>
+              <ManageableAppRef IDREF="Site3Antenna1Radio1App"/>
+            </Radios>
+          </Antenna>
+        </Devices>
+      </Network>                <!--End of Antenna Site3 Network-->
+
+      <Network ID="AntennaSite4Network">
+        <Name>Antenna Site4 Network</Name>
+        <Description>Antenna Site4 Network</Description>
+        <NetworkType>GroundNetwork</NetworkType>
+        <NetworkServices/>
+
+        <NetworkNode ID="Site4Antenna1Radio1">
+          <Name>Site4 Antenna1 Radio1</Name>
+          <InventoryID>Site4-Antenna1-Radio1-InvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site4Antenna1Radio1App">
+              <RoleID>Site4Antenna1Radio1-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSRadio>
+                <RadioType>Ground Radio</RadioType>
+                <TransceiverID>24</TransceiverID>
+              </TmNSRadio>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site4Antenna1Radio1IFace">
+            <Name>RadioIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.4.2</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.4.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site4Antenna1Radio1PhyNetPort">
+              <Name>Network Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site4Antenna1Radio1Port">
+              <Name>Site4Antenna1Radio1Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site4Antenna1Radio1PhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site4Antenna1SSTReceivers">
+          <Name>Site4Antenna1 SST Receivers</Name>
+          <InventoryID>Site4-Antenna1-SSTRx-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site4Antenna1SSTRx1">
+              <Name>Receiver1</Name>
+              <RoleID>Site4-Antenna1-SSTRx-00010</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site4Antenna1SSTRx1Chan1">
+                  <ChannelNumber>30</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1800e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site4Antenna1SSTRx1Chan2">
+                  <ChannelNumber>33</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1950e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+            <TmNSManageableApp ID="Site4Antenna1SSTRx2">
+              <Name>Receiver2</Name>
+              <RoleID>Site4-Antenna1-SSTRx2-00011</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSNetworkDevice/>
+              <TmNSSSTRx>
+                <Channel ID="Site4Antenna1SSTRx2Chan1">
+                  <ChannelNumber>31</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1850e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+                <Channel ID="Site4Antenna1SSTRx2Chan2">
+                  <ChannelNumber>32</ChannelNumber>
+                  <CenterFrequency>
+                    <FloatValue>1900e6</FloatValue>
+                    <SIUnits>Hertz</SIUnits>
+                  </CenterFrequency>
+                </Channel>
+              </TmNSSSTRx>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site4Antenna1SSTRxIFace">
+            <Name>SSTRxIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.4.3</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.4.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site4Antenna1SSTRxPhyNetPort">
+              <Name>SST Tx Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <NetworkInterface ID="Site4Antenna1SSTRxPrivateIFace">
+            <Name>SSTRxPrivateIFace</Name>
+            <InterfaceName>eth1</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.4.3</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.4.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site4Antenna1SSTRxPrivatePhyNetPort">
+              <Name>SST Tx Private Phy Net Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site4Antenna1SSTRxPort">
+              <Name>SSTRxPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site4Antenna1SSTRxPhyNetPort"/>
+            </Port>
+            <Port ID="Site4Antenna1SSTRxPrivatePort">
+              <Name>SSTRxPrivatePort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site4Antenna1SSTRxPrivatePhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="Site4Antenna1ACU">
+          <Name>Site4Antenna1ACU</Name>
+          <InventoryID>Site4-Antenna1-ACU-00010</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="Site4Antenna1ACUApp">
+              <RoleID>Site4-Antenna1-ACU</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>-TBD-</ConfigurationVersion>
+              <TmNSACU>
+                <TrackingReceiver>
+                  <ManageableAppRef IDREF="Site4Antenna1SSTRx2"/>
+                </TrackingReceiver>
+              </TmNSACU>
+              <SNMPInterface>
+                <SNMPVersion>3</SNMPVersion>
+                <DSCPTableEntryRef IDREF="DiffservLTC"/>
+                <NetworkInterfaceRef IDREF="Site4Antenna1ACUIFace"/>
+              </SNMPInterface>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="Site4Antenna1ACUIFace">
+            <Name>ACU Computer Interface</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>10.0.4.4</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>10.0.4.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="Site4Antenna1ACUPhyNetPort">
+              <Name>ACU Computer PhyNetPort</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="Site4Antenna1ACUPort">
+              <Name>ACU Computer Port</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="Site4Antenna1ACUPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <Devices>
+          <Antenna>
+            <Name>Site4Antenna1</Name>
+            <Description>Site4 Antenna1</Description>
+            <ACU>
+              <ManageableAppRef IDREF="Site4Antenna1ACUApp"/>
+            </ACU>
+            <SSTRxs>
+              <ManageableAppRef IDREF="Site4Antenna1SSTRx1"/>
+              <ManageableAppRef IDREF="Site4Antenna1SSTRx2"/>
+            </SSTRxs>
+            <Radios>
+              <ManageableAppRef IDREF="Site4Antenna1Radio1App"/>
+            </Radios>
+          </Antenna>
+        </Devices>
+      </Network>                <!--End of Antenna Site4 Network-->
+
+
+      <Network ID="RangeOperationsCenterNetwork">
+        <Name>ROC Network</Name>
+        <Description>Range Operations Center Network</Description>
+        <NetworkType>GroundNetwork</NetworkType>
+        <NetworkServices/>
+
+        <NetworkNode ID="RFNetworkManagerComputer">
+          <Name>RFNM Computer</Name>
+          <InventoryID>RFNM-Computer-InvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="RFNM">
+              <RoleID>RFNM-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSConsolidatedManager>
+                <ManagedApps>
+                  <ManageableAppRef IDREF="LinkManager"/>
+                  <ManageableAppRef IDREF="Site1Antenna1Radio1App"/>
+                  <ManageableAppRef IDREF="Site1Antenna2Radio1App"/>
+                  <ManageableAppRef IDREF="Site2Antenna1Radio1App"/>
+                  <ManageableAppRef IDREF="Site2Antenna2Radio1App"/>
+                  <ManageableAppRef IDREF="Site3Antenna1Radio1App"/>
+                  <ManageableAppRef IDREF="Site4Antenna1Radio1App"/>
+                </ManagedApps>
+              </TmNSConsolidatedManager>
+              <TmNSRFNetworkManager>
+                <RFNEProtocolServer/> <!--TBD Details by RAN team-->
+                <RFNEProtocolServer/> <!--TBD Details by RAN team-->
+              </TmNSRFNetworkManager>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="RFNMIFace">
+            <Name>RFNMIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.5.2</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.5.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="RFNMPhyNetPort">
+              <Name>Network Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="RFNMPort">
+              <Name>RFNMPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RFNMPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="RFNetworkOpsManagerComputer">
+          <Name>RFN0 Computer</Name>
+          <InventoryID>RFNO-Computer-InvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="RFNO">
+              <RoleID>RFNO-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSConsolidatedManager>
+                <ManagedApps>
+                  <ManageableAppRef IDREF="RFNM"/>
+                  <ManageableAppRef IDREF="LinkManager"/>
+                </ManagedApps>
+              </TmNSConsolidatedManager>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="RFNOIFace">
+            <Name>RFNOIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.5.3</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.5.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="RFNOPhyNetPort">
+              <Name>Network Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="RFNOPort">
+              <Name>RFNOPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="RFNOPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="LinkManagerComputer">
+          <Name>Link Manager Computer</Name>
+          <InventoryID>LM-Computer-InvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="LinkManager">
+              <RoleID>LM-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSLinkManager>
+                <ManagedApps>
+                  <ManageableAppRef IDREF="Site1Antenna1Radio1App"/>
+                  <ManageableAppRef IDREF="Site1Antenna2Radio1App"/>
+                  <ManageableAppRef IDREF="Site2Antenna1Radio1App"/>
+                  <ManageableAppRef IDREF="Site2Antenna2Radio1App"/>
+                  <ManageableAppRef IDREF="Site3Antenna1Radio1App"/>
+                  <ManageableAppRef IDREF="Site4Antenna1Radio1App"/>
+                </ManagedApps>
+                <RFNEProtocolServer/> <!--TBD Details by RAN team-->
+                <RFNEProtocolServer/> <!--TBD Details by RAN team-->
+              </TmNSLinkManager>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="LMIFace">
+            <Name>LMIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.5.4</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.5.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="LMPhyNetPort">
+              <Name>Network Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="LMPort">
+              <Name>LMPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="LMPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+
+        <NetworkNode ID="SSTManagerComputer">
+          <Name>SST Manager Computer</Name>
+          <InventoryID>SST-Manager-Computer-InvID</InventoryID>
+          <TmNSManageableApps>
+            <TmNSManageableApp ID="SSTManager">
+              <RoleID>SST-Manager-001</RoleID>
+              <LoggingLevel>Trace</LoggingLevel>
+              <ConfigurationVersion>0.0.1</ConfigurationVersion>
+              <TmNSConsolidatedManager>
+                <ManagedApps>
+                  <ManageableAppRef IDREF="Site1Antenna1SSTRx1"/>
+                  <ManageableAppRef IDREF="Site1Antenna2SSTRx1"/>
+                  <ManageableAppRef IDREF="Site2Antenna1SSTRx1"/>
+                  <ManageableAppRef IDREF="Site2Antenna2SSTRx1"/>
+                  <ManageableAppRef IDREF="Site3Antenna1SSTRx1"/>
+                  <ManageableAppRef IDREF="Site4Antenna1SSTRx1"/>
+                </ManagedApps>
+              </TmNSConsolidatedManager>
+            </TmNSManageableApp>
+          </TmNSManageableApps>
+          <NetworkInterface ID="SSTMgrIFace">
+            <Name>SSTMgrIFace</Name>
+            <InterfaceName>eth0</InterfaceName>
+            <DHCPEnable>false</DHCPEnable>
+            <IPAddress>192.168.5.5</IPAddress>
+            <Netmask>255.255.255.0</Netmask>
+            <Gateway>192.168.5.1</Gateway>
+            <MACAddress>00:00:00:00:00:00</MACAddress>
+            <PhysicalNetworkPort ID="SSTMgrPhyNetPort">
+              <Name>Network Port</Name>
+              <Medium>Copper</Medium>
+              <PortNumber>1</PortNumber>
+              <PortDataRate>
+                <FloatValue>1e9</FloatValue>
+                <SIUnits>BitPerSecond</SIUnits>
+              </PortDataRate>
+            </PhysicalNetworkPort>
+          </NetworkInterface>
+          <Ports>
+            <Port ID="SSTMgrPort">
+              <Name>SSTMgrPort</Name>
+              <PortDirection>Bidirectional</PortDirection>
+              <PhysicalNetworkPortRef IDREF="SSTMgrPhyNetPort"/>
+            </Port>
+          </Ports>
+        </NetworkNode>
+      </Network>                <!--End of Range Operations Center Network-->
+
+    </Network>
+  </NetworkDomains>
+
+  <DSCPTable>
+    <ReadOnly>true</ReadOnly>
+    <Owner>SDD Range Rules</Owner>
+    <DSCPTableEntry ID="DiffservLTC">
+      <Name>Diffserv LTC (Best Effort)</Name>
+      <DSCPValue>0b000000</DSCPValue>
+      <DSCPDescription>Diffserv LTC (Best Effort PHB)</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservRCLow">
+      <Name>Diffserv RC Low (Assured Forwarding DSCP 8)</Name>
+      <DSCPValue>0b001000</DSCPValue>
+      <DSCPDescription>Diffserv RC Low (Assured Forwarding DSCP 8)</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservRCMed">
+      <Name>Diffserv RC Med (Assured Forwarding DSCP 16)</Name>
+      <DSCPValue>0b010000</DSCPValue>
+      <DSCPDescription>Diffserv RC Med (Assured Forwarding DSCP 16)</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservRCHigh">
+      <Name>Diffserv RC High (Assured Forwarding DSCP 24)</Name>
+      <DSCPValue>0b011000</DSCPValue>
+      <DSCPDescription>Diffserv RC High (Assured Forwarding DSCP 24)</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservVideo">
+      <Name>Diffserv Video (Assured Forwarding DSCP 32)</Name>
+      <DSCPValue>0b100000</DSCPValue>
+      <DSCPDescription>Diffserv Video (Assured Forwarding DSCP 32)</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservVoice">
+      <Name>Diffserv Voice (Expedited Forwarding DSCP 40)</Name>
+      <DSCPValue>0b101000</DSCPValue>
+      <DSCPDescription>Diffserv Voice (Expedited Forwarding PHB)</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservLMLow">
+      <Name>Diffserv Link Manager Low (DSCP 48)</Name>
+      <DSCPValue>0b110000</DSCPValue>
+      <DSCPDescription>Diffserv Link Manager Low (DSCP 48)</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservLMHigh">
+      <Name>Diffserv Link Manager High (DSCP 56)</Name>
+      <DSCPValue>0b111000</DSCPValue>
+      <DSCPDescription>Diffserv Link Manager High (DSCP 56)</DSCPDescription>
+    </DSCPTableEntry>
+  </DSCPTable>
+  <SupportedMCAs>
+    <ReadOnly>true</ReadOnly>
+    <Owner>SDD Range Rules</Owner>
+    <SupportedMCA>
+      <Description>1st Example Multicast Address for TmNS Message Delivery</Description>
+      <MulticastAddress>239.192.0.1</MulticastAddress>
+    </SupportedMCA>
+    <SupportedMCA>
+      <Description>2nd Example Multicast Address for TmNS Message Delivery</Description>
+      <MulticastAddress>239.192.0.2</MulticastAddress>
+    </SupportedMCA>
+    <SupportedMCA>
+      <Description>3rd Example Multicast Address for TmNS Message Delivery</Description>
+      <MulticastAddress>239.192.0.3</MulticastAddress>
+    </SupportedMCA>
+    <SupportedMCA>
+      <Description>4th Example Multicast Address for TmNS Message Delivery</Description>
+      <MulticastAddress>239.192.0.4</MulticastAddress>
+    </SupportedMCA>
+    <SupportedMCA>
+      <Description>5th Example Multicast Address for TmNS Message Delivery</Description>
+      <MulticastAddress>239.192.0.5</MulticastAddress>
+    </SupportedMCA>
+  </SupportedMCAs>
+
+</MDLRoot>

@@ -1,0 +1,294 @@
+<?xml version="1.0"?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xsi:schemaLocation="MDL_v0_8_7.xsd">
+  <TestMissions>
+    <TestMission>
+      <Name>Multiple Apps Per NetworkNode Example</Name>
+      <ConfigurationVersion>-TBD-</ConfigurationVersion>
+      <TmNSCompleteness>false</TmNSCompleteness>
+      <TmNSCompletenessDescription>incomplete</TmNSCompletenessDescription>
+      <NetworkReferences>
+        <NetworkRef IDREF="ExampleNetworkID"/>
+        <NetworkRef IDREF="ExampleNetwork2ID"/>
+      </NetworkReferences>
+    </TestMission>
+  </TestMissions>
+  <NetworkDomains>
+    <Network ID="ExampleNetworkID">
+      <Name>Example Network</Name>
+      <Description>example network</Description>
+      <NetworkType>TmNS</NetworkType>
+      <NetworkNode ID="SSTComputerID">
+        <Name>SST Computer</Name>
+        <InventoryID>COMP-00010</InventoryID>
+        <TmNSManageableApps>
+
+          <TmNSManageableApp ID="ACUApp">
+            <RoleID>TmNS-SST-ACU</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSACU/>
+            <SNMPInterface>
+              <SNMPVersion>3</SNMPVersion>
+              <DSCPTableEntryRef IDREF="DiffservBestEffort"/>
+              <NetworkInterfaceRef IDREF="SSTComputerIFace"/>
+              <!-- MIBInterface not shown in this example -->
+            </SNMPInterface>
+          </TmNSManageableApp>
+
+          <TmNSManageableApp ID="SSTProxyApp1">
+            <RoleID>TmNS-SST-SSTProxy1</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSSSTRx>
+              <Channel>
+                <ChannelNumber>30</ChannelNumber>
+                <CenterFrequency>
+                  <FloatValue>1800e6</FloatValue>
+                  <SIUnits>Hertz</SIUnits>
+                </CenterFrequency>
+              </Channel>
+            </TmNSSSTRx>
+            <SNMPInterface>
+              <SNMPVersion>3</SNMPVersion>
+              <DSCPTableEntryRef IDREF="DiffservBestEffort"/>
+              <NetworkInterfaceRef IDREF="SSTComputerIFace"/>
+              <!-- MIBInterface not shown in this example -->
+            </SNMPInterface>
+          </TmNSManageableApp>
+
+          <TmNSManageableApp ID="SSTProxyApp2">
+            <RoleID>TmNS-SST-SSTProxy2</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSSSTRx>
+              <Channel>
+                <ChannelNumber>31</ChannelNumber>
+                <CenterFrequency>
+                  <FloatValue>1805e6</FloatValue>
+                  <SIUnits>Hertz</SIUnits>
+                </CenterFrequency>
+              </Channel>
+            </TmNSSSTRx>
+            <SNMPInterface>
+              <SNMPVersion>3</SNMPVersion>
+              <DSCPTableEntryRef IDREF="DiffservBestEffort"/>
+              <NetworkInterfaceRef IDREF="SSTComputerIFace"/>
+              <!-- MIBInterface not shown in this example -->
+            </SNMPInterface>
+          </TmNSManageableApp>
+
+          <TmNSManageableApp ID="SSTProxyApp3">
+            <RoleID>TmNS-SST-SSTProxy3</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSSSTRx>
+              <Channel>
+                <ChannelNumber>32</ChannelNumber>
+                <CenterFrequency>
+                  <FloatValue>1810e6</FloatValue>
+                  <SIUnits>Hertz</SIUnits>
+                </CenterFrequency>
+              </Channel>
+            </TmNSSSTRx>
+            <SNMPInterface>
+              <SNMPVersion>3</SNMPVersion>
+              <DSCPTableEntryRef IDREF="DiffservBestEffort"/>
+              <NetworkInterfaceRef IDREF="SSTComputerIFace"/>
+              <!-- MIBInterface not shown in this example -->
+            </SNMPInterface>
+          </TmNSManageableApp>
+
+          <TmNSManageableApp ID="SSTProxyApp4">
+            <RoleID>TmNS-SST-SSTProxy4</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSSSTRx>
+              <Channel>
+                <ChannelNumber>33</ChannelNumber>
+                <CenterFrequency>
+                  <FloatValue>1815e6</FloatValue>
+                  <SIUnits>Hertz</SIUnits>
+                </CenterFrequency>
+              </Channel>
+            </TmNSSSTRx>
+            <SNMPInterface>
+              <SNMPVersion>3</SNMPVersion>
+              <DSCPTableEntryRef IDREF="DiffservBestEffort"/>
+              <NetworkInterfaceRef IDREF="SSTComputerIFace"/>
+              <!-- MIBInterface not shown in this example -->
+            </SNMPInterface>
+          </TmNSManageableApp>
+
+        </TmNSManageableApps>
+        <NetworkInterface ID="SSTComputerIFace">
+          <Name>SST Computer Interface</Name>
+          <InterfaceName>eth0</InterfaceName>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.7</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="SSTComputerPhyNetPort">
+            <Name>SST Computer PhyNetPort</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="SSTComputerPort">
+            <Name>SST Computer Port</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="SSTComputerPhyNetPort"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+    </Network>
+
+    <Network ID="ExampleNetwork2ID">
+      <Name>Example Network 2</Name>
+      <Description>example network</Description>
+      <NetworkType>TmNS</NetworkType>
+      <NetworkNode ID="GSECartBlackComputer">
+        <Name>GSE Cart Blackside Computer</Name>
+        <InventoryID>COMP-00011</InventoryID>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="SSTManagerApp">
+            <RoleID>GSE-SSTMan-001</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSConsolidatedManager/> <!--Apps managed by this manager intentionally left out-->
+            <SNMPInterface>
+              <SNMPVersion>3</SNMPVersion>
+              <DSCPTableEntryRef IDREF="DiffservBestEffort"/>
+              <NetworkInterfaceRef IDREF="GSECartBlackIFace"/>
+              <!-- MIBInterface not shown in this example -->
+            </SNMPInterface>
+          </TmNSManageableApp>
+
+          <TmNSManageableApp ID="RFNetworkOpsManagerApp">
+            <RoleID>GSE-RFNOMan-001</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSConsolidatedManager>
+              <ManageableAppRef IDREF="RFNetworkManagerApp"/>
+              <ManageableAppRef IDREF="LinkManagerApp"/>
+            </TmNSConsolidatedManager>
+            <SNMPInterface>
+              <SNMPVersion>3</SNMPVersion>
+              <DSCPTableEntryRef IDREF="DiffservBestEffort"/>
+              <NetworkInterfaceRef IDREF="GSECartBlackIFace"/>
+              <!-- MIBInterface not shown in this example -->
+            </SNMPInterface>
+          </TmNSManageableApp>
+
+          <TmNSManageableApp ID="RFNetworkManagerApp">
+            <RoleID>GSE-RFNM-001</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSRFNetworkManager>
+              <RFNEProtocolServer>
+                <!--ProtocolType and ListeningPort intentionally left blank-->
+                <NetworkInterfaceRef IDREF="GSECartBlackIFace"/>
+              </RFNEProtocolServer>
+            </TmNSRFNetworkManager>
+            <SNMPInterface>
+              <SNMPVersion>3</SNMPVersion>
+              <DSCPTableEntryRef IDREF="DiffservBestEffort"/>
+              <NetworkInterfaceRef IDREF="GSECartBlackIFace"/>
+              <!-- MIBInterface not shown in this example -->
+            </SNMPInterface>
+          </TmNSManageableApp>
+
+          <TmNSManageableApp ID="LinkManagerApp">
+            <RoleID>GSE-LM-001</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSLinkManager>
+              <!-- ManageableAppRefs to the QueueManager and Radio components intentionally left blank -->
+              <RFNEProtocolServer>
+                <!--ProtocolType and ListeningPort intentionally left blank-->
+                <NetworkInterfaceRef IDREF="GSECartBlackIFace"/>
+              </RFNEProtocolServer>
+            </TmNSLinkManager>
+            <SNMPInterface>
+              <SNMPVersion>3</SNMPVersion>
+              <DSCPTableEntryRef IDREF="DiffservBestEffort"/>
+              <NetworkInterfaceRef IDREF="GSECartBlackIFace"/>
+              <!-- MIBInterface not shown in this example -->
+            </SNMPInterface>
+          </TmNSManageableApp>
+
+        </TmNSManageableApps>
+        <NetworkInterface ID="GSECartBlackIFace">
+          <Name>GSE Cart Blackside Interface</Name>
+          <InterfaceName>eth0</InterfaceName>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.7</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="GSECartBlackPhyNetPort">
+            <Name>GSE Cart Black PhyNetPort</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e9</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Ports>
+          <Port ID="GSECartBlackPort">
+            <Name>GSE Cart Black Port</Name>
+            <PortDirection>Bidirectional</PortDirection>
+            <PhysicalNetworkPortRef IDREF="GSECartBlackPhyNetPort"/>
+          </Port>
+        </Ports>
+      </NetworkNode>
+    </Network>
+  </NetworkDomains>
+  <DSCPTable>
+    <DSCPTableEntry ID="DiffservBestEffort">
+      <Name>Best Effort Diffserv</Name>
+      <Description>Diffserv Code Point for Best Effort per the Test Article Standard</Description>
+      <DSCPValue>0b000000</DSCPValue>
+      <DSCPDescription>Best Effort PHB</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservExpeditedForwarding">
+      <Name>Expedited Forwarding Diffserv</Name>
+      <Description>Diffserv Code Point for Expedited Forwarding per the Test Article Standard</Description>
+      <DSCPValue>0b101110</DSCPValue>
+      <DSCPDescription>Expedited Forwarding PHB</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservAssuredForwarding1">
+      <Name>Assured Forwarding 1 Diffserv</Name>
+      <Description>Diffserv Code Point for Assured Forwarding Class Selector 1 per the Test Article Standard</Description>
+      <DSCPValue>0b001000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 1</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservAssuredForwarding2">
+      <Name>Assured Forwarding 2 Diffserv</Name>
+      <Description>Diffserv Code Point for Assured Forwarding Class Selector 2 per the Test Article Standard</Description>
+      <DSCPValue>0b010000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 2</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservAssuredForwarding3">
+      <Name>Assured Forwarding 3 Diffserv</Name>
+      <Description>Diffserv Code Point for Assured Forwarding Class Selector 3 per the Test Article Standard</Description>
+      <DSCPValue>0b011000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 3</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservAssuredForwarding4">
+      <Name>Assured Forwarding 4 Diffserv</Name>
+      <Description>Diffserv Code Point for Assured Forwarding Class Selector 4 per the Test Article Standard</Description>
+      <DSCPValue>0b100000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 4</DSCPDescription>
+    </DSCPTableEntry>
+  </DSCPTable>
+</MDLRoot>

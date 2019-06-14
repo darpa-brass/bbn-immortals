@@ -1,0 +1,567 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xmlns:mdl="http://inetprogram.org/projects/MDL" 
+         xsi:schemaLocation="MDL_v0_8_7.xsd">
+  <TestMissions>
+    <TestMission>
+      <Name>Packaging Measurements Example</Name>
+      <ConfigurationVersion>0.0.1</ConfigurationVersion>
+      <TmNSCompleteness>false</TmNSCompleteness>
+      <TmNSCompletenessDescription>-TBD-</TmNSCompletenessDescription>
+      <NetworkReferences/>
+    </TestMission>
+  </TestMissions>
+  <Units>
+    <DerivedUnit ID="Bits16EU">
+      <Name>Two Bytes</Name>
+      <Description>16 binary digits (2 bytes)</Description>
+      <Symbol>W16</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>16</NumericalConstant>
+        <SIUnits>Bit</SIUnits>
+      </UnitsNumerator>
+    </DerivedUnit>
+    <DerivedUnit ID="GForceUnits">
+      <Name>G Force</Name>
+      <Symbol>G</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>9.80665</NumericalConstant>
+        <SIUnits>MeterPerSecondSquared</SIUnits>
+      </UnitsNumerator>
+    </DerivedUnit>
+    <DerivedUnit ID="PercentVoltUnits">
+      <Name>Percent of full scale voltage</Name>
+      <Symbol>%V</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>100</NumericalConstant>
+        <SIUnits>Volt</SIUnits>
+      </UnitsNumerator>
+      <UnitsDenominator>
+        <NumericalConstant>1</NumericalConstant>
+        <SIUnits>Volt</SIUnits>
+      </UnitsDenominator>
+    </DerivedUnit>
+  </Units>
+  <MeasurementDomains>
+    <MeasurementDomain>
+      <Name>Example Measurement Domain</Name>
+      <Measurements>
+        <Measurement ID="GearVibMeas">
+          <Name>GEARVIB</Name>
+          <Description>Gear Box Vibration</Description>
+          <MeasurementID>0x00000001</MeasurementID>
+          <MeasurementType>Analog</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>BestEffort</DeliveryClass>
+          <Requirements>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="GearVibCountsToGsConversion"/>
+            </UnitsConversions>
+            <Uncertainty>
+              <ConfidenceInterval>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.2</ConditionValueFloat>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </ConfidenceInterval>
+              <ConfidenceLevel>95</ConfidenceLevel>
+            </Uncertainty>
+            <AnalogAttributes>
+              <SignalRange>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFloat>-1.5</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFloat>1.5</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFlex>-3</ConditionValueFlex>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFlex>3</ConditionValueFlex>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </SignalRange>
+              <Resolution>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.025</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.05</ConditionValueFloat>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </Resolution>
+              <FrequencyContent>
+                <FrequencyBand>
+                  <BandType>PassBand</BandType>
+                  <EdgeFrequency>
+                    <ConditionParameter>
+                      <ConditionOperation>==</ConditionOperation>
+                      <ConditionValueFlex>200</ConditionValueFlex>
+                      <SIUnits>Hertz</SIUnits>
+                    </ConditionParameter>
+                  </EdgeFrequency>
+                </FrequencyBand>
+                <PercentSignal>99</PercentSignal>
+              </FrequencyContent>
+            </AnalogAttributes>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFloat>12</ConditionValueFloat>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>SignedBinary</DigitalEncoding>
+              <ActiveInputRange>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFloat>98.3</ConditionValueFloat>
+                  <UnitsRef IDREF="PercentVoltUnits"/>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFloat>1.17</ConditionValueFloat>
+                  <UnitsRef IDREF="PercentVoltUnits"/>
+                </ConditionParameter>
+              </ActiveInputRange>
+            </DigitalAttributes>
+          </Requirements>
+          <Implementation>
+            <MeasurementSource/>
+          </Implementation>
+        </Measurement>
+        <Measurement ID="FrameID">
+          <Name>FRAMEID</Name>
+          <Description>Placeholder for the frameID</Description>
+          <MeasurementID>0x00000002</MeasurementID>
+          <MeasurementType>DigitalBus</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>BestEffort</DeliveryClass>
+          <Requirements>
+            <SIUnits>Counts</SIUnits>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFloat>16</ConditionValueFloat>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>SignedBinary</DigitalEncoding>
+            </DigitalAttributes>
+          </Requirements>
+        </Measurement>
+      </Measurements>
+      <Packages>
+        <PackageDefinition ID="PackageDefinition1">
+          <PackageDefinitionID>0x00000010</PackageDefinitionID>
+          <StandardPackageHeader>true</StandardPackageHeader>
+          <PackageStructureRef IDREF="PackageStructure1"/>
+          <DataMap>
+            <DataWordToFieldMap>
+              <DataWord>
+                <DataWordWidth>
+                  <FlexValue>4</FlexValue>
+                  <SIUnits>Byte</SIUnits>
+                </DataWordWidth>
+                <Syllable>
+                  <ConstantValue>0x5050D0D0</ConstantValue>
+                </Syllable>
+              </DataWord>
+              <PackageDataFieldRef IDREF="Package1_Field1_FrameSync"/>
+              <TimeOrder>IncreasingTemporal</TimeOrder>
+            </DataWordToFieldMap>
+            <DataWordToFieldMap>
+              <DataWord>
+                <DataWordWidth>
+                  <FlexValue>2</FlexValue>
+                  <SIUnits>Byte</SIUnits>
+                </DataWordWidth>
+                <Syllable>
+                  <MeasurementRef IDREF="FrameID"/>
+                </Syllable>
+              </DataWord>
+              <PackageDataFieldRef IDREF="Package1_Field2_FrameID"/>
+              <TimeOrder>IncreasingTemporal</TimeOrder>
+            </DataWordToFieldMap>
+            <DataWordToFieldMap>
+              <DataWord>
+                <DataWordWidth>
+                  <FlexValue>12</FlexValue>
+                  <SIUnits>Bit</SIUnits>
+                </DataWordWidth>
+                <Syllable>
+                  <MeasurementRef IDREF="GearVibMeas"/>
+                  <SyllableMask>0x0FFF</SyllableMask>
+                  <SyllableWidth>
+                    <FlexValue>12</FlexValue>
+                    <SIUnits>Bit</SIUnits>
+                  </SyllableWidth>
+                  <SyllableStartBit>1</SyllableStartBit>
+                  <DataWordOffset>0</DataWordOffset>
+                </Syllable>
+              </DataWord>
+              <PackageDataFieldRef IDREF="Package1_Field3"/>
+              <TimeOrder>IncreasingTemporal</TimeOrder>
+            </DataWordToFieldMap>
+          </DataMap>
+        </PackageDefinition>
+        <PackageStructure ID="PackageStructure1">
+          <PackageDataField ID="Package1_Field1_FrameSync">
+            <FieldLocation ID="Package1_Field1_Location">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>12</FlexValue> <!--offset from the start of the message.  Standard header is 12 bytes -->
+                  <SIUnits>Byte</SIUnits>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>4</FlexValue>
+                <SIUnits>Byte</SIUnits>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>0</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="Package1_Field2_FrameID">
+            <FieldLocation ID="Package1_Field2_Location">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>16</FlexValue> <!--offset from the start of the message.  Standard header is 12 bytes-->
+                  <SIUnits>Byte</SIUnits>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>2</FlexValue>
+                <SIUnits>Byte</SIUnits>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>0</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="Package1_Field3">
+            <FieldLocation ID="Package1_Field3_Location">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>18</FlexValue> <!--offset from the start of the message.  Standard header is 12 bytes-->
+                  <SIUnits>Byte</SIUnits>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>2</FlexValue>
+                <SIUnits>Byte</SIUnits>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>0</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="Package1_Field4">
+            <FieldLocation ID="Package1_Field4_Location">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>20</FlexValue> <!--offset from the start of the message.  Standard header is 12 bytes-->
+                  <SIUnits>Byte</SIUnits>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>2</FlexValue>
+                <SIUnits>Byte</SIUnits>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>0</FieldRepetitions>
+          </PackageDataField>
+          <PackageDataField ID="Package1_Field5">
+            <FieldLocation ID="Package1_Field5_Location">
+              <FieldOffset>
+                <OffsetValue>
+                  <FlexValue>22</FlexValue> <!--offset from the start of the message.  Standard header is 12 bytes-->
+                  <SIUnits>Byte</SIUnits>
+                </OffsetValue>
+              </FieldOffset>
+              <FieldWidth>
+                <FlexValue>2</FlexValue>
+                <SIUnits>Byte</SIUnits>
+              </FieldWidth>
+            </FieldLocation>
+            <FieldEncoding>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>UnsignedBinary</DigitalEncoding>
+            </FieldEncoding>
+            <FieldRepetitions>0</FieldRepetitions>
+          </PackageDataField>
+        </PackageStructure>
+      </Packages>
+      <Messages>
+        <MessageDefinition ID="MessageDefinition1">
+          <MessageDefinitionID>0x80808080</MessageDefinitionID>
+          <DSCPTableEntryRef IDREF="DiffservBestEffort"/>
+          <DestinationAddress>230.0.0.10</DestinationAddress>
+          <MaximumMessageLength>
+            <FlexValue>512</FlexValue>
+            <SIUnits>Byte</SIUnits>
+          </MaximumMessageLength>
+          <FixedPackageOrder>true</FixedPackageOrder>
+          <FixedNumberOfPackages>false</FixedNumberOfPackages>
+          <PackageInstance>
+            <PackageDefinitionRef IDREF="PackageDefinition1"/>
+          </PackageInstance>
+        </MessageDefinition>
+      </Messages>
+      <DataOperations>
+        <DataOperation ID="AccelerometerTransducerDataOp">
+          <Name>Accelerometer Transducer</Name>
+          <Description>This operation represents the accelerometer transducer transfer function.</Description>
+          <Method ID="Method1">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.4917</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+                <Term>
+                  <Coefficient>0.045</Coefficient>
+                  <Exponent>0</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <UnitsRef IDREF="GForceUnits"/>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Volt</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+        <DataOperation ID="GearVibCountsToGsConversion">
+          <DataOperation ID="IUBitWeighting" SubOperationOrderIndex="1">
+            <Method ID="IUBitWeightingMethod">
+              <Name>IU Bit Weighting</Name>
+              <Description>This operation represents the conversion from Counts to Volts.</Description>
+              <MathematicalExpression>
+                <PolynomialNumerator>
+                  <Term>
+                    <Coefficient>0.000732</Coefficient>
+                    <Exponent>1</Exponent>
+                  </Term>
+                </PolynomialNumerator>
+              </MathematicalExpression>
+            </Method>
+            <InputUnits>
+              <SIUnits>Counts</SIUnits>
+            </InputUnits>
+            <OutputUnits>
+              <SIUnits>Volt</SIUnits>
+            </OutputUnits>
+          </DataOperation>
+          <DataOperation ID="InverseTransducer" SubOperationOrderIndex="2">
+            <Method ID="InverseTransducerMethod">
+              <Name>Inverse Transducer</Name>
+              <Description>This operation represents the inverse of the transducer to convert from volts to G's.  
+              The equation is  G's = (Vin - 0.045) / 0.4917</Description>
+              <MathematicalExpression>
+                <PolynomialNumerator>
+                  <Term>
+                    <Coefficient>1.0</Coefficient>
+                    <Exponent>1</Exponent>
+                  </Term>
+                  <Term>
+                    <Coefficient>-0.045</Coefficient>
+                    <Exponent>0</Exponent>
+                  </Term>
+                </PolynomialNumerator>
+                <PolynomialDenominator>
+                  <Term>
+                    <Coefficient>0.4917</Coefficient>
+                    <Exponent>0</Exponent>
+                  </Term>
+                </PolynomialDenominator>
+              </MathematicalExpression>
+            </Method>
+            <InputUnits>
+              <SIUnits>Volt</SIUnits>
+            </InputUnits>
+            <OutputUnits>
+              <UnitsRef IDREF="GForceUnits"/>
+            </OutputUnits>
+          </DataOperation>
+        </DataOperation>
+      </DataOperations>
+    </MeasurementDomain>
+  </MeasurementDomains>
+  <NetworkDomains>
+    <Network ID="ExampleNetworkID">
+      <Name>Example Network</Name>
+      <NetworkType>TmNS</NetworkType>
+      <NetworkNode ID="Dau1">
+        <Name>Dau1</Name>
+        <InventoryID>Dau1</InventoryID>
+        <InternalStructure></InternalStructure>
+        <LogicalLocation></LogicalLocation>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="DAU1App">
+            <RoleID>Dau1</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>0.0.1</ConfigurationVersion>
+            <TmNSDAU/>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="Dau1IFace">
+          <Name>Dau1IFace</Name>
+          <InterfaceName>Eth0</InterfaceName>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.21</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="Dau1PhysNetPort1">
+            <Name>Dau1 Phys Net Port 1</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e8</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Pins>
+          <Pin ID="Pin1ID" Index="1">
+            <Description>This is the first analog input pin on the card</Description>
+            <MeasurementRef IDREF="GearVibMeas"/>
+          </Pin>
+          <Pin ID="Pin2ID" Index="2">
+            <Description>This is the second analog input pin on the card</Description>
+          </Pin>
+        </Pins>
+        <Ports>
+          <Port ID="Dau1Pin1InputPort">
+            <PortDirection>Input</PortDirection>
+            <PinRef IDREF="Pin1ID"/>
+          </Port>
+          <Port ID="Dau1NetworkPort">
+            <Name>Dau1Port</Name>
+            <PortDirection>Bidirectional</PortDirection>
+          </Port>
+        </Ports>
+      </NetworkNode>
+      <Devices>
+        <Device ID="GearVibTransducer">
+          <Name>Gear Vibration Accelerometer Transducer</Name>
+          <Description>This operation represents the accelerometer transducer transfer function.</Description>
+          <Manufacturer>Endevco</Manufacturer>
+          <ModelNumber>752-500</ModelNumber>
+          <SerialNumber>000125</SerialNumber>
+          <InventoryID>03928-2934820-2934</InventoryID>
+          <DeviceType>Accelerometer</DeviceType>
+          <DataOperationRef IDREF="AccelerometerTransducerDataOp"/>
+          <Ports>
+            <Port ID="GearVibTransducerOutputPort">
+              <PortDirection>Output</PortDirection>
+            </Port>
+          </Ports>
+          <Excitation>
+            <ConditionOperation>==</ConditionOperation>
+            <ConditionValueFloat>24</ConditionValueFloat>
+            <SIUnits>Volt</SIUnits>
+          </Excitation>
+          <Calibration>
+            <CalibrationDate>2010-10-24</CalibrationDate>
+            <CalibrationPair>
+              <InputValue>
+                <FloatValue>-3</FloatValue>
+                <UnitsRef IDREF="GForceUnits"/>
+              </InputValue>
+              <OutputValue>
+                <FloatValue>-1.43</FloatValue>
+                <SIUnits>Volt</SIUnits>
+              </OutputValue>
+            </CalibrationPair>
+            <CalibrationPair>
+              <InputValue>
+                <FloatValue>3</FloatValue>
+                <UnitsRef IDREF="GForceUnits"/>
+              </InputValue>
+              <OutputValue>
+                <FloatValue>1.52</FloatValue>
+                <SIUnits>Volt</SIUnits>
+              </OutputValue>
+            </CalibrationPair>
+          </Calibration>
+        </Device>
+      </Devices>
+      <PortMappings>
+        <PortMapping ID="PM1">
+          <PortRef IDREF="GearVibTransducerOutputPort"/>
+          <PortRef IDREF="Dau1Pin1InputPort"/>
+        </PortMapping>
+      </PortMappings>
+    </Network>
+  </NetworkDomains>
+  <DSCPTable>
+    <DSCPTableEntry ID="DiffservBestEffort">
+      <Name>Best Effort Diffserv</Name>
+      <Description>Diffserv Code Point for Best Effort per the Test Article Standard</Description>
+      <DSCPValue>0b000000</DSCPValue>
+      <DSCPDescription>Best Effort PHB</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservExpeditedForwarding">
+      <Name>Expedited Forwarding Diffserv</Name>
+      <Description>Diffserv Code Point for Expedited Forwarding per the Test Article Standard</Description>
+      <DSCPValue>0b101110</DSCPValue>
+      <DSCPDescription>Expedited Forwarding PHB</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservAssuredForwarding1">
+      <Name>Assured Forwarding 1 Diffserv</Name>
+      <Description>Diffserv Code Point for Assured Forwarding Class Selector 1 per the Test Article Standard</Description>
+      <DSCPValue>0b001000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 1</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservAssuredForwarding2">
+      <Name>Assured Forwarding 2 Diffserv</Name>
+      <Description>Diffserv Code Point for Assured Forwarding Class Selector 2 per the Test Article Standard</Description>
+      <DSCPValue>0b010000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 2</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservAssuredForwarding3">
+      <Name>Assured Forwarding 3 Diffserv</Name>
+      <Description>Diffserv Code Point for Assured Forwarding Class Selector 3 per the Test Article Standard</Description>
+      <DSCPValue>0b011000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 3</DSCPDescription>
+    </DSCPTableEntry>
+    <DSCPTableEntry ID="DiffservAssuredForwarding4">
+      <Name>Assured Forwarding 4 Diffserv</Name>
+      <Description>Diffserv Code Point for Assured Forwarding Class Selector 4 per the Test Article Standard</Description>
+      <DSCPValue>0b100000</DSCPValue>
+      <DSCPDescription>Assured Forwarding Class 4</DSCPDescription>
+    </DSCPTableEntry>
+  </DSCPTable>
+</MDLRoot>

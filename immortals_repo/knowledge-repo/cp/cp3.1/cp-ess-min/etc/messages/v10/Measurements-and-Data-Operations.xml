@@ -1,0 +1,330 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xmlns:mdl="http://inetprogram.org/projects/MDL" 
+         xsi:schemaLocation="http://inetprogram.org/projects/MDL MDL_v0_8_10.xsd">
+  <ConfigurationVersion>-TBD-</ConfigurationVersion>
+  <TestMissions>
+    <TestMission>
+      <Name>Packaging Measurements Example</Name>
+      <TmNSCompleteness>false</TmNSCompleteness>
+      <TmNSCompletenessDescription>-TBD-</TmNSCompletenessDescription>
+      <NetworkReferences/>
+    </TestMission>
+  </TestMissions>
+  <Units>
+    <DerivedUnit ID="GForceUnits">
+      <Name>G Force</Name>
+      <Symbol>G</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>9.80665</NumericalConstant>
+        <SIUnits>MeterPerSecondSquared</SIUnits>
+      </UnitsNumerator>
+    </DerivedUnit>
+    <DerivedUnit ID="PercentVoltUnits">
+      <Name>Percent of full scale voltage</Name>
+      <Symbol>%V</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>100</NumericalConstant>
+        <SIUnits>Volt</SIUnits>
+      </UnitsNumerator>
+      <UnitsDenominator>
+        <NumericalConstant>1</NumericalConstant>
+        <SIUnits>Volt</SIUnits>
+      </UnitsDenominator>
+    </DerivedUnit>
+  </Units>
+  <MeasurementDomains>
+    <MeasurementDomain>
+      <Name>Example Measurement Domain</Name>
+      <Measurements>
+        <Measurement ID="GearVibMeas">
+          <Name>GEARVIB</Name>
+          <Description>Gear Box Vibration</Description>
+          <MeasurementID>0x00000001</MeasurementID>
+          <MeasurementType>Analog</MeasurementType>
+          <MeasurementActive>true</MeasurementActive>
+          <DeliveryClass>BestEffort</DeliveryClass>
+          <Requirements>
+            <SIUnits>Counts</SIUnits>
+            <UnitsConversions>
+              <DataOperationRef IDREF="GearVibCountsToGsConversion"/>
+            </UnitsConversions>
+            <Uncertainty>
+              <ConfidenceInterval>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.2</ConditionValueFloat>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </ConfidenceInterval>
+              <ConfidenceLevel>95</ConfidenceLevel>
+            </Uncertainty>
+            <AnalogAttributes>
+              <SignalRange>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFloat>-1.5</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFloat>1.5</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFlex>-3</ConditionValueFlex>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFlex>3</ConditionValueFlex>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </SignalRange>
+              <Resolution>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.025</ConditionValueFloat>
+                  <SIUnits>Volt</SIUnits>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;</ConditionOperation>
+                  <ConditionValueFloat>0.05</ConditionValueFloat>
+                  <UnitsRef IDREF="GForceUnits"/>
+                </ConditionParameter>
+              </Resolution>
+              <FrequencyContent>
+                <FrequencyBand>
+                  <BandType>PassBand</BandType>
+                  <EdgeFrequency>
+                    <ConditionParameter>
+                      <ConditionOperation>==</ConditionOperation>
+                      <ConditionValueFlex>200</ConditionValueFlex>
+                      <SIUnits>Hertz</SIUnits>
+                    </ConditionParameter>
+                  </EdgeFrequency>
+                </FrequencyBand>
+                <PercentSignal>99</PercentSignal>
+              </FrequencyContent>
+            </AnalogAttributes>
+            <DigitalAttributes>
+              <DataLength>
+                <ConditionParameter>
+                  <ConditionOperation>==</ConditionOperation>
+                  <ConditionValueFloat>12</ConditionValueFloat>
+                  <SIUnits>Bit</SIUnits>
+                </ConditionParameter>
+              </DataLength>
+              <Endianness>BigEndian</Endianness>
+              <DigitalEncoding>SignedBinary</DigitalEncoding>
+              <ActiveInputRange>
+                <ConditionParameter>
+                  <ConditionOperation>&lt;=</ConditionOperation>
+                  <ConditionValueFloat>98.3</ConditionValueFloat>
+                  <UnitsRef IDREF="PercentVoltUnits"/>
+                </ConditionParameter>
+                <ConditionParameter>
+                  <ConditionOperation>&gt;=</ConditionOperation>
+                  <ConditionValueFloat>1.17</ConditionValueFloat>
+                  <UnitsRef IDREF="PercentVoltUnits"/>
+                </ConditionParameter>
+              </ActiveInputRange>
+            </DigitalAttributes>
+          </Requirements>
+          <Implementation>
+            <MeasurementSource/>
+          </Implementation>
+        </Measurement>
+      </Measurements>
+      <DataOperations>
+        <DataOperation ID="AccelerometerTransducerDataOp">
+          <Name>Accelerometer Transducer</Name>
+          <Description>This operation represents the accelerometer transducer transfer function.</Description>
+          <Method ID="Method1">
+            <MathematicalExpression>
+              <PolynomialNumerator>
+                <Term>
+                  <Coefficient>0.4917</Coefficient>
+                  <Exponent>1</Exponent>
+                </Term>
+                <Term>
+                  <Coefficient>0.045</Coefficient>
+                  <Exponent>0</Exponent>
+                </Term>
+              </PolynomialNumerator>
+            </MathematicalExpression>
+          </Method>
+          <InputUnits>
+            <UnitsRef IDREF="GForceUnits"/>
+          </InputUnits>
+          <OutputUnits>
+            <SIUnits>Volt</SIUnits>
+          </OutputUnits>
+        </DataOperation>
+        <DataOperation ID="GearVibCountsToGsConversion">
+          <DataOperation ID="IUBitWeighting" SubOperationOrderIndex="1">
+            <Method ID="IUBitWeightingMethod">
+              <Name>IU Bit Weighting</Name>
+              <Description>This operation represents the conversion from Counts to Volts.</Description>
+              <MathematicalExpression>
+                <PolynomialNumerator>
+                  <Term>
+                    <Coefficient>0.000732</Coefficient>
+                    <Exponent>1</Exponent>
+                  </Term>
+                </PolynomialNumerator>
+              </MathematicalExpression>
+            </Method>
+            <InputUnits>
+              <SIUnits>Counts</SIUnits>
+            </InputUnits>
+            <OutputUnits>
+              <SIUnits>Volt</SIUnits>
+            </OutputUnits>
+          </DataOperation>
+          <DataOperation ID="InverseTransducer" SubOperationOrderIndex="2">
+            <Method ID="InverseTransducerMethod">
+              <Name>Inverse Transducer</Name>
+              <Description>This operation represents the inverse of the transducer to convert from volts to G's.  
+              The equation is  G's = (Vin - 0.045) / 0.4917</Description>
+              <MathematicalExpression>
+                <PolynomialNumerator>
+                  <Term>
+                    <Coefficient>1.0</Coefficient>
+                    <Exponent>1</Exponent>
+                  </Term>
+                  <Term>
+                    <Coefficient>-0.045</Coefficient>
+                    <Exponent>0</Exponent>
+                  </Term>
+                </PolynomialNumerator>
+                <PolynomialDenominator>
+                  <Term>
+                    <Coefficient>0.4917</Coefficient>
+                    <Exponent>0</Exponent>
+                  </Term>
+                </PolynomialDenominator>
+              </MathematicalExpression>
+            </Method>
+            <InputUnits>
+              <SIUnits>Volt</SIUnits>
+            </InputUnits>
+            <OutputUnits>
+              <UnitsRef IDREF="GForceUnits"/>
+            </OutputUnits>
+          </DataOperation>
+        </DataOperation>
+      </DataOperations>
+    </MeasurementDomain>
+  </MeasurementDomains>
+  <NetworkDomains>
+    <Network ID="ExampleNetworkID">
+      <Name>Example Network</Name>
+      <NetworkType>TmNS</NetworkType>
+      <NetworkServices/>
+      <NetworkNode ID="Dau1">
+        <Name>Dau1</Name>
+        <InventoryID>Dau1</InventoryID>
+        <InternalStructure></InternalStructure>
+        <LogicalLocation></LogicalLocation>
+        <TmNSManageableApps>
+          <TmNSManageableApp ID="Dau1App">
+            <RoleID>Dau1</RoleID>
+            <LoggingLevel>Trace</LoggingLevel>
+            <ConfigurationVersion>-TBD-</ConfigurationVersion>
+            <TmNSDAU/>
+          </TmNSManageableApp>
+        </TmNSManageableApps>
+        <NetworkInterface ID="Dau1IFace">
+          <Name>Dau1IFace</Name>
+          <InterfaceName>Eth0</InterfaceName>
+          <DHCPEnable>false</DHCPEnable>
+          <IPAddress>192.168.0.21</IPAddress>
+          <Netmask>255.255.255.0</Netmask>
+          <Gateway>192.168.0.1</Gateway>
+          <MACAddress>00:00:00:00:00:00</MACAddress>
+          <PhysicalNetworkPort ID="Dau1PhysNetPort1">
+            <Name>Dau1PhyNetPort2</Name>
+            <Medium>Copper</Medium>
+            <PortNumber>1</PortNumber>
+            <PortDataRate>
+              <FloatValue>1e8</FloatValue>
+              <SIUnits>BitPerSecond</SIUnits>
+            </PortDataRate>
+          </PhysicalNetworkPort>
+        </NetworkInterface>
+        <Pins>
+          <Pin ID="Pin1ID" Index="1">
+            <Description>This is the first analog input pin on the card</Description>
+          </Pin>
+          <Pin ID="Pin2ID" Index="2">
+            <Description>This is the second analog input pin on the card</Description>
+          </Pin>
+        </Pins>
+        <Ports>
+          <Port ID="Dau1Pin1InputPort">
+            <PortDirection>Input</PortDirection>
+            <PinRef IDREF="Pin1ID"/>
+          </Port>
+          <Port ID="Dau1NetworkPort">
+            <Name>Dau1Port</Name>
+            <PortDirection>Bidirectional</PortDirection>
+          </Port>
+        </Ports>
+      </NetworkNode>
+      <Devices>
+        <Device ID="GearVibTransducer">
+          <Name>Gear Vibration Accelerometer Transducer</Name>
+          <Description>This operation represents the accelerometer transducer transfer function.</Description>
+          <Manufacturer>Endevco</Manufacturer>
+          <ModelNumber>752-500</ModelNumber>
+          <SerialNumber>000125</SerialNumber>
+          <InventoryID>03928-2934820-2934</InventoryID>
+          <DeviceType>Accelerometer</DeviceType>
+          <DataOperationRef IDREF="AccelerometerTransducerDataOp"/>
+          <Ports>
+            <Port ID="GearVibTransducerOutputPort">
+              <PortDirection>Output</PortDirection>
+            </Port>
+          </Ports>
+          <Excitation>
+            <ConditionOperation>==</ConditionOperation>
+            <ConditionValueFloat>24</ConditionValueFloat>
+            <SIUnits>Volt</SIUnits>
+          </Excitation>
+          <Calibration>
+            <CalibrationDate>2010-10-24</CalibrationDate>
+            <CalibrationPair>
+              <InputValue>
+                <FloatValue>-3</FloatValue>
+                <UnitsRef IDREF="GForceUnits"/>
+              </InputValue>
+              <OutputValue>
+                <FloatValue>-1.43</FloatValue>
+                <SIUnits>Volt</SIUnits>
+              </OutputValue>
+            </CalibrationPair>
+            <CalibrationPair>
+              <InputValue>
+                <FloatValue>3</FloatValue>
+                <UnitsRef IDREF="GForceUnits"/>
+              </InputValue>
+              <OutputValue>
+                <FloatValue>1.52</FloatValue>
+                <SIUnits>Volt</SIUnits>
+              </OutputValue>
+            </CalibrationPair>
+          </Calibration>
+        </Device>
+      </Devices>
+      <PortMappings>
+        <PortMapping ID="PM1">
+          <PortRef IDREF="GearVibTransducerOutputPort"/>
+          <PortRef IDREF="Dau1Pin1InputPort"/>
+        </PortMapping>
+      </PortMappings>
+    </Network>
+  </NetworkDomains>
+</MDLRoot>
