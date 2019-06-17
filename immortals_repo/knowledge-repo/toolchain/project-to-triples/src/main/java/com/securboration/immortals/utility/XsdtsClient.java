@@ -32,7 +32,9 @@ public class XsdtsClient {
 
     private final Charset encoding = StandardCharsets.UTF_8;
 
-    private int responseTimeoutMillis = 5000;
+    private int responseTimeoutMillis = 1000 * 60 * 
+            10 //timeout in minutes
+            ;
 
     private int connectTimeoutMillis = 5000;
     

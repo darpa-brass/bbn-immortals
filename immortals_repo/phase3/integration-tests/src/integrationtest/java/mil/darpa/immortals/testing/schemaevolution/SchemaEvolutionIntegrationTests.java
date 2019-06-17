@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 
 public class SchemaEvolutionIntegrationTests {
 
-//	@Test
+	@Test
 	public void s6_12to10() {
 		TestScenarioRunner.runScenario6Test("s6_12to10");
 	}
@@ -20,7 +20,7 @@ public class SchemaEvolutionIntegrationTests {
 		TestScenarioRunner.runScenario6Test("s6_17to19");
 	}
 
-//	@Test
+	@Test
 	public void s6_7to14() {
 		TestScenarioRunner.runScenario6Test("s6_7to14");
 	}
