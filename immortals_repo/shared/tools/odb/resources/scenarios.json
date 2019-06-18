@@ -3,7 +3,6 @@
 		{
 			"shortName": "s5",
 			"prettyName": "Scenario 5 Basic",
-			"dbName": "IMMORTALS_s5",
 			"scenarioType": "Scenario5",
 			"xmlInventoryPath": "resources/dummy_data/s5_dauInventory.xml",
 			"xmlMdlrootInputPath": "resources/dummy_data/s5_input_mdlRoot.xml",
@@ -15,7 +14,6 @@
 		{
 			"shortName": "s5s",
 			"prettyName": "Scenario 5 Basic Sequential",
-			"dbName": "IMMORTALS_s5s",
 			"scenarioType": "Scenario5",
 			"xmlInventoryPath": "resources/dummy_data/s5s_dauInventory.xml",
 			"xmlMdlrootInputPath": "resources/dummy_data/s5_input_mdlRoot.xml",
@@ -28,7 +26,6 @@
 		{
 			"shortName": "s6k",
 			"prettyName": "Scenario 6 - Basic Known Schema",
-			"dbName": "IMMORTALS_s6k",
 			"scenarioType": "Scenario6",
 			"jsonInputPath": "resources/dummy_data/s6_basic.json",
 			"expectedStatusSequence": [
@@ -39,7 +36,6 @@
 		{
 			"shortName": "s6_12to10",
 			"prettyName": "Scenario 6 - 12 to 10",
-			"dbName": "IMMORTALS_s6_12to10",
 			"scenarioType": "Scenario6",
 			"jsonInputPath": "resources/dummy_data/s6_12to10.json",
 			"expectedStatusSequence": [
@@ -50,7 +46,6 @@
 		{
 			"shortName": "s6_16to19",
 			"prettyName": "Scenario 6 - 16 to 19",
-			"dbName": "IMMORTALS_s6_16to19",
 			"scenarioType": "Scenario6",
 			"jsonInputPath": "resources/dummy_data/s6_16to19.json",
 			"expectedStatusSequence": [
@@ -61,7 +56,6 @@
 		{
 			"shortName": "s6_17to19",
 			"prettyName": "Scenario 6 - 17 to 19",
-			"dbName": "IMMORTALS_s6_17to19",
 			"scenarioType": "Scenario6",
 			"jsonInputPath": "resources/dummy_data/s6_17to19.json",
 			"expectedStatusSequence": [
@@ -72,7 +66,6 @@
 		{
 			"shortName": "s6_7to14",
 			"prettyName": "Scenario 6 - 7 to 14",
-			"dbName": "IMMORTALS_s6_7to14",
 			"scenarioType": "Scenario6",
 			"jsonInputPath": "resources/dummy_data/s6_7to14.json",
 			"expectedStatusSequence": [
@@ -83,7 +76,6 @@
 		{
 			"shortName": "s6u",
 			"prettyName": "Scenario 6 - Basic Unknown Schema",
-			"dbName": "IMMORTALS_s6u",
 			"scenarioType": "Scenario6",
 			"jsonInputPath": "resources/dummy_data/s6_advanced.json",
 			"expectedStatusSequence": [

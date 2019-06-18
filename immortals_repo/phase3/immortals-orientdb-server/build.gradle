@@ -38,6 +38,14 @@ sourceSets {
 			srcDirs = ['src/main/resources']
 		}
 	}
+	test {
+		java {
+			srcDirs = ['src/test/java']
+		}
+		resources {
+			srcDirs = ['src/test/resources']
+		}
+	}
 }
 
 publishing {
@@ -57,19 +65,20 @@ task serverJar(type: ShadowJar) {
 	}
 	from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
 	configurations = [project.configurations.runtime]
-//	destinationDir = file('../')
-//	archiveName = 'immortals-orientdb-server.jar'
+	destinationDir = file('./')
+	archiveName = 'immortals-orientdb-server.jar'
 }
 jar.finalizedBy(serverJar)
 jar.finalizedBy(getTasksByName('publishToMavenLocal', true))
 
-//clean.delete('../immortals-orientdb-server.jar')
+clean.delete('./immortals-orientdb-server.jar')
 
 dependencies {
 	compile 'info.picocli:picocli:3.9.0'
 	compile 'com.google.code.findbugs:jsr305:3.0.1'
 	compile 'com.google.code.gson:gson:2.7'
 	compile 'org.slf4j:slf4j-api:1.7.5'
+	compile 'org.testng:testng:6.14.3'
 	compile 'com.orientechnologies:orientdb-core:2.2.24'
 	compile 'com.orientechnologies:orientdb-graphdb:2.2.24'
 	compile 'com.orientechnologies:orientdb-server:2.2.24'

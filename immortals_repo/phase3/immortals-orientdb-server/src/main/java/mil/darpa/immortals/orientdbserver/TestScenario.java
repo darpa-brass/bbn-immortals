@@ -4,15 +4,18 @@ import com.google.gson.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TestScenario {
 
 	private final static String DB_NAME_PREFIX = "IMMORTALS_";
-
 
 	private static TreeMap<String, TestScenario> scenario5TestScenarios;
 
@@ -26,12 +29,56 @@ public class TestScenario {
 		}
 	}
 
+	private static String injectEnvironmentVariables(@Nonnull String input) {
+		String output = input;
+
+		int idx0;
+		int idx1;
+		String target;
+		String envVar;
+		String envVal;
+		while (output.contains("${")) {
+			idx0 = output.indexOf("${");
+			idx1 = output.indexOf("}", idx0);
+			target = output.substring(idx0, idx1 + 1);
+			envVar = output.substring(idx0 + 2, idx1);
+
+			if (System.getenv(envVar) == null) {
+				throw new RuntimeException("The environment variable '" + envVar + "' must be set in order to process the scenario entries!");
+			}
+			envVal = System.getenv(envVar);
+
+			output = output.replace(target, envVal);
+		}
+		return output;
+	}
+
+	private static TreeMap<String, TestScenario> initScenarioSet(@Nonnull String inputResource, @Nonnull Gson gson) {
+		TreeMap<String, TestScenario> rval = new TreeMap<>();
+		JsonObject testScenariosContainer = gson.fromJson(new InputStreamReader(TestScenario.class.getClassLoader().getResourceAsStream(inputResource)), JsonObject.class);
+
+		for (JsonElement scenarioElement : testScenariosContainer.get("scenarios").getAsJsonArray()) {
+			String scenarioType = "Scenario6";
+			for (Map.Entry<String, JsonElement> elementAttributeEntry : scenarioElement.getAsJsonObject().entrySet()) {
+				String elementAttributeKey = elementAttributeEntry.getKey();
+				JsonElement elementAttributeValue = elementAttributeEntry.getValue();
+				if (elementAttributeKey.equals("xmlInventoryPath") || elementAttributeKey.equals("xmlMdlrootInputPath")) {
+					elementAttributeEntry.setValue(new JsonPrimitive(injectEnvironmentVariables(elementAttributeValue.getAsString())));
+					scenarioType = "Scenario5";
+				}
+			}
+			scenarioElement.getAsJsonObject().addProperty("scenarioType", scenarioType);
+			TestScenario ts = gson.fromJson(scenarioElement, TestScenario.class);
+			rval.put(ts.shortName, ts);
+		}
+		return rval;
+	}
+
 	private static synchronized void init() {
 		if (scenario5TestScenarios == null) {
-			TestScenarios s5 = new Gson().fromJson(new InputStreamReader(TestScenario.class.getClassLoader().getResourceAsStream("s5_scenarios.json")), TestScenarios.class);
-			scenario5TestScenarios = new TreeMap<>(s5.scenarios.stream().peek(x -> x.scenarioType = "Scenario5").collect(Collectors.toMap(x -> x.shortName, x -> x)));
-			TestScenarios s6 = new Gson().fromJson(new InputStreamReader(TestScenario.class.getClassLoader().getResourceAsStream("s6_scenarios.json")), TestScenarios.class);
-			scenario6TestScenarios = new TreeMap<>(s6.scenarios.stream().peek(x -> x.scenarioType = "Scenario6").collect(Collectors.toMap(x -> x.shortName, x -> x)));
+			Gson gson = new Gson();
+			scenario5TestScenarios = initScenarioSet("s5_scenarios.json", gson);
+			scenario6TestScenarios = initScenarioSet("s6_scenarios.json", gson);
 		}
 	}
 
@@ -55,9 +102,24 @@ public class TestScenario {
 		return scenario6TestScenarios.get(shortName);
 	}
 
+	public static Path getPathInParentsIfExists(@Nonnull String desiredPath) {
+		Path result = null;
+		Path cwd = Paths.get("").toAbsolutePath();
+		while (!cwd.toString().equals("/")) {
+			result = cwd.resolve(desiredPath);
+			if (Files.exists(cwd.resolve("shared/tools.sh"))) {
+				break;
+			}
+			result = null;
+			cwd = cwd.getParent();
+		}
+		return result;
+	}
+
 	private final String shortName;
 	private final String prettyName;
 	private String scenarioType;
+	private final int timeoutMS;
 	private final String xmlInventoryPath;
 	private final String xmlMdlrootInputPath;
 	private final String jsonInputPath;
@@ -66,12 +128,13 @@ public class TestScenario {
 
 
 	public TestScenario(@Nonnull String shortName, @Nonnull String prettyName, @Nonnull String scenarioType,
-	                    @Nullable String xmlInventoryPath, @Nullable String xmlMdlrootInputPath,
+	                    @Nonnull int timeoutMS, @Nullable String xmlInventoryPath, @Nullable String xmlMdlrootInputPath,
 	                    @Nullable String jsonInputPath, @Nonnull List<String> expectedStatusSequence,
 	                    @Nullable JsonObject expectedJsonOutputStructure) {
 		this.shortName = shortName;
 		this.prettyName = prettyName;
 		this.scenarioType = scenarioType;
+		this.timeoutMS = timeoutMS;
 		this.xmlInventoryPath = xmlInventoryPath;
 		this.xmlMdlrootInputPath = xmlMdlrootInputPath;
 		this.jsonInputPath = jsonInputPath;
@@ -79,8 +142,23 @@ public class TestScenario {
 		this.expectedJsonOutputStructure = expectedJsonOutputStructure;
 	}
 
-	public File getBackupFile() {
-		return ProvidedTestingData.getTestDatabaseDirectory().resolve(this.shortName + "-backup.zip").toFile();
+	public InputStream getBackupInputStream() {
+		return TestScenario.class.getClassLoader().getResourceAsStream("test_databases/" + this.shortName + "-backup.zip");
+	}
+
+	public InputStream getInputJsonData() {
+		InputStream inputJsonData;
+		Path dataPath;
+		if ((inputJsonData = TestScenario.class.getClassLoader().getResourceAsStream("inputJsonData/" + this.shortName + ".json")) != null) {
+			return inputJsonData;
+		} else if (getJsonInputPath() != null && (dataPath = getPathInParentsIfExists(getJsonInputPath())) != null) {
+			try {
+				return new FileInputStream(dataPath.toFile());
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return null;
 	}
 
 	public String getDbName() {
@@ -97,6 +175,10 @@ public class TestScenario {
 
 	public String getScenarioType() {
 		return scenarioType;
+	}
+
+	public int getTimeoutMS() {
+		return timeoutMS;
 	}
 
 	public String getXmlInventoryPath() {
@@ -181,22 +263,4 @@ public class TestScenario {
 			recursivelyCompareStructure(expectedJsonOutputStructure, actualJsonOutput);
 		}
 	}
-
-//	public static void main(String[] args) {
-//		try {
-//			Gson gson = new Gson();
-//
-//			JsonReader expectedReader = new JsonReader(new InputStreamReader(TestScenario.class.getClassLoader().getResourceAsStream("json_validation_sample_expected.json")));
-//			JsonReader validReader = new JsonReader(new InputStreamReader(TestScenario.class.getClassLoader().getResourceAsStream("json_validation_sample_valid.json")));
-//			JsonReader invalidReader = new JsonReader(new InputStreamReader(TestScenario.class.getClassLoader().getResourceAsStream("json_validation_sample_invalid.json")));
-//			JsonObject expected = gson.fromJson(expectedReader, JsonObject.class);
-//			JsonObject valid = gson.fromJson(validReader, JsonObject.class);
-//			JsonObject invalid = gson.fromJson(invalidReader, JsonObject.class);
-//			recursivelyCompareStructure(expected, invalid);
-//
-//			System.out.println("MEH");
-//		} catch (NestedException e) {
-//			throw new RuntimeException(e);
-//		}
-//  }
 }

@@ -1,6 +1,6 @@
 package mil.darpa.immortals.testing.flitcons;
 
-import mil.darpa.immortals.testing.tools.TestScenarioRunner;
+import mil.darpa.immortals.testing.tools.JarTestScenarioRunner;
 import org.testng.annotations.Test;
 
 public class FlitconsIntegrationTests {
@@ -17,21 +17,21 @@ public class FlitconsIntegrationTests {
 
 	@Test
 	public void basicTest() {
-		TestScenarioRunner.runScenario5Test("s5");
+		JarTestScenarioRunner.createScenario5Runner("s5").execute();
 	}
 
 //	@Test
 //	public void testServerWaitForReady() {
 //		runTest(TestScenario.getTestScenario("s5"), false, 4000);
 //	}
-//
+
 //	@Test
 //	public void testServerReady() {
 //		runTest(TestScenario.getTestScenario("s5"), false, null);
 //	}
-//
+
 //	@Test
 //	public void testServerSequential() {
-//		runTest(TestScenario.getTestScenario("s5s"), false, null);
+//		JarTestScenarioRunner.createScenario5Runner("s5s").execute();
 //	}
 }

@@ -6,8 +6,10 @@
       "shortName": "s6_12to10",
       // More descriptive name for results
       "prettyName": "Scenario 6 - v0.8.12 to v0.8.10",
+      // How long to allow the test to run until it is likely it has hung for some reason
+      "timeoutMS": 600000,
       // The input path relative to the <immortals_root>/phase3 directory for the input JSON to provide SwRI
-      "jsonInputPath": "../shared/tools/odbhelper/resources/dummy_data/s6_12to10.json",
+      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_12to10.json",
       // The expected terminal status. Only provide a single status for scenario 6!
       "expectedStatusSequence": [
         "AdaptationSuccessful"
@@ -17,7 +19,8 @@
     {
       "shortName": "s6_16to19",
       "prettyName": "Scenario 6 - v0.8.16 to v0.8.19",
-      "jsonInputPath": "../shared/tools/odbhelper/resources/dummy_data/s6_16to19.json",
+      "timeoutMS": 600000,
+      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_16to19.json",
       "expectedStatusSequence": [
         "AdaptationSuccessful"
       ],
@@ -26,7 +29,8 @@
     {
       "shortName": "s6_17to19",
       "prettyName": "Scenario 6 - v0.8.17 to v0.8.19",
-      "jsonInputPath": "../shared/tools/odbhelper/resources/dummy_data/s6_17to19.json",
+      "timeoutMS": 600000,
+      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_17to19.json",
       "expectedStatusSequence": [
         "AdaptationSuccessful"
       ],
@@ -35,7 +39,8 @@
     {
       "shortName": "s6_7to14",
       "prettyName": "Scenario 6 - v0.8.7 to v0.8.14",
-      "jsonInputPath": "../shared/tools/odbhelper/resources/dummy_data/s6_7to14.json",
+      "timeoutMS": 600000,
+      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_7to14.json",
       "expectedStatusSequence": [
         "AdaptationSuccessful"
       ],
@@ -44,7 +49,8 @@
     {
       "shortName": "s6bu",
       "prettyName": "Scenario 6 - Basic Unknown Schema",
-      "jsonInputPath": "../shared/tools/odbhelper/resources/dummy_data/s6_basic.json",
+      "timeoutMS": 600000,
+      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_basic.json",
       "expectedStatusSequence": [
         "AdaptationSuccessful"
       ],

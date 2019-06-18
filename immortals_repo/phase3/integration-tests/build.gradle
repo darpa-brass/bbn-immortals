@@ -28,8 +28,7 @@ task integrationTest(type: Test) {
 	description = 'Executes integration tests. Requires properly set up local OrientDB instance to pass'
 	testClassesDirs = sourceSets.integrationTest.output.classesDirs
 	classpath = sourceSets.integrationTest.runtimeClasspath
-	systemProperty "mil.darpa.immortals.test.test_databases.dir", projectDir.toPath().resolve("../test_databases").toFile().getCanonicalFile().absolutePath
-	systemProperty "mil.darpa.immoratls.test.sut.script", projectDir.toPath().resolve("../start.sh").toFile().getCanonicalFile().absolutePath
+	systemProperty "mil.darpa.immortals.root", projectDir.toPath().parent.parent.toFile().getCanonicalFile().absolutePath
 	systemProperty "mil.darpa.immortals.artifactdirectory", buildDir.toPath().resolve("tmp/integrationTest").toFile().getCanonicalFile().absolutePath
 	setWorkingDir(buildDir.toPath().resolve("tmp/integrationTest").toFile())
 	reports.junitXml.enabled = true

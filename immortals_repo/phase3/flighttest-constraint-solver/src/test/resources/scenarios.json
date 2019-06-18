@@ -15,7 +15,6 @@
 		{
 			"shortName": "s5s",
 			"prettyName": "Scenario 5 Basic Sequential",
-			"dbName": "IMMORTALS_s5s",
 			"scenarioType": "Scenario5",
 			"xmlInventoryPath": "resources/dummy_data/s5s_dauInventory.xml",
 			"xmlMdlrootInputPath": "resources/dummy_data/s5_input_mdlRoot.xml",
@@ -28,7 +27,6 @@
 		{
 			"shortName": "s6k",
 			"prettyName": "Scenario 6 - Basic Known Schema",
-			"dbName": "IMMORTALS_s6k",
 			"scenarioType": "Scenario6",
 			"jsonInputPath": "resources/dummy_data/s6_basic.json",
 			"expectedStatusSequence": [
@@ -39,7 +37,6 @@
 		{
 			"shortName": "s6u",
 			"prettyName": "Scenario 6 - Basic Unknown Schema",
-			"dbName": "IMMORTALS_s6u",
 			"scenarioType": "Scenario6",
 			"jsonInputPath": "resources/dummy_data/s6_advanced.json",
 			"expectedStatusSequence": [

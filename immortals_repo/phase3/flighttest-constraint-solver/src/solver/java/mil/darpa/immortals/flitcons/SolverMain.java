@@ -14,6 +14,8 @@ import picocli.CommandLine;
 import javax.annotation.Nonnull;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SolverMain {
 
@@ -38,44 +40,55 @@ public class SolverMain {
 
 	public static void main(String[] args) {
 		SolverConfiguration config = SolverConfiguration.getInstance();
-		ChallengeProblemBridge cpb = new ChallengeProblemBridge();
-		String evaluationInstanceIdentifier = "UNDEFINED";
+		CommandLine.populateCommand(config, args);
 
-		try {
-			CommandLine.populateCommand(config, args);
-
-			if (config.helpRequested) {
-				CommandLine.usage(config, System.out);
-			} else if (config.validateOrientdb) {
-				validate(config);
-			} else {
-				TerminalStatus state;
-
-				while ((state = cpb.waitForReadyOrHalt()) != TerminalStatus.Halt) {
-					if (state == TerminalStatus.ReadyForAdaptation) {
-						evaluationInstanceIdentifier = config.evaluationIdentifier == null ? ("I" + System.currentTimeMillis()) : config.evaluationIdentifier;
-						cpb = ProvidedData.initializeChallengeProblemBridge(evaluationInstanceIdentifier);
-						execute(cpb, evaluationInstanceIdentifier);
-						if (config.stopOnFinish) {
-							System.exit(0);
-						}
-						evaluationInstanceIdentifier = "UNDEFINED";
-					}
-				}
-			}
-		} catch (Exception e) {
-			exceptionHandler(cpb, e, "UNDEFINED");
+		if (config.helpRequested) {
+			CommandLine.usage(config, System.out);
+		} else if (config.validateOrientdb) {
+			validate(config);
+		} else {
+			execute();
 		}
 	}
 
-	static void execute(@Nonnull ChallengeProblemBridge cpb, @Nonnull String evaluationInstanceIdentifier) throws Exception {
+	static void execute() {
+		String evaluationInstanceIdentifier = null;
+		ChallengeProblemBridge cpb = new ChallengeProblemBridge();
+
+		Set<String> previousEvaluationIdentifiers = new HashSet<>();
+
 		try {
-			FlighttestConstraintSolver fcs = new FlighttestConstraintSolver();
-			fcs.solve();
-			fcs.shutdown();
-			cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.AdaptationSuccessful, "");
+			SolverConfiguration config = SolverConfiguration.getInstance();
+
+			TerminalStatus state;
+
+			while ((state = cpb.waitForReadyOrHalt()) != TerminalStatus.Halt) {
+				System.out.println("Starting Adaptation");
+				if (state == TerminalStatus.ReadyForAdaptation) {
+					evaluationInstanceIdentifier = config.evaluationIdentifier == null ? ("I" + System.currentTimeMillis()) : config.evaluationIdentifier;
+					if (previousEvaluationIdentifiers.contains(evaluationInstanceIdentifier)) {
+						throw new RuntimeException("Refusing to reuse the evaluation identifier '" + evaluationInstanceIdentifier + "'!");
+					}
+					previousEvaluationIdentifiers.add(evaluationInstanceIdentifier);
+
+					cpb = ProvidedData.initializeChallengeProblemBridge(evaluationInstanceIdentifier);
+
+					FlighttestConstraintSolver fcs = new FlighttestConstraintSolver();
+					fcs.solve();
+					fcs.shutdown();
+					System.out.print("Adaptation finished with result 'AdaptationSuccessful'. Submitting to OrientDB....");
+					cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.AdaptationSuccessful, "");
+					System.out.print("Complete");
+
+					if (config.stopOnFinish) {
+						System.exit(0);
+					}
+					evaluationInstanceIdentifier = "UNDEFINED";
+				}
+			}
+
 		} catch (Exception e) {
-			exceptionHandler(cpb, e, evaluationInstanceIdentifier);
+			exceptionHandler(cpb, e, evaluationInstanceIdentifier == null ? "UNDEFINED" : evaluationInstanceIdentifier);
 		}
 	}
 
@@ -122,9 +135,18 @@ public class SolverMain {
 						break;
 
 					case AdaptationNotRequired:
+						System.out.print("Adaptation not required. " + ae.getMessage());
+						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
+						break;
+
 					case AdaptationPartiallySuccessful:
+						System.out.println("Adaptation was only partially successful. " + ae.getMessage());
+						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
+						break;
+
 					case AdaptationUnsuccessful:
-						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), null);
+						System.out.println("Adaptation was unsuccessful. " + ae.getMessage());
+						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
 						break;
 
 					case AdaptationInternalError:

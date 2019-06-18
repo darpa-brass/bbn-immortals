@@ -39,7 +39,6 @@ public class ImmortalsOdbServerMain {
 			for (String scenarioName : TestScenario.getScenario5TestScenarioIdentifiers()) {
 				TestScenario scenario = TestScenario.getScenario5TestScenario(scenarioName);
 				OdbEmbeddedServer server = new OdbEmbeddedServer(scenario);
-				server.init();
 				server.shutdown();
 			}
 		}
@@ -48,7 +47,6 @@ public class ImmortalsOdbServerMain {
 			for (String scenarioName : TestScenario.getScenario6TestScenarioIdentifiers()) {
 				TestScenario scenario = TestScenario.getScenario6TestScenario(scenarioName);
 				OdbEmbeddedServer server = new OdbEmbeddedServer(scenario);
-				server.init();
 				server.shutdown();
 			}
 		}

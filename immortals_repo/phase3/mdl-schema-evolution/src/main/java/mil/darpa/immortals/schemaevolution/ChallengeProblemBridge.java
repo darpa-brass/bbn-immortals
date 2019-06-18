@@ -35,6 +35,7 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 
 	private OrientGraphNoTx getEvaluationGraph() throws Exception {
 		init();
+		System.err.println("GRAPH: " + ProvidedData.getOdbEvaluationTarget());
 		return new OrientGraphNoTx(ProvidedData.getOdbEvaluationTarget(), ProvidedData.getOdbEvaluationUser(), ProvidedData.getOdbEvaluationPassword());
 	}
 
@@ -48,12 +49,18 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 	public TerminalStatus waitForReadyOrHalt() throws Exception {
 		init();
 		String state = null;
-		System.out.print("Waiting for OirnetDB Ready state...");
+
+		System.out.print("Waiting for OrientDB 'Halt' or 'ReadyForAdaptation' Ready state...");
+
+
 		while (state == null || !(
 				state.equals(TerminalStatus.ReadyForAdaptation.name()) ||
 						state.equals(TerminalStatus.Halt.name()))) {
-			Vertex v = getEvaluationGraph().getVerticesOfClass(BBNEvaluationDataLabel).iterator().next();
+			OrientGraphNoTx graph = getEvaluationGraph();
+			Vertex v = graph.getVerticesOfClass(BBNEvaluationDataLabel).iterator().next();
 			state = v.getProperty(currentStateLabel);
+
+			graph.shutdown();
 
 			System.out.print(".");
 

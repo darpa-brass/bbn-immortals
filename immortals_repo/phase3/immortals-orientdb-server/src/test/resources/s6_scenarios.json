@@ -1,0 +1,52 @@
+{
+	"scenarios": [
+		{
+			// Short for "Scenario 6 Known Schema. This will be used as a unique identifier to identify the database and
+			// potentially in manual run commands. Please prefix with "s6" to deconflict with scenario 5.
+			"shortName": "s6DummyJsonInputInResources",
+			// More descriptive name for results
+			"prettyName": "Dummy Unit Test",
+			// How long to allow the test to run until it is likely it has hung for some reason
+			"timeoutMS": 600000,
+			// The input path relative to the <immortals_root>/phase3 directory for the input JSON to provide SwRI
+			"jsonInputPath": "i/do/not/exist/file.json",
+			// The expected terminal status. Only provide a single status for scenario 6!
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			// Short for "Scenario 6 Known Schema. This will be used as a unique identifier to identify the database and
+			// potentially in manual run commands. Please prefix with "s6" to deconflict with scenario 5.
+			"shortName": "s6DummyJsonFileExists",
+			// More descriptive name for results
+			"prettyName": "Dummy Unit Test",
+			// How long to allow the test to run until it is likely it has hung for some reason
+			"timeoutMS": 600000,
+			// The input path relative to the <immortals_root>/phase3 directory for the input JSON to provide SwRI
+			"jsonInputPath": "shared/tools/installer/installation.py",
+			// The expected terminal status. Only provide a single status for scenario 6!
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			// Short for "Scenario 6 Known Schema. This will be used as a unique identifier to identify the database and
+			// potentially in manual run commands. Please prefix with "s6" to deconflict with scenario 5.
+			"shortName": "s6DummyJsonFileAndResourceExists",
+			// More descriptive name for results
+			"prettyName": "Dummy Unit Test",
+			// How long to allow the test to run until it is likely it has hung for some reason
+			"timeoutMS": 600000,
+			// The input path relative to the <immortals_root>/phase3 directory for the input JSON to provide SwRI
+			"jsonInputPath": "mdl-schema-evolution/build.gradle",
+			// The expected terminal status. Only provide a single status for scenario 6!
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			],
+			"expectedJsonOutputStructure": {}
+		}
+	]
+}

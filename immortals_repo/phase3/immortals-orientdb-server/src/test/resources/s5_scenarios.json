@@ -1,0 +1,26 @@
+{
+	"scenarios": [
+		{
+			"shortName": "s5DummyTest5BackupExists",
+			"prettyName": "Scenario 5 Basic",
+			"timeoutMS": 60000,
+			"xmlInventoryPath": "i/should/not/matter/file.json",
+			"xmlMdlrootInputPath": "i/should/also/not/matter/file.json",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
+		},
+		{
+			"shortName": "s5DummyTest5BackupDoesNotExist",
+			"prettyName": "Scenario 5 Basic",
+			"timeoutMS": 60000,
+			"xmlInventoryPath": "mdl-schema-evolution/build.gradle",
+			"xmlMdlrootInputPath": "mdl-schema-evolution/gradle/wrapper/gradle-wrapper.properties",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
+		}
+	]
+}

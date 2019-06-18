@@ -1,39 +1,288 @@
 package mil.darpa.immortals.orientdbserver;
 
+import com.google.gson.Gson;
+import com.orientechnologies.orient.client.remote.OServerAdmin;
+import com.orientechnologies.orient.core.command.OCommandOutputListener;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.core.sql.query.OConcurrentResultSet;
 import com.orientechnologies.orient.server.OServer;
 import com.orientechnologies.orient.server.OServerMain;
 import com.orientechnologies.orient.server.config.OServerConfiguration;
 import com.orientechnologies.orient.server.config.OServerConfigurationManager;
-import com.orientechnologies.orient.server.config.OServerNetworkConfiguration;
-import com.orientechnologies.orient.server.config.OServerUserConfiguration;
+import com.orientechnologies.orient.server.config.OServerEntryConfiguration;
 import com.orientechnologies.orient.server.network.protocol.binary.ONetworkProtocolBinary;
+import mil.darpa.immortals.schemaevolution.ProvidedData;
+import mil.darpa.immortals.schemaevolution.TerminalStatus;
+import org.apache.tools.ant.util.FileUtils;
 
 import javax.annotation.Nonnull;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class OdbEmbeddedServer extends AbstractOdbServer {
+import static mil.darpa.immortals.schemaevolution.ProvidedData.JARGS_ARTIFACT_DIRECTORY;
+import static mil.darpa.immortals.schemaevolution.ProvidedData.JARGS_EVAL_ODB;
+
+public class OdbEmbeddedServer {
+
+	private static final Object lock = new Object();
+
+	protected final TestScenario scenario;
+	private String host;
+	private int port;
 
 	private OServer server;
 
 	public OdbEmbeddedServer(@Nonnull TestScenario scenario) {
-		super(scenario);
+		this.scenario = scenario;
 	}
 
-	@Override
+	public String getOdbPath() {
+		return "remote" + ":" + host + ":" + port + "/" + scenario.getDbName();
+	}
+
+
+	private boolean restoreDatabase() throws IOException {
+		synchronized (lock) {
+			InputStream scenarioStream = scenario.getBackupInputStream();
+
+			if (scenarioStream == null) {
+				return false;
+			}
+
+			ODatabaseDocumentTx db = null;
+			try {
+				OServerAdmin admin = new OServerAdmin(host + ":" + port)
+						.connect("root", "g21534bn890cf57b23n405f987vnb23dh789");
+
+				if (admin.existsDatabase(scenario.getDbName(), "plocal")) {
+					admin.dropDatabase(scenario.getDbName(), "plocal");
+				}
+				System.out.println("Restoring " + scenario.getScenarioType() + " OrientDB data to plocal storage...");
+				admin.createDatabase(scenario.getDbName(), "graph", "plocal");
+				admin.close();
+
+				db = new ODatabaseDocumentTx("plocal:/" + scenario.getDbName());
+				db.open("admin", "admin");
+				db.restore(scenarioStream, null, null, null);
+				db.commit();
+
+				System.out.println("OrientDB scenario data restoration finished.");
+				return true;
+			} finally {
+				if (db != null) {
+					db.close();
+				}
+			}
+		}
+	}
+
+	private void backupDatabase() throws IOException {
+		synchronized (lock) {
+			ODatabaseDocumentTx db = null;
+			try {
+				File dbBackupTarget = ProvidedTestingData.getTestDatabaseDirectory().resolve(scenario.getShortName() + "-backup.zip").toFile();
+				System.out.println("Backing up constructed database to '" + dbBackupTarget + "'...");
+				db = new ODatabaseDocumentTx("plocal:/" + scenario.getDbName());
+				db.open("admin", "admin");
+				OCommandOutputListener listener = System.out::println;
+
+				FileOutputStream os = new FileOutputStream(dbBackupTarget);
+				db.backup(os, null, null, listener, 9, 2048);
+				db.commit();
+				System.out.println("Finished backing up constructed database.");
+			} finally {
+				if (db != null) {
+					db.close();
+				}
+			}
+		}
+	}
+
+	public void waitForEvaluatorTurn() {
+		TerminalStatus state = null;
+		while ((state == null || (state.isEvaluationServerBlocked() && !state.isTerminal())) && isRunning()) {
+			synchronized (lock) {
+				if (isRunning()) {
+					ODatabaseDocumentTx db = null;
+					try {
+						db = new ODatabaseDocumentTx("plocal:/" + scenario.getDbName());
+						db.open("admin", "admin");
+						OConcurrentResultSet rval = db.command(new OCommandSQL("SELECT currentState FROM BBNEvaluationData")).execute();
+						ODocument result = (ODocument) rval.get(0);
+						Object val = result.field("currentState");
+						if (val != null) {
+							state = TerminalStatus.valueOf(val.toString());
+						}
+					} finally {
+						if (db != null && !db.isClosed()) {
+							db.close();
+						}
+					}
+				}
+			}
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	public void setReady() {
+		synchronized (lock) {
+			ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:/" + scenario.getDbName());
+			db.open("admin", "admin");
+			db.command(new OCommandSQL("UPDATE BBNEvaluationData REMOVE inputJsonData")).execute();
+			db.command(new OCommandSQL("UPDATE BBNEvaluationData REMOVE outputJsonData")).execute();
+			db.command(new OCommandSQL("UPDATE BBNEvaluationData REMOVE currentStateInfg")).execute();
+			db.command(new OCommandSQL("UPDATE BBNEvaluationData SET currentState = 'ReadyForAdaptation'")).execute();
+			db.commit();
+			db.close();
+		}
+	}
+
+	public void clearState() {
+		synchronized (lock) {
+			ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:/" + scenario.getDbName());
+			db.open("admin", "admin");
+			db.command(new OCommandSQL("UPDATE BBNEvaluationData REMOVE currentState")).execute();
+			db.commit();
+			db.close();
+		}
+	}
+
 	public synchronized void init() {
 		try {
+			System.out.println("Starting Embedded OrientDB Server...");
 			server = OServerMain.create();
-			server.startup(OdbEmbeddedServer.class.getClassLoader().getResourceAsStream("odb_test_cfg.xml"));
+
+			OServerConfigurationManager configManager = new OServerConfigurationManager(OdbEmbeddedServer.class.getClassLoader().getResourceAsStream("odb_test_cfg.xml"));
+			OServerConfiguration config = configManager.getConfiguration();
+			ArrayList<OServerEntryConfiguration> properties = new ArrayList<>(Arrays.asList(config.properties));
+			properties.add(new OServerEntryConfiguration("server.database.path", Paths.get("").resolve("databases").toAbsolutePath().toString()));
+			config.properties = properties.toArray(new OServerEntryConfiguration[0]);
+
+			server.startup(config);
 			server.activate();
+			int port = server.getListenerByProtocol(ONetworkProtocolBinary.class).getInboundAddr().getPort();
 
 			if (scenario.getScenarioType().equals("Scenario5")) {
-				System.out.println("MODE: S5");
 				// These scenarios have complex XML graphs that can take a while to load so we will use
 				// The databases when available to speed up loading (which is only possible with a plocal connection).
-				super.init("plocal", "127.0.0.1", server.getListenerByProtocol(ONetworkProtocolBinary.class).getInboundAddr().getPort());
+				init_embeddedRemoteAgnostic("127.0.0.1", port);
 			} else {
-				System.out.println("MODE: S6");
 				// Otherwise we will insert stuff manually using a remote connection
-				super.init("remote", "127.0.0.1", server.getListenerByProtocol(ONetworkProtocolBinary.class).getInboundAddr().getPort());
+				init_embeddedRemoteAgnostic("127.0.0.1", port);
+			}
+			System.out.println("Embedded OrientDB server started at 127.0.0.1:" + port);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+
+	protected void init_embeddedRemoteAgnostic(@Nonnull String host, int port) {
+		this.host = host;
+		this.port = port;
+
+		try {
+			if (!restoreDatabase()) {
+
+				if (scenario.getScenarioType().equals("Scenario5")) {
+
+					System.out.println("Constructing " + scenario.getScenarioType() + " OrientDB data for plocal storage using Python scripts...");
+
+					Path tools = TestScenario.getPathInParentsIfExists("shared/tools.sh");
+					if (tools == null) {
+						throw new RuntimeException("Could not find tools directory to populate server!");
+					}
+
+					String[] command = {
+							tools.toString(),
+							"odb",
+							"--host", host,
+							"--port", Integer.toString(port),
+							"--input-scenario-json", new Gson().toJson(scenario)
+					};
+
+					ProcessBuilder pb = new ProcessBuilder()
+							.command(command)
+							.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+							.redirectError(ProcessBuilder.Redirect.INHERIT);
+
+					System.out.println("CMD: [" + String.join(" ", command) + "]");
+
+					Process p = pb.start();
+					p.waitFor();
+
+					if (p.exitValue() == 0) {
+						System.out.println("Finished populating the OrientDB instance.");
+						backupDatabase();
+					} else {
+						throw new RuntimeException("Invalid Server Setup exit code '" + p.exitValue() + "'!");
+					}
+
+				} else if (scenario.getScenarioType().equals("Scenario6")) {
+
+					synchronized (lock) {
+						ODatabaseDocumentTx db = null;
+						try {
+							OServerAdmin admin = new OServerAdmin(host + ":" + port)
+									.connect("root", "g21534bn890cf57b23n405f987vnb23dh789");
+
+							if (admin.existsDatabase(scenario.getDbName(), "plocal")) {
+								admin.dropDatabase(scenario.getDbName(), "plocal");
+							}
+
+							System.out.println("Constructing " + scenario.getScenarioType() + " OrientDB data in plocal storage...");
+							admin.createDatabase(scenario.getDbName(), "graph", "plocal");
+							admin.close();
+
+							db = new ODatabaseDocumentTx("plocal:/" + scenario.getDbName());
+							db.open("admin", "admin");
+
+							db.command(new OCommandSQL("CREATE CLASS BBNEvaluationData EXTENDS V")).execute();
+							db.command(new OCommandSQL("CREATE PROPERTY BBNEvaluationData.inputJsonData STRING")).execute();
+							db.command(new OCommandSQL("CREATE PROPERTY BBNEvaluationData.outputJsonData STRING")).execute();
+							db.command(new OCommandSQL("CREATE PROPERTY BBNEvaluationData.currentState STRING")).execute();
+							db.command(new OCommandSQL("CREATE PROPERTY BBNEvaluationData.currentStateInfo STRING")).execute();
+
+							String data = FileUtils.readFully(new InputStreamReader(scenario.getInputJsonData()));
+
+							ODocument doc = new ODocument("BBNEvaluationData");
+							doc.field("inputJsonData", data);
+							doc.field("currentState", TerminalStatus.ReadyForAdaptation.name());
+							doc.save();
+							db.commit();
+
+							System.out.println("OrientDB scenario data restoration finished.");
+						} finally {
+							if (db != null && !db.isClosed()) {
+								db.close();
+							}
+						}
+
+						backupDatabase();
+					}
+				} else {
+					throw new RuntimeException("Unexpected Scenario Type '" + scenario.getScenarioType() + "'!");
+				}
+			}
+
+			System.setProperty(JARGS_EVAL_ODB, "remote:" + host + ":" + port + "/" + scenario.getDbName());
+
+			Path artifactDir = ProvidedData.getEvaluationArtifactDirectory().toAbsolutePath();
+			System.setProperty(JARGS_ARTIFACT_DIRECTORY, artifactDir.toString());
+			if (!Files.exists(artifactDir)) {
+				Files.createDirectory(artifactDir);
 			}
 
 		} catch (Exception e) {
@@ -41,7 +290,13 @@ public class OdbEmbeddedServer extends AbstractOdbServer {
 		}
 	}
 
-	@Override
+	public boolean isRunning() {
+		if (server == null) {
+			return false;
+		}
+		return server.isActive();
+	}
+
 	public synchronized void shutdown() {
 		if (server != null) {
 			server.shutdown();

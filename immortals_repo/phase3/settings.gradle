@@ -4,5 +4,6 @@ rootProject.name = "Phase3IdeWrapper"
 includeBuild 'flighttest-constraint-solver'
 includeBuild 'mdl-schema-evolution'
 includeBuild 'integration-tests'
+includeBuild 'immortals-orientdb-server'
 includeBuild '../docs'
 includeBuild '../shared'
