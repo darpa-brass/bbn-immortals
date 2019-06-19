@@ -135,7 +135,15 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 				evaluationVertex.setProperty(property, newValue);
 				rval.put(property, newValue);
 			}
+			String result;
+			boolean printDebug = ((result = valuesToSet.get(currentStateLabel)) != null);
+			if (printDebug) {
+				System.out.println("m.d.i.s.ChallengeProblemBridge (time=" + System.currentTimeMillis() + "): Setting currentState to '" + result + "'.");
+			}
 			evaluationGraph.commit();
+			if (printDebug) {
+				System.out.println("m.d.i.s.ChallengeProblemBridge (time=" + System.currentTimeMillis() + "): currentState set to '" + result + "'.");
+			}
 		}
 
 		evaluationGraph.shutdown();

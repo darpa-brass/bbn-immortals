@@ -143,7 +143,9 @@ public class OdbEmbeddedServer {
 			db.command(new OCommandSQL("UPDATE BBNEvaluationData REMOVE outputJsonData")).execute();
 			db.command(new OCommandSQL("UPDATE BBNEvaluationData REMOVE currentStateInfg")).execute();
 			db.command(new OCommandSQL("UPDATE BBNEvaluationData SET currentState = 'ReadyForAdaptation'")).execute();
+			System.out.println("m.d.i.o.OdbEmbeddedServer (time=" + System.currentTimeMillis() + "): Setting currentState to 'ReadyForAdaptation'.");
 			db.commit();
+			System.out.println("m.d.i.s.OdbEmbeddedServer (time=" + System.currentTimeMillis() + "): currentState set to ReadyForAdaptation.");
 			db.close();
 		}
 	}
@@ -153,6 +155,9 @@ public class OdbEmbeddedServer {
 			ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:/" + scenario.getDbName());
 			db.open("admin", "admin");
 			db.command(new OCommandSQL("UPDATE BBNEvaluationData REMOVE currentState")).execute();
+			System.out.println("m.d.i.o.OdbEmbeddedServer (time=" + System.currentTimeMillis() + "): Clearing currentState.");
+			db.commit();
+			System.out.println("m.d.i.s.OdbEmbeddedServer (time=" + System.currentTimeMillis() + "): currentState Cleared.");
 			db.commit();
 			db.close();
 		}
