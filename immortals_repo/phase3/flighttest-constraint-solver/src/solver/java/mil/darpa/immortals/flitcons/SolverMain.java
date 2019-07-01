@@ -1,13 +1,13 @@
 package mil.darpa.immortals.flitcons;
 
 import com.google.gson.JsonObject;
+import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.mdl.FlighttestConstraintSolver;
 import mil.darpa.immortals.flitcons.mdl.MdlDataValidator;
 import mil.darpa.immortals.flitcons.mdl.OrientVertexDataSource;
 import mil.darpa.immortals.flitcons.mdl.ValidationScenario;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.schemaevolution.ChallengeProblemBridge;
-import mil.darpa.immortals.schemaevolution.ProvidedData;
 import mil.darpa.immortals.schemaevolution.TerminalStatus;
 import picocli.CommandLine;
 
@@ -71,7 +71,7 @@ public class SolverMain {
 					}
 					previousEvaluationIdentifiers.add(evaluationInstanceIdentifier);
 
-					cpb = ProvidedData.initializeChallengeProblemBridge(evaluationInstanceIdentifier);
+					cpb = EnvironmentConfiguration.initializeChallengeProblemBridge(evaluationInstanceIdentifier);
 
 					FlighttestConstraintSolver fcs = new FlighttestConstraintSolver();
 					fcs.solve();

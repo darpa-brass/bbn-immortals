@@ -1,13 +1,10 @@
 package mil.darpa.immortals.testing.tools;
 
-import mil.darpa.immortals.orientdbserver.ProvidedTestingData;
+import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.orientdbserver.TestScenario;
-import mil.darpa.immortals.schemaevolution.ProvidedData;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class JarTestScenarioRunner extends TestScenarioRunner {
 
@@ -33,28 +30,22 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 			}
 		}
 		try {
-			Path artifactDirectory = ProvidedData.getEvaluationArtifactDirectory();
-
-			if (!Files.exists(artifactDirectory)) {
-				Files.createDirectory(artifactDirectory);
-			}
-
 			String[] cmd;
 
 			if (scenario.getScenarioType().equals("Scenario5")) {
 				cmd = new String[]{
-						"bash", ProvidedTestingData.getImmortalsRoot().resolve("phase3").resolve("start.sh").toString(),
+						"bash", EnvironmentConfiguration.getImmortalsRoot().resolve("phase3").resolve("start.sh").toString(),
 						"--odb-url", odbServer.getOdbPath().replace("plocal", "remote"),
 						"--scenario", "5",
-						"--artifact-directory", artifactDirectory.toAbsolutePath().toString()
+						"--artifact-directory", EnvironmentConfiguration.getArtifactDirectory().toString()
 				};
 
 			} else if (scenario.getScenarioType().equals("Scenario6")) {
 				cmd = new String[]{
-						"bash", ProvidedTestingData.getImmortalsRoot().resolve("phase3").resolve("start.sh").toString(),
+						"bash", EnvironmentConfiguration.getImmortalsRoot().resolve("phase3").resolve("start.sh").toString(),
 						"--odb-url", odbServer.getOdbPath(),
 						"--scenario", "6",
-						"--artifact-directory", artifactDirectory.toAbsolutePath().toString()
+						"--artifact-directory", EnvironmentConfiguration.getArtifactDirectory().toString()
 				};
 
 			} else {
@@ -69,7 +60,7 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 			ProcessBuilder pb = new ProcessBuilder()
 					.redirectOutput(ProcessBuilder.Redirect.INHERIT)
 					.redirectError(ProcessBuilder.Redirect.INHERIT)
-					.directory(ProvidedTestingData.getImmortalsRoot().resolve("phase3").toFile())
+					.directory(EnvironmentConfiguration.getImmortalsRoot().resolve("phase3").toFile())
 					.command(cmd);
 			adaptationServiceProcess = pb.start();
 		} catch (IOException e) {

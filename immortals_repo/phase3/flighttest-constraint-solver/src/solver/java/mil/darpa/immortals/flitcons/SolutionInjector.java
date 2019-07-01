@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 public class SolutionInjector {
 
 	private final Set<SolutionPreparer.ParentAdaptationData> adaptationData;
-	private final DataSourceInterface<OrientVertex> dataSource;
+	private final AbstractDataTarget dataSource;
 	Configuration.AdaptationConfiguration config = Configuration.getInstance().adaptation;
 
-	public SolutionInjector(@Nonnull DataSourceInterface<OrientVertex> dataSource, @Nonnull Set<SolutionPreparer.ParentAdaptationData> adaptationData) {
+	public SolutionInjector(@Nonnull AbstractDataTarget dataSource, @Nonnull Set<SolutionPreparer.ParentAdaptationData> adaptationData) {
 		this.dataSource = dataSource;
 		this.adaptationData = adaptationData;
 	}
@@ -86,7 +86,8 @@ public class SolutionInjector {
 
 	public void injectSolution() {
 		System.out.println(Utils.padCenter("Initial PortMapping Configuration", 80, '#'));
-		for (String line : Utils.makeChart(dataSource.getPortMappingChartData(), null, null)) {
+		TreeMap<String, TreeMap<String, Object>> chartData = dataSource.getPortMappingChartData();
+		for (String line : Utils.makeChart(chartData, null, null)) {
 			System.out.println(line);
 		}
 		System.out.println(Utils.padCenter("", 80, '#'));
@@ -154,7 +155,8 @@ public class SolutionInjector {
 		dataSource.restart();
 
 		System.out.println(Utils.padCenter("Resultant PortMapping Configuration", 80, '#'));
-		for (String line : Utils.makeChart(dataSource.getPortMappingChartData(), null, null)) {
+		chartData = dataSource.getPortMappingChartData();
+		for (String line : Utils.makeChart(chartData, null, null)) {
 			System.out.println(line);
 		}
 		System.out.println(Utils.padCenter("", 80, '#'));

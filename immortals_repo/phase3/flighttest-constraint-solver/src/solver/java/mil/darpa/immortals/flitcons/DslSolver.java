@@ -1,9 +1,9 @@
 package mil.darpa.immortals.flitcons;
 
+import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
-import mil.darpa.immortals.schemaevolution.ProvidedData;
 import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nonnull;
@@ -58,9 +58,9 @@ public class DslSolver implements SolverInterface {
 			DynamicObjectContainer inputConfigurationClone = inputConfiguration.duplicate();
 			DynamicObjectContainer inventoryClone = inventory.duplicate();
 
-			requestPath = ProvidedData.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfigurationClone).getBytes());
-			inventoryPath = ProvidedData.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(inventoryClone).getBytes());
-			responsePath = Paths.get(ProvidedData.storeFile(SWAP_RESPONSE, new byte[0]));
+			requestPath = EnvironmentConfiguration.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfigurationClone).getBytes());
+			inventoryPath = EnvironmentConfiguration.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(inventoryClone).getBytes());
+			responsePath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_RESPONSE, new byte[0]));
 			Files.delete(responsePath);
 			FileUtils.forceMkdir(dslDirectory.resolve("outbox").toFile());
 

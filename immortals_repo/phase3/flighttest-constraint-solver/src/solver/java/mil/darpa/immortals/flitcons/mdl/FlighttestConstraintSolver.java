@@ -14,15 +14,13 @@ import static mil.darpa.immortals.flitcons.Utils.PARENT_LABEL;
 
 public class FlighttestConstraintSolver {
 
-	private final DataSourceInterface dataSource;
-	private final DataCollector collector;
+	private final AbstractDataTarget dataSource;
 	private final MdlDataValidator validator;
 
 	private final SolverInterface solver;
 
 	public FlighttestConstraintSolver() {
 		dataSource = new OrientVertexDataSource();
-		collector = new DataCollector(dataSource);
 		validator = new MdlDataValidator(null, null, dataSource);
 
 		if (SolverConfiguration.getInstance().useSimpleSolver) {
@@ -42,10 +40,10 @@ public class FlighttestConstraintSolver {
 			validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements, useColor);
 			validator.validateConfiguration(ValidationScenario.DauInventory, useColor);
 
-			HierarchicalDataContainer inputContainer = collector.getInterconnectedTransformedFaultyConfiguration(false);
+			HierarchicalDataContainer inputContainer = dataSource.getInterconnectedTransformedFaultyConfiguration(false);
 			DynamicObjectContainer input = Utils.createDslInterchangeFormat(inputContainer);
 
-			HierarchicalDataContainer inventoryContainer = collector.getTransformedDauInventory(false);
+			HierarchicalDataContainer inventoryContainer = dataSource.getTransformedDauInventory(false);
 			DynamicObjectContainer inventory = Utils.createDslInterchangeFormat(inventoryContainer);
 
 			solver.loadData(input, inventory);
@@ -56,10 +54,10 @@ public class FlighttestConstraintSolver {
 			}
 
 			SolutionPreparer preparer = new SolutionPreparer(
-					collector.getInterconnectedFaultyConfiguration(),
-					collector.getInterconnectedTransformedFaultyConfiguration(false),
-					collector.getRawDauInventoryContainer(),
-					collector.getTransformedDauInventory(false));
+					dataSource.getInterconnectedFaultyConfiguration(),
+					dataSource.getInterconnectedTransformedFaultyConfiguration(false),
+					dataSource.getRawInventoryContainer(),
+					dataSource.getTransformedDauInventory(false));
 
 			Set<SolutionPreparer.ParentAdaptationData> adaptation = preparer.prepare(solution, PARENT_LABEL, CHILD_LABEL);
 

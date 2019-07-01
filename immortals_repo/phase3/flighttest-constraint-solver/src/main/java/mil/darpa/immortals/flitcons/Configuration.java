@@ -3,13 +3,13 @@ package mil.darpa.immortals.flitcons;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.InputStreamReader;
 import java.util.*;
 
 public class Configuration {
 
 	public static transient Configuration instance;
-
 
 	public static Configuration getInstance() {
 		if (instance == null) {
@@ -20,6 +20,42 @@ public class Configuration {
 					Configuration.class);
 		}
 		return instance;
+	}
+
+	public static class NodeAttributeRelation implements DuplicateInterface {
+		public final LinkedList<String> nodePath;
+		public final String attribute;
+
+		public NodeAttributeRelation(@Nonnull List<String> nodePath, @Nonnull String attribute) {
+			this.nodePath = new LinkedList<>(nodePath);
+			this.attribute = attribute;
+		}
+
+		@Override
+		public NodeAttributeRelation duplicate() {
+			return new NodeAttributeRelation(nodePath, attribute);
+		}
+	}
+
+	public static class ParentChildAttributeRelation implements DuplicateInterface<ParentChildAttributeRelation> {
+		public final String attribute;
+		public final LinkedList<String> parentPath;
+		public final LinkedList<String> childPath;
+		private final List<String> fullPath;
+
+		private ParentChildAttributeRelation(@Nonnull List<String> parentPath, @Nonnull List<String> childPath, @Nonnull String attribute) {
+			this.parentPath = new LinkedList<>(parentPath);
+			this.childPath = new LinkedList<>(childPath);
+			this.attribute = attribute;
+			this.fullPath = new ArrayList<>(parentPath.size() + childPath.size());
+			fullPath.addAll(parentPath);
+			fullPath.addAll(childPath);
+		}
+
+		@Override
+		public ParentChildAttributeRelation duplicate() {
+			return new ParentChildAttributeRelation(parentPath, childPath, attribute);
+		}
 	}
 
 	/**
@@ -47,28 +83,37 @@ public class Configuration {
 	 */
 	public static class Calculation implements DuplicateInterface<Calculation> {
 
+		public Calculation(@Nonnull List<String> parentPath, @Nonnull List<NodeAttributeRelation> children,
+		                   @Nonnull String parentTargetValueIdentifier, @Nonnull String equation) {
+			this.parentPath = new LinkedList<>(parentPath);
+			this.children = Utils.duplicateList(children);
+			this.parentTargetValueIdentifier = parentTargetValueIdentifier;
+			this.equation = equation;
+		}
+
+		/**
+		 * The parent node path that contains the
+		 */
+		public LinkedList<String> parentPath;
+
 		/**
 		 * The identifier for the value that will be calculated
 		 */
-		public String targetValueIdentifier;
+		public String parentTargetValueIdentifier;
 
 		/**
-		 * The identifiers for the values that are expected to be filled in by data defined elsewhere
+		 * The paths of the children and their attributes that are necessary to calculate the solution
 		 */
-		public Set<String> substitutionValues;
+		public List<NodeAttributeRelation> children;
 
 		/**
-		 * A javascript equation that consists of variables defined in {@link Calculation#substitutionValues}
+		 * A javascript equation that consists of variables prefixed with "@" defined in {@link Calculation#children}
 		 */
 		public String equation;
 
 		@Override
 		public Calculation duplicate() {
-			Calculation rval = new Calculation();
-			rval.targetValueIdentifier = targetValueIdentifier;
-			rval.substitutionValues = new HashSet<>(substitutionValues);
-			rval.equation = equation;
-			return rval;
+			return new Calculation(parentPath, children, parentTargetValueIdentifier, equation);
 		}
 	}
 
@@ -121,11 +166,73 @@ public class Configuration {
 		}
 	}
 
+	/**
+	 * A single object meant to capture most of the more complex manipulations that can be applied to an MDLRoot
+	 * to mutate it into something the DSL can ingest
+	 */
+	public static class ValueRemappingInstructions implements DuplicateInterface<ValueRemappingInstructions> {
+		/**
+		 * The path of the parent node
+		 */
+		public LinkedList<String> parentPath;
+
+		/**
+		 * The child attribute name
+		 */
+		public String childAttributeName;
+
+		/**
+		 * THe new name for the child attribute, if applicable
+		 */
+		public String optionalNewChildAttributeName;
+
+		/**
+		 * A map of the transformations that can be applied to the child attribute value. All possible original values
+		 * must be captured. If the target value is a set
+		 * {@link ValueRemappingInstructions#optionalChildAttributeValueSelectionRemap} should be used instead.
+		 */
+		public Map<String, Object> optionalChildAttributeValueRemap;
+
+		/**
+		 * A map of the transformations that can be applied to the child attribute value. All possible original values
+		 * must be captured. If the target value is a single value
+		 * {@link ValueRemappingInstructions#optionalChildAttributeValueRemap} should be used instead.
+		 */
+		public Map<String, List<Object>> optionalChildAttributeValueSelectionRemap;
+
+		/**
+		 * The value to set if the attribute is missing.
+		 */
+		public Object optionalValueToCreateIfMissing;
+
+		public ValueRemappingInstructions(
+				@Nonnull List<String> parentPath, @Nonnull String childAttributeName, @Nullable String optionalNewChildAttributeName,
+				@Nullable Map<String, Object> optionalChildAttributeValueRemap, @Nullable Map<String, List<Object>> optionalChildAttributeValueSelectionRemap,
+				@Nullable Object optionalValueToCreateIfMissing) {
+			this.parentPath = new LinkedList<>(parentPath);
+			this.childAttributeName = childAttributeName;
+			this.optionalNewChildAttributeName = optionalNewChildAttributeName;
+			this.optionalChildAttributeValueRemap = optionalChildAttributeValueRemap == null ? null : Utils.duplicateMap(optionalChildAttributeValueRemap);
+			this.optionalChildAttributeValueSelectionRemap = optionalChildAttributeValueSelectionRemap == null ? null : Utils.duplicateListMap(optionalChildAttributeValueSelectionRemap);
+			this.optionalValueToCreateIfMissing = optionalValueToCreateIfMissing;
+		}
+
+		@Override
+		public ValueRemappingInstructions duplicate() {
+			return new ValueRemappingInstructions(parentPath, childAttributeName, optionalNewChildAttributeName,
+					optionalChildAttributeValueRemap, optionalChildAttributeValueSelectionRemap, optionalValueToCreateIfMissing);
+		}
+	}
 
 	/**
 	 * This class pertains to data that must be gathered and handed to the DSL for determining replacement DAUs
 	 */
 	public static class PropertyCollectionInstructions {
+
+		/**
+		 * The node which will be replaced, and everything should be from the perspective of
+		 */
+		public String primaryNode;
 
 		/**
 		 * A mapping indicating for which objects we should collect which properties
@@ -138,35 +245,7 @@ public class Configuration {
 		 */
 		public Map<String, Set<String>> collectedDebugProperties;
 
-		/**
-		 * Item types contained in this list will default to true if they have no value set
-		 */
-		public Set<String> valuesToDefaultToTrue;
 	}
-
-	/**
-	 * {@link KnownTypes} that we are aware of and fully support
-	 */
-	public KnownTypes supported;
-
-
-	/**
-	 * If true, an exception will be raised if we encounter an unexpected MDL DAU type. Otherwise, it will flow
-	 * through freely to the DSL
-	 */
-	public boolean haltOnUnsupportedDauType;
-
-	/**
-	 * If true, an exception will be raised if we encounter unexpected module functionality. Otherwise, it will flow
-	 * through freely to the DSL
-	 */
-	public boolean haltOnUnsupportedModuleFunctionality;
-
-	/**
-	 * If true, an exception will be raised if we encounter unexpected port functionality. Otherwise, it will flow
-	 * through freely to the DSL
-	 */
-	public boolean haltOnUnsupportedPortFunctionality;
 
 	/**
 	 * Rules used to govern trimming down the data collected through the graph for much easier conversion into something
@@ -180,26 +259,34 @@ public class Configuration {
 		public Map<String, Set<String>> shortNodesToParent;
 
 		/**
-		 * Any MDL types and their children in this set will be iremoved prior to DSL conversion, thus being "ignored"
-		 * by the DSL.
+		 * Any nodes that match the paths within this value will be removed as part of the DSL conversion.
 		 */
-		public List<List<String>> ignoredNodes;
+		public List<List<String>> ignoredNodePaths;
+
+		/**
+		 * Moves the child attribute from {@link ParentChildAttributeRelation#attribute} in the
+		 * {@link ParentChildAttributeRelation#parentPath} to instances of the
+		 * {@link ParentChildAttributeRelation#childPath} children.
+		 */
+		// TODO: This really should go with the other remapping details somehow to prevent having to reference the transformed output in the configuration
+		public List<ParentChildAttributeRelation> transferAttributeToChildren;
 
 		/**
 		 * A List of node paths followed by an attribute name. If a path and attribute name is found it should be
 		 * removed when collecting requirements data.
 		 */
-		public List<List<String>> ignoredAttributes;
+		public List<List<String>> ignoredAttributePaths;
 
 		/**
 		 * Calculations that will be used to fill in values
 		 */
-		public Map<String, List<Calculation>> calculations;
+		public LinkedList<Calculation> calculations;
 
 		/**
-		 * Any parent (key) node types that do not have the corresponding chain of children will be ignored.
+		 * Ignore nodes at {@link ParentChildAttributeRelation#parentPath} path that do not contain a child at path
+		 * {@link ParentChildAttributeRelation#childPath} with the attribute {@link ParentChildAttributeRelation#attribute}
 		 */
-		public Map<String, List<String>> ignoreParentsWithoutProperties;
+		public List<ParentChildAttributeRelation> ignoreParentsWithoutChildAttributes;
 
 		/**
 		 * Any MDL Types that should be tagged with a completely unique identifier
@@ -207,9 +294,9 @@ public class Configuration {
 		public Set<String> taggedNodes;
 
 		/**
-		 * If the Path the key maps to exists and the last value is an attribute, rename it to the key value
+		 * Instructions that can be used to transform the data into a form more palatable for the DSL
 		 */
-		public Map<String, List<String>> renameAttributes;
+		public Set<ValueRemappingInstructions> valueRemappingInstructions;
 
 		/**
 		 * for an object type of the first key value, if it contains multiple children of the second key value,
@@ -220,54 +307,47 @@ public class Configuration {
 		private static TransformationInstructions mergeTransformationInstructions(
 				@Nonnull TransformationInstructions globalInstructions,
 				@Nonnull TransformationInstructions specificInstructions) {
-			TransformationInstructions rval = globalInstructions.duplicate();
+			TransformationInstructions targetInstructions = globalInstructions.duplicate();
 
 			if (specificInstructions.shortNodesToParent != null) {
 				for (String key : specificInstructions.shortNodesToParent.keySet()) {
-					Set<String> nodeSet = rval.shortNodesToParent.computeIfAbsent(key, k -> new HashSet<>());
+					Set<String> nodeSet = targetInstructions.shortNodesToParent.computeIfAbsent(key, k -> new HashSet<>());
 					nodeSet.addAll(specificInstructions.shortNodesToParent.get(key));
 				}
 			}
 
-			if (specificInstructions.ignoredNodes != null) {
-				for (List<String> l : specificInstructions.ignoredNodes) {
-					rval.ignoredNodes.add(new LinkedList<>(l));
-				}
+			if (specificInstructions.ignoredNodePaths != null) {
+				targetInstructions.ignoredNodePaths.addAll(Utils.duplicateListList(specificInstructions.ignoredNodePaths));
 			}
 
-			if (specificInstructions.ignoredAttributes != null) {
-				for (List<String> l : specificInstructions.ignoredAttributes) {
-					rval.ignoredAttributes.add(new LinkedList<>(l));
-				}
+			if (specificInstructions.ignoredAttributePaths != null) {
+				targetInstructions.ignoredAttributePaths.addAll(Utils.duplicateListList(specificInstructions.ignoredAttributePaths));
 			}
 
 			if (specificInstructions.calculations != null) {
-				for (String key : specificInstructions.calculations.keySet()) {
-					List<Calculation> targetCalculationList = rval.calculations.computeIfAbsent(key, k -> new LinkedList<>());
-					for (Calculation c : specificInstructions.calculations.get(key)) {
-						targetCalculationList.add(c.duplicate());
-					}
-				}
+				targetInstructions.calculations.addAll(Utils.duplicateList(specificInstructions.calculations));
 			}
 
-			if (specificInstructions.renameAttributes != null) {
-				for (String key : specificInstructions.renameAttributes.keySet()) {
-					rval.renameAttributes.put(key, new LinkedList<>(specificInstructions.renameAttributes.get(key)));
-				}
+			if (specificInstructions.valueRemappingInstructions != null) {
+				targetInstructions.valueRemappingInstructions.addAll(Utils.duplicateSet(specificInstructions.valueRemappingInstructions));
 			}
 
-			if (specificInstructions.ignoreParentsWithoutProperties != null) {
-				throw new RuntimeException("Not adding support for this unless needed!");
+			if (specificInstructions.transferAttributeToChildren != null) {
+				targetInstructions.transferAttributeToChildren.addAll(Utils.duplicateList(specificInstructions.transferAttributeToChildren));
+			}
+
+			if (specificInstructions.ignoreParentsWithoutChildAttributes != null) {
+				targetInstructions.ignoreParentsWithoutChildAttributes.addAll(Utils.duplicateList(specificInstructions.ignoreParentsWithoutChildAttributes));
 			}
 
 			if (specificInstructions.taggedNodes != null) {
-				throw new RuntimeException("Not adding support for this unless needed!");
+				targetInstructions.taggedNodes.addAll(specificInstructions.taggedNodes);
 			}
 
 			if (specificInstructions.combineSquashedChildNodeAttributes != null) {
 				throw new RuntimeException("Not adding support for this unless needed!");
 			}
-			return rval;
+			return targetInstructions;
 		}
 
 		@Override
@@ -275,12 +355,13 @@ public class Configuration {
 			TransformationInstructions rval = new TransformationInstructions();
 
 			rval.shortNodesToParent = Utils.duplicateSetMap(shortNodesToParent);
-			rval.ignoredNodes = Utils.duplicateListList(ignoredNodes);
-			rval.ignoredAttributes = Utils.duplicateListList(ignoredAttributes);
-			rval.calculations = Utils.duplicateMap(calculations);
-			rval.ignoreParentsWithoutProperties = Utils.duplicateMap(ignoreParentsWithoutProperties);
+			rval.ignoredNodePaths = Utils.duplicateListList(ignoredNodePaths);
+			rval.ignoredAttributePaths = Utils.duplicateListList(ignoredAttributePaths);
+			rval.calculations = Utils.duplicateList(calculations);
+			rval.ignoreParentsWithoutChildAttributes = Utils.duplicateList(ignoreParentsWithoutChildAttributes);
 			rval.taggedNodes = new HashSet<>(taggedNodes);
-			rval.renameAttributes = Utils.duplicateListMap(renameAttributes);
+			rval.valueRemappingInstructions = Utils.duplicateSet(valueRemappingInstructions);
+			rval.transferAttributeToChildren = Utils.duplicateList(transferAttributeToChildren);
 
 			rval.combineSquashedChildNodeAttributes = new HashMap<>();
 
@@ -312,6 +393,13 @@ public class Configuration {
 		 */
 		public List<String> debugIdentificationValues;
 	}
+
+	/**
+	 * An intermediary value to be used to define null. The intent is to standardize null regardless of input format
+	 * (where it may mean or be interpreted in a different way). This is specifically useful when creating
+	 * {@link ValueRemappingInstructions}
+	 */
+	public String nullValuePlaceholder;
 
 	/**
 	 * Data related to preparing for dataCollectionInstructions.

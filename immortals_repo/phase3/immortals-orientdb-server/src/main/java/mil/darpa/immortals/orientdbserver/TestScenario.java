@@ -77,7 +77,12 @@ public class TestScenario {
 	private static synchronized void init() {
 		if (scenario5TestScenarios == null) {
 			Gson gson = new Gson();
+
 			scenario5TestScenarios = initScenarioSet("s5_scenarios.json", gson);
+			if (System.getenv().containsKey("CHALLENGE_PROBLEMS_ROOT")) {
+				scenario5TestScenarios.putAll(initScenarioSet("s5_cp_scenarios.json", gson));
+			}
+
 			scenario6TestScenarios = initScenarioSet("s6_scenarios.json", gson);
 		}
 	}
@@ -90,6 +95,13 @@ public class TestScenario {
 	public static List<String> getScenario6TestScenarioIdentifiers() {
 		init();
 		return new LinkedList<>(scenario6TestScenarios.keySet());
+	}
+
+	public static List<String> getAllTestScenarioIdentifiers() {
+		init();
+		LinkedList<String> rval = new LinkedList<>(scenario5TestScenarios.keySet());
+		rval.addAll(scenario6TestScenarios.keySet());
+		return rval;
 	}
 
 	public static TestScenario getScenario5TestScenario(@Nonnull String shortName) {

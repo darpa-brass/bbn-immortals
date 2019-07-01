@@ -14,7 +14,7 @@
 		{
 			"shortName": "s5s",
 			"prettyName": "Scenario 5 Basic Sequential",
-			"timeoutMS": 60000,
+			"timeoutMS": 90000,
 			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/s5s_dauInventory.xml",
 			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml",
 			"expectedStatusSequence": [
@@ -22,15 +22,6 @@
 				"AdaptationSuccessful",
 				"AdaptationUnsuccessful"
 			]
-			//		},
-			//		{
-			//			"shortName": "s5e2",
-			//			"prettyName": "Scenario 5 SwRI Example 2",
-			//			"xmlInventoryPath": "${CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
-			//			"xmlMdlrootInputPath": "${CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_2/BRASS_Scenario5_Example2_TTC_Verbose.xml",
-			//			"expectedStatusSequence": [
-			//				"AdaptationSuccessful"
-			//			]
 		}
 	]
 }

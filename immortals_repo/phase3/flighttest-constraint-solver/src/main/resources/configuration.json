@@ -1,459 +1,353 @@
 {
-  "haltOnUnsupportedDauType": true,
-  "haltOnUnsupportedModuleFunctionality": true,
-  "haltOnUnsupportedPortFunctionality": true,
-  "supported": {
-    "dauTypes": [
-      "NetworkNode"
-    ],
-    "moduleFunctionalityTypes": [
-      "SignalConditionerModule",
-      "ThermocoupleConditionerModule"
-    ],
-    "portFunctionalityTypes": [
-      "SignalConditionerPort",
-      "ThermocoupleConditionerPort"
-    ]
-  },
-  "dataCollectionInstructions": {
-    "collectedChildProperties": {
-      "Port": [
-        "PortDirection"
-      ],
-      "PortType": [
-        "Extension",
-        "Thermocouple"
-      ],
-      "PortTypes": [
-        "PortType"
-      ],
-      "GenericParameter": [
-        "BBNPortFunctionality",
-        "BBNDauFlaggedForReplacement",
-        "BBNDauMonetaryCost",
-        "SampleRate",
-        "DataRate",
-        "DataLength"
-        //        "PortType"
-      ],
-      "SampleRate": [
-        "Min",
-        "Max"
-      ],
-      "DataRate": [
-        "Min",
-        "Max"
-      ],
-      "DataLength": [
-        "Min",
-        "Max"
-      ],
-      "ConditionParameter": [
-        "ConditionValue"
-      ]
-    },
-    "collectedDebugProperties": {
-      "NetworkNode": [
-        "Model",
-        "Manufacturer"
-      ],
-      "Module": [
-        "Model",
-        "Manufacturer"
-      ]
-    },
-    "valuesToDefaultToTrue": [
-      "BBNDauFlaggedForReplacement"
-    ]
-  },
-  "adaptation": {
-    "ignoredAttributes": {
-      "Port": [
-        "BBNPortFunctionality"
-      ],
-      "NetworkNode": [
-        "BBNDauMonetaryCost"
-      ]
-    },
-    "parentAttributeTreeClones": [
-      [
-        "GenericParameter",
-        "BBNDauFlaggedForReplacement"
-      ]
-    ],
-    "directNodeAttributeRemappingOptions": {
-      "Port": {
-        "PortType": [
-          [
-            //          "Port",
-            "PortTypes",
-            "PortType",
-            "PortType"
-          ],
-          [
-            "PortTypes",
-            "PortType"
-          ]
-        ]
-      }
-    },
-    "indirectNodeAttributeRemappingOptions": {
-      "Port": {
-        "DataLength": [
-          [
-            "Measurement",
-            "DataAttributes",
-            "DigitalAttributes",
-            "DataLength",
-            "ConditionParameter",
-            "ConditionValue"
-          ]
-        ],
-        "DataRate": [
-          [
-            "Measurement",
-            "DataAttributes",
-            "DigitalAttributes",
-            "DataRate",
-            "ConditionParameter",
-            "ConditionValue"
-          ]
-        ],
-        "SampleRate": [
-          [
-            "Measurement",
-            "DataAttributes",
-            "DigitalAttributes",
-            "SampleRate",
-            "ConditionParameter",
-            "ConditionValue"
-          ]
-        ]
-      }
-    }
-  },
-  "globalTransformation": {
-    "shortNodesToParent": {
-      "NetworkNode": [
-        "InternalStructure",
-        "GenericParameter"
-      ],
-      "InternalStructure": [
-        "Modules"
-      ],
-      "Modules": [
-        "Module"
-      ],
-      "Module": [
-        "Ports"
-      ],
-      "Port": [
-        "PortTypes",
-        "GenericParameter",
-        "Measurement"
-      ],
-      "PortTypes": [
-        "PortType"
-      ],
-      "Measurement": [
-        "GenericParameter"
-      ],
-      "GenericParameter": [
-        "PortType",
-        "Thermocouple"
-      ]
-    },
-    "ignoredNodes": [
-      [
-        //        "NetworkNode",
-        "InternalStructure",
-        "Modules",
-        "Module",
-        "Connectors"
-      ],
-      [
-        //        "NetworkNode",
-        "InternalStructure",
-        "Modules",
-        "Module",
-        "SubModules"
-      ]
-    ],
-    "ignoredAttributes": [],
-    "ignoreParentsWithoutProperties": {
-      "Port": [
-        "GenericParameter",
-        "BBNPortFunctionality"
-      ]
-    },
-    "taggedNodes": [
-      "NetworkNode",
-      "Port"
-    ],
-    "combineSquashedChildNodeAttributes": {
-      "GenericParameter": {
-        "PortType": [
-          "PortType",
-          "Thermocouple"
-        ]
-      },
-      "Port": {
-        "GenericParameter": [
-          "PortType",
-          "Thermocouple"
-        ]
-      }
-    },
-    "calculations": {},
-    "renameAttributes": {}
-  },
-  "inventoryTransformation": {
-    "ignoredAttributes": [
-      [
-        "Port",
-        "PortTypes",
-        "PortType",
-        "Thermocouple"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "PortType",
-        "PortType"
-      ],
-      [
-        "Measurement",
-        "GenericParameter",
-        "DataLength"
-      ],
-      [
-        "Measurement",
-        "GenericParameter",
-        "SampleRate"
-      ],
-      [
-        "Measurement",
-        "DataAttributes",
-        "DigitalAttributes",
-        "DataRate",
-        "ConditionParameter",
-        "ConditionValue"
-      ]
-    ],
-    "calculations": {
-      "Port": [
-        {
-          "targetValueIdentifier": "DataRate",
-          "substitutionValues": [
-            "SampleRate",
-            "DataLength"
-          ],
-          "equation": "@SampleRate * @DataLength"
-        }
-      ]
-    }
-  },
-  "requirementsTransformation": {
-    "ignoredAttributes": [
-      [
-        "Port",
-        "GenericParameter",
-        "PortType",
-        "Thermocouple"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "PortType",
-        "PortType"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "SampleRate"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "DataLength"
-      ],
-      [
-        "Measurement",
-        "DataAttributes",
-        "DigitalAttributes",
-        "DataLength",
-        "ConditionParameter",
-        "ConditionValue"
-      ],
-      [
-        "Measurement",
-        "DataAttributes",
-        "DigitalAttributes",
-        "SampleRate",
-        "ConditionParameter",
-        "ConditionValue"
-      ],
-      [
-        "Measurement",
-        "DataAttributes",
-        "DigitalAttributes",
-        "DataRate",
-        "ConditionParameter",
-        "ConditionValue"
-      ]
-    ]
-  },
-  "usageTransformation": {
-    "ignoredAttributes": [
-      [
-        "Port",
-        "GenericParameter",
-        "PortType",
-        "PortType"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "PortType",
-        "Thermocouple"
-      ],
-      [
-        "Measurement",
-        "GenericParameter",
-        "DataLength"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "DataLength"
-      ],
-      [
-        "Measurement",
-        "GenericParameter",
-        "DataRate"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "DataRate"
-      ],
-      [
-        "Measurement",
-        "GenericParameter",
-        "SampleRate"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "SampleRate"
-      ]
-    ],
-    "ignoredNodes": [
-      [
-        "Measurement",
-        "GenericParameter",
-        "DataLength"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "DataLength"
-      ],
-      [
-        "Measurement",
-        "GenericParameter",
-        "DataRate"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "DataRate"
-      ],
-      [
-        "Measurement",
-        "GenericParameter",
-        "SampleRate"
-      ],
-      [
-        "Port",
-        "GenericParameter",
-        "SampleRate"
-      ]
-    ],
-    "renameAttributes": {
-      "DataLength": [
-        "Measurement",
-        "DataAttributes",
-        "DigitalAttributes",
-        "DataLength",
-        "ConditionParameter",
-        "ConditionValue"
-      ],
-      "SampleRate": [
-        "Measurement",
-        "DataAttributes",
-        "DigitalAttributes",
-        "SampleRate",
-        "ConditionParameter",
-        "ConditionValue"
-      ],
-      "DataRate": [
-        "Measurement",
-        "DataAttributes",
-        "DigitalAttributes",
-        "DataRate",
-        "ConditionParameter",
-        "ConditionValue"
-      ]
-    },
-    "shortNodesToParent": {
-      "Measurement": [
-        "DataAttributes"
-      ],
-      "DataAttributes": [
-        "DigitalAttributes"
-      ],
-      "DigitalAttributes": [
-        "DataRate",
-        "DataLength",
-        "SampleRate"
-      ],
-      "DataRate": [
-        "ConditionParameter"
-      ],
-      "DataLength": [
-        "ConditionParameter"
-      ],
-      "SampleRate": [
-        "ConditionParameter"
-      ],
-      "Port": [
-        "DataAttributes"
-      ]
-    }
-  },
-  "validation": {
-    "defaultPropertyList": {
-      "NetworkNode": [
-        "BBNDauFlaggedForReplacement",
-        "GloballyUniqueId"
-      ],
-      "Port": [
-        "Thermocouple",
-        "GloballyUniqueId",
-        "BBNPortFunctionality",
-        "PortDirection",
-        "PortPolarity",
-        "PortType",
-        "SupersededPortId",
-        "SampleRate",
-        "DataRate",
-        "DataLength"
-      ]
-    },
-    "debugIdentificationValues": [
-      "Manufacturer",
-      "Model"
-    ]
-  }
+	"nullValuePlaceholder": "b862c60433e5",
+	"dataCollectionInstructions": {
+		"primaryNode": "NetworkNode",
+		"collectedChildProperties": {
+			"Port": [
+				"PortDirection"
+			],
+			"PortType": [
+				"Extension",
+				"Thermocouple"
+			],
+			"PortTypes": [
+				"PortType"
+			],
+			"GenericParameter": [
+				"BBNPortFunctionality",
+				"BBNDauFlaggedForReplacement",
+				"BBNDauMonetaryCost",
+				"SampleRate",
+				"DataRate",
+				"DataLength",
+				"ExcitationPortIsPresent"
+			],
+			"SampleRate": [
+				"Min",
+				"Max"
+			],
+			"DataRate": [
+				"Min",
+				"Max"
+			],
+			"DataLength": [
+				"Min",
+				"Max"
+			],
+			"ConditionParameter": [
+				"ConditionValue"
+			],
+			"DeviceModule": [
+				"ExcitationSource"
+			]
+		},
+		"collectedDebugProperties": {
+			"NetworkNode": [
+				"Model",
+				"Manufacturer"
+			],
+			"Module": [
+				"Model",
+				"Manufacturer"
+			]
+		}
+	},
+	"adaptation": {
+		"ignoredAttributes": {
+			"Port": [
+				"BBNPortFunctionality",
+				"Excitation"
+			],
+			"NetworkNode": [
+				"BBNDauMonetaryCost"
+			]
+		},
+		"directNodeAttributeRemappingOptions": {
+			"Port": {
+				"PortType": [
+					["PortTypes", "PortType", "PortType"],
+					["PortTypes", "PortType"]
+				]
+			}
+		},
+		"indirectNodeAttributeRemappingOptions": {
+			"Port": {
+				"DataLength": [
+					["Measurement", "DataAttributes", "DigitalAttributes", "DataLength", "ConditionParameter", "ConditionValue"]
+				],
+				"DataRate": [
+					["Measurement", "DataAttributes", "DigitalAttributes", "DataRate", "ConditionParameter", "ConditionValue"]
+				],
+				"SampleRate": [
+					["Measurement", "DataAttributes", "DigitalAttributes", "SampleRate", "ConditionParameter", "ConditionValue"]
+				]
+			}
+		}
+	},
+	"globalTransformation": {
+		"shortNodesToParent": {
+			"NetworkNode": [
+				"InternalStructure",
+				"GenericParameter"
+			],
+			"InternalStructure": [
+				"Modules"
+			],
+			"Modules": [
+				"Module"
+			],
+			"Module": [
+				"Ports"
+			],
+			"Port": [
+				"PortTypes",
+				"GenericParameter",
+				"Measurement",
+				"Device",
+				"Port"
+			],
+			"PortTypes": [
+				"PortType"
+			],
+			"Measurement": [
+				"GenericParameter"
+			],
+			"GenericParameter": [
+				"PortType",
+				"Thermocouple"
+			],
+			"Device": [
+				"DeviceStructure"
+			],
+			"DeviceStructure": [
+				"DeviceModules"
+			],
+			"DeviceModules": [
+				"DeviceModule"
+			]
+		},
+		"transferAttributeToChildren": [
+			{
+				"parentPath": ["Device", "DeviceStructure", "DeviceModules", "DeviceModule"],
+				"childPath": ["Ports", "Port"],
+				"attribute": "Excitation"
+			}
+		],
+		"ignoredNodePaths": [
+			["InternalStructure", "Modules", "Module", "Connectors"],
+			["InternalStructure", "Modules", "Module", "SubModules"]
+		],
+		"ignoredAttributePaths": [
+			["DeviceModule", "Ports", "Port", "PortDirection"]
+		],
+		"ignoreParentsWithoutChildAttributes": [
+			{
+				"parentPath": ["InternalStructure", "Modules", "Module", "Ports", "Port"],
+				"childPath": ["GenericParameter"],
+				"attribute": "BBNPortFunctionality"
+			}
+		],
+		"taggedNodes": [
+			"NetworkNode",
+			"Port"
+		],
+		"combineSquashedChildNodeAttributes": {
+			"GenericParameter": {
+				"PortType": [
+					"PortType",
+					"Thermocouple"
+				]
+			},
+			"Port": {
+				"GenericParameter": [
+					"PortType",
+					"Thermocouple"
+				]
+			}
+		},
+		"calculations": [],
+		"valueRemappingInstructions": [
+			{
+				"parentPath": ["GenericParameter"],
+				"childAttributeName": "BBNDauFlaggedForReplacement",
+				"optionalChildAttributeValueRemap": {
+					"b862c60433e5": true
+				}
+			}
+		]
+	},
+	"inventoryTransformation": {
+		"ignoredAttributePaths": [
+			["Port", "PortTypes", "PortType", "Thermocouple"],
+			["Port", "GenericParameter", "PortType", "PortType"],
+			["Measurement", "GenericParameter", "DataLength"],
+			["Measurement", "GenericParameter", "SampleRate"],
+			["Measurement", "DataAttributes", "DigitalAttributes", "DataRate", "ConditionParameter", "ConditionValue"]
+		],
+		"calculations": [
+			{
+				"parentPath": ["Module", "Ports", "Port"],
+				"parentTargetValueIdentifier": "DataRate",
+				"children": [
+					{
+						"nodePath": ["GenericParameter"],
+						"attribute": "SampleRate"
+					},
+					{
+						"nodePath": ["GenericParameter"],
+						"attribute": "DataLength"
+					}
+				],
+				"equation": "@SampleRate * @DataLength"
+			}
+		],
+		"valueRemappingInstructions": [
+			{
+				"parentPath": ["NetworkNode", "InternalStructure", "Modules", "Module", "Ports", "Port", "GenericParameter"],
+				"childAttributeName": "ExcitationPortIsPresent",
+				"optionalNewChildAttributeName": "Excitation",
+				"optionalChildAttributeValueSelectionRemap": {
+					"b862c60433e5": [true, false]
+				},
+				"optionalValueToCreateIfMissing": false
+			}
+		]
+	},
+	"requirementsTransformation": {
+		"ignoredAttributePaths": [
+			["Port", "GenericParameter", "PortType", "Thermocouple"],
+			["Port", "GenericParameter", "PortType", "PortType"],
+			["Port", "GenericParameter", "SampleRate"],
+			["Port", "GenericParameter", "DataLength"],
+			["Port", "GenericParameter", "ExcitationPortIsPresent"],
+			["Measurement", "DataAttributes", "DigitalAttributes", "DataLength", "ConditionParameter", "ConditionValue"],
+			["Measurement", "DataAttributes", "DigitalAttributes", "SampleRate", "ConditionParameter", "ConditionValue"],
+			["Measurement", "DataAttributes", "DigitalAttributes", "DataRate", "ConditionParameter", "ConditionValue"]
+		],
+		"valueRemappingInstructions": [
+			{
+				"parentPath": ["Device", "DeviceStructure", "DeviceModules", "DeviceModule"],
+				"childAttributeName": "ExcitationSource",
+				"optionalNewChildAttributeName": "Excitation",
+				"optionalChildAttributeValueRemap": {
+					"Internal": false,
+					"External": true
+				},
+				"optionalValueToCreateIfMissing": false
+			}
+		]
+	},
+	"usageTransformation": {
+		"ignoredAttributePaths": [
+			["Port", "GenericParameter", "PortType", "PortType"],
+			["Port", "GenericParameter", "PortType", "Thermocouple"],
+			["Measurement", "GenericParameter", "DataLength"],
+			["Port", "GenericParameter", "DataLength"],
+			["Measurement", "GenericParameter", "DataRate"],
+			["Port", "GenericParameter", "DataRate"],
+			["Measurement", "GenericParameter", "SampleRate"],
+			["Port", "GenericParameter", "SampleRate"],
+			["Port", "GenericParameter", "ExcitationPortIsPresent"]
+		],
+		"ignoredNodePaths": [
+			["Measurement", "GenericParameter", "DataLength"],
+			["Port", "GenericParameter", "DataLength"],
+			["Measurement", "GenericParameter", "DataRate"],
+			["Port", "GenericParameter", "DataRate"],
+			["Measurement", "GenericParameter", "SampleRate"],
+			["Port", "GenericParameter", "SampleRate"]
+		],
+		"valueRemappingInstructions": [
+			{
+				"parentPath": ["DataLength", "ConditionParameter"],
+				"childAttributeName": "ConditionValue",
+				"optionalNewChildAttributeName": "DataLength"
+			},
+			{
+				"parentPath": ["SampleRate", "ConditionParameter"],
+				"childAttributeName": "ConditionValue",
+				"optionalNewChildAttributeName": "SampleRate"
+			},
+			{
+				"parentPath": ["DataRate", "ConditionParameter"],
+				"childAttributeName": "ConditionValue",
+				"optionalNewChildAttributeName": "DataRate"
+			},
+			{
+				"parentPath": ["Device", "DeviceStructure", "DeviceModules", "DeviceModule"],
+				"childAttributeName": "ExcitationSource",
+				"optionalNewChildAttributeName": "Excitation",
+				"optionalChildAttributeValueRemap": {
+					"Internal": false,
+					"External": true
+				},
+				"optionalValueToCreateIfMissing": false
+			}
+		],
+		"shortNodesToParent": {
+			"Measurement": [
+				"DataAttributes"
+			],
+			"DataAttributes": [
+				"DigitalAttributes"
+			],
+			"DigitalAttributes": [
+				"DataRate",
+				"DataLength",
+				"SampleRate"
+			],
+			"DataRate": [
+				"ConditionParameter"
+			],
+			"DataLength": [
+				"ConditionParameter"
+			],
+			"SampleRate": [
+				"ConditionParameter"
+			],
+			"Devices": [
+				"Device"
+			],
+			"Device": [
+				"DeviceStructure"
+			],
+			"DeviceStructure": [
+				"DeviceModules"
+			],
+			"DeviceModules": [
+				"DeviceModule"
+			],
+			"DeviceModule": [
+				"ExcitationSource"
+			],
+			"Port": [
+				"DataAttributes"
+			]
+		}
+	},
+	"validation": {
+		"defaultPropertyList": {
+			"NetworkNode": [
+				"BBNDauFlaggedForReplacement",
+				"GloballyUniqueId"
+			],
+			"Port": [
+				"Thermocouple",
+				"GloballyUniqueId",
+				"BBNPortFunctionality",
+				"PortDirection",
+				"PortPolarity",
+				"PortType",
+				"SupersededPortId",
+				"SampleRate",
+				"DataRate",
+				"DataLength",
+				"Excitation"
+			]
+		},
+		"debugIdentificationValues": [
+			"Manufacturer",
+			"Model"
+		]
+	}
 }

@@ -7,16 +7,16 @@ import javax.annotation.Nonnull;
 
 public enum ValidationScenario {
 	InputConfigurationRequirements(
-			"Input MDLRoot Configuration",
+			"Input MDLRoot Requirements",
 			match -> "FaultyConfiguration".equals(match.getRule().getMetaData().get("ValidationMode"))),
 	DauInventory(
-			"Input DAU Inventory",
+			"Input DAU Inventory Requirements",
 			match -> "DAUInventory".equals(match.getRule().getMetaData().get("ValidationMode"))),
 	OutputConfigurationUsage(
-			"Output MDL Requirements Configuration",
+			"Output MDLRoot Usage Configuration",
 			match -> "ValidConfiguration".equals(match.getRule().getMetaData().get("ValidationMode"))),
 	InputConfigurationUsage(
-			"Input MDLRoot Configuration",
+			"Input MDLRoot Usage Configuration",
 			match -> "ValidConfiguration".equals(match.getRule().getMetaData().get("ValidationMode")));
 
 	public final String title;

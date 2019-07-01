@@ -13,7 +13,8 @@ import com.orientechnologies.orient.server.config.OServerConfiguration;
 import com.orientechnologies.orient.server.config.OServerConfigurationManager;
 import com.orientechnologies.orient.server.config.OServerEntryConfiguration;
 import com.orientechnologies.orient.server.network.protocol.binary.ONetworkProtocolBinary;
-import mil.darpa.immortals.schemaevolution.ProvidedData;
+import com.orientechnologies.orient.server.network.protocol.http.ONetworkProtocolHttpAbstract;
+import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.schemaevolution.TerminalStatus;
 import org.apache.tools.ant.util.FileUtils;
 
@@ -24,9 +25,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static mil.darpa.immortals.schemaevolution.ProvidedData.JARGS_ARTIFACT_DIRECTORY;
-import static mil.darpa.immortals.schemaevolution.ProvidedData.JARGS_EVAL_ODB;
 
 public class OdbEmbeddedServer {
 
@@ -86,7 +84,11 @@ public class OdbEmbeddedServer {
 		synchronized (lock) {
 			ODatabaseDocumentTx db = null;
 			try {
-				File dbBackupTarget = ProvidedTestingData.getTestDatabaseDirectory().resolve(scenario.getShortName() + "-backup.zip").toFile();
+				Path dbBackupDir = EnvironmentConfiguration.getArtifactDirectory().resolve("PRODUCED_TEST_DATABASES");
+				if (!Files.exists(dbBackupDir)) {
+					Files.createDirectory(dbBackupDir);
+				}
+				File dbBackupTarget = dbBackupDir.resolve(scenario.getShortName() + "-backup.zip").toFile();
 				System.out.println("Backing up constructed database to '" + dbBackupTarget + "'...");
 				db = new ODatabaseDocumentTx("plocal:/" + scenario.getDbName());
 				db.open("admin", "admin");
@@ -177,16 +179,19 @@ public class OdbEmbeddedServer {
 			server.startup(config);
 			server.activate();
 			int port = server.getListenerByProtocol(ONetworkProtocolBinary.class).getInboundAddr().getPort();
+			int webPort = server.getListenerByProtocol(ONetworkProtocolHttpAbstract.class).getInboundAddr().getPort();
 
-			if (scenario.getScenarioType().equals("Scenario5")) {
-				// These scenarios have complex XML graphs that can take a while to load so we will use
-				// The databases when available to speed up loading (which is only possible with a plocal connection).
-				init_embeddedRemoteAgnostic("127.0.0.1", port);
-			} else {
-				// Otherwise we will insert stuff manually using a remote connection
-				init_embeddedRemoteAgnostic("127.0.0.1", port);
-			}
-			System.out.println("Embedded OrientDB server started at 127.0.0.1:" + port);
+			init_embeddedRemoteAgnostic("127.0.0.1", port);
+
+
+			String displayMsg = "Embedded OrientDB is now ready for use. Details:\n" +
+					"\tHost: " + host + "\n" +
+					"\tPort: " + port + "\n" +
+					"\tWebsite: http://" + host + ":" + webPort + "/studio/index.html\n" +
+					"\tDatabases:\n" +
+					"\t\tremote:" + host + ":" + port + "/" + scenario.getDbName() + "\n";
+
+			System.out.println(displayMsg);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -282,13 +287,9 @@ public class OdbEmbeddedServer {
 				}
 			}
 
-			System.setProperty(JARGS_EVAL_ODB, "remote:" + host + ":" + port + "/" + scenario.getDbName());
+			System.setProperty(EnvironmentConfiguration.ODB_TARGET.javaArg, "remote:" + host + ":" + port + "/" + scenario.getDbName());
 
-			Path artifactDir = ProvidedData.getEvaluationArtifactDirectory().toAbsolutePath();
-			System.setProperty(JARGS_ARTIFACT_DIRECTORY, artifactDir.toString());
-			if (!Files.exists(artifactDir)) {
-				Files.createDirectory(artifactDir);
-			}
+			System.setProperty(EnvironmentConfiguration.ARTIFACT_DIRECTORY.javaArg, EnvironmentConfiguration.getArtifactDirectory().toString());
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);

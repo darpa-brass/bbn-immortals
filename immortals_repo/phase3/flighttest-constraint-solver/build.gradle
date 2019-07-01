@@ -50,6 +50,11 @@ sourceSets {
 			srcDirs = ['src/solver/java', 'src/solver/groovy']
 		}
 	}
+	devhelper {
+		java {
+			srcDirs = ['src/devhelper/java']
+		}
+	}
 }
 
 test {
@@ -123,4 +128,11 @@ dependencies {
 
 	testCompile sourceSets.solver.output
 	testCompile sourceSets.solver.compileClasspath
+
+	devhelperCompile sourceSets.main.output
+	devhelperCompile sourceSets.main.compileClasspath
+	devhelperCompile sourceSets.solver.output
+	devhelperCompile sourceSets.solver.compileClasspath
+
+	devhelperCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
 }

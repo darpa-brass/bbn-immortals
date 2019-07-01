@@ -1,7 +1,7 @@
 package mil.darpa.immortals.flitcons.mdl;
 
-import mil.darpa.immortals.flitcons.DataCollector;
-import mil.darpa.immortals.flitcons.DataSourceInterface;
+import mil.darpa.immortals.EnvironmentConfiguration;
+import mil.darpa.immortals.flitcons.AbstractDataSource;
 import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
@@ -10,7 +10,6 @@ import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
 import mil.darpa.immortals.flitcons.validation.DataValidator;
 import mil.darpa.immortals.flitcons.validation.ValidationDataContainer;
-import mil.darpa.immortals.schemaevolution.ProvidedData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,13 +20,18 @@ import static mil.darpa.immortals.flitcons.Utils.difGson;
 
 public class MdlDataValidator extends DataValidator {
 
-	private final DataCollector collector;
+	private final AbstractDataSource collector;
 
 	private boolean saveResults = true;
 
-	public MdlDataValidator(@Nullable File inputExcelFile, @Nullable File outputDrlFile, DataSourceInterface dataSource) {
+	public MdlDataValidator(@Nullable File inputExcelFile, @Nullable File outputDrlFile, AbstractDataSource dataSource) {
 		super(inputExcelFile, outputDrlFile);
-		this.collector = new DataCollector(dataSource);
+		this.collector = dataSource;
+	}
+
+	public MdlDataValidator(AbstractDataSource dataSource) {
+		super(null, null);
+		this.collector = dataSource;
 	}
 
 	public void setSaveResults(boolean value) {
@@ -53,7 +57,7 @@ public class MdlDataValidator extends DataValidator {
 				case InputConfigurationRequirements:
 					data = collector.getInterconnectedTransformedFaultyConfiguration(true);
 					outputFile = SOLVER_INPUT_REQUIREMENTS_FILE;
-					if (data.getDauRootNodes().stream().noneMatch(x -> x.getAttribute(FLAGGED_FOR_REPLACEMENT) != null)) {
+					if (data.getDauRootNodes().stream().noneMatch(x -> x.getAttributeNames().contains(FLAGGED_FOR_REPLACEMENT))) {
 						throw new AdaptationnException(ResultEnum.AdaptationNotRequired, "No DAUs have been flagged for replacement!");
 					}
 					break;
@@ -67,7 +71,7 @@ public class MdlDataValidator extends DataValidator {
 					break;
 
 				case OutputConfigurationUsage:
-					data = collector.getInterconnectedInputConfigurationUsage(true);
+					data = collector.getInterconnectedTransformedInputConfigurationUsage(true);
 					outputFile = SOLVER_OUTPUT_USAGE_FILE;
 					break;
 
@@ -80,7 +84,7 @@ public class MdlDataValidator extends DataValidator {
 
 			try {
 				if (saveResults) {
-					ProvidedData.storeFile(outputFile, dynamnicDataString.getBytes());
+					EnvironmentConfiguration.storeFile(outputFile, dynamnicDataString.getBytes());
 				}
 			} catch (Exception e) {
 				throw AdaptationnException.internal(e);

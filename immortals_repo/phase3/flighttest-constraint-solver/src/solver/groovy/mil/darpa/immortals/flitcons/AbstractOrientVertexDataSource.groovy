@@ -7,11 +7,12 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import com.tinkerpop.gremlin.groovy.Gremlin
 import com.tinkerpop.pipes.Pipe
 import com.tinkerpop.pipes.branch.LoopPipe
+import mil.darpa.immortals.EnvironmentConfiguration
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier
+import mil.darpa.immortals.flitcons.mdl.OrientVertexDataSource
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException
-import mil.darpa.immortals.schemaevolution.ProvidedData
 
-abstract class AbstractOrientVertexDataSource implements DataSourceInterface<OrientVertex> {
+abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientVertex> {
 
 	static {
 		Gremlin.load()
@@ -19,9 +20,14 @@ abstract class AbstractOrientVertexDataSource implements DataSourceInterface<Ori
 
 	private OrientGraph testFlightConfigurationGraph
 
-	AbstractOrientVertexDataSource() {
+	public AbstractOrientVertexDataSource() {
+		super()
 		Gremlin.defineStep("get", [Pipe, Pipe], { String className ->
 			_().in("Containment").has("@class", className)
+		})
+
+		Gremlin.defineStep("getParent", [Pipe, Pipe], { String className ->
+			_().out("Containment").has("@class", className)
 		})
 
 		Gremlin.defineStep("references", [Pipe, Pipe], { String className ->
@@ -71,12 +77,15 @@ abstract class AbstractOrientVertexDataSource implements DataSourceInterface<Ori
 		Gremlin.defineStep("fillPortmap", [Pipe, Pipe], { Map<Set<HierarchicalIdentifier>, Set<HierarchicalIdentifier>> portMeasurementMap ->
 			def tmp
 			_().has("@class", "PortMapping").sideEffect { tmp = it }
-					.get("PortRef").groupBy(portMeasurementMap)
+					.get("PortRef").as("dauPortRef").references("Port").getParent("Ports").getParent("Module").back("dauPortRef").groupBy(portMeasurementMap)
 					{
 						it
 					}
 					{
-						tmp.get("MeasurementRefs").get("MeasurementRef").references("Measurement").toList()
+						List l = tmp.get("MeasurementRefs").get("MeasurementRef").references("Measurement").toList()
+						l.addAll(tmp.get("DataStreamRefs").get("DataStreamRef").references("DataStream").toList())
+						l.addAll(tmp.get("PortRef").references("Port").as("devicePort").getParent("Ports").getParent("DeviceModule").back("devicePort").toList())
+						return l
 					}
 					{
 						Set<Object> result = new HashSet<>()
@@ -92,7 +101,7 @@ abstract class AbstractOrientVertexDataSource implements DataSourceInterface<Ori
 	}
 
 	@Override
-	LinkedHashMap<OrientVertex, List<OrientVertex>> collectRawDauData() {
+	protected LinkedHashMap<OrientVertex, List<OrientVertex>> collectRawInputData() {
 		LinkedHashMap<OrientVertex, List<OrientVertex>> rval = new LinkedHashMap<>()
 
 		Set<OrientVertex> dauVertices = testFlightConfigurationGraph.V.has("@class", "MDLRoot").get("NetworkDomain").get("Networks").get("Network").get("NetworkNodes").get("NetworkNode").as("dau").get("TmNSApps").get("TmNSApp").has("TmNSDAU").back("dau").toSet()
@@ -103,25 +112,29 @@ abstract class AbstractOrientVertexDataSource implements DataSourceInterface<Ori
 	}
 
 	@Override
-	LinkedHashMap<OrientVertex, List<OrientVertex>> collectRawMeasurementData() {
+	protected LinkedHashMap<OrientVertex, List<OrientVertex>> collectRawExternalData() {
 		LinkedHashMap<OrientVertex, List<OrientVertex>> rval = new LinkedHashMap<>()
 
-		Set<OrientVertex> dauVertices = testFlightConfigurationGraph.V.has("@class", "MDLRoot").get("MeasurementDomains").get("MeasurementDomain").get("Measurements").get("Measurement").toSet()
-		for (OrientVertex dauVertex : dauVertices) {
+		Set<OrientVertex> measurementVertices = testFlightConfigurationGraph.V.has("@class", "MDLRoot").get("MeasurementDomains").get("MeasurementDomain").get("Measurements").get("Measurement").toSet()
+		measurementVertices.addAll(testFlightConfigurationGraph.V.has("@class", "MDLRoot").get("MeasurementDomains").get("MeasurementDomain").get("DataStreams").get("DataStream").toSet())
+		measurementVertices.addAll(testFlightConfigurationGraph.V.has("@class", "MDLRoot").get("NetworkDomain").get("Networks").get("Network").get("Devices").get("Device").toSet())
+
+
+		for (OrientVertex dauVertex : measurementVertices) {
 			rval.put(dauVertex, testFlightConfigurationGraph.V.has("@rid", dauVertex.getId().toString()).iterateObjectTree().toList())
 		}
 		return rval
 	}
 
 	@Override
-	Map<OrientVertex, Set<OrientVertex>> collectRawDauMeasurementIndirectRelations() {
+	protected Map<OrientVertex, Set<OrientVertex>> collectRawInputExternalDataIndirectRelations() {
 		Map<OrientVertex, Set<OrientVertex>> indirectRelations = new HashMap<>()
 		testFlightConfigurationGraph.V.fillPortmap(indirectRelations).iterate()
 		return indirectRelations
 	}
 
 	@Override
-	LinkedHashMap<OrientVertex, List<OrientVertex>> collectRawDauInventoryData() {
+	protected LinkedHashMap<OrientVertex, List<OrientVertex>> collectRawInventoryData() {
 		LinkedHashMap<OrientVertex, List<OrientVertex>> rval = new LinkedHashMap<>()
 
 		Set<OrientVertex> dauVertices = testFlightConfigurationGraph.V.has("@class", "DAUInventory").get("NetworkNode").toSet()
@@ -190,12 +203,12 @@ abstract class AbstractOrientVertexDataSource implements DataSourceInterface<Ori
 	@Override
 	void init() {
 		if (testFlightConfigurationGraph == null) {
-			System.out.println("Connecting to '" + ProvidedData.odbEvaluationTarget + "'.")
+			System.out.println("Connecting to '" + EnvironmentConfiguration.odbTarget + "'.")
 
 			testFlightConfigurationGraph = new OrientGraph(
-					ProvidedData.odbEvaluationTarget,
-					ProvidedData.odbEvaluationUser,
-					ProvidedData.odbEvaluationPassword)
+					EnvironmentConfiguration.odbTarget,
+					EnvironmentConfiguration.odbUser,
+					EnvironmentConfiguration.odbPassword)
 //			testFlightConfigurationGraph.setKeepInMemoryReferences(true)
 		}
 	}

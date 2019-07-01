@@ -1,10 +1,10 @@
 package mil.darpa.immortals.flitcons;
 
+import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.*;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
-import mil.darpa.immortals.schemaevolution.ProvidedData;
 
 import javax.annotation.Nonnull;
 import javax.script.ScriptEngine;
@@ -40,8 +40,8 @@ public class SimpleSolver implements SolverInterface {
 		DynamicObjectContainer inventoryClone = inventory.duplicate();
 
 		try {
-			ProvidedData.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfigurationClone).getBytes());
-			ProvidedData.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(inventoryClone).getBytes());
+			EnvironmentConfiguration.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfigurationClone).getBytes());
+			EnvironmentConfiguration.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(inventoryClone).getBytes());
 		} catch (Exception e) {
 			throw AdaptationnException.internal(e);
 		}
@@ -61,7 +61,7 @@ public class SimpleSolver implements SolverInterface {
 			}
 
 			String outValue = difGson.toJson(solution);
-			String outputPath = ProvidedData.storeFile(SWAP_RESPONSE, outValue.getBytes());
+			String outputPath = EnvironmentConfiguration.storeFile(SWAP_RESPONSE, outValue.getBytes());
 
 			FileReader fr = new FileReader(new File(outputPath));
 			return difGson.fromJson(fr, DynamicObjectContainer.class);

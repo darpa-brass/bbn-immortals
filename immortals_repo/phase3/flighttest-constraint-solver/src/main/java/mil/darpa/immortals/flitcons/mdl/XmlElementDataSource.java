@@ -1,8 +1,7 @@
 package mil.darpa.immortals.flitcons.mdl;
 
+import mil.darpa.immortals.flitcons.AbstractDataSource;
 import mil.darpa.immortals.flitcons.Configuration;
-import mil.darpa.immortals.flitcons.DataSourceInterface;
-import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.datatypes.DataType;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
@@ -10,7 +9,6 @@ import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifie
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
 import nu.xom.*;
-import org.apache.commons.lang.NotImplementedException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,36 +19,31 @@ import java.util.stream.Collectors;
 
 import static mil.darpa.immortals.flitcons.Utils.ATTRIBUTE_DEBUG_LABEL_IDENTIFIER;
 
-public class XmlElementDataSource implements DataSourceInterface<Node> {
+public class XmlElementDataSource extends AbstractDataSource<Node> {
 
 	public XmlElementDataSource(@Nonnull File inputXmlFile) {
+		super();
 		this.xmlFile = inputXmlFile;
 	}
 
 	private final File xmlFile;
 	private Document xmlDoc;
-	private Set<String> emptyValuesToDefaultToTrue;
+	private String primaryNode;
 
 	private static final XPathContext mdlContext = new XPathContext("mdl", "http://www.wsmr.army.mil/RCC/schemas/MDL");
 
-
 	@Override
-	public synchronized void init() {
+	protected synchronized void init() {
 		try {
 			if (xmlDoc == null) {
 				Builder parser = new Builder();
 				xmlDoc = parser.build(xmlFile);
-
-				emptyValuesToDefaultToTrue = Configuration.getInstance().dataCollectionInstructions.valuesToDefaultToTrue;
+				Configuration.PropertyCollectionInstructions config = Configuration.getInstance().dataCollectionInstructions;
+				primaryNode = config.primaryNode;
 			}
 		} catch (IOException | ParsingException e) {
 			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, e);
 		}
-	}
-
-	@Override
-	public void commit() {
-		throw new NotImplementedException("Updating of XML data is currently not supported!");
 	}
 
 	@Override
@@ -83,7 +76,7 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 	}
 
 	@Override
-	public LinkedHashMap<Node, List<Node>> collectRawDauInventoryData() {
+	protected LinkedHashMap<Node, List<Node>> collectRawInventoryData() {
 		init();
 		if (!isDauInventory()) {
 			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Attempted to get the DAU Inventory from a document that does not have a DAUInventory root!");
@@ -92,27 +85,7 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 	}
 
 	@Override
-	public void update_rewireNode(@Nonnull Node originalNode, @Nonnull Node replacementNode) {
-		throw new NotImplementedException("Updating of XML data is currently not supported!");
-	}
-
-	@Override
-	public void update_removeNodeTree(Node node) {
-		throw new NotImplementedException("Updating of XML data is currently not supported!");
-	}
-
-	@Override
-	public void update_insertNodeAsChild(@Nonnull Node newNode, @Nonnull Node parentNode) {
-		throw new NotImplementedException("Updating of XML data is currently not supported!");
-	}
-
-	@Override
-	public void update_NodeAttribute(@Nonnull Node node, @Nonnull String attributeName, @Nonnull Object attributeValue) {
-		throw new NotImplementedException("Updating of XML data is currently not supported!");
-	}
-
-	@Override
-	public LinkedHashMap<Node, List<Node>> collectRawDauData() {
+	protected LinkedHashMap<Node, List<Node>> collectRawInputData() {
 		init();
 		if (!isInputConfiguration()) {
 			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Attempted to get the MDLRoot from a document that does not have an MDLRoot root!");
@@ -121,30 +94,57 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 	}
 
 	@Override
-	public LinkedHashMap<Node, List<Node>> collectRawMeasurementData() {
+	protected LinkedHashMap<Node, List<Node>> collectRawExternalData() {
 		init();
 		if (!isInputConfiguration()) {
-			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Attempted to get the Measurements from a document that does not have an MDLRoot root!");
+			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Attempted to get the Measurements or DataStreams from a document that does not have an MDLRoot root!");
 		}
 
-		return collectNodeTrees(xmlDoc, "//mdl:MDLRoot/mdl:MeasurementDomains/mdl:MeasurementDomain/mdl:Measurements/mdl:Measurement");
+		LinkedHashMap<Node, List<Node>> measurementData = collectNodeTrees(xmlDoc, "//mdl:MDLRoot/mdl:MeasurementDomains/mdl:MeasurementDomain/mdl:Measurements/mdl:Measurement");
+		measurementData.putAll(collectNodeTrees(xmlDoc, "//mdl:MDLRoot/mdl:MeasurementDomains/mdl:MeasurementDomain/mdl:DataStreams/mdl:DataStream"));
+		measurementData.putAll(collectNodeTrees(xmlDoc, "//mdl:MDLRoot/mdl:NetworkDomain/mdl:Networks/mdl:Network/mdl:Devices/mdl:Device"));
+		return measurementData;
 	}
 
-	private static Element getElementById(@Nonnull Document doc, @Nonnull String id) {
-		Nodes nodes = doc.query("//*[@ID='" + id + "']", mdlContext);
-		if (nodes.size() != 1) {
-			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Expected one and only one node with id '" + id + "'!");
-		}
+	/**
+	 * Returns a mapping of the nodes referenced by the IDREF value of the input nodes to the input nodes
+	 *
+	 * @param doc        the source document
+	 * @param inputNodes the input nodes containing "IDREF" fields
+	 * @return
+	 */
+	private static Map<Element, Node> getIdrefElementsById(@Nonnull Document doc, @Nonnull Nodes inputNodes) {
+		Map<Element, Node> rval = new HashMap<>();
+		for (Node inputNode : inputNodes) {
+			if (!(inputNode instanceof Element)) {
+				throw AdaptationnException.input("Node type with an IDREF tag should be an element!");
+			}
+			Element element = (Element) inputNode;
+			String id = element.getAttributeValue("IDREF");
+			if (id == null) {
+				throw AdaptationnException.internal("No IDREF found on node!");
+			}
 
-		Node node = nodes.get(0);
-		if (!(node instanceof Element)) {
-			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Node with id '" + id + "' must be an element!");
+			// TODO: Replace doc with node doc
+			Nodes nodes = doc.query("//*[@ID='" + id + "']", mdlContext);
+			if (nodes.size() != 1) {
+				throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Expected one and only one node with id '" + id + "'!");
+			}
+
+			Node node = nodes.get(0);
+			if (!(node instanceof Element)) {
+				throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Node with id '" + id + "' must be an element!");
+			}
+			rval.put((Element) node, inputNode);
 		}
-		return (Element) node;
+		return rval;
 	}
 
+	/**
+	 * Returns a map of the primary node's PortRef object to the related secondary node objects
+	 */
 	@Override
-	public Map<Node, Set<Node>> collectRawDauMeasurementIndirectRelations() {
+	protected Map<Node, Set<Node>> collectRawInputExternalDataIndirectRelations() {
 		init();
 		Map<Node, Set<Node>> rval = new HashMap<>();
 
@@ -155,30 +155,43 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 		Nodes portMappingNodes = xmlDoc.query("//mdl:MDLRoot/mdl:NetworkDomain/mdl:Networks/mdl:Network/mdl:PortMappings/mdl:PortMapping", mdlContext);
 
 		for (Node portMappingNode : portMappingNodes) {
-			Nodes measurementRefNodes = portMappingNode.query("mdl:MeasurementRefs/mdl:MeasurementRef", mdlContext);
-			if (measurementRefNodes.size() != 1) {
-				throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Expected one and only one MeasurementRef value but found " + measurementRefNodes.size() + "!");
-			}
+			Set<Node> secondaryPorts = new HashSet<>();
+			Node primaryPortref = null;
 
-			Node measurementRefNode = measurementRefNodes.get(0);
+			secondaryPorts.addAll(getIdrefElementsById(xmlDoc, portMappingNode.query("mdl:MeasurementRefs/mdl:MeasurementRef", mdlContext)).keySet());
+			secondaryPorts.addAll(getIdrefElementsById(xmlDoc, portMappingNode.query("mdl:DataStreamRefs/mdl:DataStreamRef", mdlContext)).keySet());
+			Nodes portRefObject = portMappingNode.query("mdl:PortRef", mdlContext);
+			Map<Element, Node> portToPortRefMap = getIdrefElementsById(xmlDoc, portMappingNode.query("mdl:PortRef", mdlContext));
 
-			if (!(measurementRefNode instanceof Element)) {
-				throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "MeasurementRef node must be an element!");
-			}
-			String idref = ((Element) measurementRefNode).getAttributeValue("IDREF");
+			for (Element port : portToPortRefMap.keySet()) {
+				boolean isPrimaryNode = false;
+				Element parent = (Element) port.getParent();
 
-			Element measurement = getElementById(xmlDoc, idref);
-
-			Nodes portRefs = portMappingNode.query("mdl:PortRef", mdlContext);
-			for (Node portRef : portRefs) {
-				if (!(portRef instanceof Element)) {
-					throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "PortRef node  must be an element!");
+				while (!isPrimaryNode && parent != null) {
+					if (parent.getLocalName().equals(primaryNode)) {
+						isPrimaryNode = true;
+					} else {
+						ParentNode parentNode = parent.getParent();
+						if (parentNode instanceof Element) {
+							parent = (Element) parentNode;
+						} else {
+							parent = null;
+						}
+					}
 				}
 
-				Set<Node> measurementSet = new HashSet<>();
-				measurementSet.add(measurement);
-				rval.put(portRef, measurementSet);
+				if (isPrimaryNode) {
+					primaryPortref = portToPortRefMap.get(port);
+				} else {
+					secondaryPorts.add(port);
+				}
 			}
+
+			if (primaryPortref == null) {
+				throw AdaptationnException.internal("No port that is a child of a NetworkNode could be found in the PortMapping!!");
+			}
+
+			rval.put(primaryPortref, secondaryPorts);
 		}
 		return rval;
 	}
@@ -202,7 +215,7 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 	}
 
 	@Override
-	public synchronized HierarchicalDataContainer createContainer(@Nonnull DataType dataType, @Nonnull LinkedHashMap<Node, List<Node>> input, @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions) {
+	protected synchronized HierarchicalDataContainer createContainer(@Nonnull DataType dataType, @Nonnull LinkedHashMap<Node, List<Node>> input, @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions) {
 		LinkedHashMap<HierarchicalIdentifier, HierarchicalData> identifierDataMap = new LinkedHashMap<>();
 		LinkedHashMap<HierarchicalData, List<HierarchicalData>> rootChildMap = new LinkedHashMap<>();
 
@@ -262,8 +275,7 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 		return new HierarchicalDataContainer(dataType, identifierDataMap, rootChildMap);
 	}
 
-
-	private static void splitChildrenByClass(Node parentNode, Set<Element> elementNodes, Set<Text> textNodes, Set<String> emptyValuesToDefaultToTrue) {
+	private void splitChildrenByClass(Node parentNode, Set<Element> elementNodes, Set<Text> textNodes) {
 		int childCount = parentNode.getChildCount();
 
 		for (int i = 0; i < childCount; i++) {
@@ -276,8 +288,8 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 
 			} else if (child instanceof Element) {
 				Element element = (Element) child;
-				if (emptyValuesToDefaultToTrue.contains(element.getLocalName()) && element.getChildCount() == 0) {
-					element.appendChild("true");
+				if (element.getChildCount() == 0) {
+					element.appendChild(new Text(nullValuePlaceholder));
 				}
 				elementNodes.add((Element) child);
 
@@ -308,14 +320,13 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 		}
 	}
 
-	private static void gatherProperties(@Nonnull Element src,
+	private void gatherProperties(@Nonnull Element src,
 	                                     @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions,
 	                                     @Nonnull Map<String, Object> targetPropertyMap,
 	                                     @Nonnull Map<String, Object> targetDebugPropertyMap,
 	                                     @Nonnull Set<HierarchicalIdentifier> targetOutboundReferenceSet) {
 		Set<String> interestedProps = collectionInstructions.collectedChildProperties.get(src.getQualifiedName());
 		Set<String> debugPropSet = collectionInstructions.collectedDebugProperties.get(src.getQualifiedName());
-		Set<String> valuesToDefaultToTrue = collectionInstructions.valuesToDefaultToTrue;
 
 		String debugLabel = null;
 
@@ -335,8 +346,8 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 				} else if (interestedProps != null && interestedProps.contains(attrLabel)) {
 					// And add them to their respective lists if they match
 
-					if ((attrValue == null || attrValue.equals("")) && valuesToDefaultToTrue.contains(attrLabel)) {
-						targetPropertyMap.put(attrLabel, true);
+					if (attrValue == null) {
+						targetPropertyMap.put(attrLabel, nullValuePlaceholder);
 					} else {
 						targetPropertyMap.put(attrLabel, attrValue);
 					}
@@ -348,8 +359,8 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 						debugLabel += "," + attrLabel + "=" + attrValue;
 					}
 					// And add them to their respective lists if they match
-					if ((attrValue == null || attrValue.equals("")) && valuesToDefaultToTrue.contains(attrLabel)) {
-						targetDebugPropertyMap.put(attrLabel, true);
+					if (attrValue == null) {
+						targetDebugPropertyMap.put(attrLabel, nullValuePlaceholder);
 					} else {
 						targetDebugPropertyMap.put(attrLabel, attrValue);
 					}
@@ -362,7 +373,7 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 		}
 	}
 
-	private static void gatherInboundReferences(@Nonnull Element src, @Nonnull Set<HierarchicalIdentifier> targetSet) {
+	private void gatherInboundReferences(@Nonnull Element src, @Nonnull Set<HierarchicalIdentifier> targetSet) {
 		Attribute idAttr = src.getAttribute("ID");
 
 		if (idAttr != null) {
@@ -371,18 +382,18 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 				if (!(node instanceof Element)) {
 					throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Reference source should be an Element!");
 				}
-				targetSet.add(createIdentifier((Element) node));
+				targetSet.add(createIdentifier(node));
 
 			}
 		}
 	}
 
-	private static void gatherAttributeElementsAndChildren(@Nonnull Set<Element> elementNodes,
-	                                                       @Nullable Set<String> interestedProperties,
-	                                                       @Nullable Set<String> debugProperties,
-	                                                       @Nonnull Map<String, Object> targetPropertyMap,
-	                                                       @Nonnull Map<String, Object> targetDebugPropertyMap,
-	                                                       @Nonnull Map<String, Set<HierarchicalIdentifier>> targetCollectedChildrenMap) {
+	private void gatherAttributeElementsAndChildren(@Nonnull Set<Element> elementNodes,
+	                                                @Nullable Set<String> interestedProperties,
+	                                                @Nullable Set<String> debugProperties,
+	                                                @Nonnull Map<String, Object> targetPropertyMap,
+	                                                @Nonnull Map<String, Object> targetDebugPropertyMap,
+	                                                @Nonnull Map<String, Set<HierarchicalIdentifier>> targetCollectedChildrenMap) {
 		// Then, for all children nodes
 		for (Element childElement : elementNodes) {
 			// If it is a Text-only node that was omitted in the above textNodes.size == 1 and
@@ -413,8 +424,7 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 		}
 	}
 
-	@Override
-	public synchronized HierarchicalData createData(@Nonnull Node srcNode, boolean isRootObject, @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions) {
+	private synchronized HierarchicalData createData(@Nonnull Node srcNode, boolean isRootObject, @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions) {
 
 		if (!(srcNode instanceof Element)) {
 			throw AdaptationnException.internal("Cannot create data from a Text node!");
@@ -440,12 +450,12 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 			throw AdaptationnException.internal("Parent node must be an element!");
 		}
 
-		HierarchicalIdentifier parent = isRootObject ? null : createIdentifier((Element) parentNode);
+		HierarchicalIdentifier parent = isRootObject ? null : createIdentifier(parentNode);
 
 		// Split out the Element and Text child nodes
 		Set<Element> elementNodes = new HashSet<>();
 		Set<Text> textNodes = new HashSet<>();
-		splitChildrenByClass(src, elementNodes, textNodes, emptyValuesToDefaultToTrue);
+		splitChildrenByClass(src, elementNodes, textNodes);
 		int attributeCount = src.getAttributeCount();
 
 		if (textNodes.size() == 0) {
@@ -510,28 +520,22 @@ public class XmlElementDataSource implements DataSourceInterface<Node> {
 		);
 	}
 
-	private static HierarchicalIdentifier createIdentifier(@Nonnull Element src) {
-		Attribute attr = src.getAttribute("ID");
+	@Override
+	protected HierarchicalIdentifier createIdentifier(@Nonnull Node src) {
+
+		if (!(src instanceof Element)) {
+			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Value must be an XML Element!");
+		}
+
+		Element ele = (Element) src;
+
+		Attribute attr = ele.getAttribute("ID");
 		// Adding the I prevents it from being serialized into a number and failing validation
 		if (attr == null) {
-			return HierarchicalIdentifier.produceTraceableNode(Integer.toString(src.hashCode()), src.getQualifiedName());
+			return HierarchicalIdentifier.produceTraceableNode(Integer.toString(src.hashCode()), ele.getQualifiedName());
 		} else {
-			return HierarchicalIdentifier.createReferenceNode(attr.getValue(), src.getQualifiedName());
+			return HierarchicalIdentifier.createReferenceNode(attr.getValue(), ele.getQualifiedName());
 		}
-	}
-
-	public Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> convertOneToManyMap(@Nonnull Map<Node, Set<Node>> indirectRelations) {
-		Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> rval = new HashMap<>();
-
-		for (Map.Entry<Node, Set<Node>> entry : indirectRelations.entrySet()) {
-			if (!(entry.getKey() instanceof Element)) {
-				throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Value must be an XML Element!");
-			}
-			HierarchicalIdentifier primaryNode = createIdentifier((Element) entry.getKey());
-			Set<HierarchicalIdentifier> relationSet = rval.computeIfAbsent(primaryNode, k -> new HashSet<>());
-			relationSet.addAll(entry.getValue().stream().map(x -> createIdentifier((Element) x)).collect(Collectors.toSet()));
-		}
-		return rval;
 	}
 
 	@Override

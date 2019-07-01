@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class HierarchicalDataTransformer {
 
@@ -18,8 +19,6 @@ public class HierarchicalDataTransformer {
 		Requirements,
 		Interconnection
 	}
-
-//	private final Configuration.TransformationInstructions transformInstructions;
 
 	private final HierarchicalDataContainer primaryData;
 
@@ -34,7 +33,6 @@ public class HierarchicalDataTransformer {
 	                                   @Nullable HierarchicalDataContainer externalData,
 	                                   @Nullable Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> primaryExternalRelationsMap) {
 		this.primaryData = primaryData;
-//		this.transformInstructions = Configuration.getInstance().transformation;
 		this.preserveDebugRelations = preserveDebugRelations;
 		this.externalData = externalData;
 		this.primaryExternalRelationsMap = primaryExternalRelationsMap;
@@ -74,7 +72,7 @@ public class HierarchicalDataTransformer {
 	}
 
 	private static void trimIgnoredNodeTrees(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
-		for (List<String> originalList : instructions.ignoredNodes) {
+		for (List<String> originalList : instructions.ignoredNodePaths) {
 
 			List<String> pathList = new ArrayList<>(originalList);
 			String tail = pathList.remove(pathList.size() - 1);
@@ -91,7 +89,7 @@ public class HierarchicalDataTransformer {
 	}
 
 	private static void trimIgnoredAttributes(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
-		for (List<String> originalList : instructions.ignoredAttributes) {
+		for (List<String> originalList : instructions.ignoredAttributePaths) {
 
 			List<String> pathList = new ArrayList<>(originalList);
 			String tail = pathList.remove(pathList.size() - 1);
@@ -104,16 +102,67 @@ public class HierarchicalDataTransformer {
 		data.validate();
 	}
 
-	private static void renameAttributes(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
-		for (String targetAttributeName : instructions.renameAttributes.keySet()) {
-			List<String> nodePath = new LinkedList<>(instructions.renameAttributes.get(targetAttributeName));
-			String tail = nodePath.remove(nodePath.size() - 1);
-			Set<HierarchicalData> nodes = data.getNodesAtPath(nodePath);
+	private static void remapNodesAndAttributes(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
+		for (Configuration.ValueRemappingInstructions remappingInstructions : instructions.valueRemappingInstructions) {
+			Set<HierarchicalData> nodes = data.getNodesAtPath(remappingInstructions.parentPath);
 			for (HierarchicalData node : nodes) {
-				Object val;
-				if ((val = node.getAttribute(tail)) != null) {
-					node.removeAttribute(tail);
-					node.addAttribute(HierarchicalIdentifier.createBlankNode(), targetAttributeName, val);
+				String originalAttributeName = remappingInstructions.childAttributeName;
+				String newAttributeName = remappingInstructions.optionalNewChildAttributeName;
+				Object newAttributeValue = null;
+				if (node.getAttributeNames().contains(originalAttributeName)) {
+					if (node.getAttributeNames().contains(newAttributeName)) {
+						String nodeIdentifier = String.join(".", remappingInstructions.parentPath);
+						throw new RuntimeException("Node '" + nodeIdentifier + "' already has an attribute named '" + newAttributeName + "'!");
+					}
+
+					if (remappingInstructions.optionalChildAttributeValueRemap != null) {
+
+						Object attributeValueObject = node.getAttribute(originalAttributeName);
+						if (attributeValueObject == null) {
+							attributeValueObject = "";
+						} else if (!(attributeValueObject instanceof String)) {
+							String nodeIdentifier = String.join(".", remappingInstructions.parentPath);
+							throw new RuntimeException("Node '" + nodeIdentifier + "' attribute '" + originalAttributeName + "' value type of '" + attributeValueObject.getClass().getCanonicalName() + "' not yet supported for remapping!");
+						}
+						String attributeValue = (String) attributeValueObject;
+
+						if (remappingInstructions.optionalChildAttributeValueRemap.containsKey(attributeValue)) {
+							newAttributeValue = remappingInstructions.optionalChildAttributeValueRemap.get(attributeValue);
+						} else {
+							String nodeIdentifier = String.join(".", remappingInstructions.parentPath);
+							throw new RuntimeException("Node '" + nodeIdentifier + "' attribute '" + originalAttributeName + "' value of '" + attributeValue + "' doesn't have a matching remapping value!");
+						}
+					}
+
+					if (remappingInstructions.optionalChildAttributeValueSelectionRemap != null) {
+
+						Object attributeValueObject = node.getAttribute(originalAttributeName);
+						if (attributeValueObject == null) {
+							attributeValueObject = "";
+						} else if (!(attributeValueObject instanceof String)) {
+							String nodeIdentifier = String.join(".", remappingInstructions.parentPath);
+							throw new RuntimeException("Node '" + nodeIdentifier + "' attribute '" + originalAttributeName + "' value type of '" + attributeValueObject.getClass().getCanonicalName() + "' not yet supported for remapping!");
+						}
+						String attributeValue = (String) attributeValueObject;
+
+						if (remappingInstructions.optionalChildAttributeValueSelectionRemap.containsKey(attributeValue)) {
+							newAttributeValue = remappingInstructions.optionalChildAttributeValueSelectionRemap.get(attributeValue);
+						} else {
+							String nodeIdentifier = String.join(".", remappingInstructions.parentPath);
+							throw new RuntimeException("Node '" + nodeIdentifier + "' attribute '" + originalAttributeName + "' value of '" + attributeValue + "' doesn't have a matching remapping value!");
+						}
+					}
+
+
+				} else {
+					newAttributeValue = remappingInstructions.optionalValueToCreateIfMissing;
+				}
+
+				if (newAttributeName != null || newAttributeValue != null) {
+					newAttributeName = newAttributeName == null ? originalAttributeName : newAttributeName;
+					newAttributeValue = newAttributeValue == null ? node.getAttribute(originalAttributeName) : newAttributeValue;
+					node.removeAttribute(originalAttributeName);
+					node.addAttribute(HierarchicalIdentifier.createBlankNode(), newAttributeName, newAttributeValue);
 				}
 			}
 		}
@@ -128,32 +177,11 @@ public class HierarchicalDataTransformer {
 		for (HierarchicalData root : data.getDauRootNodes()) {
 			collectNodesDFS(root, nodesToRemove, false, a ->
 					{
-						if (instructions.ignoreParentsWithoutProperties.containsKey(a.getNodeType())) {
-
-							HierarchicalData currentNode = a;
-							Iterator<String> targetPath = instructions.ignoreParentsWithoutProperties.get(a.getNodeType()).iterator();
-
-							while (targetPath.hasNext()) {
-								String childNodeType = targetPath.next();
-
-								if (targetPath.hasNext()) {
-									Iterator<HierarchicalData> childrenIterator = currentNode.getChildrenDataIterator(childNodeType);
-
-									if (!childrenIterator.hasNext()) {
-										return true;
-									} else {
-										currentNode = childrenIterator.next();
-
-										if (childrenIterator.hasNext()) {
-											throw AdaptationnException.input("Multiple children of the same type are not currently supported for invalidating nodes!");
-										}
-									}
-
-								} else {
-									if (currentNode.getAttribute(childNodeType) == null) {
-										return true;
-									}
-								}
+						for (Configuration.ParentChildAttributeRelation relation : instructions.ignoreParentsWithoutChildAttributes) {
+							if (a.pathMatches(relation.parentPath)) {
+								HierarchicalData childNode = null;
+								return !((childNode = a.getChildNodeByPath(relation.childPath)) != null &&
+										childNode.getAttribute(relation.attribute) != null);
 							}
 						}
 						return false;
@@ -206,6 +234,25 @@ public class HierarchicalDataTransformer {
 		data.validate();
 	}
 
+	private static void pushAttributesIntoChildren(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
+		for (Configuration.ParentChildAttributeRelation relation : instructions.transferAttributeToChildren) {
+			Set<HierarchicalData> sources = data.getNodesAtPath(relation.parentPath);
+			for (HierarchicalData source : sources) {
+				Set<HierarchicalData> children = source.getChildNodesByPath(relation.childPath);
+
+				Object attribute = source.getAttribute(relation.attribute);
+
+				if (attribute != null) {
+					if (children.size() > 0) {
+						for (HierarchicalData child : children) {
+							child.addAttribute(source.node, relation.attribute, attribute);
+						}
+						source.removeAttribute(relation.attribute);
+					}
+				}
+			}
+		}
+	}
 
 	private static void tagData(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
 		Set<String> tagNodes = instructions.taggedNodes;
@@ -287,10 +334,12 @@ public class HierarchicalDataTransformer {
 		trimOmittedNodeTrees(data, instructions);
 		trimIgnoredNodeTrees(data, instructions);
 		trimIgnoredAttributes(data, instructions);
-		renameAttributes(data, instructions);
+		injectCalculations(data, instructions);
+		remapNodesAndAttributes(data, instructions);
+		pushAttributesIntoChildren(data, instructions);
 		squashData(data, instructions, preserveDebugRelations);
 		trimEmptyBranches(data);
-		injectCalculations(data, instructions);
+
 		tagData(data, instructions);
 	}
 
@@ -382,31 +431,41 @@ public class HierarchicalDataTransformer {
 	}
 
 	private static void injectCalculations(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
-		Map<String, List<Configuration.Calculation>> calculationsMap = instructions.calculations;
-
+		LinkedList<Configuration.Calculation> calculationsList = instructions.calculations;
 		Iterator<HierarchicalData> originalDataIter = data.getDataIterator();
-
 		Map<HierarchicalIdentifier, Set<Configuration.Calculation>> equationsToInject = new HashMap<>();
 
 		while (originalDataIter.hasNext()) {
 			HierarchicalData node = originalDataIter.next();
 
-			List<Configuration.Calculation> calculations;
-			if ((calculations = calculationsMap.get(node.getNodeType())) != null) {
-				for (Configuration.Calculation calculation : calculations) {
-					if (node.getAttribute(calculation.targetValueIdentifier) == null && !node.getChildrenDataIterator(calculation.targetValueIdentifier).hasNext()) {
-						for (String substitutionValue : calculation.substitutionValues) {
-							if (node.getAttribute(substitutionValue) == null && !node.getChildrenDataIterator(substitutionValue).hasNext()) {
+			// Filter the calculations to ones that have a corresponding parent node path
+			List<Configuration.Calculation> applicableCalculations = calculationsList.stream().filter(x ->
+					node.pathMatches(x.parentPath)).collect(Collectors.toList());
+
+			for (Configuration.Calculation calculation : applicableCalculations) {
+
+				if (node.getAttribute(calculation.parentTargetValueIdentifier) == null && !node.getChildrenDataIterator(calculation.parentTargetValueIdentifier).hasNext()) {
+					for (Configuration.NodeAttributeRelation childRelation : calculation.children) {
+						String substitutionValue = childRelation.attribute;
+
+						if (node.getAttribute(substitutionValue) == null) {
+							HierarchicalData childNode = null;
+
+							if ((childNode = node.getChildNodeByPath(childRelation.nodePath)) == null ||
+									childNode.getAttribute(substitutionValue) == null) {
 								throw AdaptationnException.internal(
 										"A node of type '" + node.getNodeType() +
-												"' has a calculation to determine the value of '" + calculation.targetValueIdentifier +
-												"' but is missing value '" + substitutionValue + "' necessary to compute it!");
+												"' has a calculation to determine the value of '" + calculation.parentTargetValueIdentifier +
+												"' but is missing value '" + substitutionValue + "' in child [" +
+												String.join(",", childRelation.nodePath) + "] to compute it!");
 							}
+
 						}
-						Set<Configuration.Calculation> equations = equationsToInject.computeIfAbsent(node.node, k -> new HashSet<>());
-						equations.add(calculation);
-						break;
+
 					}
+					Set<Configuration.Calculation> equations = equationsToInject.computeIfAbsent(node.node, k -> new HashSet<>());
+					equations.add(calculation);
+					break;
 				}
 			}
 		}
@@ -414,7 +473,7 @@ public class HierarchicalDataTransformer {
 		for (HierarchicalIdentifier node : equationsToInject.keySet()) {
 			Set<Configuration.Calculation> calcs = equationsToInject.get(node);
 			for (Configuration.Calculation calc : calcs) {
-				data.injectEquation(node, calc.targetValueIdentifier, new Equation(calc.equation));
+				data.injectEquation(node, calc.parentTargetValueIdentifier, new Equation(calc.equation));
 			}
 		}
 	}

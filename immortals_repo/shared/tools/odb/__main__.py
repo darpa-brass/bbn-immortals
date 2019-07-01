@@ -17,7 +17,6 @@ try:
     scenario_names = ','.join(scenarios.keys())
 except:
     scenarios = None  # type: None
-    print('whoops')
 
 
 def init_parser(parent_parser=None):
@@ -102,7 +101,6 @@ def main(parser_args):
                        )
 
     else:
-        print("NOPENOPE")
         display_msg = ('The existing OrientDB server has had new databases added to it. Details:\n' +
                        '\tHost: ' + host + '\n' +
                        '\tPort: ' + str(port) + '\n' +

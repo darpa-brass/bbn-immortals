@@ -174,7 +174,11 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 
 		} else if (existingDataIdentifierMap.containsKey(sourceData.node)) {
 			if (sourceData.node.referenceIdentifier != null) {
-				throw AdaptationnException.input("Multiple references to the ID '" + sourceData.node.referenceIdentifier + "' detected!");
+				// TODO: Enforce proper cardinality
+				// It already exists and is expected to be referenced more than once;
+//				throw AdaptationnException.input("Multiple references to the ID '" + sourceData.node.referenceIdentifier + "' detected!");
+				return;
+
 			} else {
 				throw AdaptationnException.internal("Already exists!");
 			}
@@ -385,7 +389,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 						}
 					}
 				} else {
-					throw AdaptationnException.internal("Multiple '" + parentNode.getNodeType() + "/" + childNode.getNodeType() + key + "attributes found that are not flagged for combining!");
+					throw AdaptationnException.internal("Multiple '" + parentNode.getNodeType() + "/" + childNode.getNodeType() + "/" + key + " attributes found that are not flagged for combining!");
 				}
 			} else {
 				parentNode.addAttribute(childNode.node, key, value);

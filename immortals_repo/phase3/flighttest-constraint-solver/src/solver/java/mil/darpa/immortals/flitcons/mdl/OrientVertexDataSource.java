@@ -15,12 +15,14 @@ import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static mil.darpa.immortals.flitcons.Utils.ATTRIBUTE_DEBUG_LABEL_IDENTIFIER;
 import static mil.darpa.immortals.flitcons.Utils.FLAGGED_FOR_REPLACEMENT;
 
 public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
+
+	public OrientVertexDataSource() {
+		super();
+	}
 
 	@Override
 	public void update_NodeAttribute(@Nonnull OrientVertex node, @Nonnull String attributeName, @Nonnull Object attributeValue) {
@@ -82,14 +84,13 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 			containmentEdge.remove();
 		}
 		if (newNode.getType().toString().equals("NetworkNode")) {
-			Iterator<Vertex> ovIter = newNode.getVertices(Direction.IN, "Containment").iterator();
 
-			while (ovIter.hasNext()) {
-				OrientVertex chld = (OrientVertex) ovIter.next();
+			for (Vertex vertex : newNode.getVertices(Direction.IN, "Containment")) {
+				OrientVertex chld = (OrientVertex) vertex;
 				if (chld.getType().toString().equals("GenericParameter")) {
 					// TODO: This might not be the best way to do this...
-					Object rval = newNode.getGraph().command(new OCommandSQL(
-							"UPDATE GenericParameter SET " + FLAGGED_FOR_REPLACEMENT + " = true WHERE @rid == '" + chld.getId().toString() + "'"
+					newNode.getGraph().command(new OCommandSQL(
+							"UPDATE GenericParameter SET " + FLAGGED_FOR_REPLACEMENT + " = NULL WHERE @rid == '" + chld.getId().toString() + "'"
 					)).execute();
 				}
 			}
@@ -135,35 +136,29 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 				}
 			}
 		}
-
 		return new HierarchicalDataContainer(dataType, identifierDataMap, rootChildMap);
 	}
 
-	private static void collectProps(@Nonnull OrientVertex src, String value, Set<String> valuesToDefaultToTrue, HashMap<String, Object> collectionBucket) {
+	private void collectProps(@Nonnull OrientVertex src, String value, HashMap<String, Object> collectionBucket) {
 		if (src.getProperty(value) instanceof List) {
-			if (src.getProperty(value) == null && valuesToDefaultToTrue.contains(value)) {
-				throw AdaptationnException.internal("A list value cannot utilize a default value!");
-			}
 			collectionBucket.put(value, new LinkedList<>(src.getProperty(value)));
 		} else {
-			if ((src.getProperty(value) == null || src.getProperty(value).equals("")) && valuesToDefaultToTrue.contains(value)) {
-				collectionBucket.put(value, true);
+			if (src.getProperty(value) == null || src.getProperty(value).equals("")) {
+				collectionBucket.put(value, nullValuePlaceholder);
 			} else {
 				collectionBucket.put(value, src.getProperty(value));
 			}
 		}
 	}
 
-	@Override
-	public HierarchicalData createData(@Nonnull OrientVertex src, boolean isRootObject, @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions) {
+	private HierarchicalData createData(@Nonnull OrientVertex src, boolean isRootObject, @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions) {
 		// Create identification information
 		HierarchicalIdentifier identifier = createIdentifier(src);
 
-		String debugLabel = null;
+		StringBuilder debugLabelBuilder = null;
 
 		Map<String, Set<String>> interestedProperties = collectionInstructions.collectedChildProperties;
 		Map<String, Set<String>> debugProperties = collectionInstructions.collectedDebugProperties;
-		Set<String> valuesToDefaultToTrue = collectionInstructions.valuesToDefaultToTrue;
 
 		HashMap<String, Object> collectedProps = new HashMap<>();
 		if ((interestedProperties != null && interestedProperties.containsKey(identifier.getNodeType())) ||
@@ -173,20 +168,21 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 
 			for (String value : src.getPropertyKeys()) {
 				if (interestedProps != null && interestedProps.contains(value)) {
-					collectProps(src, value, valuesToDefaultToTrue, collectedProps);
+					collectProps(src, value, collectedProps);
 				} else if (debugPropSet != null && debugPropSet.contains(value)) {
-					if (debugLabel == null) {
-						debugLabel = "v(" + identifier.getNodeType() + ")[" + identifier.getSourceIdentifier() +
-								"]{" + src.getProperty(value);
+					if (debugLabelBuilder == null) {
+						debugLabelBuilder = new StringBuilder(
+								"v(" + identifier.getNodeType() + ")[" + identifier.getSourceIdentifier() +
+										"]{" + src.getProperty(value));
 					} else {
-						debugLabel += ("/" + src.getProperty(value));
+						debugLabelBuilder.append("/").append(src.getProperty(value).toString());
 					}
 				}
 			}
 		}
 
-		if (debugLabel != null) {
-			debugLabel += "}";
+		if (debugLabelBuilder != null) {
+			debugLabelBuilder.append("}");
 		}
 
 		Iterator<Edge> parents = src.getEdges(Direction.OUT, "Containment").iterator();
@@ -232,23 +228,14 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 				inboundReferences,
 				outboundReferences,
 				childNodeMap,
-				debugLabel);
+				debugLabelBuilder == null ? null : debugLabelBuilder.toString());
 	}
 
-	private static HierarchicalIdentifier createIdentifier(@Nonnull OrientVertex src) {
+	@Override
+	protected HierarchicalIdentifier createIdentifier(@Nonnull OrientVertex src) {
 		return HierarchicalIdentifier.produceTraceableNode(src.getIdentity().toString(), src.getProperty("@class"));
 
 	}
 
-	@Override
-	public Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> convertOneToManyMap(@Nonnull Map<OrientVertex, Set<OrientVertex>> indirectRelations) {
-		Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> rval = new HashMap<>();
 
-		for (Map.Entry<OrientVertex, Set<OrientVertex>> entry : indirectRelations.entrySet()) {
-			HierarchicalIdentifier primaryNode = createIdentifier(entry.getKey());
-			Set<HierarchicalIdentifier> relationSet = rval.computeIfAbsent(primaryNode, k -> new HashSet<>());
-			relationSet.addAll(entry.getValue().stream().map(OrientVertexDataSource::createIdentifier).collect(Collectors.toSet()));
-		}
-		return rval;
-	}
 }

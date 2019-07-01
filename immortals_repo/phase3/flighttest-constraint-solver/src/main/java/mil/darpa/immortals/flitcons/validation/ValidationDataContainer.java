@@ -1,5 +1,6 @@
 package mil.darpa.immortals.flitcons.validation;
 
+import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.Configuration;
 import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
@@ -8,7 +9,6 @@ import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
-import mil.darpa.immortals.schemaevolution.ProvidedData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -252,7 +252,7 @@ public class ValidationDataContainer {
 
 			String invalidValuesFile = "validator-" + scenarioTitle.replaceAll(" ", "_") + ".txt";
 			List<String> resultLines = makeCombinedColorlessChart();
-			String targetFile = ProvidedData.storeFile(
+			String targetFile = EnvironmentConfiguration.storeFile(
 					"invalid_fields-" + scenarioTitle.replaceAll(" ", "_") + ".txt",
 					String.join("\n", resultLines).getBytes());
 

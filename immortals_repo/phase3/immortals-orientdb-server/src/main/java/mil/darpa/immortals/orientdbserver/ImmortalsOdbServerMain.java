@@ -3,6 +3,7 @@ package mil.darpa.immortals.orientdbserver;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.util.List;
 
 public class ImmortalsOdbServerMain {
 
@@ -25,12 +26,7 @@ public class ImmortalsOdbServerMain {
 	}
 
 	private void execute() {
-		if (!helpRequested && scenario5RegenerationTarget == null && scenario6RegenerationTarget == null && scenarioToStart == null) {
-			CommandLine.usage(this, System.out);
-			return;
-		}
-
-		if (helpRequested) {
+		if (helpRequested || (scenario5RegenerationTarget == null && scenario6RegenerationTarget == null && scenarioToStart == null)) {
 			CommandLine.usage(this, System.out);
 			return;
 		}
@@ -63,7 +59,9 @@ public class ImmortalsOdbServerMain {
 				server.waitForShutdown();
 
 			} else {
-				System.err.println("Unknown scenario identifier '" + scenarioToStart + "'!");
+				List<String> scenarioList = TestScenario.getAllTestScenarioIdentifiers();
+				String scenarioListString = String.join("\n\t", scenarioList);
+				System.err.println("Invalid scenario identifier '" + scenarioToStart + "'.\nValid Identifiers:\n\t" + scenarioListString);
 				System.exit(-1);
 			}
 		}

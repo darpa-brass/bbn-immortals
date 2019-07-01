@@ -3,14 +3,13 @@ package mil.darpa.immortals.schemaevolution;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+import mil.darpa.immortals.EnvironmentConfiguration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,8 +34,7 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 
 	private OrientGraphNoTx getEvaluationGraph() throws Exception {
 		init();
-		System.err.println("GRAPH: " + ProvidedData.getOdbEvaluationTarget());
-		return new OrientGraphNoTx(ProvidedData.getOdbEvaluationTarget(), ProvidedData.getOdbEvaluationUser(), ProvidedData.getOdbEvaluationPassword());
+		return new OrientGraphNoTx(EnvironmentConfiguration.getOdbTarget(), EnvironmentConfiguration.getOdbUser(), EnvironmentConfiguration.getOdbPassword());
 	}
 
 	public ChallengeProblemBridge() {
@@ -88,11 +86,7 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 	}
 
 	public String saveToFile(@Nonnull String evaluationInstanceIdentifier, @Nonnull byte[] data, @Nonnull String filename) throws IOException {
-		Path subpath = ProvidedData.getEvaluationArtifactDirectory().resolve(evaluationInstanceIdentifier);
-		if (!Files.exists(subpath)) {
-			Files.createDirectory(ProvidedData.getEvaluationArtifactDirectory().resolve(evaluationInstanceIdentifier));
-		}
-		File target = subpath.resolve(filename).toFile();
+		File target = EnvironmentConfiguration.getArtifactDirectory().resolve(filename).toFile();
 		FileOutputStream fos = new FileOutputStream(target);
 		fos.write(data);
 		fos.flush();

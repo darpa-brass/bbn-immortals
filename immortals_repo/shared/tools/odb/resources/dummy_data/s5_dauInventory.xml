@@ -402,6 +402,7 @@
                 <SampleRate>128</SampleRate>
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
+                <ExcitationPortIsPresent/>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -424,6 +425,7 @@
                 <SampleRate>128</SampleRate>
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
+                <ExcitationPortIsPresent/>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -668,6 +670,7 @@
                 <SampleRate>128</SampleRate>
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
+                <ExcitationPortIsPresent/>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -690,6 +693,7 @@
                 <SampleRate>128</SampleRate>
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
+                <ExcitationPortIsPresent/>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -934,6 +938,7 @@
                 <SampleRate>128</SampleRate>
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
+                <ExcitationPortIsPresent/>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -956,6 +961,7 @@
                 <SampleRate>128</SampleRate>
                 <SampleRate>256</SampleRate>
                 <SampleRate>512</SampleRate>
+                <ExcitationPortIsPresent/>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>

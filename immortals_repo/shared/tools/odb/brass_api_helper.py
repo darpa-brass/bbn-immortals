@@ -53,7 +53,6 @@ class BrassApiHelper:
 
         if client.db_exists(db_name):
             client.db_open(db_name, 'admin', 'admin')
-
         else:
             client.db_create(db_name, pyorient.DB_TYPE_GRAPH, pyorient.STORAGE_TYPE_MEMORY)
 
@@ -63,7 +62,6 @@ class BrassApiHelper:
         client.command('CREATE PROPERTY BBNEvaluationData.outputJsonData STRING')
         client.command('CREATE PROPERTY BBNEvaluationData.currentState STRING')
         client.command('CREATE PROPERTY BBNEvaluationData.currentStateInfo STRING')
-
         return client
 
     def init_test_scenarios(self, scenarios: Optional[List[Scenario]]):
@@ -76,11 +74,13 @@ class BrassApiHelper:
             if client.db_exists(scenario.dbName):
                 print('Removing database for "' + scenario.dbName + '".')
                 client.db_drop(scenario.dbName)
+                print('Database removed.')
 
         client.close()
 
         for scenario in scenarios:
             if scenario.scenarioType == ScenarioType.Scenario5:
+                print('Initializing database "' + scenario.dbName + '"...')
                 output_file = 'ORIENTDB_INPUT_DATA.xml'
 
                 out = subprocess.run(
@@ -107,7 +107,10 @@ class BrassApiHelper:
                 client.command("UPDATE BBNEvaluationData Set currentState = 'ReadyForAdaptation'")
                 client.close()
 
+                print('Database initialization finished.')
+
             elif scenario.scenarioType == ScenarioType.Scenario6:
+                print('Initializing database "' + scenario.dbName + '"...')
                 client = self._init_db_data(scenario.dbName)
 
                 json_data = open(os.path.join(IMMORTALS_ROOT, scenario.jsonInputPath)).read()
@@ -122,3 +125,5 @@ class BrassApiHelper:
                 )
                 client.command("UPDATE BBNEvaluationData Set currentState = 'ReadyForAdaptation'")
                 client.close()
+
+                print('Database initialization finished.')

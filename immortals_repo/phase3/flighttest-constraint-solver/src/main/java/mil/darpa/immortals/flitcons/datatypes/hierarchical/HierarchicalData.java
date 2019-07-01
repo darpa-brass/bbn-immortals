@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * A data format meant to act as an intermediary that is not XML or OrientDB but conveys the same necessary details
@@ -52,6 +53,7 @@ public class HierarchicalData implements DuplicateInterface {
 		}
 	}
 
+	@Nonnull
 	public String getDebugLabel() {
 		return debugLabel;
 	}
@@ -83,6 +85,33 @@ public class HierarchicalData implements DuplicateInterface {
 		parentNode = null;
 	}
 
+
+	public boolean pathMatches(@Nonnull LinkedList<String> testPath) {
+
+		if (!testPath.getLast().equals(getNodeType())) {
+			return false;
+		}
+
+		List<String> myPath = getPathAsData().stream().map(HierarchicalData::getNodeType).collect(Collectors.toList());
+		int myPathIdx = myPath.size() - 1;
+		int testPathIdx = testPath.size() - 2;
+		boolean doesMatch = true;
+
+		while (doesMatch && myPathIdx >= 0 && testPathIdx >= 0) {
+			if (myPath.get(myPathIdx).equals(testPath.get(testPathIdx))) {
+				myPathIdx--;
+				testPathIdx--;
+				if (myPathIdx < 0 && testPathIdx >= 0) {
+					doesMatch = false;
+				}
+			} else {
+				doesMatch = false;
+			}
+		}
+		return doesMatch;
+	}
+
+	@Nonnull
 	public List<HierarchicalData> getPathAsData() {
 		List<HierarchicalData> rval;
 		if (parentNode == null) {
@@ -98,6 +127,7 @@ public class HierarchicalData implements DuplicateInterface {
 		return rval;
 	}
 
+	@Nonnull
 	public String toString() {
 		return node.toString();
 	}
@@ -153,6 +183,7 @@ public class HierarchicalData implements DuplicateInterface {
 		}
 	}
 
+	@Nonnull
 	public HierarchicalData getRootNode() {
 		return getPathAsData().get(0);
 	}
@@ -161,6 +192,7 @@ public class HierarchicalData implements DuplicateInterface {
 		childNodeMap.computeIfAbsent(childIdentifier.getNodeType(), k -> new HashSet<>()).add(childIdentifier);
 	}
 
+	@Nonnull
 	public String getNodeType() {
 		return node.getNodeType();
 	}
@@ -177,6 +209,13 @@ public class HierarchicalData implements DuplicateInterface {
 		return childNodeMap.keySet().iterator();
 	}
 
+	@Nonnull
+	public Set<String> getCommonAttributes(@Nonnull Set<String> attributes) {
+		HashSet<String> clone = new HashSet<>(attributes);
+		clone.retainAll(attributes);
+		return clone;
+	}
+
 	public Iterator<HierarchicalData> getChildrenDataIterator(@Nonnull String nodeType) {
 		Set<HierarchicalIdentifier> nodes = childNodeMap.get(nodeType);
 		if (nodes == null) {
@@ -186,19 +225,40 @@ public class HierarchicalData implements DuplicateInterface {
 		}
 	}
 
+	@Nullable
 	public HierarchicalData getChildNodeByPath(@Nonnull List<String> path) {
+		Set<HierarchicalData> children = getChildNodesByPath(path);
+		if (children.size() == 0) {
+			return null;
+		} else if (children.size() > 1) {
+			throw AdaptationnException.input("Cannot determine proper child to select with multiple children!");
+		}
+		return children.iterator().next();
+	}
+
+	public Set<HierarchicalData> getChildNodesByPath(@Nonnull List<String> path) {
 		HierarchicalData currentNode = this;
 
-		for (String pathElement : path) {
+		Iterator<String> pathIter = path.iterator();
+		while (pathIter.hasNext()) {
+			String pathElement = pathIter.next();
+
 			Set<HierarchicalIdentifier> children = currentNode.childNodeMap.get(pathElement);
-			if (children == null || children.size() == 0) {
-				return null;
-			} else if (children.size() > 1) {
-				throw AdaptationnException.input("Cannot determine proper child to select with multiple children!");
+
+			if (pathIter.hasNext()) {
+				if (children == null || children.size() == 0) {
+					return Collections.emptySet();
+				} else if (children.size() > 1) {
+					throw AdaptationnException.internal("Collection of child nodes when branches exist in the structure is not currently supported!");
+				}
+				currentNode = parentContainer.getData(children.iterator().next());
+			} else if (children == null) {
+				return Collections.emptySet();
+			} else {
+				return parentContainer.getDataSet(children);
 			}
-			currentNode = parentContainer.getData(children.iterator().next());
 		}
-		return currentNode;
+		return new HashSet<>();
 	}
 
 	void removeAttribute(@Nonnull String attributeName) {

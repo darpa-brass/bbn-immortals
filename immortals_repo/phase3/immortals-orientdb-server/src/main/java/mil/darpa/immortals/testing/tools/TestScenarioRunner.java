@@ -1,10 +1,10 @@
 package mil.darpa.immortals.testing.tools;
 
+import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.orientdbserver.OdbEmbeddedServer;
 import mil.darpa.immortals.orientdbserver.TestScenario;
 import mil.darpa.immortals.schemaevolution.BBNEvaluationData;
 import mil.darpa.immortals.schemaevolution.ChallengeProblemBridge;
-import mil.darpa.immortals.schemaevolution.ProvidedData;
 import mil.darpa.immortals.schemaevolution.TerminalStatus;
 import org.testng.Assert;
 
@@ -68,7 +68,7 @@ public abstract class TestScenarioRunner {
 			TerminalStatus currentState;
 
 			String evaluationId = baseIdentifier + "-iteration" + iterationCount++;
-			ChallengeProblemBridge cpb = ProvidedData.initializeChallengeProblemBridge(evaluationId);
+			ChallengeProblemBridge cpb = EnvironmentConfiguration.initializeChallengeProblemBridge(evaluationId);
 
 			boolean adaptationServerStarted = false;
 
@@ -112,7 +112,7 @@ public abstract class TestScenarioRunner {
 				Assert.assertEquals(resultData.getCurrentState(), expectedState.name());
 
 				evaluationId = baseIdentifier + "-iteration" + iterationCount++;
-				cpb = ProvidedData.initializeChallengeProblemBridge(evaluationId);
+				cpb = EnvironmentConfiguration.initializeChallengeProblemBridge(evaluationId);
 
 				odbServer.setReady();
 

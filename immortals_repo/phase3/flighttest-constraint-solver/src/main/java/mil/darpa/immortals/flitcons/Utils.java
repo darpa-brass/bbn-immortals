@@ -129,6 +129,15 @@ public class Utils {
 		return rval;
 	}
 
+	public static <T> LinkedList<T> duplicateList(List<T> source) {
+		LinkedList<T> rval = new LinkedList<>();
+
+		for (T value : source) {
+			rval.add(duplicateObject(value));
+		}
+		return rval;
+	}
+
 	public static String repeat(char character, int count) {
 		return new String(new char[count]).replace("\0", String.valueOf(character));
 	}
