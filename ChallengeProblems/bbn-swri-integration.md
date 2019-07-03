@@ -113,7 +113,7 @@ In the event of an error, it will be output to the console and an attempt to upl
 ## Scenario 5 Details
 
 The primary input and output artifact will be the MDLRoot object contained in the OrientDB repository. Specifics 
-relating to this are documented in [bbn-swri-mdl-requirements](cp_05/bbn-swri-mdl-requirements.md)
+relating to this are documented in [bbn-swri-mdl-requirements](cp_05/bbn-swri-mdl-extensions.md)
 
 ### Scenario 5 Data Validation
 

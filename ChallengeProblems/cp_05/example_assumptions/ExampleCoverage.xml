@@ -78,7 +78,7 @@
 	<NetworkDomain>
 		<!--<NetworkToNetworkMapping/>-->
 		<Networks>
-			<Network ID="TA1-Example5">
+			<Network><!-- ID ignored-->
 				<!--<NetworkType/>-->
 				<!--<Networks/>-->
 				<!--<Antennas/>-->
@@ -129,19 +129,19 @@
 								<!--		</LTCInterface>-->
 								<!--	</LTCInterfaces>-->
 								<!--</TmNSLTCDataSource>-->
-								<SMInterface>
-									<SNMPSetup>
-										<!--<SNMPVersions>-->
-										<!--	<SNMPVersion>v3</SNMPVersion>-->
-										<!--</SNMPVersions>-->
-										<!--<SNMPPort>1234</SNMPPort>-->
-										<!--<NotificationPort>1234</NotificationPort>-->
-										<DSCPTableEntryRef IDREF="dscp-0"/>
-										<!--<NetworkInterfaceRefs>-->
-										<!--	<NetworkInterfaceRef IDREF="ni-bcu-eth0-ex3"/>-->
-										<!--</NetworkInterfaceRefs>-->
-									</SNMPSetup>
-								</SMInterface>
+								<!--<SMInterface>-->
+								<!--	<SNMPSetup>-->
+								<!--		<SNMPVersions>-->
+								<!--			<SNMPVersion>v3</SNMPVersion>-->
+								<!--		</SNMPVersions>-->
+								<!--		<SNMPPort>1234</SNMPPort>-->
+								<!--		<NotificationPort>1234</NotificationPort>-->
+								<!--		<DSCPTableEntryRef IDREF="dscp-0"/>-->
+								<!--		<NetworkInterfaceRefs>-->
+								<!--			<NetworkInterfaceRef IDREF="ni-bcu-eth0-ex3"/>-->
+								<!--		</NetworkInterfaceRefs>-->
+								<!--	</SNMPSetup>-->
+								<!--</SMInterface>-->
 							</TmNSApp>
 						</TmNSApps>
 						<InternalStructure>
@@ -211,9 +211,9 @@
 			</Network>
 		</Networks>
 	</NetworkDomain>
-	<DSCPTable>
-		<DSCPTableEntry ID="dscp-0">
-			<!--<DSCPValue>0b000000</DSCPValue>-->
-		</DSCPTableEntry>
-	</DSCPTable>
+	<!--<DSCPTable>-->
+	<!--	<DSCPTableEntry ID="dscp-0">-->
+	<!--		<DSCPValue>0b000000</DSCPValue>-->
+	<!--	</DSCPTableEntry>-->
+	<!--</DSCPTable>-->
 </MDLRoot>
