@@ -19,7 +19,8 @@ The following **BBNPortFunctionality** values have been seen and are utilized:
 
 ## Seen But Not Utilized BBNPortFunctionality Values
 
-The following **BBNPortFunctionality** values have been seen but not yet examined or utilized:
+The following **BBNPortFunctionality** values have been seen but not yet examined or utilized. If they are utilized 
+in a different way than the existing ports we are utilizing examples will be necessary:
  * _Serial_
  * _Ethernet_
  * _Time_
@@ -33,11 +34,12 @@ I have put together an XML document that essentially combines the examples we ha
 document that is only a few hundred lines of XML.
 
 The following applies to it:
- * Elements that are commented out are ignored
- * Multiplicities are not present in the document
+ * Elements that are commented out are currently ignored by us. If they need to be considered for adaptation or updated 
+   as a result of adaptation we will need examples.
+ * Multiplicities are not present in the document.
  * Actual values are not present or are not applicable to the document.
- * Element tags are present but empty to indicate we are examining and utilizing them
- * Attribute placeholders are present to allow it to be a valid XML document
+ * Element tags are present but empty to indicate we are examining and utilizing them.
+ * Attribute placeholders are present to allow it to be a valid XML document.
 
 To minimize the size of the document, the following fields have been excluded from all elements and are globally 
 ignored:
