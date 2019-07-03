@@ -2,16 +2,10 @@
 
 The purpose of this document is to define the shared integration points for the challenge problems for Scenario 5 and Scenario 6. 
 
-Discussions have led us to create an image that may serve one of two roles:
-
- * **Evaluation Target** - The virtual machine that the evaluation will take place on.
- * **Persistent Storage** - The virtual machine that must available to all executions that will be used to collect execution data for 
-   post-evaluation analysis.
-
-## Evaluation Target
+## Evaluation Image
 
 * After image creation it will be offline with no internet connection
-* It must have at least 4 CPU cores and 16 GB of memory. This is subject to change if bottlenecks are encountered during internal testing.
+* It must have at least 4 CPU cores and 24 GB of memory. This is subject to change if bottlenecks are encountered during internal testing.
 * Installation requires sudo access, so if the installation wil be unattended make sure sudo will be granted to the logged in user automatically.
 
 ### General Tips
@@ -19,7 +13,7 @@ Discussions have led us to create an image that may serve one of two roles:
 * Make sure you are using bash as your login shell. Sometimes ssh and AWS-specific instances use lighter weight alternatives.
 * Make sure your ~/.bashrc is being sourced properly. Depending on the parameters, SSH and Bash may not honor it.
 
-### Creation
+### Image Creation
 
 #### Steps
 The following steps will prepare a system for use:
@@ -32,9 +26,6 @@ The following steps will prepare a system for use:
     `./build.sh`
 5.  Shut down the system and save it to an image.
 
-## Persistent Storage
-
-The **Persistent Storage** system will utilize the same image as the **Evaluation Target** but will be started using different Parameters.
 
 ## OrientDB Structure
 
@@ -85,7 +76,7 @@ CREATE PROPERTY BBNEvaluationData.currentStateInfo STRING
 The steps performed by the evaluator to execute evaluation will be as follows:
 
 1.  The evaluator opens a shell on the AWS instance for the **Evaluation Target** and starts our evaluation as follows:
-`bash ~/immortals_repo/phase3/start.sh --scenario <scenarioIdentifier> --odb-url <odbUrl> --odb-user <<odbUser> --odb-password <odbPassword> --odb-persistence-url <odbPersistanceUrl>`
+`bash ~/immortals_repo/phase3/start.sh --scenario <scenarioIdentifier> --odb-url <odbUrl> --odb-user <<odbUser> --odb-password <odbPassword>`
 
 Where the parameters are the following:
 
@@ -97,16 +88,7 @@ Where the parameters are the following:
 | --odb-password    | <odbPassword>        | The OrientDB user password                                                                                     |
 
 
-At this point, the following occurs within the _Evaluation Target_:  
-
-1.  The system queries the OrientDB graph for data relating to the specified scenario and saves it to **Persistent Storage**
-2.  The system attempts to resolve the perturbation
-3.  The results are stored in the defined location and in **Persistent Storage**
-4.  The script shuts down, indicating the completion of the evaluation session.
-
-In the event of an error, it will be output to the console and an attempt to upload it to OrientDB will be performed if possible.
-
-## Evaluation Workflow
+At this point, the evaluation workflow occurs as follows:
 
 ![Evaluation WOrkflow](evaluation_workflow.png)
 
@@ -158,11 +140,6 @@ The **initialMdlVersion** is mandatory. The **updatedMdlVersion** and **updatedM
 The valid values for **initialMdlVersion** and **updatedMdlVersion** may be any of the following:
 
 "v0_8_7", "v0_8_8", "v0_8_9", "v0_8_10", "v0_8_11", "v0_8_12", "v0_8_13", "v0_8_14", "v0_8_16", "v0_8_17", "v0_8_19"
-
-
-
-
-
 
 ### Examples
 

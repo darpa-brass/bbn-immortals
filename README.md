@@ -1,5 +1,34 @@
 # IMMoRTALS Phase 3 README
 
+## Risk Reduction 2 Release Notes
+
+### Scenario 5
+* Full adaptation using the DSL implemented
+* Input DAU Inventory: [shared/tools/odb/resources/dummy_data/s5_dauInventory.xml](shared/tools/odb/resources/dummy_data/s5_dauInventory.xml)
+* Input MDLRoot: [shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml](shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml)
+
+#### Known Issues
+ * None
+
+### Scenario 6
+ * Partial Adaptation using the existing Schemas supported.
+   Valid schemas:  
+   "v0_8_7"  
+   "v0_8_8"  
+   "v0_8_9"  
+   "v0_8_10"  
+   "v0_8_11"  
+   "v0_8_12"  
+   "v0_8_13"  
+   "v0_8_14"  
+   "v0_8_16"  
+   "v0_8_17"  
+   "v0_8_19 
+
+#### Known Issues
+ * None
+
+
 ## Risk Reduction 1 Release Notes
 
 ### Scenario 5
