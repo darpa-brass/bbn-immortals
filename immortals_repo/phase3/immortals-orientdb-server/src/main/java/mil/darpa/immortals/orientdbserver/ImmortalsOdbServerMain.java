@@ -2,68 +2,86 @@ package mil.darpa.immortals.orientdbserver;
 
 import picocli.CommandLine;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ImmortalsOdbServerMain {
 
-	@CommandLine.Option(names = "--scenario5-regen", description = "Regenerates the server data for Scenario 5 tests to the target folder.")
-	private File scenario5RegenerationTarget;
-
-	@CommandLine.Option(names = "--scenario6-regen", description = "Regenerates the server data for Scenario 6 tests to the target folder.")
-	private File scenario6RegenerationTarget;
-
-	@CommandLine.Option(names = "--start", description = "Start the server with the specified scenario identifier")
-	private String scenarioToStart;
-
-	@CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Display Help")
-	private boolean helpRequested = false;
-
 	public static void main(String[] args) {
+
+		ImmortalsOdbServerConfiguration config = ImmortalsOdbServerConfiguration.getInstance();
 		ImmortalsOdbServerMain server = new ImmortalsOdbServerMain();
-		CommandLine.populateCommand(server, args);
+		CommandLine.populateCommand(config, args);
+		config.validate();
 		server.execute();
 	}
 
 	private void execute() {
-		if (helpRequested || (scenario5RegenerationTarget == null && scenario6RegenerationTarget == null && scenarioToStart == null)) {
-			CommandLine.usage(this, System.out);
-			return;
+		ImmortalsOdbServerConfiguration config = ImmortalsOdbServerConfiguration.getInstance();
+		OdbEmbeddedServer server;
+
+		if (config.isRegenerateScenario5() || config.isRegenerateScenario6()) {
+			ArrayList<TestScenario> scenarios = new ArrayList<>();
+
+			if (config.isRegenerateScenario5()) {
+				List<TestScenario> s5Scenarios = TestScenario.getScenario5TestScenarioIdentifiers().stream().map(
+						TestScenario::getScenario5TestScenario).collect(Collectors.toList());
+				scenarios.addAll(s5Scenarios);
+			}
+
+			if (config.isRegenerateScenario6()) {
+				List<TestScenario> s6Scenarios = TestScenario.getScenario6TestScenarioIdentifiers().stream().map(
+						TestScenario::getScenario6TestScenario).collect(Collectors.toList());
+				scenarios.addAll(s6Scenarios);
+			}
+
+			server = new OdbEmbeddedServer(scenarios.toArray(new TestScenario[0]));
+			server.init(false);
+			server.shutdown();
 		}
 
-		if (scenario5RegenerationTarget != null) {
-			for (String scenarioName : TestScenario.getScenario5TestScenarioIdentifiers()) {
-				TestScenario scenario = TestScenario.getScenario5TestScenario(scenarioName);
-				OdbEmbeddedServer server = new OdbEmbeddedServer(scenario);
-				server.shutdown();
+		if (config.getDauInventoryXmlPath() != null || config.getInputMdlrooXmlPath() != null || config.getScenarioToStart() != null) {
+
+			ArrayList<TestScenario> testScenarios = new ArrayList<>();
+			if (config.getDauInventoryXmlPath() != null || config.getInputMdlrooXmlPath() != null) {
+				List<String> expectedStatusSequence = new ArrayList<>(2);
+				expectedStatusSequence.add("AdaptationSuccessful");
+				expectedStatusSequence.add("AdaptationUnsuccessful");
+				TestScenario ts = new TestScenario(
+						"tmp",
+						"Temporary XML Scenario",
+						"Scenario5",
+						6000000,
+						config.getDauInventoryXmlPath(),
+						config.getInputMdlrooXmlPath(),
+						null,
+						expectedStatusSequence,
+						null
+				);
+				testScenarios.add(ts);
 			}
-		}
 
-		if (scenario6RegenerationTarget != null) {
-			for (String scenarioName : TestScenario.getScenario6TestScenarioIdentifiers()) {
-				TestScenario scenario = TestScenario.getScenario6TestScenario(scenarioName);
-				OdbEmbeddedServer server = new OdbEmbeddedServer(scenario);
-				server.shutdown();
+			String scenarioToStart = config.getScenarioToStart();
+			if (scenarioToStart != null) {
+				if (TestScenario.getScenario5TestScenarioIdentifiers().contains(scenarioToStart)) {
+					testScenarios.add(TestScenario.getScenario5TestScenario(scenarioToStart));
+
+				} else if (TestScenario.getScenario6TestScenarioIdentifiers().contains(scenarioToStart)) {
+					testScenarios.add(TestScenario.getScenario5TestScenario(scenarioToStart));
+
+				} else {
+					List<String> scenarioList = TestScenario.getAllTestScenarioIdentifiers();
+					String scenarioListString = String.join("\n\t", scenarioList);
+					System.err.println("Invalid scenario identifier '" + scenarioToStart + "'.\nValid Identifiers:\n\t" + scenarioListString);
+					System.exit(-1);
+				}
 			}
-		}
 
-		if (scenarioToStart != null) {
-			if (TestScenario.getScenario5TestScenarioIdentifiers().contains(scenarioToStart)) {
-				OdbEmbeddedServer server = new OdbEmbeddedServer(TestScenario.getScenario5TestScenario(scenarioToStart));
-				server.init();
-				server.waitForShutdown();
 
-			} else if (TestScenario.getScenario6TestScenarioIdentifiers().contains(scenarioToStart)) {
-				OdbEmbeddedServer server = new OdbEmbeddedServer(TestScenario.getScenario5TestScenario(scenarioToStart));
-				server.init();
-				server.waitForShutdown();
-
-			} else {
-				List<String> scenarioList = TestScenario.getAllTestScenarioIdentifiers();
-				String scenarioListString = String.join("\n\t", scenarioList);
-				System.err.println("Invalid scenario identifier '" + scenarioToStart + "'.\nValid Identifiers:\n\t" + scenarioListString);
-				System.exit(-1);
-			}
+			server = new OdbEmbeddedServer(testScenarios.toArray(new TestScenario[0]));
+			server.init();
+			server.waitForShutdown();
 		}
 	}
 }

@@ -2,28 +2,27 @@ package mil.darpa.immortals.flitcons.mdl;
 
 import mil.darpa.immortals.flitcons.*;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
-import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
+import mil.darpa.immortals.flitcons.mdl.validation.PortMapping;
+import mil.darpa.immortals.flitcons.mdl.validation.PortMappingValidator;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
 
-import java.util.Set;
-
-import static mil.darpa.immortals.flitcons.Utils.CHILD_LABEL;
-import static mil.darpa.immortals.flitcons.Utils.PARENT_LABEL;
+import java.util.Map;
 
 public class FlighttestConstraintSolver {
 
 	private final AbstractDataTarget dataSource;
-	private final MdlDataValidator validator;
+	private final MdlDataValidator dataValidator;
+	private final PortMappingValidator portMappingValidator;
 
 	private final SolverInterface solver;
 
 	public FlighttestConstraintSolver() {
 		dataSource = new OrientVertexDataSource();
-		validator = new MdlDataValidator(null, null, dataSource);
+		dataValidator = new MdlDataValidator(null, null, dataSource);
+		portMappingValidator = new PortMappingValidator(dataSource.getPortMappingDetails());
 
-		if (SolverConfiguration.getInstance().useSimpleSolver) {
+		if (SolverConfiguration.getInstance().isUseSimpleSolver()) {
 			solver = new SimpleSolver();
 		} else {
 			solver = new DslSolver();
@@ -31,42 +30,30 @@ public class FlighttestConstraintSolver {
 	}
 
 	public void solve() {
-		boolean useColor = !SolverConfiguration.getInstance().colorlessMode;
-
 		try {
+			dataValidator.validateConfiguration(ValidationScenario.InputConfigurationUsage);
+			dataValidator.validateConfiguration(ValidationScenario.InputConfigurationRequirements);
+			dataValidator.validateConfiguration(ValidationScenario.DauInventory);
 
-			validator.validateConfiguration(ValidationScenario.InputConfigurationUsage, useColor);
+			portMappingValidator.validateInitialData();
 
-			validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements, useColor);
-			validator.validateConfiguration(ValidationScenario.DauInventory, useColor);
-
-			HierarchicalDataContainer inputContainer = dataSource.getInterconnectedTransformedFaultyConfiguration(false);
-			DynamicObjectContainer input = Utils.createDslInterchangeFormat(inputContainer);
-
-			HierarchicalDataContainer inventoryContainer = dataSource.getTransformedDauInventory(false);
-			DynamicObjectContainer inventory = Utils.createDslInterchangeFormat(inventoryContainer);
-
-			solver.loadData(input, inventory);
+			solver.loadData(dataSource);
 			DynamicObjectContainer solution = solver.solve();
 
 			if (solution == null) {
 				throw new AdaptationnException(ResultEnum.AdaptationUnsuccessful, "Could not find a valid adaptation.");
 			}
 
-			SolutionPreparer preparer = new SolutionPreparer(
-					dataSource.getInterconnectedFaultyConfiguration(),
-					dataSource.getInterconnectedTransformedFaultyConfiguration(false),
-					dataSource.getRawInventoryContainer(),
-					dataSource.getTransformedDauInventory(false));
+			SolutionInjector injector = new SolutionInjector(dataSource, solution);
 
-			Set<SolutionPreparer.ParentAdaptationData> adaptation = preparer.prepare(solution, PARENT_LABEL, CHILD_LABEL);
-
-			SolutionInjector injector = new SolutionInjector(dataSource, adaptation);
 			injector.injectSolution();
 
-			validator.validateConfiguration(ValidationScenario.OutputConfigurationUsage, useColor);
+			dataSource.restart();
+			portMappingValidator.validateResultData(dataSource.getPortMappingDetails());
 
-		} catch (DynamicValueeException e) {
+			dataValidator.validateConfiguration(ValidationScenario.OutputConfigurationUsage);
+
+		} catch (NestedPathException e) {
 			throw AdaptationnException.internal(e);
 		}
 	}

@@ -2,9 +2,11 @@ package mil.darpa.immortals.flitcons.mdl;
 
 import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.AbstractDataSource;
+import mil.darpa.immortals.flitcons.SolverConfiguration;
 import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
+import mil.darpa.immortals.flitcons.NestedPathException;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainerFactory;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
@@ -42,7 +44,7 @@ public class MdlDataValidator extends DataValidator {
 		super.init();
 	}
 
-	public ValidationDataContainer validateConfiguration(@Nonnull ValidationScenario scenario, boolean useColor) {
+	public ValidationDataContainer validateConfiguration(@Nonnull ValidationScenario scenario) {
 		try {
 			HierarchicalDataContainer data;
 			String outputFile;
@@ -79,7 +81,7 @@ public class MdlDataValidator extends DataValidator {
 					throw AdaptationnException.internal("Invalid scenario type '" + scenario.name() + "'!");
 			}
 
-			DynamicObjectContainer dynamicData = Utils.createDslInterchangeFormat(data);
+			DynamicObjectContainer dynamicData = DynamicObjectContainerFactory.create(data);
 			String dynamnicDataString = difGson.toJson(dynamicData);
 
 			try {
@@ -91,9 +93,9 @@ public class MdlDataValidator extends DataValidator {
 			}
 
 			ValidationDataContainer results = super.validate(scenario.filter, dynamicData);
-			results.printResults(scenario.title, useColor);
+			results.printResults(scenario.title, !SolverConfiguration.getInstance().isColorlessMode());
 			return results;
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw AdaptationnException.input(e);
 		}
 	}

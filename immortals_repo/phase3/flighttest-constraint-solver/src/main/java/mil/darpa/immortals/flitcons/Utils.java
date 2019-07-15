@@ -3,17 +3,45 @@ package mil.darpa.immortals.flitcons;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.*;
-import mil.darpa.immortals.flitcons.datatypes.hierarchical.*;
+import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
+import mil.darpa.immortals.flitcons.datatypes.hierarchical.Immutable;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static mil.darpa.immortals.flitcons.Utils.Ansi.*;
+
 /**
  * Created by awellman@bbn.com on 1/11/18.
  */
 public class Utils {
+
+	public static class Sym {
+		public static final String LT = " < ";
+		public static final String NLT = " ≮ "; //"</";
+		public static final String GT = " > ";
+		public static final String NGT = " ≯ "; //">/";
+		public static final String LTE = " ≤ "; //"<=";
+		public static final String NLTE = " ≰ "; //"<=/";
+		public static final String GTE = " ≥ "; //">=";
+		public static final String NGTE = " ≱ "; //">=/";
+		public static final String EE = " ∈ ";
+		public static final String NEE = " ∉ ";
+		public static final String TE = " ∃ ";
+		public static final String NTE = " ∄ ";
+		public static final String EQT = " ≍ ";
+		public static final String NEQT = " ≭ ";
+	}
+
+	public static class Ansi {
+		public static final String RED_FG = "31";
+		public static final String RED_BG = "41";
+		public static final String GREEN_FG = "32";
+		public static final String GREEN_BG = "42";
+	}
+
 	public static final String GLOBALLY_UNIQUE_ID = "GloballyUniqueId";
 	public static final String SUPERSEDED_GLOBALLY_UNIQUE_ID = "SupersededGloballyUniqueId";
 	public static final String SUPERSEDED_GLOBALLY_UNIQUE_IDS = "SupersededGloballyUniqueIds";
@@ -157,23 +185,30 @@ public class Utils {
 		}
 	}
 
-	public static List<String> makeChart(@Nonnull TreeMap<String, TreeMap<String, Object>> rowColumnData,
-	                                     @Nullable TreeMap<String, TreeMap<String, String>> ansiColorCodes,
-	                                     @Nullable TreeMap<String, TreeMap<String, Boolean>> hideMap) {
+	public static List<String> makeChart(@Nonnull TreeMap<String, Map<String, Object>> rowColumnData,
+	                                     @Nullable TreeMap<String, Map<String, Boolean>> passing,
+	                                     @Nullable TreeMap<String, Map<String, Boolean>> hideMap) {
+		return makeChart(rowColumnData, passing, hideMap, null);
+	}
+
+	public static List<String> makeChart(@Nonnull TreeMap<String, Map<String, Object>> rowColumnData,
+	                                     @Nullable TreeMap<String, Map<String, Boolean>> passing,
+	                                     @Nullable TreeMap<String, Map<String, Boolean>> hideMap,
+	                                     @Nullable String title) {
 		// First gather some information on all known columns and their max necessary width
 		TreeMap<String, Integer> columnSizeMap = new TreeMap<>();
 		int rowZeroSize = 0;
 
 
 		int maxColumns = 0;
-		for (Map.Entry<String, TreeMap<String, Object>> topEntry : rowColumnData.entrySet()) {
+		for (Map.Entry<String, Map<String, Object>> topEntry : rowColumnData.entrySet()) {
 			rowZeroSize = Math.max(rowZeroSize, topEntry.getKey().length());
 
-			TreeMap<String, Object> v = topEntry.getValue();
+			Map<String, Object> v = topEntry.getValue();
 			for (Map.Entry<String, Object> entry : v.entrySet()) {
 				maxColumns = Math.max(maxColumns, v.size());
 				String columnName = entry.getKey();
-				int knownMaxStringSize = columnSizeMap.computeIfAbsent(columnName, k -> 0);
+				int knownMaxStringSize = columnSizeMap.computeIfAbsent(columnName, k -> columnName.length());
 				String entryString = entry.getValue().toString();
 				int maxStringSize = Math.max(entry.getKey().length(), entryString.length());
 				if (maxStringSize > knownMaxStringSize) {
@@ -183,7 +218,7 @@ public class Utils {
 		}
 
 		// Then fill in the missing columns for each row so that it will result in a proper Y*X grid
-		for (TreeMap<String, Object> row : rowColumnData.values()) {
+		for (Map<String, Object> row : rowColumnData.values()) {
 			for (String column : columnSizeMap.keySet()) {
 				if (!row.containsKey(column)) {
 					row.put(column, "");
@@ -197,181 +232,85 @@ public class Utils {
 		for (Map.Entry<String, Integer> headerColumn : columnSizeMap.entrySet()) {
 			header.append(" ").append(padRight(headerColumn.getKey(), headerColumn.getValue() + 1)).append("|");
 		}
+
+		if (title != null) {
+			rval.add(Utils.padCenter(title, header.length(), '#'));
+		}
 		rval.add(header.toString());
 
 		// Then convert them to rows
-		for (Map.Entry<String, TreeMap<String, Object>> rowEntry : rowColumnData.entrySet()) {
-			StringBuilder sb = new StringBuilder("| " + padRight(rowEntry.getKey(), rowZeroSize + 1) + "|");
+		for (String rowKey : rowColumnData.keySet()) {
+			Map<String, Object> rowValues = rowColumnData.get(rowKey);
 
-			for (Map.Entry<String, Object> columnEntry : rowEntry.getValue().entrySet()) {
+			StringBuilder sb = new StringBuilder("| " + padRight(rowKey, rowZeroSize + 1) + "|");
+
+			for (String columnKey : columnSizeMap.keySet()) {
+				Object columnValue = rowValues.get(columnKey);
 				boolean showValue = (hideMap == null || (
-						hideMap.get(rowEntry.getKey()).get(columnEntry.getKey()) != null &&
-								!hideMap.get(rowEntry.getKey()).get(columnEntry.getKey())));
-				String valueString = showValue ? columnEntry.getValue().toString() : "";
+						hideMap.get(rowKey).get(columnKey) != null &&
+								!hideMap.get(rowKey).get(columnKey)));
+				String valueString = showValue ? columnValue.toString() : "";
 
 				String colorString;
 
-				if (ansiColorCodes == null) {
+				if (passing == null) {
 					colorString = null;
 					if (showValue && valueString.trim().equals("")) {
 						valueString = "MISSING";
 					}
 
 				} else {
-					String ansiCode = ansiColorCodes.get(rowEntry.getKey()).get(columnEntry.getKey());
+					Boolean pass = passing.get(rowKey).get(columnKey);
 
-					if (ansiCode == null) {
-						if (valueString == null || valueString.equals("")) {
-							colorString = null;
 
-						} else {
+					boolean hasValue = !(valueString == null || valueString.equals(""));
+
+					if (pass == null) {
+						if (hasValue) {
 							throw AdaptationnException.internal("String values in the chart must have a corresponding ANSI color code!");
+						} else {
+							colorString = null;
 						}
 
 					} else {
+						String ansiCode;
+
+						if (pass) {
+							if (hasValue) {
+								ansiCode = GREEN_FG;
+							} else {
+								ansiCode = GREEN_BG;
+							}
+						} else {
+							if (hasValue) {
+								ansiCode = RED_FG;
+							} else {
+								ansiCode = RED_BG;
+							}
+						}
 						colorString = (char) 27 + "[" + ansiCode + "m";
 					}
 				}
 
 				if (colorString == null) {
 					sb.append(" ")
-							.append(padRight(valueString, columnSizeMap.get(columnEntry.getKey()) + 1))
+							.append(padRight(valueString, columnSizeMap.get(columnKey) + 1))
 							.append("|");
 				} else {
 
 					sb.append(" ")
 							.append(colorString)
-							.append(padRight(valueString, columnSizeMap.get(columnEntry.getKey()) + 1))
+							.append(padRight(valueString, columnSizeMap.get(columnKey) + 1))
 							.append((char) 27 + "[0m")
 							.append("|");
 				}
 			}
 			rval.add(sb.toString());
 		}
+		rval.add(Utils.padCenter("#", header.length(), '#'));
 
 		return rval;
 	}
-
-	private static DynamicValue parseDynamicValueFromAttribute(HierarchicalData source, String attributeName) throws DynamicValueeException {
-		Object value = source.getAttribute(attributeName);
-
-		if (value instanceof Object[]) {
-			try {
-				return new DynamicValue(source.node, null, (Object[]) value, null);
-			} catch (DynamicValueeException e) {
-				e.addPathParent(attributeName + "[*]");
-				throw e;
-			}
-		} else if (value instanceof String || value instanceof Number || value instanceof Boolean) {
-			try {
-				return new DynamicValue(source.node, null, null, value);
-			} catch (DynamicValueeException e) {
-				e.addPathParent(attributeName);
-				throw e;
-			}
-
-		} else if (value instanceof List) {
-			try {
-				return new DynamicValue(source.node, null, ((List) value).toArray(), null);
-			} catch (DynamicValueeException e) {
-				e.addPathParent(attributeName);
-				throw e;
-			}
-		} else {
-			throw new DynamicValueeException(source.node.toString(), "Unsupported attribute type '" + value.getClass().toString() + "'!");
-		}
-	}
-
-	private static DynamicObjectContainer produceDynamicObjectContainer(HierarchicalData source) throws DynamicValueeException {
-		DynamicObjectContainer target = new DynamicObjectContainer(source.node, source.getDebugLabel());
-		boolean containsData = false;
-
-		for (String label : source.getAttributeNames()) {
-			DynamicValue dynamicValue = parseDynamicValueFromAttribute(source, label);
-			target.put(label, dynamicValue);
-			containsData = true;
-		}
-
-		Iterator<String> childTypeIter = source.getChildrenClassIterator();
-		while (childTypeIter.hasNext()) {
-
-			boolean containsChildData = false;
-
-			List<Object> values = new LinkedList<>();
-
-			String childType = childTypeIter.next();
-
-			Iterator<HierarchicalData> childIter = source.getChildrenDataIterator(childType);
-			while (childIter.hasNext()) {
-				HierarchicalData data = childIter.next();
-
-				if (data.getAttribute("Min") != null && data.getAttribute("Max") != null) {
-					Object min = data.getAttribute("Min");
-					Object max = data.getAttribute("Max");
-					if (min == null || max == null) {
-						throw new DynamicValueeException(source.toString(), "A Min cannot be defined without a Max!");
-					}
-					if (data.getChildrenClassIterator().hasNext()) {
-						throw new DynamicValueeException(source.toString(), "A Range object cannot have child attributes!");
-					}
-					target.put(childType, new DynamicValue(source.node, new Range(min, max), null, null));
-					containsData = true;
-
-				} else if (data.getAttribute("Equation") != null) {
-					target.put(childType, new DynamicValue(source.node, null, null, new Equation((String) data.getAttribute("Equation"))));
-					containsData = true;
-
-				} else {
-					Object value = produceDynamicObjectContainer(data);
-					if (value != null) {
-						values.add(value);
-						containsData = true;
-						containsChildData = true;
-					}
-				}
-				if (containsChildData) {
-					try {
-						target.put(childType, new DynamicValue(source.node, null, values.toArray(), null));
-					} catch (DynamicValueeException e) {
-						e.addPathParent(childType);
-						throw e;
-					}
-				}
-			}
-		}
-
-		if (containsData) {
-			return target;
-		} else {
-			return null;
-		}
-	}
-
-	public static DynamicObjectContainer createDslInterchangeFormat(HierarchicalDataContainer inputData) throws DynamicValueeException {
-		DynamicObjectContainer target = new DynamicObjectContainer(HierarchicalIdentifier.createBlankNode(), null);
-		Object[] daus = new Object[inputData.getDauRootNodes().size()];
-
-		int idx = 0;
-
-		for (HierarchicalData dau : inputData.getDauRootNodes()) {
-			try {
-				daus[idx++] = Utils.produceDynamicObjectContainer(dau);
-			} catch (DynamicValueeException e) {
-				e.addPathParent("daus");
-				throw e;
-			}
-		}
-
-		try {
-			target.put("daus", new DynamicValue(null, null, daus, null));
-		} catch (DynamicValueeException e) {
-			e.addPathParent("daus");
-			throw e;
-		}
-
-		return target;
-	}
-
 
 	public static boolean stringListContains(@Nonnull Set<String> listToValidateAgainst, @Nonnull Object object) {
 		if (object instanceof Object[]) {

@@ -1,6 +1,7 @@
 package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import com.google.gson.*;
+import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.Utils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -113,7 +114,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(dv.valueArray[2], long2);
 			Assert.assertEquals(dv.valueArray[3], long3);
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -154,7 +155,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(dv.range.Min, long0);
 			Assert.assertEquals(dv.range.Max, long1);
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -190,7 +191,7 @@ public class DynamicValueTest {
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
 			Assert.assertEquals(dv.singleValue, long0);
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -238,7 +239,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(dv.valueArray[2], float2);
 			Assert.assertEquals(dv.valueArray[3], float3);
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -279,7 +280,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(dv.range.Min, float0);
 			Assert.assertEquals(dv.range.Max, float1);
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -315,7 +316,7 @@ public class DynamicValueTest {
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
 			Assert.assertEquals(dv.singleValue, float0);
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -363,7 +364,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(dv.valueArray[2], boolean2);
 			Assert.assertEquals(dv.valueArray[3], boolean3);
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -401,7 +402,7 @@ public class DynamicValueTest {
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
 			Assert.assertEquals(dv.singleValue, boolean0);
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -449,7 +450,7 @@ public class DynamicValueTest {
 			Assert.assertEquals(str2, dv.valueArray[2]);
 			Assert.assertEquals(str3, dv.valueArray[3]);
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -488,7 +489,7 @@ public class DynamicValueTest {
 			Assert.assertTrue(dv.singleValue instanceof Equation);
 			Assert.assertTrue(eq0.Equation.equals(((Equation)dv.singleValue).Equation));
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
 		}
 	}

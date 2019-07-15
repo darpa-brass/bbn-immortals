@@ -30,22 +30,22 @@ public class OdbEmbeddedServer {
 
 	private static final Object lock = new Object();
 
-	protected final TestScenario scenario;
+	protected final TestScenario[] scenarios;
 	private String host;
 	private int port;
 
 	private OServer server;
 
-	public OdbEmbeddedServer(@Nonnull TestScenario scenario) {
-		this.scenario = scenario;
+	public OdbEmbeddedServer(@Nonnull TestScenario... scenarios) {
+		this.scenarios = scenarios;
 	}
 
-	public String getOdbPath() {
+	public String getOdbPath(@Nonnull TestScenario scenario) {
 		return "remote" + ":" + host + ":" + port + "/" + scenario.getDbName();
 	}
 
 
-	private boolean restoreDatabase() throws IOException {
+	private boolean restoreDatabase(@Nonnull TestScenario scenario) throws IOException {
 		synchronized (lock) {
 			InputStream scenarioStream = scenario.getBackupInputStream();
 
@@ -80,7 +80,7 @@ public class OdbEmbeddedServer {
 		}
 	}
 
-	private void backupDatabase() throws IOException {
+	private void backupDatabase(@Nonnull TestScenario scenario) throws IOException {
 		synchronized (lock) {
 			ODatabaseDocumentTx db = null;
 			try {
@@ -106,7 +106,7 @@ public class OdbEmbeddedServer {
 		}
 	}
 
-	public void waitForEvaluatorTurn() {
+	public void waitForEvaluatorTurn(@Nonnull TestScenario scenario) {
 		TerminalStatus state = null;
 		while ((state == null || (state.isEvaluationServerBlocked() && !state.isTerminal())) && isRunning()) {
 			synchronized (lock) {
@@ -137,7 +137,7 @@ public class OdbEmbeddedServer {
 		}
 	}
 
-	public void setReady() {
+	public void setReady(@Nonnull TestScenario scenario) {
 		synchronized (lock) {
 			ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:/" + scenario.getDbName());
 			db.open("admin", "admin");
@@ -152,7 +152,7 @@ public class OdbEmbeddedServer {
 		}
 	}
 
-	public void clearState() {
+	public void clearState(@Nonnull TestScenario scenario) {
 		synchronized (lock) {
 			ODatabaseDocumentTx db = new ODatabaseDocumentTx("plocal:/" + scenario.getDbName());
 			db.open("admin", "admin");
@@ -166,6 +166,10 @@ public class OdbEmbeddedServer {
 	}
 
 	public synchronized void init() {
+		init(true);
+	}
+
+	public synchronized void init(boolean useBackups) {
 		try {
 			System.out.println("Starting Embedded OrientDB Server...");
 			server = OServerMain.create();
@@ -181,17 +185,21 @@ public class OdbEmbeddedServer {
 			int port = server.getListenerByProtocol(ONetworkProtocolBinary.class).getInboundAddr().getPort();
 			int webPort = server.getListenerByProtocol(ONetworkProtocolHttpAbstract.class).getInboundAddr().getPort();
 
-			init_embeddedRemoteAgnostic("127.0.0.1", port);
+			StringBuilder displayMessageBuilder = new StringBuilder(
+					"Embedded OrientDB is now ready for use. Details:\n" +
+							"\tHost: " + host + "\n" +
+							"\tPort: " + port + "\n" +
+							"\tWebsite: http://" + host + ":" + webPort + "/studio/index.html\n" +
+							"\tDatabases:\n");
 
 
-			String displayMsg = "Embedded OrientDB is now ready for use. Details:\n" +
-					"\tHost: " + host + "\n" +
-					"\tPort: " + port + "\n" +
-					"\tWebsite: http://" + host + ":" + webPort + "/studio/index.html\n" +
-					"\tDatabases:\n" +
-					"\t\tremote:" + host + ":" + port + "/" + scenario.getDbName() + "\n";
+			for (TestScenario scenario : scenarios) {
+				init_embeddedRemoteAgnostic("127.0.0.1", port, scenario, useBackups);
+				displayMessageBuilder.append("\t\tremote:").append(host).append(":").append(port).append("/")
+						.append(scenario.getDbName()).append("\n");
+			}
 
-			System.out.println(displayMsg);
+			System.out.println(displayMessageBuilder.toString());
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -199,12 +207,12 @@ public class OdbEmbeddedServer {
 	}
 
 
-	protected void init_embeddedRemoteAgnostic(@Nonnull String host, int port) {
+	private void init_embeddedRemoteAgnostic(@Nonnull String host, int port, @Nonnull TestScenario scenario, boolean useBackups) {
 		this.host = host;
 		this.port = port;
 
 		try {
-			if (!restoreDatabase()) {
+			if (!useBackups || !restoreDatabase(scenario)) {
 
 				if (scenario.getScenarioType().equals("Scenario5")) {
 
@@ -235,7 +243,7 @@ public class OdbEmbeddedServer {
 
 					if (p.exitValue() == 0) {
 						System.out.println("Finished populating the OrientDB instance.");
-						backupDatabase();
+						backupDatabase(scenario);
 					} else {
 						throw new RuntimeException("Invalid Server Setup exit code '" + p.exitValue() + "'!");
 					}
@@ -280,7 +288,7 @@ public class OdbEmbeddedServer {
 							}
 						}
 
-						backupDatabase();
+						backupDatabase(scenario);
 					}
 				} else {
 					throw new RuntimeException("Unexpected Scenario Type '" + scenario.getScenarioType() + "'!");

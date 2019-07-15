@@ -21,7 +21,11 @@ import static mil.darpa.immortals.flitcons.Utils.FLAGGED_FOR_REPLACEMENT;
 public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 
 	public OrientVertexDataSource() {
-		super();
+		super(null);
+	}
+
+	public OrientVertexDataSource(@Nonnull String orientDbServerPath) {
+		super(orientDbServerPath);
 	}
 
 	@Override

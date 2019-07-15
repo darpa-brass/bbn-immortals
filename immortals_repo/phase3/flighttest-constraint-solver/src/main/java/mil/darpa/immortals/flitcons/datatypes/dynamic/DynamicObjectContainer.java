@@ -1,5 +1,6 @@
 package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
+import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
@@ -64,7 +65,7 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 		children.remove(key);
 	}
 
-	public Set<String> createGroupingHashes() throws DynamicValueeException {
+	public Set<String> createGroupingHashes() throws NestedPathException {
 		try {
 
 			Set<Equation> equations = children.values().stream().filter(x -> x.getValue() instanceof Equation).map(x -> (Equation) x.getValue()).collect(Collectors.toSet());
@@ -138,7 +139,7 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 								break;
 
 							default:
-								throw new DynamicValueeException(key, "Invalid multiplicity '" + val.multiplicity.name() + "' detected!");
+								throw new NestedPathException(key, "Invalid multiplicity '" + val.multiplicity.name() + "' detected!");
 
 						}
 					}

@@ -7,3 +7,12 @@ includeBuild 'integration-tests'
 includeBuild 'immortals-orientdb-server'
 includeBuild '../docs'
 includeBuild '../shared'
+
+String cpr = System.env.IMMORTALS_CHALLENGE_PROBLEMS_ROOT
+String imar = System.env.IMMORTALS_MDL_ARCHIVE_ROOT
+if (cpr != null) {
+    includeBuild "$cpr"
+}
+if (imar != null) {
+    includeBuild "$imar"
+}

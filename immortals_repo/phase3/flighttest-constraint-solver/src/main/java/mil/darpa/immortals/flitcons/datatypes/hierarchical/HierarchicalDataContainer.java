@@ -173,14 +173,11 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 			throw AdaptationnException.internal("Cannot insert and clone a node from the same database!");
 
 		} else if (existingDataIdentifierMap.containsKey(sourceData.node)) {
-			if (sourceData.node.referenceIdentifier != null) {
 				// TODO: Enforce proper cardinality
 				// It already exists and is expected to be referenced more than once;
-//				throw AdaptationnException.input("Multiple references to the ID '" + sourceData.node.referenceIdentifier + "' detected!");
-				return;
 
-			} else {
-				throw AdaptationnException.internal("Already exists!");
+			if (sourceData.node.referenceIdentifier == null) {
+				throw AdaptationnException.internal("Node already exists!");
 			}
 		}
 
@@ -206,6 +203,33 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 			}
 
 		}
+	}
+
+	public HierarchicalData cloneTrimmedTreeIntoContainer(@Nonnull HierarchicalData sourceData,
+	                                   @Nonnull HierarchicalData targetParentNode) {
+
+		// Duplicate the node
+		HierarchicalData clone = sourceData.duplicateFlatDisconnected(targetParentNode.node);
+		clone.setParentContainer(this);
+		clone.isRootNode = false;
+		if (clone.getParent() != null) {
+			clone.clearParentNode();
+		}
+
+		setParentNode(clone, targetParentNode);
+
+		// And do the same for all children
+		Iterator<String> nodeTypeIterator = sourceData.getChildrenClassIterator();
+		while (nodeTypeIterator.hasNext()) {
+			String nodeTypeObject = nodeTypeIterator.next();
+
+			Iterator<HierarchicalData> childDataIter = sourceData.getChildrenDataIterator(nodeTypeObject);
+			while (childDataIter.hasNext()) {
+				HierarchicalData originalChildNode = childDataIter.next();
+				HierarchicalData newChildNode = cloneTrimmedTreeIntoContainer(originalChildNode, clone);
+			}
+		}
+		return clone;
 	}
 
 	@Override

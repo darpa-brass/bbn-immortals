@@ -1,7 +1,7 @@
 package mil.darpa.immortals.flitcons.validation;
 
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
+import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.Equation;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.Range;
 
@@ -27,7 +27,7 @@ public class ValidationData {
 	}
 
 	public ValidationData(@Nonnull ValidationDataContainer parent, @Nonnull String name, @Nullable DynamicValueMultiplicity multiplicity,
-	                      @Nullable Object value) throws DynamicValueeException {
+	                      @Nullable Object value) throws NestedPathException {
 		this.parent = parent;
 		this.name = name;
 		this.multiplicity = multiplicity;
@@ -64,40 +64,40 @@ public class ValidationData {
 
 	}
 
-	private static void validate(boolean allowNull, ValidationData data) throws DynamicValueeException {
+	private static void validate(boolean allowNull, ValidationData data) throws NestedPathException {
 		switch (data.multiplicity) {
 
 			case SingleValue:
 				if (!isValidValue(data.value)) {
-					throw new DynamicValueeException(data.name, "Invalid SingleValue value!");
+					throw new NestedPathException(data.name, "Invalid SingleValue value!");
 
 				}
 				break;
 
 			case Range:
 				if (!(data.value instanceof Range)) {
-					throw new DynamicValueeException(data.name, "Invalid Range value!");
+					throw new NestedPathException(data.name, "Invalid Range value!");
 
 				} else {
 					Range r = (Range) data.value;
 					if (!isValidValue(r.Min)) {
-						throw new DynamicValueeException(data.name, "Invalid Min Range value!");
+						throw new NestedPathException(data.name, "Invalid Min Range value!");
 
 					} else if (!isValidValue(r.Max)) {
-						throw new DynamicValueeException(data.name, "Invalid Max Range value!");
+						throw new NestedPathException(data.name, "Invalid Max Range value!");
 					}
 				}
 				break;
 
 			case Set:
 				if (!(data.value instanceof Object[])) {
-					throw new DynamicValueeException(data.name, "Invalid Set value!");
+					throw new NestedPathException(data.name, "Invalid Set value!");
 				} else {
 					Object[] a = (Object[]) data.value;
 
 					for (Object o : a) {
 						if (!isValidValue(o)) {
-							throw new DynamicValueeException(data.name, "Invalid Set child value!");
+							throw new NestedPathException(data.name, "Invalid Set child value!");
 						}
 					}
 				}

@@ -74,7 +74,7 @@ jar.finalizedBy(getTasksByName('publishToMavenLocal', true))
 clean.delete('./immortals-orientdb-server.jar')
 
 dependencies {
-	compile 'info.picocli:picocli:3.9.0'
+	compile 'info.picocli:picocli:3.9.6'
 	compile 'com.google.code.findbugs:jsr305:3.0.1'
 	compile 'com.google.code.gson:gson:2.7'
 	compile 'org.slf4j:slf4j-api:1.7.5'

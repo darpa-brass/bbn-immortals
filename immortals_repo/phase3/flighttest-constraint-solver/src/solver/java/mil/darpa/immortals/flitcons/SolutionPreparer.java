@@ -3,7 +3,6 @@ package mil.darpa.immortals.flitcons;
 import mil.darpa.immortals.flitcons.adaptation.AdaptationDataInterface;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValue;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
@@ -72,7 +71,7 @@ public class SolutionPreparer {
 			}
 
 			return adaptationData;
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw AdaptationnException.internal(e);
 		}
 	}

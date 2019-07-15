@@ -1,6 +1,7 @@
 package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import com.google.gson.*;
+import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
@@ -12,7 +13,7 @@ import static mil.darpa.immortals.flitcons.Utils.GLOBALLY_UNIQUE_ID;
 
 public class DynamicValueDeserializer implements JsonDeserializer<DynamicValue> {
 
-	private static DynamicValue getDynamicValue(JsonElement element) throws DynamicValueeException {
+	private static DynamicValue getDynamicValue(JsonElement element) throws NestedPathException {
 		if (element.isJsonPrimitive()) {
 			Object value = getSinglePrimitive(element);
 			if (value instanceof Range) {
@@ -49,7 +50,7 @@ public class DynamicValueDeserializer implements JsonDeserializer<DynamicValue> 
 		}
 	}
 
-	private static Object getSinglePrimitive(JsonElement value) throws DynamicValueeException {
+	private static Object getSinglePrimitive(JsonElement value) throws NestedPathException {
 
 		if (value.isJsonObject()) {
 			JsonObject jo = value.getAsJsonObject();
@@ -104,7 +105,7 @@ public class DynamicValueDeserializer implements JsonDeserializer<DynamicValue> 
 	public DynamicValue deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 		try {
 			return getDynamicValue(json);
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw AdaptationnException.internal(e);
 		}
 	}

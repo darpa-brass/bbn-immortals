@@ -1,6 +1,7 @@
 package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import com.google.gson.*;
+import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
@@ -34,7 +35,7 @@ public class DynamicObjectContainerDeserializer implements JsonDeserializer<Dyna
 			} else {
 				throw AdaptationnException.internal("DynamicObjectContainer JSON root must be a JsonObject!");
 			}
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw AdaptationnException.internal(e);
 		}
 	}

@@ -81,14 +81,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -136,14 +136,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -191,14 +191,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -246,14 +246,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -301,14 +301,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -356,14 +356,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -411,14 +411,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -466,14 +466,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -521,14 +521,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -576,14 +576,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -631,14 +631,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -686,14 +686,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -741,14 +741,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -796,14 +796,14 @@
               <SampleRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>128</ConditionValue>
+                  <ConditionValue>100</ConditionValue>
                   <BaseUnit>Hertz</BaseUnit>
                 </ConditionParameter>
               </SampleRate>
               <DataRate>
                 <ConditionParameter>
                   <ConditionOperation>==</ConditionOperation>
-                  <ConditionValue>2048</ConditionValue>
+                  <ConditionValue>1600</ConditionValue>
                   <BaseUnit>BitPerSecond</BaseUnit>
                 </ConditionParameter>
               </DataRate>
@@ -1417,6 +1417,8 @@
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
+						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
                       <PortTypes>
@@ -1437,6 +1439,8 @@
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
+						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
                       <PortTypes>
@@ -1457,6 +1461,8 @@
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
+						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
                       <PortTypes>
@@ -1477,6 +1483,8 @@
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
+						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
                       <PortTypes>
@@ -1497,6 +1505,8 @@
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
+						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
                       <PortTypes>
@@ -1517,6 +1527,8 @@
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
+						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
                       <PortTypes>
@@ -1992,6 +2004,7 @@
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2016,6 +2029,7 @@
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2040,6 +2054,7 @@
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2064,6 +2079,7 @@
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2088,6 +2104,7 @@
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2112,6 +2129,7 @@
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2136,6 +2154,7 @@
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
                         <DataLength>16</DataLength>
                         <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2159,6 +2178,8 @@
                         </NameValues>
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
                         <DataLength>16</DataLength>
+                        <SampleRate>100</SampleRate>
+                        <SampleRate>200</SampleRate>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>

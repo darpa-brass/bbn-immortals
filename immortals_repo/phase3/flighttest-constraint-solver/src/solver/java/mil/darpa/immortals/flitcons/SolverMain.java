@@ -42,9 +42,9 @@ public class SolverMain {
 		SolverConfiguration config = SolverConfiguration.getInstance();
 		CommandLine.populateCommand(config, args);
 
-		if (config.helpRequested) {
+		if (config.isHelpRequested()) {
 			CommandLine.usage(config, System.out);
-		} else if (config.validateOrientdb) {
+		} else if (config.isValidateOrientdb()) {
 			validate(config);
 		} else {
 			execute();
@@ -65,7 +65,7 @@ public class SolverMain {
 			while ((state = cpb.waitForReadyOrHalt()) != TerminalStatus.Halt) {
 				System.out.println("Starting Adaptation");
 				if (state == TerminalStatus.ReadyForAdaptation) {
-					evaluationInstanceIdentifier = config.evaluationIdentifier == null ? ("I" + System.currentTimeMillis()) : config.evaluationIdentifier;
+					evaluationInstanceIdentifier = config.getEvaluationIdentifier() == null ? ("I" + System.currentTimeMillis()) : config.getEvaluationIdentifier();
 					if (previousEvaluationIdentifiers.contains(evaluationInstanceIdentifier)) {
 						throw new RuntimeException("Refusing to reuse the evaluation identifier '" + evaluationInstanceIdentifier + "'!");
 					}
@@ -80,7 +80,7 @@ public class SolverMain {
 					cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.AdaptationSuccessful, "");
 					System.out.print("Complete");
 
-					if (config.stopOnFinish) {
+					if (config.isStopOnFinish()) {
 						System.exit(0);
 					}
 					evaluationInstanceIdentifier = "UNDEFINED";
@@ -95,8 +95,8 @@ public class SolverMain {
 	private static void validate(@Nonnull SolverConfiguration config) {
 		OrientVertexDataSource dataSource = new OrientVertexDataSource();
 		MdlDataValidator validator = new MdlDataValidator(null, null, dataSource);
-		boolean inputIsValid = validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements, !config.colorlessMode).isValid();
-		boolean inventoryIsValid = validator.validateConfiguration(ValidationScenario.DauInventory, !config.colorlessMode).isValid();
+		boolean inputIsValid = validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements).isValid();
+		boolean inventoryIsValid = validator.validateConfiguration(ValidationScenario.DauInventory).isValid();
 
 		String inputResult = inputIsValid ? "PASSED" : "FAILED";
 		String inventoryResult = inventoryIsValid ? "PASSED" : "FAILED";

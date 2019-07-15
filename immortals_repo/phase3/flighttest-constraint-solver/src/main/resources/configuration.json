@@ -209,7 +209,7 @@
 				"optionalChildAttributeValueSelectionRemap": {
 					"b862c60433e5": [true, false]
 				},
-				"optionalValueToCreateIfMissing": false
+				"optionalValueToCreateIfMissing": [false]
 			}
 		]
 	},

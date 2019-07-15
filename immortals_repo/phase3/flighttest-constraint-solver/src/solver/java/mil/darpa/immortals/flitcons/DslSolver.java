@@ -2,6 +2,7 @@ package mil.darpa.immortals.flitcons;
 
 import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainerFactory;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
 import org.apache.commons.io.FileUtils;
@@ -9,14 +10,11 @@ import org.apache.commons.io.FileUtils;
 import javax.annotation.Nonnull;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DslSolver implements SolverInterface {
-
-	public static final String ARGS_DSL_PATH = "IMMORTALS_RESOURCE_DSL";
+public class DslSolver implements SolverInterface<DslSolver> {
 
 	private static final String SWAP_REQUEST = "dsl-swap-request.json";
 	private static final String SWAP_INVENTORY = "dsl-swap-inventory.json";
@@ -29,37 +27,17 @@ public class DslSolver implements SolverInterface {
 	private Path responsePath;
 
 	public DslSolver() {
-		try {
-			String envPath;
-			Path cwd = Paths.get(DslSolver.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-			if ((envPath = System.getenv(ARGS_DSL_PATH)) != null) {
-				dslDirectory = Paths.get(envPath);
-
-			} else {
-				dslDirectory = cwd.getParent().getParent().getParent().resolve("dsl").resolve("resource-dsl").toAbsolutePath().normalize();
-			}
-
-			if (!Files.exists(dslDirectory)) {
-				if (envPath == null) {
-					throw AdaptationnException.internal("No path for the DSL provided and relative path '" + dslDirectory.toAbsolutePath() + "' does not exist!");
-				} else {
-					throw AdaptationnException.internal("Provided DSL path '" + dslDirectory.toString() + "' does not exist!");
-				}
-			}
-
-		} catch (URISyntaxException e) {
-			throw AdaptationnException.internal(e);
-		}
+		dslDirectory = EnvironmentConfiguration.getDslRoot();
 	}
 
 	@Override
-	public void loadData(@Nonnull DynamicObjectContainer inputConfiguration, @Nonnull DynamicObjectContainer inventory) {
+	public DslSolver loadData(@Nonnull AbstractDataSource dataSource) {
 		try {
-			DynamicObjectContainer inputConfigurationClone = inputConfiguration.duplicate();
-			DynamicObjectContainer inventoryClone = inventory.duplicate();
+			DynamicObjectContainer inputConfiguration = DynamicObjectContainerFactory.create(dataSource.getInterconnectedTransformedFaultyConfiguration(false));
+			DynamicObjectContainer dauInventory = DynamicObjectContainerFactory.create(dataSource.getTransformedDauInventory(false));
 
-			requestPath = EnvironmentConfiguration.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfigurationClone).getBytes());
-			inventoryPath = EnvironmentConfiguration.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(inventoryClone).getBytes());
+			requestPath = EnvironmentConfiguration.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfiguration).getBytes());
+			inventoryPath = EnvironmentConfiguration.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(dauInventory).getBytes());
 			responsePath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_RESPONSE, new byte[0]));
 			Files.delete(responsePath);
 			FileUtils.forceMkdir(dslDirectory.resolve("outbox").toFile());
@@ -67,6 +45,7 @@ public class DslSolver implements SolverInterface {
 		} catch (Exception e) {
 			throw AdaptationnException.internal(e);
 		}
+		return this;
 	}
 
 	@Override

@@ -88,14 +88,14 @@ public abstract class TestScenarioRunner {
 
 
 				if (odbServerStartDelay != null) {
-					odbServer.clearState();
+					odbServer.clearState(scenario);
 					data = cpb.getCurrentEvaluationData(evaluationId);
 					Assert.assertNull(data.getCurrentState());
 
 					timer.schedule(new TimerTask() {
 						@Override
 						public void run() {
-							odbServer.setReady();
+							odbServer.setReady(scenario);
 						}
 					}, odbServerStartDelay);
 				}
@@ -105,7 +105,7 @@ public abstract class TestScenarioRunner {
 					adaptationServerStarted = true;
 				}
 
-				odbServer.waitForEvaluatorTurn();
+				odbServer.waitForEvaluatorTurn(scenario);
 
 				BBNEvaluationData resultData = cpb.getCurrentEvaluationData(evaluationId);
 				currentState = TerminalStatus.valueOf(resultData.getCurrentState());
@@ -114,7 +114,7 @@ public abstract class TestScenarioRunner {
 				evaluationId = baseIdentifier + "-iteration" + iterationCount++;
 				cpb = EnvironmentConfiguration.initializeChallengeProblemBridge(evaluationId);
 
-				odbServer.setReady();
+				odbServer.setReady(scenario);
 
 			} while (!currentState.isTerminal() && expectedStates.size() > 0);
 

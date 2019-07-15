@@ -11,12 +11,17 @@ import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 public enum EnvironmentConfiguration {
-	IMMORTALS_ROOT("IMMORTALS_ROOT", "mil.darpa.immortals.root", tryResolveRelativeToImmortalsRoot(false, "")),
+	IMMORTALS_ROOT("IMMORTALS_ROOT", "mil.darpa.immortals.root",
+			tryResolveRelativeToImmortalsRoot(false, "")),
 	ODB_TARGET("ORIENTDB_EVAL_TARGET", "mil.darpa.immortals.odbTarget", null),
 	ODB_USER("ORIENTDB_EVAL_USER", "mil.darpa.immortals.odbUser", "admin"),
 	ODB_PASSWORD("ORIENTDB_EVAL_PASSWORD", "mil.darpa.immortals.odbPassword", "admin"),
 	ARTIFACT_DIRECTORY("IMMORTALS_ARTIFACT_DIRECTORY", "mil.darpa.immortals.artifactdirectory",
-			tryResolveRelativeToImmortalsRoot(true, "phase3", "DEFAULT_ARTIFACT_DIRECTORY"));
+			tryResolveRelativeToImmortalsRoot(true, "phase3", "DEFAULT_ARTIFACT_DIRECTORY")),
+	CHALLENGE_PROBLEMS_ROOT("CHALLENGE_PROBLEMS_ROOT", "mil.darpa.immortals.challengeProblemsRoot", null),
+	DSL_PATH("IMMORTALS_RESOURCE_DSL", "mil.darpa.immortals.resourceDslRoot",
+			tryResolveRelativeToImmortalsRoot(false, "dsl", "resource-dsl"));
+
 
 	private static final Logger logger = Logger.getLogger(EnvironmentConfiguration.class.getName());
 
@@ -35,6 +40,10 @@ public enum EnvironmentConfiguration {
 
 	public static Path getArtifactDirectory() {
 		return Paths.get(ARTIFACT_DIRECTORY.getValue()).toAbsolutePath();
+	}
+
+	public static Path getDslRoot() {
+		return Paths.get(DSL_PATH.getValue()).toAbsolutePath();
 	}
 
 	public static Path getImmortalsRoot() {

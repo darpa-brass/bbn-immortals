@@ -3,16 +3,33 @@ package mil.darpa.immortals.flitcons;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import mil.darpa.immortals.flitcons.adaptation.AdaptationDataInterface;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import static mil.darpa.immortals.flitcons.Utils.CHILD_LABEL;
+import static mil.darpa.immortals.flitcons.Utils.PARENT_LABEL;
+
 public class SolutionInjector {
+
+	public SolutionInjector(@Nonnull AbstractDataTarget dataTarget, @Nonnull DynamicObjectContainer solution) {
+		this.dataSource = dataTarget;
+
+		SolutionPreparer preparer = new SolutionPreparer(
+				dataTarget.getInterconnectedFaultyConfiguration(),
+				dataTarget.getInterconnectedTransformedFaultyConfiguration(false),
+				dataTarget.getRawInventoryContainer(),
+				dataTarget.getTransformedDauInventory(false));
+
+		this.adaptationData = preparer.prepare(solution, PARENT_LABEL, CHILD_LABEL);
+	}
 
 	private final Set<SolutionPreparer.ParentAdaptationData> adaptationData;
 	private final AbstractDataTarget dataSource;
@@ -86,10 +103,6 @@ public class SolutionInjector {
 
 	public void injectSolution() {
 		System.out.println(Utils.padCenter("Initial PortMapping Configuration", 80, '#'));
-		TreeMap<String, TreeMap<String, Object>> chartData = dataSource.getPortMappingChartData();
-		for (String line : Utils.makeChart(chartData, null, null)) {
-			System.out.println(line);
-		}
 		System.out.println(Utils.padCenter("", 80, '#'));
 
 
@@ -145,7 +158,7 @@ public class SolutionInjector {
 				dataSource.update_removeNodeTree((OrientVertex) data.associatedObject);
 			}
 
-			if (!SolverConfiguration.getInstance().noCommit) {
+			if (!SolverConfiguration.getInstance().isNoCommit()) {
 				dataSource.commit();
 			}
 
@@ -154,11 +167,6 @@ public class SolutionInjector {
 
 		dataSource.restart();
 
-		System.out.println(Utils.padCenter("Resultant PortMapping Configuration", 80, '#'));
-		chartData = dataSource.getPortMappingChartData();
-		for (String line : Utils.makeChart(chartData, null, null)) {
-			System.out.println(line);
-		}
 		System.out.println(Utils.padCenter("", 80, '#'));
 		dataSource.shutdown();
 	}

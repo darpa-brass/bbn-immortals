@@ -5,6 +5,7 @@ import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataConta
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataTransformer;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.mdl.MdlHacks;
+import mil.darpa.immortals.flitcons.mdl.validation.PortMapping;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
 
@@ -153,4 +154,7 @@ public abstract class AbstractDataSource<T> {
 	}
 
 	public abstract TreeMap<String, TreeMap<String, Object>> getPortMappingChartData();
+
+	public abstract Map<String, PortMapping> getPortMappingDetails();
 }
+

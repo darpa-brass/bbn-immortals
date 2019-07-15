@@ -14,30 +14,101 @@ public class SolverConfiguration {
 		return instance;
 	}
 
-	private SolverConfiguration() {
-
-	}
-
 	@CommandLine.Option(names = "--validate", description = "Validates the OrientDB setup instead of adapting it")
-	public boolean validateOrientdb = false;
+	private boolean validateOrientdb = false;
 
 	@CommandLine.Option(names = {"-C", ValidationDataContainer.COLORLESS_FLAG}, description = "Results in the validation result only displaying invalid values instead of displaying all values as green or red depending on pass or fail")
-	public boolean colorlessMode = false;
+	private boolean colorlessMode = false;
 
 	@CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Display Help")
-	public boolean helpRequested = false;
+	private boolean helpRequested = false;
 
 	@CommandLine.Option(names = "--no-commit", description = "Performs the adaptation but does not commit it to the OrientDB instance")
-	public boolean noCommit = false;
+	private boolean noCommit = false;
 
 	@CommandLine.Option(names = "--resource-dsl-path", description = "The directory where the Resource DSL is located")
-	public String dslPath = null;
+	private String dslPath = null;
 
 	@CommandLine.Option(hidden = true, names = {"--simple-solver"})
-	public boolean useSimpleSolver = false;
+	private boolean useSimpleSolver = false;
 
 	@CommandLine.Option(names = "--stop-on-finish", description = "Indicates it should always stop when it has completed a single adaptation.")
-	public boolean stopOnFinish;
+	private boolean stopOnFinish;
 
-	public String evaluationIdentifier;
+	private String evaluationIdentifier;
+
+	private SolverConfiguration() {
+	}
+
+	public boolean isValidateOrientdb() {
+		return validateOrientdb;
+	}
+
+	public SolverConfiguration setValidateOrientdb(boolean validateOrientdb) {
+		this.validateOrientdb = validateOrientdb;
+		return this;
+	}
+
+	public boolean isColorlessMode() {
+		return colorlessMode;
+	}
+
+	public SolverConfiguration setColorlessMode(boolean colorlessMode) {
+		this.colorlessMode = colorlessMode;
+		return this;
+	}
+
+	public boolean isHelpRequested() {
+		return helpRequested;
+	}
+
+	public SolverConfiguration setHelpRequested(boolean helpRequested) {
+		this.helpRequested = helpRequested;
+		return this;
+	}
+
+	public boolean isNoCommit() {
+		return noCommit;
+	}
+
+	public SolverConfiguration setNoCommit(boolean noCommit) {
+		this.noCommit = noCommit;
+		return this;
+	}
+
+	public String getDslPath() {
+		return dslPath;
+	}
+
+	public SolverConfiguration setDslPath(String dslPath) {
+		this.dslPath = dslPath;
+		return this;
+	}
+
+	public boolean isUseSimpleSolver() {
+		return useSimpleSolver;
+	}
+
+	public SolverConfiguration setUseSimpleSolver(boolean useSimpleSolver) {
+		this.useSimpleSolver = useSimpleSolver;
+		return this;
+	}
+
+	public boolean isStopOnFinish() {
+		return stopOnFinish;
+	}
+
+	public SolverConfiguration setStopOnFinish(boolean stopOnFinish) {
+		this.stopOnFinish = stopOnFinish;
+		return this;
+	}
+
+	public String getEvaluationIdentifier() {
+		return evaluationIdentifier;
+	}
+
+	public SolverConfiguration setEvaluationIdentifier(String evaluationIdentifier) {
+		this.evaluationIdentifier = evaluationIdentifier;
+		return this;
+	}
 }

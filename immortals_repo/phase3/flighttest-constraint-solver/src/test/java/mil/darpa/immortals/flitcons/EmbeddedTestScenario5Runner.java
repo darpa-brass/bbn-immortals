@@ -24,7 +24,7 @@ public class EmbeddedTestScenario5Runner extends TestScenarioRunner {
 				throw new RuntimeException("Adaptation thread is already running!");
 			}
 		}
-		SolverConfiguration.getInstance().useSimpleSolver = true;
+		SolverConfiguration.getInstance().setUseSimpleSolver(true);
 		solverThread = new Thread(() -> {
 			System.out.println("Starting Embedded Scenario 5 Adaptation Session");
 			SolverMain.execute();

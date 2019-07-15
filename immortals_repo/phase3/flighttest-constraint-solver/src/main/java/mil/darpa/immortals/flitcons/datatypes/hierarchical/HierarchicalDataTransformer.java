@@ -179,7 +179,7 @@ public class HierarchicalDataTransformer {
 					{
 						for (Configuration.ParentChildAttributeRelation relation : instructions.ignoreParentsWithoutChildAttributes) {
 							if (a.pathMatches(relation.parentPath)) {
-								HierarchicalData childNode = null;
+								HierarchicalData childNode;
 								return !((childNode = a.getChildNodeByPath(relation.childPath)) != null &&
 										childNode.getAttribute(relation.attribute) != null);
 							}
@@ -449,7 +449,7 @@ public class HierarchicalDataTransformer {
 						String substitutionValue = childRelation.attribute;
 
 						if (node.getAttribute(substitutionValue) == null) {
-							HierarchicalData childNode = null;
+							HierarchicalData childNode;
 
 							if ((childNode = node.getChildNodeByPath(childRelation.nodePath)) == null ||
 									childNode.getAttribute(substitutionValue) == null) {
@@ -482,7 +482,8 @@ public class HierarchicalDataTransformer {
 	                                             @Nonnull HierarchicalDataContainer externalStructure,
 	                                             @Nonnull Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> indirectRelations) {
 
-		Map<HierarchicalData, Set<HierarchicalData>> newParentChildrenMap = new HashMap<>();
+		Map<HierarchicalData, Set<HierarchicalData>> parentChildMap = new HashMap<>();
+		Map<HierarchicalData, Set<HierarchicalData>> childParentMap = new HashMap<>();
 
 		// For each DAU node
 		for (HierarchicalData dauNode : primaryStructure.getDauRootNodes()) {
@@ -516,9 +517,10 @@ public class HierarchicalDataTransformer {
 
 							// And set the parent of those nodes to the DAU node
 							HierarchicalData externalNode = externalStructure.getNode(referencedNode);
-							Set<HierarchicalData> parentChildren = newParentChildrenMap.computeIfAbsent(primaryNode, k -> new HashSet<>());
+							Set<HierarchicalData> childParents = childParentMap.computeIfAbsent(externalNode, k -> new HashSet<>());
+							Set<HierarchicalData> parentChildren = parentChildMap.computeIfAbsent(primaryNode, k -> new HashSet<>());
 							parentChildren.add(externalNode);
-
+							childParents.add(primaryNode);
 						}
 					}
 				}
@@ -529,17 +531,46 @@ public class HierarchicalDataTransformer {
 					HierarchicalIdentifier hn = iter.next();
 					if (!primaryStructure.containsNode(hn)) {
 						// Throw an exception because that is not yet supported.
-						throw AdaptationnException.input("Reference from primary Node '" + primaryNode.toString() + "' to external node '" + hn.toString() + "' detected! This is not supported!");
+						// TODO: This should probably be validated pre and post adaptation...
+						if (!(primaryNode.node.getNodeType().equals("DSCPTableEntryRef") && hn.getNodeType().equals("DSCPTableEntry"))) {
+							throw AdaptationnException.input("Reference from primary Node '" + primaryNode.toString() + "' to external node '" + hn.toString() + "' detected! This is not supported!");
+						}
+					}
+				}
+			}
+		}
+
+		Set<HierarchicalData> multiParentChildren = childParentMap.keySet().stream().filter(x -> childParentMap.get(x).size() > 1).collect(Collectors.toSet());
+
+		for (HierarchicalData multiParentChild : multiParentChildren) {
+			Iterator<String> childIterator = multiParentChild.getChildrenClassIterator();
+			while (childIterator.hasNext()) {
+				String type = childIterator.next();
+
+				Iterator<HierarchicalData> dataIterator = multiParentChild.getChildrenDataIterator(type);
+				while (dataIterator.hasNext()) {
+					HierarchicalData child = dataIterator.next();
+					if (child.getChildrenClassIterator().hasNext()) {
+						throw AdaptationnException.internal("Complex objects are not currently supported if multiple PortMappings utilize a single measurement!");
+					}
+					Set<String> childAttributeNames = child.getAttributeNames();
+					if (!(childAttributeNames.size() == 2 && childAttributeNames.contains("Min") &&
+							childAttributeNames.contains("Max") && child.getAttribute("Min").equals(child.getAttribute("Max")))) {
+						throw AdaptationnException.internal("A single Measurement or DataStream cannot be referenced by multiple PortMappings if it has multiple possible configurations!");
 					}
 				}
 			}
 		}
 
 		// Then remap the nodes;
-		for (Map.Entry<HierarchicalData, Set<HierarchicalData>> entry : newParentChildrenMap.entrySet()) {
+		for (Map.Entry<HierarchicalData, Set<HierarchicalData>> entry : parentChildMap.entrySet()) {
 			HierarchicalData parentNode = entry.getKey();
 			for (HierarchicalData externalChild : entry.getValue()) {
-				primaryStructure.cloneTreeIntoContainer(externalChild, parentNode);
+				if (multiParentChildren.contains(externalChild)) {
+					primaryStructure.cloneTrimmedTreeIntoContainer(externalChild, parentNode);
+				} else {
+					primaryStructure.cloneTreeIntoContainer(externalChild, parentNode);
+				}
 			}
 		}
 	}

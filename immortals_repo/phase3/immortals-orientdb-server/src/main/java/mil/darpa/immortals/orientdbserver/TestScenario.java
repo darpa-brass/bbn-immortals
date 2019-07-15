@@ -1,6 +1,7 @@
 package mil.darpa.immortals.orientdbserver;
 
 import com.google.gson.*;
+import mil.darpa.immortals.EnvironmentConfiguration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -79,7 +80,7 @@ public class TestScenario {
 			Gson gson = new Gson();
 
 			scenario5TestScenarios = initScenarioSet("s5_scenarios.json", gson);
-			if (System.getenv().containsKey("CHALLENGE_PROBLEMS_ROOT")) {
+			if (System.getenv().containsKey(EnvironmentConfiguration.CHALLENGE_PROBLEMS_ROOT.envVar)) {
 				scenario5TestScenarios.putAll(initScenarioSet("s5_cp_scenarios.json", gson));
 			}
 

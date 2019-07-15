@@ -6,9 +6,11 @@ import mil.darpa.immortals.flitcons.datatypes.DataType;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
+import mil.darpa.immortals.flitcons.mdl.validation.PortMapping;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
 import nu.xom.*;
+import org.apache.commons.lang.NotImplementedException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -540,7 +542,12 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 
 	@Override
 	public TreeMap<String, TreeMap<String, Object>> getPortMappingChartData() {
-		return null;
+		throw new NotImplementedException("This is only implemented for the OrientVertexDataSource!");
+	}
+
+	@Override
+	public Map<String, PortMapping> getPortMappingDetails() {
+		throw new NotImplementedException("This is only implemented for the OrientVertexDataSource!");
 	}
 
 	@Override

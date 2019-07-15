@@ -58,6 +58,21 @@ public class HierarchicalData implements DuplicateInterface {
 		return debugLabel;
 	}
 
+	public HierarchicalData duplicateWithNewNode() {
+			return new HierarchicalData(
+				HierarchicalIdentifier.produceTraceableNode(UUID.randomUUID().toString(), node.getNodeType()),
+				Utils.duplicateMap(attributes),
+				associatedObject,
+				isRootNode,
+				parentNode,
+				Utils.duplicateSet(inboundReferences),
+				Utils.duplicateSet(outboundReferences),
+				Utils.duplicateSetMap(childNodeMap),
+				debugLabel,
+				Utils.duplicateMap(foreignAttributeSources)
+		);
+	}
+
 	@Override
 	public HierarchicalData duplicate() {
 		return new HierarchicalData(
@@ -71,6 +86,20 @@ public class HierarchicalData implements DuplicateInterface {
 				Utils.duplicateSetMap(childNodeMap),
 				debugLabel,
 				Utils.duplicateMap(foreignAttributeSources)
+		);
+	}
+
+	public HierarchicalData duplicateFlatDisconnected(@Nullable HierarchicalIdentifier targetParentNode) {
+		return new HierarchicalData(
+				HierarchicalIdentifier.produceTraceableNode(UUID.randomUUID().toString(), node.getNodeType()),
+				Utils.duplicateMap(attributes),
+				new Object(),
+				false,
+				targetParentNode,
+				null,
+				null,
+				null,
+				null
 		);
 	}
 

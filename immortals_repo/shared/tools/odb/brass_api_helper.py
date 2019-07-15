@@ -83,22 +83,29 @@ class BrassApiHelper:
                 print('Initializing database "' + scenario.dbName + '"...')
                 output_file = 'ORIENTDB_INPUT_DATA.xml'
 
-                out = subprocess.run(
-                    ['sed',
-                     '/<\/NameValues>/{\n r ' + os.path.join(IMMORTALS_ROOT,
-                                                             scenario.xmlInventoryPath) + '\n:a\nn\nba\n}',
-                     os.path.join(IMMORTALS_ROOT, scenario.xmlMdlrootInputPath)],
-                    stdout=subprocess.PIPE)
+                output_str = None
+
+                if scenario.xmlInventoryPath is not None:
+                    out = subprocess.run(
+                        ['sed',
+                         '/<\/NameValues>/{\n r ' + os.path.join(IMMORTALS_ROOT,
+                                                                 scenario.xmlInventoryPath) + '\n:a\nn\nba\n}',
+                         os.path.join(IMMORTALS_ROOT, scenario.xmlMdlrootInputPath)],
+                        stdout=subprocess.PIPE)
+                    output_str = out.stdout.decode()
+                else:
+                    output_str = open(os.path.join(IMMORTALS_ROOT, scenario.xmlMdlrootInputPath)).read()
 
                 out_file = open(output_file, 'w')
-                out_file.write(out.stdout.decode())
+                out_file.write(output_str)
                 out_file.flush()
                 out_file.close()
 
                 client = self._init_db_data(scenario.dbName, [output_file])  # type: pyorient.OrientDB
 
-                # TODO: This is hacky. I shouldn't have to import it has the child of a GenericParameter and then disconnect it!
-                client.command('DELETE EDGE FROM (SELECT FROM DAUInventory)')
+                if scenario.xmlInventoryPath is not None:
+                    # TODO: This is hacky. I shouldn't have to import it has the child of a GenericParameter and then disconnect it!
+                    client.command('DELETE EDGE FROM (SELECT FROM DAUInventory)')
 
                 input_record = client.record_create(-1, {'@BBNEvaluationData': {}})
                 mdl_record = client.query('SELECT FROM MDLRoot')[0]

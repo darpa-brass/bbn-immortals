@@ -54,10 +54,10 @@ public class ValidatorMain {
 				validator.setSaveResults(false);
 
 				if (xec.isInputConfiguration()) {
-					validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements, !config.colorlessMode);
+					validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements);
 
 				} else if (xec.isDauInventory()) {
-					validator.validateConfiguration(ValidationScenario.DauInventory, !config.colorlessMode);
+					validator.validateConfiguration(ValidationScenario.DauInventory);
 
 				} else {
 					System.err.println("XML File did not contain a 'DAUInventory' or 'MDLRoot' in the root!");

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static mil.darpa.immortals.flitcons.Utils.*;
 
-public class SimpleSolver implements SolverInterface {
+public class SimpleSolver implements SolverInterface<SimpleSolver> {
 
 
 	private static final String SWAP_REQUEST = "simple-swap-request.json";
@@ -31,20 +31,17 @@ public class SimpleSolver implements SolverInterface {
 	public SimpleSolver() {
 	}
 
-	@Override
-	public void loadData(@Nonnull DynamicObjectContainer inputConfiguration, @Nonnull DynamicObjectContainer inventory) {
-		this.inputConfiguration = inputConfiguration;
-		this.dauInventory = inventory;
-
-		DynamicObjectContainer inputConfigurationClone = inputConfiguration.duplicate();
-		DynamicObjectContainer inventoryClone = inventory.duplicate();
+	public SimpleSolver loadData(@Nonnull AbstractDataSource dataSource) throws NestedPathException {
+		this.inputConfiguration = DynamicObjectContainerFactory.create(dataSource.getInterconnectedTransformedFaultyConfiguration(false));
+		this.dauInventory = DynamicObjectContainerFactory.create(dataSource.getTransformedDauInventory(false));
 
 		try {
-			EnvironmentConfiguration.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfigurationClone).getBytes());
-			EnvironmentConfiguration.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(inventoryClone).getBytes());
+			EnvironmentConfiguration.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfiguration).getBytes());
+			EnvironmentConfiguration.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(dauInventory).getBytes());
 		} catch (Exception e) {
 			throw AdaptationnException.internal(e);
 		}
+		return this;
 	}
 
 	@Override
@@ -66,7 +63,7 @@ public class SimpleSolver implements SolverInterface {
 			FileReader fr = new FileReader(new File(outputPath));
 			return difGson.fromJson(fr, DynamicObjectContainer.class);
 
-		} catch (DynamicValueeException e) {
+		} catch (NestedPathException e) {
 			throw AdaptationnException.input(e);
 
 		} catch (Exception e) {
@@ -99,7 +96,7 @@ public class SimpleSolver implements SolverInterface {
 										parent = inventoryChildContainer.parent;
 										break;
 									}
-								} catch (DynamicValueeException e) {
+								} catch (NestedPathException e) {
 									e.addPathParent(inputParent.identifier.toString());
 									throw AdaptationnException.internal(e);
 								}
@@ -147,13 +144,13 @@ public class SimpleSolver implements SolverInterface {
 				}
 
 				return doc;
-			} catch (DynamicValueeException e) {
+			} catch (NestedPathException e) {
 				throw AdaptationnException.internal(e);
 			}
 
 		}
 
-		public static GroupingsContainer create(DynamicObjectContainer dauInventory) throws DynamicValueeException {
+		public static GroupingsContainer create(DynamicObjectContainer dauInventory) throws NestedPathException {
 			GroupingsContainer rval = new GroupingsContainer();
 
 			Set<DynamicObjectContainer> parentSet = dauInventory.get(PARENT_LABEL).parseDynamicObjectContainerArray();
@@ -168,12 +165,12 @@ public class SimpleSolver implements SolverInterface {
 							for (String value : groupingValues) {
 								targetChildContainer.add(value, child);
 							}
-						} catch (DynamicValueeException e) {
+						} catch (NestedPathException e) {
 							e.addPathParent(child.identifier.toString());
 							throw e;
 						}
 					}
-				} catch (DynamicValueeException e) {
+				} catch (NestedPathException e) {
 					e.addPathParent(parent.identifier.toString());
 					throw e;
 				}
@@ -224,7 +221,7 @@ public class SimpleSolver implements SolverInterface {
 		}
 
 		public synchronized DynamicObjectContainer attemptCreateAndRemoveReplacement(@Nonnull String grouping,
-		                                                                             @Nonnull DynamicObjectContainer originalContainer) throws DynamicValueeException {
+		                                                                             @Nonnull DynamicObjectContainer originalContainer) throws NestedPathException {
 			DynamicObjectContainer candidateInventoryContainer = get(grouping);
 			if (candidateInventoryContainer == null) {
 				return null;
@@ -239,7 +236,7 @@ public class SimpleSolver implements SolverInterface {
 		}
 
 		public synchronized Map<String, Long> attemptValueComputations(@Nonnull DynamicObjectContainer originalChildContainer,
-		                                                               @Nonnull DynamicObjectContainer inventoryContainer) throws DynamicValueeException {
+		                                                               @Nonnull DynamicObjectContainer inventoryContainer) throws NestedPathException {
 
 			Map<String, Long> rval = new HashMap<>();
 
@@ -355,7 +352,7 @@ public class SimpleSolver implements SolverInterface {
 								value = (Long) output;
 
 							} else {
-								throw new DynamicValueeException(inventoryContainer.identifier.toString() + "." + targetVariable,
+								throw new NestedPathException(inventoryContainer.identifier.toString() + "." + targetVariable,
 										"Unexpected output '" + output + "' from javascript evaluation of calculation '" + javascriptEquation + "'!");
 							}
 
@@ -404,7 +401,7 @@ public class SimpleSolver implements SolverInterface {
 		}
 
 		public synchronized DynamicObjectContainer attemptCreateAndRemoveChildContainer(@Nonnull DynamicObjectContainer originalContainer,
-		                                                                                @Nonnull DynamicObjectContainer candidateInventoryContainer) throws DynamicValueeException {
+		                                                                                @Nonnull DynamicObjectContainer candidateInventoryContainer) throws NestedPathException {
 			try {
 				// Determine attributes that are not suitable in their current form
 				Set<String> problematicValues = determineMissingOrInvalidValues(originalContainer, candidateInventoryContainer);
@@ -438,18 +435,18 @@ public class SimpleSolver implements SolverInterface {
 						DynamicValue desiredValue = originalContainer.get(key);
 
 						if (!valueSet.contains(desiredValue.getValue())) {
-							throw new DynamicValueeException(candidateInventoryContainer.identifier.toString() + "." + key, "Value '" + key + "' Does not match the corresponding value from the inventory!");
+							throw new NestedPathException(candidateInventoryContainer.identifier.toString() + "." + key, "Value '" + key + "' Does not match the corresponding value from the inventory!");
 						} else {
 							possibleResult.put(key, DynamicValue.fromSingleValue(candidateInventoryContainer.get(key).dataSource, desiredValue));
 						}
 
 					} else if (candidateValue.getValue() instanceof Range) {
 						// Otherwise, If the original value is a range, it is not supported and throw an exception
-						throw new DynamicValueeException(candidateInventoryContainer.identifier.toString() + "." + key, "Ranges not supported in DAU Inventory at this time!");
+						throw new NestedPathException(candidateInventoryContainer.identifier.toString() + "." + key, "Ranges not supported in DAU Inventory at this time!");
 
 					} else {
 						// Otherwise, we have no resolution strategy
-						throw new DynamicValueeException(candidateInventoryContainer.identifier.toString() + "." + key, "No resolution strategy could be found!");
+						throw new NestedPathException(candidateInventoryContainer.identifier.toString() + "." + key, "No resolution strategy could be found!");
 
 					}
 				}
@@ -459,7 +456,7 @@ public class SimpleSolver implements SolverInterface {
 				possibleResult.put(SUPERSEDED_GLOBALLY_UNIQUE_ID, DynamicValue.fromSingleValue(supersededId.dataSource, supersededId.parseString()));
 
 				return possibleResult;
-			} catch (DynamicValueeException e) {
+			} catch (NestedPathException e) {
 				e.addPathParent("{original=" + originalContainer.identifier.toString() + ", replacement=" + candidateInventoryContainer.identifier.toString() + "}");
 				throw e;
 			}

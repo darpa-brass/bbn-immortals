@@ -2,11 +2,11 @@ package mil.darpa.immortals.flitcons.validation;
 
 import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.Configuration;
+import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValue;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
@@ -30,7 +30,7 @@ public class ValidationDataContainer {
 		return children.get(value);
 	}
 
-	private void putData(@Nonnull String key, @Nullable DynamicValue val, @Nonnull Map<String, ValidationData> targetContainer, @Nonnull Configuration.ValidationConfiguration configuration) throws DynamicValueeException {
+	private void putData(@Nonnull String key, @Nullable DynamicValue val, @Nonnull Map<String, ValidationData> targetContainer, @Nonnull Configuration.ValidationConfiguration configuration) throws NestedPathException {
 		if (val == null) {
 			targetContainer.put(key, new ValidationData(this, key, DynamicValueMultiplicity.NullValue, null));
 
@@ -39,7 +39,7 @@ public class ValidationDataContainer {
 			Class clazz = val.valueArray[0].getClass();
 			for (int i = 0; i < val.valueArray.length; i++) {
 				if (!val.valueArray[i].getClass().isAssignableFrom(clazz)) {
-					throw new DynamicValueeException(key, "All values in the array must be of the same type!");
+					throw new NestedPathException(key, "All values in the array must be of the same type!");
 				}
 				arr[i] = new ValidationDataContainer((DynamicObjectContainer) val.valueArray[i], configuration, true);
 			}
@@ -50,7 +50,7 @@ public class ValidationDataContainer {
 		}
 	}
 
-	public static ValidationDataContainer createContainer(@Nonnull DynamicObjectContainer source, @Nonnull Configuration.ValidationConfiguration configuration) throws DynamicValueeException {
+	public static ValidationDataContainer createContainer(@Nonnull DynamicObjectContainer source, @Nonnull Configuration.ValidationConfiguration configuration) throws NestedPathException {
 		return new ValidationDataContainer(source, configuration, false);
 
 	}
@@ -59,9 +59,9 @@ public class ValidationDataContainer {
 	 * @param source        The source of the data
 	 * @param configuration The configuration to use when validating
 	 * @param isWellDefined whether or not it is fully defined with a formal node type and source
-	 * @throws DynamicValueeException
+	 * @throws NestedPathException
 	 */
-	private ValidationDataContainer(@Nonnull DynamicObjectContainer source, @Nonnull Configuration.ValidationConfiguration configuration, boolean isWellDefined) throws DynamicValueeException {
+	private ValidationDataContainer(@Nonnull DynamicObjectContainer source, @Nonnull Configuration.ValidationConfiguration configuration, boolean isWellDefined) throws NestedPathException {
 
 		Map<String, Set<String>> bootstrapData = configuration.defaultPropertyList;
 
@@ -79,7 +79,7 @@ public class ValidationDataContainer {
 					if (!children.containsKey(value)) {
 						try {
 							children.put(value, new ValidationData(this, value, DynamicValueMultiplicity.NullValue, null));
-						} catch (DynamicValueeException e) {
+						} catch (NestedPathException e) {
 							e.addPathParent(identifier.getNodeType());
 							throw e;
 						}
@@ -131,8 +131,8 @@ public class ValidationDataContainer {
 	}
 
 	private static void makeResultMap(@Nonnull ValidationDataContainer container, @Nullable String parent,
-	                                  @Nonnull TreeMap<String, TreeMap<String, Object>> valueContainer,
-	                                  @Nonnull TreeMap<String, TreeMap<String, Boolean>> validityContainer) {
+	                                  @Nonnull TreeMap<String, Map<String, Object>> valueContainer,
+	                                  @Nonnull TreeMap<String, Map<String, Boolean>> validityContainer) {
 		for (Map.Entry<String, ValidationData> child : container.children.entrySet()) {
 			ValidationData data = child.getValue();
 
@@ -151,6 +151,61 @@ public class ValidationDataContainer {
 						ValidationDataContainer containerValue = (ValidationDataContainer) value;
 
 						makeResultMap((ValidationDataContainer) value, sb.toString() + "[" +
+								(containerValue.debugIdentifier == null ? i : (i + "(" + containerValue.debugIdentifier + ")")) +
+								"]", valueContainer, validityContainer);
+
+					} else {
+						throw AdaptationnException.input("All values in the array must be of the same type!");
+					}
+
+				}
+
+			} else {
+				Map<String, Object> valueRow = valueContainer.computeIfAbsent(parent, k -> new TreeMap<>());
+				Map<String, Boolean> validityRow = validityContainer.computeIfAbsent(parent, k -> new TreeMap<>());
+
+				if (data.value instanceof Object[]) {
+					Object[] valueArray = (Object[]) data.value;
+					StringBuilder sb = new StringBuilder("[");
+					for (int i = 0; i < valueArray.length; i++) {
+						sb.append(valueArray[i]);
+
+						if (i + 1 != valueArray.length) {
+							sb.append(",");
+						}
+					}
+					sb.append("]");
+					valueRow.put(data.name, sb.toString());
+
+				} else {
+					valueRow.put(data.name, data.value == null ? "" : data.value.toString());
+				}
+				validityRow.put(data.name, data.isValid());
+			}
+		}
+	}
+
+	private static void makeResultMapOld(@Nonnull ValidationDataContainer container, @Nullable String parent,
+	                                     @Nonnull TreeMap<String, TreeMap<String, Object>> valueContainer,
+	                                     @Nonnull TreeMap<String, TreeMap<String, Boolean>> validityContainer) {
+		for (Map.Entry<String, ValidationData> child : container.children.entrySet()) {
+			ValidationData data = child.getValue();
+
+			if (data.value instanceof ValidationDataContainer) {
+				String name = parent == null ? child.getKey() : parent + "." + child.getKey();
+				makeResultMapOld((ValidationDataContainer) data.value, name, valueContainer, validityContainer);
+
+			} else if (data.value instanceof Object[] && ((Object[]) data.value)[0] instanceof ValidationDataContainer) {
+				Object[] values = (Object[]) data.value;
+
+				for (int i = 0; i < values.length; i++) {
+					Object value = values[i];
+					StringBuilder sb = new StringBuilder(parent == null ? child.getKey() : parent + "." + child.getKey());
+
+					if (value instanceof ValidationDataContainer) {
+						ValidationDataContainer containerValue = (ValidationDataContainer) value;
+
+						makeResultMapOld((ValidationDataContainer) value, sb.toString() + "[" +
 								(containerValue.debugIdentifier == null ? i : (i + "(" + containerValue.debugIdentifier + ")")) +
 								"]", valueContainer, validityContainer);
 
@@ -185,59 +240,27 @@ public class ValidationDataContainer {
 		}
 	}
 
+
 	private List<String> makeCombinedColorlessChart() {
-		TreeMap<String, TreeMap<String, Object>> valueMap = new TreeMap<>();
-		TreeMap<String, TreeMap<String, Boolean>> validityMap = new TreeMap<>();
+		TreeMap<String, Map<String, Object>> valueMap = new TreeMap<>();
+		TreeMap<String, Map<String, Boolean>> validityMap = new TreeMap<>();
 		makeResultMap(this, null, valueMap, validityMap);
 		return Utils.makeChart(valueMap, null, validityMap);
 	}
 
 	private List<String> makeCombinedColorChart() {
-		TreeMap<String, TreeMap<String, Object>> valueMap = new TreeMap<>();
-		TreeMap<String, TreeMap<String, Boolean>> validityMap = new TreeMap<>();
+		TreeMap<String, Map<String, Object>> valueMap = new TreeMap<>();
+		TreeMap<String, Map<String, Boolean>> validityMap = new TreeMap<>();
 		makeResultMap(this, null, valueMap, validityMap);
-
-		TreeMap<String, TreeMap<String, String>> ansiColorMap = new TreeMap<>();
-		for (Map.Entry<String, TreeMap<String, Boolean>> rowEntry : validityMap.entrySet()) {
-			String rowIdentifier = rowEntry.getKey();
-			TreeMap<String, String> targetRow = new TreeMap<>();
-			ansiColorMap.put(rowIdentifier, targetRow);
-
-			for (Map.Entry<String, Boolean> columnEntry : rowEntry.getValue().entrySet()) {
-				String columnIdentifier = columnEntry.getKey();
-
-				boolean isValid = columnEntry.getValue();
-				Object value = valueMap.get(rowIdentifier).get(columnIdentifier);
-				boolean hasValue = value != null && !value.equals("");
-
-
-				if (isValid) {
-					if (hasValue) {
-						targetRow.put(columnIdentifier, "32");
-					} else {
-						targetRow.put(columnIdentifier, "42");
-					}
-
-				} else {
-					if (hasValue) {
-						targetRow.put(columnIdentifier, "31");
-					} else {
-						targetRow.put(columnIdentifier, "41");
-					}
-				}
-			}
-		}
-
-
-		return Utils.makeChart(valueMap, ansiColorMap, null);
+		return Utils.makeChart(valueMap, validityMap, null);
 	}
 
 	public boolean isValid() {
-		TreeMap<String, TreeMap<String, Object>> valueMap = new TreeMap<>();
-		TreeMap<String, TreeMap<String, Boolean>> validityMap = new TreeMap<>();
+		TreeMap<String, Map<String, Object>> valueMap = new TreeMap<>();
+		TreeMap<String, Map<String, Boolean>> validityMap = new TreeMap<>();
 		makeResultMap(this, null, valueMap, validityMap);
 
-		for (Map.Entry<String, TreeMap<String, Boolean>> rowEntry : validityMap.entrySet()) {
+		for (Map.Entry<String, Map<String, Boolean>> rowEntry : validityMap.entrySet()) {
 			for (Map.Entry<String, Boolean> columnEntry : rowEntry.getValue().entrySet()) {
 				if (!columnEntry.getValue()) {
 					return false;

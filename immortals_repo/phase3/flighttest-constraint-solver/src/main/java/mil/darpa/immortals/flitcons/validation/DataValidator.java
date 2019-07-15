@@ -3,7 +3,7 @@ package mil.darpa.immortals.flitcons.validation;
 import mil.darpa.immortals.flitcons.Configuration;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueeException;
+import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import org.apache.commons.io.FileUtils;
 import org.drools.core.builder.conf.impl.DecisionTableConfigurationImpl;
@@ -54,7 +54,7 @@ public abstract class DataValidator {
 
 	}
 
-	protected synchronized ValidationDataContainer validate(@Nullable AgendaFilter filter, @Nonnull DynamicObjectContainer root) throws DynamicValueeException {
+	protected synchronized ValidationDataContainer validate(@Nullable AgendaFilter filter, @Nonnull DynamicObjectContainer root) throws NestedPathException {
 		init();
 		ValidationDataContainer rval = ValidationDataContainer.createContainer(root, validationConfiguration);
 		Set<ValidationData> vdcs = rval.getAllDataInHierarchy();

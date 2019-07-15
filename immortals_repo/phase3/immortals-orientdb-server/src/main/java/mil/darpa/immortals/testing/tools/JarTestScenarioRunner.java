@@ -35,7 +35,7 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 			if (scenario.getScenarioType().equals("Scenario5")) {
 				cmd = new String[]{
 						"bash", EnvironmentConfiguration.getImmortalsRoot().resolve("phase3").resolve("start.sh").toString(),
-						"--odb-url", odbServer.getOdbPath().replace("plocal", "remote"),
+						"--odb-url", odbServer.getOdbPath(scenario).replace("plocal", "remote"),
 						"--scenario", "5",
 						"--artifact-directory", EnvironmentConfiguration.getArtifactDirectory().toString()
 				};
@@ -43,7 +43,7 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 			} else if (scenario.getScenarioType().equals("Scenario6")) {
 				cmd = new String[]{
 						"bash", EnvironmentConfiguration.getImmortalsRoot().resolve("phase3").resolve("start.sh").toString(),
-						"--odb-url", odbServer.getOdbPath(),
+						"--odb-url", odbServer.getOdbPath(scenario),
 						"--scenario", "6",
 						"--artifact-directory", EnvironmentConfiguration.getArtifactDirectory().toString()
 				};
