@@ -1,10 +1,17 @@
 package mil.darpa.immortals.testing.schemaevolution;
 
-import mil.darpa.immortals.testing.tools.JarTestScenarioRunner;
-import mil.darpa.immortals.testing.tools.TestScenarioRunner;
+import mil.darpa.immortals.orientdbserver.JarTestScenarioRunner;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class SchemaEvolutionIntegrationTests {
+
+	@BeforeClass
+	public void init() {
+		SLF4JBridgeHandler.removeHandlersForRootLogger();
+		SLF4JBridgeHandler.install();
+	}
 
 //	@Test
 //	public void s6_12to10() {

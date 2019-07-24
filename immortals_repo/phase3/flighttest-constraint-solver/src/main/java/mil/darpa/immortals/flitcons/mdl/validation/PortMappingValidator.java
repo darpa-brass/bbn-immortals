@@ -1,7 +1,10 @@
 package mil.darpa.immortals.flitcons.mdl.validation;
 
+import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -10,6 +13,8 @@ import java.util.stream.Collectors;
 import static mil.darpa.immortals.flitcons.Utils.Sym.*;
 
 public class PortMappingValidator {
+
+	private static final Logger logger = LoggerFactory.getLogger(PortMappingValidator.class);
 
 	private final Map<String, PortMapping> initialData;
 
@@ -101,8 +106,8 @@ public class PortMappingValidator {
 //			for (String resultMeasurementPort : resultMapping.measurements.keySet()) {
 //			}
 		}
-		for (String line : Utils.makeChart(rowColumnData, passDataMap, null, title)) {
-			System.out.println(line);
+		for (String line : Utils.makeChart(rowColumnData, passDataMap, EnvironmentConfiguration.isBasicDisplayMode(), title)) {
+			logger.info(line);
 		}
 	}
 
@@ -152,7 +157,7 @@ public class PortMappingValidator {
 
 		List<String> results = portMappingResults.makeChart(title);
 		for (String line : results) {
-			System.out.println(line);
+			logger.info(line);
 		}
 	}
 }

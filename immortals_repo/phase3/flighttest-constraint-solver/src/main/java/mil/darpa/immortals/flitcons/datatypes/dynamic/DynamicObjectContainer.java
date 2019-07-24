@@ -4,6 +4,7 @@ import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
+import mil.darpa.immortals.flitcons.validation.DebugData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,28 +18,28 @@ import static mil.darpa.immortals.flitcons.Utils.GLOBALLY_UNIQUE_ID;
 
 public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectContainer> {
 
-	public static final Map<String, String> aliases = new HashMap<>();
+	public static final Map<String, DebugData> aliases = new HashMap<>();
 
 	public final HierarchicalIdentifier identifier;
 
 	private final int hashCode = UUID.randomUUID().hashCode();
 
-	public final String debugLabel;
+	public final DebugData debugData;
 
 	public final TreeMap<String, DynamicValue> children = new TreeMap<>();
 
-	public DynamicObjectContainer(@Nonnull HierarchicalIdentifier identifier, @Nullable String debugLabel) {
-		this.debugLabel = debugLabel;
+	public DynamicObjectContainer(@Nonnull HierarchicalIdentifier identifier, @Nullable DebugData debugData) {
+		this.debugData = debugData;
 		this.identifier = identifier;
-		if (debugLabel != null) {
-			aliases.put(identifier.getUniqueSessionIdentifier(), debugLabel);
+		if (debugData != null) {
+			aliases.put(identifier.getUniqueSessionIdentifier(), debugData);
 		}
 	}
 
 	DynamicObjectContainer(@Nonnull HierarchicalIdentifier identifier, @Nonnull SortedMap<String, ? extends DynamicValue> sortedMap) {
 		children.putAll(sortedMap);
 		this.identifier = identifier;
-		this.debugLabel = aliases.get(identifier.getUniqueSessionIdentifier());
+		this.debugData = aliases.get(identifier.getUniqueSessionIdentifier());
 	}
 
 	public Set<String> keySet() {
@@ -167,7 +168,7 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 
 	@Override
 	public DynamicObjectContainer duplicate() {
-		DynamicObjectContainer newDoc = new DynamicObjectContainer(identifier, debugLabel);
+		DynamicObjectContainer newDoc = new DynamicObjectContainer(identifier, debugData);
 		for (Map.Entry<String, DynamicValue> attrEntry : entrySet()) {
 			newDoc.put(attrEntry.getKey(), attrEntry.getValue().duplicate());
 		}

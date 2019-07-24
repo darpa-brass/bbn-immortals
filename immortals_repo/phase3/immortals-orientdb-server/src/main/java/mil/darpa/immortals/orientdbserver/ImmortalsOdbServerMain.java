@@ -1,5 +1,7 @@
 package mil.darpa.immortals.orientdbserver;
 
+import mil.darpa.immortals.schemaevolution.TerminalStatus;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import picocli.CommandLine;
 
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.stream.Collectors;
 public class ImmortalsOdbServerMain {
 
 	public static void main(String[] args) {
+		SLF4JBridgeHandler.removeHandlersForRootLogger();;
+		SLF4JBridgeHandler.install();
 
 		ImmortalsOdbServerConfiguration config = ImmortalsOdbServerConfiguration.getInstance();
 		ImmortalsOdbServerMain server = new ImmortalsOdbServerMain();
@@ -68,7 +72,7 @@ public class ImmortalsOdbServerMain {
 					testScenarios.add(TestScenario.getScenario5TestScenario(scenarioToStart));
 
 				} else if (TestScenario.getScenario6TestScenarioIdentifiers().contains(scenarioToStart)) {
-					testScenarios.add(TestScenario.getScenario5TestScenario(scenarioToStart));
+					testScenarios.add(TestScenario.getScenario6TestScenario(scenarioToStart));
 
 				} else {
 					List<String> scenarioList = TestScenario.getAllTestScenarioIdentifiers();
@@ -78,9 +82,12 @@ public class ImmortalsOdbServerMain {
 				}
 			}
 
-
 			server = new OdbEmbeddedServer(testScenarios.toArray(new TestScenario[0]));
 			server.init();
+
+			for (TestScenario scenario : testScenarios) {
+				server.setState(scenario, TerminalStatus.ReadyForAdaptation, false);
+			}
 			server.waitForShutdown();
 		}
 	}

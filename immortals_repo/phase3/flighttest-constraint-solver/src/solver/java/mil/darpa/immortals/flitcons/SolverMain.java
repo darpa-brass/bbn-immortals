@@ -9,6 +9,8 @@ import mil.darpa.immortals.flitcons.mdl.ValidationScenario;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.schemaevolution.ChallengeProblemBridge;
 import mil.darpa.immortals.schemaevolution.TerminalStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import javax.annotation.Nonnull;
@@ -18,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SolverMain {
+
+	private static final Logger logger = LoggerFactory.getLogger(SolverMain.class);
 
 	private static String jsonifyException(@Nonnull Throwable t) {
 		JsonObject jo = new JsonObject();
@@ -45,7 +49,7 @@ public class SolverMain {
 		if (config.isHelpRequested()) {
 			CommandLine.usage(config, System.out);
 		} else if (config.isValidateOrientdb()) {
-			validate(config);
+			validate();
 		} else {
 			execute();
 		}
@@ -63,7 +67,7 @@ public class SolverMain {
 			TerminalStatus state;
 
 			while ((state = cpb.waitForReadyOrHalt()) != TerminalStatus.Halt) {
-				System.out.println("Starting Adaptation");
+				logger.info("Starting Adaptation");
 				if (state == TerminalStatus.ReadyForAdaptation) {
 					evaluationInstanceIdentifier = config.getEvaluationIdentifier() == null ? ("I" + System.currentTimeMillis()) : config.getEvaluationIdentifier();
 					if (previousEvaluationIdentifiers.contains(evaluationInstanceIdentifier)) {
@@ -76,9 +80,9 @@ public class SolverMain {
 					FlighttestConstraintSolver fcs = new FlighttestConstraintSolver();
 					fcs.solve();
 					fcs.shutdown();
-					System.out.print("Adaptation finished with result 'AdaptationSuccessful'. Submitting to OrientDB....");
+					logger.info("Adaptation finished with result 'AdaptationSuccessful'. Submitting to OrientDB....");
 					cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.AdaptationSuccessful, "");
-					System.out.print("Complete");
+					logger.info("Results submitted to OrientDB.");
 
 					if (config.isStopOnFinish()) {
 						System.exit(0);
@@ -92,7 +96,7 @@ public class SolverMain {
 		}
 	}
 
-	private static void validate(@Nonnull SolverConfiguration config) {
+	private static void validate() {
 		OrientVertexDataSource dataSource = new OrientVertexDataSource();
 		MdlDataValidator validator = new MdlDataValidator(null, null, dataSource);
 		boolean inputIsValid = validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements).isValid();
@@ -106,10 +110,10 @@ public class SolverMain {
 		String result = "\n\tInput Configuration: " + inputResult + "\n\tDAU Inventory: " + inventoryResult;
 
 		if (somethingFailed) {
-			System.err.println("VALIDATION FAILED:" + result);
+			logger.error("VALIDATION FAILED:" + result);
 			System.exit(101);
 		} else {
-			System.out.println("Validation Succeeded:" + result);
+			logger.info("Validation Succeeded:" + result);
 		}
 	}
 
@@ -135,17 +139,17 @@ public class SolverMain {
 						break;
 
 					case AdaptationNotRequired:
-						System.out.print("Adaptation not required. " + ae.getMessage());
+						logger.info("Adaptation not required. " + ae.getMessage());
 						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
 						break;
 
 					case AdaptationPartiallySuccessful:
-						System.out.println("Adaptation was only partially successful. " + ae.getMessage());
+						logger.info("Adaptation was only partially successful. " + ae.getMessage());
 						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
 						break;
 
 					case AdaptationUnsuccessful:
-						System.out.println("Adaptation was unsuccessful. " + ae.getMessage());
+						logger.info("Adaptation was unsuccessful. " + ae.getMessage());
 						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
 						break;
 
@@ -183,6 +187,7 @@ public class SolverMain {
 				}
 			} catch (Exception e2) {
 				System.err.println(e.getMessage());
+				logger.error(e.getMessage());
 				e.printStackTrace();
 				System.err.println();
 				System.err.println();

@@ -39,7 +39,7 @@ sourceSets {
 			srcDirs = ['src/test/java']
 		}
 		resources {
-			srcDirs = ['src/main/resources', 'src/test/resources']
+			srcDirs = ['src/test/resources']
 		}
 	}
 	solver {
@@ -59,9 +59,14 @@ sourceSets {
 
 test {
 	useTestNG()
-    systemProperty "mil.darpa.immortals.artifactdirectory", buildDir.toPath().resolve("tmp/test").toFile().getCanonicalFile().absolutePath
-    systemProperty "mil.darpa.immortals.root", projectDir.toPath().parent.parent.toFile().getCanonicalFile().absolutePath
+	systemProperty "mil.darpa.immortals.artifactdirectory", buildDir.toPath().resolve("tmp/test").toFile().getCanonicalFile().absolutePath
+	systemProperty "mil.darpa.immortals.root", projectDir.toPath().parent.parent.toFile().getCanonicalFile().absolutePath
+	systemProperty "immortalsLogLevel", "DEBUG"
+	systemProperty "mil.darpa.immortals.basicDisplayMode", ""
 	setWorkingDir(buildDir.toPath().resolve("tmp/test").toFile())
+	testLogging {
+		showStandardStreams = true
+	}
 	reports {
 		junitXml.enabled = true
 		html.enabled = true
@@ -95,6 +100,19 @@ task validatorJar(type: ShadowJar) {
 }
 jar.finalizedBy(validatorJar)
 
+task devJar(type: ShadowJar) {
+	group = "Shadow tasks"
+	manifest {
+		attributes("Implementation-Title": "Immortals-FlightTest-Constraint_solver",
+				"Main-Class": "mil.darpa.immortals.flitcons.DevhelperMain")
+	}
+	from(project.convention.getPlugin(JavaPluginConvention).sourceSets.devhelper.output,
+			project.convention.getPlugin(JavaPluginConvention).sourceSets.devhelper.compileClasspath)
+	configurations = [project.configurations.runtime]
+	destinationDir = file('./')
+	archiveName = "devhelper.jar"
+}
+
 clean.delete('./validator.jar', './flighttest-constraint-solver.jar')
 
 dependencies {
@@ -125,7 +143,7 @@ dependencies {
 
 	testCompile 'org.testng:testng:6.14.3'
     testCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
-
+	testCompile 'org.slf4j:jul-to-slf4j:1.7.5'
 	testCompile sourceSets.solver.output
 	testCompile sourceSets.solver.compileClasspath
 
@@ -133,5 +151,6 @@ dependencies {
 	devhelperCompile sourceSets.main.compileClasspath
 	devhelperCompile sourceSets.solver.output
 	devhelperCompile sourceSets.solver.compileClasspath
+	devhelperCompile 'org.slf4j:jul-to-slf4j:1.7.5'
 	devhelperCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
 }

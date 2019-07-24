@@ -1,6 +1,5 @@
 package mil.darpa.immortals.flitcons;
 
-import mil.darpa.immortals.flitcons.validation.ValidationDataContainer;
 import picocli.CommandLine;
 
 public class SolverConfiguration {
@@ -17,17 +16,11 @@ public class SolverConfiguration {
 	@CommandLine.Option(names = "--validate", description = "Validates the OrientDB setup instead of adapting it")
 	private boolean validateOrientdb = false;
 
-	@CommandLine.Option(names = {"-C", ValidationDataContainer.COLORLESS_FLAG}, description = "Results in the validation result only displaying invalid values instead of displaying all values as green or red depending on pass or fail")
-	private boolean colorlessMode = false;
-
 	@CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Display Help")
 	private boolean helpRequested = false;
 
 	@CommandLine.Option(names = "--no-commit", description = "Performs the adaptation but does not commit it to the OrientDB instance")
 	private boolean noCommit = false;
-
-	@CommandLine.Option(names = "--resource-dsl-path", description = "The directory where the Resource DSL is located")
-	private String dslPath = null;
 
 	@CommandLine.Option(hidden = true, names = {"--simple-solver"})
 	private boolean useSimpleSolver = false;
@@ -49,15 +42,6 @@ public class SolverConfiguration {
 		return this;
 	}
 
-	public boolean isColorlessMode() {
-		return colorlessMode;
-	}
-
-	public SolverConfiguration setColorlessMode(boolean colorlessMode) {
-		this.colorlessMode = colorlessMode;
-		return this;
-	}
-
 	public boolean isHelpRequested() {
 		return helpRequested;
 	}
@@ -73,15 +57,6 @@ public class SolverConfiguration {
 
 	public SolverConfiguration setNoCommit(boolean noCommit) {
 		this.noCommit = noCommit;
-		return this;
-	}
-
-	public String getDslPath() {
-		return dslPath;
-	}
-
-	public SolverConfiguration setDslPath(String dslPath) {
-		this.dslPath = dslPath;
 		return this;
 	}
 

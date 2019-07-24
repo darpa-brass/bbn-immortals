@@ -1,12 +1,15 @@
-package mil.darpa.immortals.testing.tools;
+package mil.darpa.immortals.orientdbserver;
 
 import mil.darpa.immortals.EnvironmentConfiguration;
-import mil.darpa.immortals.orientdbserver.TestScenario;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class JarTestScenarioRunner extends TestScenarioRunner {
+
+	private static final Logger logger = LoggerFactory.getLogger(JarTestScenarioRunner.class);
 
 	private Process adaptationServiceProcess;
 
@@ -30,6 +33,7 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 			}
 		}
 		try {
+			logger.info("Starting adaptation service from jar file...");
 			String[] cmd;
 
 			if (scenario.getScenarioType().equals("Scenario5")) {
@@ -37,7 +41,9 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 						"bash", EnvironmentConfiguration.getImmortalsRoot().resolve("phase3").resolve("start.sh").toString(),
 						"--odb-url", odbServer.getOdbPath(scenario).replace("plocal", "remote"),
 						"--scenario", "5",
-						"--artifact-directory", EnvironmentConfiguration.getArtifactDirectory().toString()
+						"--artifact-directory", EnvironmentConfiguration.getArtifactDirectory().toString(),
+						"--debug-mode",
+						"--monochrome-mode"
 				};
 
 			} else if (scenario.getScenarioType().equals("Scenario6")) {
@@ -55,9 +61,10 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 				throw new RuntimeException("Unexpected Scenario type '" + scenario.getScenarioType() + "'!");
 			}
 
-			System.out.println("CMD: [" + String.join(" ", cmd) + "]");
+			logger.info("CMD: [" + String.join(" ", cmd) + "]");
 
 			ProcessBuilder pb = new ProcessBuilder()
+					.inheritIO()
 					.redirectOutput(ProcessBuilder.Redirect.INHERIT)
 					.redirectError(ProcessBuilder.Redirect.INHERIT)
 					.directory(EnvironmentConfiguration.getImmortalsRoot().resolve("phase3").toFile())

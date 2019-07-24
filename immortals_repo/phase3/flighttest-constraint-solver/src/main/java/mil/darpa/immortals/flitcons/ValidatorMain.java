@@ -1,23 +1,24 @@
 package mil.darpa.immortals.flitcons;
 
-import ch.qos.logback.classic.util.ContextInitializer;
 import mil.darpa.immortals.flitcons.mdl.MdlDataValidator;
 import mil.darpa.immortals.flitcons.mdl.ValidationScenario;
 import mil.darpa.immortals.flitcons.mdl.XmlElementDataSource;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 
 public class ValidatorMain {
 
+	private static final Logger logger = LoggerFactory.getLogger(ValidatorMain.class);
+
 	public static void main(String[] args) {
+
+
 		ValidatorConfiguration config = ValidatorConfiguration.getInstance();
 
 		CommandLine.populateCommand(config, args);
@@ -25,17 +26,6 @@ public class ValidatorMain {
 		if (config.helpRequested) {
 			CommandLine.usage(config, System.out);
 		} else {
-			if (config.debugMode) {
-				System.setProperty("java.util.logging.SimpleFormatter.format", "%5$s %n");
-				Logger rootLogger = LogManager.getLogManager().getLogger("");
-				for (Handler h : rootLogger.getHandlers()) {
-					h.setLevel(Level.ALL);
-				}
-				rootLogger.setLevel(Level.ALL);
-
-			} else {
-				System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, "logback-validator.xml");
-			}
 			execute(config);
 		}
 	}
@@ -48,7 +38,6 @@ public class ValidatorMain {
 
 		for (File xmlFile : config.inputFiles) {
 			try {
-				System.out.println("File: " + xmlFile.getAbsolutePath());
 				XmlElementDataSource xec = new XmlElementDataSource(xmlFile);
 				MdlDataValidator validator = new MdlDataValidator(config.inputXls, config.outputDrl, xec);
 				validator.setSaveResults(false);
@@ -64,10 +53,23 @@ public class ValidatorMain {
 					System.exit(1);
 				}
 			} catch (AdaptationnException e) {
-				if (config.debugMode) {
+				if (logger.isDebugEnabled()) {
 					throw e;
 				} else {
-					System.err.println(e.getMessage());
+					switch (e.result) {
+						case ReadyForAdaptation:
+						case AdaptationSuccessful:
+						case AdaptationNotRequired:
+						case PerturbationInputInvalid:
+						case AdaptationUnsuccessful:
+						case AdaptationPartiallySuccessful:
+							System.err.println(e.getMessage());
+							break;
+
+						case AdaptationInternalError:
+						case AdaptationUnexpectedError:
+							throw e;
+					}
 				}
 			}
 		}

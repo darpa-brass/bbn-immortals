@@ -12,6 +12,7 @@ import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
+import mil.darpa.immortals.flitcons.validation.DebugData;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -159,7 +160,7 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 		// Create identification information
 		HierarchicalIdentifier identifier = createIdentifier(src);
 
-		StringBuilder debugLabelBuilder = null;
+		DebugData debugData = new DebugData(identifier.getNodeType(), identifier.getSourceIdentifier());
 
 		Map<String, Set<String>> interestedProperties = collectionInstructions.collectedChildProperties;
 		Map<String, Set<String>> debugProperties = collectionInstructions.collectedDebugProperties;
@@ -174,19 +175,9 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 				if (interestedProps != null && interestedProps.contains(value)) {
 					collectProps(src, value, collectedProps);
 				} else if (debugPropSet != null && debugPropSet.contains(value)) {
-					if (debugLabelBuilder == null) {
-						debugLabelBuilder = new StringBuilder(
-								"v(" + identifier.getNodeType() + ")[" + identifier.getSourceIdentifier() +
-										"]{" + src.getProperty(value));
-					} else {
-						debugLabelBuilder.append("/").append(src.getProperty(value).toString());
-					}
+					debugData.addAttribute(value, src.getProperty(value));
 				}
 			}
-		}
-
-		if (debugLabelBuilder != null) {
-			debugLabelBuilder.append("}");
 		}
 
 		Iterator<Edge> parents = src.getEdges(Direction.OUT, "Containment").iterator();
@@ -223,6 +214,10 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 			}
 		}
 
+		if (debugData.getAttributeSize() == 0) {
+			debugData = null;
+		}
+
 		return new HierarchicalData(
 				identifier,
 				collectedProps,
@@ -232,7 +227,7 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 				inboundReferences,
 				outboundReferences,
 				childNodeMap,
-				debugLabelBuilder == null ? null : debugLabelBuilder.toString());
+				debugData);
 	}
 
 	@Override

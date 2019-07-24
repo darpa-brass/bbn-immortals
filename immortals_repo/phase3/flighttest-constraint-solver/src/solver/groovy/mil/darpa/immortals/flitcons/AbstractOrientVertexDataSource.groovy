@@ -10,10 +10,14 @@ import mil.darpa.immortals.EnvironmentConfiguration
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier
 import mil.darpa.immortals.flitcons.mdl.validation.*
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import javax.annotation.Nullable
 
 abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientVertex> {
+
+	private static final Logger logger = LoggerFactory.getLogger(AbstractOrientVertexDataSource.class)
 
 	static {
 		Gremlin.load()
@@ -21,9 +25,9 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 
 	private OrientGraph testFlightConfigurationGraph
 
-	private String serverOverridePath;
+	private String serverOverridePath
 
-	public AbstractOrientVertexDataSource(@Nullable String serverPath) {
+	AbstractOrientVertexDataSource(@Nullable String serverPath) {
 		super()
 
 		serverOverridePath = serverPath
@@ -148,62 +152,6 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 			rval.put(dauVertex, testFlightConfigurationGraph.V.has("@rid", dauVertex.getId().toString()).iterateObjectTree().toList())
 		}
 		return rval
-	}
-
-	@Override
-	TreeMap<String, TreeMap<String, Object>> getPortMappingChartData() {
-		TreeMap<String, TreeMap<String, Object>> chartData = new TreeMap<>()
-
-		TreeMap<String, Object> currentRow = null
-		String referenceTitle
-		String targetTitle
-
-		int measurementRefCounter = 0
-		int measurementCounter = 0
-		int portRefCounter = 0
-		int portCounter = 0
-
-		testFlightConfigurationGraph.V.has("@class", "PortMapping").as("portMappings").sideEffect { it ->
-			currentRow = new TreeMap<>()
-			chartData.put(it.id.toString(), currentRow)
-			portCounter = 0
-			portRefCounter = 0
-			measurementCounter = 0
-			measurementRefCounter = 0
-		}
-				.in("@class", "Containment").has("@class", "PortRef").as("portRefs").sideEffect {
-			referenceTitle = "Pr" + portRefCounter++
-			currentRow.put(referenceTitle + "#", it.id.toString())
-			currentRow.put(referenceTitle + ".IDREF", it.getProperty("IDREF"))
-		}.out("@class", "Reference").has("@class", "Port").sideEffect {
-			targetTitle = referenceTitle + ".P" + portCounter++
-			currentRow.put(targetTitle + "#", it.id.toString())
-			currentRow.put(targetTitle + ".ID", it.getProperty("ID"))
-		}
-
-				.back("portMappings").in("@class", "Containment").has("@class", "MeasurementRefs").in("@class", "Containment").has("@class", "MeasurementRef").sideEffect {
-			referenceTitle = "Mr" + measurementRefCounter++
-			currentRow.put(referenceTitle + "#", it.id.toString())
-			currentRow.put(referenceTitle + ".IDREF", it.getProperty("IDREF"))
-		}.out("@class", "Reference").has("@class", "Measurement").sideEffect {
-			targetTitle = referenceTitle + ".M" + measurementCounter++
-			currentRow.put(targetTitle + "#", it.id.toString())
-			currentRow.put(targetTitle + ".ID", it.getProperty("ID"))
-		}.in("@class", "Containment").has("@class", "DataAttributes").as("dataAttributes")
-
-				.in("@class", "Containment").has("@class", "DigitalAttributes").as("digitalAttributes")
-				.in("@class", "Containment").has("@class", "SampleRate").in("@class", "Containment").has("@class", "ConditionParameter").sideEffect {
-			currentRow.put(targetTitle + ".SR", it.getProperty("ConditionValue"))
-		}
-				.back("digitalAttributes").in("@class", "Containment").has("@class", "DataRate").in("@class", "Containment").has("@class", "ConditionParameter").sideEffect {
-			currentRow.put(targetTitle + ".DR", it.getProperty("ConditionValue"))
-		}
-				.back("digitalAttributes").in("@class", "Containment").has("@class", "DataLength").in("@class", "Containment").has("@class", "ConditionParameter").sideEffect {
-			currentRow.put(targetTitle + ".DL", it.getProperty("ConditionValue"))
-		}
-				.iterate()
-
-		return chartData
 	}
 
 	@Override
@@ -399,7 +347,7 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 	void init() {
 		if (testFlightConfigurationGraph == null) {
 			String serverPath = serverOverridePath == null ? EnvironmentConfiguration.odbTarget : serverOverridePath
-			System.out.println("Connecting to '" + serverPath + "'.")
+			logger.info("Connecting to '" + serverPath + "'.")
 
 			testFlightConfigurationGraph = new OrientGraph(
 					serverPath,

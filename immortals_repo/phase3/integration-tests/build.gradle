@@ -28,14 +28,24 @@ task integrationTest(type: Test) {
 	description = 'Executes integration tests. Requires properly set up local OrientDB instance to pass'
 	testClassesDirs = sourceSets.integrationTest.output.classesDirs
 	classpath = sourceSets.integrationTest.runtimeClasspath
+	testLogging {
+		showStandardStreams = true
+	}
 	systemProperty "mil.darpa.immortals.root", projectDir.toPath().parent.parent.toFile().getCanonicalFile().absolutePath
 	systemProperty "mil.darpa.immortals.artifactdirectory", buildDir.toPath().resolve("tmp/integrationTest").toFile().getCanonicalFile().absolutePath
+	systemProperty "immortalsLogLevel", "DEBUG"
+	systemProperty "mil.darpa.immortals.basicDisplayMode", ""
 	setWorkingDir(buildDir.toPath().resolve("tmp/integrationTest").toFile())
 	reports.junitXml.enabled = true
 	reports.html.enabled = true
 }
 
 dependencies {
+	integrationTestCompile 'ch.qos.logback:logback-classic:1.1.7'
+	integrationTestCompile 'ch.qos.logback:logback-core:1.1.7'
+	integrationTestCompile 'org.slf4j:slf4j-api:1.7.5'
+	integrationTestCompile 'org.slf4j:jul-to-slf4j:1.7.5'
+
 	integrationTestCompile 'com.orientechnologies:orientdb-core:2.2.24'
 	integrationTestCompile 'com.orientechnologies:orientdb-graphdb:2.2.24'
 	integrationTestCompile 'com.orientechnologies:orientdb-server:2.2.24'

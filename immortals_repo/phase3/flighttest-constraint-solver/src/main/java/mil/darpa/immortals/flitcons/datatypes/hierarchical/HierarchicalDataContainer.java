@@ -34,10 +34,10 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	//	 Useful functions for debugging node trees since the relations are through identifiers and not direct
-	private Map debugMap;
+	private Map<HierarchicalData, Map> debugMap;
 
 	public final void fillDebugMap() {
-		Map targetMap = debugMap = new HashMap();
+		Map<HierarchicalData, Map> targetMap = debugMap = new HashMap<>();
 
 		for (HierarchicalData parent : superParentChildElements.keySet()) {
 			targetMap.put(parent, getChildrenMap(parent));
@@ -45,7 +45,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	private Map getChildrenMap(HierarchicalData node) {
-		Map rval = new HashMap();
+		Map<HierarchicalData, Object> rval = new HashMap<>();
 
 		Iterator<String> childTypeIter = node.getChildrenClassIterator();
 		while (childTypeIter.hasNext()) {
@@ -169,12 +169,12 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	 */
 	public void cloneTreeIntoContainer(@Nonnull HierarchicalData sourceData,
 	                                   @Nonnull HierarchicalData targetParentNode) {
-		if (existingDataIdentifierMap.values().contains(sourceData)) {
+		if (existingDataIdentifierMap.containsValue(sourceData)) {
 			throw AdaptationnException.internal("Cannot insert and clone a node from the same database!");
 
 		} else if (existingDataIdentifierMap.containsKey(sourceData.node)) {
-				// TODO: Enforce proper cardinality
-				// It already exists and is expected to be referenced more than once;
+			// TODO: Enforce proper cardinality
+			// It already exists and is expected to be referenced more than once;
 
 			if (sourceData.node.referenceIdentifier == null) {
 				throw AdaptationnException.internal("Node already exists!");
@@ -205,8 +205,8 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 		}
 	}
 
-	public HierarchicalData cloneTrimmedTreeIntoContainer(@Nonnull HierarchicalData sourceData,
-	                                   @Nonnull HierarchicalData targetParentNode) {
+	public void cloneTrimmedTreeIntoContainer(@Nonnull HierarchicalData sourceData,
+	                                          @Nonnull HierarchicalData targetParentNode) {
 
 		// Duplicate the node
 		HierarchicalData clone = sourceData.duplicateFlatDisconnected(targetParentNode.node);
@@ -226,10 +226,9 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 			Iterator<HierarchicalData> childDataIter = sourceData.getChildrenDataIterator(nodeTypeObject);
 			while (childDataIter.hasNext()) {
 				HierarchicalData originalChildNode = childDataIter.next();
-				HierarchicalData newChildNode = cloneTrimmedTreeIntoContainer(originalChildNode, clone);
+				cloneTrimmedTreeIntoContainer(originalChildNode, clone);
 			}
 		}
-		return clone;
 	}
 
 	@Override
@@ -303,7 +302,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	public void removeNodeTree(@Nonnull HierarchicalData node) {
-		if (!existingDataIdentifierMap.values().contains(node)) {
+		if (!existingDataIdentifierMap.containsValue(node)) {
 			throw AdaptationnException.internal("Could not find the node '" + node.toString() + "'!");
 		}
 
@@ -389,7 +388,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 			overrideParentNode(child, parentNode);
 		}
 
-		for (String key : childNode.getAttributeNames()) {
+		for (String key : new HashSet<>(childNode.getAttributeNames())) {
 			Object value = childNode.getAttribute(key);
 
 			if (parentNode.getAttribute(key) != null) {
@@ -402,6 +401,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 						Object[] newArray = new Object[existingArray.length + 1];
 						System.arraycopy(existingArray, 0, newArray, 0, existingArray.length);
 						newArray[existingArray.length] = value;
+						parentNode.removeAttribute(key);
 						parentNode.addAttribute(childNode.node, key, newArray);
 
 					} else {
@@ -409,23 +409,52 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 							Object[] newArray = new Object[2];
 							newArray[0] = existingValue;
 							newArray[1] = value;
+							parentNode.removeAttribute(key);
 							parentNode.addAttribute(childNode.node, key, newArray);
 						}
 					}
+
 				} else {
-					throw AdaptationnException.internal("Multiple '" + parentNode.getNodeType() + "/" + childNode.getNodeType() + "/" + key + " attributes found that are not flagged for combining!");
+					List<Configuration.ResolutionStrategy> resolutionStrategies = instructions.resolutionStrategies.stream().filter(x -> x.attributeLabel.equals(key)).collect(Collectors.toList());
+
+					Optional<Configuration.ResolutionStrategySolution> solution = Optional.empty();
+
+					for (Configuration.ResolutionStrategy strategy : resolutionStrategies) {
+						if (parentNode.pathMatches(strategy.node1Path)) {
+							if (childNode.pathMatches(strategy.node2Path)) {
+								solution = strategy.resolutionStrategySolutions.stream().filter(
+										x -> x.node1Value.equals(parentNode.getAttribute(key)) &&
+												x.node2Values.contains(childNode.getAttribute(key).toString())).findFirst();
+
+							}
+
+						} else if (parentNode.pathMatches(strategy.node2Path)) {
+							if (childNode.pathMatches(strategy.node1Path)) {
+								solution = strategy.resolutionStrategySolutions.stream().filter(
+										x -> x.node1Value.equals(childNode.getAttribute(key)) &&
+												x.node2Values.contains(parentNode.getAttribute(key).toString())).findFirst();
+							}
+						}
+					}
+
+					// TODO: This should take into account the origin of the child originally, not just the current structure!
+					if (solution.isPresent()) {
+						parentNode.overrideAttribute(childNode.node, key, solution.get().result);
+						childNode.removeAttribute(key);
+					} else {
+						throw AdaptationnException.internal("Multiple '" + parentNode.getNodeType() + "/" + childNode.getNodeType() + " '" + key + "' attributes found that are not flagged for combining!");
+					}
 				}
 			} else {
 				parentNode.addAttribute(childNode.node, key, value);
 			}
 		}
 
-		if (childNode.getDebugLabel() != null && preserveDebugData) {
-			parentNode.updateDebugLabel(childNode.getDebugLabel());
+		if (childNode.getDebugData() != null && preserveDebugData) {
+			throw new RuntimeException("Child debug data is not yet supported!");
 		}
 
 		removeNode(childNode);
-
 
 		Iterator<String> childNodeTypeIter = parentNode.getChildrenClassIterator();
 		while (childNodeTypeIter.hasNext()) {

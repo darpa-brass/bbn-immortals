@@ -1,5 +1,6 @@
 package mil.darpa.immortals.flitcons.mdl.validation;
 
+import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.Utils;
 
 import javax.annotation.Nonnull;
@@ -39,7 +40,7 @@ public class DisplayablePortMappings extends LinkedList<DisplayablePortMapping> 
 			addValue(columnMap, columnColorMap, "Thermocouple", portMapping.getThermocoupleDisplayString(), portMapping.isThermocouplePass());
 			// TODO: Also check PortType?
 		}
-		return Utils.makeChart(rowColumnData, validityMap, null, title);
+		return Utils.makeChart(rowColumnData, validityMap, EnvironmentConfiguration.isBasicDisplayMode(), title);
 	}
 
 	public boolean isValid() {

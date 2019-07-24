@@ -29,12 +29,6 @@ public class ValidatorConfiguration {
 	@CommandLine.Option(names = "--output-rules-drl", description = "The location where the input rules should be written out to if they were provided")
 	public File outputDrl = null;
 
-	@CommandLine.Option(names = {"-C", ValidationDataContainer.COLORLESS_FLAG}, description = "Results in the validation result only displaying invalid values instead of displaying all values as green or red depending on pass or fail")
-	public boolean colorlessMode = false;
-
 	@CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Display Help")
 	public boolean helpRequested = false;
-
-	@CommandLine.Option(names = {"-d", "--debug"}, description = "Displays additional debug information")
-	public boolean debugMode = false;
 }

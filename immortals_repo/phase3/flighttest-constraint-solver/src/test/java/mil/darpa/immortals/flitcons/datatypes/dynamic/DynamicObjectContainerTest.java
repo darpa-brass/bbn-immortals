@@ -147,7 +147,7 @@ public class DynamicObjectContainerTest {
 
 			if (validateDynamicObjectContainerExtras) {
 				Assert.assertEquals(d0.identifier, d1.identifier);
-				Assert.assertEquals(d0.debugLabel, d1.debugLabel);
+//				Assert.assertEquals(d0.debugData, d1.debugData);
 			}
 
 		} else if (obj0 instanceof String) {

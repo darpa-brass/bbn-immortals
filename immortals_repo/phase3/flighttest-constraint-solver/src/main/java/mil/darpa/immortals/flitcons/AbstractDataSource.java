@@ -148,12 +148,10 @@ public abstract class AbstractDataSource<T> {
 		for (Map.Entry<T, Set<T>> entry : indirectRelations.entrySet()) {
 			HierarchicalIdentifier primaryNode = createIdentifier(entry.getKey());
 			Set<HierarchicalIdentifier> relationSet = rval.computeIfAbsent(primaryNode, k -> new HashSet<>());
-			relationSet.addAll(entry.getValue().stream().map(x -> createIdentifier(x)).collect(Collectors.toSet()));
+			relationSet.addAll(entry.getValue().stream().map(this::createIdentifier).collect(Collectors.toSet()));
 		}
 		return rval;
 	}
-
-	public abstract TreeMap<String, TreeMap<String, Object>> getPortMappingChartData();
 
 	public abstract Map<String, PortMapping> getPortMappingDetails();
 }

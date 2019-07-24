@@ -33,6 +33,22 @@ public class Utils {
 		public static final String NTE = " ∄ ";
 		public static final String EQT = " ≍ ";
 		public static final String NEQT = " ≭ ";
+
+		public static String asciify(@Nonnull String input) {
+			return input
+					.replaceAll(NLT, "!<")
+					.replaceAll(NGT, "!>")
+					.replaceAll(LTE, "<=")
+					.replaceAll(NLTE, "!<=")
+					.replaceAll(GTE, ">=")
+					.replaceAll(NGTE, "!>=")
+					.replaceAll(EE, "element of")
+					.replaceAll(NEE, "not element of")
+					.replaceAll(TE, "exists")
+					.replaceAll(NTE, "not exists")
+					.replaceAll(EQT, "equivalent to")
+					.replaceAll(NEQT, "not equivalent to");
+		}
 	}
 
 	public static class Ansi {
@@ -185,16 +201,59 @@ public class Utils {
 		}
 	}
 
-	public static List<String> makeChart(@Nonnull TreeMap<String, Map<String, Object>> rowColumnData,
-	                                     @Nullable TreeMap<String, Map<String, Boolean>> passing,
-	                                     @Nullable TreeMap<String, Map<String, Boolean>> hideMap) {
-		return makeChart(rowColumnData, passing, hideMap, null);
+	private static String formatCellContents(@Nullable Boolean passing, @Nullable String value, boolean useBasicDisplayScheme, int longestColumnValue) {
+		boolean hasValue = value != null && !value.trim().equals("");
+		String ansiCode;
+		String displayValue;
+
+		if (useBasicDisplayScheme) {
+			ansiCode = null;
+			if (hasValue) {
+				if (passing == null || passing) {
+					displayValue = "";
+				} else {
+					displayValue = Sym.asciify(value);
+				}
+			} else {
+				if (passing == null || passing) {
+					displayValue = "";
+				} else {
+					displayValue = "MISSING";
+				}
+			}
+		} else {
+			if (hasValue) {
+				displayValue = value;
+				if (passing == null) {
+					ansiCode = null;
+				} else if (passing) {
+					ansiCode = GREEN_FG;
+				} else {
+					ansiCode = RED_FG;
+				}
+			} else {
+				displayValue = "";
+				if (passing == null) {
+					ansiCode = null;
+				} else if (passing) {
+					ansiCode = GREEN_BG;
+				} else {
+					ansiCode = RED_BG;
+				}
+			}
+		}
+
+		if (ansiCode == null) {
+			return " " + padRight(displayValue, longestColumnValue + 1);
+
+		} else {
+			return " " + (char) 27 + "[" + ansiCode + "m" + padRight(displayValue, longestColumnValue + 1) + (char) 27 + "[0m";
+		}
 	}
 
 	public static List<String> makeChart(@Nonnull TreeMap<String, Map<String, Object>> rowColumnData,
-	                                     @Nullable TreeMap<String, Map<String, Boolean>> passing,
-	                                     @Nullable TreeMap<String, Map<String, Boolean>> hideMap,
-	                                     @Nullable String title) {
+	                                     @Nonnull TreeMap<String, Map<String, Boolean>> passing,
+	                                     boolean useBasicDisplayScheme, @Nonnull String title) {
 		// First gather some information on all known columns and their max necessary width
 		TreeMap<String, Integer> columnSizeMap = new TreeMap<>();
 		int rowZeroSize = 0;
@@ -234,7 +293,7 @@ public class Utils {
 		}
 
 		if (title != null) {
-			rval.add(Utils.padCenter(title, header.length(), '#'));
+			rval.add(Utils.padCenter(title + (useBasicDisplayScheme ? " Failures" : ""), header.length(), '#'));
 		}
 		rval.add(header.toString());
 
@@ -245,65 +304,9 @@ public class Utils {
 			StringBuilder sb = new StringBuilder("| " + padRight(rowKey, rowZeroSize + 1) + "|");
 
 			for (String columnKey : columnSizeMap.keySet()) {
-				Object columnValue = rowValues.get(columnKey);
-				boolean showValue = (hideMap == null || (
-						hideMap.get(rowKey).get(columnKey) != null &&
-								!hideMap.get(rowKey).get(columnKey)));
-				String valueString = showValue ? columnValue.toString() : "";
-
-				String colorString;
-
-				if (passing == null) {
-					colorString = null;
-					if (showValue && valueString.trim().equals("")) {
-						valueString = "MISSING";
-					}
-
-				} else {
-					Boolean pass = passing.get(rowKey).get(columnKey);
-
-
-					boolean hasValue = !(valueString == null || valueString.equals(""));
-
-					if (pass == null) {
-						if (hasValue) {
-							throw AdaptationnException.internal("String values in the chart must have a corresponding ANSI color code!");
-						} else {
-							colorString = null;
-						}
-
-					} else {
-						String ansiCode;
-
-						if (pass) {
-							if (hasValue) {
-								ansiCode = GREEN_FG;
-							} else {
-								ansiCode = GREEN_BG;
-							}
-						} else {
-							if (hasValue) {
-								ansiCode = RED_FG;
-							} else {
-								ansiCode = RED_BG;
-							}
-						}
-						colorString = (char) 27 + "[" + ansiCode + "m";
-					}
-				}
-
-				if (colorString == null) {
-					sb.append(" ")
-							.append(padRight(valueString, columnSizeMap.get(columnKey) + 1))
-							.append("|");
-				} else {
-
-					sb.append(" ")
-							.append(colorString)
-							.append(padRight(valueString, columnSizeMap.get(columnKey) + 1))
-							.append((char) 27 + "[0m")
-							.append("|");
-				}
+				String columnValue = (String) rowValues.get(columnKey);
+				Boolean pass = passing.get(rowKey).get(columnKey);
+				sb.append(formatCellContents(pass, columnValue, useBasicDisplayScheme, columnSizeMap.get(columnKey))).append("|");
 			}
 			rval.add(sb.toString());
 		}

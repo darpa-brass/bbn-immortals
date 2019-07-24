@@ -28,7 +28,6 @@ public class SolutionPreparer {
 	                        @Nonnull HierarchicalDataContainer rawInventory,
 	                        @Nonnull HierarchicalDataContainer transformedInventory) {
 		this.rawInterconnectedTarget = rawInterconnectedTarget;
-		this.rawInterconnectedTarget.fillDebugMap();
 		this.transformedTarget = transformedTarget;
 		this.rawInventory = rawInventory;
 		this.transformedInventory = transformedInventory;
@@ -59,7 +58,7 @@ public class SolutionPreparer {
 				for (DynamicObjectContainer portContainer : portContainers) {
 					String portIdentifier = portContainer.get(GLOBALLY_UNIQUE_ID).parseString();
 					String supersededPortIdentifier = portContainer.get(SUPERSEDED_GLOBALLY_UNIQUE_ID).parseString();
-					ChildAdaptationData port = new ChildAdaptationData(dauIdentifier, portIdentifier, supersededPortIdentifier);
+					ChildAdaptationData port = new ChildAdaptationData(portIdentifier, supersededPortIdentifier);
 
 					for (String key : portContainer.keySet()) {
 						if (!key.equals(GLOBALLY_UNIQUE_ID) & !key.equals(SUPERSEDED_GLOBALLY_UNIQUE_ID)) {
@@ -103,7 +102,7 @@ public class SolutionPreparer {
 
 		public final TreeMap<String, Object> values;
 
-		public ChildAdaptationData(@Nonnull String parentGloballyUniqueId, @Nonnull String globallyUniqueId, @Nonnull String supersededPortUniqueId) {
+		public ChildAdaptationData(@Nonnull String globallyUniqueId, @Nonnull String supersededPortUniqueId) {
 			this.identifier = HierarchicalIdentifier.produceTraceableNode(globallyUniqueId, null);
 			if (identifier.getSourceIdentifier() == null) {
 				throw AdaptationnException.internal("No source identifier for adaptation found for '" + this.identifier.toString() + "'!");
@@ -204,7 +203,7 @@ public class SolutionPreparer {
 		 * This seems redundant with how it is used. But it is intended to protect against blindly
 		 * assuming all nodes have the same parent.
 		 *
-		 * @return
+		 * @return the data this value is replacing
 		 */
 		@Override
 		public HierarchicalData getSupersededData() {

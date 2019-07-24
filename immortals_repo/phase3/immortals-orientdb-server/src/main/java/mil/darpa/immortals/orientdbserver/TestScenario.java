@@ -2,6 +2,8 @@ package mil.darpa.immortals.orientdbserver;
 
 import com.google.gson.*;
 import mil.darpa.immortals.EnvironmentConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,6 +19,7 @@ import java.util.*;
 public class TestScenario {
 
 	private final static String DB_NAME_PREFIX = "IMMORTALS_";
+	private final static Logger logger = LoggerFactory.getLogger(TestScenario.class);
 
 	private static TreeMap<String, TestScenario> scenario5TestScenarios;
 
@@ -80,7 +83,7 @@ public class TestScenario {
 			Gson gson = new Gson();
 
 			scenario5TestScenarios = initScenarioSet("s5_scenarios.json", gson);
-			if (System.getenv().containsKey(EnvironmentConfiguration.CHALLENGE_PROBLEMS_ROOT.envVar)) {
+			if (EnvironmentConfiguration.CHALLENGE_PROBLEMS_ROOT.isPresent()) {
 				scenario5TestScenarios.putAll(initScenarioSet("s5_cp_scenarios.json", gson));
 			}
 
@@ -221,7 +224,7 @@ public class TestScenario {
 				if (!actualObject.has(key)) {
 					throw new NestedException("", "Does not contain expected key value '" + key + "'!");
 				} else {
-					System.out.println(key + "==" + key);
+					logger.info(key + "==" + key);
 				}
 				try {
 					JsonElement expectedEntryValue = entry.getValue();

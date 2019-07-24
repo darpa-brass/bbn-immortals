@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Configuration {
 
-	public static transient Configuration instance;
+	private static transient Configuration instance;
 
 	public static Configuration getInstance() {
 		if (instance == null) {
@@ -37,6 +37,67 @@ public class Configuration {
 		}
 	}
 
+	/**
+	 * A potential solution for a conflict.
+	 */
+	public static class ResolutionStrategySolution implements DuplicateInterface {
+		/**
+		 * The possible value for node #1
+		 */
+		public final String node1Value;
+		/**
+		 * The set of possible values for node #2
+		 */
+		public final List<String> node2Values;
+		/**
+		 * The valid result if an only if node #1 has the specified value and node #2 has one of the specified values
+		 */
+		public final String result;
+
+		public ResolutionStrategySolution(@Nonnull String node1Value, @Nonnull List<String> node2Values, @Nonnull String result) {
+			this.node1Value = node1Value;
+			this.node2Values = node2Values;
+			this.result = result;
+		}
+
+		@Override
+		public ResolutionStrategySolution duplicate() {
+			return new ResolutionStrategySolution(node1Value, new LinkedList<>(node2Values), result);
+		}
+	}
+
+	/**
+	 * The strategy for resolving a conflict when two nodes to be merged together have a conflict
+	 */
+	public static class ResolutionStrategy implements DuplicateInterface {
+		/**
+		 * The full or partial path of the node with a single specific value
+		 */
+		public final LinkedList<String> node1Path;
+		/**
+		 * The full or partial path of the node that can have a couple different values
+		 */
+		public final LinkedList<String> node2Path;
+		public final String attributeLabel;
+		public final List<ResolutionStrategySolution> resolutionStrategySolutions;
+
+		public ResolutionStrategy(@Nonnull List<String> node1Path, @Nonnull List<String> node2Path, @Nonnull String attributeLabel, @Nonnull List<ResolutionStrategySolution> resolutionStrategySolutions) {
+			this.node1Path = new LinkedList<>(node1Path);
+			this.node2Path = new LinkedList<>(node2Path);
+			this.attributeLabel = attributeLabel;
+			this.resolutionStrategySolutions = resolutionStrategySolutions;
+		}
+
+		@Override
+		public ResolutionStrategy duplicate() {
+			return new ResolutionStrategy(
+					Utils.duplicateList(node1Path),
+					Utils.duplicateList(node2Path),
+					attributeLabel,
+					Utils.duplicateList(resolutionStrategySolutions));
+		}
+	}
+
 	public static class ParentChildAttributeRelation implements DuplicateInterface<ParentChildAttributeRelation> {
 		public final String attribute;
 		public final LinkedList<String> parentPath;
@@ -56,26 +117,6 @@ public class Configuration {
 		public ParentChildAttributeRelation duplicate() {
 			return new ParentChildAttributeRelation(parentPath, childPath, attribute);
 		}
-	}
-
-	/**
-	 * Known types of object that will be encountered
-	 */
-	public static class KnownTypes {
-		/**
-		 * MDL DAU types we are aware of.
-		 */
-		public Set<String> dauTypes = new HashSet<>();
-
-		/**
-		 * Module functionality types we are aware of.
-		 */
-		public Set<String> moduleFunctionalityTypes = new HashSet<>();
-
-		/**
-		 * Port functionality types we are aware of.
-		 */
-		public Set<String> portFunctionalityTypes = new HashSet<>();
 	}
 
 	/**
@@ -304,6 +345,11 @@ public class Configuration {
 		 */
 		public Map<String, Map<String, Set<String>>> combineSquashedChildNodeAttributes;
 
+		/**
+		 * Provides a list of strategies for resolving conflicts.
+		 */
+		public List<ResolutionStrategy> resolutionStrategies;
+
 		private static TransformationInstructions mergeTransformationInstructions(
 				@Nonnull TransformationInstructions globalInstructions,
 				@Nonnull TransformationInstructions specificInstructions) {
@@ -344,6 +390,10 @@ public class Configuration {
 				targetInstructions.taggedNodes.addAll(specificInstructions.taggedNodes);
 			}
 
+			if (specificInstructions.resolutionStrategies != null) {
+				throw new RuntimeException("Not adding support for this unless needed!");
+			}
+
 			if (specificInstructions.combineSquashedChildNodeAttributes != null) {
 				throw new RuntimeException("Not adding support for this unless needed!");
 			}
@@ -362,6 +412,7 @@ public class Configuration {
 			rval.taggedNodes = new HashSet<>(taggedNodes);
 			rval.valueRemappingInstructions = Utils.duplicateSet(valueRemappingInstructions);
 			rval.transferAttributeToChildren = Utils.duplicateList(transferAttributeToChildren);
+			rval.resolutionStrategies = Utils.duplicateList(resolutionStrategies);
 
 			rval.combineSquashedChildNodeAttributes = new HashMap<>();
 
@@ -388,10 +439,17 @@ public class Configuration {
 		public Map<String, Set<String>> defaultPropertyList;
 
 		/**
-		 * A list of attribute values that should be stored separately for debugging but shouldn't be provided to the
-		 * solver
+		 * If true, simple shortened labels will be used in the charts, omitting path structure details
 		 */
-		public List<String> debugIdentificationValues;
+		public boolean useSimpleLabels;
+
+		/**
+		 * The depth of the labels
+		 * <p>
+		 * For example, 1 would provide the DAU name, 2 would provide the DAU name and Port name, 3 would provide
+		 * additional nested labels if available
+		 */
+		public int labelDepth = 9999;
 	}
 
 	/**

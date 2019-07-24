@@ -4,6 +4,8 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import mil.darpa.immortals.EnvironmentConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,6 +23,8 @@ import java.util.Map;
  * Process instance running this process if it is not running directly within the root evaluation harness.
  */
 public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
+
+	private final Logger logger = LoggerFactory.getLogger(ChallengeProblemBridge.class);
 
 	// TODO: Check for uniqueness for identifiers
 
@@ -48,7 +52,7 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 		init();
 		String state = null;
 
-		System.out.print("Waiting for OrientDB 'Halt' or 'ReadyForAdaptation' Ready state...");
+		logger.info("Waiting for OrientDB 'Halt' or 'ReadyForAdaptation' Ready state...");
 
 
 		while (state == null || !(
@@ -60,29 +64,20 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 
 			graph.shutdown();
 
-			System.out.print(".");
-
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e);
 			}
 		}
-		System.out.println();
 		TerminalStatus rval = TerminalStatus.valueOf(state);
 
 		if (rval == TerminalStatus.ReadyForAdaptation) {
-			System.out.println("OrientDB Now Ready.");
+			logger.info("OrientDB Now Ready.");
 		} else if (rval == TerminalStatus.Halt) {
-			System.out.println("OrientDB Has set the Shutdown signal.");
+			logger.info("OrientDB Has set the Shutdown signal.");
 		}
 		return rval;
-	}
-
-	public TerminalStatus getState() throws Exception {
-		Vertex v = getEvaluationGraph().getVerticesOfClass(BBNEvaluationDataLabel).iterator().next();
-		String state = v.getProperty(currentStateLabel);
-		return TerminalStatus.valueOf(state);
 	}
 
 	public String saveToFile(@Nonnull String evaluationInstanceIdentifier, @Nonnull byte[] data, @Nonnull String filename) throws IOException {
@@ -94,6 +89,7 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 		return target.toString();
 	}
 
+	@Nullable
 	@Override
 	public synchronized String getConfigurationJson(@Nonnull String evaluationInstanceIdentifier) throws Exception {
 		BBNEvaluationData data = getCurrentEvaluationData(evaluationInstanceIdentifier);
@@ -132,11 +128,11 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 			String result;
 			boolean printDebug = ((result = valuesToSet.get(currentStateLabel)) != null);
 			if (printDebug) {
-				System.out.println("m.d.i.s.ChallengeProblemBridge (time=" + System.currentTimeMillis() + "): Setting currentState to '" + result + "'.");
+				logger.trace("Setting currentState to '" + result + "'.");
 			}
 			evaluationGraph.commit();
 			if (printDebug) {
-				System.out.println("m.d.i.s.ChallengeProblemBridge (time=" + System.currentTimeMillis() + "): currentState set to '" + result + "'.");
+				logger.trace("currentState set to '" + result + "'.");
 			}
 		}
 
@@ -155,6 +151,7 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 	}
 
 	@Override
+	@Deprecated
 	public synchronized void postResultsJson(@Nonnull String evaluationInstanceIdentifier, @Nonnull TerminalStatus finishStatus, @Nonnull String results) throws Exception {
 		updateCurrentEvaluationData(evaluationInstanceIdentifier,
 				null,
@@ -172,6 +169,7 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 				errorData);
 	}
 
+	@Override
 	public synchronized void postInvalidInputError(@Nonnull String evaluationInstanceIdentifier, @Nonnull String errorDescription, @Nullable String errorData) throws Exception {
 		updateCurrentEvaluationData(evaluationInstanceIdentifier,
 				null,
@@ -188,19 +186,20 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 		saveToFile(evaluationInstanceIdentifier, binaryData, artifactIdentifier);
 	}
 
+	public synchronized void storeLargeBinaryDebugData(@Nonnull String evaluationInstanceIdentifier, @Nonnull String artifactIdentifier, @Nonnull byte[] binaryData) throws Exception {
+		// TODO: Change to debug specific directory
+		if (artifactIdentifier.startsWith("_")) {
+			throw new RuntimeException("Artifact identifiers starting with an underscore cannot be used!");
+		}
+		saveToFile(evaluationInstanceIdentifier, binaryData, artifactIdentifier);
+	}
+
 	public BBNEvaluationData getCurrentEvaluationData(@Nonnull String evaluationInstanceIdentifier) throws Exception {
 		Map<String, String> currentValues = getAddEvaluationDataVertexValues(
 				null, inputJsonDataLabel, outputJsonDataLabel, currentStateLabel, currentStateInfoLabel);
 
 		BBNEvaluationData data = BBNEvaluationData.fromFieldMap(currentValues);
 		saveToFile(evaluationInstanceIdentifier, data.toJsonString().getBytes(), "_bbnEvaluationData.json");
-		return data;
-	}
-
-	public BBNEvaluationData getCurrentEvaluationDataNoSave() throws Exception {
-		Map<String, String> currentValues = getAddEvaluationDataVertexValues(
-				null, inputJsonDataLabel, outputJsonDataLabel, currentStateLabel, currentStateInfoLabel);
-		BBNEvaluationData data = BBNEvaluationData.fromFieldMap(currentValues);
 		return data;
 	}
 

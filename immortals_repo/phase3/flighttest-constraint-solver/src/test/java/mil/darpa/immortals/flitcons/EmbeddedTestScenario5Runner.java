@@ -1,11 +1,15 @@
 package mil.darpa.immortals.flitcons;
 
 import mil.darpa.immortals.orientdbserver.TestScenario;
-import mil.darpa.immortals.testing.tools.TestScenarioRunner;
+import mil.darpa.immortals.orientdbserver.TestScenarioRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
 public class EmbeddedTestScenario5Runner extends TestScenarioRunner {
+
+	private final Logger logger = LoggerFactory.getLogger(EmbeddedTestScenario5Runner.class);
 
 	private Thread solverThread;
 
@@ -26,9 +30,9 @@ public class EmbeddedTestScenario5Runner extends TestScenarioRunner {
 		}
 		SolverConfiguration.getInstance().setUseSimpleSolver(true);
 		solverThread = new Thread(() -> {
-			System.out.println("Starting Embedded Scenario 5 Adaptation Session");
+			logger.info("Starting Embedded Scenario 5 Adaptation Session");
 			SolverMain.execute();
-			System.out.println("Finished Embedded Scenario 5 Adaptation Session");
+			logger.info("Finished Embedded Scenario 5 Adaptation Session");
 		});
 		solverThread.start();
 	}

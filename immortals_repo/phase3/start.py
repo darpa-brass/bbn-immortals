@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-import argparse
 import os
+
+import argparse
 import subprocess
 import sys
 from typing import List
@@ -26,8 +27,15 @@ _parser.add_argument('--odb-password', action='store', type=str, default='admin'
 _parser.add_argument('--artifact-directory', action='store', type=str,
                      help='The directory to use for storage of any artifacts for analysis')
 
+_parser.add_argument('--debug-mode', action='store_true',
+                     help='Enables debug logging and log formatting')
+
+_parser.add_argument('--monochrome-mode', action='store_true',
+                     help="Ensures output data is optimized for monochrome ASCII output")
+
 _scenario_5_cmd = ['java', '-jar',
                    os.path.join(SCRIPT_DIR, 'flighttest-constraint-solver/flighttest-constraint-solver.jar')]
+
 _scenario_6_cmd = [
     'java', '-DevalType=live',
     '-DcannedInputJson=../knowledge-repo/cp/cp3.1/cp-eval-service/examples/sanityCheck.json',
@@ -42,8 +50,14 @@ _scenario_6_cmd = [
     '-jar', 'cp3.1-eval-service.jar']
 
 
-def exec_scenario_5(env_values, argv: List[str]) -> bool:
+def exec_scenario_5(env_values, argv: List[str], debug: bool, monochrome_mode: bool) -> bool:
     cmd = list(_scenario_5_cmd)
+
+    if debug:
+        cmd.insert(1, '-DimmortalsLogLevel=DEBUG')
+
+    if monochrome_mode:
+        cmd.insert(1, '-Dmil.darpa.immortals.basicDisplayMode')
 
     p = subprocess.run(cmd + argv, env=env_values, stdout=sys.stdout, stderr=sys.stderr)
     return p.returncode == 0
@@ -118,7 +132,7 @@ def main():
                 os.mkdir(artifact_dir)
             env_values['IMMORTALS_ARTIFACT_DIRECTORY'] = artifact_dir
             if config[0] == '5':
-                passed = exec_scenario_5(env_values, pass_through_args)
+                passed = exec_scenario_5(env_values, pass_through_args, args.debug_mode, args.monochrome_mode)
 
             elif config[0] == '6':
                 passed = exec_scenario_6(env_values, pass_through_args)
@@ -170,7 +184,7 @@ def main():
             env_values['ORIENTDB_EVAL_PASSWORD'] = args.odb_password
 
         if args.scenario == '5':
-            exec_scenario_5(env_values, pass_through_args)
+            exec_scenario_5(env_values, pass_through_args, args.debug_mode, args.monochrome_mode)
 
         elif args.scenario == '6':
             exec_scenario_6(env_values, pass_through_args)

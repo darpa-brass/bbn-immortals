@@ -6,6 +6,8 @@ import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainerFact
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.FileReader;
@@ -19,6 +21,7 @@ public class DslSolver implements SolverInterface<DslSolver> {
 	private static final String SWAP_REQUEST = "dsl-swap-request.json";
 	private static final String SWAP_INVENTORY = "dsl-swap-inventory.json";
 	private static final String SWAP_RESPONSE = "dsl-swap-response.json";
+	private static final Logger logger = LoggerFactory.getLogger(DslSolver.class);
 
 	private final Path dslDirectory;
 
@@ -51,7 +54,7 @@ public class DslSolver implements SolverInterface<DslSolver> {
 	@Override
 	public DynamicObjectContainer solve() {
 		try {
-			System.out.println(Utils.padCenter("DSL COMMAND", 80, '#'));
+			logger.info(Utils.padCenter("DSL COMMAND", 80, '#'));
 
 			ProcessBuilder pb = new ProcessBuilder()
 					.inheritIO()
@@ -60,14 +63,14 @@ public class DslSolver implements SolverInterface<DslSolver> {
 							"--inventory-file", inventoryPath, "--request-file", requestPath,
 							"--response-file", responsePath.toString());
 
-			System.out.println(String.join(" ", pb.command()));
+			logger.info(String.join(" ", pb.command()));
 
-			System.out.println(Utils.padCenter("DSL OUTPUT", 80, '#'));
+			logger.info(Utils.padCenter("DSL OUTPUT", 80, '#'));
 
 			Process p = pb.start();
 			int rval = p.waitFor();
 
-			System.out.println("########################END DSL OUTPUT HERE########################");
+			logger.info("########################END DSL OUTPUT HERE########################");
 
 			if (rval == 0) {
 

@@ -9,6 +9,7 @@ import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifie
 import mil.darpa.immortals.flitcons.mdl.validation.PortMapping;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
+import mil.darpa.immortals.flitcons.validation.DebugData;
 import nu.xom.*;
 import org.apache.commons.lang.NotImplementedException;
 
@@ -18,8 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static mil.darpa.immortals.flitcons.Utils.ATTRIBUTE_DEBUG_LABEL_IDENTIFIER;
 
 public class XmlElementDataSource extends AbstractDataSource<Node> {
 
@@ -113,7 +112,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 	 *
 	 * @param doc        the source document
 	 * @param inputNodes the input nodes containing "IDREF" fields
-	 * @return
+	 * @return The nodes
 	 */
 	private static Map<Element, Node> getIdrefElementsById(@Nonnull Document doc, @Nonnull Nodes inputNodes) {
 		Map<Element, Node> rval = new HashMap<>();
@@ -162,7 +161,6 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 
 			secondaryPorts.addAll(getIdrefElementsById(xmlDoc, portMappingNode.query("mdl:MeasurementRefs/mdl:MeasurementRef", mdlContext)).keySet());
 			secondaryPorts.addAll(getIdrefElementsById(xmlDoc, portMappingNode.query("mdl:DataStreamRefs/mdl:DataStreamRef", mdlContext)).keySet());
-			Nodes portRefObject = portMappingNode.query("mdl:PortRef", mdlContext);
 			Map<Element, Node> portToPortRefMap = getIdrefElementsById(xmlDoc, portMappingNode.query("mdl:PortRef", mdlContext));
 
 			for (Element port : portToPortRefMap.keySet()) {
@@ -323,14 +321,12 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 	}
 
 	private void gatherProperties(@Nonnull Element src,
-	                                     @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions,
-	                                     @Nonnull Map<String, Object> targetPropertyMap,
-	                                     @Nonnull Map<String, Object> targetDebugPropertyMap,
-	                                     @Nonnull Set<HierarchicalIdentifier> targetOutboundReferenceSet) {
+	                              @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions,
+	                              @Nonnull Map<String, Object> targetPropertyMap,
+	                              @Nonnull DebugData targetDebugData,
+	                              @Nonnull Set<HierarchicalIdentifier> targetOutboundReferenceSet) {
 		Set<String> interestedProps = collectionInstructions.collectedChildProperties.get(src.getQualifiedName());
 		Set<String> debugPropSet = collectionInstructions.collectedDebugProperties.get(src.getQualifiedName());
-
-		String debugLabel = null;
 
 		if (interestedProps != null || debugPropSet != null) {
 
@@ -339,10 +335,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 				String attrLabel = attr.getQualifiedName();
 				String attrValue = attr.getValue();
 
-				if (attr.getQualifiedName().equals("ID")) {
-					// Skip since it is already incorporated in the identifier
-
-				} else if (attr.getQualifiedName().equals("IDREF")) {
+				if (attr.getQualifiedName().equals("IDREF")) {
 					// Add to outbound references
 					targetOutboundReferenceSet.add(HierarchicalIdentifier.createReferenceNode(attr.getValue(), null));
 				} else if (interestedProps != null && interestedProps.contains(attrLabel)) {
@@ -355,22 +348,13 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 					}
 
 				} else if (debugPropSet != null && debugPropSet.contains(attrLabel)) {
-					if (debugLabel == null) {
-						debugLabel = "v(" + src.getQualifiedName() + "){" + attrLabel + "=" + attrValue;
-					} else {
-						debugLabel += "," + attrLabel + "=" + attrValue;
-					}
 					// And add them to their respective lists if they match
 					if (attrValue == null) {
-						targetDebugPropertyMap.put(attrLabel, nullValuePlaceholder);
+						targetDebugData.addAttribute(attrLabel, nullValuePlaceholder);
 					} else {
-						targetDebugPropertyMap.put(attrLabel, attrValue);
+						targetDebugData.addAttribute(attrLabel, attrValue);
 					}
 				}
-			}
-
-			if (debugLabel != null) {
-				targetDebugPropertyMap.put(ATTRIBUTE_DEBUG_LABEL_IDENTIFIER, debugLabel + "}");
 			}
 		}
 	}
@@ -394,7 +378,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 	                                                @Nullable Set<String> interestedProperties,
 	                                                @Nullable Set<String> debugProperties,
 	                                                @Nonnull Map<String, Object> targetPropertyMap,
-	                                                @Nonnull Map<String, Object> targetDebugPropertyMap,
+	                                                @Nonnull DebugData debugData,
 	                                                @Nonnull Map<String, Set<HierarchicalIdentifier>> targetCollectedChildrenMap) {
 		// Then, for all children nodes
 		for (Element childElement : elementNodes) {
@@ -411,7 +395,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 				}
 
 				if (debugProperties != null && debugProperties.contains(qName)) {
-					setOrAppendPropValue(qName, value, targetDebugPropertyMap);
+					debugData.addAttribute(qName, value);
 				}
 
 			} else {
@@ -445,6 +429,8 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 		Map<String, Set<HierarchicalIdentifier>> childMap = new HashMap<>();
 		TreeMap<String, Object> collectedDebugProps = new TreeMap<>();
 
+		DebugData debugData = new DebugData(identifier.getNodeType(), null);
+
 		// Get the parent node
 		Node parentNode = src.getParent();
 
@@ -468,17 +454,17 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 
 				} else {
 					// Gather attributes/outbound references
-					gatherProperties(src, collectionInstructions, collectedProps, collectedDebugProps, outboundReferences);
+					gatherProperties(src, collectionInstructions, collectedProps, debugData, outboundReferences);
 				}
 
 			} else {
 				if (attributeCount > 0) {
 					// Gather attributes/outbound references
-					gatherProperties(src, collectionInstructions, collectedProps, collectedDebugProps, outboundReferences);
+					gatherProperties(src, collectionInstructions, collectedProps, debugData, outboundReferences);
 				}
 				// Add attribute child nodes and child nodes
 				gatherAttributeElementsAndChildren(elementNodes, collectionInstructions.collectedChildProperties.get(src.getQualifiedName()), collectionInstructions.collectedDebugProperties.get(src.getQualifiedName()),
-						collectedProps, collectedDebugProps, childMap);
+						collectedProps, debugData, childMap);
 			}
 
 		} else if (textNodes.size() == 1) {
@@ -489,7 +475,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 
 				} else {
 					// Gather attributes/outbound references
-					gatherProperties(src, collectionInstructions, collectedProps, collectedDebugProps, outboundReferences);
+					gatherProperties(src, collectionInstructions, collectedProps, debugData, outboundReferences);
 					// Ignore Text data
 				}
 
@@ -503,12 +489,9 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 
 		gatherInboundReferences(src, inboundReferences);
 
-		String debugLabel = null;
-		if (collectedDebugProps.size() > 0) {
-			List<String> values = collectedDebugProps.values().stream().map(Object::toString).collect(Collectors.toList());
-			debugLabel = "(" + identifier.getNodeType() + ")[?]{" + String.join("/", values) + "}";
+		if (debugData.getAttributeSize() == 0) {
+			debugData = null;
 		}
-
 		return new HierarchicalData(
 				identifier,
 				collectedProps,
@@ -518,7 +501,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 				inboundReferences,
 				outboundReferences,
 				childMap,
-				debugLabel
+				debugData
 		);
 	}
 
@@ -538,11 +521,6 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 		} else {
 			return HierarchicalIdentifier.createReferenceNode(attr.getValue(), ele.getQualifiedName());
 		}
-	}
-
-	@Override
-	public TreeMap<String, TreeMap<String, Object>> getPortMappingChartData() {
-		throw new NotImplementedException("This is only implemented for the OrientVertexDataSource!");
 	}
 
 	@Override

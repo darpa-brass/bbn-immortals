@@ -1,6 +1,8 @@
 package mil.darpa.immortals;
 
 import mil.darpa.immortals.schemaevolution.ChallengeProblemBridge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -8,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Logger;
 
 public enum EnvironmentConfiguration {
 	IMMORTALS_ROOT("IMMORTALS_ROOT", "mil.darpa.immortals.root",
@@ -18,12 +19,13 @@ public enum EnvironmentConfiguration {
 	ODB_PASSWORD("ORIENTDB_EVAL_PASSWORD", "mil.darpa.immortals.odbPassword", "admin"),
 	ARTIFACT_DIRECTORY("IMMORTALS_ARTIFACT_DIRECTORY", "mil.darpa.immortals.artifactdirectory",
 			tryResolveRelativeToImmortalsRoot(true, "phase3", "DEFAULT_ARTIFACT_DIRECTORY")),
-	CHALLENGE_PROBLEMS_ROOT("CHALLENGE_PROBLEMS_ROOT", "mil.darpa.immortals.challengeProblemsRoot", null),
+	CHALLENGE_PROBLEMS_ROOT("IMMORTALS_CHALLENGE_PROBLEMS_ROOT", "mil.darpa.immortals.challengeProblemsRoot", null),
 	DSL_PATH("IMMORTALS_RESOURCE_DSL", "mil.darpa.immortals.resourceDslRoot",
-			tryResolveRelativeToImmortalsRoot(false, "dsl", "resource-dsl"));
+			tryResolveRelativeToImmortalsRoot(false, "dsl", "resource-dsl")),
+	BASIC_DISPLAY_MODE("IMMORTALS_BASIC_DISPLAY_MODE", "mil.darpa.immortals.basicDisplayMode", true);
 
 
-	private static final Logger logger = Logger.getLogger(EnvironmentConfiguration.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(EnvironmentConfiguration.class.getName());
 
 
 	public static String getOdbTarget() {
@@ -50,6 +52,14 @@ public enum EnvironmentConfiguration {
 		return Paths.get(IMMORTALS_ROOT.getValue()).toAbsolutePath();
 	}
 
+	public static Path getChallengeProblemsRoot() {
+		return Paths.get(CHALLENGE_PROBLEMS_ROOT.getValue()).toAbsolutePath();
+	}
+
+	public static boolean isBasicDisplayMode() {
+		return BASIC_DISPLAY_MODE.isPresent();
+	}
+
 	private static ChallengeProblemBridge challengeProblemBridge;
 	private static String evaluationIdentifier;
 
@@ -70,15 +80,19 @@ public enum EnvironmentConfiguration {
 	}
 
 	static {
-		logger.config("---------------------------------INIT VARIABLES---------------------------------");
+		logger.debug("---------------------------------INIT VARIABLES---------------------------------");
 		for (EnvironmentConfiguration var : EnvironmentConfiguration.values()) {
 			try {
-				logger.config(var.name() + "='" + var.getValue() + "'");
+				if (var.isFlag) {
+					logger.debug(var.name() + (var.isPresent() ? "='true'" : "='false'"));
+				} else {
+					logger.debug(var.name() + "='" + var.getValue() + "'");
+				}
 			} catch (Exception e) {
-				logger.config(var.name() + "=UNDEFINED");
+				logger.debug(var.name() + "=UNDEFINED");
 			}
 		}
-		logger.config("--------------------------------------------------------------------------------");
+		logger.debug("--------------------------------------------------------------------------------");
 	}
 
 	private static String tryResolveRelativeToImmortalsRoot(boolean createIfParentExists, String... desiredChildpath) {
@@ -121,15 +135,34 @@ public enum EnvironmentConfiguration {
 	public final String envVar;
 	public final String javaArg;
 	private final String defaultValue;
+	private final boolean isFlag;
 
 	EnvironmentConfiguration(@Nonnull String envVar, @Nonnull String javaArg, @Nullable String defaultValue) {
 		this.envVar = envVar;
 		this.javaArg = javaArg;
 		this.defaultValue = defaultValue;
+		this.isFlag = false;
+	}
+
+	EnvironmentConfiguration(@Nonnull String envVar, @Nonnull String javaArg, boolean isFlag) {
+		this.envVar = envVar;
+		this.javaArg = javaArg;
+		this.defaultValue = null;
+		this.isFlag = isFlag;
+	}
+
+
+	public boolean isPresent() {
+		return (System.getProperties().containsKey(javaArg) || System.getenv().containsKey(envVar));
 	}
 
 	public String getValue() {
 		String rval;
+
+		if (isFlag) {
+			logger.warn("Should be using \"isFlagPresent\" method instead of \"getValue\" for the environment variable \"" + name() + "\"!");
+		}
+
 		if ((rval = System.getProperty(javaArg)) != null) {
 			return rval;
 		} else if ((rval = System.getenv(envVar)) != null) {

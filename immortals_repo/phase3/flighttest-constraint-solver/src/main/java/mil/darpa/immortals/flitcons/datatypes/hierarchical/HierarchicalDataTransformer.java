@@ -97,6 +97,12 @@ public class HierarchicalDataTransformer {
 
 			for (HierarchicalData parentData : dataSet) {
 				parentData.removeAttribute(tail);
+				if (parentData.getDebugData() != null) {
+					parentData.getDebugData().removeAttribute(tail);
+					if (parentData.getDebugData().getAttributeSize() == 0) {
+						parentData.removeDebugData();
+					}
+				}
 			}
 		}
 		data.validate();
@@ -218,7 +224,7 @@ public class HierarchicalDataTransformer {
 //                 TODO: Add clobber check via configuration values
 
 					// Mark it for squashing if debug information is not being preserved or there is no debug info
-					if (!preserveDebugRelations || candidateNode.getDebugLabel() == null) {
+					if (!preserveDebugRelations || candidateNode.getDebugData() == null) {
 						markedForSquashing.add(candidateNode);
 						// And mark the loop as modified so continued attribute squishing can occur
 						modified = true;
@@ -337,6 +343,7 @@ public class HierarchicalDataTransformer {
 		injectCalculations(data, instructions);
 		remapNodesAndAttributes(data, instructions);
 		pushAttributesIntoChildren(data, instructions);
+		data.fillDebugMap();
 		squashData(data, instructions, preserveDebugRelations);
 		trimEmptyBranches(data);
 
@@ -481,7 +488,6 @@ public class HierarchicalDataTransformer {
 	private static void pullExternalDataIntoDaus(@Nonnull HierarchicalDataContainer primaryStructure,
 	                                             @Nonnull HierarchicalDataContainer externalStructure,
 	                                             @Nonnull Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> indirectRelations) {
-
 		Map<HierarchicalData, Set<HierarchicalData>> parentChildMap = new HashMap<>();
 		Map<HierarchicalData, Set<HierarchicalData>> childParentMap = new HashMap<>();
 

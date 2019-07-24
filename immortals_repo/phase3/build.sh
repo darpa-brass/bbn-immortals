@@ -123,8 +123,8 @@ if [[ ${DO_SCENARIO_6} == true ]];then
     "${SCRIPT_DIR}/mdl-schema-evolution/gradlew" --build-file "${SCRIPT_DIR}/mdl-schema-evolution/build.gradle" clean build publishImmortalsMseLibPublicationToMavenLocal publishMseLibPublicationToMavenLocal
 
     # Build Securboration artifacts and return to the immortals root
-    mvn -f "${SCRIPT_DIR}/../knowledge-repo/pom.xml" clean install -DskipTests
-    mvn -f "${SCRIPT_DIR}/../knowledge-repo/cp/cp3.1/xsd-translation-service/pom.xml" clean install -DskipTests
+    mvn --batch-mode -f "${SCRIPT_DIR}/../knowledge-repo/pom.xml" clean install -DskipTests
+    mvn --batch-mode -f "${SCRIPT_DIR}/../knowledge-repo/cp/cp3.1/xsd-translation-service/pom.xml" clean install -DskipTests
 
     cp -R "${SCRIPT_DIR}/../knowledge-repo" "${ARTIFACT_ROOT}/"
     echo Scenario 6 Finished Building.
@@ -140,5 +140,7 @@ if [[ -f "${ARTIFACT_ROOT}.tar.gz" ]];then
 fi
 
 cd "${SCRIPT_DIR}"
-tar cvzf "${ARTIFACT_ROOT}.tar.gz" ${ARTIFACT_NAME}
+echo Creating "${ARTIFACT_ROOT}.tar.gz" artifact....
+tar czf "${ARTIFACT_ROOT}.tar.gz" ${ARTIFACT_NAME}
+echo Finished creating "${ARTIFACT_ROOT}.tar.gz" artifact.
 cd "${PPWD}"

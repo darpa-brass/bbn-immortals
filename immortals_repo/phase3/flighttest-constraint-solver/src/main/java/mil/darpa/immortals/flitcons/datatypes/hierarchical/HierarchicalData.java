@@ -2,6 +2,7 @@ package mil.darpa.immortals.flitcons.datatypes.hierarchical;
 
 import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
+import mil.darpa.immortals.flitcons.validation.DebugData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +28,7 @@ public class HierarchicalData implements DuplicateInterface {
 
 	private final Map<String, HierarchicalIdentifier> foreignAttributeSources;
 
-	private String debugLabel;
+	private DebugData debugData;
 
 	HierarchicalIdentifier parentNode;
 
@@ -45,17 +46,12 @@ public class HierarchicalData implements DuplicateInterface {
 		return foreignAttributeSources.getOrDefault(attributeName, this.node);
 	}
 
-	public void updateDebugLabel(@Nonnull String labelAddendum) {
-		if (debugLabel == null) {
-			debugLabel = labelAddendum;
-		} else {
-			debugLabel += "|" + labelAddendum;
-		}
+	public DebugData getDebugData() {
+		return debugData;
 	}
 
-	@Nonnull
-	public String getDebugLabel() {
-		return debugLabel;
+	public void removeDebugData() {
+		debugData = null;
 	}
 
 	public HierarchicalData duplicateWithNewNode() {
@@ -68,7 +64,7 @@ public class HierarchicalData implements DuplicateInterface {
 				Utils.duplicateSet(inboundReferences),
 				Utils.duplicateSet(outboundReferences),
 				Utils.duplicateSetMap(childNodeMap),
-				debugLabel,
+				debugData,
 				Utils.duplicateMap(foreignAttributeSources)
 		);
 	}
@@ -84,7 +80,7 @@ public class HierarchicalData implements DuplicateInterface {
 				Utils.duplicateSet(inboundReferences),
 				Utils.duplicateSet(outboundReferences),
 				Utils.duplicateSetMap(childNodeMap),
-				debugLabel,
+				debugData,
 				Utils.duplicateMap(foreignAttributeSources)
 		);
 	}
@@ -167,7 +163,7 @@ public class HierarchicalData implements DuplicateInterface {
 	                        @Nullable Set<HierarchicalIdentifier> inboundReferences,
 	                        @Nullable Set<HierarchicalIdentifier> outboundReferences,
 	                        @Nullable Map<String, Set<HierarchicalIdentifier>> childNodeMap,
-	                        @Nullable String debugLabel) {
+	                        @Nullable DebugData debugData) {
 		this.attributes = attributes;
 		this.associatedObject = associatedObject;
 		this.node = identifier;
@@ -176,7 +172,7 @@ public class HierarchicalData implements DuplicateInterface {
 		this.inboundReferences = inboundReferences == null ? new HashSet<>() : inboundReferences;
 		this.outboundReferences = outboundReferences == null ? new HashSet<>() : outboundReferences;
 		this.childNodeMap = childNodeMap == null ? new HashMap<>() : childNodeMap;
-		this.debugLabel = debugLabel;
+		this.debugData = debugData;
 		this.foreignAttributeSources = new HashMap<>();
 		validate();
 	}
@@ -187,7 +183,7 @@ public class HierarchicalData implements DuplicateInterface {
 	                         @Nullable Set<HierarchicalIdentifier> inboundReferences,
 	                         @Nullable Set<HierarchicalIdentifier> outboundReferences,
 	                         @Nullable Map<String, Set<HierarchicalIdentifier>> childNodeMap,
-	                         @Nullable String debugLabel,
+	                         @Nullable DebugData debugData,
 	                         @Nullable Map<String, HierarchicalIdentifier> foreignAttributeSources) {
 		this.attributes = attributes;
 		this.associatedObject = associatedObject;
@@ -197,7 +193,7 @@ public class HierarchicalData implements DuplicateInterface {
 		this.inboundReferences = inboundReferences == null ? new HashSet<>() : inboundReferences;
 		this.outboundReferences = outboundReferences == null ? new HashSet<>() : outboundReferences;
 		this.childNodeMap = childNodeMap == null ? new HashMap<>() : childNodeMap;
-		this.debugLabel = debugLabel;
+		this.debugData = debugData;
 		this.foreignAttributeSources = foreignAttributeSources == null ? new HashMap<>() : foreignAttributeSources;
 		validate();
 	}
@@ -334,7 +330,15 @@ public class HierarchicalData implements DuplicateInterface {
 		}
 	}
 
+	void overrideAttribute(@Nonnull HierarchicalIdentifier source, @Nonnull String attributeName, @Nonnull Object attributeValue) {
+		this.attributes.put(attributeName, attributeValue);
+		this.foreignAttributeSources.put(attributeName, source);
+	}
+
 	void addAttribute(@Nonnull HierarchicalIdentifier source, @Nonnull String attributeName, @Nonnull Object attributeValue) {
+		if (this.attributes.containsKey(attributeName)) {
+			throw AdaptationnException.internal("Cannot clobber attribute '" + attributeName + "' value '" + this.attributes.get(attributeName) + "' on '" + this.node.toString() + "'!");
+		}
 		this.attributes.put(attributeName, attributeValue);
 		this.foreignAttributeSources.put(attributeName, source);
 	}

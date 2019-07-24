@@ -4,8 +4,8 @@
 			"shortName": "s5e2",
 			"prettyName": "Scenario 5 SwRI Example 2",
 			"timeoutMS": 60000,
-			"xmlInventoryPath": "${CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
-			"xmlMdlrootInputPath": "${CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_2/BRASS_Scenario5_Example2_TTC_Verbose.xml",
+			"xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
+			"xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_2/BRASS_Scenario5_Example2_TTC_Verbose.xml",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful"
 			]

@@ -1,9 +1,9 @@
 package mil.darpa.immortals.flitcons.validation;
 
 import mil.darpa.immortals.flitcons.Configuration;
+import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
-import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import org.apache.commons.io.FileUtils;
 import org.drools.core.builder.conf.impl.DecisionTableConfigurationImpl;
@@ -32,12 +32,12 @@ import java.util.Set;
 
 public abstract class DataValidator {
 
-	public static String SOLVER_INPUT_USAGE_FILE = "validation-input-usage.json";
-	public static String SOLVER_INPUT_REQUIREMENTS_FILE = "validation-input-requirements.json";
-	public static String SOLVER_DAUINVENTORY_FILE = "validation-input-inventory.json";
-	public static String SOLVER_OUTPUT_USAGE_FILE = "validation-output-usage.json";
+	protected static String SOLVER_INPUT_USAGE_FILE = "validation-input-usage.json";
+	protected static String SOLVER_INPUT_REQUIREMENTS_FILE = "validation-input-requirements.json";
+	protected static String SOLVER_DAUINVENTORY_FILE = "validation-input-inventory.json";
+	protected static String SOLVER_OUTPUT_USAGE_FILE = "validation-output-usage.json";
 
-	private static final Logger log = LoggerFactory.getLogger(DataValidator.class);
+	private static final Logger logger = LoggerFactory.getLogger(DataValidator.class);
 
 	private final File inputExcelFile;
 
@@ -76,7 +76,7 @@ public abstract class DataValidator {
 			Resource rs;
 
 			if (inputExcelFile != null) {
-				System.out.println("Loading rules from '" + inputExcelFile.getAbsolutePath() + "'");
+				logger.info("Loading rules from '" + inputExcelFile.getAbsolutePath() + "'");
 				DecisionTableConfiguration configuration = KnowledgeBuilderFactory.newDecisionTableConfiguration();
 				configuration.setInputType(DecisionTableInputType.XLS);
 				rs = ResourceFactory.newFileResource(inputExcelFile);
@@ -86,14 +86,14 @@ public abstract class DataValidator {
 
 				if (outputDrlFile != null) {
 					FileUtils.writeStringToFile(outputDrlFile, drl, Charset.defaultCharset());
-					log.info("Wrote DRL validation rules to '" + outputDrlFile.getAbsolutePath() + "'.");
+					logger.info("Wrote DRL validation rules to '" + outputDrlFile.getAbsolutePath() + "'.");
 				}
 
 			} else {
-				log.debug("Loading rules from internal data");
+				logger.debug("Loading rules from internal data");
 				InputStream drl = DataValidator.class.getClassLoader().getResourceAsStream("CombinedValidationRules.drl");
 				rs = ResourceFactory.newInputStreamResource(drl);
-				rs.setSourcePath("/CombinedValidationRules.drl");
+				rs.setSourcePath("mil/darpa/immortals/flitcons/rules/CombinedValidationRules.drl");
 				rs.setResourceType(ResourceType.DRL);
 			}
 

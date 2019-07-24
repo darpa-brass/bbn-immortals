@@ -4,6 +4,7 @@ import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
+import mil.darpa.immortals.flitcons.validation.DebugData;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,7 +44,7 @@ public class DynamicObjectContainerFactory {
 
 
 	private static DynamicObjectContainer produceDynamicObjectContainer(HierarchicalData source) throws NestedPathException {
-		DynamicObjectContainer target = new DynamicObjectContainer(source.node, source.getDebugLabel());
+		DynamicObjectContainer target = new DynamicObjectContainer(source.node, source.getDebugData());
 		boolean containsData = false;
 
 		for (String label : source.getAttributeNames()) {
@@ -109,7 +110,7 @@ public class DynamicObjectContainerFactory {
 
 
 	public static DynamicObjectContainer create(HierarchicalDataContainer inputData) throws NestedPathException {
-		DynamicObjectContainer target = new DynamicObjectContainer(HierarchicalIdentifier.createBlankNode(), (String) null);
+		DynamicObjectContainer target = new DynamicObjectContainer(HierarchicalIdentifier.createBlankNode(), (DebugData) null);
 		Object[] daus = new Object[inputData.getDauRootNodes().size()];
 
 		int idx = 0;
@@ -124,7 +125,7 @@ public class DynamicObjectContainerFactory {
 		}
 
 		try {
-			target.put("daus", new DynamicValue(null, null, daus, null));
+			target.put("daus", new DynamicValue(HierarchicalIdentifier.createBlankNode(), null, daus, null));
 		} catch (NestedPathException e) {
 			e.addPathParent("daus");
 			throw e;

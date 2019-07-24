@@ -6,6 +6,8 @@ import mil.darpa.immortals.flitcons.adaptation.AdaptationDataInterface;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -18,6 +20,8 @@ import static mil.darpa.immortals.flitcons.Utils.CHILD_LABEL;
 import static mil.darpa.immortals.flitcons.Utils.PARENT_LABEL;
 
 public class SolutionInjector {
+
+	private static final Logger logger = LoggerFactory.getLogger(SolutionInjector.class);
 
 	public SolutionInjector(@Nonnull AbstractDataTarget dataTarget, @Nonnull DynamicObjectContainer solution) {
 		this.dataSource = dataTarget;
@@ -102,8 +106,8 @@ public class SolutionInjector {
 	}
 
 	public void injectSolution() {
-		System.out.println(Utils.padCenter("Initial PortMapping Configuration", 80, '#'));
-		System.out.println(Utils.padCenter("", 80, '#'));
+		logger.info(Utils.padCenter("Initial PortMapping Configuration", 80, '#'));
+		logger.info(Utils.padCenter("", 80, '#'));
 
 
 		//// 1.  Update the inventory node attributes to match the chosen values
@@ -167,7 +171,7 @@ public class SolutionInjector {
 
 		dataSource.restart();
 
-		System.out.println(Utils.padCenter("", 80, '#'));
+		logger.info(Utils.padCenter("", 80, '#'));
 		dataSource.shutdown();
 	}
 }

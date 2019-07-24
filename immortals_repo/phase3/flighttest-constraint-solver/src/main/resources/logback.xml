@@ -1,0 +1,84 @@
+<configuration xmlns="http://ch.qos.logback/xml/ns/logback">
+	<property name="TAG_FCS" value="FCS"/>
+	<property name="TAG_IMMORTALS_ODB" value="IDB"/>
+	<property name="TAG_THIRD_PARTY" value="TPY"/>
+
+	<appender name="THIRD_PARTY_INFO" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<encoder>
+			<pattern>${TAG_THIRD_PARTY} ERROR: %msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="THIRD_PARTY_DEBUG" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+		</filter>
+		<encoder>
+			<pattern>| ${TAG_THIRD_PARTY} | %level | %d{HH:mm:ss.SSS} | %msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="THIRD_PARTY_TRACE" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<encoder>
+			<pattern>| ${TAG_THIRD_PARTY} | %level | %d{HH:mm:ss.SSS} | [%thread] %logger{36} | %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FCS_INFO" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="FCS_DEBUG" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>| ${TAG_FCS} | %level | %d{HH:mm:ss.SSS} | %msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="FCS_TRACE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>| ${TAG_FCS} | %level | %d{HH:mm:ss.SSS} | [%thread] %logger{36} | %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="IDB_INFO" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="IDB_DEBUG" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>| ${TAG_IMMORTALS_ODB} | %level | %d{HH:mm:ss.SSS} | %msg%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="IDB_TRACE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>| ${TAG_IMMORTALS_ODB} | %level | %d{HH:mm:ss.SSS} | [%thread] %logger{36} | %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.orientechnologies" level="${immortalsLogLevel:-INFO}" additivity="false">
+		<appender-ref ref="THIRD_PARTY_${immortalsLogLevel:-INFO}"/>
+	</logger>
+	<logger name="org.kie" level="${immortalsLogLevel:-INFO}" additivity="false">
+		<appender-ref ref="THIRD_PARTY_${immortalsLogLevel:-INFO}"/>
+	</logger>
+	<logger name="org.drools" level="${immortalsLogLevel:-INFO}" additivity="false">
+		<appender-ref ref="THIRD_PARTY_${immortalsLogLevel:-INFO}"/>
+	</logger>
+
+	<logger name="mil.darpa.immortals.orientdbserver" level="${immortalsLogLevel:-INFO}" additivity="false">
+		<appender-ref ref="IDB_${immortalsLogLevel:-INFO}"/>
+	</logger>
+
+	<logger name="mil.darpa.immortals.flitcons" level="${immortalsLogLevel:-INFO}" additivity="false">
+		<appender-ref ref="FCS_${immortalsLogLevel:-INFO}"/>
+	</logger>
+
+	<root level="${immortalsLogLevel:-INFO}">
+		<appender-ref ref="FCS_${immortalsLogLevel:-INFO}"/>
+	</root>
+</configuration>

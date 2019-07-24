@@ -93,7 +93,7 @@ public class MdlDataValidator extends DataValidator {
 			}
 
 			ValidationDataContainer results = super.validate(scenario.filter, dynamicData);
-			results.printResults(scenario.title, !SolverConfiguration.getInstance().isColorlessMode());
+			results.printResults(scenario.title);
 			return results;
 		} catch (NestedPathException e) {
 			throw AdaptationnException.input(e);

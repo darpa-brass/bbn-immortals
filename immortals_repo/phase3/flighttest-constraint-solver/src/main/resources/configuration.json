@@ -43,12 +43,10 @@
 		},
 		"collectedDebugProperties": {
 			"NetworkNode": [
-				"Model",
-				"Manufacturer"
+				"ID"
 			],
-			"Module": [
-				"Model",
-				"Manufacturer"
+			"Port": [
+				"ID"
 			]
 		}
 	},
@@ -115,17 +113,27 @@
 			"GenericParameter": [
 				"PortType",
 				"Thermocouple"
-			],
-			"Device": [
-				"DeviceStructure"
-			],
-			"DeviceStructure": [
-				"DeviceModules"
-			],
-			"DeviceModules": [
-				"DeviceModule"
 			]
 		},
+		"resolutionStrategies": [
+			{
+				"node1Path": ["Port", "Port"],
+				"node2Path": ["Module", "Ports", "Port"],
+				"attributeLabel": "PortDirection",
+				"resolutionStrategySolutions": [
+					{
+						"node1Value": "Input",
+						"node2Values": ["Bidirectional", "Output"],
+						"result": "Output"
+					},
+					{
+						"node1Value": "Output",
+						"node2Values": ["Bidirectional", "Input"],
+						"result": "Input"
+					}
+				]
+			}
+		],
 		"transferAttributeToChildren": [
 			{
 				"parentPath": ["Device", "DeviceStructure", "DeviceModules", "DeviceModule"],
@@ -138,7 +146,7 @@
 			["InternalStructure", "Modules", "Module", "SubModules"]
 		],
 		"ignoredAttributePaths": [
-			["DeviceModule", "Ports", "Port", "PortDirection"]
+			["DeviceModule", "Ports", "Port", "ID"]
 		],
 		"ignoreParentsWithoutChildAttributes": [
 			{
@@ -304,24 +312,6 @@
 			],
 			"SampleRate": [
 				"ConditionParameter"
-			],
-			"Devices": [
-				"Device"
-			],
-			"Device": [
-				"DeviceStructure"
-			],
-			"DeviceStructure": [
-				"DeviceModules"
-			],
-			"DeviceModules": [
-				"DeviceModule"
-			],
-			"DeviceModule": [
-				"ExcitationSource"
-			],
-			"Port": [
-				"DataAttributes"
 			]
 		}
 	},
@@ -345,9 +335,7 @@
 				"Excitation"
 			]
 		},
-		"debugIdentificationValues": [
-			"Manufacturer",
-			"Model"
-		]
+		"useSimpleLabels": true,
+		"labelDepth": 2
 	}
 }

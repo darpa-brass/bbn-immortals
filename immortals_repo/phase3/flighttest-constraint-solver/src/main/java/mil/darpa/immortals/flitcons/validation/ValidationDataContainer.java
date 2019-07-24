@@ -9,6 +9,8 @@ import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValue;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,7 +18,7 @@ import java.util.*;
 
 public class ValidationDataContainer {
 
-	public static final String COLORLESS_FLAG = "--colorless-mode";
+	public static final Logger logger = LoggerFactory.getLogger(ValidationDataContainer.class);
 
 	public final HierarchicalIdentifier identifier;
 
@@ -24,7 +26,9 @@ public class ValidationDataContainer {
 
 	private final TreeMap<String, ValidationData> children = new TreeMap<>();
 
-	private final String debugIdentifier;
+	private final DebugData debugData;
+
+	private static final int maxLabelDepth = Configuration.getInstance().validation.labelDepth;
 
 	public ValidationData get(@Nonnull String value) {
 		return children.get(value);
@@ -59,7 +63,7 @@ public class ValidationDataContainer {
 	 * @param source        The source of the data
 	 * @param configuration The configuration to use when validating
 	 * @param isWellDefined whether or not it is fully defined with a formal node type and source
-	 * @throws NestedPathException
+	 * @throws NestedPathException if an exception occurs
 	 */
 	private ValidationDataContainer(@Nonnull DynamicObjectContainer source, @Nonnull Configuration.ValidationConfiguration configuration, boolean isWellDefined) throws NestedPathException {
 
@@ -90,7 +94,7 @@ public class ValidationDataContainer {
 			name = null;
 		}
 
-		debugIdentifier = source.debugLabel;
+		debugData = source.debugData;
 	}
 
 	private void collectNestedValidationData(ValidationDataContainer container, Set<ValidationData> result) {
@@ -130,39 +134,44 @@ public class ValidationDataContainer {
 		return rval;
 	}
 
-	private static void makeResultMap(@Nonnull ValidationDataContainer container, @Nullable String parent,
+	private static void makeResultMap(@Nonnull ValidationDataContainer container, @Nullable List<String> parentLabelData,
 	                                  @Nonnull TreeMap<String, Map<String, Object>> valueContainer,
 	                                  @Nonnull TreeMap<String, Map<String, Boolean>> validityContainer) {
 		for (Map.Entry<String, ValidationData> child : container.children.entrySet()) {
 			ValidationData data = child.getValue();
 
 			if (data.value instanceof ValidationDataContainer) {
-				String name = parent == null ? child.getKey() : parent + "." + child.getKey();
-				makeResultMap((ValidationDataContainer) data.value, name, valueContainer, validityContainer);
+				throw new RuntimeException("Directly nested ValidationDataContainers are not supported!");
 
 			} else if (data.value instanceof Object[] && ((Object[]) data.value)[0] instanceof ValidationDataContainer) {
 				Object[] values = (Object[]) data.value;
 
-				for (int i = 0; i < values.length; i++) {
-					Object value = values[i];
-					StringBuilder sb = new StringBuilder(parent == null ? child.getKey() : parent + "." + child.getKey());
-
+				for (Object value : values) {
 					if (value instanceof ValidationDataContainer) {
 						ValidationDataContainer containerValue = (ValidationDataContainer) value;
 
-						makeResultMap((ValidationDataContainer) value, sb.toString() + "[" +
-								(containerValue.debugIdentifier == null ? i : (i + "(" + containerValue.debugIdentifier + ")")) +
-								"]", valueContainer, validityContainer);
+						List<String> labelData;
+						if (parentLabelData == null) {
+							labelData = new LinkedList<>();
+						} else {
+							labelData = new LinkedList<>(parentLabelData);
+						}
+						if (labelData.size() < maxLabelDepth) {
+							labelData.add(containerValue.debugData.toString());
+						}
+						makeResultMap(containerValue, labelData, valueContainer, validityContainer);
 
 					} else {
 						throw AdaptationnException.input("All values in the array must be of the same type!");
 					}
-
 				}
 
 			} else {
-				Map<String, Object> valueRow = valueContainer.computeIfAbsent(parent, k -> new TreeMap<>());
-				Map<String, Boolean> validityRow = validityContainer.computeIfAbsent(parent, k -> new TreeMap<>());
+				if (parentLabelData == null) {
+					throw AdaptationnException.internal("Missing label data for validation charts!");
+				}
+				Map<String, Object> valueRow = valueContainer.computeIfAbsent(String.join("/", parentLabelData), k -> new TreeMap<>());
+				Map<String, Boolean> validityRow = validityContainer.computeIfAbsent(String.join("/", parentLabelData), k -> new TreeMap<>());
 
 				if (data.value instanceof Object[]) {
 					Object[] valueArray = (Object[]) data.value;
@@ -175,9 +184,15 @@ public class ValidationDataContainer {
 						}
 					}
 					sb.append("]");
+					if (valueRow.containsKey(data.name)) {
+						throw new RuntimeException("Cannot overwrite existing data!");
+					}
 					valueRow.put(data.name, sb.toString());
 
 				} else {
+					if (valueRow.containsKey(data.name)) {
+						throw new RuntimeException("Cannot overwrite existing data!");
+					}
 					valueRow.put(data.name, data.value == null ? "" : data.value.toString());
 				}
 				validityRow.put(data.name, data.isValid());
@@ -185,74 +200,11 @@ public class ValidationDataContainer {
 		}
 	}
 
-	private static void makeResultMapOld(@Nonnull ValidationDataContainer container, @Nullable String parent,
-	                                     @Nonnull TreeMap<String, TreeMap<String, Object>> valueContainer,
-	                                     @Nonnull TreeMap<String, TreeMap<String, Boolean>> validityContainer) {
-		for (Map.Entry<String, ValidationData> child : container.children.entrySet()) {
-			ValidationData data = child.getValue();
-
-			if (data.value instanceof ValidationDataContainer) {
-				String name = parent == null ? child.getKey() : parent + "." + child.getKey();
-				makeResultMapOld((ValidationDataContainer) data.value, name, valueContainer, validityContainer);
-
-			} else if (data.value instanceof Object[] && ((Object[]) data.value)[0] instanceof ValidationDataContainer) {
-				Object[] values = (Object[]) data.value;
-
-				for (int i = 0; i < values.length; i++) {
-					Object value = values[i];
-					StringBuilder sb = new StringBuilder(parent == null ? child.getKey() : parent + "." + child.getKey());
-
-					if (value instanceof ValidationDataContainer) {
-						ValidationDataContainer containerValue = (ValidationDataContainer) value;
-
-						makeResultMapOld((ValidationDataContainer) value, sb.toString() + "[" +
-								(containerValue.debugIdentifier == null ? i : (i + "(" + containerValue.debugIdentifier + ")")) +
-								"]", valueContainer, validityContainer);
-
-					} else {
-						throw AdaptationnException.input("All values in the array must be of the same type!");
-					}
-
-				}
-
-			} else {
-				TreeMap<String, Object> valueRow = valueContainer.computeIfAbsent(parent, k -> new TreeMap<>());
-				TreeMap<String, Boolean> validityRow = validityContainer.computeIfAbsent(parent, k -> new TreeMap<>());
-
-				if (data.value instanceof Object[]) {
-					Object[] valueArray = (Object[]) data.value;
-					StringBuilder sb = new StringBuilder("[");
-					for (int i = 0; i < valueArray.length; i++) {
-						sb.append(valueArray[i]);
-
-						if (i + 1 != valueArray.length) {
-							sb.append(",");
-						}
-					}
-					sb.append("]");
-					valueRow.put(data.name, sb.toString());
-
-				} else {
-					valueRow.put(data.name, data.value == null ? "" : data.value.toString());
-				}
-				validityRow.put(data.name, data.isValid());
-			}
-		}
-	}
-
-
-	private List<String> makeCombinedColorlessChart() {
+	private List<String> makeCombinedChart(@Nonnull String title, boolean useBasicDisplayScheme) {
 		TreeMap<String, Map<String, Object>> valueMap = new TreeMap<>();
 		TreeMap<String, Map<String, Boolean>> validityMap = new TreeMap<>();
 		makeResultMap(this, null, valueMap, validityMap);
-		return Utils.makeChart(valueMap, null, validityMap);
-	}
-
-	private List<String> makeCombinedColorChart() {
-		TreeMap<String, Map<String, Object>> valueMap = new TreeMap<>();
-		TreeMap<String, Map<String, Boolean>> validityMap = new TreeMap<>();
-		makeResultMap(this, null, valueMap, validityMap);
-		return Utils.makeChart(valueMap, validityMap, null);
+		return Utils.makeChart(valueMap, validityMap, useBasicDisplayScheme, title);
 	}
 
 	public boolean isValid() {
@@ -270,32 +222,27 @@ public class ValidationDataContainer {
 		return true;
 	}
 
-	public void printResults(String scenarioTitle, boolean useColor) {
+	public void printResults(@Nonnull String scenarioTitle) {
+		boolean isBasic = EnvironmentConfiguration.isBasicDisplayMode();
 		try {
+			List<String> displayLines = makeCombinedChart(scenarioTitle + " Validation Result", true);
+			if (isBasic) {
+				for (String str : displayLines) {
+					logger.info(str);
+				}
+			} else {
+				String targetFile = EnvironmentConfiguration.storeFile(
+						"invalid_fields-" + scenarioTitle.replaceAll(" ", "_") + ".txt",
+						String.join("\n", displayLines).getBytes());
 
-			String invalidValuesFile = "validator-" + scenarioTitle.replaceAll(" ", "_") + ".txt";
-			List<String> resultLines = makeCombinedColorlessChart();
-			String targetFile = EnvironmentConfiguration.storeFile(
-					"invalid_fields-" + scenarioTitle.replaceAll(" ", "_") + ".txt",
-					String.join("\n", resultLines).getBytes());
+				displayLines = makeCombinedChart(scenarioTitle + " Validation Result", false);
 
-			System.out.println(Utils.padCenter(scenarioTitle + " Validation Result", 80, '#'));
-			if (useColor) {
-				resultLines = makeCombinedColorChart();
+				for (String str : displayLines) {
+					logger.info(str);
+				}
+				logger.info("A monochrome version of the above chart has been been written to the file '" + targetFile + "'.");
 			}
-			for (String str : resultLines) {
-				System.out.println(str);
-			}
-			System.out.println("################################################################################\n");
-
-			if (useColor) {
-				System.out.println("The above chart is intended to be displayed in an ANSI-capable terminal and values should be displayed in green or red depending on a value's validity. " +
-						"If it does not display in color you can use the '" + COLORLESS_FLAG + "' flag to utilize a colorless chart.");
-			}
-
-			System.out.println("The invalid value results for this execution have also been written to the file '" + targetFile + "'.");
-		} catch (
-				Exception e) {
+		} catch (Exception e) {
 			throw AdaptationnException.internal(e);
 		}
 	}
