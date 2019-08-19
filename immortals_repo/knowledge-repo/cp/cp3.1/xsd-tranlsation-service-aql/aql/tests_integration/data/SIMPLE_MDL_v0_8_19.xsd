@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://inetprogram.org/projects/MDL" xmlns:mdl="http://inetprogram.org/projects/MDL" xmlns:tmatsCommon="http://www.wsmr.army.mil/RCCsite/Documents/106-13_Telemetry%20Standards/TmatsCommon" xmlns:tmatsD="http://www.wsmr.army.mil/RCCsite/Documents/106-13_Telemetry%20Standards/TmatsD" xmlns:tmatsP="http://www.wsmr.army.mil/RCCsite/Documents/106-13_Telemetry%20Standards/TmatsP" targetNamespace="http://inetprogram.org/projects/MDL" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:import namespace="http://www.wsmr.army.mil/RCCsite/Documents/106-13_Telemetry%20Standards/TmatsCommon" schemaLocation="TmatsCommonTypes.xsd" />
+   <xsd:import namespace="http://www.wsmr.army.mil/RCCsite/Documents/106-13_Telemetry%20Standards/TmatsP" schemaLocation="TmatsPGroup.xsd" />
+   <xsd:import namespace="http://www.wsmr.army.mil/RCCsite/Documents/106-13_Telemetry%20Standards/TmatsD" schemaLocation="TmatsDGroup.xsd" />
+   <xsd:element name="MDLRoot" type="MDLRootType" />
+   <xsd:complexType name="MDLRootType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Checksum" type="xsd:string" />
+	 <!-- Field renamed from "ConfigurationVersion" -->
+         <xsd:element name="ConfigVersion" type="xsd:string" />
+         <xsd:element name="DirtyBit" type="xsd:boolean" />
+         <xsd:element name="NetworkDomains" type="NetworkDomainsType" minOccurs="0" />
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="NetworkDomainsType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <!-- THIS IS A NEW FIELD -->
+         <xsd:element name="Domain" type="xsd:string" minOccurs="0" />
+         <xsd:element name="DatabaseID" type="xsd:string" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Network" type="NetworkType" maxOccurs="unbounded" />
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="NetworkType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Name" type="xsd:token" />
+         <xsd:element name="Description" type="xsd:string" />
+         <xsd:element name="NetworkNode" type="NetworkNodeType" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="NetworkNodeType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Name" type="xsd:token" />
+         <xsd:element name="Description" type="xsd:string" />
+	 <!-- Removing this element -->
+	 <!-- <xsd:element name="NetworkName" type="xsd:token" /> -->
+         <xsd:element name="InternalStructure" type="InternalStructureType" />
+      </xsd:sequence>
+   </xsd:complexType>
+   <!-- NEW TYPE -->
+   <xsd:complexType name="InternalStructureType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Name" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Description" type="xsd:string" minOccurs="0" />
+         <xsd:element name="Module" type="ModuleType" maxOccurs="unbounded" />
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ModuleType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Name" type="xsd:token" />
+         <xsd:element name="Description" type="xsd:string" />
+	 <!-- ROUTES MOVED TO HERE -->
+         <xsd:element name="Routes" type="RoutesType" minOccurs="0" />
+      </xsd:sequence>
+      <xsd:attribute name="ID" type="xsd:ID" use="required" />
+   </xsd:complexType>
+   <xsd:complexType name="RoutesType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Route" type="RouteType" maxOccurs="unbounded" />
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="RouteType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Metric" type="xsd:positiveInteger" minOccurs="0" />
+      </xsd:sequence>
+   </xsd:complexType>
+</xsd:schema>

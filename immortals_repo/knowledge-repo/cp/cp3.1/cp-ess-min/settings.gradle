@@ -4,6 +4,7 @@ include (
 	
 	'client', 
 	'server',
+	'server-demo',
 )
 
 rootProject.name='cp-ess-min'

@@ -57,7 +57,11 @@
 		<module>schema-code/server</module>
 		
 		<module>server</module>
+		<module>server-demo</module>
 		<module>client</module>
+		<!--
+		<module>dfus/xml-transformer</module>
+		-->
 	</modules>
 
 	<build>

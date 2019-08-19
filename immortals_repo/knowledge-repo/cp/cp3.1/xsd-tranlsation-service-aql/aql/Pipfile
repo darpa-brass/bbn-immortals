@@ -1,0 +1,18 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+ipdb = "*"
+pytest = "*"
+flake8 = "*"
+pytest-datadir = "*"
+
+[packages]
+flask = "*"
+lxml = "*"
+progressbar = "*"
+
+[requires]
+python_version = "3.7"

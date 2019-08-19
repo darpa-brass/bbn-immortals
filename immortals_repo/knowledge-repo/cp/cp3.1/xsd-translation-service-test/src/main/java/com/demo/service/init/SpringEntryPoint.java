@@ -4,7 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
-import com.securboration.test.CannedEssSchemaTranslator;
+import com.securboration.schemavalidator.main.Main;
 
 /**
  * This is the spring entry point for the application.
@@ -26,12 +26,12 @@ public class SpringEntryPoint implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.printf(
                 "running %s, startup took (tot=%dms,config=%dms)\n",
-                CannedEssSchemaTranslator.class.getSimpleName(),
+                Main.class.getSimpleName(),
                 System.currentTimeMillis() - classTime,
                 System.currentTimeMillis() - constructorTime
                 );
         
-        CannedEssSchemaTranslator.main(args);
+        Main.main(args);
     }
 
 }

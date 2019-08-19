@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://inetprogram.org/projects/MDL" xmlns:mdl="http://inetprogram.org/projects/MDL" xmlns:tmats="https://wsmrc2vger.wsmr.army.mil/rcc/manuals/106-11" targetNamespace="http://inetprogram.org/projects/MDL" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xsd:import namespace="https://wsmrc2vger.wsmr.army.mil/rcc/manuals/106-11" schemaLocation="Tmats_01-2011.xsd" />
+   <xsd:element name="Root" type="RootType" />
+   <xsd:complexType name="RootType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="true" minOccurs="1" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Network" type="NetworkType" minOccurs="0" />
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="NetworkType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+	 <xsd:element name="DeliveryClass" type="DeliveryClassEnum" default="BestEffort"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:simpleType name="DeliveryClassEnum">
+     <xsd:restriction base="xsd:string">
+       <xsd:enumeration value="Voice"/>
+       <xsd:enumeration value="FlightSafety"/>
+       <xsd:enumeration value="BestEffort"/>tw
+     </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

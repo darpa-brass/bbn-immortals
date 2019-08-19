@@ -125,7 +125,11 @@ public class CannedEssSchemaTranslator {
                 new File(essMinBaseDir,"schema/server")
         );
 
-        return translate(translationServiceEndpointUrl,srcDocumentSet,dstDocumentSet);
+        return translate(
+            translationServiceEndpointUrl,
+            srcDocumentSet,
+            dstDocumentSet
+            );
     }
 
 
@@ -188,11 +192,14 @@ public class CannedEssSchemaTranslator {
         return client.getXsdTranslation(tpd);
     }
 
-    private static DocumentSet getDocumentSetFromDirectory(final File dir) throws IOException{
+    private static DocumentSet getDocumentSetFromDirectory(
+            final File dir
+            ) throws IOException{
         final DocumentSet ds = new DocumentSet();
 
         ds.setName(dir.getName());
 
+        final File mdl = findMdlSchema(dir);
         final String base = normalName(dir);
 
         System.out.printf(
@@ -212,6 +219,10 @@ public class CannedEssSchemaTranslator {
             Document d = new Document();
             d.setDocumentContent(FileUtils.readFileToString(f));
             d.setDocumentName(name);
+            
+            if(f.getName().equals(mdl.getName())){
+                d.setPrimarySchemaDoc(true);
+            }
 
             ds.getDocuments().add(d);
 

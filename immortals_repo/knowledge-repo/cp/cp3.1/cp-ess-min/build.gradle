@@ -28,6 +28,7 @@ allprojects {
 	
 	clean {
 		delete "${projectDir}/target"
+		delete "${projectDir}/bin"
 	}
 }
 

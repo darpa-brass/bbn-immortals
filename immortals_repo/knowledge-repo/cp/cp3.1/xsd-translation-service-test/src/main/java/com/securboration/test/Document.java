@@ -4,6 +4,7 @@ public class Document {
 
     private String documentName;
     private String documentContent;
+    private boolean primarySchemaDoc;
 
     public Document(){
 
@@ -27,6 +28,18 @@ public class Document {
 
     public void setDocumentContent(String documentContent) {
         this.documentContent = documentContent;
+    }
+
+
+    
+    public boolean isPrimarySchemaDoc() {
+        return primarySchemaDoc;
+    }
+
+
+    
+    public void setPrimarySchemaDoc(boolean primarySchemaDoc) {
+        this.primarySchemaDoc = primarySchemaDoc;
     }
 
 
