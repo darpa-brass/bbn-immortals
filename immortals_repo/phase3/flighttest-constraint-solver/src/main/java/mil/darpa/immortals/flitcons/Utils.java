@@ -123,7 +123,7 @@ public class Utils {
 	}
 
 	public static boolean isSupportedPrimitive(@Nonnull Object value) {
-		return (value instanceof  Long || value instanceof  String || value instanceof Boolean);
+		return (value instanceof Long || value instanceof String || value instanceof Boolean);
 	}
 
 	public static <T> T duplicateObject(T obj) {
@@ -241,7 +241,7 @@ public class Utils {
 				if (passing == null || passing) {
 					displayValue = "";
 				} else {
-					displayValue = Sym.asciify(value);
+					displayValue = value;
 				}
 			} else {
 				if (passing == null || passing) {
@@ -296,7 +296,8 @@ public class Utils {
 				String columnKey = entry.getKey();
 				String columnHeader = headerAliases.getOrDefault(columnKey, columnKey);
 				int knownMaxStringSize = columnSizeMap.computeIfAbsent(columnKey, k -> columnHeader.length());
-				String entryString = entry.getValue().toString();
+				String entryString = Sym.asciify(entry.getValue().toString());
+				entry.setValue(entryString);
 				int maxStringSize = Math.max(minColumnSize, Math.max(columnHeader.length(), entryString.length()));
 				if (maxStringSize > knownMaxStringSize) {
 					columnSizeMap.put(columnKey, maxStringSize);

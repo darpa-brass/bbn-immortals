@@ -21,46 +21,51 @@
 				"AdaptationSuccessful",
 				"AdaptationUnsuccessful"
 			]
-//		},
-//		{
-//			"shortName": "s5e3",
-//			"prettyName": "Scenario 5 SwRI Example 3",
-//			"timeoutMS": 60000,
-//			"xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
-//			"xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_TTC.xml",
-//			"expectedStatusSequence": [
-//				"AdaptationSuccessful"
-//			]
-//		},
-//		{
-//			"shortName": "s5e4",
-//			"prettyName": "Scenario 5 SwRI Example 4",
-//			"timeoutMS": 60000,
-//			"xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
-//			"xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_4/BRASS_Scenario5_Example4_TTC.xml",
-//			"expectedStatusSequence": [
-//				"AdaptationSuccessful"
-//			]
-//		},
-//		{
-//			"shortName": "s5e5",
-//			"prettyName": "Scenario 5 SwRI Example 5",
-//			"timeoutMS": 60000,
-//			"xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
-//			"xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_5/BRASS_Scenario5_Example5_TTC.xml",
-//			"expectedStatusSequence": [
-//				"AdaptationSuccessful"
-//			]
-//		},
-//		{
-//			"shortName": "s5e6",
-//			"prettyName": "Scenario 5 SwRI Example 6",
-//			"timeoutMS": 60000,
-//			"xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
-//			"xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_6/BRASS_Scenario5_Example6_TTC.xml",
-//			"expectedStatusSequence": [
-//				"AdaptationSuccessful"
-//			]
+		},
+		{
+			"shortName": "s5e3",
+			"prettyName": "Scenario 5 SwRI Example 3",
+			"timeoutMS": 120000,
+			"xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
+			"xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
+		},
+		{
+			"shortName": "s5e4",
+			"prettyName": "Scenario 5 SwRI Example 4",
+			"timeoutMS": 120000,
+			"xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
+			"xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_4/BRASS_Scenario5_Example4_TTC.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
+		},
+		{
+			"shortName": "s5e5",
+			"prettyName": "Scenario 5 SwRI Example 5",
+			"timeoutMS": 120000,
+			"xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
+			"xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_5/BRASS_Scenario5_Example5_TTC.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
+		},
+		{
+			"shortName": "s5e6",
+			"prettyName": "Scenario 5 SwRI Example 6",
+			"timeoutMS": 120000,
+			"xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1.xml",
+			"xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_6/BRASS_Scenario5_Example6_TTC.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
 		}
 	]
 }

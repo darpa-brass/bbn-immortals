@@ -10,7 +10,38 @@ JAR_FILE = None
 DSL_DIR = None
 RULES_FILE = None
 
-passing_test_scenarios = {
+default_test_scenarios = {
+    "s5": {
+        "request_file": "scenarios/s5/dsl-swap-request.json",
+        "inventory_file": "scenarios/s5/dsl-swap-inventory.json"
+    },
+    "s5e1": {
+        "request_file": "scenarios/s5e1/dsl-swap-request.json",
+        "inventory_file": "scenarios/s5e1/dsl-swap-inventory.json"
+    },
+    "s5e2": {
+        "request_file": "scenarios/s5e2/dsl-swap-request.json",
+        "inventory_file": "scenarios/s5e2/dsl-swap-inventory.json"
+    },
+    "s5e3": {
+        "request_file": "scenarios/s5e3/dsl-swap-request.json",
+        "inventory_file": "scenarios/s5e3/dsl-swap-inventory.json"
+    },
+    "s5e4": {
+        "request_file": "scenarios/s5e4/dsl-swap-request.json",
+        "inventory_file": "scenarios/s5e4/dsl-swap-inventory.json"
+    },
+    "s5e5": {
+        "request_file": "scenarios/s5e5/dsl-swap-request.json",
+        "inventory_file": "scenarios/s5e5/dsl-swap-inventory.json"
+    },
+    "s5e6": {
+        "request_file": "scenarios/s5e6/dsl-swap-request.json",
+        "inventory_file": "scenarios/s5e6/dsl-swap-inventory.json"
+    }
+}
+
+debug_test_scenarios = {
     "RP0IP0": {
         "request_file": "input-RP0.json",
         "inventory_file": "inventory-IP0.json"
@@ -57,10 +88,6 @@ passing_test_scenarios = {
         "request_file": "DSLInterchangeFormat-dsl-input.json",
         "inventory_file": "DSLInterchangeFormat-dsl-dauinventory.json"
     },
-    "s5e1": {
-        "request_file": "scenarios/s5e1/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5e1/dsl-swap-inventory.json"
-    },
     "s5e2-bus-only": {
         "request_file": "s5e2/dsl-swap-request-bus.json",
         "inventory_file": "s5e2/dsl-swap-inventory.json"
@@ -73,14 +100,6 @@ passing_test_scenarios = {
         "request_file": "s5e2/dsl-swap-request-signalconditioners.json",
         "inventory_file": "s5e2/dsl-swap-inventory.json"
     },
-    "s5e2": {
-        "request_file": "scenarios/s5e2/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5e2/dsl-swap-inventory.json"
-    },
-    "s5": {
-        "request_file": "scenarios/s5/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5/dsl-swap-inventory.json"
-    },
     "s5MoreMeasurements": {
         "request_file": "scenarios/s5MoreMeasurements/dsl-swap-request.json",
         "inventory_file": "scenarios/s5MoreMeasurements/dsl-swap-inventory.json"
@@ -90,9 +109,10 @@ passing_test_scenarios = {
         "inventory_file": "freeze/dsl-swap-inventory.json"
     }
 }
+scenario_choices = default_test_scenarios.keys() + debug_test_scenarios.keys()
 
 parser = argparse.ArgumentParser('DSL Tester', add_help=True)
-parser.add_argument('--scenario', type=str, choices=passing_test_scenarios.keys(), help='The scenario to execute')
+parser.add_argument('--scenario', type=str, choices=scenario_choices, help='The scenario to execute')
 parser.add_argument('--simple-solver', '-s', action='store_true', help='Use the simple solver')
 parser.add_argument('--use-jar-with-dsl', '-j', action='store_true', help='Use the Jar if the DSL is used')
 parser.add_argument('--keep-running-on-failure', action='store_true', help='Keep running the tests on failure')
@@ -174,7 +194,7 @@ def run_test(request_file, inventory_file, simple_solver=False, use_jar=True, ab
 
         if simple_solver:
             cmd.append('--simple-solver')
-            exec_cmd(cmd, None,  abort_on_failure)
+            exec_cmd(cmd, None, abort_on_failure)
         else:
             exec_cmd(cmd, None, abort_on_failure)
 
@@ -191,7 +211,7 @@ def run_test(request_file, inventory_file, simple_solver=False, use_jar=True, ab
 
 
 def main():
-    global JAR_FILE, DSL_DIR, RULES_FILE, passing_test_scenarios
+    global JAR_FILE, DSL_DIR, RULES_FILE, default_test_scenarios, debug_test_scenarios
     args = parser.parse_args()
 
     if args.simple_solver:
@@ -218,19 +238,25 @@ def main():
             raise Exception('The file "' + RULES_FILE + '" does not exist!')
 
     if args.scenario is None:
-        for name in passing_test_scenarios.keys():
-            if name == 'freeze':
-                continue
-            input_group = passing_test_scenarios[name]
+        for name in default_test_scenarios.keys():
+            input_group = default_test_scenarios[name]
             run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
                      abort_on_failure=(not args.keep_running_on_failure), **input_group)
 
-        input_group = passing_test_scenarios['freeze']
-        run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
-                 abort_on_failure=(not args.keep_running_on_failure), **input_group)
+        for name in debug_test_scenarios.keys():
+            input_group = debug_test_scenarios[name]
+            run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
+                     abort_on_failure=(not args.keep_running_on_failure), **input_group)
 
     else:
-        input_group = passing_test_scenarios[args.scenario]
+        if args.scenario in default_test_scenarios:
+            input_group = default_test_scenarios[args.scenario]
+        elif args.scenario in debug_test_scenarios:
+            input_group = debug_test_scenarios[args.scenario]
+        else:
+            print("Invalid scenario '" + args.scenario + "'!")
+            exit(-1)
+
         run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
                  abort_on_failure=(not args.keep_running_on_failure), **input_group)
 

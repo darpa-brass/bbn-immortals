@@ -110,9 +110,10 @@ public class SimpleSolver implements SolverInterface<SimpleSolver> {
 
 					// For each Input DAU Port
 					for (String inputGroup : inputChildContainer.getGroups()) {
-						System.out.println("\tTesting Input Group: " + inputGroup);
+						List<DynamicObjectContainer> inputGroupValues = inputChildContainer.getValues(inputGroup);
+						System.out.println("\tTesting Input Group '" + inputGroup + "' with " + inputGroupValues.size() + " children");
 						portGroup:
-						for (DynamicObjectContainer inputValue : inputChildContainer.getValues(inputGroup)) {
+						for (DynamicObjectContainer inputValue : inputGroupValues) {
 
 							DynamicObjectContainer result = null;
 							DynamicObjectContainer parent = null;
@@ -135,6 +136,7 @@ public class SimpleSolver implements SolverInterface<SimpleSolver> {
 								return null;
 							}
 
+							System.out.println("\t\tMatch found");
 							oldChildOldParentMap.put(inputValue, inputParent);
 							newOldObjectMap.put(result, inputValue);
 							Set<DynamicObjectContainer> resultChildren = resultParentChildren.computeIfAbsent(parent, k -> new HashSet<>());

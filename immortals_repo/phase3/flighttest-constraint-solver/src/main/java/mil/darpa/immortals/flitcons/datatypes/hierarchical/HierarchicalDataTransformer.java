@@ -657,7 +657,12 @@ public class HierarchicalDataTransformer {
 		for (HierarchicalData multiParentChild : multiParentChildren) {
 
 			if (multiParentChild.node.getNodeType().equals("Port")) {
-				throw AdaptationnException.input("The Port '" + multiParentChild.toString() + "' is referenced by multiple PortMappings!");
+				if (multiParentChild.getDebugData() != null) {
+					throw AdaptationnException.input("The Port '" + multiParentChild.toString() + "' with details '" + multiParentChild.getDebugData() + "'  is referenced by multiple PortMappings!");
+				} else {
+					throw AdaptationnException.input("The Port '" + multiParentChild.toString() + "'  is referenced by multiple PortMappings!");
+				}
+
 			} else if (multiParentChild.node.getNodeType().equals("Measurement")) {
 				// TODO: Add support for deconflicting Measurements
 			} else if (multiParentChild.node.getNodeType().equals("DataStream")) {

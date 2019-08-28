@@ -1,7 +1,6 @@
 package mil.darpa.immortals.orientdbserver;
 
 import com.google.gson.*;
-import mil.darpa.immortals.EnvironmentConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

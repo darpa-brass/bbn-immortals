@@ -49,7 +49,6 @@ public class MdlHacks {
 				ArrayList<DynamicObjectContainer> connectedPorts = new ArrayList<>();
 				for (Object portObject : dau.get("Port").valueArray) {
 					DynamicObjectContainer port = (DynamicObjectContainer) portObject;
-					System.out.println("ON: " + port.toString());
 					DynamicValue supersededPort = port.get("SupersededGloballyUniqueId");
 					if (supersededPort != null && supersededPort.singleValue != null && !(supersededPort.singleValue instanceof String && ((String)supersededPort.singleValue).trim().equals(""))) {
 						connectedPorts.add(port);
@@ -85,16 +84,6 @@ public class MdlHacks {
 				dau.remove("Port");
 				dau.put("Port", DynamicValue.fromValueArray(dau.identifier, connectedPorts.toArray()));
 
-			}
-
-			for (Object dauObject : dslOutput.get("daus").valueArray) {
-				DynamicObjectContainer dau = (DynamicObjectContainer) dauObject;
-				ArrayList<DynamicObjectContainer> connectedPorts = new ArrayList<>();
-				for (Object portObject : dau.get("Port").valueArray) {
-					DynamicObjectContainer port = (DynamicObjectContainer) portObject;
-					System.err.println("PortType: " + port.get("PortType").singleValue);
-
-				}
 			}
 
 		} catch (NestedPathException e) {
