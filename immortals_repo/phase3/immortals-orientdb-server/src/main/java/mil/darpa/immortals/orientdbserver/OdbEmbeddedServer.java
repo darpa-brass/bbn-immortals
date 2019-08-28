@@ -227,6 +227,10 @@ public class OdbEmbeddedServer {
 
 				if (scenario.getScenarioType().equals("Scenario5")) {
 
+					if (scenario.getXmlMdlrootInputPath() == null && scenario.getXmlInventoryPath() == null) {
+						throw new RuntimeException("No MDLRoot or DAUInventory file exists for scenario '" + scenario.getShortName() + "'!");
+					}
+
 					logger.info("Constructing " + scenario.getScenarioType() + " OrientDB data for plocal storage using Python scripts...");
 
 					Path tools = TestScenario.getPathInParentsIfExists("shared/tools.sh");

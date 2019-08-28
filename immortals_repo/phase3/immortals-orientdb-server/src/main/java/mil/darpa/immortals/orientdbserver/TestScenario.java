@@ -52,7 +52,7 @@ public class TestScenario {
 			envVar = output.substring(idx0 + 2, idx1);
 
 			if (System.getenv(envVar) == null) {
-				throw new RuntimeException("The environment variable '" + envVar + "' must be set in order to process the scenario entries!");
+				return null;
 			}
 			envVal = System.getenv(envVar);
 
@@ -71,7 +71,8 @@ public class TestScenario {
 				String elementAttributeKey = elementAttributeEntry.getKey();
 				JsonElement elementAttributeValue = elementAttributeEntry.getValue();
 				if (elementAttributeKey.equals("xmlInventoryPath") || elementAttributeKey.equals("xmlMdlrootInputPath")) {
-					elementAttributeEntry.setValue(new JsonPrimitive(injectEnvironmentVariables(elementAttributeValue.getAsString())));
+					String path = injectEnvironmentVariables(elementAttributeValue.getAsString());
+					elementAttributeEntry.setValue(path == null ? new JsonNull() : new JsonPrimitive(path));
 					scenarioType = "Scenario5";
 				}
 			}
@@ -88,11 +89,8 @@ public class TestScenario {
 
 			bbnScenario5TestScenarios = initScenarioSet("s5_scenarios.json", gson);
 			scenario5TestScenarios = new TreeMap<>(bbnScenario5TestScenarios);
-
-			if (EnvironmentConfiguration.CHALLENGE_PROBLEMS_ROOT.isPresent()) {
-				swriScenario5TestScenarios = initScenarioSet("s5_cp_scenarios.json", gson);
-				scenario5TestScenarios.putAll(swriScenario5TestScenarios);
-			}
+			swriScenario5TestScenarios = initScenarioSet("s5_cp_scenarios.json", gson);
+			scenario5TestScenarios.putAll(swriScenario5TestScenarios);
 			scenario6TestScenarios = initScenarioSet("s6_scenarios.json", gson);
 		}
 	}
