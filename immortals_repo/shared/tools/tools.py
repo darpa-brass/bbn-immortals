@@ -7,6 +7,7 @@ import installer
 import integrationtest
 import odb
 import mdl
+import xmltest
 
 _parser = argparse.ArgumentParser()
 _subparsers = _parser.add_subparsers(dest='cmd')
@@ -17,6 +18,7 @@ if __name__ == '__main__':
     installer_parser = installer.init_parser(_subparsers)
     odbhelper_parser = odb.init_parser(_subparsers)
     mdl_parser = mdl.init_parser(_subparsers)
+    xmltest_parser = xmltest.init_parser(_subparsers)
     
     args = _parser.parse_args()
 
@@ -32,3 +34,5 @@ if __name__ == '__main__':
         odb.main(args)
     elif args.cmd == 'mdl':
         mdl.main(args)
+    elif args.cmd == 'xmltest':
+        xmltest.main(args)

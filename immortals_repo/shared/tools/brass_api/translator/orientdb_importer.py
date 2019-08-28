@@ -33,6 +33,7 @@ class OrientDBXMLImporter(object):
         self.orientDB_helper = BrassOrientDBHelper(database_name=databaseName, config_file=configFile)
         self.mdlFile = mdlFile
         self.orientDB_helper.open_database(over_write=True)
+        self.preprocessor = None
         self._schema = None
 
 
@@ -48,10 +49,10 @@ class OrientDBXMLImporter(object):
         """
 
 
-        preprocessor = preprocess.create_preprocessor(self.mdlFile)
-        preprocessor.preprocess_xml()
-        self.parseXML(preprocessor.orientdb_xml_file)
-        preprocessor.remove_orientdb_xml()
+        self.preprocessor = preprocess.create_preprocessor(self.mdlFile)
+        self.preprocessor.preprocess_xml()
+        self.parseXML(self.preprocessor.orientdb_xml_file)
+        self.preprocessor.remove_orientdb_xml()
 
 
     def parseXML(self, xmlFile):
@@ -183,7 +184,7 @@ class OrientDBXMLImporter(object):
                 if classToInsertInto == 'MDLRoot':
                     e[list(e)[0]]['schema'] = self._schema
 
-
+                print(f"create_node({classToInsertInto}, {e[list(e)[0]]})")
                 self.orientDB_helper.create_node(classToInsertInto, e[list(e)[0]])
 
 

@@ -2,9 +2,11 @@ package mil.darpa.immortals.flitcons.datatypes.hierarchical;
 
 import mil.darpa.immortals.flitcons.Configuration;
 import mil.darpa.immortals.flitcons.datatypes.DataType;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.Equation;
+import mil.darpa.immortals.flitcons.mdl.MdlHacks;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -13,6 +15,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class HierarchicalDataTransformer {
+
+	private static final Logger logger = LoggerFactory.getLogger(HierarchicalDataTransformer.class);
 
 	private enum TargetTransformation {
 		Usage,
@@ -72,8 +76,9 @@ public class HierarchicalDataTransformer {
 	}
 
 	private static void trimIgnoredNodeTrees(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
-		for (List<String> originalList : instructions.ignoredNodePaths) {
+		boolean revalidate = false;
 
+		for (List<String> originalList : instructions.ignoredNodePaths) {
 			List<String> pathList = new ArrayList<>(originalList);
 			String tail = pathList.remove(pathList.size() - 1);
 			Set<HierarchicalData> dataSet = data.getNodesAtPath(pathList);
@@ -81,16 +86,18 @@ public class HierarchicalDataTransformer {
 			for (HierarchicalData parentData : dataSet) {
 				Iterator<HierarchicalData> iter = parentData.getChildrenDataIterator(tail);
 				while (iter.hasNext()) {
+					revalidate = true;
 					data.removeNodeTree(iter.next());
 				}
 			}
 		}
-		data.validate();
+		if (revalidate) {
+			data.validate();
+		}
 	}
 
 	private static void trimIgnoredAttributes(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
 		for (List<String> originalList : instructions.ignoredAttributePaths) {
-
 			List<String> pathList = new ArrayList<>(originalList);
 			String tail = pathList.remove(pathList.size() - 1);
 			Set<HierarchicalData> dataSet = data.getNodesAtPath(pathList);
@@ -105,7 +112,6 @@ public class HierarchicalDataTransformer {
 				}
 			}
 		}
-		data.validate();
 	}
 
 	private static void remapNodesAndAttributes(@Nonnull HierarchicalDataContainer data, @Nonnull Configuration.TransformationInstructions instructions) {
@@ -115,6 +121,7 @@ public class HierarchicalDataTransformer {
 				String originalAttributeName = remappingInstructions.childAttributeName;
 				String newAttributeName = remappingInstructions.optionalNewChildAttributeName;
 				Object newAttributeValue = null;
+
 				if (node.getAttributeNames().contains(originalAttributeName)) {
 					if (node.getAttributeNames().contains(newAttributeName)) {
 						String nodeIdentifier = String.join(".", remappingInstructions.parentPath);
@@ -167,8 +174,30 @@ public class HierarchicalDataTransformer {
 				if (newAttributeName != null || newAttributeValue != null) {
 					newAttributeName = newAttributeName == null ? originalAttributeName : newAttributeName;
 					newAttributeValue = newAttributeValue == null ? node.getAttribute(originalAttributeName) : newAttributeValue;
-					node.removeAttribute(originalAttributeName);
-					node.addAttribute(HierarchicalIdentifier.createBlankNode(), newAttributeName, newAttributeValue);
+
+					Set<String> attrNames = node.getAttributeNames();
+					if (!attrNames.contains(newAttributeName)) {
+						if (attrNames.contains(originalAttributeName)) {
+							node.removeAttribute(originalAttributeName);
+							node.addAttribute(HierarchicalIdentifier.createBlankNode(), newAttributeName, newAttributeValue);
+						} else {
+							if (newAttributeValue != null) {
+								node.addAttribute(HierarchicalIdentifier.createBlankNode(), newAttributeName, newAttributeValue);
+							}
+						}
+					} else if (!newAttributeValue.equals(node.getAttribute(originalAttributeName))){ {
+						node.removeAttribute(originalAttributeName);
+						node.addAttribute(HierarchicalIdentifier.createBlankNode(), originalAttributeName, newAttributeValue);
+					}
+						if (attrNames.contains(originalAttributeName)) {
+							node.removeAttribute(originalAttributeName);
+							node.addAttribute(HierarchicalIdentifier.createBlankNode(), newAttributeName, newAttributeValue);
+						} else {
+							if (newAttributeValue != null) {
+								node.addAttribute(HierarchicalIdentifier.createBlankNode(), newAttributeName, newAttributeValue);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -198,7 +227,9 @@ public class HierarchicalDataTransformer {
 		for (HierarchicalData node : nodesToRemove) {
 			data.removeNodeTree(node);
 		}
-		data.validate();
+		if (nodesToRemove.size() > 0) {
+			data.validate();
+		}
 	}
 
 	/**
@@ -269,7 +300,6 @@ public class HierarchicalDataTransformer {
 				node.exposeTag();
 			}
 		}
-		data.validate();
 	}
 
 	private static void trimEmptyBranches(HierarchicalDataContainer data) {
@@ -429,11 +459,20 @@ public class HierarchicalDataTransformer {
 			transform(externalClone, specificInstructions, preserveDebugRelations);
 		}
 
-		pullExternalDataIntoDaus(primaryClone, externalClone, primaryExternalRelationsMap);
+		if (primaryExternalRelationsMap != null) {
+			removeDisconnectedPorts(primaryClone, primaryExternalRelationsMap);
+		}
+
+		if (externalClone != null) {
+			pullExternalDataIntoDaus(primaryClone, externalClone, primaryExternalRelationsMap, specificInstructions);
+		}
 
 		if (targetTransformation != TargetTransformation.Interconnection) {
 			transform(primaryClone, specificInstructions, preserveDebugRelations);
 		}
+
+		MdlHacks.injectExcitationPortDefaults(primaryClone);
+
 		return primaryClone;
 	}
 
@@ -450,25 +489,52 @@ public class HierarchicalDataTransformer {
 					node.pathMatches(x.parentPath)).collect(Collectors.toList());
 
 			for (Configuration.Calculation calculation : applicableCalculations) {
+				boolean containsApplicableChild = false;
+
+				// For each calculation child
+				for (Configuration.NodeAttributeRelation calculationChild : calculation.children) {
+					Set<HierarchicalData> calculationChildNodes;
+					if (calculationChild.nodePath.size() == 0) {
+						calculationChildNodes = new HashSet<>();
+						calculationChildNodes.add(node);
+					} else {
+						calculationChildNodes = node.getChildNodesByPath(calculationChild.nodePath);
+					}
+
+					for (HierarchicalData calculationChildNode : calculationChildNodes) {
+						// If the attribute exists or one of the child nodes exists and contains one of the expected attributes
+						if (node.getAttribute(calculation.parentTargetValueIdentifier) != null || (
+								calculationChildNode != null && calculationChildNode.getAttributes().containsKey(calculationChild.attribute))) {
+							// The calculation injection should be performed
+							containsApplicableChild = true;
+							break;
+						}
+					}
+				}
+
+				if (!containsApplicableChild) {
+					break;
+				}
 
 				if (node.getAttribute(calculation.parentTargetValueIdentifier) == null && !node.getChildrenDataIterator(calculation.parentTargetValueIdentifier).hasNext()) {
 					for (Configuration.NodeAttributeRelation childRelation : calculation.children) {
 						String substitutionValue = childRelation.attribute;
 
 						if (node.getAttribute(substitutionValue) == null) {
-							HierarchicalData childNode;
+							Set<HierarchicalData> childNodes = null;
 
-							if ((childNode = node.getChildNodeByPath(childRelation.nodePath)) == null ||
-									childNode.getAttribute(substitutionValue) == null) {
-								throw AdaptationnException.internal(
-										"A node of type '" + node.getNodeType() +
-												"' has a calculation to determine the value of '" + calculation.parentTargetValueIdentifier +
-												"' but is missing value '" + substitutionValue + "' in child [" +
-												String.join(",", childRelation.nodePath) + "] to compute it!");
+							if ((childNodes = node.getChildNodesByPath(childRelation.nodePath)) != null) {
+								for (HierarchicalData childNode : childNodes) {
+									if (childNode.getAttribute(substitutionValue) == null) {
+										logger.error(
+												"Node '" + node +
+														"' has a calculation to determine the value of '" + calculation.parentTargetValueIdentifier +
+														"' but is missing value '" + substitutionValue + "' in child [" +
+														String.join(",", childRelation.nodePath) + "] to compute it!");
+									}
+								}
 							}
-
 						}
-
 					}
 					Set<Configuration.Calculation> equations = equationsToInject.computeIfAbsent(node.node, k -> new HashSet<>());
 					equations.add(calculation);
@@ -480,14 +546,50 @@ public class HierarchicalDataTransformer {
 		for (HierarchicalIdentifier node : equationsToInject.keySet()) {
 			Set<Configuration.Calculation> calcs = equationsToInject.get(node);
 			for (Configuration.Calculation calc : calcs) {
-				data.injectEquation(node, calc.parentTargetValueIdentifier, new Equation(calc.equation));
+				HierarchicalIdentifier identifier = HierarchicalIdentifier.produceTraceableNode(UUID.randomUUID().toString(), calc.equation);
+				data.getData(node).addAttribute(identifier, calc.parentTargetValueIdentifier, calc.equation);
 			}
+		}
+	}
+
+	private static void removeDisconnectedPorts(@Nonnull HierarchicalDataContainer primaryStructure,
+	                                            @Nonnull Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> indirectRelations) {
+		Set<HierarchicalData> disconnectedNodes = new HashSet<>();
+
+		Set<HierarchicalIdentifier> allRelationalNodes = new HashSet<>();
+		Set<HierarchicalIdentifier> allRelationalNodeReferences = new HashSet<>();
+		for (Map.Entry<HierarchicalIdentifier, Set<HierarchicalIdentifier>> mappingEntry : indirectRelations.entrySet()) {
+			allRelationalNodeReferences.add(mappingEntry.getKey());
+			allRelationalNodes.addAll(mappingEntry.getValue());
+		}
+
+		for (HierarchicalIdentifier node : primaryStructure.getNodeIdentifiers()) {
+			HierarchicalData data = primaryStructure.getData(node);
+
+			// TODO: Don't hard-code port! Put it in a config and make ignoring non-connected nodes a flag!
+			if (data.getNodeType().equals("Port") && !allRelationalNodes.contains(node)) {
+				Iterator<HierarchicalIdentifier> inboundReferences = data.getInboundReferencesIterator();
+
+				if (!inboundReferences.hasNext()) {
+					disconnectedNodes.add(data);
+				}
+				while (inboundReferences.hasNext()) {
+					if (!allRelationalNodeReferences.contains(inboundReferences.next())) {
+						disconnectedNodes.add(data);
+					}
+				}
+			}
+		}
+
+		for (HierarchicalData data : disconnectedNodes) {
+			primaryStructure.removeNodeTree(data);
 		}
 	}
 
 	private static void pullExternalDataIntoDaus(@Nonnull HierarchicalDataContainer primaryStructure,
 	                                             @Nonnull HierarchicalDataContainer externalStructure,
-	                                             @Nonnull Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> indirectRelations) {
+	                                             @Nonnull Map<HierarchicalIdentifier, Set<HierarchicalIdentifier>> indirectRelations,
+	                                             @Nonnull Configuration.TransformationInstructions instructions) {
 		Map<HierarchicalData, Set<HierarchicalData>> parentChildMap = new HashMap<>();
 		Map<HierarchicalData, Set<HierarchicalData>> childParentMap = new HashMap<>();
 
@@ -508,25 +610,28 @@ public class HierarchicalDataTransformer {
 					// That does not reference another child of the same DAU
 					if (dauNodeSet.stream().noneMatch(t -> t.node.equals(hn))) {
 
-						// If no external relation to it can be found, throw an exception
-						if (!indirectRelations.containsKey(hn)) {
-							throw AdaptationnException.input("Reference edge does not map to any corresponding references to known data!");
-						}
+						// If an external reference has been found
+						if (indirectRelations != null && indirectRelations.containsKey(hn)) {
+							// Get the related nodes
+							Set<HierarchicalIdentifier> relatedNodes = indirectRelations.get(hn);
+							for (HierarchicalIdentifier referencedNode : relatedNodes) {
+								// And for each one, confirm they have related data
+								if (!externalStructure.containsNode(referencedNode)) {
+									throw AdaptationnException.input("Could not find a matching external data node for the node '" + referencedNode + "'!");
+								}
 
-						// Otherwise, get the related nodes
-						Set<HierarchicalIdentifier> relatedNodes = indirectRelations.get(hn);
-						for (HierarchicalIdentifier referencedNode : relatedNodes) {
-							// And for each one, confirm they have related data
-							if (!externalStructure.containsNode(referencedNode)) {
-								throw AdaptationnException.input("Could not find a matching external data node for the node '" + referencedNode + "'!");
+								// And set the parent of those nodes to the DAU node
+								HierarchicalData externalNode = externalStructure.getNode(referencedNode);
+								Set<HierarchicalData> childParents = childParentMap.computeIfAbsent(externalNode, k -> new HashSet<>());
+								Set<HierarchicalData> parentChildren = parentChildMap.computeIfAbsent(primaryNode, k -> new HashSet<>());
+								parentChildren.add(externalNode);
+								childParents.add(primaryNode);
 							}
-
-							// And set the parent of those nodes to the DAU node
-							HierarchicalData externalNode = externalStructure.getNode(referencedNode);
-							Set<HierarchicalData> childParents = childParentMap.computeIfAbsent(externalNode, k -> new HashSet<>());
-							Set<HierarchicalData> parentChildren = parentChildMap.computeIfAbsent(primaryNode, k -> new HashSet<>());
-							parentChildren.add(externalNode);
-							childParents.add(primaryNode);
+						} else {
+							// Otherwise, if it is not an ignored type, throw an exception
+							if (!instructions.ignoreDanglingReference(hn.getNodeType(), primaryNode.getNodeType())) {
+								throw AdaptationnException.input("Reference edge does not map to any corresponding references to known data!");
+							}
 						}
 					}
 				}
@@ -538,7 +643,7 @@ public class HierarchicalDataTransformer {
 					if (!primaryStructure.containsNode(hn)) {
 						// Throw an exception because that is not yet supported.
 						// TODO: This should probably be validated pre and post adaptation...
-						if (!(primaryNode.node.getNodeType().equals("DSCPTableEntryRef") && hn.getNodeType().equals("DSCPTableEntry"))) {
+						if (!instructions.ignoreDanglingReference(primaryNode.node.getNodeType(), hn.getNodeType())) {
 							throw AdaptationnException.input("Reference from primary Node '" + primaryNode.toString() + "' to external node '" + hn.toString() + "' detected! This is not supported!");
 						}
 					}
@@ -546,26 +651,41 @@ public class HierarchicalDataTransformer {
 			}
 		}
 
+		// THen collect all children that seem to have multiple parents
 		Set<HierarchicalData> multiParentChildren = childParentMap.keySet().stream().filter(x -> childParentMap.get(x).size() > 1).collect(Collectors.toSet());
 
 		for (HierarchicalData multiParentChild : multiParentChildren) {
-			Iterator<String> childIterator = multiParentChild.getChildrenClassIterator();
-			while (childIterator.hasNext()) {
-				String type = childIterator.next();
 
-				Iterator<HierarchicalData> dataIterator = multiParentChild.getChildrenDataIterator(type);
-				while (dataIterator.hasNext()) {
-					HierarchicalData child = dataIterator.next();
-					if (child.getChildrenClassIterator().hasNext()) {
-						throw AdaptationnException.internal("Complex objects are not currently supported if multiple PortMappings utilize a single measurement!");
-					}
-					Set<String> childAttributeNames = child.getAttributeNames();
-					if (!(childAttributeNames.size() == 2 && childAttributeNames.contains("Min") &&
-							childAttributeNames.contains("Max") && child.getAttribute("Min").equals(child.getAttribute("Max")))) {
-						throw AdaptationnException.internal("A single Measurement or DataStream cannot be referenced by multiple PortMappings if it has multiple possible configurations!");
-					}
-				}
+			if (multiParentChild.node.getNodeType().equals("Port")) {
+				throw AdaptationnException.input("The Port '" + multiParentChild.toString() + "' is referenced by multiple PortMappings!");
+			} else if (multiParentChild.node.getNodeType().equals("Measurement")) {
+				// TODO: Add support for deconflicting Measurements
+			} else if (multiParentChild.node.getNodeType().equals("DataStream")) {
+				// Ignore
+			} else {
+				throw AdaptationnException.input("Unexpected type '" + multiParentChild.toString() + "' referenced multiple times within a PortMapping!");
 			}
+
+//			todo: Add proper creation of duplicates
+			// And for each one
+//			Iterator<String> childIterator = multiParentChild.getChildrenClassIterator();
+//			while (childIterator.hasNext()) {
+//				String type = childIterator.next();
+//
+//				Iterator<HierarchicalData> dataIterator = multiParentChild.getChildrenDataIterator(type);
+//				while (dataIterator.hasNext()) {
+//					HierarchicalData child = dataIterator.next();
+//					if (child.getChildrenClassIterator().hasNext()) {
+//						// TODO: Make this clearer?
+//						throw AdaptationnException.internal("Complex objects are not currently supported if multiple PortMappings utilize a single measurement!");
+//					}
+//					Set<String> childAttributeNames = child.getAttributeNames();
+//					if (!(childAttributeNames.size() == 2 && childAttributeNames.contains("Min") &&
+//							childAttributeNames.contains("Max") && child.getAttribute("Min").equals(child.getAttribute("Max")))) {
+//						throw AdaptationnException.internal("A single Measurement or DataStream cannot be referenced by multiple PortMappings if it has multiple possible configurations!");
+//					}
+//				}
+//			}
 		}
 
 		// Then remap the nodes;

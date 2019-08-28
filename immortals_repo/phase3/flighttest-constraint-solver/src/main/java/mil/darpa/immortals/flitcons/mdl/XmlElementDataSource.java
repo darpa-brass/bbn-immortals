@@ -31,6 +31,10 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 	private Document xmlDoc;
 	private String primaryNode;
 
+	public String getSourceFile() {
+		return xmlFile.toString();
+	}
+
 	private static final XPathContext mdlContext = new XPathContext("mdl", "http://www.wsmr.army.mil/RCC/schemas/MDL");
 
 	@Override
@@ -128,17 +132,83 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 
 			// TODO: Replace doc with node doc
 			Nodes nodes = doc.query("//*[@ID='" + id + "']", mdlContext);
-			if (nodes.size() != 1) {
-				throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Expected one and only one node with id '" + id + "'!");
+
+			if (nodes.size() == 0) {
+				throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "An IDREF value of '" + id + "' references a non-existing ID!");
+			} else if (nodes.size() > 1) {
+				throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "The ID '" + id + "' is assigned to multiple elements!");
 			}
 
 			Node node = nodes.get(0);
 			if (!(node instanceof Element)) {
-				throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Node with id '" + id + "' must be an element!");
+				throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "The node with the ID '" + id + "' must be an element!");
 			}
 			rval.put((Element) node, inputNode);
 		}
 		return rval;
+	}
+
+	public List<String> validateRelationalIntegrity() {
+		Map<String, Integer> errorCount = new HashMap<>();
+
+		List<String> seenIds = new LinkedList<>();
+		Nodes nodes = xmlDoc.query("//*/@ID");
+
+		for (Node node : nodes) {
+			String value = node.getValue();
+			if (seenIds.contains(value)) {
+				String err = "The ID value '" + value + "' is assigned to multiple elements!";
+				if (errorCount.containsKey(err)) {
+					errorCount.put(err, errorCount.get(err) + 1);
+				} else {
+					errorCount.put(err, 1);
+				}
+			} else {
+				seenIds.add(value);
+			}
+		}
+
+		nodes = xmlDoc.query("//*/@IDREF");
+
+		List<String> seenPortRefValues = new LinkedList<>();
+
+		for (Node node : nodes) {
+			Element parentNode = (Element) node.getParent();
+			String value = node.getValue();
+			if (!seenIds.contains(value) && !value.equals("dscp-0")) {
+				String err = "The IDREF value of '" + value + "' references a non-existing ID!";
+				if (errorCount.containsKey(err)) {
+					errorCount.put(err, errorCount.get(err) + 1);
+				} else {
+					errorCount.put(err, 1);
+				}
+			}
+			if (parentNode.getQualifiedName().equals("PortRef")) {
+				Element parentParentNode;
+				parentParentNode = (Element) parentNode.getParent();
+				if (parentParentNode.getQualifiedName().equals("PortMapping")) {
+					if (seenPortRefValues.contains(value)) {
+						String err = "The IDREF value of '" + value + "' is used by multiple PortMapping PortRefs!";
+						if (errorCount.containsKey(err)) {
+							errorCount.put(err, errorCount.get(err) + 1);
+						} else {
+							errorCount.put(err, 1);
+						}
+					} else {
+						seenPortRefValues.add(value);
+					}
+				}
+			}
+		}
+
+		if (!errorCount.isEmpty()) {
+			List<String> rval = new LinkedList<>();
+			for (Map.Entry<String, Integer> entry : errorCount.entrySet()) {
+				rval.add(entry.getKey() + " [" + entry.getValue() + " Occurrences]");
+			}
+			return rval;
+		}
+		return null;
 	}
 
 	/**
@@ -148,6 +218,8 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 	protected Map<Node, Set<Node>> collectRawInputExternalDataIndirectRelations() {
 		init();
 		Map<Node, Set<Node>> rval = new HashMap<>();
+
+		validateRelationalIntegrity();
 
 		if (!isInputConfiguration()) {
 			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "Attempted to get the relations from a document that does not have an MDLRoot root!");
@@ -159,9 +231,9 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 			Set<Node> secondaryPorts = new HashSet<>();
 			Node primaryPortref = null;
 
+			Map<Element, Node> portToPortRefMap = getIdrefElementsById(xmlDoc, portMappingNode.query("mdl:PortRef", mdlContext));
 			secondaryPorts.addAll(getIdrefElementsById(xmlDoc, portMappingNode.query("mdl:MeasurementRefs/mdl:MeasurementRef", mdlContext)).keySet());
 			secondaryPorts.addAll(getIdrefElementsById(xmlDoc, portMappingNode.query("mdl:DataStreamRefs/mdl:DataStreamRef", mdlContext)).keySet());
-			Map<Element, Node> portToPortRefMap = getIdrefElementsById(xmlDoc, portMappingNode.query("mdl:PortRef", mdlContext));
 
 			for (Element port : portToPortRefMap.keySet()) {
 				boolean isPrimaryNode = false;
@@ -191,6 +263,10 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 				throw AdaptationnException.internal("No port that is a child of a NetworkNode could be found in the PortMapping!!");
 			}
 
+			if (rval.containsKey(primaryPortref)) {
+				throw AdaptationnException.internal("This is invalid!");
+
+			}
 			rval.put(primaryPortref, secondaryPorts);
 		}
 		return rval;
@@ -221,6 +297,8 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 
 		Set<Node> parentNodes = input.keySet();
 
+		Map<HierarchicalIdentifier, Map<String, Integer>> localNodeTypeDuplicationCounter = new HashMap<>();
+
 		for (Node parentNode : parentNodes) {
 			if (!(parentNode instanceof Element)) {
 				throw AdaptationnException.internal("Root nodes must be XML Elements!");
@@ -232,6 +310,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 				identifierDataMap.put(parentData.node, parentData);
 				List<HierarchicalData> children = new LinkedList<>();
 				rootChildMap.put(parentData, children);
+
 				for (Node childNode : input.get(parentElement)) {
 					if (childNode instanceof Element && !parentNodes.contains(childNode)) {
 						Element childElement = (Element) childNode;
@@ -239,6 +318,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 						HierarchicalData childData = createData(childElement, false, collectionInstructions);
 
 						if (childData != null) {
+							DebugData debugData = childData.getDebugData();
 							identifierDataMap.put(childData.node, childData);
 
 							if (children.contains(childData)) {
@@ -489,7 +569,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 
 		gatherInboundReferences(src, inboundReferences);
 
-		if (debugData.getAttributeSize() == 0) {
+		if (debugData.getAttributeSize() == 0 && !Configuration.getInstance().getGlobalTransformationInstructions().taggedNodes.contains(identifier.getNodeType())) {
 			debugData = null;
 		}
 		return new HierarchicalData(
@@ -517,7 +597,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 		Attribute attr = ele.getAttribute("ID");
 		// Adding the I prevents it from being serialized into a number and failing validation
 		if (attr == null) {
-			return HierarchicalIdentifier.produceTraceableNode(Integer.toString(src.hashCode()), ele.getQualifiedName());
+			return HierarchicalIdentifier.produceTraceableNode("I" + Integer.toString(src.hashCode()), ele.getQualifiedName());
 		} else {
 			return HierarchicalIdentifier.createReferenceNode(attr.getValue(), ele.getQualifiedName());
 		}

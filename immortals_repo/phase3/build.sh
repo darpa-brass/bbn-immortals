@@ -93,6 +93,9 @@ if [[ ${DO_SCENARIO_5} == true ]];then
     "${SCRIPT_DIR}/flighttest-constraint-solver/gradlew" --build-file "${SCRIPT_DIR}/flighttest-constraint-solver/build.gradle" clean build
 
     cd "${SCRIPT_DIR}/../dsl/resource-dsl/"
+	if [ -f resource-dsl.tix ];then
+		rm resource-dsl.tix
+	fi
     stack setup
     stack build
     cd "${PPWD}"

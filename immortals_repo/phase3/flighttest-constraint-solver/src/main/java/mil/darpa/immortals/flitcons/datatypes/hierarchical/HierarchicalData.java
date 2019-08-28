@@ -1,5 +1,6 @@
 package mil.darpa.immortals.flitcons.datatypes.hierarchical;
 
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.validation.DebugData;
@@ -7,7 +8,6 @@ import mil.darpa.immortals.flitcons.validation.DebugData;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -15,7 +15,9 @@ import java.util.stream.Collectors;
  */
 public class HierarchicalData implements DuplicateInterface {
 
-	private static AtomicInteger tagCounter = new AtomicInteger(1248576);
+	public final HierarchicalData originalNodeClonedFrom;
+
+	public final Set<HierarchicalData> clones = new HashSet<>();
 
 	boolean isRootNode;
 
@@ -55,7 +57,7 @@ public class HierarchicalData implements DuplicateInterface {
 	}
 
 	public HierarchicalData duplicateWithNewNode() {
-			return new HierarchicalData(
+		return new HierarchicalData(
 				HierarchicalIdentifier.produceTraceableNode(UUID.randomUUID().toString(), node.getNodeType()),
 				Utils.duplicateMap(attributes),
 				associatedObject,
@@ -65,6 +67,7 @@ public class HierarchicalData implements DuplicateInterface {
 				Utils.duplicateSet(outboundReferences),
 				Utils.duplicateSetMap(childNodeMap),
 				debugData,
+				null,
 				Utils.duplicateMap(foreignAttributeSources)
 		);
 	}
@@ -81,12 +84,13 @@ public class HierarchicalData implements DuplicateInterface {
 				Utils.duplicateSet(outboundReferences),
 				Utils.duplicateSetMap(childNodeMap),
 				debugData,
+				originalNodeClonedFrom,
 				Utils.duplicateMap(foreignAttributeSources)
 		);
 	}
 
-	public HierarchicalData duplicateFlatDisconnected(@Nullable HierarchicalIdentifier targetParentNode) {
-		return new HierarchicalData(
+	public HierarchicalData duplicateDisconnectedClone(@Nullable HierarchicalIdentifier targetParentNode) {
+		HierarchicalData rval = new HierarchicalData(
 				HierarchicalIdentifier.produceTraceableNode(UUID.randomUUID().toString(), node.getNodeType()),
 				Utils.duplicateMap(attributes),
 				new Object(),
@@ -95,8 +99,12 @@ public class HierarchicalData implements DuplicateInterface {
 				null,
 				null,
 				null,
-				null
+				debugData,
+				this,
+				foreignAttributeSources
 		);
+		clones.add(rval);
+		return rval;
 	}
 
 	public void setParentContainer(HierarchicalDataContainer parentContainer) {
@@ -164,17 +172,8 @@ public class HierarchicalData implements DuplicateInterface {
 	                        @Nullable Set<HierarchicalIdentifier> outboundReferences,
 	                        @Nullable Map<String, Set<HierarchicalIdentifier>> childNodeMap,
 	                        @Nullable DebugData debugData) {
-		this.attributes = attributes;
-		this.associatedObject = associatedObject;
-		this.node = identifier;
-		this.isRootNode = isRootNode;
-		this.parentNode = parent;
-		this.inboundReferences = inboundReferences == null ? new HashSet<>() : inboundReferences;
-		this.outboundReferences = outboundReferences == null ? new HashSet<>() : outboundReferences;
-		this.childNodeMap = childNodeMap == null ? new HashMap<>() : childNodeMap;
-		this.debugData = debugData;
-		this.foreignAttributeSources = new HashMap<>();
-		validate();
+		this(identifier, attributes, associatedObject, isRootNode, parent, inboundReferences, outboundReferences,
+				childNodeMap, debugData, null, null);
 	}
 
 	private HierarchicalData(@Nonnull HierarchicalIdentifier identifier, @Nonnull Map<String, Object> attributes,
@@ -184,6 +183,7 @@ public class HierarchicalData implements DuplicateInterface {
 	                         @Nullable Set<HierarchicalIdentifier> outboundReferences,
 	                         @Nullable Map<String, Set<HierarchicalIdentifier>> childNodeMap,
 	                         @Nullable DebugData debugData,
+	                         @Nullable HierarchicalData originalNodeClonedFrom,
 	                         @Nullable Map<String, HierarchicalIdentifier> foreignAttributeSources) {
 		this.attributes = attributes;
 		this.associatedObject = associatedObject;
@@ -194,6 +194,7 @@ public class HierarchicalData implements DuplicateInterface {
 		this.outboundReferences = outboundReferences == null ? new HashSet<>() : outboundReferences;
 		this.childNodeMap = childNodeMap == null ? new HashMap<>() : childNodeMap;
 		this.debugData = debugData;
+		this.originalNodeClonedFrom = originalNodeClonedFrom;
 		this.foreignAttributeSources = foreignAttributeSources == null ? new HashMap<>() : foreignAttributeSources;
 		validate();
 	}
@@ -205,6 +206,12 @@ public class HierarchicalData implements DuplicateInterface {
 
 		if (!isRootNode && parentNode == null) {
 			throw AdaptationnException.internal("A Node must have a parent node if it is not a parent node!");
+		}
+
+		for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+			if (entry.getValue() == null) {
+				throw AdaptationnException.internal("A Node attribute cannot be null!");
+			}
 		}
 	}
 
@@ -262,6 +269,20 @@ public class HierarchicalData implements DuplicateInterface {
 	}
 
 	public Set<HierarchicalData> getChildNodesByPath(@Nonnull List<String> path) {
+
+		if (path.size() == 0) {
+			Set<HierarchicalData> nodes = new HashSet<>();
+			Iterator<String> nodeIterator = this.getChildrenClassIterator();
+			while (nodeIterator.hasNext()) {
+				String nodeType = nodeIterator.next();
+				Iterator<HierarchicalData> dataIterator = this.getChildrenDataIterator(nodeType);
+				while (dataIterator.hasNext()) {
+					nodes.add(dataIterator.next());
+				}
+			}
+			return nodes;
+		}
+
 		HierarchicalData currentNode = this;
 
 		Iterator<String> pathIter = path.iterator();

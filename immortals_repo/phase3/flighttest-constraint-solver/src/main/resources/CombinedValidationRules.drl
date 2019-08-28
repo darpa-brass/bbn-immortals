@@ -19,7 +19,8 @@ DynamicValueMultiplicity Range;
 rule "DAUInventory_10"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "Thermocouple", ($data.value != null && parent.get('PortType').value == 'Thermocouple') || (parent.get('PortType').value == 'Thermocouple' == false), ($data.value == null && parent.get('PortType').value != 'Thermocouple') || (parent.get('PortType').value != 'Thermocouple' == false), ($data.value == null || $data.multiplicity == Set), ($data.value == null || ThermocoupleEnum.contains(value)))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "SampleRate", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (type == Long)))
 	then
 		$data.setValid(true);
 end
@@ -28,7 +29,8 @@ end
 rule "DAUInventory_11"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "GloballyUniqueId", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || value instanceof String))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "DataLength", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (type == Long)))
 	then
 		$data.setValid(true);
 end
@@ -37,7 +39,8 @@ end
 rule "DAUInventory_12"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "BBNPortFunctionality", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || value instanceof String))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "DataRate", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (type == Long || type == String)))
 	then
 		$data.setValid(true);
 end
@@ -46,7 +49,8 @@ end
 rule "DAUInventory_13"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "PortDirection", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || PortDirectionEnum.contains(value)))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "GloballyUniqueId", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (type == String)))
 	then
 		$data.setValid(true);
 end
@@ -55,7 +59,8 @@ end
 rule "DAUInventory_14"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "PortPolarity", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || PolarityType.contains(value)))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "Thermocouple", $data.value != null || (false) == false, $data.value == null || ((sibling('PortType') not in ('Thermocouple'))) == false, ($data.value == null ||
+$data.multiplicity in (Set)), ($data.value == null || (ThermocoupleEnum.contains(value))))
 	then
 		$data.setValid(true);
 end
@@ -64,7 +69,8 @@ end
 rule "DAUInventory_15"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "PortType", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || PortTypeEnum.contains(value)))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "GloballyUniqueId", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (value instanceof String)))
 	then
 		$data.setValid(true);
 end
@@ -73,7 +79,8 @@ end
 rule "DAUInventory_16"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "SupersededPortId", ($data.value != null && false) || (false == false), ($data.value == null && true) || (true == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == String))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "BBNPortFunctionality", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (value instanceof String)))
 	then
 		$data.setValid(true);
 end
@@ -82,7 +89,8 @@ end
 rule "DAUInventory_17"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "SampleRate", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == Set), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "PortDirection", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (PortDirectionEnum.contains(value))))
 	then
 		$data.setValid(true);
 end
@@ -91,7 +99,8 @@ end
 rule "DAUInventory_18"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "DataRate", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || value instanceof Equation))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "PortPolarity", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (PolarityType.contains(value))))
 	then
 		$data.setValid(true);
 end
@@ -100,7 +109,8 @@ end
 rule "DAUInventory_19"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "DataLength", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "PortType", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (PortTypeEnum.contains(value))))
 	then
 		$data.setValid(true);
 end
@@ -109,7 +119,8 @@ end
 rule "DAUInventory_20"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "Excitation", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == Set), ($data.value == null || type == Boolean))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "SupersededPortId", $data.value != null || (false) == false, $data.value == null || (true) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (type == String)))
 	then
 		$data.setValid(true);
 end
@@ -118,7 +129,8 @@ end
 rule "DAUInventory_21"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauFlaggedForReplacement", ($data.value != null && false) || (false == false), ($data.value == null && true) || (true == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || true))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "Excitation", $data.value != null || ((sibling('PortType') in ('Thermocouple', 'Analog'))) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (Set)), ($data.value == null || (type == Boolean)))
 	then
 		$data.setValid(true);
 end
@@ -127,7 +139,9 @@ end
 rule "DAUInventory_22"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauMonetaryCost", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "Measurement", $data.value != null || ((sibling('PortType') in ('SignalConditioner', 'Serial')) ||
+(sibling('DataRate') != null || sibling('DataLength') != null)) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue, Set)), ($data.value == null || (type == Object)))
 	then
 		$data.setValid(true);
 end
@@ -136,259 +150,380 @@ end
 rule "DAUInventory_23"
 	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "GloballyUniqueId", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == String))
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauFlaggedForReplacement", $data.value != null || (false) == false, $data.value == null || (true) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (true)))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A30, header at A25
-rule "FaultyConfiguration_30"
-	@ValidationMode("FaultyConfiguration")
+// rule values at A24, header at A5
+rule "DAUInventory_24"
+	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "Thermocouple", ($data.value != null && parent.get('PortType').value == 'Thermocouple') || (parent.get('PortType').value == 'Thermocouple' == false), ($data.value == null && parent.get('PortType').value != 'Thermocouple') || (parent.get('PortType').value != 'Thermocouple' == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || ThermocoupleEnum.contains(value)))
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauMonetaryCost", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (type == Long)))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A31, header at A25
-rule "FaultyConfiguration_31"
-	@ValidationMode("FaultyConfiguration")
+// rule values at A25, header at A5
+rule "DAUInventory_25"
+	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "GloballyUniqueId", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == String))
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "GloballyUniqueId", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || (type == String)))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A32, header at A25
-rule "FaultyConfiguration_32"
-	@ValidationMode("FaultyConfiguration")
+// rule values at A26, header at A5
+rule "DAUInventory_26"
+	@ValidationMode("DAUInventory")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "BBNPortFunctionality", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == String))
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "Port", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue, Set)), ($data.value == null || (type == Object)))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A33, header at A25
+// rule values at A33, header at A28
 rule "FaultyConfiguration_33"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "PortDirection", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || PortDirectionEnum.contains(value)))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "SampleRate", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (Range)), ($data.value == null || type == Long))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A34, header at A25
+// rule values at A34, header at A28
 rule "FaultyConfiguration_34"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "PortPolarity", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || PolarityType.contains(value)))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "DataLength", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (Range)), ($data.value == null || type == Long))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A35, header at A25
+// rule values at A35, header at A28
 rule "FaultyConfiguration_35"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "PortType", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || PortTypeEnum.contains(value)))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "DataRate", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (Range)), ($data.value == null || type == Long))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A36, header at A25
+// rule values at A36, header at A28
 rule "FaultyConfiguration_36"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "SupersededPortId", ($data.value != null && false) || (false == false), ($data.value == null && true) || (true == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == String))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "GloballyUniqueId", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == String))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A37, header at A25
+// rule values at A37, header at A28
 rule "FaultyConfiguration_37"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "SampleRate", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == Range), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "Thermocouple", $data.value != null || (false) == false, $data.value == null || ((sibling('PortType') not in ('Thermocouple'))) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || ThermocoupleEnum.contains(value)))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A38, header at A25
+// rule values at A38, header at A28
 rule "FaultyConfiguration_38"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "DataRate", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == Range), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "GloballyUniqueId", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == String))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A39, header at A25
+// rule values at A39, header at A28
 rule "FaultyConfiguration_39"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "DataLength", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == Range), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "BBNPortFunctionality", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == String))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A40, header at A25
+// rule values at A40, header at A28
 rule "FaultyConfiguration_40"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "Excitation", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == Boolean))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "PortDirection", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || PortDirectionEnum.contains(value)))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A41, header at A25
+// rule values at A41, header at A28
 rule "FaultyConfiguration_41"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauFlaggedForReplacement", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || true))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "PortPolarity", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || PolarityType.contains(value)))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A42, header at A25
+// rule values at A42, header at A28
 rule "FaultyConfiguration_42"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauMonetaryCost", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "PortType", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || PortTypeEnum.contains(value)))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A43, header at A25
+// rule values at A43, header at A28
 rule "FaultyConfiguration_43"
 	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "GloballyUniqueId", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == String))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "SupersededPortId", $data.value != null || (false) == false, $data.value == null || (true) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == String))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A50, header at A45
-rule "ValidConfiguration_50"
-	@ValidationMode("ValidConfiguration")
+// rule values at A44, header at A28
+rule "FaultyConfiguration_44"
+	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "Thermocouple", ($data.value != null && parent.get('PortType').value == 'Thermocouple') || (parent.get('PortType').value == 'Thermocouple' == false), ($data.value == null && parent.get('PortType').value != 'Thermocouple') || (parent.get('PortType').value != 'Thermocouple' == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || ThermocoupleEnum.contains(value)))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "Measurement", $data.value != null || ((sibling('PortType') in ('SignalConditioner', 'Serial')) ||
+(sibling('DataRate') != null || sibling('DataLength') != null)) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue, Set)), ($data.value == null || type == Object))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A51, header at A45
-rule "ValidConfiguration_51"
-	@ValidationMode("ValidConfiguration")
+// rule values at A45, header at A28
+rule "FaultyConfiguration_45"
+	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "GloballyUniqueId", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == String))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "Excitation", $data.value != null || ((sibling('PortType') in ('Thermocouple', 'Analog'))) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == Boolean))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A52, header at A45
-rule "ValidConfiguration_52"
-	@ValidationMode("ValidConfiguration")
+// rule values at A46, header at A28
+rule "FaultyConfiguration_46"
+	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "BBNPortFunctionality", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == String))
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauFlaggedForReplacement", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || true))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A53, header at A45
-rule "ValidConfiguration_53"
-	@ValidationMode("ValidConfiguration")
+// rule values at A47, header at A28
+rule "FaultyConfiguration_47"
+	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "PortDirection", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || PortDirectionEnum.contains(value)))
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauMonetaryCost", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == Long))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A54, header at A45
-rule "ValidConfiguration_54"
-	@ValidationMode("ValidConfiguration")
+// rule values at A48, header at A28
+rule "FaultyConfiguration_48"
+	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "PortPolarity", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || PolarityType.contains(value)))
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "GloballyUniqueId", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == String))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A55, header at A45
-rule "ValidConfiguration_55"
-	@ValidationMode("ValidConfiguration")
+// rule values at A49, header at A28
+rule "FaultyConfiguration_49"
+	@ValidationMode("FaultyConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "PortType", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || PortTypeEnum.contains(value)))
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "Port", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue, Set)), ($data.value == null || type == Object))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A56, header at A45
+// rule values at A56, header at A51
 rule "ValidConfiguration_56"
 	@ValidationMode("ValidConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "SupersededPortId", ($data.value != null && false) || (false == false), ($data.value == null && true) || (true == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == String))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "SampleRate", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == Long))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A57, header at A45
+// rule values at A57, header at A51
 rule "ValidConfiguration_57"
 	@ValidationMode("ValidConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "SampleRate", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "DataLength", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == Long))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A58, header at A45
+// rule values at A58, header at A51
 rule "ValidConfiguration_58"
 	@ValidationMode("ValidConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "DataRate", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "DataRate", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == Long))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A59, header at A45
+// rule values at A59, header at A51
 rule "ValidConfiguration_59"
 	@ValidationMode("ValidConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "DataLength", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Measurement", $data.name == "GloballyUniqueId", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == String))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A60, header at A45
+// rule values at A60, header at A51
 rule "ValidConfiguration_60"
 	@ValidationMode("ValidConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "Port", $data.name == "Excitation", ($data.value != null && true) || (true == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == Boolean))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "Thermocouple", $data.value != null || (false) == false, $data.value == null || ((sibling('PortType') not in ('Thermocouple'))) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || ThermocoupleEnum.contains(value)))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A61, header at A45
+// rule values at A61, header at A51
 rule "ValidConfiguration_61"
 	@ValidationMode("ValidConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauFlaggedForReplacement", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || true))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "GloballyUniqueId", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == String))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A62, header at A45
+// rule values at A62, header at A51
 rule "ValidConfiguration_62"
 	@ValidationMode("ValidConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauMonetaryCost", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == Long))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "BBNPortFunctionality", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == String))
 	then
 		$data.setValid(true);
 end
 
-// rule values at A63, header at A45
+// rule values at A63, header at A51
 rule "ValidConfiguration_63"
 	@ValidationMode("ValidConfiguration")
 	when
-		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "GloballyUniqueId", ($data.value != null && false) || (false == false), ($data.value == null && false) || (false == false), ($data.value == null || $data.multiplicity == SingleValue), ($data.value == null || type == String))
+		$data: ValidationData($data.parent.name == "Port", $data.name == "PortDirection", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || PortDirectionEnum.contains(value)))
+	then
+		$data.setValid(true);
+end
+
+// rule values at A64, header at A51
+rule "ValidConfiguration_64"
+	@ValidationMode("ValidConfiguration")
+	when
+		$data: ValidationData($data.parent.name == "Port", $data.name == "PortPolarity", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || PolarityType.contains(value)))
+	then
+		$data.setValid(true);
+end
+
+// rule values at A65, header at A51
+rule "ValidConfiguration_65"
+	@ValidationMode("ValidConfiguration")
+	when
+		$data: ValidationData($data.parent.name == "Port", $data.name == "PortType", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || PortTypeEnum.contains(value)))
+	then
+		$data.setValid(true);
+end
+
+// rule values at A66, header at A51
+rule "ValidConfiguration_66"
+	@ValidationMode("ValidConfiguration")
+	when
+		$data: ValidationData($data.parent.name == "Port", $data.name == "SupersededPortId", $data.value != null || (false) == false, $data.value == null || (true) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == String))
+	then
+		$data.setValid(true);
+end
+
+// rule values at A67, header at A51
+rule "ValidConfiguration_67"
+	@ValidationMode("ValidConfiguration")
+	when
+		$data: ValidationData($data.parent.name == "Port", $data.name == "Excitation", $data.value != null || ((sibling('PortType') in ('Thermocouple', 'Analog'))) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == Boolean))
+	then
+		$data.setValid(true);
+end
+
+// rule values at A68, header at A51
+rule "ValidConfiguration_68"
+	@ValidationMode("ValidConfiguration")
+	when
+		$data: ValidationData($data.parent.name == "Port", $data.name == "Measurement", $data.value != null || ((sibling('PortType') in ('SignalConditioner', 'Serial')) ||
+(sibling('DataRate') != null || sibling('DataLength') != null)) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue, Set)), ($data.value == null || type == Object))
+	then
+		$data.setValid(true);
+end
+
+// rule values at A69, header at A51
+rule "ValidConfiguration_69"
+	@ValidationMode("ValidConfiguration")
+	when
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauFlaggedForReplacement", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || true))
+	then
+		$data.setValid(true);
+end
+
+// rule values at A70, header at A51
+rule "ValidConfiguration_70"
+	@ValidationMode("ValidConfiguration")
+	when
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "BBNDauMonetaryCost", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == Long))
+	then
+		$data.setValid(true);
+end
+
+// rule values at A71, header at A51
+rule "ValidConfiguration_71"
+	@ValidationMode("ValidConfiguration")
+	when
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "GloballyUniqueId", $data.value != null || (false) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue)), ($data.value == null || type == String))
+	then
+		$data.setValid(true);
+end
+
+// rule values at A72, header at A51
+rule "ValidConfiguration_72"
+	@ValidationMode("ValidConfiguration")
+	when
+		$data: ValidationData($data.parent.name == "NetworkNode", $data.name == "Port", $data.value != null || (true) == false, $data.value == null || (false) == false, ($data.value == null ||
+$data.multiplicity in (SingleValue, Set)), ($data.value == null || type == Object))
 	then
 		$data.setValid(true);
 end

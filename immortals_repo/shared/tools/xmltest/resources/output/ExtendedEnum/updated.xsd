@@ -1,0 +1,56 @@
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://darpa.mil/immortals/test/ExtendedEnumRoot" targetNamespace="http://darpa.mil/immortals/test/ExtendedEnumRoot" elementFormDefault="qualified">
+  <xsd:element name="ExtendedEnum" type="ExtendedEnumType"/>
+  <xsd:complexType name="ExtendedEnumType">
+    <xsd:annotation>
+      <xsd:documentation>The Enum has been replaced with an element that extends it to provide additional data</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="MeasurementType" type="MeasurementTypeEnumExtType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="MeasurementTypeEnumExtType">
+    <xsd:annotation>
+      <xsd:documentation>
+The MeasurementTypeEnumExtType provides an extensible enumeration.  If the
+value of the enumeration is "Extension", the attribute named
+"extension" shall contain the string representing the extended
+enumeration value.
+</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="MeasurementTypeEnum">
+        <xsd:attribute name="extension" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:simpleType name="MeasurementTypeEnum">
+    <xsd:annotation>
+      <xsd:documentation>
+The MeasurementType element is an enumeration that describes the 
+basic kind of measurement.  Some example values are Analog, Discrete,
+DigitalBus, Computed, Time, Video, etc.
+</xsd:documentation>
+      <xsd:documentation>
+If "Analog" or "Discrete" is selected, the AnalogAttributes
+element shall be used to describe the Measurement element.  If
+"DigitalBus" or "Computed" is selected, the DigitalAttributes element
+shall be used to describe the Measurement element.
+</xsd:documentation>
+      <xsd:documentation>
+If "Time" is selected, the TimeAttributes element shall be used
+to describe the Measurement element.
+</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Analog"/>
+      <xsd:enumeration value="Discrete"/>
+      <xsd:enumeration value="DigitalBus"/>
+      <xsd:enumeration value="Computed"/>
+      <xsd:enumeration value="Time"/>
+      <xsd:enumeration value="Video"/>
+      <xsd:enumeration value="Overhead"/>
+      <xsd:enumeration value="Extension"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

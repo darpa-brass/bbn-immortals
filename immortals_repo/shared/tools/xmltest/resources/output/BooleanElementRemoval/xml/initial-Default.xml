@@ -1,0 +1,9 @@
+<BooleanElementRemoval xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://darpa.mil/immortals/test/BooleanElementRemovalRoot" xsi:schemaLocation="http://darpa.mil/immortals/test/BooleanElementRemovalRoot ../initial.xsd">
+  <RadioLink>
+    <Description>This is a radio link</Description>
+    <TxRxEnable>true</TxRxEnable>
+    <LinkControlMode>true</LinkControlMode>
+    <EncryptionKeyID>567</EncryptionKeyID>
+    <ARQEnableFlag>false</ARQEnableFlag>
+  </RadioLink>
+</BooleanElementRemoval>

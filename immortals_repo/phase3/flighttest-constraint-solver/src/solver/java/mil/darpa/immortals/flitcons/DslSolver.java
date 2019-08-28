@@ -3,6 +3,8 @@ package mil.darpa.immortals.flitcons;
 import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainerFactory;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValue;
+import mil.darpa.immortals.flitcons.mdl.MdlHacks;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
 import org.apache.commons.io.FileUtils;
@@ -15,22 +17,36 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class DslSolver implements SolverInterface<DslSolver> {
+
+	private static Process dslProcess = null;
 
 	private static final String SWAP_REQUEST = "dsl-swap-request.json";
 	private static final String SWAP_INVENTORY = "dsl-swap-inventory.json";
 	private static final String SWAP_RESPONSE = "dsl-swap-response.json";
+	private static final String SWAP_RULES = "dsl-swap-rules.json";
 	private static final Logger logger = LoggerFactory.getLogger(DslSolver.class);
 
 	private final Path dslDirectory;
 
-	private String requestPath;
-	private String inventoryPath;
+	private Path requestPath;
+	private Path inventoryPath;
+	private Path rulesPath;
 	private Path responsePath;
 
 	public DslSolver() {
 		dslDirectory = EnvironmentConfiguration.getDslRoot();
+	}
+
+	static {
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			Process p = dslProcess;
+			if (p != null) {
+				p.destroy();
+			}
+		}));
 	}
 
 	@Override
@@ -39,9 +55,10 @@ public class DslSolver implements SolverInterface<DslSolver> {
 			DynamicObjectContainer inputConfiguration = DynamicObjectContainerFactory.create(dataSource.getInterconnectedTransformedFaultyConfiguration(false));
 			DynamicObjectContainer dauInventory = DynamicObjectContainerFactory.create(dataSource.getTransformedDauInventory(false));
 
-			requestPath = EnvironmentConfiguration.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfiguration).getBytes());
-			inventoryPath = EnvironmentConfiguration.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(dauInventory).getBytes());
+			requestPath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfiguration).getBytes()));
+			inventoryPath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(dauInventory).getBytes()));
 			responsePath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_RESPONSE, new byte[0]));
+			rulesPath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_RULES, Utils.getGson().toJson(Configuration.getInstance().adaptation.resolutionOptions).getBytes()));
 			Files.delete(responsePath);
 			FileUtils.forceMkdir(dslDirectory.resolve("outbox").toFile());
 
@@ -52,23 +69,48 @@ public class DslSolver implements SolverInterface<DslSolver> {
 	}
 
 	@Override
+	public DynamicObjectContainer solveFromJsonFiles(@Nonnull Path inputJsonFile, @Nonnull Path inventoryJsonFile) {
+		try {
+			requestPath = inputJsonFile;
+			inventoryPath = inventoryJsonFile;
+			responsePath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_RESPONSE, new byte[0]));
+			rulesPath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_RULES, Utils.getGson().toJson(Configuration.getInstance().adaptation.resolutionOptions).getBytes()));
+			Files.delete(responsePath);
+			FileUtils.forceMkdir(dslDirectory.resolve("outbox").toFile());
+		} catch (Exception e) {
+			throw AdaptationnException.internal(e);
+		}
+
+		return this.solve();
+	}
+
+	@Override
 	public DynamicObjectContainer solve() {
 		try {
+			if (dslProcess != null) {
+				throw AdaptationnException.internal("Cannot run Two DSLs at the same time!");
+			}
 			logger.info(Utils.padCenter("DSL COMMAND", 80, '#'));
 
-			ProcessBuilder pb = new ProcessBuilder()
-					.inheritIO()
-					.directory(dslDirectory.toFile())
-					.command("stack", "exec", "resource-dsl", "--", "swap-dau", "--run",
-							"--inventory-file", inventoryPath, "--request-file", requestPath,
-							"--response-file", responsePath.toString());
+			String[] cmd = {
+					"stack", "exec", "resource-dsl", "--", "swap-dau", "--run",
+					"--rules-file", rulesPath.toString(),
+					"--inventory-file", inventoryPath.toString(), "--request-file", requestPath.toString(),
+					"--response-file", responsePath.toString()
+			};
 
+			final ProcessBuilder pb = new ProcessBuilder(cmd)
+					.inheritIO()
+					.directory(dslDirectory.toFile());
 			logger.info(String.join(" ", pb.command()));
 
 			logger.info(Utils.padCenter("DSL OUTPUT", 80, '#'));
 
-			Process p = pb.start();
-			int rval = p.waitFor();
+			dslProcess = pb.start();
+
+			int rval = dslProcess.waitFor();
+
+			dslProcess = null;
 
 			logger.info("########################END DSL OUTPUT HERE########################");
 
@@ -82,7 +124,11 @@ public class DslSolver implements SolverInterface<DslSolver> {
 				}
 
 				FileReader fr = new FileReader(responsePath.toFile());
-				return Utils.difGson.fromJson(fr, DynamicObjectContainer.class);
+				DynamicObjectContainer result = Utils.difGson.fromJson(fr, DynamicObjectContainer.class);
+
+				MdlHacks.cleanseDslOutput(result);
+
+				return result;
 
 			} else if (rval == 1) {
 				throw AdaptationnException.input("DSL indicated an invalid input configuration!");

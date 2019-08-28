@@ -1,0 +1,3 @@
+<ExtendedEnum xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://darpa.mil/immortals/test/ExtendedEnumRoot" xsi:schemaLocation="http://darpa.mil/immortals/test/ExtendedEnumRoot ../initial.xsd">
+  <MeasurementType>DigitalBus</MeasurementType>
+</ExtendedEnum>

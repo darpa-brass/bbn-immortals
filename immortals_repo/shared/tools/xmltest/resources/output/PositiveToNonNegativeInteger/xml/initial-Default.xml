@@ -1,0 +1,9 @@
+<PositiveToNonNegativeInteger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://darpa.mil/immortals/test/PositiveToNonNegativeIntegerRoot" xsi:schemaLocation="http://darpa.mil/immortals/test/PositiveToNonNegativeIntegerRoot ../initial.xsd">
+  <SubModule>
+    <Name>Submodule</Name>
+    <Manufacturer>Misc Manufacturer</Manufacturer>
+    <ModelNumber>007</ModelNumber>
+    <SerialNumber>24895t7234598</SerialNumber>
+    <Position>1</Position>
+  </SubModule>
+</PositiveToNonNegativeInteger>

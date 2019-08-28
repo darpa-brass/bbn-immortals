@@ -147,6 +147,7 @@ class BrassOrientDBHelper(object):
 
         try:
             sql_cmd = select_sql(type)
+            print(f"SQL: {sql_cmd}")
             self.log.debug(sql_cmd)
             return self._orientdb_client.run_command(
                 sql_cmd

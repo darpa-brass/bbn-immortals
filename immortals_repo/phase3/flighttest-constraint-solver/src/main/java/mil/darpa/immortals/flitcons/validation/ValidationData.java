@@ -8,6 +8,9 @@ import mil.darpa.immortals.flitcons.datatypes.dynamic.Range;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ValidationData {
 	private final ValidationDataContainer parent;
@@ -48,6 +51,11 @@ public class ValidationData {
 			type = null;
 		}
 
+	}
+
+	public Object sibling(@Nonnull String name) {
+		ValidationData vd = getParent().get(name);
+		return vd == null ? null : vd.value;
 	}
 
 	public Type getType() {

@@ -6,12 +6,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class JarTestScenarioRunner extends TestScenarioRunner {
 
 	private static final Logger logger = LoggerFactory.getLogger(JarTestScenarioRunner.class);
 
 	private Process adaptationServiceProcess;
+
+	public boolean useSimpleSolver = false;
 
 	private JarTestScenarioRunner(@Nonnull TestScenario testScenario) {
 		super(testScenario);
@@ -45,6 +48,10 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 						"--debug-mode",
 						"--monochrome-mode"
 				};
+				if (useSimpleSolver) {
+					cmd = Arrays.copyOf(cmd, cmd.length + 1);
+					cmd[cmd.length - 1] = "--simple-solver";
+				}
 
 			} else if (scenario.getScenarioType().equals("Scenario6")) {
 				cmd = new String[]{

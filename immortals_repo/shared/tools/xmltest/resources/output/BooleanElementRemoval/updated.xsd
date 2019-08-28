@@ -1,0 +1,26 @@
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://darpa.mil/immortals/test/BooleanElementRemovalRoot" targetNamespace="http://darpa.mil/immortals/test/BooleanElementRemovalRoot" elementFormDefault="qualified">
+  <xsd:element name="BooleanElementRemoval" type="BooleanElementRemovalType"/>
+  <xsd:complexType name="BooleanElementRemovalType">
+    <xsd:annotation>
+      <xsd:documentation>Removal of a single boolean element</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="RadioLink" type="RadioLinkType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RadioLinkType">
+    <xsd:annotation>
+      <xsd:documentation>
+The RadioLink element describes a one-way connection between
+two radio endpoints.
+</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Description" type="xsd:string"/>
+      <xsd:element name="TxRxEnable" type="xsd:boolean"/>
+      <xsd:element name="EncryptionKeyID" type="xsd:unsignedInt"/>
+      <xsd:element name="ARQEnableFlag" type="xsd:boolean"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

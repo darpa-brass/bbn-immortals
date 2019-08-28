@@ -23,6 +23,10 @@ public class TestScenario {
 
 	private static TreeMap<String, TestScenario> scenario5TestScenarios;
 
+	private static TreeMap<String, TestScenario> bbnScenario5TestScenarios;
+
+	private static TreeMap<String, TestScenario> swriScenario5TestScenarios;
+
 	private static TreeMap<String, TestScenario> scenario6TestScenarios;
 
 	private static class TestScenarios {
@@ -82,18 +86,30 @@ public class TestScenario {
 		if (scenario5TestScenarios == null) {
 			Gson gson = new Gson();
 
-			scenario5TestScenarios = initScenarioSet("s5_scenarios.json", gson);
-			if (EnvironmentConfiguration.CHALLENGE_PROBLEMS_ROOT.isPresent()) {
-				scenario5TestScenarios.putAll(initScenarioSet("s5_cp_scenarios.json", gson));
-			}
+			bbnScenario5TestScenarios = initScenarioSet("s5_scenarios.json", gson);
+			scenario5TestScenarios = new TreeMap<>(bbnScenario5TestScenarios);
 
+			if (EnvironmentConfiguration.CHALLENGE_PROBLEMS_ROOT.isPresent()) {
+				swriScenario5TestScenarios = initScenarioSet("s5_cp_scenarios.json", gson);
+				scenario5TestScenarios.putAll(swriScenario5TestScenarios);
+			}
 			scenario6TestScenarios = initScenarioSet("s6_scenarios.json", gson);
 		}
 	}
 
-	public static List<String> getScenario5TestScenarioIdentifiers() {
+	public static List<String> getAllScenario5TestScenarioIdentifiers() {
 		init();
 		return new LinkedList<>(scenario5TestScenarios.keySet());
+	}
+
+	public static List<String> getBbnScenario5TestScenarioIdentifiers() {
+		init();
+		return new LinkedList<>(bbnScenario5TestScenarios.keySet());
+	}
+
+	public static List<String> getSwriScenario5TestScenarioIdentifiers() {
+		init();
+		return new LinkedList<>(swriScenario5TestScenarios.keySet());
 	}
 
 	public static List<String> getScenario6TestScenarioIdentifiers() {

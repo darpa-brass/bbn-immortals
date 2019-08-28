@@ -18,6 +18,27 @@ import static mil.darpa.immortals.flitcons.Utils.Ansi.*;
  */
 public class Utils {
 
+	// For monochrome mode, "MISSING" is used when a column is missing an expected value. Assuming this minimum size
+	// is easier than considering that so column data processing can be kept in a single step after determining the
+	// optimal width
+	public static final int minColumnSize = 7;
+
+	public static class ChartData {
+		public final boolean useBasicDisplayScheme;
+		public final String title;
+		public final TreeMap<String, Map<String, Object>> rowColumnData;
+		public final TreeMap<String, Map<String, Boolean>> validityMap;
+		public final Map<String, String> rowDisplayLabels;
+
+		public ChartData(@Nonnull String title, @Nonnull boolean useBasicDisplayScheme) {
+			this.title = title;
+			this.useBasicDisplayScheme = useBasicDisplayScheme;
+			this.rowColumnData = new TreeMap<>();
+			this.rowDisplayLabels = new TreeMap<>();
+			this.validityMap = new TreeMap<>();
+		}
+	}
+
 	public static class Sym {
 		public static final String LT = " < ";
 		public static final String NLT = " ≮ "; //"</";
@@ -33,6 +54,8 @@ public class Utils {
 		public static final String NTE = " ∄ ";
 		public static final String EQT = " ≍ ";
 		public static final String NEQT = " ≭ ";
+		public static final String SS = " ⊆ ";
+		public static final String NSS = " ⊊ ";
 
 		public static String asciify(@Nonnull String input) {
 			return input
@@ -47,7 +70,9 @@ public class Utils {
 					.replaceAll(TE, "exists")
 					.replaceAll(NTE, "not exists")
 					.replaceAll(EQT, "equivalent to")
-					.replaceAll(NEQT, "not equivalent to");
+					.replaceAll(NEQT, "not equivalent to")
+					.replaceAll(SS, "subset of")
+					.replace(NSS, "not subset of");
 		}
 	}
 
@@ -95,6 +120,10 @@ public class Utils {
 				.registerTypeAdapter(DynamicObjectContainer.class, new DynamicObjectContainerDeserializer())
 				.create();
 
+	}
+
+	public static boolean isSupportedPrimitive(@Nonnull Object value) {
+		return (value instanceof  Long || value instanceof  String || value instanceof Boolean);
 	}
 
 	public static <T> T duplicateObject(T obj) {
@@ -251,33 +280,32 @@ public class Utils {
 		}
 	}
 
-	public static List<String> makeChart(@Nonnull TreeMap<String, Map<String, Object>> rowColumnData,
-	                                     @Nonnull TreeMap<String, Map<String, Boolean>> passing,
-	                                     boolean useBasicDisplayScheme, @Nonnull String title) {
+	public static List<String> makeChart(@Nonnull ChartData cd) {
+		TreeMap<String, String> headerAliases = Configuration.getInstance().validation.headerAliases;
 		// First gather some information on all known columns and their max necessary width
 		TreeMap<String, Integer> columnSizeMap = new TreeMap<>();
 		int rowZeroSize = 0;
 
-
 		int maxColumns = 0;
-		for (Map.Entry<String, Map<String, Object>> topEntry : rowColumnData.entrySet()) {
+		for (Map.Entry<String, Map<String, Object>> topEntry : cd.rowColumnData.entrySet()) {
 			rowZeroSize = Math.max(rowZeroSize, topEntry.getKey().length());
 
 			Map<String, Object> v = topEntry.getValue();
 			for (Map.Entry<String, Object> entry : v.entrySet()) {
 				maxColumns = Math.max(maxColumns, v.size());
-				String columnName = entry.getKey();
-				int knownMaxStringSize = columnSizeMap.computeIfAbsent(columnName, k -> columnName.length());
+				String columnKey = entry.getKey();
+				String columnHeader = headerAliases.getOrDefault(columnKey, columnKey);
+				int knownMaxStringSize = columnSizeMap.computeIfAbsent(columnKey, k -> columnHeader.length());
 				String entryString = entry.getValue().toString();
-				int maxStringSize = Math.max(entry.getKey().length(), entryString.length());
+				int maxStringSize = Math.max(minColumnSize, Math.max(columnHeader.length(), entryString.length()));
 				if (maxStringSize > knownMaxStringSize) {
-					columnSizeMap.put(columnName, maxStringSize);
+					columnSizeMap.put(columnKey, maxStringSize);
 				}
 			}
 		}
 
 		// Then fill in the missing columns for each row so that it will result in a proper Y*X grid
-		for (Map<String, Object> row : rowColumnData.values()) {
+		for (Map<String, Object> row : cd.rowColumnData.values()) {
 			for (String column : columnSizeMap.keySet()) {
 				if (!row.containsKey(column)) {
 					row.put(column, "");
@@ -285,28 +313,29 @@ public class Utils {
 			}
 		}
 
-		List<String> rval = new ArrayList<>(rowColumnData.size());
+		List<String> rval = new ArrayList<>(cd.rowColumnData.size());
 
 		StringBuilder header = new StringBuilder("| " + padRight("", rowZeroSize + 1) + "|");
 		for (Map.Entry<String, Integer> headerColumn : columnSizeMap.entrySet()) {
-			header.append(" ").append(padRight(headerColumn.getKey(), headerColumn.getValue() + 1)).append("|");
+			header.append(" ").append(padRight(
+					headerAliases.getOrDefault(headerColumn.getKey(), headerColumn.getKey()), headerColumn.getValue() + 1)).append("|");
 		}
 
-		if (title != null) {
-			rval.add(Utils.padCenter(title + (useBasicDisplayScheme ? " Failures" : ""), header.length(), '#'));
+		if (cd.title != null) {
+			rval.add(Utils.padCenter(cd.title + (cd.useBasicDisplayScheme ? " Failures" : ""), header.length(), '#'));
 		}
 		rval.add(header.toString());
 
 		// Then convert them to rows
-		for (String rowKey : rowColumnData.keySet()) {
-			Map<String, Object> rowValues = rowColumnData.get(rowKey);
+		for (String rowKey : cd.rowColumnData.keySet()) {
+			Map<String, Object> rowValues = cd.rowColumnData.get(rowKey);
 
 			StringBuilder sb = new StringBuilder("| " + padRight(rowKey, rowZeroSize + 1) + "|");
 
 			for (String columnKey : columnSizeMap.keySet()) {
 				String columnValue = (String) rowValues.get(columnKey);
-				Boolean pass = passing.get(rowKey).get(columnKey);
-				sb.append(formatCellContents(pass, columnValue, useBasicDisplayScheme, columnSizeMap.get(columnKey))).append("|");
+				Boolean pass = cd.validityMap.get(rowKey).get(columnKey);
+				sb.append(formatCellContents(pass, columnValue, cd.useBasicDisplayScheme, columnSizeMap.get(columnKey))).append("|");
 			}
 			rval.add(sb.toString());
 		}

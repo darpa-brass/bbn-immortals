@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+						xmlns="http://darpa.mil/immortals/TestDocs"
+						targetNamespace="http://darpa.mil/immortals/TestDocs"
+						elementFormDefault="qualified">
+	<xsd:element name="TestRoot" type="TestRootType">
+	</xsd:element>
+	<xsd:complexType name="TestRootType">
+		<xsd:annotation>
+			<xsd:documentation>Docs</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="TestElement" type="xsd:string"/>
+			<xsd:element name="MeasurementType" type="MeasurementTypeEnum"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+
+	<xsd:element name="MeasurementType" type="MeasurementTypeEnum"/>
+
+</xsd:schema>

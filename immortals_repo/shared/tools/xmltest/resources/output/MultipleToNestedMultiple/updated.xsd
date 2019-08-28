@@ -1,0 +1,41 @@
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://darpa.mil/immortals/test/MultipleToNestedMultipleRoot" targetNamespace="http://darpa.mil/immortals/test/MultipleToNestedMultipleRoot" elementFormDefault="qualified">
+  <xsd:element name="MultipleToNestedMultiple" type="MultipleToNestedMultipleType"/>
+  <xsd:complexType name="MultipleToNestedMultipleType">
+    <xsd:annotation>
+      <xsd:documentation>A single "NameValue" object restructured to be within a "NameValues" object to allow multiples</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="NameValues" type="NameValuesType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="NameValuesType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The NameValues element is a container for zero or more
+        TmNSManageableApp elements.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0"/>
+      <xsd:element name="Owner" type="xsd:token" minOccurs="0"/>
+      <xsd:element name="NameValue" type="NameValueType" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="NameValueType">
+    <xsd:simpleContent>
+      <xsd:annotation>
+        <xsd:documentation>
+          The NameValue element is a Name/Value pair used to document
+          decisions made to arrive at a vendor-specific configuration.  The
+          Index attribute may be used to document the ordering of sibling
+          NameValue elements.
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="Name" type="xsd:token" use="required"/>
+        <xsd:attribute name="Index" type="xsd:positiveInteger" use="required"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+</xsd:schema>

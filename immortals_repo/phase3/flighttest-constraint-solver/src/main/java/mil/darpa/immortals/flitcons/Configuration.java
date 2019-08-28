@@ -119,9 +119,20 @@ public class Configuration {
 		}
 	}
 
+	public static class Edge {
+		public final String sourceType;
+		public final String targetType;
+
+		public Edge(@Nonnull String sourceType, @Nonnull String targetType) {
+			this.sourceType = sourceType;
+			this.targetType = targetType;
+		}
+	}
+
 	/**
 	 * A calculation that must be performed to determined undefined values
 	 */
+	@Deprecated
 	public static class Calculation implements DuplicateInterface<Calculation> {
 
 		public Calculation(@Nonnull List<String> parentPath, @Nonnull List<NodeAttributeRelation> children,
@@ -158,6 +169,26 @@ public class Configuration {
 		}
 	}
 
+	public static class ResolutionConfiguration {
+		public String Attribute;
+		public String AttributeValue;
+		public String[] Compatible;
+		public String Equation;
+	}
+
+	public static class AttributeRemappingConfiguration implements DuplicateInterface<AttributeRemappingConfiguration> {
+		LinkedList<String> sourceAttributePath;
+		LinkedList<String> targetAttributePath;
+
+		@Override
+		public AttributeRemappingConfiguration duplicate() {
+			AttributeRemappingConfiguration rval = new AttributeRemappingConfiguration();
+			rval.sourceAttributePath = new LinkedList<>(sourceAttributePath);
+			rval.targetAttributePath = new LinkedList<>(targetAttributePath);
+			return rval;
+		}
+	}
+
 	/**
 	 * Details needed to perform an adapation
 	 */
@@ -178,6 +209,8 @@ public class Configuration {
 		 */
 		Map<String, Map<String, List<List<String>>>> directNodeAttributeRemappingOptions;
 
+		public Map<String, LinkedList<AttributeRemappingConfiguration>> attributeRemappingInstructions;
+
 		/**
 		 * The intent of this is to remap values attached to a transformed result configuration obtained from the
 		 * solver and remap them to fields within the same graph structure as the input graph
@@ -188,6 +221,8 @@ public class Configuration {
 		 * Inner List: A single path relative to the parent node
 		 */
 		Map<String, Map<String, List<List<String>>>> indirectNodeAttributeRemappingOptions;
+
+		public List<ResolutionConfiguration> resolutionOptions;
 
 		// TODO: Do away with these once we track the resultant valid data properly
 		private static List<List<String>> getMappings(@Nonnull String nodeType, @Nonnull String attributeName, @Nonnull Map<String, Map<String, List<List<String>>>> remappingSet) {
@@ -299,6 +334,17 @@ public class Configuration {
 		 */
 		public Map<String, Set<String>> shortNodesToParent;
 
+		public Set<Edge> allowedDanglingReferences;
+
+		public boolean ignoreDanglingReference(@Nonnull String sourceType, @Nonnull String targetType) {
+			for (Edge e : allowedDanglingReferences) {
+				if (e.sourceType.equals(sourceType) && e.targetType.equals(targetType)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		/**
 		 * Any nodes that match the paths within this value will be removed as part of the DSL conversion.
 		 */
@@ -321,6 +367,7 @@ public class Configuration {
 		/**
 		 * Calculations that will be used to fill in values
 		 */
+		@Deprecated
 		public LinkedList<Calculation> calculations;
 
 		/**
@@ -386,6 +433,10 @@ public class Configuration {
 				targetInstructions.ignoreParentsWithoutChildAttributes.addAll(Utils.duplicateList(specificInstructions.ignoreParentsWithoutChildAttributes));
 			}
 
+			if (specificInstructions.allowedDanglingReferences != null) {
+				targetInstructions.allowedDanglingReferences.addAll(specificInstructions.allowedDanglingReferences);
+			}
+
 			if (specificInstructions.taggedNodes != null) {
 				targetInstructions.taggedNodes.addAll(specificInstructions.taggedNodes);
 			}
@@ -413,6 +464,7 @@ public class Configuration {
 			rval.valueRemappingInstructions = Utils.duplicateSet(valueRemappingInstructions);
 			rval.transferAttributeToChildren = Utils.duplicateList(transferAttributeToChildren);
 			rval.resolutionStrategies = Utils.duplicateList(resolutionStrategies);
+			rval.allowedDanglingReferences = new LinkedHashSet<>(allowedDanglingReferences);
 
 			rval.combineSquashedChildNodeAttributes = new HashMap<>();
 
@@ -437,6 +489,11 @@ public class Configuration {
 		 * The list of attributes that must be present for a specified node
 		 */
 		public Map<String, Set<String>> defaultPropertyList;
+
+		/**
+		 * Aliases for chart headers to minimize their size
+		 */
+		public TreeMap<String, String> headerAliases;
 
 		/**
 		 * If true, simple shortened labels will be used in the charts, omitting path structure details

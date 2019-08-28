@@ -20,7 +20,8 @@
 				"SampleRate",
 				"DataRate",
 				"DataLength",
-				"ExcitationPortIsPresent"
+				"ExcitationPortIsPresent",
+				"Measurement"
 			],
 			"SampleRate": [
 				"Min",
@@ -39,6 +40,11 @@
 			],
 			"DeviceModule": [
 				"ExcitationSource"
+			],
+			"Measurement": [
+				"SampleRate",
+				"DataRate",
+				"DataLength"
 			]
 		},
 		"collectedDebugProperties": {
@@ -51,13 +57,31 @@
 		}
 	},
 	"adaptation": {
+		"resolutionOptions": [
+			{
+				"Attribute": "DataRate",
+				"AttributeValue": "@SampleRate * @DataLength",
+				"Equation": "@SampleRate * @DataLength"
+			},
+			{
+				"Attribute": "Direction",
+				"AttributeValue": "Input",
+				"Compatible": ["Input", "Bidirectional"]
+			},
+			{
+				"Attribute": "Direction",
+				"AttributeValue": "Output",
+				"Compatible": ["Output", "Bidirectional"]
+			}
+		],
 		"ignoredAttributes": {
 			"Port": [
 				"BBNPortFunctionality",
 				"Excitation"
 			],
 			"NetworkNode": [
-				"BBNDauMonetaryCost"
+				"BBNDauMonetaryCost",
+				"BBNDauFlaggedForReplacement"
 			]
 		},
 		"directNodeAttributeRemappingOptions": {
@@ -69,17 +93,39 @@
 			}
 		},
 		"indirectNodeAttributeRemappingOptions": {
-			"Port": {
+			"Measurement": {
 				"DataLength": [
-					["Measurement", "DataAttributes", "DigitalAttributes", "DataLength", "ConditionParameter", "ConditionValue"]
+					["DataAttributes", "DigitalAttributes", "DataLength", "ConditionParameter", "ConditionValue"]
 				],
 				"DataRate": [
-					["Measurement", "DataAttributes", "DigitalAttributes", "DataRate", "ConditionParameter", "ConditionValue"]
+					["DataAttributes", "DigitalAttributes", "DataRate", "ConditionParameter", "ConditionValue"]
 				],
 				"SampleRate": [
-					["Measurement", "DataAttributes", "DigitalAttributes", "SampleRate", "ConditionParameter", "ConditionValue"]
+					["DataAttributes", "DigitalAttributes", "SampleRate", "ConditionParameter", "ConditionValue"]
 				]
 			}
+		},
+		"attributeRemappingInstructions": {
+			"Port": [
+				{
+					// TODO: THis should probably be nested to validate them wholesale as part of insertion
+					"sourceAttributePath": ["Measurement", "DataLength"],
+					"targetAttributePath": ["Measurement", "DataAttributes", "DigitalAttributes", "DataLength", "ConditionParameter", "ConditionValue"]
+				},
+				{
+					"sourceAttributePath": ["Measurement", "DataRate"],
+					"targetAttributePath": ["Measurement", "DataAttributes", "DigitalAttributes", "DataRate", "ConditionParameter", "ConditionValue"]
+				},
+				{
+					"sourceAttributePath": ["Measurement", "SampleRate"],
+					"targetAttributePath": ["Measurement", "DataAttributes", "DigitalAttributes", "SampleRate", "ConditionParameter", "ConditionValue"]
+				},
+				{
+					"sourceAttributePath": ["Thermocouple"],
+					"targetAttributePath": ["PortTypes", "PortType", "Thermocouple"]
+
+				}
+			]
 		}
 	},
 	"globalTransformation": {
@@ -100,7 +146,6 @@
 			"Port": [
 				"PortTypes",
 				"GenericParameter",
-				"Measurement",
 				"Device",
 				"Port"
 			],
@@ -115,6 +160,34 @@
 				"Thermocouple"
 			]
 		},
+		"allowedDanglingReferences" : [
+			{
+				"sourceType": "DSCPTableEntryRef",
+				"targetType": "DSCPTableEntry"
+			},
+			{
+				"sourceType": "TmNSAppRef",
+				"targetType": "TmNSApp"
+			},
+			{
+				"sourceType": "NetworkInterfaceRef",
+				"targetType": "NetworkInterface"
+			},
+			// TODO: THis isn't ideal to ignore since it be contained within a DAU...
+			{
+				"sourceType": "PinRef",
+				"targetType": "Pin"
+			},
+			{
+				"sourceType": "PhysicalNetworkPortRef",
+				"targetType": "PhysicalNetworkPort"
+			}
+		],
+		"ignoredReferenceNodes": [
+			"TmNSAppRef",
+			"DSCPTableEntryRef",
+			"DSCPTableEntry"
+		],
 		"resolutionStrategies": [
 			{
 				"node1Path": ["Port", "Port"],
@@ -143,6 +216,7 @@
 		],
 		"ignoredNodePaths": [
 			["InternalStructure", "Modules", "Module", "Connectors"],
+			["InternalStructure", "Modules", "Module", "Ports", "Port", "Connectors"],
 			["InternalStructure", "Modules", "Module", "SubModules"]
 		],
 		"ignoredAttributePaths": [
@@ -157,7 +231,8 @@
 		],
 		"taggedNodes": [
 			"NetworkNode",
-			"Port"
+			"Port",
+			"Measurement"
 		],
 		"combineSquashedChildNodeAttributes": {
 			"GenericParameter": {
@@ -190,19 +265,20 @@
 			["Port", "GenericParameter", "PortType", "PortType"],
 			["Measurement", "GenericParameter", "DataLength"],
 			["Measurement", "GenericParameter", "SampleRate"],
+			["Measurement", "GenericParameter", "DataRate"],
 			["Measurement", "DataAttributes", "DigitalAttributes", "DataRate", "ConditionParameter", "ConditionValue"]
 		],
 		"calculations": [
 			{
-				"parentPath": ["Module", "Ports", "Port"],
+				"parentPath": ["Module", "Ports", "Port", "GenericParameter", "Measurement"],
 				"parentTargetValueIdentifier": "DataRate",
 				"children": [
 					{
-						"nodePath": ["GenericParameter"],
+						"nodePath": [],
 						"attribute": "SampleRate"
 					},
 					{
-						"nodePath": ["GenericParameter"],
+						"nodePath": [],
 						"attribute": "DataLength"
 					}
 				],
@@ -230,11 +306,14 @@
 			["Port", "GenericParameter", "ExcitationPortIsPresent"],
 			["Measurement", "DataAttributes", "DigitalAttributes", "DataLength", "ConditionParameter", "ConditionValue"],
 			["Measurement", "DataAttributes", "DigitalAttributes", "SampleRate", "ConditionParameter", "ConditionValue"],
-			["Measurement", "DataAttributes", "DigitalAttributes", "DataRate", "ConditionParameter", "ConditionValue"]
+			["Measurement", "DataAttributes", "DigitalAttributes", "DataRate", "ConditionParameter", "ConditionValue"],
+			["GenericParameter", "Measurement", "DataLength"],
+			["GenericParameter", "Measurement", "DataRate"],
+			["GenericParameter", "Measurement", "SampleRate"]
 		],
 		"valueRemappingInstructions": [
 			{
-				"parentPath": ["Device", "DeviceStructure", "DeviceModules", "DeviceModule"],
+        "parentPath": ["Device", "DeviceStructure", "DeviceModules", "DeviceModule"],
 				"childAttributeName": "ExcitationSource",
 				"optionalNewChildAttributeName": "Excitation",
 				"optionalChildAttributeValueRemap": {
@@ -255,7 +334,10 @@
 			["Port", "GenericParameter", "DataRate"],
 			["Measurement", "GenericParameter", "SampleRate"],
 			["Port", "GenericParameter", "SampleRate"],
-			["Port", "GenericParameter", "ExcitationPortIsPresent"]
+			["Port", "GenericParameter", "ExcitationPortIsPresent"],
+			["GenericParameter", "Measurement", "DataLength"],
+			["GenericParameter", "Measurement", "DataRate"],
+			["GenericParameter", "Measurement", "SampleRate"]
 		],
 		"ignoredNodePaths": [
 			["Measurement", "GenericParameter", "DataLength"],
@@ -319,23 +401,29 @@
 		"defaultPropertyList": {
 			"NetworkNode": [
 				"BBNDauFlaggedForReplacement",
-				"GloballyUniqueId"
+				"Port"
 			],
 			"Port": [
 				"Thermocouple",
-				"GloballyUniqueId",
 				"BBNPortFunctionality",
 				"PortDirection",
 				"PortPolarity",
 				"PortType",
 				"SupersededPortId",
+				"Excitation",
+				"Measurement"
+			],
+			"Measurement": [
 				"SampleRate",
-				"DataRate",
 				"DataLength",
-				"Excitation"
+				"DataRate"
 			]
 		},
+		"headerAliases": {
+			"BBNDauFlaggedForReplacement": "Flagged",
+			"BBNDauMonetaryCost": "Cost"
+		},
 		"useSimpleLabels": true,
-		"labelDepth": 2
+		"labelDepth": 3
 	}
 }

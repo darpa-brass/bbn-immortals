@@ -1,0 +1,67 @@
+{
+  "daus": [
+    {
+      "BBNDauFlaggedForReplacement": true,
+      "BBNDauMonetaryCost": 50000,
+      "GloballyUniqueId": "I#32:1",
+      "Port": [
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": false,
+          "GloballyUniqueId": "I#89:59",
+          "PortDirection": "Input",
+          "PortType": "Bus"
+        },
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": false,
+          "GloballyUniqueId": "I#89:64",
+          "PortDirection": "Input",
+          "PortType": "Bus"
+        },
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": false,
+          "GloballyUniqueId": "I#89:63",
+          "PortDirection": "Input",
+          "PortType": "Bus"
+        },
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": false,
+          "GloballyUniqueId": "I#89:58",
+          "PortDirection": "Input",
+          "PortType": "Bus"
+        },
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": false,
+          "GloballyUniqueId": "I#89:60",
+          "PortDirection": "Input",
+          "PortType": "Bus"
+        },
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": false,
+          "GloballyUniqueId": "I#89:61",
+          "PortDirection": "Input",
+          "PortType": "Bus"
+        },
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": false,
+          "GloballyUniqueId": "I#89:62",
+          "PortDirection": "Input",
+          "PortType": "Bus"
+        },
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": false,
+          "GloballyUniqueId": "I#89:65",
+          "PortDirection": "Input",
+          "PortType": "Bus"
+        }
+      ]
+    }
+  ]
+}

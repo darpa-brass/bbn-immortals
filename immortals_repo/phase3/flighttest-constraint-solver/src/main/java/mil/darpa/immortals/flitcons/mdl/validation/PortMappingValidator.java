@@ -27,8 +27,7 @@ public class PortMappingValidator {
 	}
 
 	public static void validateResultDataPortMappings(@Nonnull Map<String, PortMapping> initialData, @Nonnull Map<String, PortMapping> resultData, @Nonnull String title) {
-		TreeMap<String, Map<String, Object>> rowColumnData = new TreeMap<>();
-		TreeMap<String, Map<String, Boolean>> passDataMap = new TreeMap<>();
+		Utils.ChartData cd = new Utils.ChartData(title, EnvironmentConfiguration.isBasicDisplayMode());
 
 		// TODO: Add Measurement, DataStream, and Device data, accounting for multiplicities
 
@@ -41,8 +40,8 @@ public class PortMappingValidator {
 		for (String mappingId : combinedMappingIds) {
 			LinkedHashMap<String, Object> columnData = new LinkedHashMap<>();
 			LinkedHashMap<String, Boolean> passData = new LinkedHashMap<>();
-			rowColumnData.put(mappingId, columnData);
-			passDataMap.put(mappingId, passData);
+			cd.rowColumnData.put(mappingId, columnData);
+			cd.validityMap.put(mappingId, passData);
 
 			PortMapping initialPortMapping = initialData.get(mappingId);
 			PortMapping resultPortMapping = resultData.get(mappingId);
@@ -106,7 +105,7 @@ public class PortMappingValidator {
 //			for (String resultMeasurementPort : resultMapping.measurements.keySet()) {
 //			}
 		}
-		for (String line : Utils.makeChart(rowColumnData, passDataMap, EnvironmentConfiguration.isBasicDisplayMode(), title)) {
+		for (String line : Utils.makeChart(cd)) {
 			logger.info(line);
 		}
 	}
@@ -130,7 +129,37 @@ public class PortMappingValidator {
 
 			PortMapping result = data.get(portMappingKey);
 
-			if (!result.dauPorts.isEmpty() && !result.devicePorts.isEmpty()) {
+			if (result.dauPorts.isEmpty()) {
+				throw AdaptationnException.input("All PortMappings must contain a DAU Port!");
+			}
+
+			if (result.measurements.isEmpty() && result.dataStreams.isEmpty()) {
+				throw AdaptationnException.input("All PortMappings must contain DataStream or Measurement!");
+			}
+			if (!result.devicePorts.isEmpty()) {
+				if (result.measurements.isEmpty()) {
+					throw AdaptationnException.input("All PortMappings that contain a Device Port must contain a Measurement!");
+				}
+				if (!result.dataStreams.isEmpty()) {
+					throw AdaptationnException.input("All PortMappings that contain a Device Port cannot contain a DataStream!");
+				}
+			}
+
+			if (!result.dataStreams.isEmpty()) {
+				portMappingResult.setMeasurementSelectionResult("N/A", true);
+				portMappingResult.setDataLengthRangeResult("N/A", true);
+				portMappingResult.setDataRateRangeResult("N/A", true);
+				portMappingResult.setDirectionResult("N/A", true);
+				portMappingResult.setExcitationResult("N/A", true);
+				portMappingResult.setPortTypeResult("N/A", true);
+				portMappingResult.setSampleRateRangeResult("N/A", true);
+				portMappingResult.setThermocoupleResult("N/A", true);
+				// The Datastream simply being present indicates this is successful other than validating general details
+				portMappingResult.setDataStreamResult("PRESENT", true);
+
+				// TODO: Add validation of general details
+
+			} else if (!result.devicePorts.isEmpty()) {
 				if (result.dauPorts.size() > 1 || result.devicePorts.size() > 1) {
 					// TODO: get Example of this
 					throw AdaptationnException.internal("Not yet supported!");
@@ -146,6 +175,7 @@ public class PortMappingValidator {
 						for (DevicePort devicePort : result.devicePorts.values()) {
 							devicePort.fits(dauPort, portMappingResult);
 						}
+						portMappingResult.setDataStreamResult("N/A", true);
 					}
 				}
 

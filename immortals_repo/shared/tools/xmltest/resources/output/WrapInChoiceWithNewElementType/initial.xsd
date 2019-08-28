@@ -1,0 +1,99 @@
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://darpa.mil/immortals/test/WrapInChoiceWithNewElementTypeRoot" targetNamespace="http://darpa.mil/immortals/test/WrapInChoiceWithNewElementTypeRoot" elementFormDefault="qualified">
+  <xsd:element name="WrapInChoiceWithNewElementType" type="WrapInChoiceWithNewElementTypeType"/>
+  <xsd:complexType name="WrapInChoiceWithNewElementTypeType">
+    <xsd:annotation>
+      <xsd:documentation>Encapsulate an existing element type in a choice with a new type</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Route" type="RouteType"/>
+      <xsd:element name="NetworkInterface" type="NetworkInterfaceType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RouteType">
+    <xsd:annotation>
+      <xsd:documentation>
+                A Route element describes a single network route configured on a network interface of the NetworkNode.
+            </xsd:documentation>
+      <xsd:documentation>
+                A Destination element, of type mdl:IPAddress, describes the destination network of the route.
+            </xsd:documentation>
+      <xsd:documentation>
+                A Netmask element, of type mdl:IPAddress, describes the netmask of the route.
+            </xsd:documentation>
+      <xsd:documentation>
+                A Gateway element, of type mdl:IPAddress, describes the gateway address for the route.
+            </xsd:documentation>
+      <xsd:documentation>
+                A Metric element, of type xsd:positiveInteger, describes the metric of the route.
+            </xsd:documentation>
+      <xsd:documentation>
+                A NetworkInterfaceRef identifies the NetworkInterface element to which the route applies.
+            </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0"/>
+      <xsd:element name="Owner" type="xsd:token" minOccurs="0"/>
+      <xsd:element name="Destination" type="IPAddress"/>
+      <xsd:element name="Netmask" type="IPAddress"/>
+      <xsd:element name="Gateway" type="IPAddress"/>
+      <xsd:element name="Metric" type="xsd:positiveInteger"/>
+      <xsd:element name="NetworkInterfaceRef" type="NetworkInterfaceRefType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="IPAddress">
+    <xsd:annotation>
+      <xsd:documentation>
+                The mdl:IPAddress data type is an xsd:union of the mdl:IPv4Address and mdl:IPv6Address data types.
+            </xsd:documentation>
+    </xsd:annotation>
+    <xsd:union memberTypes="IPv4Address IPv6Address"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="IPv4Address">
+    <xsd:annotation>
+      <xsd:documentation>
+                The mdl:IPv4Address data type is an xsd:string of decimal digits separated by '.' (period) characters. It represents the 32-bit dot-decimal notation of IPv4 addresses. Valid IPv4 addresses contain a series of four one-byte long decimal numbers (0 - 255) separated by the '.' character (a total of three '.' characters appear). A valid value of the mdl:IPv4Address data type is "212.23.123.0". See RFC 790 in Section 2.2.2 for further details on IPv4 addresses.
+            </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="IPv6Address">
+    <xsd:annotation>
+      <xsd:documentation>
+                The mdl:IPv6Address data type is an xsd:string of hexadecimal digits ('0'-'9' and 'A'-'F' or 'a'-'f') separated by ':' (colon) characters. It represents the 128-bit notation of IPv6 addresses. Fully expanded IPv6 addresses contain a series of eight two-byte long hexadecimal numbers separated by the ":" character (a total of seven ':' characters appear). A single two-byte long hexadecimal number contains up to four hexadecimal digits. All valid IPv6 addresses are supported in the MDL. A valid value of the mdl:IPv6Address data type is "2001:DB8:0000:0056:0000:ABCD:EF12:1234". See RFC 2460 for further details on IPv6 addresses and valid shorthand notations.
+            </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){4}(:[0-9A-Fa-f]{1,4}){0,1}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){3}(:[0-9A-Fa-f]{1,4}){0,2}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){2}(:[0-9A-Fa-f]{1,4}){0,3}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)(:[0-9A-Fa-f]{1,4}){0,4}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(:(:[0-9A-Fa-f]{1,4}){0,5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})))(%.+)?"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="NetworkInterfaceRefType">
+    <xsd:annotation>
+      <xsd:documentation>
+                The value of the IDREF of a NetworkInterfaceRef shall refer to the ID attribute of a NetworkInterface within the same NetworkNode.
+            </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="IDREF" type="xsd:IDREF" use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="RadioLinkRefType">
+    <xsd:annotation>
+      <xsd:documentation>
+                The value of the IDREF of a RadioLinkRef must refer to the ID attribute of a RadioLinkType.
+            </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="IDREF" type="xsd:IDREF" use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="NetworkInterfaceType">
+    <xsd:annotation>
+      <xsd:documentation>
+                A NetworkInterface element describes the module or component that provides the interface between a NetworkNode and a network. A NetworkNode can contain one or more NetworkInterfaces, and will have a NetworkInterface element describing each. This element and all sub-elements are conditional as described in the MDLRoot documentation. Components that require and shall process this element for configuration are:
+            </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Name" type="xsd:token"/>
+    </xsd:sequence>
+    <xsd:attribute name="ID" type="xsd:ID" use="required"/>
+  </xsd:complexType>
+</xsd:schema>

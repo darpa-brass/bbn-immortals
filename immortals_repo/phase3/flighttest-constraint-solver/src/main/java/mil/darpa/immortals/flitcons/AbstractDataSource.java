@@ -22,13 +22,21 @@ public abstract class AbstractDataSource<T> {
 
 	protected final String nullValuePlaceholder;
 
+	private void _init() {
+		init();
+		List<String> errors = validateRelationalIntegrity();
+		if (errors != null && !errors.isEmpty()) {
+			throw AdaptationnException.input(String.join("\n", errors));
+		}
+	}
+
 	public AbstractDataSource() {
 		config = Configuration.getInstance();
 		nullValuePlaceholder = config.nullValuePlaceholder;
 	}
 
 	private synchronized HierarchicalDataContainer getRawInputConfiguration() {
-		init();
+		_init();
 		if (rawInputConfigurationContainer == null) {
 			LinkedHashMap<T, List<T>> dauVertices = collectRawInputData();
 			rawInputConfigurationContainer = createContainer(DataType.RawInputConfigurationData, dauVertices, config.dataCollectionInstructions);
@@ -36,20 +44,23 @@ public abstract class AbstractDataSource<T> {
 			if (rawInputConfigurationContainer.dataType != DataType.RawInputConfigurationData) {
 				throw new RuntimeException("BAD TYPE '" + rawInputConfigurationContainer.dataType.name() + "'!");
 			}
+			rawInputConfigurationContainer.validate();
 		}
 		return rawInputConfigurationContainer;
 	}
 
 	private synchronized HierarchicalDataContainer getRawFaultyConfigurationExternalsContainer() {
-		init();
+		_init();
 		if (rawExternalDataContainer == null) {
 			LinkedHashMap<T, List<T>> measurementVertices = collectRawExternalData();
 			rawExternalDataContainer = createContainer(DataType.RawInputExternalData, measurementVertices, config.dataCollectionInstructions);
 			MdlHacks.fixHierarchicalData(rawExternalDataContainer.getDataIterator());
+			rawExternalDataContainer.validate();
 		}
 		if (rawExternalDataContainer.dataType != DataType.RawInputExternalData) {
 			throw new RuntimeException("BAD TYPE '" + rawExternalDataContainer.dataType.name() + "'!");
 		}
+
 		return rawExternalDataContainer;
 	}
 
@@ -64,7 +75,7 @@ public abstract class AbstractDataSource<T> {
 	}
 
 	public synchronized HierarchicalDataContainer getRawInventoryContainer() {
-		init();
+		_init();
 		if (rawInventoryContainer == null) {
 			LinkedHashMap<T, List<T>> dauInventoryVertices = collectRawInventoryData();
 			rawInventoryContainer = createContainer(DataType.RawInventory, dauInventoryVertices, config.dataCollectionInstructions);
@@ -73,11 +84,12 @@ public abstract class AbstractDataSource<T> {
 		if (rawInventoryContainer.dataType != DataType.RawInventory) {
 			throw new RuntimeException("BAD TYPE '" + rawInventoryContainer.dataType.name() + "'!");
 		}
+		rawInventoryContainer.validate();
 		return rawInventoryContainer;
 	}
 
 	private synchronized HierarchicalDataTransformer createInputTransformer(boolean preserveDebugRelations) {
-		init();
+		_init();
 		if (!isInputConfiguration()) {
 			throw new AdaptationnException(ResultEnum.PerturbationInputInvalid, "The provided data is not an input configuration!");
 		}
@@ -107,7 +119,7 @@ public abstract class AbstractDataSource<T> {
 	}
 
 	public HierarchicalDataContainer getTransformedDauInventory(boolean preserveDebugRelations) {
-		init();
+		_init();
 
 		HierarchicalDataTransformer transformer = new HierarchicalDataTransformer(
 				getRawInventoryContainer(), preserveDebugRelations, null, null);
@@ -139,6 +151,8 @@ public abstract class AbstractDataSource<T> {
 	public abstract boolean isDauInventory();
 
 	public abstract boolean isInputConfiguration();
+
+	public abstract List<String> validateRelationalIntegrity();
 
 	protected abstract HierarchicalDataContainer createContainer(@Nonnull DataType mode, @Nonnull LinkedHashMap<T, List<T>> input, @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions);
 

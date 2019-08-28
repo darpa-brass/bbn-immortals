@@ -13,21 +13,11 @@ public class FlitconsIntegrationTests {
 		SLF4JBridgeHandler.install();
 	}
 
-//	@Test
-//	public void testInvalidInputPropagation() {
-//
-//	}
-//
-//	@Test
-//	public void testUnexpectedErrorPropagation() {
-//
-//	}
-
 	@Test
 	public void testServerReady() {
 		JarTestScenarioRunner.createScenario5Runner("s5").execute();
 	}
-	
+
 	@Test
 	public void testServerWaitForReady() {
 		JarTestScenarioRunner.createScenario5Runner("s5").execute(4000);
@@ -37,5 +27,18 @@ public class FlitconsIntegrationTests {
 	@Test
 	public void testServerSequential() {
 		JarTestScenarioRunner.createScenario5Runner("s5s").execute();
+	}
+
+	@Test
+	public void testSwriExample1() {
+		JarTestScenarioRunner.createScenario5Runner("s5e1").execute();
+	}
+
+	@Test
+	public void testSwriExample2() {
+		JarTestScenarioRunner.createScenario5Runner("s5e2").execute();
+//		JarTestScenarioRunner runner = (JarTestScenarioRunner) JarTestScenarioRunner.createScenario5Runner("s5e2");
+//		runner.useSimpleSolver = true;
+//		runner.execute();
 	}
 }

@@ -13,10 +13,10 @@ public enum ValidationScenario {
 			"Input DAU Inventory Requirements",
 			match -> "DAUInventory".equals(match.getRule().getMetaData().get("ValidationMode"))),
 	OutputConfigurationUsage(
-			"Output MDLRoot Usage Configuration",
+			"Output MDLRoot Usage",
 			match -> "ValidConfiguration".equals(match.getRule().getMetaData().get("ValidationMode"))),
 	InputConfigurationUsage(
-			"Input MDLRoot Usage Configuration",
+			"Input MDLRoot Usage",
 			match -> "ValidConfiguration".equals(match.getRule().getMetaData().get("ValidationMode")));
 
 	public final String title;

@@ -1,0 +1,59 @@
+{
+  "daus": [
+    {
+      "BBNDauFlaggedForReplacement": true,
+      "BBNDauMonetaryCost": 50000,
+      "GloballyUniqueId": "I#32:1",
+      "Port": [
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#89:41",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 12,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 0,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "ce90f677-cf58-48c2-a85a-7c8cd009f322",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": false,
+          "GloballyUniqueId": "I#89:49",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 12,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 0,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "4e311a66-3ef6-4cbf-8f26-14120b59e701",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        }
+      ]
+    }
+  ]
+}

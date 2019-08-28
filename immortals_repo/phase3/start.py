@@ -162,14 +162,20 @@ def main():
         env_values = os.environ.copy()
 
         if args.scenario is None:
-            _parser.print_usage()
-            print('IMMoRTALS Scenario 5/Scenario 6 Launcher: error: the following arguments are required: --scenario')
-            exit(1)
+            if 'IMMORTALS_SCENARIO' in os.environ:
+                args.scenario = os.environ['IMMORTALS_SCENARIO']
+            else:
+                _parser.print_usage()
+                print('IMMoRTALS Scenario 5/Scenario 6 Launcher: error: the following arguments are required: --scenario')
+                exit(1)
 
         if args.odb_url is None:
-            _parser.print_usage()
-            print('IMMoRTALS Scenario 5/Scenario 6 Launcher: error: the following arguments are required: --odb-url')
-            exit(1)
+            if 'ORIENTDB_EVAL_TARGET' in os.environ:
+                args.odb_url = os.environ['ORIENTDB_EVAL_TARGET']
+            else:
+                _parser.print_usage()
+                print('IMMoRTALS Scenario 5/Scenario 6 Launcher: error: the following arguments are required: --odb-url')
+                exit(1)
 
         env_values['ORIENTDB_EVAL_TARGET'] = args.odb_url
         env_values['IMMORTALS_RESOURCE_DSL'] = os.path.abspath(os.path.join(SCRIPT_DIR, '../dsl/resource-dsl'))

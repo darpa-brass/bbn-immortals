@@ -1,0 +1,12 @@
+<WrapInChoiceWithNewElementType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://darpa.mil/immortals/test/WrapInChoiceWithNewElementTypeRoot" xsi:schemaLocation="http://darpa.mil/immortals/test/WrapInChoiceWithNewElementTypeRoot ../initial.xsd">
+  <Route>
+    <Destination>192.168.1.55</Destination>
+    <Netmask>255.255.255.0</Netmask>
+    <Gateway>192.168.1.1</Gateway>
+    <Metric>1</Metric>
+    <NetworkInterfaceRef IDREF="MyId"/>
+  </Route>
+  <NetworkInterface ID="MyId">
+    <Name>MyNetworkInterface</Name>
+  </NetworkInterface>
+</WrapInChoiceWithNewElementType>

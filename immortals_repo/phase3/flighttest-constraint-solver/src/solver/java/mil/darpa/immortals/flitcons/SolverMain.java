@@ -16,6 +16,7 @@ import picocli.CommandLine;
 import javax.annotation.Nonnull;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,8 +51,30 @@ public class SolverMain {
 			CommandLine.usage(config, System.out);
 		} else if (config.isValidateOrientdb()) {
 			validate();
+		} else if (config.getJsonInventoryPath() != null || config.getJsonRequestPath() != null) {
+			executeFromJson();
 		} else {
 			execute();
+		}
+	}
+
+	static void executeFromJson() {
+		SolverConfiguration config = SolverConfiguration.getInstance();
+		Path inventoryPath = config.getJsonInventoryPath();
+		Path requestPath = config.getJsonRequestPath();
+		if (inventoryPath == null) {
+			throw new RuntimeException("Cannot solve from JSON if no inventory is provided!");
+		}
+		if (requestPath == null) {
+			throw new RuntimeException("Cannot solve from Json if no request is provided!");
+		}
+
+		if (config.isUseSimpleSolver()) {
+			SimpleSolver solver = new SimpleSolver();
+			solver.solveFromJsonFiles(requestPath, inventoryPath);
+		} else {
+			DslSolver solver = new DslSolver();
+			solver.solveFromJsonFiles(requestPath, inventoryPath);
 		}
 	}
 
@@ -99,8 +122,8 @@ public class SolverMain {
 	private static void validate() {
 		OrientVertexDataSource dataSource = new OrientVertexDataSource();
 		MdlDataValidator validator = new MdlDataValidator(null, null, dataSource);
-		boolean inputIsValid = validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements).isValid();
-		boolean inventoryIsValid = validator.validateConfiguration(ValidationScenario.DauInventory).isValid();
+		boolean inputIsValid = validator.validateConfiguration(ValidationScenario.InputConfigurationRequirements, true, false).isValid();
+		boolean inventoryIsValid = validator.validateConfiguration(ValidationScenario.DauInventory, true, false).isValid();
 
 		String inputResult = inputIsValid ? "PASSED" : "FAILED";
 		String inventoryResult = inventoryIsValid ? "PASSED" : "FAILED";
@@ -121,82 +144,85 @@ public class SolverMain {
 		System.err.println(e.getMessage());
 		e.printStackTrace(System.err);
 
+		if (!SolverConfiguration.getInstance().isNoCommit()) {
 
-		if (e instanceof AdaptationnException) {
-			try {
-				AdaptationnException ae = (AdaptationnException) e;
 
-				switch (ae.result) {
-					case ReadyForAdaptation:
-					case AdaptationSuccessful:
-						cpb.postError(evaluationInstanceIdentifier, "Unexpected exception state '" +
-								ae.result.name() + "'!", jsonifyException(e));
-						break;
-
-					case PerturbationInputInvalid:
-						cpb.postInvalidInputError(evaluationInstanceIdentifier,
-								"The perturbation input was invalid.", jsonifyException(e));
-						break;
-
-					case AdaptationNotRequired:
-						logger.info("Adaptation not required. " + ae.getMessage());
-						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
-						break;
-
-					case AdaptationPartiallySuccessful:
-						logger.info("Adaptation was only partially successful. " + ae.getMessage());
-						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
-						break;
-
-					case AdaptationUnsuccessful:
-						logger.info("Adaptation was unsuccessful. " + ae.getMessage());
-						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
-						break;
-
-					case AdaptationInternalError:
-					case AdaptationUnexpectedError:
-						cpb.postError(evaluationInstanceIdentifier, "Unexpected Internal Error!",
-								jsonifyException(e));
-						break;
-				}
-			} catch (Exception e2) {
-				System.err.println(e2.getMessage());
-				e2.printStackTrace(System.err);
+			if (e instanceof AdaptationnException) {
 				try {
-					cpb.postError(evaluationInstanceIdentifier, e2.getMessage(), "{}");
-				} catch (Exception e3) {
-					System.err.println(e3.getMessage());
-					throw new RuntimeException(e);
+					AdaptationnException ae = (AdaptationnException) e;
+
+					switch (ae.result) {
+						case ReadyForAdaptation:
+						case AdaptationSuccessful:
+							cpb.postError(evaluationInstanceIdentifier, "Unexpected exception state '" +
+									ae.result.name() + "'!", jsonifyException(e));
+							break;
+
+						case PerturbationInputInvalid:
+							cpb.postInvalidInputError(evaluationInstanceIdentifier,
+									"The perturbation input was invalid.", jsonifyException(e));
+							break;
+
+						case AdaptationNotRequired:
+							logger.info("Adaptation not required. " + ae.getMessage());
+							cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
+							break;
+
+						case AdaptationPartiallySuccessful:
+							logger.info("Adaptation was only partially successful. " + ae.getMessage());
+							cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
+							break;
+
+						case AdaptationUnsuccessful:
+							logger.info("Adaptation was unsuccessful. " + ae.getMessage());
+							cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.valueOf(ae.result.name()), e.getMessage(), "");
+							break;
+
+						case AdaptationInternalError:
+						case AdaptationUnexpectedError:
+							cpb.postError(evaluationInstanceIdentifier, "Unexpected Internal Error!",
+									jsonifyException(e));
+							break;
+					}
+				} catch (Exception e2) {
+					System.err.println(e2.getMessage());
+					e2.printStackTrace(System.err);
+					try {
+						cpb.postError(evaluationInstanceIdentifier, e2.getMessage(), "{}");
+					} catch (Exception e3) {
+						System.err.println(e3.getMessage());
+						throw new RuntimeException(e);
+					}
 				}
-			}
 
-		} else {
+			} else {
 
-			try {
-				String msg = e.getMessage();
+				try {
+					String msg = e.getMessage();
 
-				if (msg == null) {
-					System.err.println("EXCEPTION WITH NO MESSAGE!!");
-					e.printStackTrace();
-					cpb.postError(evaluationInstanceIdentifier, "UNDEFINED", jsonifyException(e));
+					if (msg == null) {
+						System.err.println("EXCEPTION WITH NO MESSAGE!!");
+						e.printStackTrace();
+						cpb.postError(evaluationInstanceIdentifier, "UNDEFINED", jsonifyException(e));
 
-				} else {
+					} else {
+						System.err.println(e.getMessage());
+						e.printStackTrace();
+						cpb.postError(evaluationInstanceIdentifier, e.getMessage(), null);
+					}
+				} catch (Exception e2) {
 					System.err.println(e.getMessage());
+					logger.error(e.getMessage());
 					e.printStackTrace();
-					cpb.postError(evaluationInstanceIdentifier, e.getMessage(), null);
+					System.err.println();
+					System.err.println();
+					System.out.println();
+					System.out.println();
+					System.err.println(e2.getMessage());
+					e2.printStackTrace();
 				}
-			} catch (Exception e2) {
-				System.err.println(e.getMessage());
-				logger.error(e.getMessage());
-				e.printStackTrace();
-				System.err.println();
-				System.err.println();
-				System.out.println();
-				System.out.println();
-				System.err.println(e2.getMessage());
-				e2.printStackTrace();
+				System.exit(-1);
 			}
-			System.exit(-1);
 		}
 	}
 }

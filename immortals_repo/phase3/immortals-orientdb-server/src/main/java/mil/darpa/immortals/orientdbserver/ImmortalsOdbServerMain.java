@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class ImmortalsOdbServerMain {
 
 	public static void main(String[] args) {
-		SLF4JBridgeHandler.removeHandlersForRootLogger();;
+		SLF4JBridgeHandler.removeHandlersForRootLogger();
 		SLF4JBridgeHandler.install();
 
 		ImmortalsOdbServerConfiguration config = ImmortalsOdbServerConfiguration.getInstance();
@@ -25,11 +25,23 @@ public class ImmortalsOdbServerMain {
 		ImmortalsOdbServerConfiguration config = ImmortalsOdbServerConfiguration.getInstance();
 		OdbEmbeddedServer server;
 
-		if (config.isRegenerateScenario5() || config.isRegenerateScenario6()) {
+		if (config.isRegenerateScenario5bbn() || config.isRegenerateScenario5swri() || config.isRegenerateScenario6() ||
+				config.getScenarioToRegenerate() != null) {
 			ArrayList<TestScenario> scenarios = new ArrayList<>();
 
-			if (config.isRegenerateScenario5()) {
-				List<TestScenario> s5Scenarios = TestScenario.getScenario5TestScenarioIdentifiers().stream().map(
+			if (config.isRegenerateScenario5bbn()) {
+				List<TestScenario> s5Scenarios = TestScenario.getBbnScenario5TestScenarioIdentifiers().stream().map(
+						TestScenario::getScenario5TestScenario).collect(Collectors.toList());
+				scenarios.addAll(s5Scenarios);
+			}
+
+			if (config.getScenarioToRegenerate() != null) {
+				TestScenario scenario = TestScenario.getScenario5TestScenario(config.getScenarioToRegenerate());
+				scenarios.add(scenario);
+			}
+
+			if (config.isRegenerateScenario5swri()) {
+				List<TestScenario> s5Scenarios = TestScenario.getSwriScenario5TestScenarioIdentifiers().stream().map(
 						TestScenario::getScenario5TestScenario).collect(Collectors.toList());
 				scenarios.addAll(s5Scenarios);
 			}
@@ -42,7 +54,9 @@ public class ImmortalsOdbServerMain {
 
 			server = new OdbEmbeddedServer(scenarios.toArray(new TestScenario[0]));
 			server.init(false);
-			server.shutdown();
+			if (!config.keepRunning) {
+				server.shutdown();
+			}
 		}
 
 		if (config.getDauInventoryXmlPath() != null || config.getInputMdlrooXmlPath() != null || config.getScenarioToStart() != null) {
@@ -68,7 +82,7 @@ public class ImmortalsOdbServerMain {
 
 			String scenarioToStart = config.getScenarioToStart();
 			if (scenarioToStart != null) {
-				if (TestScenario.getScenario5TestScenarioIdentifiers().contains(scenarioToStart)) {
+				if (TestScenario.getAllScenario5TestScenarioIdentifiers().contains(scenarioToStart)) {
 					testScenarios.add(TestScenario.getScenario5TestScenario(scenarioToStart));
 
 				} else if (TestScenario.getScenario6TestScenarioIdentifiers().contains(scenarioToStart)) {

@@ -1,0 +1,3 @@
+<MultipleToNestedMultiple xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://darpa.mil/immortals/test/MultipleToNestedMultipleRoot" xsi:schemaLocation="http://darpa.mil/immortals/test/MultipleToNestedMultipleRoot ../initial.xsd">
+  <NameValue Name="Test0" Index="1">One</NameValue>
+</MultipleToNestedMultiple>

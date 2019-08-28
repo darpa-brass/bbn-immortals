@@ -46,7 +46,6 @@ if [ -d "${HOME}/.immortals/anaconda" ];then
 
     if [ -d "${HOME}/.immortals/anaconda/envs/aql" ]; then
         conda activate aql
-        pip3 install lxml
     fi
 fi
 

@@ -43,7 +43,11 @@ public class DebugData implements DuplicateInterface<DebugData> {
 
 	public String toString() {
 		if (useSimpleLabels) {
-			return (String.join("/", associatedData.values()));
+			if (associatedData.size() > 0) {
+				return (String.join("/", associatedData.values()));
+			} else {
+				return dataType;
+			}
 
 		} else {
 			StringBuilder sb = new StringBuilder();
@@ -65,7 +69,11 @@ public class DebugData implements DuplicateInterface<DebugData> {
 				attrBuilder.append("}");
 				sb.append(attrBuilder.toString());
 			}
-			return sb.toString();
+			if (sb.length() == 0) {
+				return null;
+			} else {
+				return sb.toString();
+			}
 		}
 	}
 

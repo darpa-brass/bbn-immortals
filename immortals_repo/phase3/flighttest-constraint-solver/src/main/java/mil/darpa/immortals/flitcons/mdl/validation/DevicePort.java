@@ -39,7 +39,7 @@ public class DevicePort {
 	}
 
 	public void fits(@Nonnull DauPort dauPort, @Nonnull DisplayablePortMapping displayablePortMapping) {
-		if (excitationSource == null) {
+		if (excitationSource == null || excitationSource.equals("Internal")) {
 			displayablePortMapping.setExcitationResult("N/A", true);
 
 		} else {

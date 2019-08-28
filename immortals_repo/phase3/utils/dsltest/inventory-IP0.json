@@ -1,0 +1,25 @@
+{
+  "daus": [
+    {
+      "GloballyUniqueId": "Ox130d50",
+      "BBNDauMonetaryCost": 100,
+      "Port": [
+        {
+          "GloballyUniqueId": "IP0",
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -10,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static mil.darpa.immortals.flitcons.Utils.CHILD_LABEL;
@@ -64,11 +61,56 @@ public class SolutionInjector {
 		}
 
 		// Then, for any remaining attributes
+
+		// TODO: Abstract this somehow so the SolutionInjector stays clean of MDL
+		if (nodeValues.containsKey("PortType") && nodeValues.get("PortType").equals("Thermocouple")) {
+			if (nodeValues.containsKey("Thermocouple")) {
+				// If a Thermocouple PortType is necessary
+
+				// Remove the existing "PortType" attribute if it exists
+				dataSource.update_removeAttribute(rawNodeData.associatedObject, "PortType", "PortTypes");
+
+				// Add the protType object containing the Thermocouple data
+				TreeMap<String, Object> values = new TreeMap<>();
+				values.put("Thermocouple", nodeValues.get("Thermocouple"));
+				values.put("PortType", nodeValues.get("PortType"));
+				List<String> childPath = new LinkedList<>();
+				childPath.add("PortTypes");
+				childPath.add("PortType");
+				dataSource.update_createOrUpdateChildWithAttributes((OrientVertex) rawNodeData.associatedObject, childPath, values);
+
+				// And remove the values forom the list to be updated
+				nodeValues.remove("Thermocouple");
+				nodeValues.remove("PortType");
+
+			} else {
+				// Otherwise
+				List<String> childNodePath = new LinkedList<>();
+				childNodePath.add("PortTypes");
+				childNodePath.add("PortType");
+				// Check if there is a "PortType" node
+				HierarchicalData childNode = rawNodeData.getChildNodeByPath(childNodePath);
+				if (childNode != null) {
+					// And remove it if so
+					dataSource.update_removeNodeTree(childNode.associatedObject);
+
+					// Add the attribute to the parent
+					childNodePath.remove(1);
+					HierarchicalData parentNode = rawNodeData.getChildNodeByPath(childNodePath);
+					dataSource.update_NodeAttribute(parentNode, "PortType", nodeValues.get("PortType"));
+
+					// And remove the value from the attributes to update
+					nodeValues.remove("PortType");
+
+				}
+			}
+		}
+
 		for (String attrName : nodeValues.keySet()) {
-			// TODO: Add port type properly once the posted issue is resolved
-			if (attrName.equals("PortType") || attrName.equals("Thermocouple")) continue;
 			List<List<String>> candidateAttributeRemappingPaths;
 			boolean childAccountedFor = false;
+
+			LinkedList<Configuration.AttributeRemappingConfiguration> remappingConfigurationList;
 
 			if (config.ignoredAttributes.containsKey(rawNodeType) &&
 					config.ignoredAttributes.get(rawNodeType).contains(attrName)) {
@@ -97,6 +139,76 @@ public class SolutionInjector {
 						break;
 					}
 				}
+			} else if ((remappingConfigurationList = config.attributeRemappingInstructions.get(rawNodeType)) != null) {
+				childAccountedFor = true;
+				for (Configuration.AttributeRemappingConfiguration originalremappingConfiguration : remappingConfigurationList) {
+					Configuration.AttributeRemappingConfiguration remappingConfiguration = originalremappingConfiguration.duplicate();
+					LinkedList<String> sourceList = remappingConfiguration.sourceAttributePath;
+
+					Object currentValue;
+
+					if (attrName.equals(sourceList.remove(0))) {
+						currentValue = nodeValues.get(attrName);
+
+						while (!sourceList.isEmpty() && currentValue != null) {
+							if ((currentValue instanceof Map)) {
+								Map currentMap = (Map) currentValue;
+								String nextVal = sourceList.remove(0);
+								if (currentMap.containsKey(nextVal)) {
+									currentValue = currentMap.get(nextVal);
+								} else {
+									currentValue = null;
+									break;
+								}
+							} else {
+								currentValue = null;
+								break;
+							}
+						}
+						if (sourceList.isEmpty() && currentValue != null) {
+
+							HierarchicalData supsersededData = node.getSupersededData();
+							HierarchicalData realParentNode = supsersededData.getChildNodeByPath(remappingConfiguration.targetAttributePath.subList(0, remappingConfiguration.targetAttributePath.size() - 1));
+							String nodeName = remappingConfiguration.targetAttributePath.getLast();
+							if (realParentNode != null) {
+								try {
+									// TODO: Handle deconfliction properly
+									if (realParentNode.originalNodeClonedFrom != null) {
+
+										HierarchicalData originalNode = realParentNode.originalNodeClonedFrom;
+										Map<String, Object> newValues = new HashMap<>();
+
+										for (HierarchicalData clone : originalNode.clones) {
+											if (newValues.isEmpty()) {
+												newValues.putAll(clone.getAttributes());
+											} else {
+												for (String name : clone.getAttributeNames()) {
+													if (!newValues.containsKey(name) ||
+															newValues.get(name) != clone.getAttribute(name)) {
+														throw new RuntimeException("Conflict detected!");
+													}
+
+												}
+											}
+										}
+
+
+										dataSource.update_NodeAttribute((OrientVertex) realParentNode.originalNodeClonedFrom.associatedObject, nodeName, currentValue);
+									} else {
+										dataSource.update_NodeAttribute((OrientVertex) realParentNode.associatedObject, nodeName, currentValue);
+									}
+									continue;
+								} catch (Exception e) {
+									throw new RuntimeException(e);
+								}
+
+							}
+						}
+					}
+//					childAccountedFor = false;
+				}
+
+
 			}
 
 			if (!childAccountedFor) {
@@ -123,13 +235,12 @@ public class SolutionInjector {
 			}
 		}
 
+		Set<HierarchicalData> nodeTreesToRemove = new HashSet<>();
+
 		// 2.  Replace the old nodes with the inventory nodes
 
 		for (SolutionPreparer.ParentAdaptationData parent : adaptationData) {
-			// TODO: Add partial rewiring from old DAU to new DAU?
-
 			// For each child
-			// TODO: Verify it
 			for (SolutionPreparer.ChildAdaptationData child : parent.ports) {
 				// Rewire the original node into where the old node was
 				dataSource.update_rewireNode(
@@ -157,17 +268,19 @@ public class SolutionInjector {
 			OrientVertex newParentParentNode = (OrientVertex) ((OrientVertex) parentOriginals.iterator().next().associatedObject).getEdges(Direction.OUT, "Containment").iterator().next().getVertex(Direction.IN);
 			dataSource.update_insertNodeAsChild((OrientVertex) parentReplacement.associatedObject, newParentParentNode);
 
-			// And remove the old parent nodes
-			for (HierarchicalData data : parentOriginals) {
-				dataSource.update_removeNodeTree((OrientVertex) data.associatedObject);
-			}
-
-			if (!SolverConfiguration.getInstance().isNoCommit()) {
-				dataSource.commit();
-			}
-
-			dataSource.shutdown();
+			nodeTreesToRemove.addAll(parentOriginals);
 		}
+
+		// And remove the old parent nodes
+		for (HierarchicalData data : nodeTreesToRemove) {
+			dataSource.update_removeNodeTree((OrientVertex) data.associatedObject);
+		}
+
+		if (!SolverConfiguration.getInstance().isNoCommit()) {
+			dataSource.commit();
+		}
+
+		dataSource.shutdown();
 
 		dataSource.restart();
 

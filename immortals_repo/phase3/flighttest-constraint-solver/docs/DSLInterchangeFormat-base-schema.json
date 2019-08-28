@@ -1,0 +1,225 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://darpa.mil/brass/immortals/dslinterchangeformat/base-schema.json",
+  "definitions": {
+    "stringOrNull": {
+      "$id": "#stringOrNull",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "longOrArrayOfLong": {
+      "$id": "#longOrArrayOfLong",
+      "oneOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "Min": {
+              "type": "integer"
+            },
+            "Max": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
+    "minMax": {
+      "$id": "#minMax",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Min": {
+          "type": "integer"
+        },
+        "Max": {
+          "type": "integer"
+        }
+      },
+      "required": ["Min", "Max"]
+    },
+    "inputMeasurement": {
+      "$id": "#inputMeasurement",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "SampleRate": {
+          "$ref": "#minMax"
+        },
+        "DataLength": {
+          "$ref": "#minMax"
+        },
+        "DataRate": {
+          "$ref": "#minMax"
+        }
+      },
+      "required": ["SampleRate", "DataRate", "DataLength"]
+    },
+    "inputPort": {
+      "$id": "#inputPort",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "BBNPortFunctionality": {
+          "type": "string"
+        },
+        "GloballyUniqueId": {
+          "type": "string"
+        },
+        "PortDirection": {
+          "type": "string"
+        },
+        "PortType": {
+          "type": "string"
+        },
+        "Measurement": {
+          "$ref": "#inputMeasurement"
+        },
+        "Thermocouple": {
+          "type": "string"
+        }
+      },
+      "required": ["BBNPortFunctionality", "GloballyUniqueId"]
+    },
+    "inventoryMeasurement": {
+      "$id": "#inventoryMeasurement",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "SampleRate": {
+            "$ref": "#longOrArrayOfLong"
+          },
+          "DataLength": {
+            "$ref": "#longOrArrayOfLong"
+          },
+          "DataRate": {
+            "$ref": "#stringOrNull"
+          }
+        },
+        "required": ["SampleRate", "DataRate", "DataLength"]
+      }
+    },
+    "inventoryPort": {
+      "$id": "#inventoryPort",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "BBNPortFunctionality": {
+          "type": "string"
+        },
+        "GloballyUniqueId": {
+          "type": "string"
+        },
+        "PortDirection": {
+          "type": "string"
+        },
+        "PortType": {
+          "type": "string"
+        },
+        "Measurement": {
+          "$ref": "#inventoryMeasurement"
+        },
+        "Thermocouple": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["BBNPortFunctionality", "GloballyUniqueId"]
+    },
+    "outputMeasurement": {
+      "$id": "#outputMeasurement",
+      "type": "object",
+      "properties": {
+        "SampleRate": {
+          "type": "integer"
+        },
+        "DataLength": {
+          "type": "integer"
+        },
+        "DataRate": {
+          "type": "integer"
+        }
+      },
+      "required": ["SampleRate", "DataRate", "DataLength"]
+    },
+    "outputPort": {
+      "$id": "#outputPort",
+      "type": "object",
+      "properties": {
+        "BBNPortFunctionality": {
+          "type": "string"
+        },
+        "GloballyUniqueId": {
+          "type": "string"
+        },
+        "PortDirection": {
+          "type": "string"
+        },
+        "PortType": {
+          "type": "string"
+        },
+        "Measurement": {
+          "$ref": "#outputMeasurement"
+        },
+        "Thermocouple": {
+          "type": "string"
+        }
+      },
+      "required": ["SampleRate", "DataRate", "DataLength"]
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "daus": {
+      "type": "array",
+      "items": {
+        "$id": "#dau",
+        "type": "object",
+        "properties": {
+          "GloballyUniqueId": {
+            "type": "string"
+          },
+          "BBNDauMonetaryCost": {
+            "type": "integer"
+          },
+          "Port": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#inputPort"
+                },
+                {
+                  "$ref": "#inventoryPort"
+                },
+                {
+                  "$ref": "#outputPort"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

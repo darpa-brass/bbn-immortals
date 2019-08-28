@@ -13,12 +13,8 @@ public class DisplayablePortMapping {
 	private boolean dataLengthRangePass;
 	private String sampleRateRangeDisplayString;
 	private boolean sampleRateRangePass;
-	private String dataRateSelectionDisplayString;
-	private boolean dataRateSelectionPass;
-	private String dataLengthSelectionDisplayString;
-	private boolean dataLengthSelectionPass;
-	private String sampleRateSelectionDisplayString;
-	private boolean sampleRateSelectionPass;
+	private String measurementSelectionDisplayString;
+	private boolean measurementSelectionPass;
 	private String directionDisplayString;
 	private boolean directionPass;
 	private String excitationDisplayString;
@@ -27,6 +23,8 @@ public class DisplayablePortMapping {
 	private boolean thermocouplePass;
 	private String portTypeDisplayString;
 	private boolean portTypePass;
+	private String dataStreamDisplayString;
+	private boolean dataStreamPass;
 
 	public DisplayablePortMapping(@Nonnull String id) {
 		this.id = id;
@@ -60,28 +58,12 @@ public class DisplayablePortMapping {
 		return sampleRateRangePass;
 	}
 
-	public String getDataRateSelectionDisplayString() {
-		return dataRateSelectionDisplayString;
+	public String getMeasurementSelectionDisplayString() {
+		return measurementSelectionDisplayString;
 	}
 
-	public boolean isDataRateSelectionPass() {
-		return dataRateSelectionPass;
-	}
-
-	public String getDataLengthSelectionDisplayString() {
-		return dataLengthSelectionDisplayString;
-	}
-
-	public boolean isDataLengthSelectionPass() {
-		return dataLengthSelectionPass;
-	}
-
-	public String getSampleRateSelectionDisplayString() {
-		return sampleRateSelectionDisplayString;
-	}
-
-	public boolean isSampleRateSelectionPass() {
-		return sampleRateSelectionPass;
+	public boolean isMeasurementSelectionPass() {
+		return measurementSelectionPass;
 	}
 
 	public String getDirectionDisplayString() {
@@ -116,6 +98,22 @@ public class DisplayablePortMapping {
 		return portTypePass;
 	}
 
+	public String getDataStreamDisplayString() {
+		return dataStreamDisplayString;
+	}
+
+	public boolean isDataStreamPass() {
+		return dataStreamPass;
+	}
+
+	public void setDataStreamResult(@Nonnull String displayString, boolean pass) {
+		if (dataStreamDisplayString != null) {
+			throw AdaptationnException.internal("Value being set multiple times indicates a conflict!");
+		}
+		dataStreamDisplayString = displayString;
+		dataStreamPass = pass;
+	}
+
 	public void setDataRateRangeResult(@Nonnull String displayString, boolean pass) {
 		if (dataRateRangeDisplayString != null) {
 			throw AdaptationnException.internal("Value being set multiple times indicates a conflict!");
@@ -140,31 +138,13 @@ public class DisplayablePortMapping {
 		sampleRateRangePass = pass;
 	}
 
-	public void setDataRateSelectionResult(@Nonnull String displayString, boolean pass) {
-		if (dataRateSelectionDisplayString != null) {
+	public void setMeasurementSelectionResult(@Nonnull String displayString, boolean pass) {
+		if (measurementSelectionDisplayString != null) {
 			throw AdaptationnException.internal("Value being set multiple times indicates a conflict!");
 		}
-		dataRateSelectionDisplayString = displayString;
-		dataRateSelectionPass = pass;
+		measurementSelectionDisplayString = displayString;
+		measurementSelectionPass = pass;
 	}
-
-	public void setDataLengthSelectionResult(@Nonnull String displayString, boolean pass) {
-		if (dataLengthSelectionDisplayString != null) {
-			throw AdaptationnException.internal("Value being set multiple times indicates a conflict!");
-		}
-		dataLengthSelectionDisplayString = displayString;
-		dataLengthSelectionPass = pass;
-	}
-
-
-	public void setSampleRateSelectionResult(@Nonnull String displayString, boolean pass) {
-		if (sampleRateSelectionDisplayString != null) {
-			throw AdaptationnException.internal("Value being set multiple times indicates a conflict!");
-		}
-		sampleRateSelectionDisplayString = displayString;
-		sampleRateSelectionPass = pass;
-	}
-
 
 	public void setDirectionResult(@Nonnull String displayString, boolean pass) {
 		if (directionDisplayString != null) {

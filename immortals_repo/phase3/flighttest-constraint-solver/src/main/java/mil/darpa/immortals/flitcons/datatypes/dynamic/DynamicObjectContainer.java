@@ -1,6 +1,7 @@
 package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import mil.darpa.immortals.flitcons.NestedPathException;
+import mil.darpa.immortals.flitcons.SolverConfiguration;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
@@ -71,6 +72,10 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 
 			Set<Equation> equations = children.values().stream().filter(x -> x.getValue() instanceof Equation).map(x -> (Equation) x.getValue()).collect(Collectors.toSet());
 			Set<String> equationValues = new HashSet<>();
+
+			// TODO: This should be isolated in MDL-specific code
+			equationValues.add("Measurement");
+			// End TODO
 
 			for (Equation eq : equations) {
 				equationValues.addAll(eq.getVariables());

@@ -1,5 +1,6 @@
 package mil.darpa.immortals.flitcons
 
+import com.tinkerpop.blueprints.Direction
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
 import com.tinkerpop.blueprints.impls.orient.OrientVertex
@@ -154,6 +155,80 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 		return rval
 	}
 
+	private static OrientVertex getParent(OrientVertex vertex) {
+		return vertex.getEdges(Direction.OUT, "Containment").iterator().next().getVertex(Direction.IN)
+	}
+
+	@Override
+	public List<String> validateRelationalIntegrity() {
+		Map<String, Integer> errorCount = new HashMap<>()
+
+		List<String> seenIds = new LinkedList<>()
+		List<OrientVertex> vertices = testFlightConfigurationGraph.V.has("ID").toList();
+
+		for (OrientVertex vertex : vertices) {
+			String value = vertex.getProperty("ID")
+			if (seenIds.contains(value)) {
+				// TODO: Resolve
+				String err = "The ID value '" + value + "' is assigned to multiple elements!";
+				if (errorCount.containsKey(err)) {
+					errorCount.put(err, errorCount.get(err) + 1)
+				} else {
+					errorCount.put(err, 1)
+				}
+			} else {
+				seenIds.add(value)
+			}
+		}
+
+		vertices = testFlightConfigurationGraph.V.has("IDREF").toList()
+		List<String> seenPortRefValues = new LinkedList<>();
+
+		for (OrientVertex vertex : vertices) {
+			OrientVertex parentVertex = getParent(vertex)
+			String value = vertex.getProperty("IDREF");
+
+		}
+
+		for (OrientVertex vertex : vertices) {
+			OrientVertex parentVertex = getParent(vertex)
+			String value = vertex.getProperty("IDREF");
+
+			if (!seenIds.contains(value) && !value.equals("dscp-0")) {
+				String err = "The IDREF value of '" + value + "' references a non-existing ID!";
+				if (errorCount.containsKey(err)) {
+					errorCount.put(err, errorCount.get(err) + 1);
+				} else {
+					errorCount.put(err, 1);
+				}
+			}
+
+			if (parentVertex.getProperty("@class").equals("PortRef")) {
+				OrientVertex parentParentVertex = getParent(parentVertex)
+				if (parentParentVertex.getProperty("@class").equals("PortMapping")) {
+					if (seenPortRefValues.contains(value)) {
+						String err = "The IDREF value of '" + value + "' is used by multiple PortMapping PortRefs!";
+						if (errorCount.containsKey(err)) {
+							errorCount.put(err, errorCount.get(err) + 1);
+						} else {
+							errorCount.put(err, 1);
+						}
+					} else {
+						seenPortRefValues.add(value);
+					}
+				}
+			}
+		}
+		if (!errorCount.isEmpty()) {
+			List<String> rval = new LinkedList<>();
+			for (Map.Entry<String, Integer> entry : errorCount.entrySet()) {
+				rval.add(entry.getKey() + " [" + entry.getValue() + " Occurrences]");
+			}
+			return rval
+		}
+		return null;
+	}
+
 	@Override
 	Map<String, PortMapping> getPortMappingDetails() {
 		init()
@@ -216,38 +291,27 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 										currentDauPort.thermocouple = it['Thermocouple'] as String
 									},
 									_().in.has('@class', 'GenericParameter').sideEffect {
-										Object tmp
-
-										if (it.propertyKeys.contains('SampleRate')) {
-											tmp = it['SampleRate']
-											if (tmp instanceof List) {
-												currentDauPort.requirements.validSampleRates.addAll(tmp.collect { req -> Long.valueOf(req) })
-											} else {
-												currentDauPort.requirements.validSampleRates.add(tmp as Long)
-											}
-										}
-
-										if (it.propertyKeys.contains('DataRate')) {
-											tmp = it['DataRate']
-											if (tmp instanceof List) {
-												currentDauPort.requirements.validDataRates.addAll(tmp.collect { req -> Long.valueOf(req) })
-											} else {
-												currentDauPort.requirements.validDataRates.add(tmp as Long)
-											}
-										}
-
-										if (it.propertyKeys.contains('DataLength')) {
-											tmp = it['DataLength']
-											if (tmp instanceof List) {
-												currentDauPort.requirements.validDataLengths.addAll(tmp.collect { req -> Long.valueOf(req) })
-											} else {
-												currentDauPort.requirements.validDataLengths.add(tmp as Long)
-											}
-										}
 										currentDauPort.excitationPortIsPresent = it.propertyKeys.contains('ExcitationPortIsPresent')
 									},
 									_().in.has('@class', 'GenericParameter').in.has('@class', 'PortType').has('Thermocouple').sideEffect {
 										currentDauPort.requirements.validThermocouples.add(it['Thermocouple'] as String)
+									},
+									_().in.has('@class', 'GenericParameter').in.has('@class', 'Measurement').sideEffect {
+										DauPort.PortMeasurementCombination measurementCombination = new DauPort.PortMeasurementCombination()
+										currentDauPort.requirements.validMeasurementCombinations.add(measurementCombination)
+
+										// Check if has measurement
+										if (it.propertyKeys.contains('SampleRate')) {
+											measurementCombination.sampleRate = Long.valueOf((String) it['SampleRate'])
+										}
+
+										if (it.propertyKeys.contains('DataRate')) {
+											measurementCombination.dataRate = Long.valueOf((String) it['DataRate'])
+										}
+
+										if (it.propertyKeys.contains('DataLength')) {
+											measurementCombination.dataLength = Long.valueOf((String) it['DataLength'])
+										}
 									}
 							).fairMerge
 							.back('pr').aggregate(daurefs)

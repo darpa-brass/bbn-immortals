@@ -1,0 +1,51 @@
+{
+  "daus": [
+    {
+      "GloballyUniqueId": "ID0",
+      "BBNDauMonetaryCost": 100,
+      "Port": [
+        {
+          "GloballyUniqueId": "IP0",
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "GloballyUniqueId": "ID1",
+      "BBNDauMonetaryCost": 100,
+      "Port": [
+        {
+          "GloballyUniqueId": "IP1",
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            },
+            {
+              "DataLength": 16,
+              "SampleRate": 128,
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

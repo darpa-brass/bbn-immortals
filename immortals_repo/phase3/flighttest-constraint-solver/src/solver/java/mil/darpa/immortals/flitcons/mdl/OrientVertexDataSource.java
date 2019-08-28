@@ -43,11 +43,15 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 			if (e.getVertex(Direction.IN).equals(originalNode)) {
 				OrientVertex outNode = (OrientVertex) e.getVertex(Direction.OUT);
 				outNode.addEdge("Reference", replacementNode);
+				outNode.removeProperty("IDREF");
+				outNode.setProperty("IDREF", replacementNode.getProperty("ID"));
 				e.remove();
 			}
 			if (e.getVertex(Direction.OUT).equals(originalNode)) {
 				OrientVertex inNode = (OrientVertex) e.getVertex(Direction.IN);
 				replacementNode.addEdge("Reference", inNode);
+				originalNode.removeProperty("IDREF");
+				originalNode.setProperty("IDREF", inNode.getProperty("ID"));
 				e.remove();
 			}
 		}
@@ -124,14 +128,15 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 		Set<OrientVertex> parentVertices = input.keySet();
 
 		for (OrientVertex parentVertex : parentVertices) {
-			HierarchicalData parentData = createData(parentVertex, true, collectionInstructions);
+			List<OrientVertex> dauVertices = input.get(parentVertex);
+			HierarchicalData parentData = createData(parentVertex, true, collectionInstructions, dauVertices);
 			identifierDataMap.put(parentData.node, parentData);
 			List<HierarchicalData> children = new LinkedList<>();
 			rootChildMap.put(parentData, children);
-			for (OrientVertex childVertex : input.get(parentVertex)) {
-				if (!parentVertices.contains(childVertex)) {
 
-					HierarchicalData childData = createData(childVertex, false, collectionInstructions);
+			for (OrientVertex childVertex : dauVertices) {
+				if (!parentVertices.contains(childVertex)) {
+					HierarchicalData childData = createData(childVertex, false, collectionInstructions, dauVertices);
 					identifierDataMap.put(childData.node, childData);
 
 					if (children.contains(childData)) {
@@ -156,7 +161,8 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 		}
 	}
 
-	private HierarchicalData createData(@Nonnull OrientVertex src, boolean isRootObject, @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions) {
+	private HierarchicalData createData(@Nonnull OrientVertex src, boolean isRootObject, @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions,
+	                                    List<OrientVertex> otherDauVertices) {
 		// Create identification information
 		HierarchicalIdentifier identifier = createIdentifier(src);
 
@@ -206,15 +212,19 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 		for (Edge e : src.getEdges(Direction.BOTH, "Reference")) {
 			if (e.getVertex(Direction.IN).equals(src)) {
 				OrientVertex outNode = (OrientVertex) e.getVertex(Direction.OUT);
-				inboundReferences.add(createIdentifier(outNode));
+				if (!otherDauVertices.contains(outNode)) {
+					inboundReferences.add(createIdentifier(outNode));
+				}
 			}
 			if (e.getVertex(Direction.OUT).equals(src)) {
 				OrientVertex inNode = (OrientVertex) e.getVertex(Direction.IN);
-				outboundReferences.add(createIdentifier(inNode));
+				if (!otherDauVertices.contains(inNode)) {
+					outboundReferences.add(createIdentifier(inNode));
+				}
 			}
 		}
 
-		if (debugData.getAttributeSize() == 0) {
+		if (debugData.getAttributeSize() == 0 && !Configuration.getInstance().getGlobalTransformationInstructions().taggedNodes.contains(identifier.getNodeType())) {
 			debugData = null;
 		}
 
@@ -232,9 +242,90 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 
 	@Override
 	protected HierarchicalIdentifier createIdentifier(@Nonnull OrientVertex src) {
-		return HierarchicalIdentifier.produceTraceableNode(src.getIdentity().toString(), src.getProperty("@class"));
-
+		return HierarchicalIdentifier.produceTraceableNode("I" + src.getIdentity().toString(), src.getProperty("@class"));
 	}
 
+	@Override
+	protected void update_removeAttribute(@Nonnull OrientVertex parentNode, @Nonnull String attributeName, String... childPath) {
+		if (childPath == null) {
+			// If there is no child path, remove the node from the parent if it exists
+			parentNode.removeProperty(attributeName);
+		} else {
+			// Otherwise, search through the child structure
+			LinkedList<String> remainingChildren = new LinkedList(Arrays.asList(childPath));
 
+			OrientVertex currentChild = parentNode;
+
+			// For each child node
+			while (!remainingChildren.isEmpty()) {
+				OrientVertex originalChild = currentChild;
+
+				// Get the Contianment edges for the children
+				Iterator edgeIterator = currentChild.getEdges(Direction.IN, "Containment").iterator();
+
+				while (edgeIterator.hasNext() && originalChild.equals(currentChild) && !remainingChildren.isEmpty()) {
+					// And iterate through them looking for a match to the current step in the child path
+					OrientVertex child = (OrientVertex) ((Edge) edgeIterator.next()).getVertex(Direction.OUT);
+					if (child.getLabel().equals(remainingChildren.get(0))) {
+						// If a match is found, set the currentChild to the new child, and remove the child since it has been found
+						try {
+							remainingChildren.remove(0);
+						} catch (Exception e) {
+							throw new RuntimeException(e);
+						}
+						currentChild = child;
+					}
+				}
+				// If at the end of looking through the edges we haven't found a matching child, break the loop looking for a matching path since one cannot be found
+				if (originalChild.equals(currentChild)) {
+					break;
+				}
+			}
+
+			if (remainingChildren.isEmpty()) {
+				// Then, if we have arrived at the target node and no children have been found, try and remove the attribute,
+				currentChild.removeProperty(attributeName);
+			}
+		}
+	}
+
+	@Override
+	protected void update_createOrUpdateChildWithAttributes(@Nonnull OrientVertex parentNode, @Nonnull List<String> childPath,
+	                                                        @Nonnull Map<String, Object> attributes) {
+		List<String> remainingChildren = new LinkedList<>(childPath);
+
+		OrientVertex currentChild = parentNode;
+
+		// For each child node
+		while (!remainingChildren.isEmpty()) {
+			OrientVertex originalChild = currentChild;
+
+			// Get the Contianment edges for the children
+			Iterator edgeIterator = currentChild.getEdges(Direction.IN, "Containment").iterator();
+
+			while (edgeIterator.hasNext() && originalChild.equals(currentChild) && !remainingChildren.isEmpty()) {
+				// And iterate through them looking for a match to the current step in the child path
+				OrientVertex child = (OrientVertex) ((Edge) edgeIterator.next()).getVertex(Direction.OUT);
+				if (child.getLabel().equals(remainingChildren.get(0))) {
+					// If a match is found, set the currentChild to the new child, and remove the child since it has been found
+					remainingChildren.remove(0);
+					currentChild = child;
+				}
+			}
+			// If at the end of looking through the edges we haven't found a matching child, break the loop looking for a matching path since one cannot be found
+			if (originalChild.equals(currentChild)) {
+				break;
+			}
+		}
+
+		while (!remainingChildren.isEmpty()) {
+			String nodeType = remainingChildren.remove(0);
+			OrientVertex newChild = parentNode.getGraph().addVertex(nodeType, (String) null);
+			newChild.addEdge("Containment", currentChild);
+			currentChild = newChild;
+		}
+		for (Map.Entry<String, Object> attributeEntry : attributes.entrySet()) {
+			currentChild.setProperty(attributeEntry.getKey(), attributeEntry.getValue());
+		}
+	}
 }

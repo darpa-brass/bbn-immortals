@@ -6,11 +6,12 @@ import Data.Data (Data,Typeable)
 import GHC.Generics (Generic)
 
 import Control.Monad (when)
-import Data.Aeson
+import Data.Aeson hiding (Value)
 import Data.Aeson.BetterErrors
-import Data.Aeson.Types (listValue)
+import Data.Aeson.Types (Pair, listValue)
 import Data.Function (on)
-import Data.List (foldl',nub,nubBy,sortBy,subsequences)
+import Data.List (findIndex,foldl',nub,nubBy,sortBy,subsequences)
+import Data.Maybe (fromMaybe)
 import Data.SBV (AllSatResult,Boolean(..),getModelDictionaries)
 import Data.SBV.Internals (trueCW)
 import Data.String (fromString)
@@ -28,13 +29,17 @@ import DSL.Environment
 import DSL.Model
 import DSL.Name
 import DSL.Parser (parseExprText)
+import DSL.Path
 import DSL.Primitive
 import DSL.Resource
 import DSL.SAT
 import DSL.Serialize
 import DSL.Sugar
 import DSL.Types
-import DSL.V
+
+-- For debugging...
+-- import Debug.Trace (traceShow)
+-- import DSL.V
 
 
 --
@@ -50,10 +55,11 @@ type Ports a = [Port a]
 type PortGroups a = [PortGroup a]
 
 -- | Named attributes associated with a port. For a fully configured DAU,
---   the values of the port attributes will be of type 'PVal', while for an
+--   the values of the port attributes will be of type 'AttrVal', while for an
 --   unconfigured DAU, the values of port attributes will be 'Constraint',
 --   which captures the range of possible values the port can take on.
-type PortAttrs a = Env Name a
+newtype PortAttrs a = MkPortAttrs (Env Name a)
+  deriving (Data,Typeable,Generic,Eq,Show,Functor)
 
 -- | A port is a named connection to a DAU and its associated attributes.
 data Port a = MkPort {
@@ -70,13 +76,36 @@ data PortGroup a = MkPortGroup {
    , groupSize  :: Int          -- ^ number of ports in the group
 } deriving (Data,Typeable,Generic,Eq,Show)
 
--- | A constraint on a port in an unconfigured DAU.
+-- | A constraint on a port attribute in an unconfigured DAU.
 data Constraint
    = Exactly PVal
    | OneOf [PVal]
    | Range Int Int
+   | Sync [PortAttrs Constraint]
+  deriving (Data,Typeable,Generic,Eq,Show)
+
+-- | A value of a port attribute in a configured DAU.
+data AttrVal
+   = Leaf PVal
+   | Node (PortAttrs AttrVal)
+  deriving (Data,Typeable,Generic,Eq,Show)
+
+
+-- ** Attribute rules
+
+-- | A rule refines the check associated with a particular attribute. There
+--   are two kinds of rules: Equations define derived attributes whose values
+--   are determined by an arithmetic expression over other attribute values.
+--   Compatibility rules describe a list of values that are considered
+--   compatible with a given value of a given attribute.
+data Rule
+   = Compatible [PVal]
    | Equation Expr
   deriving (Data,Typeable,Generic,Eq,Show)
+
+-- | A set of rules that apply to a given attribute-value pair.
+newtype Rules = MkRules (Env (Name,PVal) Rule)
+  deriving (Eq,Show,Data)
 
 
 -- ** DAUs
@@ -86,15 +115,31 @@ data Constraint
 --   grouped or ungrouped; the type parameter 'p' is used to range over these
 --   two possibilities.
 data Dau p = MkDau {
-     dauID   :: Name      -- ^ globally unique ID of this DAU
-   , ports   :: p         -- ^ named ports
-   , monCost :: Integer   -- ^ fixed monetary cost of the DAU
+     dauID   :: Name  -- ^ globally unique ID of this DAU
+   , ports   :: p     -- ^ named ports
+   , monCost :: Int   -- ^ fixed monetary cost of the DAU
 } deriving (Data,Typeable,Generic,Eq,Show)
 
 -- | A DAU inventory is a list of available DAUs, sorted by monetary cost,
 --   where the ports in each DAU have been organized into groups.
 --   -- TODO: Make this a set so ordering of JSON file doesn't matter
 type Inventory = [Dau (PortGroups Constraint)]
+
+
+-- ** Provisions
+
+-- | A provision associates a port group with its DAU and group index. This is
+--   information that can be derived directly from the DAU description, but
+--   is used in the provision map for quickly looking up relevant port groups
+--   by functionality.
+data Provision = MkProvision {
+     provDau   :: Name                  -- ^ DAU this provision belongs to
+   , provIdx   :: Int                   -- ^ group index of this provision
+   , provGroup :: PortGroup Constraint  -- ^ the provided port groups
+} deriving (Data,Typeable,Generic,Eq,Show)
+
+-- | Associates port functionalities with port groups from provided DAUs.
+type Provisions = Env Name [Provision]
 
 
 -- ** Requests and Responses
@@ -126,7 +171,7 @@ data Response = MkResponse {
 -- | A port in an adaptation response, which replaces another named port.
 data ResponsePort = MkResponsePort {
      oldPort :: Name
-   , resPort :: Port PVal
+   , resPort :: Port AttrVal
 } deriving (Data,Typeable,Generic,Eq,Show)
 
 -- | A DAU in an adaptation response, which replaces one or more DAUs in the
@@ -135,6 +180,20 @@ data ResponseDau = MkResponseDau {
      oldDaus :: [Name]
    , resDau  :: Dau [ResponsePort]
 } deriving (Data,Typeable,Generic,Eq,Show)
+
+
+
+--
+-- * Helper functions
+--
+
+-- | Convert a set of port attributes to a list of name-value pairs.
+portAttrsToList :: PortAttrs a -> [(Name,a)]
+portAttrsToList (MkPortAttrs m) = envToList m
+
+-- | Convert a list of name-value pairs to a set of port attributes.
+portAttrsFromList :: [(Name,a)] -> PortAttrs a
+portAttrsFromList = MkPortAttrs . envFromList
 
 
 --
@@ -161,12 +220,19 @@ groupPorts ps = do
 --
 
 -- | Monetary cost of a (sub-)inventory.
-inventoryCost :: Inventory -> Integer
+inventoryCost :: Inventory -> Int
 inventoryCost = sum . map monCost
 
 -- | Convert a list of ungrouped DAUs into a DAU inventory.
 createInventory :: [Dau (Ports Constraint)] -> Inventory
 createInventory ds = sortBy (compare `on` monCost) (map groupPortsInDau ds)
+
+-- | The provision map for a given inventory.
+provisions :: Inventory -> Provisions
+provisions = envFromListAcc . concatMap dau
+  where
+    dau (MkDau n gs _) = map (grp n) (zip gs [1..])
+    grp n (g,i) = (groupFunc g, [MkProvision n i g])
 
 -- | Filter inventory to include only DAUs that provide functionalities
 --   relevant to the given port groups.
@@ -205,154 +271,190 @@ dimN :: Var -> [Var]
 dimN pre = [mconcat [pre, "+", pack (show i)] | i <- [1..]]
 
 -- | Dimension indicating how to configure a port attribute.
-dimAttr :: Name -> Int -> Name -> Var
-dimAttr dau grp att = mconcat ["Cfg ", dau, "+", pack (show grp), " ", att]
+dimAttr
+  :: Name  -- ^ provided DAU ID
+  -> Int   -- ^ group index in provided DAU
+  -> Name  -- ^ required DAU ID
+  -> Int   -- ^ group index in required DAU
+  -> Name  -- ^ attribute name
+  -> Var
+dimAttr pn pg rn rg att = mconcat 
+    ["Cfg ", pn, "+", pack (show pg), " ", rn, "+", pack (show rg), " ", att]
 
 -- | Dimension indicating whether a provided DAU + group is used to (partially)
 --   satisfy a required DAU + port group.
-dimUseGroup :: Name -> Int -> Name -> Int -> Var
-dimUseGroup provDau provGrp reqDau reqGrp =
-    mconcat ["Use ", provDau, "+", pack (show provGrp), " ", reqDau, "+", pack (show reqGrp)]
+dimUseGroup
+  :: Name  -- ^ provided DAU
+  -> Int   -- ^ group index in provided DAU
+  -> Name  -- ^ required DAU
+  -> Int   -- ^ group index in required DAU
+  -> Var
+dimUseGroup pn pg rn rg = mconcat
+    ["Use ", pn, "+", pack (show pg), " ", rn, "+", pack (show rg)]
 
 
 -- ** Provisions
 
--- | Translate a DAU inventory into a dictionary.
-toDictionary :: Inventory -> Dictionary
-toDictionary = envFromList . map entry
-  where
-    entry d = (mkSymbol (dauID d), ModEntry (provideDau d))
+-- | Resource path prefix of an inventory port group.
+invPrefix :: Name -> Int -> ResID
+invPrefix invDau invGrp =
+    ResID [invDau, fromString (show invGrp)]
 
--- | Encode a provided DAU as a DSL model.
-provideDau :: Dau (PortGroups Constraint) -> Model
-provideDau (MkDau n gs c) = Model []
-    [ Elems [
-        modify "/MonetaryCost" TInt (val + fromInteger c)
-      , In (Path Relative [n])
-        [ Elems (zipWith (providePortGroup n) gs [1..]) ]
-    ]]
+-- | Resource path prefix of a set of provisions.
+provPrefix :: Name -> Int -> Name -> Int -> ResID
+provPrefix invDau invGrp reqDau reqGrp =
+    ResID [invDau, fromString (show invGrp), reqDau, fromString (show reqGrp)]
 
--- | Encode a provided port group as a DSL statement.
-providePortGroup :: Name -> PortGroup Constraint -> Int -> Stmt
-providePortGroup dau g i =
-    In (fromString ("Group/" ++ show i))
-    [ Elems [
-      create "Functionality" (sym (groupFunc g))
-    , create "PortCount" (lit (I (groupSize g)))
-    , In "Attributes"
-      [ Elems $ do
-        (n,c) <- filter (not . isEqn) attrs ++ filter isEqn attrs
-        return (providePortAttr (dimAttr dau i n) n c)
-      ]
-    ]]
+-- | Initial resource environment for a given inventory.
+initEnv :: Inventory -> ResEnv
+initEnv inv = envFromList (cost : match : concatMap dau inv)
   where
-    attrs = envToList (groupAttrs g)
-    isEqn (_, Equation _) = True
-    isEqn _               = False
+    cost = ("/MonetaryCost", One (Just (I (sum (map monCost inv)))))
+    match = ("/PortsToMatch", One (Just (I 0)))
+    dau (MkDau n gs _) = map (grp n) (zip gs [1..])
+    grp n (g,i) = (invPrefix n i <> "PortCount", One (Just (I (groupSize g))))
 
--- | Encode a provided port attribute as a DSL statement.
-providePortAttr :: Var -> Name -> Constraint -> Stmt
-providePortAttr dim att c = Do (Path Relative [att]) (effect c)
+-- | Provide a port group for use by a particular required port group.
+providePortGroup
+  :: Rules                 -- ^ shared attribute rules
+  -> Name                  -- ^ provided DAU ID
+  -> Int                   -- ^ provided group ID
+  -> Name                  -- ^ required DAU ID
+  -> Int                   -- ^ required group ID
+  -> PortGroup Constraint  -- ^ provided port group
+  -> Stmt
+providePortGroup rules pn pg rn rg grp =
+    In "Attributes" (providePortAttrs rules dimGen (groupAttrs grp))
   where
-    effect (Exactly v)   = Create (lit v)
-    effect (OneOf vs)    = Create (One (Lit (chcN (dimN dim) vs)))
-    effect (Range lo hi) = Create (One (Lit (chcN (dimN dim) (map I [lo..hi]))))
-    effect (Equation e)  = Create (One e)
+    dimGen = dimAttr pn pg rn rg
+
+-- | Encode a set of provided port attributes as a DSL statement block.
+providePortAttrs
+  :: Rules                 -- ^ shared attribute rules
+  -> (Name -> Var)         -- ^ unique dimension generator
+  -> PortAttrs Constraint  -- ^ provided attributes
+  -> Block
+providePortAttrs rules@(MkRules rs) dimGen as =
+    [ Elems $ [providePortAttr (dimGen n) n c | (n,c) <- attrs]
+        ++ map (uncurry providePortEquation) eqns
+    ]
+  where
+    (attrs,eqns) = foldr split ([],[]) (portAttrsToList as)
+    split (n, Exactly v) (as,es)
+      | Right (Equation e) <- envLookup (n,v) rs = (as, (n,e):es)
+    split (n, OneOf [v]) (as,es)
+      | Right (Equation e) <- envLookup (n,v) rs = (as, (n,e):es)
+    split (n, c) (as,es) = ((n,c):as, es)
+
+    providePortAttr dim att c =
+      let path = Path Relative [att] in
+      case c of
+        Exactly v   -> Do path $ Create (lit v)
+        OneOf vs    -> Do path $ Create (One (Lit (chcN (dimN dim) vs)))
+        Range lo hi -> Do path $ Create (One (Lit (chcN (dimN dim) (map I [lo..hi]))))
+        Sync ss     -> In path $ splitN (dimN dim) (map (providePortAttrs rules dimGen) ss)
+    
+-- | Encode a provided port attribute that is defined via an equation.
+providePortEquation :: Name -> Expr -> Stmt
+providePortEquation att e = Do (Path Relative [att]) (Create (One e))
 
 
 -- ** Requirements
 
--- | Check all required DAUs against the inventory of provisions.
-requireDaus :: Inventory -> [Dau (PortGroups Constraint)] -> [Stmt]
-requireDaus inv reqs = concatMap (requireDau inv) reqs
+-- | Check all required DAUs against the provisions.
+requireDaus :: Rules -> Provisions -> [Dau (PortGroups Constraint)] -> [Stmt]
+requireDaus rules prov reqs = concatMap (requireDau rules prov) reqs
 
--- | Check a required DAU against the inventory of provisions.
-requireDau :: Inventory -> Dau (PortGroups Constraint) -> [Stmt]
-requireDau inv req = do
+-- | Check a required DAU against the provisions.
+requireDau :: Rules -> Provisions -> Dau (PortGroups Constraint) -> [Stmt]
+requireDau rules prov req = do
     (g,i) <- zip (ports req) [1..]
-    requirePortGroup inv (dauID req) i g
-        
--- | Check whether the required port group is satisfied by the inventory
---   of provisions; adjust the ports-to-match and available ports accordingly.
+    requirePortGroup rules prov (dauID req) i g
+
+-- | Check whether the required port group is satisfied by the provisions;
+--   adjust the ports-to-match and available ports accordingly.
 requirePortGroup
-  :: Inventory             -- ^ provided DAU inventory
+  :: Rules                 -- ^ attribute compatibility rules
+  -> Provisions            -- ^ provided port groups
   -> Name                  -- ^ required DAU name
   -> Int                   -- ^ index of required group
   -> PortGroup Constraint  -- ^ required group
   -> [Stmt]
-requirePortGroup inv reqDauName reqGrpIx reqGrp =
+requirePortGroup rules prov reqDauID reqGrpIx reqGrp =
     -- keep track of the ports we still have to match for this group
-    (modify "/PortsToMatch" TInt (lit (I (groupSize reqGrp))) : do
-       provDau <- inv
-       let provDauName = dauID provDau
-       provGrpIx <- [1 .. length (ports provDau)]
-       let dim = dimUseGroup provDauName provGrpIx reqDauName reqGrpIx
-       return $
-         In (Path Relative [provDauName, "Group", pack (show provGrpIx)])
-         [ Elems [checkGroup dim reqGrp] ])
-    ++ [check "/PortsToMatch" tInt (val .== 0)]
+    ( modify "/PortsToMatch" TInt (lit (I (groupSize reqGrp))) : do
+        MkProvision provDauID provGrpIx provGrp <- relevant
+        let dim = dimUseGroup provDauID provGrpIx reqDauID reqGrpIx
+        let provPath = toPath (provPrefix provDauID provGrpIx reqDauID reqGrpIx)
+        let portCount = toPath (invPrefix provDauID provGrpIx <> "PortCount")
+        return $
+          In provPath
+            [ Elems [
+              providePortGroup rules provDauID provGrpIx reqDauID reqGrpIx provGrp
+            , checkGroup rules dim portCount reqGrp
+            ]]
+    ) ++ [check "/PortsToMatch" tInt (val .== 0)]
+  where
+    relevant = fromMaybe [] (envLookup' (groupFunc reqGrp) prov)
         
 -- | Check a required port group against the port group in the current context.
-checkGroup :: Var -> PortGroup Constraint -> Stmt
-checkGroup dim grp =
-    -- if there are ports left to match, ports left in this group,
-    -- and this group provides the right functionality
-    If (res "/PortsToMatch" .> 0
-         &&& res "PortCount" .> 0
-         &&& res "Functionality" .==. sym (groupFunc grp))
+checkGroup :: Rules -> Var -> Path -> PortGroup Constraint -> Stmt
+checkGroup rules dim portCount grp =
+    -- if there are ports left to match, ports left in this group
+    If (res "/PortsToMatch" .> 0 &&& res portCount .> 0)
     [ Split (BRef dim)  -- tracks if this group was used for this requirement
       [ Elems [
         -- check all of the attributes
-        In "Attributes" [ Elems $ do
-          (n,c) <- envToList (groupAttrs grp)
-          return (requirePortAttr n c)
-        ]
+        In "Attributes" [ Elems (requirePortAttrs rules (groupAttrs grp)) ]
         -- if success, update the ports available and required
-      , if' (res "/PortsToMatch" .> res "PortCount") [
-          modify "PortCount" TInt 0
-        , modify "/PortsToMatch" TInt (val - res "PortCount")
+      , if' (res "/PortsToMatch" .> res portCount) [
+          modify "/PortsToMatch" TInt (val - res portCount)
+        , modify portCount TInt 0
         ] [
-          modify "PortCount" TInt (val - res "/PortsToMatch")
+          modify portCount TInt (val - res "/PortsToMatch")
         , modify "/PortsToMatch" TInt 0
         ]
       ]]
       []
      ] []
 
--- | Check whether the required attribute is satisfied by the current port group.
-requirePortAttr :: Name -> Constraint -> Stmt
-requirePortAttr att c = check (Path Relative [att]) (One ptype) (body c)
+-- | Check whether a required set of port attributes is satisfied in the
+--   current context.
+requirePortAttrs :: Rules -> PortAttrs Constraint -> [Stmt]
+requirePortAttrs rules@(MkRules rs) as = do
+    (n,c) <- portAttrsToList as
+    let path = Path Relative [n]
+    return $ case c of
+      Exactly v ->
+        let t = primType v
+        in check path (One t) (oneOf t (compatible n v))
+      OneOf vs ->
+        let t = primType (head vs)
+        in check path (One t) (oneOf t (concatMap (compatible n) vs))
+      Range lo hi ->
+        check path (One TInt) (val .>= int lo &&& val .<= int hi)
+      Sync [as] ->
+        In path [ Elems (requirePortAttrs rules as) ]
+      Sync _ ->
+        error "requirePortAttrs: we don't support choices of synchronized attributes in requirements."
   where
-    ptype = case c of
-      Exactly v  -> primType v
-      OneOf vs   -> primType (head vs)
-      Range _ _  -> TInt
-      Equation _ -> TInt
-    eq a b = case ptype of
+    eq t a b = case t of
       TUnit   -> true
       TBool   -> One (P2 (BB_B Eqv) a b)
       TInt    -> One (P2 (NN_B Equ) a b)
       TFloat  -> One (P2 (NN_B Equ) a b)
       TSymbol -> One (P2 (SS_B SEqu) a b)
-    body (Exactly v)   = eq val (lit v)
-    body (OneOf vs)    = foldr1 (|||) [eq val (lit v) | v <- vs]
-    body (Range lo hi) = val .>= int lo &&& val .<= int hi
-    body (Equation e)  = val .== One e  -- TODO this case should probably just throw an error
-
-
+    compatible n v = case envLookup (n,v) rs of
+      Right (Compatible vs) -> vs
+      _ -> [v]
+    oneOf t vs = foldr1 (|||) [eq t val (lit v) | v <- nub vs]
+    
 
 -- ** Application model
 
--- | Generate the application model for a given inventory and set of DAUs to
---   replace.
-appModel :: Inventory -> [Dau (PortGroups Constraint)] -> Model
-appModel inv daus = Model []
-    [ Elems $
-       create "/MonetaryCost" 0
-    :  create "/PortsToMatch" 0
-    :  [Load (sym (dauID d)) [] | d <- inv]
-    ++ requireDaus inv daus
-    ]
+-- | Generate the application model.
+appModel :: Rules -> Provisions -> [Dau (PortGroups Constraint)] -> Model
+appModel rules prov daus = Model [] [ Elems (requireDaus rules prov daus) ]
 
 
 --
@@ -366,10 +468,10 @@ triviallyConfigure (MkRequest ds) = MkResponse (map configDau ds)
     configDau (MkRequestDau _ (MkDau i ps mc)) =
         MkResponseDau [i] (MkDau i (map configPort ps) mc)
     configPort (MkPort i fn as) = MkResponsePort i (MkPort i fn (fmap configAttr as))
-    configAttr (Exactly v)  = v
-    configAttr (OneOf vs)   = head vs
-    configAttr (Range v _)  = I v
-    configAttr (Equation _) = I 0
+    configAttr (Exactly v)  = Leaf v
+    configAttr (OneOf vs)   = Leaf (head vs)
+    configAttr (Range v _)  = Leaf (I v)
+    configAttr (Sync ss)    = Node (fmap configAttr (head ss))
 
 
 -- ** Defining the search space
@@ -383,10 +485,14 @@ toReplace = map (groupPortsInDau . reqDau) . filter replace . reqDaus
 --   sub-inventory. A max size less than 1 indicates unbounded sub-inventory
 --   size (which will be slow for large inventories).
 toSearch :: Int -> [Dau (PortGroups Constraint)] -> Inventory -> [Inventory]
-toSearch size daus inv = sortInventories $
-    (if size > 0 then subsUpToLength size else subsequences) filtered
+toSearch size daus inv = map (free ++) $ sortInventories
+    ((if size > 0 then subsUpToLength size else subsequences) nonFree)
   where
     filtered = filterInventory (concatMap ports daus) inv
+    (free,nonFree) = foldr splitFree ([],[]) filtered
+    splitFree d (f,n)
+      | monCost d <= 0 = (d:f, n)
+      | otherwise      = (f, d:n)
 
 
 -- ** Building the response
@@ -394,7 +500,7 @@ toSearch size daus inv = sortInventories $
 -- | Mapping from DAU IDs and group indexes to the set of member port IDs.
 type PortMap = Map (Name,Int) [Name]
 
--- | A nested maps that describes which inventory DAUs and port groups
+-- | A nested map that describes which inventory DAUs and port groups
 --   replace which request DAUs and port groups. The keys of the outer map
 --   are inventory DAU IDs, keys of the inner map are inventory group IDs.
 --   values are a list. Values of the outer map include a list of request
@@ -436,20 +542,21 @@ buildReplaceMap = foldr processDim Map.empty
         | k == "Cfg" = daus
         | otherwise  = error ("buildReplaceMap: Unrecognized dimension: " ++ dim)
       where
-        [k,l,r] = words dim
+        (k:l:r:_) = words dim
         split = break (== '+')
 
 -- | Build a configuration from the output of the SAT solver.
 buildConfig :: AllSatResult -> BExpr
 buildConfig = foldr processDim true
-    . Map.keys . Map.filter (== trueCW) . head . getModelDictionaries
+    . Map.assocs . head . getModelDictionaries
   where
-    processDim dim cfg
+    processDim (dim,v) cfg
         | k == "Use" = cfg
-        | k == "Cfg" = BRef (fromString dim) &&& cfg
+        | k == "Cfg" = (if v == trueCW then ref else bnot ref) &&& cfg
         | otherwise  = error ("buildConfig: Unrecognized dimension: " ++ dim)
       where
-        [k,_,_] = words dim
+        ref = BRef (fromString dim)
+        (k:_) = words dim
 
 -- | Create a response.
 buildResponse
@@ -479,66 +586,94 @@ buildResponseDau renv rep cfg (MkDau d gs c) ports =
   where
     (ports', gs') = foldl' go (ports,[]) (zip gs [1..])
     go (ps,gs) (g,i) =
-      let (ps',ns) = replacedPortNames rep d i (groupSize g) ps
+      let (ps', ns) = replacedPorts rep d i (groupSize g) ps
       in (ps', gs ++ expandAndConfig renv cfg ns d i g)
 
--- | Consume and return replaced port names.
-replacedPortNames
-  :: ReplaceMap
-  -> Name
-  -> Int
-  -> Int
-  -> PortMap
-  -> (PortMap, [Name])
-replacedPortNames rep invDau invGrp size ports
+-- | Consume and return replaced ports.
+replacedPorts
+  :: ReplaceMap            -- ^ replacement-tracking map
+  -> Name                  -- ^ inventory DAU ID
+  -> Int                   -- ^ inventory group index
+  -> Int                   -- ^ size of inventory group
+  -> PortMap               -- ^ map of ports that need replacing
+  -> (PortMap, [(Name,Int,[Name])])
+replacedPorts rep invDau invGrp size ports
     | Just (_, grps) <- Map.lookup invDau rep
     , Just reqs <- Map.lookup invGrp grps
-    = let go (ps,ns,k) r = case Map.lookup r ps of
-            Just ms | length ms <= k -> (Map.insert r [] ps, ns ++ ms, k - length ms)
-                    | otherwise      -> (Map.insert r (drop k ms) ps, ns ++ take k ms, 0)
+    = let go (ps,ns,k) r@(reqDau,reqGrp) = case Map.lookup r ps of
+            Just ms ->
+              ( Map.insert r (drop k ms) ps
+              , (reqDau, reqGrp, take k ms) : ns
+              , max 0 (k - length ms)
+              )
             Nothing -> (ps,ns,k)
           (ports', names, _) = foldl' go (ports, [], size) reqs
-      in (ports', names)
+      in (ports', reverse names)
     | otherwise = (ports,[])
 
 -- | Expand and configure a port group.
 expandAndConfig
-  :: ResEnv
-  -> BExpr
-  -> [Name]
-  -> Name
-  -> Int
-  -> PortGroup Constraint
+  :: ResEnv                -- ^ final resource environment
+  -> BExpr                 -- ^ configuration
+  -> [(Name,Int,[Name])]   -- ^ replaced required ports w/ DAU ID & group index
+  -> Name                  -- ^ inventory DAU ID
+  -> Int                   -- ^ inventory group index
+  -> PortGroup Constraint  -- ^ inventory port group
   -> [ResponsePort]
-expandAndConfig renv cfg old d i (MkPortGroup new f as _) = do
-    (n,o) <- zip new (old ++ repeat "")
-    return (MkResponsePort o (MkPort n f as'))
+expandAndConfig renv cfg repl invDau invGrp (MkPortGroup invPorts f as _) = do
+    (reqDau,reqGrp,reqPorts,invPorts') <- zipPorts repl invPorts
+    let as' = configPortAttrs renv cfg invDau invGrp reqDau reqGrp as
+    (old,new) <- zip reqPorts invPorts'
+    return (MkResponsePort old (MkPort new f as'))
   where
-    as' = configPortAttrs renv cfg d i as
+    zipPorts [] _ = []
+    zipPorts ((rn,rg,rps):t) ips =
+      let k = length rps
+      in (rn, rg, rps, take k ips) : zipPorts t (drop k ips)
 
 -- | Configure port attributes based on the resource environment.
 configPortAttrs
-  :: ResEnv
-  -> BExpr
-  -> Name
-  -> Int
-  -> PortAttrs Constraint
-  -> PortAttrs PVal
-configPortAttrs renv cfg d i (Env m) = Env (Map.mapWithKey config m)
+  :: ResEnv                -- ^ final resource environment
+  -> BExpr                 -- ^ configuration
+  -> Name                  -- ^ inventory DAU ID
+  -> Int                   -- ^ inventory group index
+  -> Name                  -- ^ required DAU ID
+  -> Int                   -- ^ required group index
+  -> PortAttrs Constraint  -- ^ inventory group's unconfigured attributes
+  -> PortAttrs AttrVal
+configPortAttrs renv cfg invDauID invGrpIx reqDauID reqGrpIx (MkPortAttrs (Env m)) =
+    MkPortAttrs (Env (Map.mapWithKey (config pre) m))
   where
-    path a = ResID [d, "Group", fromString (show i), "Attributes", a]
-    config a _ = case envLookup (path a) renv of
-                   Right v | One (Just pv) <- conf cfg v -> pv
-                   e -> error $ "Unconfigured attribute: " ++ show (path a) ++ " got: " ++ show e
+    pre = provPrefix invDauID invGrpIx reqDauID reqGrpIx <> "Attributes"
+    dimGen = dimAttr invDauID invGrpIx reqDauID reqGrpIx
+    path (ResID ns) a = ResID (ns ++ [a])
+    config p a (Sync as) =
+      let ds = take (length as) (dimN (dimGen a))
+          ix = fromMaybe 0 $ findIndex (\d -> sat (BRef d &&& cfg)) ds
+          MkPortAttrs (Env m) = as !! ix
+      in Node (MkPortAttrs (Env (Map.mapWithKey (config (path p a)) m)))
+    config p a _ = case envLookup (path p a) renv of
+      Right v -> case fullConfig cfg v of
+        Just pv -> Leaf pv
+        Nothing -> error $ "Misconfigured attribute: " ++ show (path p a)
+                     ++ "\n  started with: " ++ show v
+                     ++ "\n  configured with: " ++ show cfg
+      Left err -> error (show err)
+
+-- | Fully configure a value.
+fullConfig :: BExpr -> Value -> Maybe PVal
+fullConfig _   (One v) = v
+fullConfig cfg (Chc c l r)
+    | sat (c &&& cfg) = fullConfig cfg l
+    | otherwise       = fullConfig cfg r
 
 
 -- ** Main driver
 
 -- | Find replacement DAUs in the given inventory.
-findReplacement :: Int -> Inventory -> Request -> IO (Maybe Response)
-findReplacement mx inv req = do
-    -- writeJSON "outbox/swap-dictionary-debug.json" dict
-    -- writeJSON "outbox/swap-model-debug.json" (appModel (invs !! 1) daus)
+findReplacement :: Int -> Rules -> Inventory -> Request -> IO (Maybe Response)
+findReplacement mx rules inv req = do
+    -- writeJSON "outbox/swap-model-debug.json" (appModel rules (provisions (invs !! 1)) daus)
     -- putStrLn $ "To replace: " ++ show daus
     -- putStrLn $ "Inventory: " ++ show inv
     case loop invs of
@@ -546,17 +681,17 @@ findReplacement mx inv req = do
       Just (i, renv, ctx) -> do 
         r <- satResults 1 ctx
         writeFile "outbox/swap-solution.txt" (show r)
-        -- putStrLn (show (processSatResults r))
+        -- putStrLn $ "Configuration: " ++ show (buildConfig r)
+        -- putStrLn $ "Resource Env: " ++ show renv
         return (Just (buildResponse ports i renv (buildReplaceMap r) (buildConfig r)))
   where
-    dict = toDictionary inv
     daus = toReplace req
     invs = toSearch mx daus inv
     ports = buildPortMap daus
-    test i = runWithDict dict envEmpty (loadModel (appModel i daus) [])
+    test i = runWithDict envEmpty (initEnv i) (loadModel (appModel rules (provisions i) daus) [])
     loop []     = Nothing
     loop (i:is) = case test i of
-        -- (Left _, s) -> traceShow s (loop is)
+        -- (Left _, s) -> traceShow (shrink s) (loop is)
         (Left _, _) -> loop is
         (Right _, SCtx renv ctx _) -> Just (i, renv, bnot ctx)
 
@@ -565,49 +700,26 @@ findReplacement mx inv req = do
 -- * JSON serialization of BBN interface
 --
 
-instance ToJSON p => ToJSON (Dau p) where
-  toJSON d = object
-    [ "GloballyUniqueId"   .= String (dauID d)
-    , "Port"               .= toJSON (ports d)
-    , "BBNDauMonetaryCost" .= Number (fromInteger (monCost d)) ]
-
-asDau :: ParseIt a -> ParseIt (Dau (Ports a))
-asDau asVal = do
-    i <- key "GloballyUniqueId" asText
-    ps <- key "Port" (eachInArray (asPort asVal))
-    mc <- key "BBNDauMonetaryCost" asIntegral
-    return (MkDau i ps mc)
-
-instance ToJSON a => ToJSON (Port a) where
-  toJSON p = object (pid : pfn : pattrs)
+instance ToJSON Rules where
+  toJSON (MkRules m) = listValue rule (envToList m)
     where
-      pid = "GloballyUniqueId" .= portID p
-      pfn = "BBNPortFunctionality" .= portFunc p
-      pattrs = map entry (envToList (portAttrs p))
-      entry (k,v) = k .= toJSON v
+      rule ((a,v),r) = object
+        [ "Attribute" .= String a
+        , "AttributeValue" .= toJSON v
+        , case r of
+            Compatible vs -> "Compatible" .= listValue toJSON vs
+            Equation e    -> "Equation"   .= toJSON e
+        ]
 
-asPort :: ParseIt a -> ParseIt (Port a)
-asPort asVal = do
-    i <- key "GloballyUniqueId" asText
-    fn <- key "BBNPortFunctionality" asText
-    kvs <- eachInObject asVal 
-    return (MkPort i fn (envFromList (filter isAttr kvs)))
+asRules :: ParseIt Rules
+asRules = eachInArray rule >>= return . MkRules . envFromList
   where
-    exclude = ["GloballyUniqueId", "BBNPortFunctionality"]
-    isAttr (k,_) = not (elem k exclude)
-
-instance ToJSON Constraint where
-  toJSON (Exactly v)   = toJSON v
-  toJSON (OneOf vs)    = listValue toJSON vs
-  toJSON (Range lo hi) = object [ "Min" .= toJSON lo, "Max" .= toJSON hi ]
-  toJSON (Equation e)  = object [ "Equation" .= toJSON e ]
-
-asConstraint :: ParseIt Constraint
-asConstraint = Exactly <$> asPVal
-    <|> OneOf <$> eachInArray asPVal
-    <|> Range <$> key "Min" asInt <*> key "Max" asInt
-    <|> Equation <$> key "Equation" asExpr'
-  where
+    rule = do
+      a <- key "Attribute" asText
+      v <- key "AttributeValue" asPVal
+      r <- Compatible <$> key "Compatible" (eachInArray asPVal)
+             <|> Equation <$> key "Equation" asExpr'
+      return ((a,v),r)
     -- TODO Alex's revised parser doesn't handle spaces right...
     -- this is a customized version of asExpr that works around this
     asExpr' = do
@@ -616,6 +728,67 @@ asConstraint = Exactly <$> asPVal
       case parseExprText t' of
         Right e  -> pure e
         Left msg -> throwCustomError (ExprParseError (pack msg) t)
+
+instance ToJSON p => ToJSON (Dau p) where
+  toJSON d = object
+    [ "GloballyUniqueId"   .= String (dauID d)
+    , "Port"               .= toJSON (ports d)
+    , "BBNDauMonetaryCost" .= Number (fromInteger (toInteger (monCost d))) ]
+
+asDau :: ParseIt a -> ParseIt (Dau (Ports a))
+asDau asVal = do
+    i <- key "GloballyUniqueId" asText
+    ps <- key "Port" (eachInArray (asPort asVal))
+    mc <- key "BBNDauMonetaryCost" asIntegral
+    return (MkDau i ps mc)
+
+portAttrsPairs :: ToJSON a => PortAttrs a -> [Pair]
+portAttrsPairs = map entry . portAttrsToList
+    where
+      entry (k,v) = k .= toJSON v
+
+asPortAttrs :: ParseIt a -> ParseIt (PortAttrs a)
+asPortAttrs asVal = do
+    kvs <- eachInObject asVal
+    return (portAttrsFromList (filter isAttr kvs))
+  where
+    exclude = ["GloballyUniqueId", "BBNPortFunctionality"]
+    isAttr (k,_) = not (elem k exclude)
+
+instance ToJSON a => ToJSON (Port a) where
+  toJSON p = object (pid : pfn : pattrs)
+    where
+      pid = "GloballyUniqueId" .= portID p
+      pfn = "BBNPortFunctionality" .= portFunc p
+      pattrs = portAttrsPairs (portAttrs p)
+
+asPort :: ParseIt a -> ParseIt (Port a)
+asPort asVal = do
+    i <- key "GloballyUniqueId" asText
+    fn <- key "BBNPortFunctionality" asText
+    as <- asPortAttrs asVal
+    return (MkPort i fn as)
+
+instance ToJSON Constraint where
+  toJSON (Exactly v)   = toJSON v
+  toJSON (OneOf vs)    = listValue toJSON vs
+  toJSON (Range lo hi) = object [ "Min" .= toJSON lo, "Max" .= toJSON hi ]
+  toJSON (Sync ss)     = listValue (object . portAttrsPairs) ss
+
+asConstraint :: ParseIt Constraint
+asConstraint = Exactly <$> asPVal
+    <|> OneOf <$> eachInArray asPVal
+    <|> Range <$> key "Min" asInt <*> key "Max" asInt
+    <|> Sync  <$> eachInArray (asPortAttrs asConstraint)
+    <|> Sync . (:[]) <$> asPortAttrs asConstraint
+
+instance ToJSON AttrVal where
+  toJSON (Leaf v)  = toJSON v
+  toJSON (Node as) = object (portAttrsPairs as)
+
+asAttrVal :: ParseIt AttrVal
+asAttrVal = Leaf <$> asPVal
+    <|> Node <$> asPortAttrs asAttrVal
 
 instance ToJSON SetInventory where
   toJSON s = object
@@ -670,10 +843,8 @@ instance ToJSON ResponsePort where
 defaultMaxDaus :: Int
 defaultMaxDaus   = 2
 
--- defaultIntervals :: Int
--- defaultIntervals = 2
-
-defaultInventoryFile, defaultRequestFile, defaultResponseFile :: FilePath
+defaultRulesFile, defaultInventoryFile, defaultRequestFile, defaultResponseFile :: FilePath
+defaultRulesFile     = "inbox/swap-rules.json"
 defaultInventoryFile = "inbox/swap-inventory.json"
 defaultRequestFile   = "inbox/swap-request.json"
 defaultResponseFile  = "outbox/swap-response.json"
@@ -681,14 +852,14 @@ defaultResponseFile  = "outbox/swap-response.json"
 data SwapOpts = MkSwapOpts {
      swapRunSearch     :: Bool
    , swapMaxDaus       :: Int
-   -- , swapMaxIntervals  :: Int
+   , swapRulesFile     :: FilePath
    , swapInventoryFile :: FilePath
    , swapRequestFile   :: FilePath
    , swapResponseFile  :: FilePath
 } deriving (Data,Typeable,Generic,Eq,Read,Show)
 
 defaultOpts :: SwapOpts
-defaultOpts = MkSwapOpts True 2 defaultInventoryFile defaultRequestFile defaultResponseFile
+defaultOpts = MkSwapOpts True 2 defaultRulesFile defaultInventoryFile defaultRequestFile defaultResponseFile
 
 parseSwapOpts :: Parser SwapOpts
 parseSwapOpts = MkSwapOpts
@@ -700,12 +871,12 @@ parseSwapOpts = MkSwapOpts
     <*> intOption 
          ( long "max-daus"
         <> value defaultMaxDaus
-        <> help "Max number of DAUs to include in  response; 0 for no limit" )
-    
-    -- <*> intOption 
-    --      ( long "range-intervals"
-    --     <> value defaultIntervals
-    --     <> help "Number of intervals to use for range constraints" )
+        <> help "Max number of DAUs to include in response; 0 for no limit" )
+
+    <*> pathOption
+         ( long "rules-file"
+        <> value defaultRulesFile
+        <> help "Path to the JSON rules file" )
 
     <*> pathOption
          ( long "inventory-file"
@@ -731,8 +902,9 @@ runSwap opts = do
     when (swapRunSearch opts) $ do
       req <- readJSON (swapRequestFile opts) asRequest
       MkSetInventory daus <- readJSON (swapInventoryFile opts) asSetInventory
+      rules <- readJSON (swapRulesFile opts) asRules
       putStrLn "Searching for replacement DAUs ..."
-      result <- findReplacement (swapMaxDaus opts) (createInventory daus) req
+      result <- findReplacement (swapMaxDaus opts) rules (createInventory daus) req
       case result of
         Just res -> do 
           let resFile = swapResponseFile opts
@@ -747,4 +919,5 @@ runSwapTest :: SwapOpts -> IO (Maybe Response)
 runSwapTest opts = do
     req <- readJSON (swapRequestFile opts) asRequest
     MkSetInventory daus <- readJSON (swapInventoryFile opts) asSetInventory
-    findReplacement (swapMaxDaus opts) (createInventory daus) req
+    rules <- readJSON (swapRulesFile opts) asRules
+    findReplacement (swapMaxDaus opts) rules (createInventory daus) req

@@ -31,9 +31,9 @@ public class FlighttestConstraintSolver {
 
 	public void solve() {
 		try {
-			dataValidator.validateConfiguration(ValidationScenario.InputConfigurationUsage);
-			dataValidator.validateConfiguration(ValidationScenario.InputConfigurationRequirements);
-			dataValidator.validateConfiguration(ValidationScenario.DauInventory);
+			dataValidator.validateConfiguration(ValidationScenario.InputConfigurationUsage, true, false);
+			dataValidator.validateConfiguration(ValidationScenario.InputConfigurationRequirements, true, false);
+			dataValidator.validateConfiguration(ValidationScenario.DauInventory, false, true);
 
 			portMappingValidator.validateInitialData();
 
@@ -51,7 +51,7 @@ public class FlighttestConstraintSolver {
 			dataSource.restart();
 			portMappingValidator.validateResultData(dataSource.getPortMappingDetails());
 
-			dataValidator.validateConfiguration(ValidationScenario.OutputConfigurationUsage);
+			dataValidator.validateConfiguration(ValidationScenario.OutputConfigurationUsage, true, false);
 
 		} catch (NestedPathException e) {
 			throw AdaptationnException.internal(e);

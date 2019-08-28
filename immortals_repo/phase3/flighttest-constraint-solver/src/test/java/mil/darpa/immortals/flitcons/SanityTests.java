@@ -26,4 +26,14 @@ public class SanityTests {
 	public void testServerSequential() {
 		EmbeddedTestScenario5Runner.createScenario5Runner("s5s").execute();
 	}
+
+	@Test
+	public void testSwriExample1() {
+		EmbeddedTestScenario5Runner.createScenario5Runner("s5e1").execute();
+	}
+
+	@Test
+	public void testSwriExample2() {
+		EmbeddedTestScenario5Runner.createScenario5Runner("s5e2").execute();
+	}
 }

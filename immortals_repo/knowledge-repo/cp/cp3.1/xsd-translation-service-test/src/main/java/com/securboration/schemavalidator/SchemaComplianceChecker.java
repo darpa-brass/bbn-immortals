@@ -639,7 +639,14 @@ public class SchemaComplianceChecker {
             this.normalizedBadnessScore = normalizedBadnessScore;
             this.weightedBadnessScore = weightedBadnessScore;
         }
+        
+        public List<BadnessReportElement> getReportElements(){
+            return elements;
+        }
 
+        public int getNumBadElements(){
+            return elements.size();
+        }
         
         public double getBadnessScore() {
             return normalizedBadnessScore;
@@ -671,7 +678,7 @@ public class SchemaComplianceChecker {
         
     }
     
-    private static class BadnessReportElement{
+    public static class BadnessReportElement{
         
         private final Exception e;
         private final String exceptionClass;
@@ -687,6 +694,21 @@ public class SchemaComplianceChecker {
         @Override
         public String toString(){
             return exceptionClass.toUpperCase() + ": " + summary;
+        }
+
+        
+        public Exception getE() {
+            return e;
+        }
+
+        
+        public String getExceptionClass() {
+            return exceptionClass;
+        }
+
+        
+        public String getSummary() {
+            return summary;
         }
         
     }

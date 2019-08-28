@@ -3,7 +3,7 @@
 		{
 			"shortName": "s5",
 			"prettyName": "Scenario 5 Basic",
-			"timeoutMS": 60000,
+			"timeoutMS": 120000,
 			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/s5_dauInventory.xml",
 			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml",
 			"expectedStatusSequence": [
@@ -14,9 +14,55 @@
 		{
 			"shortName": "s5s",
 			"prettyName": "Scenario 5 Basic Sequential",
-			"timeoutMS": 90000,
+			"timeoutMS": 120000,
 			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/s5s_dauInventory.xml",
 			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
+		},
+		{
+			"shortName": "s5MoreMeasurements",
+			"prettyName": "Scenario 5 Basic With More Measurements",
+			"timeoutMS": 120000,
+			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/s5_dauInventory_more_measurements.xml",
+			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
+		},
+		{
+			"shortName": "s5sMoreMeasurements",
+			"prettyName": "Scenario 5 Basic Sequential With More Measurements",
+			"timeoutMS": 120000,
+			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/s5s_dauInventory_more_measurements.xml",
+			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
+		},
+		{
+			"shortName": "s5_old",
+			"prettyName": "Scenario 5 Basic (No attribute grouping;Intended for integration tests using the SimpleSolver",
+			"timeoutMS": 60000,
+			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/old_s5_dauInventory.xml",
+			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/old_s5_input_mdlRoot.xml",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			]
+		},
+		{
+			"shortName": "s5s_old",
+			"prettyName": "Scenario 5 Basic Sequential (No attribute grouping;Intended for integration tests using the SimpleSolver",
+			"timeoutMS": 90000,
+			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/old_s5s_dauInventory.xml",
+			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/old_s5_input_mdlRoot.xml",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful",
 				"AdaptationSuccessful",

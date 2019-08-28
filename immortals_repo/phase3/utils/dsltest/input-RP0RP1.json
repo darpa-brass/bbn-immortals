@@ -1,0 +1,47 @@
+{
+  "daus": [
+    {
+      "GloballyUniqueId": "#89:1",
+      "Port": [
+        {
+          "GloballyUniqueId": "RP0",
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "Measurement": {
+            "SampleRate": {
+              "Min": 80,
+              "Max": 130
+            },
+            "DataLength": {
+              "Min": 16,
+              "Max": 16
+            },
+            "DataRate": {
+              "Min": 0,
+              "Max": 32768
+            }
+          }
+        },
+        {
+          "GloballyUniqueId": "RP1",
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "Measurement": {
+            "SampleRate": {
+              "Min": 80,
+              "Max": 130
+            },
+            "DataLength": {
+              "Min": 16,
+              "Max": 16
+            },
+            "DataRate": {
+              "Min": 0,
+              "Max": 32768
+            }
+          }
+        }
+      ],
+      "BBNDauFlaggedForReplacement": true,
+      "BBNDauMonetaryCost": 50000
+    }
+  ]
+}

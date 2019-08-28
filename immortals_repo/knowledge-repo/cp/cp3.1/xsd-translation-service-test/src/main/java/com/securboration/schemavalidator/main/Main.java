@@ -6,8 +6,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Stack;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -16,11 +23,14 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.math3.stat.Frequency;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.securboration.schemavalidator.SchemaComplianceChecker;
 import com.securboration.schemavalidator.SchemaComplianceChecker.BadnessReport;
+import com.securboration.schemavalidator.SchemaComplianceChecker.BadnessReportElement;
 import com.securboration.test.Document;
 import com.securboration.test.DocumentSet;
 import com.securboration.test.TranslationProblemDefinition;
@@ -30,12 +40,21 @@ import com.securboration.test.XsltTransformer;
 public class Main {
     
     public static void main(String[] args) throws Exception {
-//        if(false)
+//        {//TODO
+//            System.setProperty("translationProblemsDir", "C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\xsd-translation-service-test\\output\\translationProblemInstances");
+//            System.setProperty("clientUrl", "http://localhost:8090/xsdsts");
+//            
+//            System.setProperty("resultsDir", "./results/zzz");
+//            
+//        }//TODO
+        
+        
+        
 //        {//TODO
 //            System.setProperty("srcSchema", "C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\xsd-translation-service-test\\zTest\\MDL_v0_8_17\\schema\\MDL_v0_8_17.xsd");
 //            System.setProperty("dstSchema", "C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\xsd-translation-service-test\\zTest\\MDL_v0_8_19\\schema\\MDL_v0_8_19.xsd");
 //            System.setProperty("srcDocs", "C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\xsd-translation-service-test\\zTest\\MDL_v0_8_17\\datasource");
-//            System.setProperty("resultsDir", "./results/afterUpgrade");
+//            System.setProperty("resultsDir", "./results/afterUpgrade2");
 //            System.setProperty("clientUrl", "http://localhost:8090/xsdsts");
 //        }//TODO
         
@@ -48,24 +67,117 @@ public class Main {
 //          System.setProperty("clientUrl", "http://localhost:8090/xsdsts");
 //      }//TODO
         
-        final File srcDocsDir = getFileFromProperty("srcDocs","path to a dir containing dst-compliant XML docs",null,true);
+        final String clientUrl = getProperty("clientUrl","base URL of a translation endpoint to test",null,false);
         final File resultsDir = getFileFromProperty("resultsDir","path to an output directory",new File("./results/" + System.currentTimeMillis()).getCanonicalPath(),true);
         
+        final String testInstancesDir = getProperty("translationProblemsDir","path to a dir containing multiple translation problem instances to iterate through",null,true);
+        
+        if(testInstancesDir != null){//we instead perform a batch-mode evaluation if this property is set
+            main2(clientUrl,testInstancesDir,resultsDir);
+            return;
+        }
+        
+        //perform a one-off evaluation run
+        
+        final File srcDocsDir = getFileFromProperty("srcDocs","path to a dir containing dst-compliant XML docs",null,true);
         final File srcSchemaFile = getFileFromProperty("srcSchema","path to a src schema xsd",null,false);
         final File dstSchemaFile = getFileFromProperty("dstSchema","path to a src schema xsd",null,false);
-        final String clientUrl = getProperty("clientUrl","base URL of a translation endpoint to test",null,false);
         
-        test(srcSchemaFile,dstSchemaFile,srcDocsDir,resultsDir,clientUrl);
+        final MetricsTracker parent = new MetricsTracker("all translation problem instances");
+        
+        performTranslationTestInstance(
+            parent,
+            srcSchemaFile,
+            dstSchemaFile,
+            srcDocsDir,
+            resultsDir,
+            clientUrl
+            );
+        
+        System.out.println("\n\n"+parent.toString());//TODO
     }
     
+    private static void main2(
+            final String clientUrl,
+            final String testInstancesDir,
+            final File resultsDir
+            ) throws Exception{
+        
+        final File testInputDir = new File(testInstancesDir);
+        
+        final MetricsTracker parent = new MetricsTracker("all translation problem instances");
+        
+        for(File f:testInputDir.listFiles()){
+            
+            final File localResultsDir = new File(resultsDir,f.getName());
+            
+            if(!f.isDirectory()){
+                continue;
+            }
+            
+            System.out.printf("%s\n", f.getName());
+            
+            final File srcDocsDir = new File(f,"srcDocs");
+            final File srcSchemaFile = detectMdlFile(new File(f,"srcSchema"));
+            final File dstSchemaFile = detectMdlFile(new File(f,"dstSchema"));
+            
+            performTranslationTestInstance(
+                parent,
+                srcSchemaFile,
+                dstSchemaFile,
+                srcDocsDir,
+                localResultsDir,
+                clientUrl
+                );
+            
+            System.out.println("\n\n"+parent.toString());
+        }
+        
+        final File outputFile = new File(resultsDir,"metrics.dat");
+        
+        FileUtils.writeStringToFile(
+            outputFile,
+            parent.toString(), 
+            StandardCharsets.UTF_8
+            );
+        
+        System.out.printf(
+            "dumped metrics.dat to %s\n", 
+            outputFile.getAbsolutePath()
+            );
+    }
     
-    private static void test(
+    private static File detectMdlFile(final File dir){
+        for(File f:dir.listFiles()){
+            if(f.isDirectory()){
+                continue;
+            }
+            if(!f.isFile()){
+                continue;
+            }
+            
+            if(f.getName().startsWith("MDL_")){
+                return f;
+            }
+        }
+        
+        throw new RuntimeException("no MDL xsd detected in " + dir.getAbsolutePath());
+    }
+    
+    private static void performTranslationTestInstance(
+            final MetricsTracker parentMetrics,
             final File srcSchemaFile, 
             final File dstSchemaFile, 
             final File srcDocsDir, 
             final File resultsDir,
             final String clientUrl
             ) throws Exception {
+        parentMetrics.incrementValue("numTranslationProblemInstances");
+        
+        final MetricsTracker localMetrics = parentMetrics.getChild(
+            String.format("%s-to-%s", srcSchemaFile.getName(), dstSchemaFile.getName())
+            );
+        
         final Report report = new Report();
         
         try{
@@ -109,8 +221,25 @@ public class Main {
                     report.$("\tchecking %s...\n",f.getCanonicalPath());
                     
                     try(FileInputStream fis = new FileInputStream(f)){
+                        
                         srcValidator.validate(new StreamSource(fis));
                         report.$("\t\tthe document is compliant with the src schema\n");
+                        
+                        if(false)
+                        {//TODO: enable this block if you want to allow already-compliant documents to be included
+                            try(FileInputStream fis2 = new FileInputStream(f)){
+                                dstValidator.validate(new StreamSource(fis2));
+                                report.$("\t\tthe document is already compliant with the dst schema and will be excluded during testing\n");
+                                
+                                continue;//continue on to the next document since this one is trivially conformant and therefore uninteresting for testing
+                            } catch(SAXException e){
+                                report.$("\t\tthe document is NOT compliant with the dst schema\n");
+                                //do nothing, we expected an error here
+                            }
+                        }
+                        
+                        report.$("\t\tthe document is interesting and will be included during testing\n");
+                        
                         docsToTranslate.add(f);
                     } catch(Exception e){
                         System.out.println(f.getAbsolutePath());
@@ -163,6 +292,9 @@ public class Main {
                     StandardCharsets.UTF_8
                     );
                 
+                localMetrics.addValue("xsltAcquisitionTimeMillis",elapsed);
+                localMetrics.addValue("xsltSizeBytes",xslt.getBytes().length);
+                
                 report.$("obtained a %dB XSLT in %dms\n",xslt.getBytes().length,elapsed);
             }
             
@@ -176,6 +308,10 @@ public class Main {
                 int numDocuments = 0;
                 
                 for(File f:docsToTranslate){
+                    localMetrics.incrementValue("documentsTranslatedCount");
+                    localMetrics.incrementValue("documentsTranslatedPerfectlyCount",0L);
+                    localMetrics.incrementValue("documentsTranslatedImperfectlyCount",0L);
+                    
                     report.$("\tusing %s...\n",f.getCanonicalPath());
                     
                     try{
@@ -199,15 +335,28 @@ public class Main {
                             );
                         
                         numDocuments++;
+                        
+                        localMetrics.addValue("badElementsCount",r.getNumBadElements());
+                        localMetrics.addValue("badLinesCount",r.getWeightedBadnessScore());
+                        localMetrics.addValue("badLinesFraction",r.getBadnessScore());
+                        
                         if(r.getBadnessScore() > 0){
                             normalizedBadness += r.getBadnessScore();
                             weightedBadness += r.getWeightedBadnessScore();
                             numProblematic += 1d;
                             
+                            localMetrics.incrementValue("documentsTranslatedImperfectlyCount");
                             report.$("\tthe translated document is NOT schema compliant because:\n%s\n", r.toString());
+                            
+                            for(BadnessReportElement bre:r.getReportElements()){
+                                localMetrics.incrementFrequency("validatorExceptionClass",bre.getE().getClass().getName());//TODO
+                                localMetrics.incrementFrequency("validatorProblematicElementName", extractElementName(bre.getE()));
+                                localMetrics.incrementFrequency("validatorProblemDesc", bre.getE().getMessage());
+                            }
                         } else {
                             numPerfect += 1d;
                             
+                            localMetrics.incrementValue("documentsTranslatedPerfectlyCount");
                             report.$("\tthe translated document is schema compliant\n");
                         }
                     } catch(Exception e){
@@ -241,12 +390,276 @@ public class Main {
         }
     }
     
+    private static String extractElementName(Exception e){
+        final String message = e.getMessage();
+        
+        if(!message.contains("Invalid content was found starting with element '")){
+            return "unknown";
+        }
+        
+        final String magic = "Invalid content was found starting with element '";
+        
+        final int startIndex = message.indexOf(magic) + magic.length();
+        
+        final int endIndex = message.indexOf("'",startIndex);
+        
+        return message.substring(startIndex,endIndex);
+    }
+    
+    private static class MetricsTracker{
+        
+        private final String name;
+        
+        private final MetricsTracker parent;
+        
+        private final List<MetricsTracker> children = new ArrayList<>();
+        
+        private final Map<String,Frequency> frequencies = new LinkedHashMap<>();
+        
+        private final Map<String,DescriptiveStatistics> metrics = new LinkedHashMap<>();
+        
+        private final Map<String,Long> counters = new LinkedHashMap<>();
+        
+        
+        //e.g., "problematicElementName" : "<module>"->1234, "<other>"->4567
+        private void incrementFrequency(
+                final String key,
+                final String value
+                ){
+            if(parent != null){
+                parent.incrementFrequency(key, value);
+            }
+            
+            Frequency f = frequencies.get(key);
+            if(f == null){
+                f = new Frequency();
+                frequencies.put(key,f);
+            }
+            
+            f.addValue(value);
+        }
+        
+        private static void addValueNumeric(
+                final StringBuilder sb,
+                final String metricName, 
+                final double value
+                ){
+            sb.append(String.format(
+                "%s = %1.4f, ",
+                metricName,
+                value
+                ));
+        }
+        
+        @Override
+        public String toString(){
+            final StringBuilder sb = new StringBuilder();
+            
+            toString(sb);
+            
+            return sb.toString();
+        }
+        
+        private String getPath(){
+            Stack<String> stack = new Stack<>();
+            
+            MetricsTracker current = this;
+            while(current != null){
+                stack.push(current.name);
+                current = current.parent;
+            }
+            
+            StringBuilder sb = new StringBuilder();
+            
+            boolean first = true;
+            while(!stack.isEmpty()){
+                if(first){
+                    first = false;
+                } else {
+                    sb.append(" -> ");
+                }
+                
+                sb.append("[" + stack.pop() + "]");
+            }
+            
+            return sb.toString();
+        }
+        
+        private static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+            List<Entry<K, V>> list = new ArrayList<>(map.entrySet());
+            list.sort(Entry.comparingByValue());
+            
+            Collections.reverse(list);//sort descending
+
+            Map<K, V> result = new LinkedHashMap<>();
+            for (Entry<K, V> entry : list) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+
+            return result;
+        }
+        
+        private void toString(StringBuilder sb){
+            sb.append(String.format("metrics for context %s\n",getPath()));
+            
+            for(String key:counters.keySet()){
+                final Long stats = counters.get(key);
+                
+                sb.append(String.format("counter \"%s\" = %d\n",key,stats));
+            }
+            for(String key:metrics.keySet()){
+                final DescriptiveStatistics stats = metrics.get(key);
+                
+                sb.append(String.format("statistic \"%s\" ",key));
+                
+                addValueNumeric(sb,"arithmeticMean",stats.getMean());
+                addValueNumeric(sb,"stdv",stats.getStandardDeviation());
+                addValueNumeric(sb,"min",stats.getMin());
+                addValueNumeric(sb,"max",stats.getMax());
+                addValueNumeric(sb,"percentile1",stats.getPercentile(1d));
+                addValueNumeric(sb,"percentile5",stats.getPercentile(5d));
+                addValueNumeric(sb,"percentile15",stats.getPercentile(15d));
+                addValueNumeric(sb,"percentile25",stats.getPercentile(25d));
+                addValueNumeric(sb,"percentile50",stats.getPercentile(50d));
+                addValueNumeric(sb,"percentile75",stats.getPercentile(50d));
+                addValueNumeric(sb,"percentile85",stats.getPercentile(85d));
+                addValueNumeric(sb,"percentile95",stats.getPercentile(95d));
+                addValueNumeric(sb,"percentile99",stats.getPercentile(99d));
+                addValueNumeric(sb,"skewness",stats.getSkewness());
+                addValueNumeric(sb,"geometricMean",stats.getGeometricMean());
+                
+                sb.append("\n");
+            }
+            for(String key:frequencies.keySet()){
+                sb.append(String.format("freq \"%s\" => ", key));
+                
+                final Frequency f = frequencies.get(key);
+                
+                final Map<Comparable<?>,Long> counts = new HashMap<>();
+                Iterator<Comparable<?>> iterator = f.valuesIterator();
+                while(iterator.hasNext()){
+                    Comparable<?> c = iterator.next();
+                    
+                    final long count = f.getCount(c);
+                    
+                    counts.put(c, count);
+                }
+                
+                Map<Comparable<?>,Long> sorted = sortByValue(counts);
+                
+                for(Comparable<?> k:sorted.keySet()){
+                    sb.append(String.format("\"%s\" = %d, ",k,sorted.get(k)));
+                }
+                
+                sb.append("\n");
+            }
+            
+            
+            sb.append("\n");
+            
+            for(MetricsTracker child:children){
+                child.toString(sb);
+            }
+        }
+        
+        public void incrementValue(
+                final String key
+                ){
+            incrementValue(key,1L);
+        }
+                
+        
+        public void incrementValue(
+                final String key, 
+                final long value
+                ){
+            if(parent != null){
+                parent.incrementValue(key, value);
+            }
+            
+            Long v = counters.get(key);
+            if(v == null){
+                v = 0L;
+            }
+            
+            counters.put(key, v+value);
+        }
+        
+        public void addValue(
+                final String key, 
+                final double value
+                ){
+            if(parent != null){
+                parent.addValue(key, value);
+            }
+            
+            DescriptiveStatistics s = metrics.get(key);
+            
+            if(s == null){
+                s = new DescriptiveStatistics();
+                metrics.put(key, s);
+            }
+            
+            s.addValue(value);
+        }
+
+        public MetricsTracker(
+                String name
+                ) {
+            this(name,null);
+        }
+        
+        private MetricsTracker(
+                String name,
+                MetricsTracker parent
+                ) {
+            this.name = name;
+            this.parent = parent;
+        }
+        
+        public MetricsTracker getChild(String name){
+            MetricsTracker child = new MetricsTracker(name,this);
+            
+            this.children.add(child);
+            
+            return child;
+        }
+    }
+    
     private static class Report{
         final StringBuilder sb = new StringBuilder();
         
         void $(String format, Object...args){
             System.out.printf(format, args);
             sb.append(String.format(format, args));
+        }
+        
+        void metricNumeric(
+                String metricName, 
+                Object metricValue
+                ){
+            $("%s, %s, number\n",metricName,metricValue);
+        }
+        
+        void metricOther(
+                String metricName, 
+                Object metricValue
+                ){
+            $("%s, %s, other\n",metricName,metricValue);
+        }
+        
+        void metricBoolean(
+                String metricName, 
+                Object metricValue
+                ){
+            $("%s, %s, boolean\n",metricName,metricValue);
+        }
+        
+        void metricDiscrete(
+                String metricName, 
+                Object metricValue
+                ){
+            $("%s, %s, discrete\n",metricName,metricValue);
         }
     }
     

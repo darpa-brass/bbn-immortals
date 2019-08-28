@@ -21,37 +21,32 @@ public class DisplayablePortMappings extends LinkedList<DisplayablePortMapping> 
 	}
 
 	public List<String> makeChart(@Nonnull String title) {
-		TreeMap<String, Map<String, Object>> rowColumnData = new TreeMap<>();
-		TreeMap<String, Map<String, Boolean>> validityMap = new TreeMap<>();
+		Utils.ChartData cd = new Utils.ChartData(title, EnvironmentConfiguration.isBasicDisplayMode());
 
 		for (DisplayablePortMapping portMapping : this) {
 			LinkedHashMap<String, Object> columnMap = new LinkedHashMap<>();
-			rowColumnData.put(portMapping.getId(), columnMap);
+			cd.rowColumnData.put(portMapping.getId(), columnMap);
 			LinkedHashMap<String, Boolean> columnColorMap = new LinkedHashMap<>();
-			validityMap.put(portMapping.getId(), columnColorMap);
+			cd.validityMap.put(portMapping.getId(), columnColorMap);
 			addValue(columnMap, columnColorMap, "DataRateRange", portMapping.getDataRateRangeDisplayString(), portMapping.isDataRateRangePass());
-			addValue(columnMap, columnColorMap, "DataRateSelection", portMapping.getDataRateSelectionDisplayString(), portMapping.isDataRateSelectionPass());
 			addValue(columnMap, columnColorMap, "DataLengthRange", portMapping.getDataLengthRangeDisplayString(), portMapping.isDataLengthRangePass());
-			addValue(columnMap, columnColorMap, "DataLengthSelection", portMapping.getDataLengthSelectionDisplayString(), portMapping.isDataLengthSelectionPass());
 			addValue(columnMap, columnColorMap, "SampleRateRange", portMapping.getSampleRateRangeDisplayString(), portMapping.isSampleRateRangePass());
-			addValue(columnMap, columnColorMap, "SampleRateSelection", portMapping.getSampleRateSelectionDisplayString(), portMapping.isSampleRateSelectionPass());
+			addValue(columnMap, columnColorMap, "Measurement", portMapping.getMeasurementSelectionDisplayString(), portMapping.isMeasurementSelectionPass());
 			addValue(columnMap, columnColorMap, "Direction", portMapping.getDirectionDisplayString(), portMapping.isDirectionPass());
 			addValue(columnMap, columnColorMap, "Excitation", portMapping.getExcitationDisplayString(), portMapping.isExcitationPass());
 			addValue(columnMap, columnColorMap, "Thermocouple", portMapping.getThermocoupleDisplayString(), portMapping.isThermocouplePass());
+			addValue(columnMap, columnColorMap, "DataStream", portMapping.getDataStreamDisplayString(), portMapping.isDataStreamPass());
 			// TODO: Also check PortType?
 		}
-		return Utils.makeChart(rowColumnData, validityMap, EnvironmentConfiguration.isBasicDisplayMode(), title);
+		return Utils.makeChart(cd);
 	}
 
 	public boolean isValid() {
 		for (DisplayablePortMapping pm : this) {
 			if (!(pm.isDataRateRangePass() &&
-					pm.isDataRateSelectionPass() &&
 					pm.isDataLengthRangePass() &&
-					pm.isDataLengthSelectionPass() &&
-
 					pm.isSampleRateRangePass() &&
-					pm.isSampleRateSelectionPass() &&
+					pm.isMeasurementSelectionPass() &&
 					pm.isDirectionPass() &&
 					pm.isExcitationPass() &&
 					pm.isPortTypePass() &&

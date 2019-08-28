@@ -1,0 +1,337 @@
+{
+  "daus": [
+    {
+      "GloballyUniqueId": "Ox130d50",
+      "BBNDauMonetaryCost": 100,
+      "Port": [
+        {
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "GloballyUniqueId": "Ox130d5a",
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Measurement": [
+            {
+              "DataLength": 1600,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            },
+            {
+              "DataLength": 16,
+              "SampleRate": 128,
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ],
+          "Thermocouple": [
+            "E",
+            "T",
+            "K",
+            "J"
+          ]
+        },
+        {
+          "BBNPortFunctionality": "SignalConditionerPort",
+          "GloballyUniqueId": "Ox130d5b",
+          "PortDirection": "Input",
+          "PortType": "Analog",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ]
+        },
+        {
+          "BBNPortFunctionality": "SignalConditionerPort",
+          "GloballyUniqueId": "Ox130hd5b",
+          "PortDirection": "Input",
+          "PortType": "Analog",
+          "Measurement": [
+            {
+              "DataLength": 36000,
+              "SampleRate": [
+                256,
+                1024
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            },
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ]
+        },
+        {
+          "BBNPortFunctionality": "SignalConditionerPort",
+          "GloballyUniqueId": "Ox130d5c",
+          "PortDirection": "Input",
+          "PortType": "Analog",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": 9000,
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ]
+        },
+        {
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "GloballyUniqueId": "Ox130d51",
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ],
+          "Thermocouple": [
+            "E",
+            "T",
+            "K",
+            "J"
+          ]
+        },
+        {
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "GloballyUniqueId": "Ox130d52",
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Measurement": [
+            {
+              "DataLength": 1600,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            },
+            {
+              "DataLength": 16,
+              "SampleRate": 128,
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ],
+          "Thermocouple": [
+            "E",
+            "T",
+            "K",
+            "J"
+          ]
+        },
+        {
+          "BBNPortFunctionality": "SignalConditionerPort",
+          "GloballyUniqueId": "Ox130d53",
+          "PortDirection": "Input",
+          "PortType": "Analog",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ]
+        },
+        {
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "GloballyUniqueId": "Ox130d54",
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ],
+          "Thermocouple": [
+            "E",
+            "T",
+            "K",
+            "J"
+          ]
+        },
+        {
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "GloballyUniqueId": "Ox130d5d",
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ],
+          "Thermocouple": [
+            "E",
+            "T",
+            "K",
+            "J"
+          ]
+        },
+        {
+          "BBNPortFunctionality": "SignalConditionerPort",
+          "GloballyUniqueId": "Ox130d55",
+          "PortDirection": "Input",
+          "PortType": "Analog",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ]
+        },
+        {
+          "BBNPortFunctionality": "SignalConditionerPort",
+          "GloballyUniqueId": "Ox130d56",
+          "PortDirection": "Input",
+          "PortType": "Analog",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ]
+        },
+        {
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "GloballyUniqueId": "Ox130d57",
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Measurement": [
+            {
+              "DataLength": 1600,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            },
+            {
+              "DataLength": 16,
+              "SampleRate": 128,
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ],
+          "Thermocouple": [
+            "E",
+            "T",
+            "K",
+            "J"
+          ]
+        },
+        {
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "GloballyUniqueId": "Ox130d5e",
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ],
+          "Thermocouple": [
+            "E",
+            "T",
+            "K",
+            "J"
+          ]
+        },
+        {
+          "BBNPortFunctionality": "ThermocoupleConditionerPort",
+          "GloballyUniqueId": "Ox130d58",
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Measurement": [
+            {
+              "DataLength": 1600,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            },
+            {
+              "DataLength": 16,
+              "SampleRate": 128,
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ],
+          "Thermocouple": [
+            "E",
+            "T",
+            "K",
+            "J"
+          ]
+        },
+        {
+          "BBNPortFunctionality": "SignalConditionerPort",
+          "GloballyUniqueId": "Ox130d59",
+          "PortDirection": "Input",
+          "PortType": "Analog",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "SampleRate": [
+                128,
+                256,
+                512
+              ],
+              "DataRate": "@SampleRate * @DataLength"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

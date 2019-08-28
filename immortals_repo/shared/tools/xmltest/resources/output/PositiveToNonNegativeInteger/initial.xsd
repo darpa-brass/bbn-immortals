@@ -1,0 +1,45 @@
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://darpa.mil/immortals/test/PositiveToNonNegativeIntegerRoot" targetNamespace="http://darpa.mil/immortals/test/PositiveToNonNegativeIntegerRoot" elementFormDefault="qualified">
+  <xsd:element name="PositiveToNonNegativeInteger" type="PositiveToNonNegativeIntegerType"/>
+  <xsd:complexType name="PositiveToNonNegativeIntegerType">
+    <xsd:annotation>
+      <xsd:documentation>Change Integer from positive to non-null</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="SubModule" type="SubModuleType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SubModuleType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The SubModule element describes the properties of sub-module or card in a DAU.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0"/>
+      <xsd:element name="Owner" type="xsd:token" minOccurs="0"/>
+      <xsd:element name="Name" type="xsd:token"/>
+      <xsd:element name="Manufacturer" type="xsd:string"/>
+      <xsd:element name="ModelNumber" type="xsd:string"/>
+      <xsd:element name="SerialNumber" type="xsd:string"/>
+      <xsd:element name="Position" type="xsd:positiveInteger"/>
+      <xsd:element name="Connector" type="ConnectorType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ConnectorType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The Connector element describes a physical connector on a NetworkNode or a module and contains one or more Pin elements.
+        This element and sub-elements are conditional as described in the MDLRoot documentation.  Components that require and shall 
+        process this element for configuration are: 
+        DAU
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0"/>
+      <xsd:element name="Owner" type="xsd:token" minOccurs="0"/>
+      <xsd:element name="Name" type="xsd:token"/>
+      <xsd:element name="Description" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

@@ -17,6 +17,8 @@ def create_preprocessor(xml_file):
         second_line = infile.readlines()[0].rstrip()
         if 'MDL' in first_line:
             return MDLPreprocessor(xml_file)
+        elif 'DAUInventory' in first_line:
+            return InventoryPreprocessor(xml_file)
         elif 'VCL' in second_line:
             return VICTORYPreprocessor(xml_file)
     else:
@@ -77,17 +79,24 @@ class MDLPreprocessor(Preprocessor):
         :param str xmlfile:     name and path of xml file
         :return:                the string "<MDLRoot>"
         """
-        import fileinput, re
+        import re
 
         mdl_schema = None
         mdl_root_str = None
 
-        for lines in fileinput.FileInput(self.orientdb_xml_file, inplace=1):
-            if lines.startswith('<MDLRoot'):
-                print('<MDLRoot>')
-                mdl_root_str = lines
-            else:
-                print (lines, end='')
+        # get MDL content
+        with open(self.orientdb_xml_file, 'r') as f:
+            content = f.read()
+        
+        # find/replace MDLRoot element
+        mdl_root_str = re.search('(<MDLRoot[^>]*>)', content, flags = re.MULTILINE).group(1)
+        content = content.replace(mdl_root_str, '<MDLRoot>', 1)
+        
+        # write out simplified MDLRoot
+        with open(self.orientdb_xml_file, 'w') as f:
+            f.write(content)
+
+        print(f"Root str: {mdl_root_str}")
 
         matchObj = re.search('MDL_(.*)xsd', mdl_root_str)
         if matchObj is not None:
@@ -129,6 +138,13 @@ class MDLPreprocessor(Preprocessor):
             raise BrassException('Invalide MDL XML File: ' + e.message, 'xml_util.validate_mdl')
         finally:
             return status
+
+class InventoryPreprocessor(Preprocessor):
+    def __init__(self, xml_file):
+        super().__init__(xml_file)
+
+    def preprocess_xml(self):
+        super().preprocess_xml()
 
 class VICTORYPreprocessor(Preprocessor):
     def __init__(self, xml_file):

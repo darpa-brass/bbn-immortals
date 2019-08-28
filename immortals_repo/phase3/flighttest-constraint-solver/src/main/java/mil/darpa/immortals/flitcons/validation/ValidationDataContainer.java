@@ -67,6 +67,8 @@ public class ValidationDataContainer {
 	 */
 	private ValidationDataContainer(@Nonnull DynamicObjectContainer source, @Nonnull Configuration.ValidationConfiguration configuration, boolean isWellDefined) throws NestedPathException {
 
+		// TODO: Add validation that complex child types (Port or Measurement) counts are as expected for their parent containers
+
 		Map<String, Set<String>> bootstrapData = configuration.defaultPropertyList;
 
 		this.identifier = source.identifier;
@@ -134,22 +136,36 @@ public class ValidationDataContainer {
 		return rval;
 	}
 
-	private static void makeResultMap(@Nonnull ValidationDataContainer container, @Nullable List<String> parentLabelData,
-	                                  @Nonnull TreeMap<String, Map<String, Object>> valueContainer,
-	                                  @Nonnull TreeMap<String, Map<String, Boolean>> validityContainer) {
+	private static void fillChartData(@Nonnull ValidationDataContainer container, @Nullable List<String> parentLabelData,
+	                                  @Nonnull Utils.ChartData chartData) throws NestedPathException {
 		for (Map.Entry<String, ValidationData> child : container.children.entrySet()) {
 			ValidationData data = child.getValue();
-
 			if (data.value instanceof ValidationDataContainer) {
-				throw new RuntimeException("Directly nested ValidationDataContainers are not supported!");
+				throw new NestedPathException(data.name, "Directly nested ValidationDataContainers are not supported!");
 
 			} else if (data.value instanceof Object[] && ((Object[]) data.value)[0] instanceof ValidationDataContainer) {
 				Object[] values = (Object[]) data.value;
 
-				for (Object value : values) {
-					if (value instanceof ValidationDataContainer) {
-						ValidationDataContainer containerValue = (ValidationDataContainer) value;
+				// TODO: Add check to configuration to validate if multiple values are valid
+				Map<String, List<ValidationDataContainer>> sortedChildValues = new HashMap<>();
 
+				for (Object value : values) {
+					if (!(value instanceof ValidationDataContainer)) {
+						throw new NestedPathException(data.name, "All values in the array must be of the same type!");
+					}
+					ValidationDataContainer containerValue = (ValidationDataContainer) value;
+
+					List<ValidationDataContainer> objectList =
+							sortedChildValues.computeIfAbsent(
+									containerValue.identifier.getNodeType(), k -> new LinkedList<>());
+
+					objectList.add(containerValue);
+
+				}
+
+				for (List<ValidationDataContainer> containerList : sortedChildValues.values()) {
+					int idx = 0;
+					for (ValidationDataContainer containerValue : containerList) {
 						List<String> labelData;
 						if (parentLabelData == null) {
 							labelData = new LinkedList<>();
@@ -157,21 +173,24 @@ public class ValidationDataContainer {
 							labelData = new LinkedList<>(parentLabelData);
 						}
 						if (labelData.size() < maxLabelDepth) {
-							labelData.add(containerValue.debugData.toString());
+							String addition = containerValue.debugData != null ? containerValue.debugData.toString() : containerValue.name;
+							if (containerList.size() > 0) {
+								addition += ("[" + idx++ + "]");
+							}
+							if (addition != null) {
+								labelData.add(addition);
+							}
 						}
-						makeResultMap(containerValue, labelData, valueContainer, validityContainer);
-
-					} else {
-						throw AdaptationnException.input("All values in the array must be of the same type!");
+						fillChartData(containerValue, labelData, chartData);
 					}
 				}
 
 			} else {
 				if (parentLabelData == null) {
-					throw AdaptationnException.internal("Missing label data for validation charts!");
+					throw new NestedPathException(data.name, "Missing label data for validation charts!");
 				}
-				Map<String, Object> valueRow = valueContainer.computeIfAbsent(String.join("/", parentLabelData), k -> new TreeMap<>());
-				Map<String, Boolean> validityRow = validityContainer.computeIfAbsent(String.join("/", parentLabelData), k -> new TreeMap<>());
+				Map<String, Object> valueRow = chartData.rowColumnData.computeIfAbsent(String.join("/", parentLabelData), k -> new TreeMap<>());
+				Map<String, Boolean> validityRow = chartData.validityMap.computeIfAbsent(String.join("/", parentLabelData), k -> new TreeMap<>());
 
 				if (data.value instanceof Object[]) {
 					Object[] valueArray = (Object[]) data.value;
@@ -184,14 +203,14 @@ public class ValidationDataContainer {
 						}
 					}
 					sb.append("]");
-					if (valueRow.containsKey(data.name)) {
-						throw new RuntimeException("Cannot overwrite existing data!");
+					if (valueRow.containsKey(data.name) && validityRow.get(data.name) != null) {
+						throw new NestedPathException(data.name, "Cannot overwrite existing data '" + valueRow.get(data.name) + "' with '" + data.value + "'!");
 					}
 					valueRow.put(data.name, sb.toString());
 
 				} else {
-					if (valueRow.containsKey(data.name)) {
-						throw new RuntimeException("Cannot overwrite existing data!");
+					if (valueRow.containsKey(data.name) && valueRow.get(data.name) != null && data.value != null) {
+						throw new NestedPathException(data.name, "Cannot clobber value '" + valueRow.get(data.name) + "' with '" + data.value + "'!");
 					}
 					valueRow.put(data.name, data.value == null ? "" : data.value.toString());
 				}
@@ -201,25 +220,31 @@ public class ValidationDataContainer {
 	}
 
 	private List<String> makeCombinedChart(@Nonnull String title, boolean useBasicDisplayScheme) {
-		TreeMap<String, Map<String, Object>> valueMap = new TreeMap<>();
-		TreeMap<String, Map<String, Boolean>> validityMap = new TreeMap<>();
-		makeResultMap(this, null, valueMap, validityMap);
-		return Utils.makeChart(valueMap, validityMap, useBasicDisplayScheme, title);
+		try {
+			Utils.ChartData chartData = new Utils.ChartData(title, useBasicDisplayScheme);
+			fillChartData(this, null, chartData);
+			return Utils.makeChart(chartData);
+		} catch (NestedPathException e) {
+			throw AdaptationnException.internal(e);
+		}
 	}
 
 	public boolean isValid() {
-		TreeMap<String, Map<String, Object>> valueMap = new TreeMap<>();
-		TreeMap<String, Map<String, Boolean>> validityMap = new TreeMap<>();
-		makeResultMap(this, null, valueMap, validityMap);
+		Utils.ChartData cd = new Utils.ChartData("DUMMY CHART", true);
+		try {
+			fillChartData(this, null, cd);
 
-		for (Map.Entry<String, Map<String, Boolean>> rowEntry : validityMap.entrySet()) {
-			for (Map.Entry<String, Boolean> columnEntry : rowEntry.getValue().entrySet()) {
-				if (!columnEntry.getValue()) {
-					return false;
+			for (Map.Entry<String, Map<String, Boolean>> rowEntry : cd.validityMap.entrySet()) {
+				for (Map.Entry<String, Boolean> columnEntry : rowEntry.getValue().entrySet()) {
+					if (!columnEntry.getValue()) {
+						return false;
+					}
 				}
 			}
+			return true;
+		} catch (NestedPathException e) {
+			throw AdaptationnException.internal(e);
 		}
-		return true;
 	}
 
 	public void printResults(@Nonnull String scenarioTitle) {

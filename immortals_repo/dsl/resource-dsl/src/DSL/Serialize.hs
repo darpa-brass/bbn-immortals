@@ -8,6 +8,7 @@ import Data.Aeson.BetterErrors
 import Data.Aeson.Encode.Pretty (encodePretty)
 import Data.Map.Strict (toAscList)
 import Data.Scientific (floatingOrInteger,fromFloatDigits,toBoundedInteger)
+import Data.String (fromString)
 import Data.Text (Text,intercalate,pack,unpack)
 import Data.Vector (fromList)
 import System.Directory (createDirectoryIfMissing)
@@ -21,7 +22,6 @@ import DSL.Types
 import DSL.Environment
 import DSL.Name
 import DSL.Parser
-import DSL.Path
 import DSL.Pretty
 
 
@@ -119,7 +119,7 @@ instance ToJSON Path where
   toJSON = String . prettyPath
 
 asPath :: ParseIt Path
-asPath = fromTextPath <$> asText
+asPath = fromString . unpack <$> asText
 
 instance ToJSON ResID where
   toJSON (ResID p) = toJSON p
@@ -167,11 +167,11 @@ asPType = do
       _ -> throwCustomError (BadCase "primitive type" ["unit","bool","int","float","symbol"] t)
 
 instance ToJSON PVal where
-  toJSON Unit  = String "()"
+  toJSON Unit  = Null
   toJSON (B b) = Bool b
   toJSON (I i) = Number (fromInteger (toInteger i))
   toJSON (F d) = Number (fromFloatDigits d)
-  toJSON (S s) = String (toName s)
+  toJSON (S s) = toJSON s
 
 asInt :: ParseIt Int
 asInt = do
@@ -184,9 +184,9 @@ asPVal :: ParseIt PVal
 asPVal = do
     v <- asValue
     case v of
+      Null     -> pure Unit
       Bool b   -> pure (B b)
       Number n -> pure (either F I (floatingOrInteger n))
-      String "()" -> pure Unit
       String _ -> S <$> asSymbol
       _ -> throwCustomError (BadPVal v)
 

@@ -1,0 +1,33 @@
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://darpa.mil/immortals/test/ExtendedEnumRoot" targetNamespace="http://darpa.mil/immortals/test/ExtendedEnumRoot" elementFormDefault="qualified">
+  <xsd:element name="ExtendedEnum" type="ExtendedEnumType"/>
+  <xsd:complexType name="ExtendedEnumType">
+    <xsd:annotation>
+      <xsd:documentation>The Enum has been replaced with an element that extends it to provide additional data</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="MeasurementType" type="MeasurementTypeEnum"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="MeasurementTypeEnum">
+    <xsd:annotation>
+      <xsd:documentation>
+The MeasurementType element is an enumeration of type
+mdl:MeasurementTypeEnum that can be set to one of the following
+values: "Analog", "Discrete", "DigitalBus", "Computed"
+</xsd:documentation>
+      <xsd:documentation>
+If "Analog" or "Discrete" is selected, the AnalogAttributes
+element shall be used to describe the Measurement element.  If
+"DigitalBus" or "Computed" is selected, the DigitalAttributes element
+shall be used to describe the Measurement element.
+</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Analog"/>
+      <xsd:enumeration value="Discrete"/>
+      <xsd:enumeration value="DigitalBus"/>
+      <xsd:enumeration value="Computed"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

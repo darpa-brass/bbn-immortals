@@ -2,10 +2,8 @@ package mil.darpa.immortals.flitcons.mdl;
 
 import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.AbstractDataSource;
-import mil.darpa.immortals.flitcons.SolverConfiguration;
-import mil.darpa.immortals.flitcons.Utils;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.NestedPathException;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainerFactory;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
@@ -44,10 +42,12 @@ public class MdlDataValidator extends DataValidator {
 		super.init();
 	}
 
-	public ValidationDataContainer validateConfiguration(@Nonnull ValidationScenario scenario) {
+	public ValidationDataContainer validateConfiguration(@Nonnull ValidationScenario scenario, boolean verbose, boolean lightMode) {
 		try {
 			HierarchicalDataContainer data;
 			String outputFile;
+
+			ValidationDataContainer results = null;
 
 			switch (scenario) {
 
@@ -81,19 +81,23 @@ public class MdlDataValidator extends DataValidator {
 					throw AdaptationnException.internal("Invalid scenario type '" + scenario.name() + "'!");
 			}
 
-			DynamicObjectContainer dynamicData = DynamicObjectContainerFactory.create(data);
-			String dynamnicDataString = difGson.toJson(dynamicData);
+			if (!lightMode) {
+				DynamicObjectContainer dynamicData = DynamicObjectContainerFactory.create(data);
+				String dynamnicDataString = difGson.toJson(dynamicData);
 
-			try {
-				if (saveResults) {
-					EnvironmentConfiguration.storeFile(outputFile, dynamnicDataString.getBytes());
+				try {
+					if (saveResults) {
+						EnvironmentConfiguration.storeFile(outputFile, dynamnicDataString.getBytes());
+					}
+				} catch (Exception e) {
+					throw AdaptationnException.internal(e);
 				}
-			} catch (Exception e) {
-				throw AdaptationnException.internal(e);
-			}
 
-			ValidationDataContainer results = super.validate(scenario.filter, dynamicData);
-			results.printResults(scenario.title);
+				results = super.validate(scenario.filter, dynamicData);
+				if (verbose) {
+					results.printResults(scenario.title);
+				}
+			}
 			return results;
 		} catch (NestedPathException e) {
 			throw AdaptationnException.input(e);

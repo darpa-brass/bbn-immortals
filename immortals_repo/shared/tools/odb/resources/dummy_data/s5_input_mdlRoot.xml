@@ -52,7 +52,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -107,7 +107,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -162,7 +162,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -217,7 +217,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -272,7 +272,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -327,7 +327,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -382,7 +382,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -437,7 +437,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -492,7 +492,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -547,7 +547,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -602,7 +602,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -657,7 +657,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -712,7 +712,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -767,7 +767,7 @@
               <Max>130</Max>
             </SampleRate>
             <DataLength>
-              <Min>16</Min>
+              <Min>12</Min>
               <Max>16</Max>
             </DataLength>
             <DataRate>
@@ -1415,9 +1415,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
 						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
@@ -1437,9 +1442,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
 						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
@@ -1459,9 +1469,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+						</Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
 						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
@@ -1481,9 +1496,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
 						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
@@ -1503,9 +1523,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+						</Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
 						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
@@ -1525,9 +1550,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
 						<ExcitationPortIsPresent/>
                       </GenericParameter>
                       <PortDirection>Input</PortDirection>
@@ -2002,9 +2032,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2027,9 +2062,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2052,9 +2092,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2077,9 +2122,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2102,9 +2152,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2127,9 +2182,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2152,9 +2212,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>
@@ -2177,9 +2242,14 @@
                           <NameValue Name="BBN" Index="1"/>
                         </NameValues>
                         <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                        <DataLength>16</DataLength>
-                        <SampleRate>100</SampleRate>
-                        <SampleRate>200</SampleRate>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>100</SampleRate>
+                        </Measurement>
+                        <Measurement>
+                          <DataLength>16</DataLength>
+                          <SampleRate>200</SampleRate>
+                        </Measurement>
                         <PortType Thermocouple="J">Thermocouple</PortType>
                         <PortType Thermocouple="K">Thermocouple</PortType>
                         <PortType Thermocouple="T">Thermocouple</PortType>

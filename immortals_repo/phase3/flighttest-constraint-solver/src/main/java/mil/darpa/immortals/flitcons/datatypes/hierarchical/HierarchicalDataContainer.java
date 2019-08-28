@@ -5,6 +5,8 @@ import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.datatypes.DataType;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.Equation;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -16,11 +18,15 @@ import java.util.stream.Collectors;
  */
 public class HierarchicalDataContainer implements DuplicateInterface<HierarchicalDataContainer> {
 
+	private static final Logger logger = LoggerFactory.getLogger(HierarchicalDataContainer.class);
+
 	private final LinkedHashMap<HierarchicalIdentifier, HierarchicalData> existingDataIdentifierMap;
 
 	private final Map<HierarchicalData, List<HierarchicalData>> superParentChildElements;
 
 	public final DataType dataType;
+
+	private boolean validated = false;
 
 	public HierarchicalDataContainer(@Nonnull DataType dataType, @Nonnull LinkedHashMap<HierarchicalIdentifier, HierarchicalData> identifierDataMap, @Nonnull LinkedHashMap<HierarchicalData, List<HierarchicalData>> rootChildValues) {
 		this.dataType = dataType;
@@ -67,6 +73,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	private void iterateAndRemove(HierarchicalData parent, Set<HierarchicalData> allParentChildNodes, Set<HierarchicalData> allKnownNodes) {
+		validated = false;
 		Iterator<String> childClassIterator = parent.getChildrenClassIterator();
 		while (childClassIterator.hasNext()) {
 			String nodeClass = childClassIterator.next();
@@ -91,6 +98,10 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	public final void validate() {
+		if (validated) {
+			logger.warn("Validation has already been performed!");
+			return;
+		}
 		Set<HierarchicalData> allChildNodes = new HashSet<>();
 
 		// For each root object
@@ -159,6 +170,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 			String errorValues = allKnownNodes.stream().map(x -> x.getNodeType() + "(" + x.toString() + ")\n").collect(Collectors.joining());
 			throw AdaptationnException.internal("Known nodes not been iterated! Details:\n" + errorValues);
 		}
+		validated = true;
 	}
 
 	/**
@@ -169,6 +181,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	 */
 	public void cloneTreeIntoContainer(@Nonnull HierarchicalData sourceData,
 	                                   @Nonnull HierarchicalData targetParentNode) {
+		validated = false;
 		if (existingDataIdentifierMap.containsValue(sourceData)) {
 			throw AdaptationnException.internal("Cannot insert and clone a node from the same database!");
 
@@ -207,9 +220,10 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 
 	public void cloneTrimmedTreeIntoContainer(@Nonnull HierarchicalData sourceData,
 	                                          @Nonnull HierarchicalData targetParentNode) {
+		validated = false;
 
 		// Duplicate the node
-		HierarchicalData clone = sourceData.duplicateFlatDisconnected(targetParentNode.node);
+		HierarchicalData clone = sourceData.duplicateDisconnectedClone(targetParentNode.node);
 		clone.setParentContainer(this);
 		clone.isRootNode = false;
 		if (clone.getParent() != null) {
@@ -241,8 +255,9 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	 * into a new one!
 	 */
 	public HierarchicalDataContainer duplicate(@Nonnull DataType mode) {
-		validate();
-
+		if (!validated) {
+			validate();
+		}
 		LinkedHashMap<HierarchicalIdentifier, HierarchicalData> existingDataIdentifierMapClone =
 				Utils.duplicateMap(existingDataIdentifierMap);
 
@@ -302,6 +317,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	public void removeNodeTree(@Nonnull HierarchicalData node) {
+		validated = false;
 		if (!existingDataIdentifierMap.containsValue(node)) {
 			throw AdaptationnException.internal("Could not find the node '" + node.toString() + "'!");
 		}
@@ -327,6 +343,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	public void removeNode(@Nonnull HierarchicalData node) {
+		validated = false;
 		HierarchicalData parent = node.getParentData();
 		HierarchicalData rootNode = node.getRootNode();
 
@@ -343,6 +360,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	private void setParentNode(@Nonnull HierarchicalData childNode, @Nonnull HierarchicalData parentNode) {
+		validated = false;
 		if (childNode.getParent() != null) {
 			throw AdaptationnException.internal("Can only set parent node once!");
 		}
@@ -360,6 +378,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	private void overrideParentNode(@Nonnull HierarchicalData childNode, @Nonnull HierarchicalData newParentNode) {
+		validated = false;
 		if (childNode.getParentData() == null) {
 			throw AdaptationnException.internal("THe parent node has not been set!");
 		}
@@ -369,6 +388,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	public void removeAndShortParentAndChildNodes(@Nonnull HierarchicalData childNode, Configuration.TransformationInstructions instructions, boolean preserveDebugData) {
+		validated = false;
 		HierarchicalData parentNode = childNode.getParentData();
 
 		Set<HierarchicalData> children = new HashSet<>();
@@ -413,6 +433,9 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 							parentNode.addAttribute(childNode.node, key, newArray);
 						}
 					}
+
+				} else if (parentNode.getAttribute(key).equals(childNode.getAttribute(key))) {
+					childNode.removeAttribute(key);
 
 				} else {
 					List<Configuration.ResolutionStrategy> resolutionStrategies = instructions.resolutionStrategies.stream().filter(x -> x.attributeLabel.equals(key)).collect(Collectors.toList());
@@ -464,6 +487,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 	}
 
 	public void injectEquation(@Nonnull HierarchicalIdentifier parentNode, @Nonnull String equationTargetValue, @Nonnull Equation equation) {
+		validated = false;
 		HierarchicalData parentData = existingDataIdentifierMap.get(parentNode);
 
 		Map<String, Object> attributes = new HashMap<>();

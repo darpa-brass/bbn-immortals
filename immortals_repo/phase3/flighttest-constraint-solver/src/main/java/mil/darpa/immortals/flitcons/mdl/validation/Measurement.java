@@ -2,6 +2,8 @@ package mil.darpa.immortals.flitcons.mdl.validation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.LinkedList;
+import java.util.List;
 
 import static mil.darpa.immortals.flitcons.Utils.Sym.LTE;
 import static mil.darpa.immortals.flitcons.Utils.Sym.NLTE;
@@ -14,8 +16,32 @@ public class Measurement {
 	public Long dataRate;
 	public Long sampleRate;
 	public Requirements requirements = new Requirements();
+
 	public Measurement(@Nonnull String id) {
 		this.id = id;
+	}
+
+	public static String toString(@Nullable Long sampleRate, @Nullable Long dataLength, @Nullable Long dataRate) {
+		if (sampleRate == null && dataLength == null && dataRate == null) {
+			return "null";
+		}
+
+		List<String> values = new LinkedList<>();
+
+		if (dataLength != null) {
+			values.add("DL=" + dataLength);
+		}
+		if (dataRate != null) {
+			values.add("DR=" + dataRate);
+		}
+		if (sampleRate != null) {
+			values.add("SR=" + sampleRate);
+		}
+		return "[" + String.join(",", values) + "]";
+	}
+
+	public String toString() {
+		return toString(sampleRate, dataLength, dataRate);
 	}
 
 	public static class Requirements {
