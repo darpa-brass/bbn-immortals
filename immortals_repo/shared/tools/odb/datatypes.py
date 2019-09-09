@@ -54,7 +54,10 @@ class Scenario:
     def __init__(self, shortName: str, prettyName: str, scenarioType: str, timeoutMS: int,
                  expectedStatusSequence: List[str], xmlInventoryPath: Optional[str] = None,
                  xmlMdlrootInputPath: Optional[str] = None, jsonInputPath: Optional[str] = None,
-                 expectedJsonOutputStructure: Optional[Dict] = None):
+                 expectedJsonOutputStructure: Optional[Dict] = None,
+                 ingestedXmlInventoryHash: Optional[str] = None,
+                 ingestedXmlMdlrootInputHash: Optional[str] = None
+                 ):
         self.shortName = shortName
         self.prettyName = prettyName
         self.scenarioType = ScenarioType[scenarioType]
@@ -65,6 +68,8 @@ class Scenario:
         self.xmlMdlrootInputPath = xmlMdlrootInputPath
         self.jsonInputPath = jsonInputPath
         self.expectedJsonOutputStructure = expectedJsonOutputStructure
+        self.ingestedXmlInventoryHash = ingestedXmlInventoryHash
+        self.ingestedXmlMdlrootInputHash = ingestedXmlMdlrootInputHash
 
         if scenarioType == ScenarioType.Scenario5:
             assert xmlInventoryPath is not None

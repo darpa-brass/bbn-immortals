@@ -1,22 +1,28 @@
 {
 	"scenarios": [
 		{
-			"shortName": "s5",
-			"prettyName": "Scenario 5 Basic",
+			"shortName": "bs5",
+			"scenarioType": "Scenario5bbn",
+			"prettyName": "BBN Scenario 5 Basic",
 			"timeoutMS": 120000,
 			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/s5_dauInventory.xml",
 			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml",
+			"ingestedXmlInventoryHash": "",
+			"ingestedXmlMdlrootInputHash": "",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful",
 				"AdaptationUnsuccessful"
 			]
 		},
 		{
-			"shortName": "s5s",
-			"prettyName": "Scenario 5 Basic Sequential",
+			"shortName": "bs5s",
+			"scenarioType": "Scenario5bbn",
+			"prettyName": "BBN Scenario 5 Basic Sequential",
 			"timeoutMS": 120000,
 			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/s5s_dauInventory.xml",
 			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml",
+			"ingestedXmlInventoryHash": "",
+			"ingestedXmlMdlrootInputHash": "",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful",
 				"AdaptationSuccessful",
@@ -24,22 +30,28 @@
 			]
 		},
 		{
-			"shortName": "s5MoreMeasurements",
-			"prettyName": "Scenario 5 Basic With More Measurements",
+			"shortName": "bs5MoreMeasurements",
+			"scenarioType": "Scenario5bbn",
+			"prettyName": "BBN Scenario 5 Basic With More Measurements",
 			"timeoutMS": 120000,
 			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/s5_dauInventory_more_measurements.xml",
 			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml",
+			"ingestedXmlInventoryHash": "",
+			"ingestedXmlMdlrootInputHash": "",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful",
 				"AdaptationUnsuccessful"
 			]
 		},
 		{
-			"shortName": "s5sMoreMeasurements",
-			"prettyName": "Scenario 5 Basic Sequential With More Measurements",
+			"shortName": "bs5sMoreMeasurements",
+			"scenarioType": "Scenario5bbn",
+			"prettyName": "BBN Scenario 5 Basic Sequential With More Measurements",
 			"timeoutMS": 120000,
 			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/s5s_dauInventory_more_measurements.xml",
 			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/s5_input_mdlRoot.xml",
+			"ingestedXmlInventoryHash": "",
+			"ingestedXmlMdlrootInputHash": "",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful",
 				"AdaptationSuccessful",
@@ -48,10 +60,13 @@
 		},
 		{
 			"shortName": "s5_old",
+			"scenarioType": "Scenario5bbn",
 			"prettyName": "Scenario 5 Basic (No attribute grouping;Intended for integration tests using the SimpleSolver",
 			"timeoutMS": 60000,
 			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/old_s5_dauInventory.xml",
 			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/old_s5_input_mdlRoot.xml",
+			"ingestedXmlInventoryHash": "",
+			"ingestedXmlMdlrootInputHash": "",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful",
 				"AdaptationUnsuccessful"
@@ -59,10 +74,13 @@
 		},
 		{
 			"shortName": "s5s_old",
+			"scenarioType": "Scenario5bbn",
 			"prettyName": "Scenario 5 Basic Sequential (No attribute grouping;Intended for integration tests using the SimpleSolver",
 			"timeoutMS": 90000,
 			"xmlInventoryPath": "shared/tools/odb/resources/dummy_data/old_s5s_dauInventory.xml",
 			"xmlMdlrootInputPath": "shared/tools/odb/resources/dummy_data/old_s5_input_mdlRoot.xml",
+			"ingestedXmlInventoryHash": "",
+			"ingestedXmlMdlrootInputHash": "",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful",
 				"AdaptationSuccessful",

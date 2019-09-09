@@ -219,9 +219,9 @@ public class ValidationDataContainer {
 		}
 	}
 
-	private List<String> makeCombinedChart(@Nonnull String title, boolean useBasicDisplayScheme) {
+	public List<String> makeResultsChart(@Nonnull String title, boolean useBasicDisplayScheme) {
 		try {
-			Utils.ChartData chartData = new Utils.ChartData(title, useBasicDisplayScheme);
+			Utils.ChartData chartData = new Utils.ChartData(title + " Validation Result", useBasicDisplayScheme);
 			fillChartData(this, null, chartData);
 			return Utils.makeChart(chartData);
 		} catch (NestedPathException e) {
@@ -250,7 +250,7 @@ public class ValidationDataContainer {
 	public void printResults(@Nonnull String scenarioTitle) {
 		boolean isBasic = EnvironmentConfiguration.isBasicDisplayMode();
 		try {
-			List<String> displayLines = makeCombinedChart(scenarioTitle + " Validation Result", true);
+			List<String> displayLines = makeResultsChart(scenarioTitle, true);
 			if (isBasic) {
 				for (String str : displayLines) {
 					logger.info(str);
@@ -260,7 +260,7 @@ public class ValidationDataContainer {
 						"invalid_fields-" + scenarioTitle.replaceAll(" ", "_") + ".txt",
 						String.join("\n", displayLines).getBytes());
 
-				displayLines = makeCombinedChart(scenarioTitle + " Validation Result", false);
+				displayLines = makeResultsChart(scenarioTitle, false);
 
 				for (String str : displayLines) {
 					logger.info(str);

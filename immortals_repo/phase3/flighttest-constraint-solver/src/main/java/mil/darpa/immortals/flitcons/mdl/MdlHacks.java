@@ -111,7 +111,6 @@ public class MdlHacks {
 ////
 ////					if (measurementContainer.singleValue != null) {
 ////						DynamicObjectContainer measurement = (DynamicObjectContainer) measurementContainer.getValue();
-////						System.out.println("MEH");
 ////
 ////
 ////					} else if (measurementContainer.valueArray != null && measurementContainer.valueArray.length == 1) {
@@ -119,14 +118,12 @@ public class MdlHacks {
 ////						dataRateRanges.put(portIdentifier, measurement.get("DataRate").range);
 ////						sampleRateRanges.put(portIdentifier, measurement.get("SampleRate").range);
 ////						dataLengthRanges.put(portIdentifier, measurement.get("DataLength").range);
-////						System.out.println("MEH");
 ////
 ////					} else {
 ////						throw new RuntimeException("Bad Measurement value!");
 ////					}
 ////				}
 ////			}
-//			System.out.println("MEH");
 //
 //			Object[] daus = dauInventory.get("daus").valueArray;
 //			for (Object o : daus) {
@@ -157,9 +154,7 @@ public class MdlHacks {
 //								sampleRate = (Long) measurement.get("SampleRate").singleValue;
 //							}
 //
-//							System.out.println("MEH");
 //						}
-//						System.out.println("MEH");
 //
 //					} else {
 //						throw new RuntimeException("Bad Measurement value!");
@@ -172,7 +167,6 @@ public class MdlHacks {
 //
 ////					if (measurementContainer.singleValue != null) {
 ////						DynamicObjectContainer measurement = (DynamicObjectContainer) measurementContainer.getValue();
-////						System.out.println("MEH");
 ////
 ////
 ////					} else if (measurementContainer.valueArray != null && measurementContainer.valueArray.length == 1) {
@@ -180,7 +174,6 @@ public class MdlHacks {
 //////						dataRateRanges.put(portIdentifier, measurement.get("DataRate").range);
 //////						sampleRateRanges.put(portIdentifier, measurement.get("SampleRate").range);
 //////						dataLengthRanges.put(portIdentifier, measurement.get("DataLength").range);
-////						System.out.println("MEH");
 ////
 ////					} else {
 ////						throw new RuntimeException("Bad Measurement value!");

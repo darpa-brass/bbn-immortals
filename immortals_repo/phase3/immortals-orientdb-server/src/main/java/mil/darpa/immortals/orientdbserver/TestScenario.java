@@ -1,135 +1,47 @@
 package mil.darpa.immortals.orientdbserver;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import org.apache.tools.ant.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class TestScenario {
 
 	private final static String DB_NAME_PREFIX = "IMMORTALS_";
+
 	private final static Logger logger = LoggerFactory.getLogger(TestScenario.class);
 
-	private static TreeMap<String, TestScenario> scenario5TestScenarios;
 
-	private static TreeMap<String, TestScenario> bbnScenario5TestScenarios;
+	private final String shortName;
+	private final String prettyName;
+	private final String scenarioType;
+	private final int timeoutMS;
+	private final String xmlInventoryPath;
+	private final String xmlMdlrootInputPath;
+	private final String ingestedXmlInventoryHash;
+	private final String ingestedXmlMdlrootInputHash;
+	private final String jsonInputPath;
+	private final LinkedList<String> expectedStatusSequence;
+	private final JsonObject expectedJsonOutputStructure;
 
-	private static TreeMap<String, TestScenario> swriScenario5TestScenarios;
+	private transient TestScenarios.ScenarioType _scenarioType;
 
-	private static TreeMap<String, TestScenario> scenario6TestScenarios;
-
-	private static class TestScenarios {
-		public final Set<TestScenario> scenarios;
-
-		public TestScenarios(@Nonnull Set<TestScenario> scenarios) {
-			this.scenarios = scenarios;
-		}
-	}
-
-	private static String injectEnvironmentVariables(@Nonnull String input) {
-		String output = input;
-
-		int idx0;
-		int idx1;
-		String target;
-		String envVar;
-		String envVal;
-		while (output.contains("${")) {
-			idx0 = output.indexOf("${");
-			idx1 = output.indexOf("}", idx0);
-			target = output.substring(idx0, idx1 + 1);
-			envVar = output.substring(idx0 + 2, idx1);
-
-			if (System.getenv(envVar) == null) {
-				return null;
-			}
-			envVal = System.getenv(envVar);
-
-			output = output.replace(target, envVal);
-		}
-		return output;
-	}
-
-	private static TreeMap<String, TestScenario> initScenarioSet(@Nonnull String inputResource, @Nonnull Gson gson) {
-		TreeMap<String, TestScenario> rval = new TreeMap<>();
-		JsonObject testScenariosContainer = gson.fromJson(new InputStreamReader(TestScenario.class.getClassLoader().getResourceAsStream(inputResource)), JsonObject.class);
-
-		for (JsonElement scenarioElement : testScenariosContainer.get("scenarios").getAsJsonArray()) {
-			String scenarioType = "Scenario6";
-			for (Map.Entry<String, JsonElement> elementAttributeEntry : scenarioElement.getAsJsonObject().entrySet()) {
-				String elementAttributeKey = elementAttributeEntry.getKey();
-				JsonElement elementAttributeValue = elementAttributeEntry.getValue();
-				if (elementAttributeKey.equals("xmlInventoryPath") || elementAttributeKey.equals("xmlMdlrootInputPath")) {
-					String path = injectEnvironmentVariables(elementAttributeValue.getAsString());
-					elementAttributeEntry.setValue(path == null ? new JsonNull() : new JsonPrimitive(path));
-					scenarioType = "Scenario5";
-				}
-			}
-			scenarioElement.getAsJsonObject().addProperty("scenarioType", scenarioType);
-			TestScenario ts = gson.fromJson(scenarioElement, TestScenario.class);
-			rval.put(ts.shortName, ts);
-		}
-		return rval;
-	}
-
-	private static synchronized void init() {
-		if (scenario5TestScenarios == null) {
-			Gson gson = new Gson();
-
-			bbnScenario5TestScenarios = initScenarioSet("s5_scenarios.json", gson);
-			scenario5TestScenarios = new TreeMap<>(bbnScenario5TestScenarios);
-			swriScenario5TestScenarios = initScenarioSet("s5_cp_scenarios.json", gson);
-			scenario5TestScenarios.putAll(swriScenario5TestScenarios);
-			scenario6TestScenarios = initScenarioSet("s6_scenarios.json", gson);
-		}
-	}
-
-	public static List<String> getAllScenario5TestScenarioIdentifiers() {
-		init();
-		return new LinkedList<>(scenario5TestScenarios.keySet());
-	}
-
-	public static List<String> getBbnScenario5TestScenarioIdentifiers() {
-		init();
-		return new LinkedList<>(bbnScenario5TestScenarios.keySet());
-	}
-
-	public static List<String> getSwriScenario5TestScenarioIdentifiers() {
-		init();
-		return new LinkedList<>(swriScenario5TestScenarios.keySet());
-	}
-
-	public static List<String> getScenario6TestScenarioIdentifiers() {
-		init();
-		return new LinkedList<>(scenario6TestScenarios.keySet());
-	}
-
-	public static List<String> getAllTestScenarioIdentifiers() {
-		init();
-		LinkedList<String> rval = new LinkedList<>(scenario5TestScenarios.keySet());
-		rval.addAll(scenario6TestScenarios.keySet());
-		return rval;
-	}
-
-	public static TestScenario getScenario5TestScenario(@Nonnull String shortName) {
-		init();
-		return scenario5TestScenarios.get(shortName);
-	}
-
-	public static TestScenario getScenario6TestScenario(@Nonnull String shortName) {
-		init();
-		return scenario6TestScenarios.get(shortName);
-	}
 
 	public static Path getPathInParentsIfExists(@Nonnull String desiredPath) {
 		Path result = null;
@@ -145,40 +57,55 @@ public class TestScenario {
 		return result;
 	}
 
-	private final String shortName;
-	private final String prettyName;
-	private String scenarioType;
-	private final int timeoutMS;
-	private final String xmlInventoryPath;
-	private final String xmlMdlrootInputPath;
-	private final String jsonInputPath;
-	private final LinkedList<String> expectedStatusSequence;
-	private final JsonObject expectedJsonOutputStructure;
-
-
 	public TestScenario(@Nonnull String shortName, @Nonnull String prettyName, @Nonnull String scenarioType,
 	                    @Nonnull int timeoutMS, @Nullable String xmlInventoryPath, @Nullable String xmlMdlrootInputPath,
+	                    @Nonnull String ingestedXmlInventoryHash, @Nonnull String ingestedXmlMdlrootInputHash,
 	                    @Nullable String jsonInputPath, @Nonnull List<String> expectedStatusSequence,
 	                    @Nullable JsonObject expectedJsonOutputStructure) {
 		this.shortName = shortName;
-		this.prettyName = prettyName;
 		this.scenarioType = scenarioType;
+		this.prettyName = prettyName;
 		this.timeoutMS = timeoutMS;
 		this.xmlInventoryPath = xmlInventoryPath;
 		this.xmlMdlrootInputPath = xmlMdlrootInputPath;
+		this.ingestedXmlInventoryHash = ingestedXmlInventoryHash;
+		this.ingestedXmlMdlrootInputHash = ingestedXmlMdlrootInputHash;
 		this.jsonInputPath = jsonInputPath;
 		this.expectedStatusSequence = new LinkedList<>(expectedStatusSequence);
 		this.expectedJsonOutputStructure = expectedJsonOutputStructure;
 	}
 
+	public synchronized TestScenarios.ScenarioType getScenarioType() {
+		if (_scenarioType == null) {
+			_scenarioType = TestScenarios.ScenarioType.valueOf(scenarioType);
+		}
+		return _scenarioType;
+	}
+
+	public boolean isSwri() {
+		return getScenarioType().isSwri;
+	}
+
+	public boolean isBbn() {
+		return getScenarioType().isBbn;
+	}
+
+	public boolean isScenario5() {
+		return getScenarioType().isScenario5;
+	}
+
+	public boolean isScenario6() {
+		return getScenarioType().isScenario6;
+	}
+
 	public InputStream getBackupInputStream() {
-		return TestScenario.class.getClassLoader().getResourceAsStream("test_databases/" + this.shortName + "-backup.zip");
+		return TestScenarios.class.getClassLoader().getResourceAsStream("test_databases/" + this.shortName + "-backup.zip");
 	}
 
 	public InputStream getInputJsonData() {
 		InputStream inputJsonData;
 		Path dataPath;
-		if ((inputJsonData = TestScenario.class.getClassLoader().getResourceAsStream("inputJsonData/" + this.shortName + ".json")) != null) {
+		if ((inputJsonData = TestScenarios.class.getClassLoader().getResourceAsStream("inputJsonData/" + this.shortName + ".json")) != null) {
 			return inputJsonData;
 		} else if (getJsonInputPath() != null && (dataPath = getPathInParentsIfExists(getJsonInputPath())) != null) {
 			try {
@@ -202,20 +129,39 @@ public class TestScenario {
 		return prettyName;
 	}
 
-	public String getScenarioType() {
-		return scenarioType;
-	}
-
 	public int getTimeoutMS() {
 		return timeoutMS;
 	}
 
-	public String getXmlInventoryPath() {
-		return xmlInventoryPath;
+	public File getXmlInventoryPath() {
+		if (xmlInventoryPath == null) {
+			throw new RuntimeException("XML Inventory is null!");
+		}
+		File f = new File(xmlInventoryPath);
+		if (!f.exists()) {
+			throw new RuntimeException("The XML Inventory file '" + f.toString() + "' does not exist!");
+		}
+		return f;
 	}
 
-	public String getXmlMdlrootInputPath() {
-		return xmlMdlrootInputPath;
+	public File getXmlMdlrootInputPath() {
+		if (xmlMdlrootInputPath == null) {
+			throw new RuntimeException("XML MDLRoot is null!");
+		}
+		File f = new File(xmlMdlrootInputPath);
+		if (!f.exists()) {
+			throw new RuntimeException("The XML MDLRoot file '" + f.toString() + "' does not exist!");
+		}
+		return f;
+	}
+
+	public boolean hasXmlInventoryInput() {
+		return xmlInventoryPath != null;
+	}
+
+	public boolean hasXmlMdlrootInput() {
+		return xmlMdlrootInputPath != null;
+
 	}
 
 	public String getJsonInputPath() {
@@ -226,6 +172,34 @@ public class TestScenario {
 		return expectedStatusSequence;
 	}
 
+	private static boolean fileIsOutdated(@Nonnull File file, @Nonnull String knownHash) {
+		try {
+			String fileData = FileUtils.readFully(new FileReader(file));
+
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] hash = digest.digest(fileData.getBytes(StandardCharsets.UTF_8));
+
+			StringBuffer hexString = new StringBuffer();
+			for (int i = 0; i < hash.length; i++) {
+				String hex = Integer.toHexString(0xff & hash[i]);
+				if (hex.length() == 1) hexString.append('0');
+				hexString.append(hex);
+			}
+			String currentHash = hexString.toString();
+
+			return !knownHash.equals(currentHash);
+		} catch (IOException | NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public boolean backupIsOutdated() {
+		if (!(hasXmlMdlrootInput() || hasXmlInventoryInput())) {
+			throw new RuntimeException("Cannot validate backup since no source files can be found!");
+		}
+		return ((hasXmlMdlrootInput() && fileIsOutdated(getXmlMdlrootInputPath(), ingestedXmlMdlrootInputHash)) ||
+				(hasXmlInventoryInput() && fileIsOutdated(getXmlInventoryPath(), ingestedXmlInventoryHash)));
+	}
 
 	private static void recursivelyCompareStructure(@Nonnull JsonElement expectedJsonElement, @Nonnull JsonElement actualJsonElement) throws NestedException {
 		if (expectedJsonElement.isJsonObject() && actualJsonElement.isJsonObject()) {
@@ -286,6 +260,7 @@ public class TestScenario {
 			throw new NestedException("", "Json types do not match!");
 		}
 	}
+
 
 	public void validateJsonOutputStructure(@Nonnull JsonObject actualJsonOutput) throws NestedException {
 		if (expectedJsonOutputStructure != null) {

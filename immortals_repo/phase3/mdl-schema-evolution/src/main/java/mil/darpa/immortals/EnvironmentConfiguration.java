@@ -20,13 +20,13 @@ public enum EnvironmentConfiguration {
 	ARTIFACT_DIRECTORY("IMMORTALS_ARTIFACT_DIRECTORY", "mil.darpa.immortals.artifactdirectory",
 			tryResolveRelativeToImmortalsRoot(true, "phase3", "DEFAULT_ARTIFACT_DIRECTORY")),
 	CHALLENGE_PROBLEMS_ROOT("IMMORTALS_CHALLENGE_PROBLEMS_ROOT", "mil.darpa.immortals.challengeProblemsRoot", null),
+	ADAPTIVE_CONSTRAINT_SATISFACTION_ROOT("IMMORTALS_ADAPTIVE_CONSTRAINT_SATISFACTION_ROOT", "mil.darpa.immortals.adaptiveConstraintSatisfactionRoot", null),
 	DSL_PATH("IMMORTALS_RESOURCE_DSL", "mil.darpa.immortals.resourceDslRoot",
 			tryResolveRelativeToImmortalsRoot(false, "dsl", "resource-dsl")),
 	BASIC_DISPLAY_MODE("IMMORTALS_BASIC_DISPLAY_MODE", "mil.darpa.immortals.basicDisplayMode", true);
 
 
 	private static final Logger logger = LoggerFactory.getLogger(EnvironmentConfiguration.class.getName());
-
 
 	public static String getOdbTarget() {
 		return ODB_TARGET.getValue();
@@ -42,6 +42,10 @@ public enum EnvironmentConfiguration {
 
 	public static Path getArtifactDirectory() {
 		return Paths.get(ARTIFACT_DIRECTORY.getValue()).toAbsolutePath();
+	}
+
+	public static boolean isDefaultArtifactDirectory() {
+		return getArtifactDirectory().equals(Paths.get(tryResolveRelativeToImmortalsRoot(false, "")));
 	}
 
 	public static Path getDslRoot() {
@@ -174,5 +178,9 @@ public enum EnvironmentConfiguration {
 					"No value for '" + name() + "' has been set! Please set the environment variable '" +
 							envVar + "' or the JVM argument '" + javaArg + "'!");
 		}
+	}
+
+	public String getDisplayableUsage() {
+		return "Please set the environment variable '" + this.envVar + "' or the java arg '" + this.javaArg + "'!";
 	}
 }

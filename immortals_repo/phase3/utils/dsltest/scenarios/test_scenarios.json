@@ -1,0 +1,114 @@
+{
+	"regression_scenarios": {
+		"s5": {
+			"request_file": "scenarios/s5/dsl-swap-request.json",
+			"request_file_hash": "",
+			"inventory_file": "scenarios/s5/dsl-swap-inventory.json",
+			"inventory_file_hash": ""
+		},
+		"s5e01i01": {
+			"request_file": "scenarios/s5e1/dsl-swap-request.json",
+			"request_file_hash": "",
+			"inventory_file": "scenarios/s5e1/dsl-swap-inventory.json",
+			"inventory_file_hash": ""
+		},
+		"s5e02i01": {
+			"request_file": "scenarios/s5e2/dsl-swap-request.json",
+			"request_file_hash": "",
+			"inventory_file": "scenarios/s5e2/dsl-swap-inventory.json",
+			"inventory_file_hash": ""
+		},
+		"s5e03i01": {
+			"request_file": "scenarios/s5e3/dsl-swap-request.json",
+			"request_file_hash": "",
+			"inventory_file": "scenarios/s5e3/dsl-swap-inventory.json",
+			"inventory_file_hash": ""
+		},
+		"s5e04i01": {
+			"request_file": "scenarios/s5e4/dsl-swap-request.json",
+			"request_file_hash": "",
+			"inventory_file": "scenarios/s5e4/dsl-swap-inventory.json",
+			"inventory_file_hash": ""
+		},
+		"s5e05i01": {
+			"request_file": "scenarios/s5e5/dsl-swap-request.json",
+			"request_file_hash": "",
+			"inventory_file": "scenarios/s5e5/dsl-swap-inventory.json",
+			"inventory_file_hash": ""
+		},
+		"s5e06i01": {
+			"request_file": "scenarios/s5e6/dsl-swap-request.json",
+			"request_file_hash": "",
+			"inventory_file": "scenarios/s5e6/dsl-swap-inventory.json",
+			"inventory_file_hash": ""
+		}
+	},
+	"staging_scenarios": {
+	},
+	"debug_scenarios": {
+		"RP0IP0": {
+			"request_file": "input-RP0.json",
+			"inventory_file": "inventory-IP0.json"
+		},
+		"RP1IP0": {
+			"request_file": "input-RP1.json",
+			"inventory_file": "inventory-IP0.json"
+		},
+		"RP0IP1": {
+			"request_file": "input-RP0.json",
+			"inventory_file": "inventory-IP1.json"
+		},
+		"RP1IP1": {
+			"request_file": "input-RP1.json",
+			"inventory_file": "inventory-IP1.json"
+		},
+		"RP0IP0IP1": {
+			"request_file": "input-RP0.json",
+			"inventory_file": "inventory-IP0IP1.json"
+		},
+		"RP1IP0IP1": {
+			"request_file": "input-RP1.json",
+			"inventory_file": "inventory-IP0IP1.json"
+		},
+		"RP0IP0IP1-TwoDaus": {
+			"request_file": "input-RP0.json",
+			"inventory_file": "inventory-IP0IP1-twoDaus.json"
+		},
+		"RP1IP0IP1-twoDaus": {
+			"request_file": "input-RP1.json",
+			"inventory_file": "inventory-IP0IP1-twoDaus.json"
+		},
+		"RP0RP1IP0IP1": {
+			"request_file": "input-RP0RP1.json",
+			"inventory_file": "inventory-IP0IP1.json"
+		},
+		"RP0RP1IP0IP1-twoDaus": {
+			"request_file": "input-RP0RP1.json",
+			"inventory_file": "inventory-IP0IP1-twoDaus.json"
+		},
+		"DSLInterchangeFormat": {
+			"request_file": "DSLInterchangeFormat-dsl-input.json",
+			"inventory_file": "DSLInterchangeFormat-dsl-dauinventory.json"
+		},
+		"s5e2-bus-only": {
+			"request_file": "s5e2/dsl-swap-request-bus.json",
+			"inventory_file": "s5e2/dsl-swap-inventory.json"
+		},
+		"s5e2-no-signalconditioners": {
+			"request_file": "s5e2/dsl-swap-request-nosignalconditioners.json",
+			"inventory_file": "s5e2/dsl-swap-inventory.json"
+		},
+		"s5e2-signalconditioners": {
+			"request_file": "s5e2/dsl-swap-request-signalconditioners.json",
+			"inventory_file": "s5e2/dsl-swap-inventory.json"
+		},
+		"s5MoreMeasurements": {
+			"request_file": "scenarios/s5MoreMeasurements/dsl-swap-request.json",
+			"inventory_file": "scenarios/s5MoreMeasurements/dsl-swap-inventory.json"
+		},
+		"freeze": {
+			"request_file": "freeze/dsl-swap-request.json",
+			"inventory_file": "freeze/dsl-swap-inventory.json"
+		}
+	}
+}

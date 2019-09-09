@@ -1,6 +1,7 @@
 package mil.darpa.immortals.flitcons;
 
 import mil.darpa.immortals.orientdbserver.TestScenario;
+import mil.darpa.immortals.orientdbserver.TestScenarios;
 import mil.darpa.immortals.orientdbserver.TestScenarioRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ public class EmbeddedTestScenario5Runner extends TestScenarioRunner {
 	}
 
 	public static TestScenarioRunner createScenario5Runner(@Nonnull String shortTestLabel) {
-		return new EmbeddedTestScenario5Runner(TestScenario.getScenario5TestScenario(shortTestLabel));
+		return new EmbeddedTestScenario5Runner(TestScenarios.getTestScenario(shortTestLabel));
 	}
 
 	@Override

@@ -67,7 +67,7 @@ public abstract class TestScenarioRunner {
 
 		try {
 			List<String> expectedStates = new ArrayList<>(scenario.getExpectedStatusSequence());
-			odbServer.init();
+			odbServer.init(OdbEmbeddedServer.OdbDeploymentMode.BackupsOnly);
 
 			TerminalStatus expectedState;
 			TerminalStatus currentState;
@@ -84,7 +84,7 @@ public abstract class TestScenarioRunner {
 				Assert.assertNull(data.getCurrentStateInfo());
 				Assert.assertNull(data.getOutputJsonData());
 
-				if (scenario.getScenarioType().equals("Scenario5")) {
+				if (scenario.getScenarioType().isScenario5) {
 					Assert.assertNull(data.getInputJsonData());
 				} else {
 					Assert.assertNotNull(data.getInputJsonData());

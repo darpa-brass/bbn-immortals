@@ -35,6 +35,9 @@ task integrationTest(type: Test) {
 	systemProperty "mil.darpa.immortals.artifactdirectory", buildDir.toPath().resolve("tmp/integrationTest").toFile().getCanonicalFile().absolutePath
 	systemProperty "immortalsLogLevel", "DEBUG"
 	systemProperty "mil.darpa.immortals.basicDisplayMode", ""
+	// Nulling these properties since tests should run from canned backup data
+	environment "IMMORTALS_CHALLENGE_PROBLEMS_ROOT", null
+	environment "IMMORTALS_ADAPTIVE_CONSTRAINT_SATISFACTION_ROOT", null
 	setWorkingDir(buildDir.toPath().resolve("tmp/integrationTest").toFile())
 	reports.junitXml.enabled = true
 	reports.html.enabled = true

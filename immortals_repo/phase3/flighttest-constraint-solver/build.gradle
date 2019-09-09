@@ -36,7 +36,7 @@ sourceSets {
 	}
 	test {
 		java {
-			srcDirs = ['src/test/java']
+			srcDirs = ['src/main/java', 'src/solver/java', 'src/test/java']
 		}
 		resources {
 			srcDirs = ['src/test/resources']
@@ -50,9 +50,12 @@ sourceSets {
 			srcDirs = ['src/solver/java', 'src/solver/groovy']
 		}
 	}
-	devhelper {
+	validator {
 		java {
-			srcDirs = ['src/devhelper/java']
+			srcDirs = ['src/main/java', 'src/validator/java']
+		}
+		groovy {
+			srcDirs = ['src/solver/java', 'src/solver/groovy']
 		}
 	}
 }
@@ -63,6 +66,9 @@ test {
 	systemProperty "mil.darpa.immortals.root", projectDir.toPath().parent.parent.toFile().getCanonicalFile().absolutePath
 	systemProperty "immortalsLogLevel", "DEBUG"
 	systemProperty "mil.darpa.immortals.basicDisplayMode", ""
+	// Nulling these properties since tests should run from canned backup data
+	environment "IMMORTALS_CHALLENGE_PROBLEMS_ROOT", null
+	environment "IMMORTALS_ADAPTIVE_CONSTRAINT_SATISFACTION_ROOT", null
 	setWorkingDir(buildDir.toPath().resolve("tmp/test").toFile())
 	testLogging {
 		showStandardStreams = true
@@ -93,25 +99,13 @@ task validatorJar(type: ShadowJar) {
 		attributes("Implementation-Title": "Immortals-FlightTest-Constraint_validator",
 				"Main-Class": "mil.darpa.immortals.flitcons.ValidatorMain")
 	}
-	from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+	from(project.convention.getPlugin(JavaPluginConvention).sourceSets.validator.output,
+			project.convention.getPlugin(JavaPluginConvention).sourceSets.validator.compileClasspath)
 	configurations = [project.configurations.runtime]
 	destinationDir = file('./')
 	archiveName = 'validator.jar'
 }
 jar.finalizedBy(validatorJar)
-
-task devJar(type: ShadowJar) {
-	group = "Shadow tasks"
-	manifest {
-		attributes("Implementation-Title": "Immortals-FlightTest-Constraint_solver",
-				"Main-Class": "mil.darpa.immortals.flitcons.DevhelperMain")
-	}
-	from(project.convention.getPlugin(JavaPluginConvention).sourceSets.devhelper.output,
-			project.convention.getPlugin(JavaPluginConvention).sourceSets.devhelper.compileClasspath)
-	configurations = [project.configurations.runtime]
-	destinationDir = file('./')
-	archiveName = "devhelper.jar"
-}
 
 clean.delete('./validator.jar', './flighttest-constraint-solver.jar')
 
@@ -147,10 +141,10 @@ dependencies {
 	testCompile sourceSets.solver.output
 	testCompile sourceSets.solver.compileClasspath
 
-	devhelperCompile sourceSets.main.output
-	devhelperCompile sourceSets.main.compileClasspath
-	devhelperCompile sourceSets.solver.output
-	devhelperCompile sourceSets.solver.compileClasspath
-	devhelperCompile 'org.slf4j:jul-to-slf4j:1.7.5'
-	devhelperCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
+	validatorCompile sourceSets.main.output
+	validatorCompile sourceSets.main.compileClasspath
+	validatorCompile sourceSets.solver.output
+	validatorCompile sourceSets.solver.compileClasspath
+	validatorCompile 'org.slf4j:jul-to-slf4j:1.7.5'
+	validatorCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
 }

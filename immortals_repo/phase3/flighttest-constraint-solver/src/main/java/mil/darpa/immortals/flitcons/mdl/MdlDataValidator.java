@@ -24,6 +24,7 @@ public class MdlDataValidator extends DataValidator {
 
 	private boolean saveResults = true;
 
+
 	public MdlDataValidator(@Nullable File inputExcelFile, @Nullable File outputDrlFile, AbstractDataSource dataSource) {
 		super(inputExcelFile, outputDrlFile);
 		this.collector = dataSource;
@@ -42,7 +43,12 @@ public class MdlDataValidator extends DataValidator {
 		super.init();
 	}
 
+
 	public ValidationDataContainer validateConfiguration(@Nonnull ValidationScenario scenario, boolean verbose, boolean lightMode) {
+		return validateConfiguration(scenario, verbose, lightMode, null);
+	}
+
+	public ValidationDataContainer validateConfiguration(@Nonnull ValidationScenario scenario, boolean verbose, boolean lightMode, @Nullable String fileTag) {
 		try {
 			HierarchicalDataContainer data;
 			String outputFile;
@@ -87,7 +93,9 @@ public class MdlDataValidator extends DataValidator {
 
 				try {
 					if (saveResults) {
-						EnvironmentConfiguration.storeFile(outputFile, dynamnicDataString.getBytes());
+						EnvironmentConfiguration.storeFile(
+								fileTag == null ? outputFile : fileTag + '-' + outputFile,
+								dynamnicDataString.getBytes());
 					}
 				} catch (Exception e) {
 					throw AdaptationnException.internal(e);

@@ -26,12 +26,21 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 
 	private OrientGraph testFlightConfigurationGraph
 
-	private String serverOverridePath
+	private String serverPath
+
+	public String getServerPath() {
+		return serverPath;
+	}
 
 	AbstractOrientVertexDataSource(@Nullable String serverPath) {
 		super()
 
-		serverOverridePath = serverPath
+		if (serverPath == null) {
+			this.serverPath = EnvironmentConfiguration.odbTarget
+		} else {
+			this.serverPath = serverPath
+
+		}
 
 		Gremlin.defineStep("get", [Pipe, Pipe], { String className ->
 			_().in("Containment").has("@class", className)
@@ -410,7 +419,6 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 	@Override
 	void init() {
 		if (testFlightConfigurationGraph == null) {
-			String serverPath = serverOverridePath == null ? EnvironmentConfiguration.odbTarget : serverOverridePath
 			logger.info("Connecting to '" + serverPath + "'.")
 
 			testFlightConfigurationGraph = new OrientGraph(

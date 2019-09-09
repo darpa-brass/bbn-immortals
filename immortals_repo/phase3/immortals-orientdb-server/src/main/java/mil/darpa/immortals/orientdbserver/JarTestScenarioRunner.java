@@ -21,11 +21,11 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 	}
 
 	public static TestScenarioRunner createScenario5Runner(@Nonnull String shortTestLabel) {
-		return new JarTestScenarioRunner(TestScenario.getScenario5TestScenario(shortTestLabel));
+		return new JarTestScenarioRunner(TestScenarios.getTestScenario(shortTestLabel));
 	}
 
 	public static TestScenarioRunner createScenario6Runner(@Nonnull String shortTestLabel) {
-		return new JarTestScenarioRunner(TestScenario.getScenario6TestScenario(shortTestLabel));
+		return new JarTestScenarioRunner(TestScenarios.getTestScenario(shortTestLabel));
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 			logger.info("Starting adaptation service from jar file...");
 			String[] cmd;
 
-			if (scenario.getScenarioType().equals("Scenario5")) {
+			if (scenario.getScenarioType().isScenario5) {
 				cmd = new String[]{
 						"bash", EnvironmentConfiguration.getImmortalsRoot().resolve("phase3").resolve("start.sh").toString(),
 						"--odb-url", odbServer.getOdbPath(scenario).replace("plocal", "remote"),
@@ -53,7 +53,7 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 					cmd[cmd.length - 1] = "--simple-solver";
 				}
 
-			} else if (scenario.getScenarioType().equals("Scenario6")) {
+			} else if (scenario.getScenarioType().isScenario6) {
 				cmd = new String[]{
 						"bash", EnvironmentConfiguration.getImmortalsRoot().resolve("phase3").resolve("start.sh").toString(),
 						"--odb-url", odbServer.getOdbPath(scenario),

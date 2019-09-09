@@ -8,32 +8,32 @@ public class SanityTests {
 
 	@BeforeClass
 	public void init() {
-			SLF4JBridgeHandler.removeHandlersForRootLogger();;
+			SLF4JBridgeHandler.removeHandlersForRootLogger();
 			SLF4JBridgeHandler.install();
 	}
 
 	@Test
 	public void testServerWaitForReady() {
-		EmbeddedTestScenario5Runner.createScenario5Runner("s5").execute(4000);
+		EmbeddedTestScenario5Runner.createScenario5Runner("bs5").execute(4000);
 	}
 
 	@Test
 	public void testServerReady() {
-		EmbeddedTestScenario5Runner.createScenario5Runner("s5").execute();
+		EmbeddedTestScenario5Runner.createScenario5Runner("bs5").execute();
 	}
 
 	@Test
 	public void testServerSequential() {
-		EmbeddedTestScenario5Runner.createScenario5Runner("s5s").execute();
+		EmbeddedTestScenario5Runner.createScenario5Runner("bs5s").execute();
 	}
 
 	@Test
 	public void testSwriExample1() {
-		EmbeddedTestScenario5Runner.createScenario5Runner("s5e1").execute();
+		EmbeddedTestScenario5Runner.createScenario5Runner("s5e01i01").execute();
 	}
 
 	@Test
 	public void testSwriExample2() {
-		EmbeddedTestScenario5Runner.createScenario5Runner("s5e2").execute();
+		EmbeddedTestScenario5Runner.createScenario5Runner("s5e02i01").execute();
 	}
 }

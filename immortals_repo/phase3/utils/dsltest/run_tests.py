@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import json
 import os
 import subprocess
 import time
@@ -10,106 +11,15 @@ JAR_FILE = None
 DSL_DIR = None
 RULES_FILE = None
 
-default_test_scenarios = {
-    "s5": {
-        "request_file": "scenarios/s5/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5/dsl-swap-inventory.json"
-    },
-    "s5e1": {
-        "request_file": "scenarios/s5e1/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5e1/dsl-swap-inventory.json"
-    },
-    "s5e2": {
-        "request_file": "scenarios/s5e2/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5e2/dsl-swap-inventory.json"
-    },
-    "s5e3": {
-        "request_file": "scenarios/s5e3/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5e3/dsl-swap-inventory.json"
-    },
-    "s5e4": {
-        "request_file": "scenarios/s5e4/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5e4/dsl-swap-inventory.json"
-    },
-    "s5e5": {
-        "request_file": "scenarios/s5e5/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5e5/dsl-swap-inventory.json"
-    },
-    "s5e6": {
-        "request_file": "scenarios/s5e6/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5e6/dsl-swap-inventory.json"
-    }
-}
+with open(os.path.join(SD, 'scenarios/test_scenarios.json'), 'r') as f:
+    test_scenario_data = json.load(f)
+    regression_scenarios = test_scenario_data['regression_scenarios']  # type: dict
+    staging_scenarios = test_scenario_data['staging_scenarios']  # type: dict
+    for key in staging_scenarios:
+        regression_scenarios[key] = staging_scenarios[key]
+    debug_scenarios = test_scenario_data['debug_scenarios']  # type: dict
 
-debug_test_scenarios = {
-    "RP0IP0": {
-        "request_file": "input-RP0.json",
-        "inventory_file": "inventory-IP0.json"
-    },
-    "RP1IP0": {
-        "request_file": "input-RP1.json",
-        "inventory_file": "inventory-IP0.json"
-    },
-    "RP0IP1": {
-        "request_file": "input-RP0.json",
-        "inventory_file": "inventory-IP1.json"
-    },
-    "RP1IP1": {
-        "request_file": "input-RP1.json",
-        "inventory_file": "inventory-IP1.json"
-    },
-
-    "RP0IP0IP1": {
-        "request_file": "input-RP0.json",
-        "inventory_file": "inventory-IP0IP1.json"
-    },
-    "RP1IP0IP1": {
-        "request_file": "input-RP1.json",
-        "inventory_file": "inventory-IP0IP1.json"
-    },
-
-    "RP0IP0IP1-TwoDaus": {
-        "request_file": "input-RP0.json",
-        "inventory_file": "inventory-IP0IP1-twoDaus.json"
-    },
-    "RP1IP0IP1-twoDaus": {
-        "request_file": "input-RP1.json",
-        "inventory_file": "inventory-IP0IP1-twoDaus.json"
-    },
-    "RP0RP1IP0IP1": {
-        "request_file": "input-RP0RP1.json",
-        "inventory_file": "inventory-IP0IP1.json"
-    },
-    "RP0RP1IP0IP1-twoDaus": {
-        "request_file": "input-RP0RP1.json",
-        "inventory_file": "inventory-IP0IP1-twoDaus.json"
-    },
-    "DSLInterchangeFormat": {
-        "request_file": "DSLInterchangeFormat-dsl-input.json",
-        "inventory_file": "DSLInterchangeFormat-dsl-dauinventory.json"
-    },
-    "s5e2-bus-only": {
-        "request_file": "s5e2/dsl-swap-request-bus.json",
-        "inventory_file": "s5e2/dsl-swap-inventory.json"
-    },
-    "s5e2-no-signalconditioners": {
-        "request_file": "s5e2/dsl-swap-request-nosignalconditioners.json",
-        "inventory_file": "s5e2/dsl-swap-inventory.json"
-    },
-    "s5e2-signalconditioners": {
-        "request_file": "s5e2/dsl-swap-request-signalconditioners.json",
-        "inventory_file": "s5e2/dsl-swap-inventory.json"
-    },
-    "s5MoreMeasurements": {
-        "request_file": "scenarios/s5MoreMeasurements/dsl-swap-request.json",
-        "inventory_file": "scenarios/s5MoreMeasurements/dsl-swap-inventory.json"
-    },
-    "freeze": {
-        "request_file": "freeze/dsl-swap-request.json",
-        "inventory_file": "freeze/dsl-swap-inventory.json"
-    }
-}
-scenario_choices = default_test_scenarios.keys() + debug_test_scenarios.keys()
+scenario_choices = sorted(list(regression_scenarios.keys()) + list(debug_scenarios.keys()))
 
 parser = argparse.ArgumentParser('DSL Tester', add_help=True)
 parser.add_argument('--scenario', type=str, choices=scenario_choices, help='The scenario to execute')
@@ -211,7 +121,7 @@ def run_test(request_file, inventory_file, simple_solver=False, use_jar=True, ab
 
 
 def main():
-    global JAR_FILE, DSL_DIR, RULES_FILE, default_test_scenarios, debug_test_scenarios
+    global JAR_FILE, DSL_DIR, RULES_FILE, regression_scenarios, debug_scenarios
     args = parser.parse_args()
 
     if args.simple_solver:
@@ -238,27 +148,28 @@ def main():
             raise Exception('The file "' + RULES_FILE + '" does not exist!')
 
     if args.scenario is None:
-        for name in default_test_scenarios.keys():
-            input_group = default_test_scenarios[name]
+        for name in regression_scenarios.keys():
+            input_group = regression_scenarios[name]
             run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
                      abort_on_failure=(not args.keep_running_on_failure), **input_group)
 
-        for name in debug_test_scenarios.keys():
-            input_group = debug_test_scenarios[name]
+        for name in debug_scenarios.keys():
+            input_group = debug_scenarios[name]
             run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
                      abort_on_failure=(not args.keep_running_on_failure), **input_group)
 
     else:
-        if args.scenario in default_test_scenarios:
-            input_group = default_test_scenarios[args.scenario]
-        elif args.scenario in debug_test_scenarios:
-            input_group = debug_test_scenarios[args.scenario]
+        if args.scenario in regression_scenarios:
+            run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
+                     abort_on_failure=(not args.keep_running_on_failure), **regression_scenarios[args.scenario])
+
+        elif args.scenario in debug_scenarios:
+            run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
+                     abort_on_failure=(not args.keep_running_on_failure), **debug_scenarios[args.scenario])
+
         else:
             print("Invalid scenario '" + args.scenario + "'!")
             exit(-1)
-
-        run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
-                 abort_on_failure=(not args.keep_running_on_failure), **input_group)
 
 
 if __name__ == '__main__':
