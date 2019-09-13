@@ -13,15 +13,16 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
 	id 'groovy'
+	id 'java'
 	id "com.github.johnrengelman.shadow" version "4.0.4"
 }
+
+group 'mil.darpa.immortals'
+version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-
-group 'mil.darpa.immortals'
-version '1.0-SNAPSHOT'
 
 repositories {
 	mavenLocal()
@@ -36,7 +37,7 @@ sourceSets {
 	}
 	test {
 		java {
-			srcDirs = ['src/main/java', 'src/solver/java', 'src/test/java']
+			srcDirs = ['src/test/java']
 		}
 		resources {
 			srcDirs = ['src/test/resources']
@@ -44,7 +45,7 @@ sourceSets {
 	}
 	solver {
 		java {
-			srcDirs = ['src/main/java']
+			srcDirs = []
 		}
 		groovy {
 			srcDirs = ['src/solver/java', 'src/solver/groovy']
@@ -52,10 +53,7 @@ sourceSets {
 	}
 	validator {
 		java {
-			srcDirs = ['src/main/java', 'src/validator/java']
-		}
-		groovy {
-			srcDirs = ['src/solver/java', 'src/solver/groovy']
+			srcDirs = ['src/validator/java']
 		}
 	}
 }
@@ -131,20 +129,21 @@ dependencies {
 	solverCompile 'org.codehaus.groovy:groovy-all:2.4.15'
 	solverCompile 'com.orientechnologies:orientdb-core:2.2.24'
 	solverCompile 'com.orientechnologies:orientdb-graphdb:2.2.24'
-
 	solverCompile sourceSets.main.output
 	solverCompile sourceSets.main.compileClasspath
 
 	testCompile 'org.testng:testng:6.14.3'
     testCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
 	testCompile 'org.slf4j:jul-to-slf4j:1.7.5'
+	testCompile sourceSets.main.output
+	testCompile sourceSets.main.compileClasspath
 	testCompile sourceSets.solver.output
 	testCompile sourceSets.solver.compileClasspath
 
+	validatorCompile 'org.slf4j:jul-to-slf4j:1.7.5'
+	validatorCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
 	validatorCompile sourceSets.main.output
 	validatorCompile sourceSets.main.compileClasspath
 	validatorCompile sourceSets.solver.output
 	validatorCompile sourceSets.solver.compileClasspath
-	validatorCompile 'org.slf4j:jul-to-slf4j:1.7.5'
-	validatorCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
 }

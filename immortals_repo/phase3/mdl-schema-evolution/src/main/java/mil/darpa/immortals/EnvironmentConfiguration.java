@@ -45,7 +45,12 @@ public enum EnvironmentConfiguration {
 	}
 
 	public static boolean isDefaultArtifactDirectory() {
-		return getArtifactDirectory().equals(Paths.get(tryResolveRelativeToImmortalsRoot(false, "")));
+		String immortalsRoot = tryResolveRelativeToImmortalsRoot(true, "phase3", "DEFAULT_ARTIFACT_DIRECTORY");
+		if (immortalsRoot == null) {
+			return false;
+		} else {
+			return getArtifactDirectory().equals(Paths.get(immortalsRoot));
+		}
 	}
 
 	public static Path getDslRoot() {

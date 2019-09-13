@@ -59,20 +59,20 @@ public class Utils {
 
 		public static String asciify(@Nonnull String input) {
 			return input
-					.replaceAll(NLT, "!<")
-					.replaceAll(NGT, "!>")
-					.replaceAll(LTE, "<=")
-					.replaceAll(NLTE, "!<=")
-					.replaceAll(GTE, ">=")
-					.replaceAll(NGTE, "!>=")
-					.replaceAll(EE, "element of")
-					.replaceAll(NEE, "not element of")
-					.replaceAll(TE, "exists")
-					.replaceAll(NTE, "not exists")
-					.replaceAll(EQT, "equivalent to")
-					.replaceAll(NEQT, "not equivalent to")
-					.replaceAll(SS, "subset of")
-					.replace(NSS, "not subset of");
+					.replaceAll(NLT, " !< ")
+					.replaceAll(NGT, " !> ")
+					.replaceAll(LTE, " <= ")
+					.replaceAll(NLTE, " !<= ")
+					.replaceAll(GTE, " >= ")
+					.replaceAll(NGTE, " !>= ")
+					.replaceAll(EE, " element of ")
+					.replaceAll(NEE, " not element of ")
+					.replaceAll(TE, " exists ")
+					.replaceAll(NTE, " not exists ")
+					.replaceAll(EQT, " equivalent to ")
+					.replaceAll(NEQT, " not equivalent to ")
+					.replaceAll(SS, " subset of ")
+					.replace(NSS, " not subset of ");
 		}
 	}
 

@@ -26,6 +26,8 @@ parser.add_argument('--scenario', type=str, choices=scenario_choices, help='The 
 parser.add_argument('--simple-solver', '-s', action='store_true', help='Use the simple solver')
 parser.add_argument('--use-jar-with-dsl', '-j', action='store_true', help='Use the Jar if the DSL is used')
 parser.add_argument('--keep-running-on-failure', action='store_true', help='Keep running the tests on failure')
+parser.add_argument('--input-inventory', '-i', type=str, help='The input inventory to use')
+parser.add_argument('--input-request', '-r', type=str, help='The input request to use')
 
 
 def exec_cmd(cmd, cwd=None, abort_on_failure=True):
@@ -90,12 +92,20 @@ def run_test(request_file, inventory_file, simple_solver=False, use_jar=True, ab
     """
 
     global JAR_FILE
-    request_file = os.path.realpath(os.path.join(SD, request_file))
-    inventory_file = os.path.realpath(os.path.join(SD, inventory_file))
-    if not os.path.exists(request_file):
-        raise Exception('The file "' + request_file + "' does not exist!")
-    if not os.path.exists(inventory_file):
-        raise Exception('The file "' + inventory_file + "' does not exist!")
+
+    if os.path.exists(request_file):
+        request_file = os.path.abspath(request_file)
+    else:
+        request_file = os.path.realpath(os.path.join(SD, request_file))
+        if not os.path.exists(request_file):
+            raise Exception('The file "' + request_file + "' does not exist!")
+
+    if os.path.exists(inventory_file):
+        inventory_file = os.path.abspath(inventory_file)
+    else:
+        inventory_file = os.path.realpath(os.path.join(SD, inventory_file))
+        if not os.path.exists(inventory_file):
+            raise Exception('The file "' + inventory_file + "' does not exist!")
 
     if use_jar:
         cmd = ['java', '-jar', JAR_FILE,
@@ -124,6 +134,17 @@ def main():
     global JAR_FILE, DSL_DIR, RULES_FILE, regression_scenarios, debug_scenarios
     args = parser.parse_args()
 
+    if args.input_inventory is not None or args.input_request is not None:
+        if args.input_inventory is None:
+            raise Exception("Cannot provide an input request without an input inventory!")
+            exit(1)
+        elif args.input_request is None:
+            raise Exception("Cannot provide an input inventory without an input request!")
+            exit(1)
+        elif args.scenario is not None:
+            raise Exception("Cannot provide an input inventory and input request along with an input scenario!")
+            exit(1)
+
     if args.simple_solver:
         use_simple_solver = True
         use_full_jar = True
@@ -147,25 +168,44 @@ def main():
         if not os.path.exists(RULES_FILE):
             raise Exception('The file "' + RULES_FILE + '" does not exist!')
 
-    if args.scenario is None:
+    if args.input_inventory is not None or args.input_request is not None:
+        run_test(inventory_file=args.input_inventory, request_file=args.input_request,
+                 simple_solver=use_simple_solver, use_jar=use_full_jar,
+                 abort_on_failure=(not args.keep_running_on_failure))
+
+    elif args.scenario is None:
         for name in regression_scenarios.keys():
             input_group = regression_scenarios[name]
+            if 'request_file_hash' in input_group:
+                input_group.pop('request_file_hash')
+            if 'inventory_file_hash' in input_group:
+                input_group.pop('inventory_file_hash')
             run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
                      abort_on_failure=(not args.keep_running_on_failure), **input_group)
 
         for name in debug_scenarios.keys():
             input_group = debug_scenarios[name]
+            if 'request_file_hash' in input_group:
+                input_group.pop('request_file_hash')
+            if 'inventory_file_hash' in input_group:
+                input_group.pop('inventory_file_hash')
             run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
                      abort_on_failure=(not args.keep_running_on_failure), **input_group)
 
     else:
         if args.scenario in regression_scenarios:
+            scenario = regression_scenarios[args.scenario]
+            if 'request_file_hash' in scenario:
+                scenario.pop('request_file_hash')
+            if 'inventory_file_hash' in scenario:
+                scenario.pop('inventory_file_hash')
+
             run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
-                     abort_on_failure=(not args.keep_running_on_failure), **regression_scenarios[args.scenario])
+                     abort_on_failure=(not args.keep_running_on_failure), **scenario)
 
         elif args.scenario in debug_scenarios:
             run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
-                     abort_on_failure=(not args.keep_running_on_failure), **debug_scenarios[args.scenario])
+                     abort_on_failure=(not args.keep_running_on_failure), **scenario)
 
         else:
             print("Invalid scenario '" + args.scenario + "'!")

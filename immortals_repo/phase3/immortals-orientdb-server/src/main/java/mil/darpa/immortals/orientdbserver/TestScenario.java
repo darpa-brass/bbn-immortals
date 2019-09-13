@@ -102,6 +102,10 @@ public class TestScenario {
 		return TestScenarios.class.getClassLoader().getResourceAsStream("test_databases/" + this.shortName + "-backup.zip");
 	}
 
+	public boolean hasBackup() {
+		return getBackupInputStream() != null;
+	}
+
 	public InputStream getInputJsonData() {
 		InputStream inputJsonData;
 		Path dataPath;
@@ -198,7 +202,8 @@ public class TestScenario {
 			throw new RuntimeException("Cannot validate backup since no source files can be found!");
 		}
 		return ((hasXmlMdlrootInput() && fileIsOutdated(getXmlMdlrootInputPath(), ingestedXmlMdlrootInputHash)) ||
-				(hasXmlInventoryInput() && fileIsOutdated(getXmlInventoryPath(), ingestedXmlInventoryHash)));
+				(hasXmlInventoryInput() && fileIsOutdated(getXmlInventoryPath(), ingestedXmlInventoryHash)) ||
+				(!hasBackup()));
 	}
 
 	private static void recursivelyCompareStructure(@Nonnull JsonElement expectedJsonElement, @Nonnull JsonElement actualJsonElement) throws NestedException {

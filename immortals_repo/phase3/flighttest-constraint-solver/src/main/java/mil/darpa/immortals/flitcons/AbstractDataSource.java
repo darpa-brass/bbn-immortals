@@ -138,7 +138,11 @@ public abstract class AbstractDataSource<T> {
 
 	public abstract void shutdown();
 
-	public abstract void restart();
+	public void restart() {
+		rawInventoryContainer = null;
+		rawInputConfigurationContainer = null;
+		rawExternalDataContainer = null;
+	}
 
 	protected abstract LinkedHashMap<T, List<T>> collectRawInputData();
 

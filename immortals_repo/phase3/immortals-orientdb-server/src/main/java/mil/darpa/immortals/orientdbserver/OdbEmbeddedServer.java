@@ -280,8 +280,6 @@ public class OdbEmbeddedServer {
 				String acsDir;
 				if ((acsDir = System.getenv(ENV_ACS)) != null && new File(acsDir).exists()) {
 					pb.environment().put(ENV_ACS, System.getenv(ENV_ACS));
-				} else {
-					throw new RuntimeException("Cannot execute python-based adaptation without the environment variable '" + ENV_ACS + "' being set to a valid directory!");
 				}
 
 				Process p = pb.start();
@@ -367,7 +365,8 @@ public class OdbEmbeddedServer {
 				break;
 
 			case BackupsWithUpdatedXmlIfAvailable:
-				if ((scenario.hasXmlInventoryInput() || scenario.hasXmlMdlrootInput()) && scenario.backupIsOutdated()) {
+				if (((scenario.hasXmlInventoryInput() || scenario.hasXmlMdlrootInput()) && scenario.backupIsOutdated()) ||
+						!scenario.hasBackup()) {
 					initFromFiles(host, port, scenario);
 				} else {
 					if (!restoreDatabase(scenario)) {
@@ -381,7 +380,7 @@ public class OdbEmbeddedServer {
 					throw new RuntimeException("No input XML files could be found!");
 				}
 
-				if (scenario.backupIsOutdated()) {
+				if (scenario.backupIsOutdated() || !scenario.hasBackup()) {
 					initFromFiles(host, port, scenario);
 				} else {
 					if (!restoreDatabase(scenario)) {

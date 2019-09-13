@@ -14,17 +14,17 @@ public class SanityTests {
 
 	@Test
 	public void testServerWaitForReady() {
-		EmbeddedTestScenario5Runner.createScenario5Runner("bs5").execute(4000);
+		EmbeddedTestScenario5Runner.createScenario5Runner("bs5eThermocoupleExtensions_iThermocoupleExtensions").execute(4000);
 	}
 
 	@Test
 	public void testServerReady() {
-		EmbeddedTestScenario5Runner.createScenario5Runner("bs5").execute();
+		EmbeddedTestScenario5Runner.createScenario5Runner("bs5eThermocoupleExtensions_iThermocoupleExtensions").execute();
 	}
 
 	@Test
 	public void testServerSequential() {
-		EmbeddedTestScenario5Runner.createScenario5Runner("bs5s").execute();
+		EmbeddedTestScenario5Runner.createScenario5Runner("bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential").execute();
 	}
 
 	@Test

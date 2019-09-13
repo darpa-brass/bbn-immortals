@@ -1,5 +1,11 @@
 {
 	"regression_scenarios": {
+		"basic": {
+			"request_file": "scenarios/basic/dsl-swap-request.json",
+			"request_file_hash": "",
+			"inventory_file": "scenarios/basic/dsl-swap-inventory.json",
+			"inventory_file_hash": ""
+		},
 		"s5": {
 			"request_file": "scenarios/s5/dsl-swap-request.json",
 			"request_file_hash": "",

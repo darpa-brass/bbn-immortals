@@ -123,7 +123,6 @@
 				{
 					"sourceAttributePath": ["Thermocouple"],
 					"targetAttributePath": ["PortTypes", "PortType", "Thermocouple"]
-
 				}
 			]
 		}
@@ -160,7 +159,7 @@
 				"Thermocouple"
 			]
 		},
-		"allowedDanglingReferences" : [
+		"allowedDanglingReferences": [
 			{
 				"sourceType": "DSCPTableEntryRef",
 				"targetType": "DSCPTableEntry"
@@ -294,6 +293,11 @@
 					"b862c60433e5": [true, false]
 				},
 				"optionalValueToCreateIfMissing": [false]
+//			},
+//			{
+//				"parentPath": ["NetworkNode", "InternalStructure", "Modules", "Module", "Ports", "Port", "PortTypes", "PortType"],
+//				"childAttributeName": "Thermocouple",
+//				"optionalValueToCreateIfMissing": "b862c60433e5"
 			}
 		]
 	},
@@ -313,14 +317,18 @@
 		],
 		"valueRemappingInstructions": [
 			{
-        "parentPath": ["Device", "DeviceStructure", "DeviceModules", "DeviceModule"],
+				"parentPath": ["Device", "DeviceStructure", "DeviceModules", "DeviceModule"],
 				"childAttributeName": "ExcitationSource",
 				"optionalNewChildAttributeName": "Excitation",
 				"optionalChildAttributeValueRemap": {
 					"Internal": false,
 					"External": true
-				},
-				"optionalValueToCreateIfMissing": false
+				}
+//			},
+//			{
+//				"parentPath": ["NetworkNode", "InternalStructure", "Modules", "Module", "Ports", "Port", "PortTypes", "PortType"],
+//				"childAttributeName": "Thermocouple",
+//				"optionalValueToCreateIfMissing": ["b862c60433e5", "K", "E", "J", "N", "B", "R", "S", "T", "C", "N"]
 			}
 		]
 	},

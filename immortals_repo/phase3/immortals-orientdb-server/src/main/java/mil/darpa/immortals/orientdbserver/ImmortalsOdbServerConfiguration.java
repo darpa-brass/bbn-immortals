@@ -30,7 +30,14 @@ public class ImmortalsOdbServerConfiguration {
 			description = "Regenerates the specified scenario(s)")
 	private List<String> scenariosToRegenerate = new LinkedList<>();
 
-	@CommandLine.Option(names = {"-s", "--start"}, description = "Start the server with the specified scenarios")
+	static class ScenarioChoices extends ArrayList<String> {
+		ScenarioChoices() {
+			super(TestScenarios.getAllTestScenarioIdentifiers());
+		}
+	}
+
+	@CommandLine.Option(names = {"-s", "--start"}, completionCandidates = ScenarioChoices.class,
+			description = "Start the server with the specified scenarios. Valid Values: ${COMPLETION-CANDIDATES}")
 	private List<String> scenariosToStart = new LinkedList<>();
 
 	static class DeploymentModes extends ArrayList<String> {

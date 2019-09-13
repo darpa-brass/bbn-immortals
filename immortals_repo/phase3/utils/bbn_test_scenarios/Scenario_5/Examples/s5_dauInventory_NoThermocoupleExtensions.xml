@@ -1,0 +1,1471 @@
+<DAUInventory>
+  <NetworkNode ID="XTTCDAU">
+    <Name>VendorB_DAU</Name>
+    <Description>TA1 VendorB DAU Network Node</Description>
+    <GenericParameter>
+      <NameValues>
+        <NameValue Name="User" Index="1">BBN</NameValue>
+      </NameValues>
+      <BBNDauMonetaryCost>80000</BBNDauMonetaryCost>
+      <BBNDauOpportunityCost>2345</BBNDauOpportunityCost>
+    </GenericParameter>
+    <InventoryID>TA1-VendorB-DAU1</InventoryID>
+    <HostName>VendorB</HostName>
+    <Manufacturer>VendorB</Manufacturer>
+    <Model>DAU Model TBD</Model>
+    <ModelVersion>model version #1</ModelVersion>
+    <SerialID>258089</SerialID>
+    <IEEE1588Version>2008e2e</IEEE1588Version>
+    <TmNSApps>
+      <TmNSApp ID="XDAUTma">
+        <Name>TA1 VendorB DAU1</Name>
+        <Description>TA1 VendorB DAU1 TMA</Description>
+        <RoleID>VendorB_DAU1</RoleID>
+        <LoggingLevel>Warning</LoggingLevel>
+        <Manufacturer>VendorB</Manufacturer>
+        <Product>TBD</Product>
+        <ProductVersion>Product Version #1</ProductVersion>
+        <ConfigurationVersion>iDAU: app mu.7115+, kernel #6983 PREEMPT Tue May 19 13:32:41 EDT 2015</ConfigurationVersion>
+        <TmNSManagementResourcesVersion>SMS v0.8.7</TmNSManagementResourcesVersion>
+        <DirtyBit>false</DirtyBit>
+        <TmNSDAU/>
+        <TmNSLTCDataSource>
+          <LTCInterfaces>
+            <LTCInterface>
+              <TimeToLive>10</TimeToLive>
+            </LTCInterface>
+          </LTCInterfaces>
+        </TmNSLTCDataSource>
+      </TmNSApp>
+    </TmNSApps>
+    <InternalStructure>
+      <Modules>
+        <Module ID="xmodule-101">
+          <Name>VendorB Module101</Name>
+          <Description>VendorB Processor</Description>
+          <Manufacturer>VendorB</Manufacturer>
+          <Model>VendorB_Module_101_Model</Model>
+          <SerialID>258085</SerialID>
+          <InventoryID>id_0x00000016</InventoryID>
+          <Position>101</Position>
+          <PositionsOccupied>1</PositionsOccupied>
+          <RunningAppRefs>
+            <TmNSAppRef IDREF="XDAUTma"/>
+          </RunningAppRefs>
+          <Connectors>
+            <Connector>
+              <Name>J1 Serial Port</Name>
+              <Description>J1: 9 pin D-subminiature</Description>
+              <Pins>
+                <Pin ID="XMppcJ1Pin2" Index="1">
+                  <Name>RS232 RCV</Name>
+                  <Description>RS-232: receive signal from the host</Description>
+                  <Designator>SerialRx</Designator>
+                </Pin>
+                <Pin ID="XMppcJ1Pin3" Index="2">
+                  <Name>RS232 XMT</Name>
+                  <Description>RS-232: transmit signal to the host</Description>
+                  <Designator>SerialTx</Designator>
+                </Pin>
+                <Pin ID="XMppcJ1Pin9" Index="3">
+                  <Name>1PPS OUT</Name>
+                  <Description>One pulse per second output</Description>
+                  <Designator>1PPS</Designator>
+                </Pin>
+              </Pins>
+            </Connector>
+          </Connectors>
+          <Ports>
+            <Port ID="XMppcRs232" Index="1">
+              <Name>Console</Name>
+              <Description>Console Serial Port</Description>
+              <PortDirection>Bidirectional</PortDirection>
+              <PortTypes>
+                <PortType>Serial</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XMppcJ1Pin2"/>
+                <PinRef IDREF="XMppcJ1Pin3"/>
+                <PinRef IDREF="XMppcJ1Pin9"/>
+              </PinRefs>
+            </Port>
+          </Ports>
+        </Module>
+        <Module ID="xmodule-102">
+          <Name>VendorB Module102</Name>
+          <Description>VendorB Controller</Description>
+          <Manufacturer>VendorB</Manufacturer>
+          <Model>VendorB Model</Model>
+          <SerialID>258080</SerialID>
+          <InventoryID>id_0x00000016</InventoryID>
+          <Position>102</Position>
+          <PositionsOccupied>1</PositionsOccupied>
+          <NetworkInterfaces>
+            <NetworkInterface ID="XMacqEthIf">
+              <Name>eth0</Name>
+              <DHCPEnable>false</DHCPEnable>
+              <IPAddress>10.1.101.201</IPAddress>
+              <PhysicalNetworkPorts>
+                <PhysicalNetworkPort ID="XMacqEthPhy">
+                  <Name>Ethernet</Name>
+                  <Description>J2 10/100Base-T Ethernet</Description>
+                  <Medium>Copper</Medium>
+                  <PortNumber>1</PortNumber>
+                  <PortDataRate>
+                    <Value>1e8</Value>
+                    <BaseUnit>BitPerSecond</BaseUnit>
+                  </PortDataRate>
+                </PhysicalNetworkPort>
+              </PhysicalNetworkPorts>
+            </NetworkInterface>
+          </NetworkInterfaces>
+          <Connectors>
+            <Connector>
+              <Name>J1 GPIO RS422</Name>
+              <Description>J1: 15 pin D-subminiature</Description>
+              <Pins>
+                <Pin ID="XMacqJ1Pin1" Index="1">
+                  <Name>GND</Name>
+                  <Description>Digital ground</Description>
+                  <Designator>GND</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin2" Index="2">
+                  <Name>Port2+</Name>
+                  <Description>RS-422 Output port 2 +</Description>
+                  <Designator>Port2_plus</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin3" Index="3">
+                  <Name>Port2-</Name>
+                  <Description>RS-422 Output port 2 -</Description>
+                  <Designator>Port2_minus</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin4" Index="4">
+                  <Name>Port4+</Name>
+                  <Description>RS-422 Output port 4 +</Description>
+                  <Designator>Port4_plus</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin5" Index="5">
+                  <Name>Port4-</Name>
+                  <Description>RS-422 Output port 4 -</Description>
+                  <Designator>Port4_minus</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin7" Index="6">
+                  <Name>GPO1_A</Name>
+                  <Description>General-purpose opto-isolated switch 1</Description>
+                  <Designator>GPO1_A</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin8" Index="7">
+                  <Name>GPO1_B</Name>
+                  <Description>General-purpose opto-isolated switch 1</Description>
+                  <Designator>GPO1_B</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin9" Index="8">
+                  <Name>Port1+</Name>
+                  <Description>RS-422 Output port 1 +</Description>
+                  <Designator>Port1_plus</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin10" Index="9">
+                  <Name>Port1-</Name>
+                  <Description>RS-422 Output port 1 -</Description>
+                  <Designator>Port1_minus</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin11" Index="10">
+                  <Name>Port3+</Name>
+                  <Description>RS-422 Output port 3 +</Description>
+                  <Designator>Port3_plus</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin12" Index="11">
+                  <Name>Port3-</Name>
+                  <Description>RS-422 Output port 3 -</Description>
+                  <Designator>Port3_minus</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin14" Index="12">
+                  <Name>GPO2_A</Name>
+                  <Description>General-purpose opto-isolated switch 2</Description>
+                  <Designator>GPO2_A</Designator>
+                </Pin>
+                <Pin ID="XMacqJ1Pin15" Index="13">
+                  <Name>GPO2_B</Name>
+                  <Description>General-purpose opto-isolated switch 2</Description>
+                  <Designator>GPO2_B</Designator>
+                </Pin>
+              </Pins>
+            </Connector>
+            <Connector>
+              <Name>J2 Ethernet</Name>
+              <Description>J2: 9 pin D-subminiature</Description>
+              <Pins>
+                <Pin ID="XMacqJ2Pin1" Index="1">
+                  <Name>TXDN</Name>
+                  <Description>Transmit signal (negative polarity)</Description>
+                  <Designator>TXDN</Designator>
+                </Pin>
+                <Pin ID="XMacqJ2Pin2" Index="2">
+                  <Name>TXDP</Name>
+                  <Description>Transmit signal (positive polarity)</Description>
+                  <Designator>TXDP</Designator>
+                </Pin>
+                <Pin ID="XMacqJ2Pin4" Index="3">
+                  <Name>RXDN</Name>
+                  <Description>Receive signal (negative polarity)</Description>
+                  <Designator>RXDN</Designator>
+                </Pin>
+                <Pin ID="XMacqJ2Pin5" Index="4">
+                  <Name>RXDP</Name>
+                  <Description>Receive signal (positive polarity)</Description>
+                  <Designator>RXDP</Designator>
+                </Pin>
+                <Pin ID="XMacqJ2Pin6" Index="5">
+                  <Name>CHASSIS GND</Name>
+                  <Description>Chassis ground</Description>
+                  <Designator>GND</Designator>
+                </Pin>
+              </Pins>
+            </Connector>
+          </Connectors>
+          <Ports>
+            <Port Enabled="true" ID="XMacq-RS-422-1" Index="1">
+              <Name>TX1</Name>
+              <Description>RS-422 Port 1</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType Extension="RS-422">Extension</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XMacqJ1Pin9"/>
+                <PinRef IDREF="XMacqJ1Pin10"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="false" ID="XMacq-RS-422-2" Index="2">
+              <Name>TX2</Name>
+              <Description>RS-422 Port 2</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType Extension="RS-422">Extension</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XMacqJ1Pin2"/>
+                <PinRef IDREF="XMacqJ1Pin3"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="false" ID="XMacq-RS-422-3" Index="3">
+              <Name>TX3</Name>
+              <Description>RS-422 Port 3</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType Extension="RS-422">Extension</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XMacqJ1Pin11"/>
+                <PinRef IDREF="XMacqJ1Pin12"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="false" ID="XMacq-RS-422-4" Index="4">
+              <Name>TX4</Name>
+              <Description>RS-422 Port 4</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType Extension="RS-422">Extension</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XMacqJ1Pin4"/>
+                <PinRef IDREF="XMacqJ1Pin5"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="true" ID="XMacq-PCM-Multicast" Index="5">
+              <Name>PCM Multicast</Name>
+              <Description>Ethernet PCM Multicast</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType>Ethernet</PortType>
+              </PortTypes>
+            </Port>
+            <Port ID="XMacqEthernet" Index="6">
+              <Name>Ethernet</Name>
+              <Description>10/100 Fast Ethernet</Description>
+              <PortDirection>Bidirectional</PortDirection>
+              <PortTypes>
+                <PortType>Ethernet</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XMacqJ2Pin1"/>
+                <PinRef IDREF="XMacqJ2Pin2"/>
+                <PinRef IDREF="XMacqJ2Pin4"/>
+                <PinRef IDREF="XMacqJ2Pin5"/>
+              </PinRefs>
+              <PhysicalNetworkPortRef IDREF="XMacqEthPhy"/>
+            </Port>
+          </Ports>
+        </Module>
+        <Module ID="xmodule-1A">
+          <Name>Card A at Position 1</Name>
+          <Description>2-channel Simultaneous Sampling Signal Conditioner</Description>
+          <GenericParameter>
+            <NameValues>
+              <NameValue Name="User" Index="1">BBN</NameValue>
+            </NameValues>
+            <BBNModuleFunctionality>SignalConditioner</BBNModuleFunctionality>
+          </GenericParameter>
+          <Manufacturer>VendorB</Manufacturer>
+          <Model>VendorB</Model>
+          <SerialID>250020</SerialID>
+          <InventoryID>id_0x00000016</InventoryID>
+          <Position>1</Position>
+          <PositionsOccupied>1</PositionsOccupied>
+          <Children>
+            <Child>
+              <Name>VoltageExcitationValue</Name>
+              <Description>Sets Voltage Excitation to 5 or 10 Volt</Description>
+              <ChildRefs>
+                <ChildRef IDREF="XVoltageExcitationValue-pos1"/>
+              </ChildRefs>
+            </Child>
+          </Children>
+          <Connectors>
+            <Connector>
+              <Name>J1</Name>
+              <Description>J1: 12 pin, Signal I/O, Channels 1-2</Description>
+              <Pins>
+                <Pin ID="XPos1-J1-Pin1" Index="1">
+                  <Name>EX1</Name>
+                  <Description>Channel 1 Voltage Excitation Out</Description>
+                  <Designator>Pos1-J1-Pin1</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin2" Index="2">
+                  <Name>IN1+</Name>
+                  <Description>Channel 1 Differential Signal Input +</Description>
+                  <Designator>Pos1-J1-Pin2</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin3" Index="3">
+                  <Name>IOUT_1</Name>
+                  <Description>Channel 1 Current Excitation Out</Description>
+                  <Designator>Pos1-J1-Pin3</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin4" Index="4">
+                  <Name>EX2</Name>
+                  <Description>Channel 2 Voltage Excitation Out</Description>
+                  <Designator>Pos1-J1-Pin4</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin5" Index="5">
+                  <Name>IN2+</Name>
+                  <Description>Channel 2 Differential Signal Input +</Description>
+                  <Designator>Pos1-J1-Pin5</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin6" Index="6">
+                  <Name>IOUT_2</Name>
+                  <Description>Channel 2 Current Excitation Out</Description>
+                  <Designator>Pos1-J1-Pin6</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin7" Index="7">
+                  <Name>REX1</Name>
+                  <Description>Channel 1 Voltage Excitation Return</Description>
+                  <Designator>Pos1-J1-Pin7</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin8" Index="8">
+                  <Name>IN1-</Name>
+                  <Description>Channel 1 Differential Signal Input -</Description>
+                  <Designator>Pos1-J1-Pin8</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin9" Index="9">
+                  <Name>IRTN_1</Name>
+                  <Description>Channel 1 Current Excitation Return</Description>
+                  <Designator>Pos1-J1-Pin9</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin10" Index="10">
+                  <Name>REX2</Name>
+                  <Description>Channel 2 Voltage Excitation Return</Description>
+                  <Designator>Pos1-J1-Pin10</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin11" Index="11">
+                  <Name>IN2-</Name>
+                  <Description>Channel 2 Differential Signal Input -</Description>
+                  <Designator>Pos1-J1-Pin11</Designator>
+                </Pin>
+                <Pin ID="XPos1-J1-Pin12" Index="12">
+                  <Name>IRTN_2</Name>
+                  <Description>Channel 2 Current Excitation Return</Description>
+                  <Designator>Pos1-J1-Pin12</Designator>
+                </Pin>
+              </Pins>
+            </Connector>
+          </Connectors>
+          <Ports>
+            <Port Enabled="true" ID="Module1A-Ch1" Index="1">
+              <Name>Ch1</Name>
+              <Description>Channel 1 Signal Input</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+                <ExcitationPortIsPresent/>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Analog</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos1-J1-Pin2"/>
+                <PinRef IDREF="XPos1-J1-Pin8"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="true" ID="Module1A-Ch2" Index="2">
+              <Name>Ch2</Name>
+              <Description>Channel 2 Signal Input</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+                <ExcitationPortIsPresent/>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Analog</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos1-J1-Pin5"/>
+                <PinRef IDREF="XPos1-J1-Pin6"/>
+              </PinRefs>
+            </Port>
+            <Port ID="Module1A-Ch1-EC" Index="21">
+              <Name>Ch1-EC</Name>
+              <Description>Channel 1 Excitation Constant Current Output</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType Extension="Excitation">Extension</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos1-J1-Pin3"/>
+                <PinRef IDREF="XPos1-J1-Pin9"/>
+              </PinRefs>
+            </Port>
+            <Port ID="Module1A-Ch2-EC" Index="22">
+              <Name>Ch2-EC</Name>
+              <Description>Channel 2 Excitation Constant Current Output</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType Extension="Excitation">Extension</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos1-J1-Pin6"/>
+                <PinRef IDREF="XPos1-J1-Pin12"/>
+              </PinRefs>
+            </Port>
+          </Ports>
+          <SubModules>
+            <SubModule ID="XVoltageExcitationValue-pos1">
+              <Name>VoltageExcitationValue</Name>
+              <Description>Set this SubModule Port/Excitation to 5 or 10 Volt</Description>
+              <Manufacturer>VendorB</Manufacturer>
+              <Model/>
+              <SerialID/>
+              <InventoryID/>
+              <Position>1000</Position>
+              <Children>
+                <Child>
+                  <Name>VoltageExcitationOnOff12</Name>
+                  <Description>Voltage Excitation Ports 1,2 enable</Description>
+                  <ChildRefs>
+                    <ChildRef IDREF="XVoltageExcitationOnOff12-pos1"/>
+                  </ChildRefs>
+                </Child>
+              </Children>
+              <Ports>
+                <Port ID="XVoltageExcitationValuePort-pos1" Index="1">
+                  <Name>VoltageExcitationValuePort</Name>
+                  <Description>Constant Voltage Excitation value for all ports</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                  <Excitation>
+                    <Polarity>Unipolar</Polarity>
+                    <Values>
+                      <ConditionParameter>
+                        <ConditionOperation>==</ConditionOperation>
+                        <ConditionValue>5</ConditionValue>
+                        <BaseUnit>Volt</BaseUnit>
+                      </ConditionParameter>
+                    </Values>
+                  </Excitation>
+                </Port>
+              </Ports>
+            </SubModule>
+            <SubModule ID="XVoltageExcitationOnOff12-pos1">
+              <Name>VoltageExcitationOnOff12</Name>
+              <Description>Set this SubModule Port Enabled to true to turn on Port 1,2 Voltage Excitation</Description>
+              <Manufacturer>VendorB</Manufacturer>
+              <Model/>
+              <SerialID/>
+              <InventoryID/>
+              <Position>1010</Position>
+              <Children>
+                <Child>
+                  <Name>VoltageExcitation12</Name>
+                  <Description>Voltage Excitation Ports 1,2 container</Description>
+                  <ChildRefs>
+                    <ChildRef IDREF="XVoltageExcitationPorts12-pos1"/>
+                  </ChildRefs>
+                </Child>
+              </Children>
+              <Ports>
+                <Port Enabled="false" ID="XVoltageExcitationOnOff12Port-pos1" Index="1">
+                  <Name>VoltageExcitationOnOff123Port</Name>
+                  <Description>Constant Voltage Excitation enable ports 1,2</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                </Port>
+              </Ports>
+            </SubModule>
+            <SubModule ID="XVoltageExcitationPorts12-pos1">
+              <Name>VoltageExcitationPorts12</Name>
+              <Description>Container for Voltage Excitation ports 1,2</Description>
+              <Manufacturer>VendorB</Manufacturer>
+              <Model/>
+              <SerialID/>
+              <InventoryID/>
+              <Position>1011</Position>
+              <Ports>
+                <Port ID="Module1A-Ch1-EV" Index="11">
+                  <Name>Ch1-EV</Name>
+                  <Description>Channel 1 Excitation Constant Voltage Output</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                  <PinRefs>
+                    <PinRef IDREF="XPos1-J1-Pin1"/>
+                    <PinRef IDREF="XPos1-J1-Pin7"/>
+                  </PinRefs>
+                </Port>
+                <Port ID="Module1A-Ch2-EV" Index="12">
+                  <Name>Ch2-EV</Name>
+                  <Description>Channel 2 Excitation Constant Voltage Output</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                  <PinRefs>
+                    <PinRef IDREF="XPos1-J1-Pin4"/>
+                    <PinRef IDREF="XPos1-J1-Pin10"/>
+                  </PinRefs>
+                </Port>
+              </Ports>
+            </SubModule>
+          </SubModules>
+        </Module>
+        <Module ID="xmodule-1B">
+          <Name>Card B at Position 2</Name>
+          <Description>2-channel Simultaneous Sampling Signal Conditioner</Description>
+          <GenericParameter>
+            <NameValues>
+              <NameValue Name="User" Index="1">BBN</NameValue>
+            </NameValues>
+            <BBNModuleFunctionality>SignalConditioner</BBNModuleFunctionality>
+          </GenericParameter>
+          <Manufacturer>VendorB</Manufacturer>
+          <Model>VendorB</Model>
+          <SerialID>250020</SerialID>
+          <InventoryID>id_0x00000016</InventoryID>
+          <Position>2</Position>
+          <PositionsOccupied>1</PositionsOccupied>
+          <Children>
+            <Child>
+              <Name>VoltageExcitationValue</Name>
+              <Description>Sets Voltage Excitation to 5 or 10 Volt</Description>
+              <ChildRefs>
+                <ChildRef IDREF="XVoltageExcitationValue-pos2"/>
+              </ChildRefs>
+            </Child>
+          </Children>
+          <Connectors>
+            <Connector>
+              <Name>J1</Name>
+              <Description>J1: 12 pin, Signal I/O, Channels 1-2</Description>
+              <Pins>
+                <Pin ID="XPos2-J1-Pin1" Index="1">
+                  <Name>EX1</Name>
+                  <Description>Channel 1 Voltage Excitation Out</Description>
+                  <Designator>Pos2-J1-Pin1</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin2" Index="2">
+                  <Name>IN1+</Name>
+                  <Description>Channel 1 Differential Signal Input +</Description>
+                  <Designator>Pos2-J1-Pin2</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin3" Index="3">
+                  <Name>IOUT_1</Name>
+                  <Description>Channel 1 Current Excitation Out</Description>
+                  <Designator>Pos2-J1-Pin3</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin4" Index="4">
+                  <Name>EX2</Name>
+                  <Description>Channel 2 Voltage Excitation Out</Description>
+                  <Designator>Pos2-J1-Pin4</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin5" Index="5">
+                  <Name>IN2+</Name>
+                  <Description>Channel 2 Differential Signal Input +</Description>
+                  <Designator>Pos2-J1-Pin5</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin6" Index="6">
+                  <Name>IOUT_2</Name>
+                  <Description>Channel 2 Current Excitation Out</Description>
+                  <Designator>Pos2-J1-Pin6</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin7" Index="7">
+                  <Name>REX1</Name>
+                  <Description>Channel 1 Voltage Excitation Return</Description>
+                  <Designator>Pos2-J1-Pin7</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin8" Index="8">
+                  <Name>IN1-</Name>
+                  <Description>Channel 1 Differential Signal Input -</Description>
+                  <Designator>Pos2-J1-Pin8</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin9" Index="9">
+                  <Name>IRTN_1</Name>
+                  <Description>Channel 1 Current Excitation Return</Description>
+                  <Designator>Pos2-J1-Pin9</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin10" Index="10">
+                  <Name>REX2</Name>
+                  <Description>Channel 2 Voltage Excitation Return</Description>
+                  <Designator>Pos2-J1-Pin10</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin11" Index="11">
+                  <Name>IN2-</Name>
+                  <Description>Channel 2 Differential Signal Input -</Description>
+                  <Designator>Pos2-J1-Pin11</Designator>
+                </Pin>
+                <Pin ID="XPos2-J1-Pin12" Index="12">
+                  <Name>IRTN_2</Name>
+                  <Description>Channel 2 Current Excitation Return</Description>
+                  <Designator>Pos2-J1-Pin12</Designator>
+                </Pin>
+              </Pins>
+            </Connector>
+          </Connectors>
+          <Ports>
+            <Port Enabled="true" ID="Module1B-Ch1" Index="1">
+              <Name>Ch1</Name>
+              <Description>Channel 1 Signal Input</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+                <ExcitationPortIsPresent/>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Analog</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos2-J1-Pin2"/>
+                <PinRef IDREF="XPos2-J1-Pin8"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="true" ID="Module1B-Ch2" Index="2">
+              <Name>Ch2</Name>
+              <Description>Channel 2 Signal Input</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+                <ExcitationPortIsPresent/>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Analog</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos2-J1-Pin5"/>
+                <PinRef IDREF="XPos2-J1-Pin6"/>
+              </PinRefs>
+            </Port>
+            <Port ID="Module1B-Ch1-EC" Index="21">
+              <Name>Ch1-EC</Name>
+              <Description>Channel 1 Excitation Constant Current Output</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType Extension="Excitation">Extension</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos2-J1-Pin3"/>
+                <PinRef IDREF="XPos2-J1-Pin9"/>
+              </PinRefs>
+            </Port>
+            <Port ID="Module1B-Ch2-EC" Index="22">
+              <Name>Ch2-EC</Name>
+              <Description>Channel 2 Excitation Constant Current Output</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType Extension="Excitation">Extension</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos2-J1-Pin6"/>
+                <PinRef IDREF="XPos2-J1-Pin12"/>
+              </PinRefs>
+            </Port>
+          </Ports>
+          <SubModules>
+            <SubModule ID="XVoltageExcitationValue-pos2">
+              <Name>VoltageExcitationValue</Name>
+              <Description>Set this SubModule Port/Excitation to 5 or 10 Volt</Description>
+              <Manufacturer>VendorB</Manufacturer>
+              <Model/>
+              <SerialID/>
+              <InventoryID/>
+              <Position>1000</Position>
+              <Children>
+                <Child>
+                  <Name>VoltageExcitationOnOff12</Name>
+                  <Description>Voltage Excitation Ports 1,2 enable</Description>
+                  <ChildRefs>
+                    <ChildRef IDREF="XVoltageExcitationOnOff12-pos2"/>
+                  </ChildRefs>
+                </Child>
+              </Children>
+              <Ports>
+                <Port ID="XVoltageExcitationValuePort-pos2" Index="1">
+                  <Name>VoltageExcitationValuePort</Name>
+                  <Description>Constant Voltage Excitation value for all ports</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                  <Excitation>
+                    <Polarity>Unipolar</Polarity>
+                    <Values>
+                      <ConditionParameter>
+                        <ConditionOperation>==</ConditionOperation>
+                        <ConditionValue>5</ConditionValue>
+                        <BaseUnit>Volt</BaseUnit>
+                      </ConditionParameter>
+                    </Values>
+                  </Excitation>
+                </Port>
+              </Ports>
+            </SubModule>
+            <SubModule ID="XVoltageExcitationOnOff12-pos2">
+              <Name>VoltageExcitationOnOff12</Name>
+              <Description>Set this SubModule Port Enabled to true to turn on Port 1,2 Voltage Excitation</Description>
+              <Manufacturer>VendorB</Manufacturer>
+              <Model/>
+              <SerialID/>
+              <InventoryID/>
+              <Position>1010</Position>
+              <Children>
+                <Child>
+                  <Name>VoltageExcitation12</Name>
+                  <Description>Voltage Excitation Ports 1,2 container</Description>
+                  <ChildRefs>
+                    <ChildRef IDREF="XVoltageExcitationPorts12-pos1"/>
+                  </ChildRefs>
+                </Child>
+              </Children>
+              <Ports>
+                <Port Enabled="false" ID="XVoltageExcitationOnOff12Port-pos2" Index="1">
+                  <Name>VoltageExcitationOnOff123Port</Name>
+                  <Description>Constant Voltage Excitation enable ports 1,2</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                </Port>
+              </Ports>
+            </SubModule>
+            <SubModule ID="XVoltageExcitationPorts12-pos2">
+              <Name>VoltageExcitationPorts12</Name>
+              <Description>Container for Voltage Excitation ports 1,2</Description>
+              <Manufacturer>VendorB</Manufacturer>
+              <Model/>
+              <SerialID/>
+              <InventoryID/>
+              <Position>1011</Position>
+              <Ports>
+                <Port ID="Module1B-Ch1-EV" Index="11">
+                  <Name>Ch1-EV</Name>
+                  <Description>Channel 1 Excitation Constant Voltage Output</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                  <PinRefs>
+                    <PinRef IDREF="XPos2-J1-Pin1"/>
+                    <PinRef IDREF="XPos2-J1-Pin7"/>
+                  </PinRefs>
+                </Port>
+                <Port ID="Module1B-Ch2-EV" Index="12">
+                  <Name>Ch2-EV</Name>
+                  <Description>Channel 2 Excitation Constant Voltage Output</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                  <PinRefs>
+                    <PinRef IDREF="XPos2-J1-Pin4"/>
+                    <PinRef IDREF="XPos2-J1-Pin10"/>
+                  </PinRefs>
+                </Port>
+              </Ports>
+            </SubModule>
+          </SubModules>
+        </Module>
+        <Module ID="xmodule-1C">
+          <Name>Card C at Position 3</Name>
+          <Description>2-channel Simultaneous Sampling Signal Conditioner</Description>
+          <GenericParameter>
+            <NameValues>
+              <NameValue Name="User" Index="1">BBN</NameValue>
+            </NameValues>
+            <BBNModuleFunctionality>SignalConditioner</BBNModuleFunctionality>
+          </GenericParameter>
+          <Manufacturer>VendorB</Manufacturer>
+          <Model>VendorB</Model>
+          <SerialID>250020</SerialID>
+          <InventoryID>id_0x00000016</InventoryID>
+          <Position>2</Position>
+          <PositionsOccupied>1</PositionsOccupied>
+          <Children>
+            <Child>
+              <Name>VoltageExcitationValue</Name>
+              <Description>Sets Voltage Excitation to 5 or 10 Volt</Description>
+              <ChildRefs>
+                <ChildRef IDREF="XVoltageExcitationValue-pos3"/>
+              </ChildRefs>
+            </Child>
+          </Children>
+          <Connectors>
+            <Connector>
+              <Name>J1</Name>
+              <Description>J1: 12 pin, Signal I/O, Channels 1-2</Description>
+              <Pins>
+                <Pin ID="XPos3-J1-Pin1" Index="1">
+                  <Name>EX1</Name>
+                  <Description>Channel 1 Voltage Excitation Out</Description>
+                  <Designator>Pos3-J1-Pin1</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin2" Index="2">
+                  <Name>IN1+</Name>
+                  <Description>Channel 1 Differential Signal Input +</Description>
+                  <Designator>Pos3-J1-Pin2</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin3" Index="3">
+                  <Name>IOUT_1</Name>
+                  <Description>Channel 1 Current Excitation Out</Description>
+                  <Designator>Pos3-J1-Pin3</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin4" Index="4">
+                  <Name>EX2</Name>
+                  <Description>Channel 2 Voltage Excitation Out</Description>
+                  <Designator>Pos3-J1-Pin4</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin5" Index="5">
+                  <Name>IN2+</Name>
+                  <Description>Channel 2 Differential Signal Input +</Description>
+                  <Designator>Pos3-J1-Pin5</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin6" Index="6">
+                  <Name>IOUT_2</Name>
+                  <Description>Channel 2 Current Excitation Out</Description>
+                  <Designator>Pos3-J1-Pin6</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin7" Index="7">
+                  <Name>REX1</Name>
+                  <Description>Channel 1 Voltage Excitation Return</Description>
+                  <Designator>Pos3-J1-Pin7</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin8" Index="8">
+                  <Name>IN1-</Name>
+                  <Description>Channel 1 Differential Signal Input -</Description>
+                  <Designator>Pos3-J1-Pin8</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin9" Index="9">
+                  <Name>IRTN_1</Name>
+                  <Description>Channel 1 Current Excitation Return</Description>
+                  <Designator>Pos3-J1-Pin9</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin10" Index="10">
+                  <Name>REX2</Name>
+                  <Description>Channel 2 Voltage Excitation Return</Description>
+                  <Designator>Pos3-J1-Pin10</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin11" Index="11">
+                  <Name>IN2-</Name>
+                  <Description>Channel 2 Differential Signal Input -</Description>
+                  <Designator>Pos3-J1-Pin11</Designator>
+                </Pin>
+                <Pin ID="XPos3-J1-Pin12" Index="12">
+                  <Name>IRTN_2</Name>
+                  <Description>Channel 2 Current Excitation Return</Description>
+                  <Designator>Pos3-J1-Pin12</Designator>
+                </Pin>
+              </Pins>
+            </Connector>
+          </Connectors>
+          <Ports>
+            <Port Enabled="true" ID="Module1C-Ch1" Index="1">
+              <Name>Ch1</Name>
+              <Description>Channel 1 Signal Input</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+                <ExcitationPortIsPresent/>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Analog</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos3-J1-Pin2"/>
+                <PinRef IDREF="XPos3-J1-Pin8"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="true" ID="Module1C-Ch2" Index="2">
+              <Name>Ch2</Name>
+              <Description>Channel 2 Signal Input</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+                <ExcitationPortIsPresent/>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Analog</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos3-J1-Pin5"/>
+                <PinRef IDREF="XPos3-J1-Pin6"/>
+              </PinRefs>
+            </Port>
+            <Port ID="Module1C-Ch1-EC" Index="21">
+              <Name>Ch1-EC</Name>
+              <Description>Channel 1 Excitation Constant Current Output</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType Extension="Excitation">Extension</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos3-J1-Pin3"/>
+                <PinRef IDREF="XPos3-J1-Pin9"/>
+              </PinRefs>
+            </Port>
+            <Port ID="Module1C-Ch2-EC" Index="22">
+              <Name>Ch2-EC</Name>
+              <Description>Channel 2 Excitation Constant Current Output</Description>
+              <PortDirection>Output</PortDirection>
+              <PortTypes>
+                <PortType Extension="Excitation">Extension</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos3-J1-Pin6"/>
+                <PinRef IDREF="XPos3-J1-Pin12"/>
+              </PinRefs>
+            </Port>
+          </Ports>
+          <SubModules>
+            <SubModule ID="XVoltageExcitationValue-pos3">
+              <Name>VoltageExcitationValue</Name>
+              <Description>Set this SubModule Port/Excitation to 5 or 10 Volt</Description>
+              <Manufacturer>VendorB</Manufacturer>
+              <Model/>
+              <SerialID/>
+              <InventoryID/>
+              <Position>1000</Position>
+              <Children>
+                <Child>
+                  <Name>VoltageExcitationOnOff12</Name>
+                  <Description>Voltage Excitation Ports 1,2 enable</Description>
+                  <ChildRefs>
+                    <ChildRef IDREF="XVoltageExcitationOnOff12-pos3"/>
+                  </ChildRefs>
+                </Child>
+              </Children>
+              <Ports>
+                <Port ID="XVoltageExcitationValuePort-pos3" Index="1">
+                  <Name>VoltageExcitationValuePort</Name>
+                  <Description>Constant Voltage Excitation value for all ports</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                  <Excitation>
+                    <Polarity>Unipolar</Polarity>
+                    <Values>
+                      <ConditionParameter>
+                        <ConditionOperation>==</ConditionOperation>
+                        <ConditionValue>5</ConditionValue>
+                        <BaseUnit>Volt</BaseUnit>
+                      </ConditionParameter>
+                    </Values>
+                  </Excitation>
+                </Port>
+              </Ports>
+            </SubModule>
+            <SubModule ID="XVoltageExcitationOnOff12-pos3">
+              <Name>VoltageExcitationOnOff12</Name>
+              <Description>Set this SubModule Port Enabled to true to turn on Port 1,2 Voltage Excitation</Description>
+              <Manufacturer>VendorB</Manufacturer>
+              <Model/>
+              <SerialID/>
+              <InventoryID/>
+              <Position>1010</Position>
+              <Children>
+                <Child>
+                  <Name>VoltageExcitation12</Name>
+                  <Description>Voltage Excitation Ports 1,2 container</Description>
+                  <ChildRefs>
+                    <ChildRef IDREF="XVoltageExcitationPorts12-pos3"/>
+                  </ChildRefs>
+                </Child>
+              </Children>
+              <Ports>
+                <Port Enabled="false" ID="XVoltageExcitationOnOff12Port-pos3" Index="1">
+                  <Name>VoltageExcitationOnOff12Port</Name>
+                  <Description>Constant Voltage Excitation enable ports 1,2</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                </Port>
+              </Ports>
+            </SubModule>
+            <SubModule ID="XVoltageExcitationPorts12-pos3">
+              <Name>VoltageExcitationPorts12</Name>
+              <Description>Container for Voltage Excitation ports 1,2</Description>
+              <Manufacturer>VendorB</Manufacturer>
+              <Model/>
+              <SerialID/>
+              <InventoryID/>
+              <Position>1011</Position>
+              <Ports>
+                <Port ID="Module1C-Ch1-EV" Index="11">
+                  <Name>Ch1-EV</Name>
+                  <Description>Channel 1 Excitation Constant Voltage Output</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                  <PinRefs>
+                    <PinRef IDREF="XPos3-J1-Pin1"/>
+                    <PinRef IDREF="XPos3-J1-Pin7"/>
+                  </PinRefs>
+                </Port>
+                <Port ID="Module1C-Ch2-EV" Index="12">
+                  <Name>Ch2-EV</Name>
+                  <Description>Channel 2 Excitation Constant Voltage Output</Description>
+                  <PortDirection>Output</PortDirection>
+                  <PortTypes>
+                    <PortType Extension="Excitation">Extension</PortType>
+                  </PortTypes>
+                  <PinRefs>
+                    <PinRef IDREF="XPos3-J1-Pin4"/>
+                    <PinRef IDREF="XPos3-J1-Pin10"/>
+                  </PinRefs>
+                </Port>
+              </Ports>
+            </SubModule>
+          </SubModules>
+        </Module>
+        <Module ID="xmodule-2A">
+          <Name>Position 4</Name>
+          <Description>4-channel thermocouple conditioner</Description>
+          <GenericParameter>
+            <NameValues>
+              <NameValue Name="User" Index="1">BBN</NameValue>
+            </NameValues>
+            <BBNModuleFunctionality>ThermocoupleConditioner</BBNModuleFunctionality>
+          </GenericParameter>
+          <Manufacturer>VendorB</Manufacturer>
+          <Model>TBD</Model>
+          <SerialID>251874</SerialID>
+          <InventoryID>id_0x00000016</InventoryID>
+          <Position>4</Position>
+          <PositionsOccupied>1</PositionsOccupied>
+          <Connectors>
+            <Connector>
+              <Name>J1</Name>
+              <Description>J1: 8 pin D-subminiature</Description>
+              <Pins>
+                <Pin ID="XPos4-J1-Pin1" Index="1">
+                  <Name>IN4+</Name>
+                  <Description>Channel 4 signal +</Description>
+                  <Designator>Pos4-J1-Pin1</Designator>
+                </Pin>
+                <Pin ID="XPos4-J1-Pin2" Index="2">
+                  <Name>IN3+</Name>
+                  <Description>Channel 3 signal +</Description>
+                  <Designator>Pos4-J1-Pin2</Designator>
+                </Pin>
+                <Pin ID="XPos4-J1-Pin3" Index="3">
+                  <Name>IN2+</Name>
+                  <Description>Channel 2 signal +</Description>
+                  <Designator>Pos4-J1-Pin3</Designator>
+                </Pin>
+                <Pin ID="XPos4-J1-Pin4" Index="4">
+                  <Name>IN1+</Name>
+                  <Description>Channel 1 signal +</Description>
+                  <Designator>Pos4-J1-Pin4</Designator>
+                </Pin>
+                <Pin ID="XPos4-J1-Pin5" Index="5">
+                  <Name>IN4-</Name>
+                  <Description>Channel 4 signal -</Description>
+                  <Designator>Pos4-J1-Pin5</Designator>
+                </Pin>
+                <Pin ID="XPos4-J1-Pin6" Index="6">
+                  <Name>IN3-</Name>
+                  <Description>Channel 3 signal -</Description>
+                  <Designator>Pos4-J1-Pin6</Designator>
+                </Pin>
+                <Pin ID="XPos4-J1-Pin7" Index="7">
+                  <Name>IN2-</Name>
+                  <Description>Channel 2 signal -</Description>
+                  <Designator>Pos4-J1-Pin7</Designator>
+                </Pin>
+                <Pin ID="XPos4-J1-Pin8" Index="8">
+                  <Name>IN1-</Name>
+                  <Description>Channel 1 signal -</Description>
+                  <Designator>Pos4-J1-Pin8</Designator>
+                </Pin>
+              </Pins>
+            </Connector>
+          </Connectors>
+          <Ports>
+            <Port Enabled="true" ID="Module2A-Ch1" Index="1">
+              <Name>Ch1</Name>
+              <Description>Channel 1</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Thermocouple</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos4-J1-Pin4"/>
+                <PinRef IDREF="XPos4-J1-Pin8"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="true" ID="Module2A-Ch2" Index="2">
+              <Name>Ch2</Name>
+              <Description>Channel 2</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Thermocouple</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos4-J1-Pin3"/>
+                <PinRef IDREF="XPos4-J1-Pin7"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="true" ID="Module2A-Ch3" Index="3">
+              <Name>Ch3</Name>
+              <Description>Channel 3</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Thermocouple</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos4-J1-Pin2"/>
+                <PinRef IDREF="XPos4-J1-Pin6"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="true" ID="Module2A-Ch4" Index="4">
+              <Name>Ch4</Name>
+              <Description>Channel 4</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Thermocouple</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos4-J1-Pin1"/>
+                <PinRef IDREF="XPos4-J1-Pin5"/>
+              </PinRefs>
+            </Port>
+          </Ports>
+        </Module>
+        <Module ID="xmodule-2B">
+          <Name>Position 5</Name>
+          <Description>4-channel thermocouple conditioner</Description>
+          <GenericParameter>
+            <NameValues>
+              <NameValue Name="User" Index="1">BBN</NameValue>
+            </NameValues>
+            <BBNModuleFunctionality>ThermocoupleConditioner</BBNModuleFunctionality>
+          </GenericParameter>
+          <Manufacturer>VendorB</Manufacturer>
+          <Model>TBD</Model>
+          <SerialID>251874</SerialID>
+          <InventoryID>id_0x00000016</InventoryID>
+          <Position>5</Position>
+          <PositionsOccupied>1</PositionsOccupied>
+          <Connectors>
+            <Connector>
+              <Name>J1</Name>
+              <Description>J1: 8 pin D-subminiature</Description>
+              <Pins>
+                <Pin ID="XPos5-J1-Pin1" Index="1">
+                  <Name>IN4+</Name>
+                  <Description>Channel 4 signal +</Description>
+                  <Designator>Pos5-J1-Pin1</Designator>
+                </Pin>
+                <Pin ID="XPos5-J1-Pin2" Index="2">
+                  <Name>IN3+</Name>
+                  <Description>Channel 3 signal +</Description>
+                  <Designator>Pos5-J1-Pin2</Designator>
+                </Pin>
+                <Pin ID="XPos5-J1-Pin3" Index="3">
+                  <Name>IN2+</Name>
+                  <Description>Channel 2 signal +</Description>
+                  <Designator>Pos5-J1-Pin3</Designator>
+                </Pin>
+                <Pin ID="XPos5-J1-Pin4" Index="4">
+                  <Name>IN1+</Name>
+                  <Description>Channel 1 signal +</Description>
+                  <Designator>Pos5-J1-Pin4</Designator>
+                </Pin>
+                <Pin ID="XPos5-J1-Pin5" Index="5">
+                  <Name>IN4-</Name>
+                  <Description>Channel 4 signal -</Description>
+                  <Designator>Pos5-J1-Pin5</Designator>
+                </Pin>
+                <Pin ID="XPos5-J1-Pin6" Index="6">
+                  <Name>IN3-</Name>
+                  <Description>Channel 3 signal -</Description>
+                  <Designator>Pos5-J1-Pin6</Designator>
+                </Pin>
+                <Pin ID="XPos5-J1-Pin7" Index="7">
+                  <Name>IN2-</Name>
+                  <Description>Channel 2 signal -</Description>
+                  <Designator>Pos5-J1-Pin7</Designator>
+                </Pin>
+                <Pin ID="XPos5-J1-Pin8" Index="8">
+                  <Name>IN1-</Name>
+                  <Description>Channel 1 signal -</Description>
+                  <Designator>Pos5-J1-Pin8</Designator>
+                </Pin>
+              </Pins>
+            </Connector>
+          </Connectors>
+          <Ports>
+            <Port Enabled="true" ID="Module2B-Ch1" Index="1">
+              <Name>Ch1</Name>
+              <Description>Channel 1</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Thermocouple</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos5-J1-Pin4"/>
+                <PinRef IDREF="XPos5-J1-Pin8"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="true" ID="Module2B-Ch2" Index="2">
+              <Name>Ch2</Name>
+              <Description>Channel 2</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Thermocouple</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos5-J1-Pin3"/>
+                <PinRef IDREF="XPos5-J1-Pin7"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="true" ID="Module2B-Ch3" Index="3">
+              <Name>Ch3</Name>
+              <Description>Channel 3</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Thermocouple</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos5-J1-Pin2"/>
+                <PinRef IDREF="XPos5-J1-Pin6"/>
+              </PinRefs>
+            </Port>
+            <Port Enabled="true" ID="Module2B-Ch4" Index="4">
+              <Name>Ch4</Name>
+              <Description>Channel 4</Description>
+              <GenericParameter>
+                <NameValues>
+                  <NameValue Name="User" Index="1">BBN</NameValue>
+                </NameValues>
+                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
+                <Measurement>
+                  <DataLength>12</DataLength>
+                  <SampleRate>96</SampleRate>
+                </Measurement>
+                <Measurement>
+                  <DataLength>16</DataLength>
+                  <SampleRate>128</SampleRate>
+                </Measurement>
+              </GenericParameter>
+              <PortDirection>Input</PortDirection>
+              <PortTypes>
+                <PortType>Thermocouple</PortType>
+              </PortTypes>
+              <PinRefs>
+                <PinRef IDREF="XPos5-J1-Pin1"/>
+                <PinRef IDREF="XPos5-J1-Pin5"/>
+              </PinRefs>
+            </Port>
+          </Ports>
+        </Module>
+      </Modules>
+    </InternalStructure>
+  </NetworkNode>
+</DAUInventory>

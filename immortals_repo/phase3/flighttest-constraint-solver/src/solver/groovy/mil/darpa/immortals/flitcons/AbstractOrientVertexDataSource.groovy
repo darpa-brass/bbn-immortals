@@ -451,6 +451,7 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 
 	@Override
 	void restart() {
+		super.restart()
 		shutdown()
 		init()
 	}
