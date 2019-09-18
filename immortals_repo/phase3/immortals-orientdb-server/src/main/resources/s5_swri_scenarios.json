@@ -6,7 +6,7 @@
             "shortName": "s5e01i01",
             "prettyName": "Scenario 5 SwRI Example 1 Inventory 1",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "ec22aca042dd4b4c1f86401b13f4d7940d0732b9508bf621cf3519d2f64b1b86",
+            "ingestedXmlInventoryHash": "a9ad0bd7b49c56c62df6afbe6e1644d46ce75f5346a4889a3c3f9186bc8a8987",
             "ingestedXmlMdlrootInputHash": "94ed9ade4864f8c3b46b60db48d95ea545ef5c905499d9178f0572b32db6dec7",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
@@ -20,7 +20,7 @@
             "shortName": "s5e02i01",
             "prettyName": "Scenario 5 SwRI Example 2 Inventory 1",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "ec22aca042dd4b4c1f86401b13f4d7940d0732b9508bf621cf3519d2f64b1b86",
+            "ingestedXmlInventoryHash": "a9ad0bd7b49c56c62df6afbe6e1644d46ce75f5346a4889a3c3f9186bc8a8987",
             "ingestedXmlMdlrootInputHash": "9262329bccc80aa9a2f50147e8b03621f611bfe9219aadf7be2fda50a907ed53",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
@@ -34,7 +34,7 @@
             "shortName": "s5e03i01",
             "prettyName": "Scenario 5 SwRI Example 3 Inventory 1",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "ec22aca042dd4b4c1f86401b13f4d7940d0732b9508bf621cf3519d2f64b1b86",
+            "ingestedXmlInventoryHash": "a9ad0bd7b49c56c62df6afbe6e1644d46ce75f5346a4889a3c3f9186bc8a8987",
             "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
@@ -48,7 +48,7 @@
             "shortName": "s5e04i01",
             "prettyName": "Scenario 5 SwRI Example 04 Inventory 01",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "ec22aca042dd4b4c1f86401b13f4d7940d0732b9508bf621cf3519d2f64b1b86",
+            "ingestedXmlInventoryHash": "a9ad0bd7b49c56c62df6afbe6e1644d46ce75f5346a4889a3c3f9186bc8a8987",
             "ingestedXmlMdlrootInputHash": "46322ac14f283bf6863ba8673255fd3fbc6cd376a625b27de682409da1509e5a",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
@@ -63,7 +63,7 @@
             "shortName": "s5e05i01",
             "prettyName": "Scenario 5 SwRI Example 5 Inventory 1",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "ec22aca042dd4b4c1f86401b13f4d7940d0732b9508bf621cf3519d2f64b1b86",
+            "ingestedXmlInventoryHash": "a9ad0bd7b49c56c62df6afbe6e1644d46ce75f5346a4889a3c3f9186bc8a8987",
             "ingestedXmlMdlrootInputHash": "5e32cf957107b7a61e21ac3f4ff2e22c2dbf9469517fc30b98cba1dc5b1f655e",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
@@ -77,7 +77,7 @@
             "shortName": "s5e06i01",
             "prettyName": "Scenario 5 SwRI Example 6 Inventory 1",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "ec22aca042dd4b4c1f86401b13f4d7940d0732b9508bf621cf3519d2f64b1b86",
+            "ingestedXmlInventoryHash": "a9ad0bd7b49c56c62df6afbe6e1644d46ce75f5346a4889a3c3f9186bc8a8987",
             "ingestedXmlMdlrootInputHash": "9d477f34d43ab127c56ddd9a0c2ae5e9df69be244631825f0c39ddb9d57e9b74",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",

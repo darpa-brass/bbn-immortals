@@ -57,7 +57,7 @@ swri_deployment_manifest = {
         'docs/CP/phase3/cp_05/description.md': 'ChallengeProblems/cp_05/description.md',
         'docs/CP/phase3/cp_05/example_assumptions/ExampleCoverage.xml': 'ChallengeProblems/cp_05/example_assumptions/ExampleCoverage.xml',
         'docs/CP/phase3/cp_05/CP5-Results-Format.md': 'ChallengeProblems/cp_05/CP5-Results-Format.md',
-        'docs/CP/phase3/cp_06/CP6-Results-Format.md': 'ChallengeProblems/cp_06/CP6-Results-Format.md',
+        'docs/CP/phase3/cp_06': 'ChallengeProblems/cp_06',
 
     },
     'translationservice': {

@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
  * Indicates the form a value takes in terms of multiplicity
  */
 public enum DynamicValueMultiplicity {
-	SingleValue,
+	NullValue,
 	Range,
 	Set,
-	NullValue;
+	SingleValue;
 
 	public static List<String> names = Arrays.stream(DynamicValueMultiplicity.values()).map(DynamicValueMultiplicity::name).collect(Collectors.toList());
 }

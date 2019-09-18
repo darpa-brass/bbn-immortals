@@ -7,6 +7,7 @@ import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
+import mil.darpa.immortals.flitcons.mdl.MdlHacks;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
@@ -34,6 +35,8 @@ public class SolutionPreparer {
 
 	public Set<ParentAdaptationData> prepare(@Nonnull DynamicObjectContainer solution, @Nonnull String parentLabel, @Nonnull String childLabel) {
 		try {
+			MdlHacks.removeInvalidThermocoupleValuesFromSolution(rawInterconnectedTarget, transformedInventory, solution);
+
 			Set<ParentAdaptationData> adaptationData = new HashSet<>();
 
 			DynamicValue dausDynamicValue = solution.get(parentLabel);

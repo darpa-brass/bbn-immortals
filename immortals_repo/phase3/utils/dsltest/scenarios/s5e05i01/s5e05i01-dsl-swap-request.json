@@ -3,12 +3,12 @@
     {
       "BBNDauFlaggedForReplacement": true,
       "BBNDauMonetaryCost": 75000,
-      "GloballyUniqueId": "I#73:5",
+      "GloballyUniqueId": "I#53:5",
       "Port": [
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#59:176",
+          "GloballyUniqueId": "I#42:175",
           "Measurement": [
             {
               "DataLength": {
@@ -19,7 +19,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "267cd221-c86e-4e56-9c75-d1cfd520fcbf",
+              "GloballyUniqueId": "8ad21937-50dd-42b6-8ffc-6354012a9bd2",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -32,7 +32,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#59:184",
+          "GloballyUniqueId": "I#42:179",
           "Measurement": [
             {
               "DataLength": {
@@ -43,7 +43,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "9df6a761-0d77-40e0-b0bb-dd3c5afe3491",
+              "GloballyUniqueId": "230d4933-079e-4165-8697-4e177c684ec1",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -56,7 +56,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#59:179",
+          "GloballyUniqueId": "I#42:178",
           "Measurement": [
             {
               "DataLength": {
@@ -67,7 +67,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "a21f20ba-6378-4f17-b064-963f7a666c08",
+              "GloballyUniqueId": "e985005a-57ae-4a9e-ac71-d6b8feb2cd44",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -80,7 +80,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#59:178",
+          "GloballyUniqueId": "I#42:173",
           "Measurement": [
             {
               "DataLength": {
@@ -91,31 +91,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "9637330d-248a-48eb-90e6-aacf88f87409",
-              "SampleRate": {
-                "Min": 250,
-                "Max": 250
-              }
-            }
-          ],
-          "PortDirection": "Input",
-          "PortType": "SignalConditioner"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": true,
-          "GloballyUniqueId": "I#59:181",
-          "Measurement": [
-            {
-              "DataLength": {
-                "Min": 16,
-                "Max": 16
-              },
-              "DataRate": {
-                "Min": 4000,
-                "Max": 4000
-              },
-              "GloballyUniqueId": "89820fd9-85ab-42a4-8e39-93a0e31cab11",
+              "GloballyUniqueId": "fccb0649-456a-4208-9c86-e6c39e10c984",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -128,7 +104,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": false,
-          "GloballyUniqueId": "I#59:191",
+          "GloballyUniqueId": "I#42:194",
           "Measurement": [
             {
               "DataLength": {
@@ -139,103 +115,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "38312826-66b6-4e21-a10d-5dce94489da3",
-              "SampleRate": {
-                "Min": 250,
-                "Max": 250
-              }
-            }
-          ],
-          "PortDirection": "Input",
-          "PortType": "SignalConditioner"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": true,
-          "GloballyUniqueId": "I#59:173",
-          "Measurement": [
-            {
-              "DataLength": {
-                "Min": 16,
-                "Max": 16
-              },
-              "DataRate": {
-                "Min": 4000,
-                "Max": 4000
-              },
-              "GloballyUniqueId": "eecca57e-67e3-46eb-9d0b-739181acf37a",
-              "SampleRate": {
-                "Min": 250,
-                "Max": 250
-              }
-            }
-          ],
-          "PortDirection": "Input",
-          "PortType": "SignalConditioner"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": true,
-          "GloballyUniqueId": "I#59:180",
-          "Measurement": [
-            {
-              "DataLength": {
-                "Min": 16,
-                "Max": 16
-              },
-              "DataRate": {
-                "Min": 4000,
-                "Max": 4000
-              },
-              "GloballyUniqueId": "0668988a-568f-4fb2-b90d-4b455ba75cbb",
-              "SampleRate": {
-                "Min": 250,
-                "Max": 250
-              }
-            }
-          ],
-          "PortDirection": "Input",
-          "PortType": "SignalConditioner"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": true,
-          "GloballyUniqueId": "I#59:175",
-          "Measurement": [
-            {
-              "DataLength": {
-                "Min": 16,
-                "Max": 16
-              },
-              "DataRate": {
-                "Min": 4000,
-                "Max": 4000
-              },
-              "GloballyUniqueId": "a874da63-92ad-41bb-aa02-2d7627eb3e16",
-              "SampleRate": {
-                "Min": 250,
-                "Max": 250
-              }
-            }
-          ],
-          "PortDirection": "Input",
-          "PortType": "SignalConditioner"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": true,
-          "GloballyUniqueId": "I#59:183",
-          "Measurement": [
-            {
-              "DataLength": {
-                "Min": 16,
-                "Max": 16
-              },
-              "DataRate": {
-                "Min": 4000,
-                "Max": 4000
-              },
-              "GloballyUniqueId": "20c61fb0-96ce-4ea6-a93b-99fbef9fec62",
+              "GloballyUniqueId": "e250ba7d-e1f9-4901-a759-72c5982560e1",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -248,7 +128,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": false,
-          "GloballyUniqueId": "I#59:194",
+          "GloballyUniqueId": "I#42:191",
           "Measurement": [
             {
               "DataLength": {
@@ -259,7 +139,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "1993ead9-a277-4887-8dc3-64456b7e1a20",
+              "GloballyUniqueId": "292d308f-f822-45d5-96b4-a55709a16d38",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -272,7 +152,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#59:177",
+          "GloballyUniqueId": "I#42:176",
           "Measurement": [
             {
               "DataLength": {
@@ -283,7 +163,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "9398e86a-d4d5-4d64-8f0e-c1e78a580f30",
+              "GloballyUniqueId": "8ccdbc12-fdb3-42a8-a7ed-4c3a5787c01e",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -296,7 +176,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#59:174",
+          "GloballyUniqueId": "I#42:184",
           "Measurement": [
             {
               "DataLength": {
@@ -307,7 +187,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "68c9fab8-04a9-4bcd-925b-2807d720a49b",
+              "GloballyUniqueId": "f6f058cc-ce15-4849-a7c8-5b4f75d901dd",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -320,7 +200,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#59:186",
+          "GloballyUniqueId": "I#42:182",
           "Measurement": [
             {
               "DataLength": {
@@ -331,7 +211,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "c6f33461-82e7-4c51-bdef-6a3cbb8a45a4",
+              "GloballyUniqueId": "5a64b6f0-3366-486c-a26b-4f56045bbbf9",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -344,7 +224,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#59:182",
+          "GloballyUniqueId": "I#42:177",
           "Measurement": [
             {
               "DataLength": {
@@ -355,7 +235,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "e63092f5-9a69-4487-add9-44c4380ba4c6",
+              "GloballyUniqueId": "3f1affa5-be7d-4de6-b827-3e82f5004f1f",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -368,7 +248,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#59:185",
+          "GloballyUniqueId": "I#42:186",
           "Measurement": [
             {
               "DataLength": {
@@ -379,7 +259,127 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "809a9d68-4d38-48f6-98b6-596298d1afbd",
+              "GloballyUniqueId": "7a856930-bfdc-4eac-ad92-5e72d2436267",
+              "SampleRate": {
+                "Min": 250,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#42:183",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 16,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 4000,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "2f891d99-5ed1-4b3d-aef5-1791539d427d",
+              "SampleRate": {
+                "Min": 250,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#42:174",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 16,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 4000,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "44ae7bcf-fec7-49e5-ad4d-d04944f8667d",
+              "SampleRate": {
+                "Min": 250,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#42:181",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 16,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 4000,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "1107667c-ae46-4743-9748-5b6e23acdecc",
+              "SampleRate": {
+                "Min": 250,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#42:185",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 16,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 4000,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "ad60c003-284c-4b2b-9d80-c05a846aba53",
+              "SampleRate": {
+                "Min": 250,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#42:180",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 16,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 4000,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "3f3b1c0b-cf82-4432-bec7-e2b11cb0cfcc",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250

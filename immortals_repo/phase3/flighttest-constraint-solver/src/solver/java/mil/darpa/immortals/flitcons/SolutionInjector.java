@@ -97,7 +97,7 @@ public class SolutionInjector {
 					// Add the attribute to the parent
 					childNodePath.remove(1);
 					HierarchicalData parentNode = rawNodeData.getChildNodeByPath(childNodePath);
-					dataSource.update_NodeAttribute(parentNode, "PortType", nodeValues.get("PortType"));
+					dataSource.add_NodeAttribute(parentNode.associatedObject, "PortType", nodeValues.get("PortType"));
 
 					// And remove the value from the attributes to update
 					nodeValues.remove("PortType");

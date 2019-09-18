@@ -8,12 +8,12 @@ import org.apache.commons.lang.math.NumberUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static mil.darpa.immortals.flitcons.Utils.duplicateObject;
 
-public class DynamicValue implements DuplicateInterface<DynamicValue> {
+public class DynamicValue implements DuplicateInterface<DynamicValue>, Comparator<DynamicValue>, Comparable<DynamicValue> {
 
 	public final HierarchicalIdentifier dataSource;
 	public transient final DynamicValueMultiplicity multiplicity;
@@ -27,6 +27,26 @@ public class DynamicValue implements DuplicateInterface<DynamicValue> {
 		this.valueArray = parseValue(valueArray);
 		this.singleValue = parseValue(singleValue);
 		this.multiplicity = validateAndReturnMultiplicity();
+	}
+
+	public String toString() {
+		switch (multiplicity) {
+			case NullValue:
+				return "null";
+			case Range:
+				return range.toString();
+			case Set:
+				List<String> values = Arrays.stream(valueArray).map(Object::toString).collect(Collectors.toList());
+				Object firstValue = valueArray[0];
+				if (firstValue instanceof  DynamicValue || firstValue instanceof  DynamicObjectContainer) {
+					Collections.sort(values);
+				}
+				return "[" + String.join("", values) + "]";
+			case SingleValue:
+				return singleValue.toString();
+			default:
+				throw AdaptationnException.internal("Invalid Multiplicity type '" + multiplicity.name() + "'!");
+		}
 	}
 
 	private static <T> T parseValue(@Nullable Object val, @Nonnull Class<T> clazz) throws NestedPathException {
@@ -249,7 +269,7 @@ public class DynamicValue implements DuplicateInterface<DynamicValue> {
 	private static boolean isValueInvalid(Object value) {
 		return !(value instanceof DynamicValue || value instanceof DynamicObjectContainer ||
 				value instanceof Long || value instanceof Float || value instanceof Boolean || value instanceof String
-				|| value instanceof Equation|| value == null);
+				|| value instanceof Equation || value == null);
 	}
 
 	private DynamicValueMultiplicity validateAndReturnMultiplicity() throws NestedPathException {
@@ -317,6 +337,35 @@ public class DynamicValue implements DuplicateInterface<DynamicValue> {
 		} catch (NestedPathException e) {
 			throw AdaptationnException.internal(e.getMessage());
 		}
+	}
+
+	@Override
+	public int compare(DynamicValue dynamicValue, DynamicValue t1) {
+		if (dynamicValue == null && t1 == null) {
+			return 0;
+		} else if (dynamicValue == null) {
+			return -1;
+		} else if (t1 == null) {
+			return 1;
+		} else {
+			return dynamicValue.compareTo(t1);
+		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof DynamicValue) {
+			return this.compareTo((DynamicValue) o) == 0;
+		}
+		return false;
+	}
+
+	@Override
+	public int compareTo(DynamicValue dynamicValue) {
+		if (dynamicValue == null) {
+			return 1;
+		}
+		return this.toString().compareTo(dynamicValue.toString());
 	}
 }
 

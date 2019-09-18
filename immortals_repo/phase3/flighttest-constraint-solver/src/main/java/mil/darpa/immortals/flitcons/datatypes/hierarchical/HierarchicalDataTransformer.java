@@ -373,7 +373,6 @@ public class HierarchicalDataTransformer {
 		injectCalculations(data, instructions);
 		remapNodesAndAttributes(data, instructions);
 		pushAttributesIntoChildren(data, instructions);
-		data.fillDebugMap();
 		squashData(data, instructions, preserveDebugRelations);
 		trimEmptyBranches(data);
 

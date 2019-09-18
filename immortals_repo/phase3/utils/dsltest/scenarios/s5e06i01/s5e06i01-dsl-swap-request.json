@@ -3,12 +3,12 @@
     {
       "BBNDauFlaggedForReplacement": true,
       "BBNDauMonetaryCost": 40000,
-      "GloballyUniqueId": "I#28:5",
+      "GloballyUniqueId": "I#32:5",
       "Port": [
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#70:173",
+          "GloballyUniqueId": "I#73:173",
           "Measurement": [
             {
               "DataLength": {
@@ -19,7 +19,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "I#84:167",
+              "GloballyUniqueId": "I#33:167",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -32,31 +32,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#70:197",
-          "Measurement": [
-            {
-              "DataLength": {
-                "Min": 24,
-                "Max": 24
-              },
-              "DataRate": {
-                "Min": 4800,
-                "Max": 4800
-              },
-              "GloballyUniqueId": "I#84:170",
-              "SampleRate": {
-                "Min": 200,
-                "Max": 200
-              }
-            }
-          ],
-          "PortDirection": "Input",
-          "PortType": "Thermocouple"
-        },
-        {
-          "BBNPortFunctionality": "Thermocouple",
-          "Excitation": false,
-          "GloballyUniqueId": "I#70:181",
+          "GloballyUniqueId": "I#73:181",
           "Measurement": [
             {
               "DataLength": {
@@ -67,7 +43,7 @@
                 "Min": 12000,
                 "Max": 12000
               },
-              "GloballyUniqueId": "I#84:168",
+              "GloballyUniqueId": "I#33:168",
               "SampleRate": {
                 "Min": 1000,
                 "Max": 1000
@@ -80,7 +56,31 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#70:189",
+          "GloballyUniqueId": "I#73:197",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 24,
+                "Max": 24
+              },
+              "DataRate": {
+                "Min": 4800,
+                "Max": 4800
+              },
+              "GloballyUniqueId": "I#33:170",
+              "SampleRate": {
+                "Min": 200,
+                "Max": 200
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "Thermocouple"
+        },
+        {
+          "BBNPortFunctionality": "Thermocouple",
+          "Excitation": false,
+          "GloballyUniqueId": "I#73:189",
           "Measurement": [
             {
               "DataLength": {
@@ -91,7 +91,7 @@
                 "Min": 10000,
                 "Max": 10000
               },
-              "GloballyUniqueId": "I#84:169",
+              "GloballyUniqueId": "I#33:169",
               "SampleRate": {
                 "Min": 1250,
                 "Max": 1250

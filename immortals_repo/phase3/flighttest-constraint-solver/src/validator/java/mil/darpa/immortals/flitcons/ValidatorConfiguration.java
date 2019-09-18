@@ -66,6 +66,9 @@ public class ValidatorConfiguration {
 	@CommandLine.Option(names = {"--scenario"}, completionCandidates = ScenarioCandidates.class, description = "Known scenarios that can be executed. Valid values: [${COMPLETION-CANDIDATES}]")
 	private List<String> scenarios = null;
 
+	@CommandLine.Option(names = {"--odb-target"}, description = "The ODB target to validate")
+	private String odbTarget = null;
+
 	@CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "Display Help")
 	public boolean helpRequested = false;
 
@@ -113,6 +116,10 @@ public class ValidatorConfiguration {
 
 	@CommandLine.Option(names = {"--validate-scenarios-from-file"}, description = "Validates the scenarios from the file")
 	private File validationSource = null;
+
+	public String getOdbTarget() {
+		return odbTarget;
+	}
 
 	public OdbEmbeddedServer.OdbDeploymentMode getDeploymentMode() {
 		if (useOdbOptimized) {
@@ -171,7 +178,7 @@ public class ValidatorConfiguration {
 	}
 
 	public void validateParams() {
-		if (helpRequested || (inputFiles == null && scenarios == null && validationSource == null && !validateAll && !validateBbn && !validateSwri)) {
+		if (helpRequested || (inputFiles == null && scenarios == null && validationSource == null && odbTarget == null && !validateAll && !validateBbn && !validateSwri)) {
 			CommandLine.usage(this, System.out);
 			System.exit(-1);
 		}
@@ -179,6 +186,11 @@ public class ValidatorConfiguration {
 		if (useOdbOptimized || useOdbExclusivelyXml || useOdbSelectiveXml) {
 			if (useOdbOptimized && useOdbExclusivelyXml || useOdbOptimized && useOdbSelectiveXml || useOdbExclusivelyXml && useOdbSelectiveXml) {
 				logger.error("Only one of '--use-odb', '--use-odb-with-xml', and 'use-odb-with-selective-xml' can be used!");
+				System.exit(-1);
+			}
+			if (odbTarget != null) {
+				logger.error("cannot use '--odb-target' with odb server parameters!");
+				System.exit(-1);
 			}
 			if (inputFiles != null) {
 				logger.error("The '--use-odb' parameter cannot be used with XML file validation!");

@@ -16,7 +16,7 @@
             "Min": 0,
             "Max": 32768
           },
-          "Extension": "K",
+          "Thermocouple": "K",
           "GloballyUniqueId": "#73:73",
           "PortDirection": "Input",
           "PortType": "Thermocouple",
@@ -35,7 +35,7 @@
             "Min": 0,
             "Max": 32768
           },
-          "Extension": "K",
+          "Thermocouple": "K",
           "GloballyUniqueId": "#73:70",
           "PortDirection": "Input",
           "PortType": "Thermocouple",
@@ -54,7 +54,7 @@
             "Min": 0,
             "Max": 32768
           },
-          "Extension": "K",
+          "Thermocouple": "K",
           "GloballyUniqueId": "#73:72",
           "PortDirection": "Input",
           "PortType": "Thermocouple",
@@ -91,7 +91,7 @@
             "Min": 0,
             "Max": 32768
           },
-          "Extension": "K",
+          "Thermocouple": "K",
           "GloballyUniqueId": "#73:71",
           "PortDirection": "Input",
           "PortType": "Thermocouple",
@@ -128,7 +128,7 @@
             "Min": 0,
             "Max": 32768
           },
-          "Extension": "K",
+          "Thermocouple": "K",
           "GloballyUniqueId": "#73:74",
           "PortDirection": "Input",
           "PortType": "Thermocouple",
@@ -147,7 +147,7 @@
             "Min": 0,
             "Max": 32768
           },
-          "Extension": "K",
+          "Thermocouple": "K",
           "GloballyUniqueId": "#73:67",
           "PortDirection": "Input",
           "PortType": "Thermocouple",
@@ -220,7 +220,7 @@
             "Min": 0,
             "Max": 32768
           },
-          "Extension": "K",
+          "Thermocouple": "K",
           "GloballyUniqueId": "#73:68",
           "PortDirection": "Input",
           "PortType": "Thermocouple",
@@ -239,7 +239,7 @@
             "Min": 0,
             "Max": 32768
           },
-          "Extension": "K",
+          "Thermocouple": "K",
           "GloballyUniqueId": "#73:69",
           "PortDirection": "Input",
           "PortType": "Thermocouple",

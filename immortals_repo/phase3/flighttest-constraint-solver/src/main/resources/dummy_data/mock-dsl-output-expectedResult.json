@@ -1,0 +1,110 @@
+{
+	"daus": [
+		{
+			"GloballyUniqueId": "FoundIt123",
+			"SupersededGloballyUniqueIds": ["ReplaceMe123"],
+			"Ports": [
+				{
+					"GloballyUniqueId": "0:0",
+					"SupersededGloballyUniqueId": "0:0",
+					"PortType": "SignalConditioner",
+					"Direction": "Input",
+					"SignalType": "Analog",
+					"DataLength": 16,
+					"SampleRate": 120,
+					"DataRate": 32768
+				},
+				{
+					"GloballyUniqueId": "0:1",
+					"SupersededGloballyUniqueId": "0:1",
+					"PortType": "SignalConditioner",
+					"Direction": "Input",
+					"SignalType": "Analog",
+					"DataLength": 16,
+					"SampleRate": 120,
+					"DataRate": 32768
+				},
+				{
+					"GloballyUniqueId": "0:2",
+					"SupersededGloballyUniqueId": "1:0",
+					"PortType": "SignalConditioner",
+					"Direction": "Input",
+					"SignalType": "Analog",
+					"DataLength": 16,
+					"SampleRate": 120,
+					"DataRate": 32768
+				},
+				{
+					"GloballyUniqueId": "0:3",
+					"SupersededGloballyUniqueId": "1:1",
+					"PortType": "SignalConditioner",
+					"Direction": "Input",
+					"SignalType": "Analog",
+					"DataLength": 16,
+					"SampleRate": 120,
+					"DataRate": 32768
+				},
+				{
+					"GloballyUniqueId": "1:0",
+					"SupersededGloballyUniqueId": "2:2",
+					"PortType": "ThermocoupleConditioner",
+					"Direction": "Input",
+					"Thermocouple": "E",
+					"DataLength": 16,
+					"SampleRate": 120,
+					"DataRate": 32768
+				},
+				{
+					"GloballyUniqueId": "1:1",
+					"SupersededGloballyUniqueId": "3:0",
+					"PortType": "ThermocoupleConditioner",
+					"Direction": "Input",
+					"Thermocouple": "E",
+					"DataLength": 16,
+					"SampleRate": 120,
+					"DataRate": 32768
+				},
+				{
+					"GloballyUniqueId": "1:2",
+					"SupersededGloballyUniqueId": "2:0",
+					"PortType": "ThermocoupleConditioner",
+					"Direction": "Input",
+					"Thermocouple": "J",
+					"DataLength": 16,
+					"SampleRate": 120,
+					"DataRate": 32768
+				},
+				{
+					"GloballyUniqueId": "1:3",
+					"SupersededGloballyUniqueId": "2:1",
+					"PortType": "ThermocoupleConditioner",
+					"Direction": "Input",
+					"Thermocouple": "J",
+					"DataLength": 16,
+					"SampleRate": 120,
+					"DataRate": 32768
+				},
+				{
+					"GloballyUniqueId": "1:5",
+					"SupersededGloballyUniqueId": "3:1",
+					"PortType": "ThermocoupleConditioner",
+					"Direction": "Input",
+					"Thermocouple": "K",
+					"DataLength": 16,
+					"SampleRate": 120,
+					"DataRate": 32768
+				},
+				{
+					"GloballyUniqueId": "1:4",
+					"SupersededGloballyUniqueId": "3:2",
+					"PortType": "ThermocoupleConditioner",
+					"Direction": "Input",
+					"Thermocouple": "T",
+					"DataLength": 16,
+					"SampleRate": 120,
+					"DataRate": 32768
+				}
+			]
+		}
+	]
+}

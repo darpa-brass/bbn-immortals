@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 import time
+import uuid
 from enum import Enum
 from logging import Logger
 from typing import List, Dict, Union, Tuple
@@ -18,7 +19,7 @@ BBN_ERROR_EXIT_CODE = -77
 CLI_ERROR_CODE = -88
 
 BLACKLISTED_FILENAMES = [
-       'BRASS_Scenario5_Inventory1.xml'
+    'BRASS_Scenario5_Inventory1.xml'
 ]
 
 logger = logging.getLogger("ingest.py")  # type: Logger
@@ -649,63 +650,111 @@ class Ingester:
             TestScenarioContainer.update_scenario_hashes(outdated_scenario_identifiers, self.testType,
                                                          conserve_absolute_paths)
 
-    def update_dsltest_sceanrios(self):
-        with open(DSL_TEST_SCENARIOS_FILE, 'r') as f:
-            test_scenarios_root = json.load(f)
-            regression_scenarios = test_scenarios_root['regression_scenarios']
-            staging_scenarios = test_scenarios_root['staging_scenarios']
-            debug_scenarios = test_scenarios_root['debug_scenarios']
+    def update_dsltest_sceanrios(self) -> Union[List[str], None]:
+        changed_scenarios = list()
 
-            swri_example_identifiers = TestScenarioContainer.swri_test_names()
-            for test_identifier in swri_example_identifiers:
-                scenario_data = TestScenarioContainer.get(test_identifier)
-                request_file = scenario_data.xmlMdlrootInputPath
-                inventory_file = scenario_data.xmlInventoryPath
+        test_scenarios_root = json.load(open(DSL_TEST_SCENARIOS_FILE, 'r'))
+        regression_scenarios = test_scenarios_root['regression_scenarios']
+        staging_scenarios = test_scenarios_root['staging_scenarios']
+        debug_scenarios = test_scenarios_root['debug_scenarios']
+        bad_scenarios = test_scenarios_root['bad_scenarios']
 
-                new_scenario = False
+        if self.testType == TestType.SwriTest:
+            example_identifiers = TestScenarioContainer.swri_test_names()
+        elif self.testType == TestType.BbnTest:
+            example_identifiers = TestScenarioContainer.bbn_test_names()
+        else:
+            raise Exception('Unexpected TestType "' + self.testType.name + '"!')
 
-                if test_identifier in regression_scenarios:
-                    dsltest_data = regression_scenarios[test_identifier]
-                elif test_identifier in staging_scenarios:
-                    dsltest_data = staging_scenarios[test_identifier]
-                elif test_identifier in debug_scenarios:
-                    dsltest_data = debug_scenarios[test_identifier]
+        for test_identifier in example_identifiers:
+            scenario_data = TestScenarioContainer.get(test_identifier)
+            request_file = os.path.join('scenarios', test_identifier, test_identifier + '-dsl-swap-request.json')
+            inventory_file = os.path.join('scenarios', test_identifier, test_identifier + '-dsl-swap-inventory.json')
+            target_folder = os.path.join(DSL_TEST_SCENARIOS_FOLDER, scenario_data.shortName)
+            inventory_tgt_path = os.path.join(target_folder, test_identifier + '-dsl-swap-inventory.json')
+            example_tgt_path = os.path.join(target_folder, test_identifier + '-dsl-swap-request.json')
+            new_scenario = False
+
+            if test_identifier in regression_scenarios:
+                dsltest_data = regression_scenarios[test_identifier]
+            elif test_identifier in staging_scenarios:
+                dsltest_data = staging_scenarios[test_identifier]
+            elif test_identifier in debug_scenarios:
+                dsltest_data = debug_scenarios[test_identifier]
+            elif test_identifier in bad_scenarios:
+                dsltest_data = bad_scenarios[test_identifier]
+            else:
+                dsltest_data = {
+                    "request_file": request_file,
+                    "inventory_file": inventory_file,
+                    "success_expected": True
+                }
+                staging_scenarios[test_identifier] = dsltest_data
+                new_scenario = True
+
+            if dsltest_data['request_file'] != request_file:
+                raise Exception('Scenario "' + test_identifier + '" request_file path has changed from "' +
+                                dsltest_data['request_file'] + '" to "' + request_file + '"!!')
+
+            if dsltest_data['inventory_file'] != inventory_file:
+                raise Exception('Scenario "' + test_identifier + '" inventory_file path has changed from "' +
+                                dsltest_data['inventory_file'] + '" to "' + inventory_file + '"!!')
+
+            if os.path.exists(example_tgt_path):
+                request_file_hash = hashlib.sha256(open(example_tgt_path, 'r').read().encode()).hexdigest()
+            else:
+                request_file_hash = str(uuid.uuid4())
+            if os.path.exists(inventory_tgt_path):
+                inventory_file_hash = hashlib.sha256(open(inventory_tgt_path, 'r').read().encode()).hexdigest()
+            else:
+                inventory_file_hash = str(uuid.uuid4())
+
+            if (('request_file_hash' not in dsltest_data or dsltest_data['request_file_hash'] != request_file_hash) or
+                    ('inventory_file_hash' not in dsltest_data or dsltest_data[
+                        'inventory_file_hash'] != inventory_file_hash)):
+                if new_scenario:
+                    logger.info('New scenario ' + test_identifier + ' introduced. Regenerating DSL example')
                 else:
-                    dsltest_data = {
-                        "request_file": request_file,
-                        "request_file_hash": "",
-                        "inventory_file": inventory_file,
-                        "inventory_file_hash": ""
-                    }
-                    new_scenario = True
-                    if not os.path.exists(target_folder):
-                        os.mkdir(target_folder)
+                    logger.info(
+                        'Scenario ' + test_identifier + ' file hashes have changed. Regenerating DSL example')
 
-                if dsltest_data['request_file'] != request_file:
-                    raise Exception('Scenario "' + test_identifier + '" request_file path has changed from "' +
-                                    dsltest_data['request_file'] + '" to "' + request_file + '"!!')
+                if not os.path.exists(target_folder):
+                    os.mkdir(target_folder)
 
-                if dsltest_data['inventory_file'] != inventory_file:
-                    raise Exception('Scenario "' + test_identifier + '" inventory_file path has changed from "' +
-                                    dsltest_data['inventory_file'] + '" to "' + inventory_file + '"!!')
+                logger.info('Validating OrientDB usage and creating DSL Interchange Files...')
+                cmd = ['java', '-jar', VALIDATOR_JAR, '--use-odb', '--scenario', scenario_data.shortName]
+                # _exec_cmd(cmd, cwd=IODBS_DIR, label='validator-jar')
+                result_dir = _exec_cmd(cmd, label='dsltest_update_validator_jar')
+                inventory_filename = test_identifier + '-validation-input-inventory.json'
+                inventory_src_path = os.path.join(result_dir, inventory_filename)
+                example_filename = test_identifier + '-validation-input-requirements.json'
+                example_src_path = os.path.join(result_dir, example_filename)
 
-                request_file_hash = hashlib.sha256(open(request_file, 'r').read().encode()).hexdigest()
-                inventory_file_hash = hashlib.sha256(open(inventory_file, 'r').read().encode()).hexdigest()
+                if not os.path.exists(inventory_src_path):
+                    raise Exception('No request DSL JSON was produced for the scenario "' + test_identifier + '!')
+                if not os.path.exists(example_src_path):
+                    raise Exception('No inventory DSL JSON was produced for the scenario "' + test_identifier + '!')
 
-                if (dsltest_data['request_file_hash'] != request_file_hash or
-                        dsltest_data['inventory_file_hash'] != inventory_file_hash):
-                    if new_scenario:
-                        logger.info('New scenario ' + test_identifier + ' introduced. Regenerating DSL example')
-                    else:
-                        logger.info(
-                            'Scenario ' + test_identifier + ' file hashes have changed. Regenerating DSL example')
+                shutil.copy(inventory_src_path, inventory_tgt_path)
+                shutil.copy(example_src_path, example_tgt_path)
 
-                    target_folder = os.path.join(DSL_TEST_SCENARIOS_FOLDER, scenario_data.shortName)
+                dsltest_data['request_file_hash'] = hashlib.sha256(
+                    open(example_tgt_path, 'r').read().encode()).hexdigest()
+                dsltest_data['inventory_file_hash'] = hashlib.sha256(
+                    open(inventory_tgt_path, 'r').read().encode()).hexdigest()
 
-                    logger.info('Validating OrientDB usage and creating DSL Interchange Files...')
-                    cmd = ['java', '-jar', VALIDATOR_JAR, '--use-odb', '--scenario', scenario_data.shortName]
-                    # _exec_cmd(cmd, cwd=IODBS_DIR, label='validator-jar')
-                    _exec_cmd(cmd, label='dsltest_update_validator_jar')
+                changed_scenarios.append(test_identifier)
+        if len(changed_scenarios) > 0:
+            write_val = {
+                'regression_scenarios': regression_scenarios,
+                'bad_scenarios': bad_scenarios,
+                'staging_scenarios': staging_scenarios,
+                'debug_scenarios': debug_scenarios
+            }
+            json.dump(write_val, open(DSL_TEST_SCENARIOS_FILE, 'w'), indent=4)
+            return changed_scenarios
+
+        return None
 
     def validate_examples(self):
         examples, inventories = self.gather_files()
@@ -743,7 +792,7 @@ class Ingester:
             build_odb()
             build_validator()
             self.validate_odb_scenarios(examples, inventories)
-            # self.update_dsltest_sceanrios()
+        self.update_dsltest_sceanrios()
 
 
 def main():

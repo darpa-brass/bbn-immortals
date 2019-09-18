@@ -15,6 +15,8 @@ public abstract class AbstractDataTarget<T> extends AbstractDataSource<T> {
 
 	protected abstract void update_NodeAttribute(@Nonnull T node, @Nonnull String attributeName, @Nonnull Object attributeValue);
 
+	protected abstract void add_NodeAttribute(@Nonnull T node, @Nonnull String attributeName, @Nonnull Object attributeValue);
+
 	protected abstract void update_createOrUpdateChildWithAttributes(@Nonnull T parentNode, @Nonnull List<String> childPath,
 	                                                                 @Nonnull Map<String, Object> attributes);
 

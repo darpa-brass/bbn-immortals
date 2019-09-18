@@ -102,7 +102,12 @@ public class DauPort {
 			try {
 				displayablePortMapping.setThermocoupleResult(fits(validThermocouples, dauPort.thermocouple), true);
 			} catch (ValidationFailureException e) {
-				displayablePortMapping.setThermocoupleResult(e.getMessage(), false);
+				// TODO: I would prefer to handle this via default values (eg null exists in null, T, K, etc)
+				if (dauPort.thermocouple == null && !validThermocouples.isEmpty()) {
+					displayablePortMapping.setThermocoupleResult("null==null", true);
+				} else {
+					displayablePortMapping.setThermocoupleResult(e.getMessage(), false);
+				}
 			}
 		}
 

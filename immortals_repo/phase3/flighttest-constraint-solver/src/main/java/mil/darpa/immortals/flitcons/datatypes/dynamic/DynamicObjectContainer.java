@@ -1,7 +1,6 @@
 package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import mil.darpa.immortals.flitcons.NestedPathException;
-import mil.darpa.immortals.flitcons.SolverConfiguration;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 
 import static mil.darpa.immortals.flitcons.Utils.GLOBALLY_UNIQUE_ID;
 
-public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectContainer> {
+public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectContainer>, Comparable<DynamicObjectContainer>, Comparator<DynamicObjectContainer> {
 
 	public static final Map<String, DebugData> aliases = new HashMap<>();
 
@@ -28,6 +27,29 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 	public final DebugData debugData;
 
 	public final TreeMap<String, DynamicValue> children = new TreeMap<>();
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		String guidStr = "";
+		String sguidsStr = "";
+		String sguidStr = "";
+		for (String key : children.keySet()) {
+			if (key.equals("GloballyUniqueId")) {
+				guidStr = "GloballyUniqueId=" + children.get(key).toString() + "\n";
+
+			} else if (key.equals("SupersededGloballyUniqueId")) {
+				sguidStr = "SupersededGloballyUniqueId=" + children.get(key) + "\n";
+
+			} else if (key.equals("SupersededGloballyUniqueIds")) {
+				sguidsStr = "SupersededGloballyUniqueIds=" + children.get(key) + "\n";
+
+			} else {
+				sb.append(key).append("=").append(children.get(key).toString()).append("\n");
+			}
+		}
+		sb.append(guidStr).append(sguidStr).append(sguidsStr);
+		return sb.toString();
+	}
 
 	public DynamicObjectContainer(@Nonnull HierarchicalIdentifier identifier, @Nullable DebugData debugData) {
 		this.debugData = debugData;
@@ -178,5 +200,34 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 			newDoc.put(attrEntry.getKey(), attrEntry.getValue().duplicate());
 		}
 		return newDoc;
+	}
+
+	@Override
+	public int compareTo(DynamicObjectContainer dynamicObjectContainer) {
+		if (dynamicObjectContainer == null) {
+			return 1;
+		}
+		return this.toString().compareTo(dynamicObjectContainer.toString());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof DynamicObjectContainer) {
+			return this.compareTo((DynamicObjectContainer) o) == 0;
+		}
+		return false;
+	}
+
+	@Override
+	public int compare(DynamicObjectContainer dynamicObjectContainer, DynamicObjectContainer t1) {
+		if (dynamicObjectContainer == null && t1 == null) {
+			return 0;
+		} else if (dynamicObjectContainer == null) {
+			return -1;
+		} else if (t1 == null) {
+			return 1;
+		} else {
+			return dynamicObjectContainer.compareTo(t1);
+		}
 	}
 }

@@ -98,6 +98,18 @@ public class HierarchicalIdentifier implements Comparator<HierarchicalIdentifier
 		}
 	}
 
+	public static HierarchicalIdentifier getByStringIdentifier(@Nonnull String identifier) {
+		Optional<HierarchicalIdentifier> candidate = identifierDatastore.stream().filter(x ->
+				identifier.equals(x.sourceIdentifier)).findFirst();
+		if (candidate.isPresent()) {
+			return candidate.get();
+		} else {
+			throw AdaptationnException.internal("Could not find node with identifier '" + identifier + "'!");
+
+		}
+
+	}
+
 	private HierarchicalIdentifier(@Nullable String identifier, @Nullable String nodeType, @Nullable String referenceIdentifier) {
 		this.sourceIdentifier = identifier;
 		this.uniqueSessionIdentifier = identifier == null ? ("I" + Integer.toHexString(tagCounter.incrementAndGet())) : identifier;

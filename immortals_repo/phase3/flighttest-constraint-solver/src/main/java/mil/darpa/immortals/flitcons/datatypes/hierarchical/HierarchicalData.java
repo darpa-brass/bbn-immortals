@@ -268,6 +268,14 @@ public class HierarchicalData implements DuplicateInterface {
 		return children.iterator().next();
 	}
 
+	public Set<HierarchicalData> getChildNodesByPath(@Nonnull String... path) {
+		return getChildNodesByPath(Arrays.asList(path));
+	}
+
+	public HierarchicalData getChildNodeByPath(@Nonnull String... path) {
+		return getChildNodeByPath(Arrays.asList(path));
+	}
+
 	public Set<HierarchicalData> getChildNodesByPath(@Nonnull List<String> path) {
 
 		if (path.size() == 0) {

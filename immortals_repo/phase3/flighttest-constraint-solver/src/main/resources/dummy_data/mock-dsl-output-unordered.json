@@ -49,7 +49,7 @@
           "SupersededGloballyUniqueId": "2:2",
           "PortType": "ThermocoupleConditioner",
           "Direction": "Input",
-          "Extension": "E",
+          "Thermocouple": "E",
           "DataLength": 16,
           "SampleRate": 120,
           "DataRate": 32768
@@ -59,7 +59,7 @@
           "SupersededGloballyUniqueId": "3:0",
           "PortType": "ThermocoupleConditioner",
           "Direction": "Input",
-          "Extension": "E",
+          "Thermocouple": "E",
           "DataLength": 16,
           "SampleRate": 120,
           "DataRate": 32768
@@ -69,7 +69,7 @@
           "SupersededGloballyUniqueId": "2:0",
           "PortType": "ThermocoupleConditioner",
           "Direction": "Input",
-          "Extension": "J",
+          "Thermocouple": "J",
           "DataLength": 16,
           "SampleRate": 120,
           "DataRate": 32768
@@ -79,7 +79,7 @@
           "SupersededGloballyUniqueId": "2:1",
           "PortType": "ThermocoupleConditioner",
           "Direction": "Input",
-          "Extension": "J",
+          "Thermocouple": "J",
           "DataLength": 16,
           "SampleRate": 120,
           "DataRate": 32768
@@ -89,7 +89,7 @@
           "SupersededGloballyUniqueId": "3:2",
           "PortType": "ThermocoupleConditioner",
           "Direction": "Input",
-          "Extension": "T",
+          "Thermocouple": "T",
           "DataLength": 16,
           "SampleRate": 120,
           "DataRate": 32768
@@ -99,7 +99,7 @@
           "SupersededGloballyUniqueId": "3:1",
           "PortType": "ThermocoupleConditioner",
           "Direction": "Input",
-          "Extension": "K",
+          "Thermocouple": "K",
           "DataLength": 16,
           "SampleRate": 120,
           "DataRate": 32768

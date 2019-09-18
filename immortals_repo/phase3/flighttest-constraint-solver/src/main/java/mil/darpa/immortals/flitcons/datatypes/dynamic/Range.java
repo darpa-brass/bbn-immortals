@@ -33,7 +33,7 @@ public class Range implements DuplicateInterface<Range> {
 	}
 
 	public String toString() {
-		return Min + " - " + Max;
+		return "(" + Min + " - " + Max + ")";
 	}
 
 	public boolean fits(long value) {

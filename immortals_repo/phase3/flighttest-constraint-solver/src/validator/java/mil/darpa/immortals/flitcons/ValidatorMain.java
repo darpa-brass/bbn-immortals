@@ -144,40 +144,45 @@ public class ValidatorMain {
 
 	private static List<ValidationResult> validateOdbTestScenarios(@Nonnull List<TestScenario> testScenarios, @Nonnull OdbEmbeddedServer server, @Nonnull ValidatorConfiguration config) {
 		List<ValidationResult> results = new LinkedList<>();
-
 		for (TestScenario testScenario : testScenarios) {
 			String label = testScenario.getShortName();
 			String odbPath = server.getOdbPath(testScenario);
+			results.addAll(validateOdbTestSession(odbPath, label, config));
+		}
+		return results;
+	}
 
-			try {
-				OrientVertexDataSource ovds = new OrientVertexDataSource(odbPath);
+	private static List<ValidationResult> validateOdbTestSession(@Nonnull String odbPath, @Nonnull String label, @Nonnull ValidatorConfiguration config) {
+		List<ValidationResult> results = new LinkedList<>();
 
-				results.add(innerValidateScenario(ovds, null, ovds.getServerPath(), config, ValidationScenario.InputConfigurationRequirements, label));
-				results.add(innerValidateScenario(ovds, null, ovds.getServerPath(), config, ValidationScenario.DauInventory, label));
+		try {
+			OrientVertexDataSource ovds = new OrientVertexDataSource(odbPath);
 
-				if (config.fullValidation || config.validateMdlrootUsage) {
-					results.add(innerValidateScenario(ovds, null, ovds.getServerPath(), config, ValidationScenario.InputConfigurationUsage, label));
-				}
+			results.add(innerValidateScenario(ovds, null, ovds.getServerPath(), config, ValidationScenario.InputConfigurationRequirements, label));
+			results.add(innerValidateScenario(ovds, null, ovds.getServerPath(), config, ValidationScenario.DauInventory, label));
 
-			} catch (AdaptationnException e) {
-				if (config.haltOnFailure) {
-					throw e;
-				} else {
-					switch (e.result) {
-						case ReadyForAdaptation:
-						case AdaptationSuccessful:
-						case AdaptationNotRequired:
-						case PerturbationInputInvalid:
-						case AdaptationUnsuccessful:
-						case AdaptationPartiallySuccessful:
-							e.printStackTrace(System.err);
-							logger.error(e.getMessage());
-							break;
+			if (config.fullValidation || config.validateMdlrootUsage) {
+				results.add(innerValidateScenario(ovds, null, ovds.getServerPath(), config, ValidationScenario.InputConfigurationUsage, label));
+			}
 
-						case AdaptationInternalError:
-						case AdaptationUnexpectedError:
-							throw e;
-					}
+		} catch (AdaptationnException e) {
+			if (config.haltOnFailure) {
+				throw e;
+			} else {
+				switch (e.result) {
+					case ReadyForAdaptation:
+					case AdaptationSuccessful:
+					case AdaptationNotRequired:
+					case PerturbationInputInvalid:
+					case AdaptationUnsuccessful:
+					case AdaptationPartiallySuccessful:
+						e.printStackTrace(System.err);
+						logger.error(e.getMessage());
+						break;
+
+					case AdaptationInternalError:
+					case AdaptationUnexpectedError:
+						throw e;
 				}
 			}
 		}
@@ -233,8 +238,12 @@ public class ValidatorMain {
 
 		ValidationResultContainer vrc = new ValidationResultContainer();
 		OdbEmbeddedServer.OdbDeploymentMode deploymentMode = config.getDeploymentMode();
+		String odbTarget = config.getOdbTarget();
 
-		if (deploymentMode != null) {
+		if (odbTarget != null) {
+			vrc.results.addAll(validateOdbTestSession(odbTarget, "ServerSession", config));
+
+		} else if (deploymentMode != null) {
 			List<TestScenario> testScenarios = config.getScenariosToValidate();
 			OdbEmbeddedServer server = new OdbEmbeddedServer(testScenarios.toArray(new TestScenario[0]));
 			server.init(deploymentMode);

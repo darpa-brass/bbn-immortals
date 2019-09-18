@@ -38,6 +38,11 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 	}
 
 	@Override
+	protected void add_NodeAttribute(@Nonnull OrientVertex node, @Nonnull String attributeName, @Nonnull Object attributeValue) {
+		node.setProperty(attributeName, attributeValue);
+	}
+
+	@Override
 	public void update_rewireNode(@Nonnull OrientVertex originalNode, @Nonnull OrientVertex replacementNode) {
 		for (Edge e : originalNode.getEdges(Direction.BOTH, "Reference")) {
 			if (e.getVertex(Direction.IN).equals(originalNode)) {

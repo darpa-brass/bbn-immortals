@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 public class DynamicObjectContainerTest {
 
+	private static final String TMP_JSON_FILE = "dynamicObjectContainerTmp.json";
 	private static Gson gson;
 
 	@BeforeClass
@@ -147,7 +148,6 @@ public class DynamicObjectContainerTest {
 
 			if (validateDynamicObjectContainerExtras) {
 				Assert.assertEquals(d0.identifier, d1.identifier);
-//				Assert.assertEquals(d0.debugData, d1.debugData);
 			}
 
 		} else if (obj0 instanceof String) {
@@ -165,75 +165,57 @@ public class DynamicObjectContainerTest {
 		}
 	}
 
-	@Test
-	public void serializationDeserializationTestOne() {
-		InputStreamReader isr0 = new InputStreamReader(
-				DynamicObjectContainerTest.class.getClassLoader().getResourceAsStream("dummy_data/mock-dsl-input.json"));
+	public void innerSerializationTest(@Nonnull String unorderedResourcePath, @Nonnull String orderedResourcePath) {
+		InputStreamReader sortedInputStream = new InputStreamReader(
+				DynamicObjectContainerTest.class.getClassLoader().getResourceAsStream(orderedResourcePath));
 
-		JsonElement json0 = gson.fromJson(isr0, JsonElement.class);
+		JsonElement sortedJsonElement = gson.fromJson(sortedInputStream, JsonElement.class);
 
-		InputStreamReader isr1 = new InputStreamReader(
-				DynamicObjectContainerTest.class.getClassLoader().getResourceAsStream("dummy_data/mock-dsl-input.json"));
+		InputStreamReader unsortedInputStream = new InputStreamReader(
+				DynamicObjectContainerTest.class.getClassLoader().getResourceAsStream(unorderedResourcePath));
 
-		DynamicObjectContainer container0 = gson.fromJson(isr1, DynamicObjectContainer.class);
+		DynamicObjectContainer unsortedContainer = gson.fromJson(unsortedInputStream, DynamicObjectContainer.class);
 
-		JsonElement json1 = gson.toJsonTree(container0);
+
+		JsonElement unsortedProcessedContainer = gson.toJsonTree(unsortedContainer);
 		try {
-			FileOutputStream fos = new FileOutputStream("dsl-input-test.json");
+			FileOutputStream fos = new FileOutputStream(TMP_JSON_FILE);
 			OutputStreamWriter osw = new OutputStreamWriter(fos);
-			gson.toJson(container0, osw);
+			gson.toJson(unsortedProcessedContainer, osw);
 			osw.flush();
 			osw.close();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
-		jsonObjectValidator(json0, json1);
-		jsonObjectValidator(json1, json0);
+		jsonObjectValidator(unsortedProcessedContainer, sortedJsonElement);
+		jsonObjectValidator(sortedJsonElement, unsortedProcessedContainer);
 
-		DynamicObjectContainer container1 = gson.fromJson(json1, DynamicObjectContainer.class);
-		dynamicObjectContainerValidator(container0, container1);
+		// TODO: Consider re-enabling this if you can safely swap the array used for lists for a sorted list
+//		DynamicObjectContainer container1 = gson.fromJson(unsortedProcessedContainer, DynamicObjectContainer.class);
+//		dynamicObjectContainerValidator(unsortedContainer, container1);
 
 		try {
-			Files.delete(Paths.get("dsl-input-test.json"));
+			Files.delete(Paths.get(TMP_JSON_FILE));
 		} catch (IOException e) {
 			throw new RuntimeException("Error removing artifact!");
 		}
 	}
 
+
+	@Test
+	public void serializationDeserializationTestOne() {
+		innerSerializationTest("dummy_data/mock-dsl-input-unordered.json", "dummy_data/mock-dsl-input-expectedResult.json");
+	}
+
 	@Test
 	public void serializationDeserializationTestTwo() {
-		InputStreamReader isr0 = new InputStreamReader(
-				DynamicObjectContainerTest.class.getClassLoader().getResourceAsStream("dummy_data/mock-dsl-output.json"));
+		innerSerializationTest("dummy_data/mock-dsl-output-unordered.json", "dummy_data/mock-dsl-output-expectedResult.json");
+	}
 
-		JsonElement json0 = gson.fromJson(isr0, JsonElement.class);
-
-		InputStreamReader isr1 = new InputStreamReader(
-				DynamicObjectContainerTest.class.getClassLoader().getResourceAsStream("dummy_data/mock-dsl-output.json"));
-
-		DynamicObjectContainer container0 = gson.fromJson(isr1, DynamicObjectContainer.class);
-
-		JsonElement json1 = gson.toJsonTree(container0);
-		try {
-			FileOutputStream fos = new FileOutputStream("dsl-input-test.json");
-			OutputStreamWriter osw = new OutputStreamWriter(fos);
-			gson.toJson(container0, osw);
-			osw.flush();
-			osw.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		jsonObjectValidator(json0, json1);
-		jsonObjectValidator(json1, json0);
-
-		DynamicObjectContainer container1 = gson.fromJson(json1, DynamicObjectContainer.class);
-		dynamicObjectContainerValidator(container0, container1);
-		try {
-			Files.delete(Paths.get("dsl-input-test.json"));
-		} catch (IOException e) {
-			throw new RuntimeException("Error removing artifact!");
-		}
+	@Test
+	public void serializationDeserializationTestThree() {
+		innerSerializationTest("dummy_data/mock-dsl-inventory-unordered.json", "dummy_data/mock-dsl-inventory-expectedResult.json");
 	}
 }
 

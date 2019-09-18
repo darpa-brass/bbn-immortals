@@ -11,21 +11,60 @@ import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifie
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import static mil.darpa.immortals.flitcons.Utils.duplicateObject;
 
 public class MdlHacks {
 
 	public static void fixHierarchicalData(@Nonnull Iterator<HierarchicalData> hierarchicalDataIterator) {
-		while (hierarchicalDataIterator.hasNext()) {
-			HierarchicalData data = hierarchicalDataIterator.next();
-			if (data.getNodeType().equals("PortType") && data.getAttribute("Thermocouple") != null) {
-				data.getAttributes().put("PortType", "Thermocouple");
+//		while (hierarchicalDataIterator.hasNext()) {
+//			HierarchicalData data = hierarchicalDataIterator.next();
+//			if (data.getNodeType().equals("PortType")) {
+//				HierarchicalData parent = data.getParentData();
+//				List<String> path = new LinkedList<>();
+//				path.add("GenericParameter");
+//				HierarchicalData genericParameter = parent.getChildNodeByPath(path);
+//				if (((genericParameter != null && genericParameter.getAttribute("BBNPortFunctionality").equals("ThermocoupleConditioner")) ||
+//						data.getAttribute("Thermocouple") != null) &&
+//						(data.getAttribute("PortType") == null || data.getAttribute("PortType").equals(""))) {
+//					System.err.println("PortType Found with no value! HotPatching!");
+//					data.getAttributes().put("PortType", "Thermocouple");
+//				}
+//			}
+//		}
+	}
+
+	public static void removeInvalidThermocoupleValuesFromSolution(@Nonnull HierarchicalDataContainer original,
+	                                                               @Nonnull HierarchicalDataContainer solutionContainer,
+	                                                               @Nonnull DynamicObjectContainer solution) {
+		try {
+			Set<DynamicObjectContainer> solutionDaus = solution.get("daus").parseDynamicObjectContainerArray();
+			for (DynamicObjectContainer solutionDau : solutionDaus) {
+				Set<DynamicObjectContainer> ports = solutionDau.get("Port").parseDynamicObjectContainerArray();
+				for (DynamicObjectContainer port : ports) {
+					if (port.get("Thermocouple") != null) {
+						HierarchicalIdentifier portIdentifier = HierarchicalIdentifier.getByStringIdentifier(
+								port.get("SupersededGloballyUniqueId").parseString());
+						HierarchicalData originalNode = original.getNode(portIdentifier);
+
+						HierarchicalData portType = originalNode.getChildNodeByPath("PortTypes", "PortType");
+						Object thermocouple = null;
+						if (portType != null) {
+							thermocouple = portType.getAttribute("Thermocouple");
+						}
+
+						if (thermocouple == null) {
+							port.remove("Thermocouple");
+						}
+					}
+
+				}
 			}
+
+
+		} catch (NestedPathException e) {
+			throw AdaptationnException.internal(e);
 		}
 	}
 
@@ -42,53 +81,53 @@ public class MdlHacks {
 	}
 
 	public static void cleanseDslOutput(@Nonnull DynamicObjectContainer dslOutput) {
-		try {
-
-			for (Object dauObject : dslOutput.get("daus").valueArray) {
-				DynamicObjectContainer dau = (DynamicObjectContainer) dauObject;
-				ArrayList<DynamicObjectContainer> connectedPorts = new ArrayList<>();
-				for (Object portObject : dau.get("Port").valueArray) {
-					DynamicObjectContainer port = (DynamicObjectContainer) portObject;
-					DynamicValue supersededPort = port.get("SupersededGloballyUniqueId");
-					if (supersededPort != null && supersededPort.singleValue != null && !(supersededPort.singleValue instanceof String && ((String)supersededPort.singleValue).trim().equals(""))) {
-						connectedPorts.add(port);
-
-
-						Map<String, DynamicValue> updatedValues = new HashMap<>();
-						for (Map.Entry<String, DynamicValue> attributeEntry : port.children.entrySet()) {
-							DynamicValue attributeValue = attributeEntry.getValue();
-							if (attributeValue.multiplicity == DynamicValueMultiplicity.SingleValue &&
-									attributeValue.singleValue instanceof String && ((String) attributeValue.singleValue).startsWith(":")) {
-								String singleValue = (String)((String) attributeValue.singleValue).replace(":", "");
-								Range range = attributeValue.range;
-								Object[] valueArray = attributeValue.valueArray;
-								HierarchicalIdentifier dataSource = attributeValue.dataSource;
-								Range newRange = range == null ? null : duplicateObject(range);
-								Object[] newValueArray = null;
-
-								if (valueArray != null) {
-									newValueArray = new Object[valueArray.length];
-									for (int i = 0; i < valueArray.length; i++) {
-										newValueArray[i] = duplicateObject(valueArray[i]);
-									}
-								}
-								updatedValues.put(attributeEntry.getKey(),
-										new DynamicValue(dataSource, newRange, newValueArray, singleValue));
-							}
-						}
-						for (Map.Entry<String, DynamicValue> attributeEntry : updatedValues.entrySet()) {
-							port.put(attributeEntry.getKey(), attributeEntry.getValue());
-						}
-					}
-				}
-				dau.remove("Port");
-				dau.put("Port", DynamicValue.fromValueArray(dau.identifier, connectedPorts.toArray()));
-
-			}
-
-		} catch (NestedPathException e) {
-			throw AdaptationnException.internal(e);
-		}
+//		try {
+//
+//			for (Object dauObject : dslOutput.get("daus").valueArray) {
+//				DynamicObjectContainer dau = (DynamicObjectContainer) dauObject;
+//				ArrayList<DynamicObjectContainer> connectedPorts = new ArrayList<>();
+//				for (Object portObject : dau.get("Port").valueArray) {
+//					DynamicObjectContainer port = (DynamicObjectContainer) portObject;
+//					DynamicValue supersededPort = port.get("SupersededGloballyUniqueId");
+//					if (supersededPort != null && supersededPort.singleValue != null && !(supersededPort.singleValue instanceof String && ((String) supersededPort.singleValue).trim().equals(""))) {
+//						connectedPorts.add(port);
+//
+//
+//						Map<String, DynamicValue> updatedValues = new HashMap<>();
+//						for (Map.Entry<String, DynamicValue> attributeEntry : port.children.entrySet()) {
+//							DynamicValue attributeValue = attributeEntry.getValue();
+//							if (attributeValue.multiplicity == DynamicValueMultiplicity.SingleValue &&
+//									attributeValue.singleValue instanceof String && ((String) attributeValue.singleValue).startsWith(":")) {
+//								String singleValue = (String) ((String) attributeValue.singleValue).replace(":", "");
+//								Range range = attributeValue.range;
+//								Object[] valueArray = attributeValue.valueArray;
+//								HierarchicalIdentifier dataSource = attributeValue.dataSource;
+//								Range newRange = range == null ? null : duplicateObject(range);
+//								Object[] newValueArray = null;
+//
+//								if (valueArray != null) {
+//									newValueArray = new Object[valueArray.length];
+//									for (int i = 0; i < valueArray.length; i++) {
+//										newValueArray[i] = duplicateObject(valueArray[i]);
+//									}
+//								}
+//								updatedValues.put(attributeEntry.getKey(),
+//										new DynamicValue(dataSource, newRange, newValueArray, singleValue));
+//							}
+//						}
+//						for (Map.Entry<String, DynamicValue> attributeEntry : updatedValues.entrySet()) {
+//							port.put(attributeEntry.getKey(), attributeEntry.getValue());
+//						}
+//					}
+//				}
+//				dau.remove("Port");
+//				dau.put("Port", DynamicValue.fromValueArray(dau.identifier, connectedPorts.toArray()));
+//
+//			}
+//
+//		} catch (NestedPathException e) {
+//			throw AdaptationnException.internal(e);
+//		}
 	}
 
 //	public static class MeasurementValueWrapper {
