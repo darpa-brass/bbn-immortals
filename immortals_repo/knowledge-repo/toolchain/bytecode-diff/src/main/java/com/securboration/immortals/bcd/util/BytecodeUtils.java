@@ -45,9 +45,22 @@ public class BytecodeUtils {
     
     public static SootClass getSootClass(
             final File jar, 
-            final String internalName
+            final String internalName,
+            final File...otherJars
             ) throws IOException{
-        final String classpath = Scene.v().defaultClassPath() + File.pathSeparator + jar.getCanonicalPath();
+        final StringBuilder cp = new StringBuilder();
+        {
+            cp.append(Scene.v().defaultClassPath());
+            cp.append(File.pathSeparator);
+            cp.append(jar.getCanonicalPath());
+            
+            for(File other:otherJars){
+                cp.append(File.pathSeparator);
+                cp.append(other.getCanonicalPath());
+            }
+        }
+        
+        final String classpath = cp.toString();
         
         Options.v().set_output_format(Options.output_format_jimple);
         Options.v().set_soot_classpath(classpath);

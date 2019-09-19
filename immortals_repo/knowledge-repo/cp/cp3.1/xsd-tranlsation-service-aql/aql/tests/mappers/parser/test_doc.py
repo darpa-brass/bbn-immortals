@@ -10,7 +10,7 @@ def _check_children(expected_names, element):
 @fixture
 def simple_doc(shared_datadir, get_main_element_single):
     with open(shared_datadir / 'simple.xsd', 'r') as file_content:
-        return get_main_element_single(file_content.read())
+        return get_main_element_single(file_content.read())['element']
 
 
 def test_parser_must_return_expected_elements(simple_doc):
@@ -54,3 +54,12 @@ def test_parser_must_add_restriction_enum_to_type(simple_doc):
 
     expected_restriction_enum = ['Voice', 'FlightSafety', 'BestEffort']
     assert delivery_class.element_type.restriction_enum == expected_restriction_enum
+
+
+def test_parser_must_parse_type_annotation(simple_doc):
+    expected = '\n'.join([
+        'Our root type with a simple documentation',
+        'This is a second line for our documentation'
+    ])
+
+    assert simple_doc.element_type.annotation == expected

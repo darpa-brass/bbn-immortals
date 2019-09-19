@@ -86,6 +86,32 @@ def _compare(first_el, second_el, path=None, result=None):
         to_remove.remove(removed)
         to_add.remove(added)
 
+    # Let's check now similarity between elements
+    for removed in removals:
+        if removed not in to_remove:
+            continue
+
+        for added in additions:
+            if added not in to_add:
+                continue
+
+            if not removed.is_similar(added):
+                continue
+
+            # Similar elements
+
+            # Only add rename if they have different names
+            if removed.name != added.name:
+                result['renames'].append((_join_paths(path + [removed]), _join_paths(path + [added])))
+
+            # Remove both elements from removals add additions
+            # as they are the same
+            to_add.remove(added)
+            to_remove.remove(removed)
+
+            result = _compare(removed, added, path, result)
+            break
+
     for elem in to_add:
         result['additions'].append(_join_paths(path + [elem]))
 

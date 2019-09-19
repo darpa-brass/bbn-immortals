@@ -31,20 +31,25 @@ class SchemaRepository(object):
 
         self.parse()
 
-        # Just search for first element in documents
+        # Just search for primary element in documents
         for location, schema_data in self.schemas.items():
             # Filter only primary docs
             if not schema_data['primary']:
                 continue
 
-            schema, _ = self.get_schema(location)
-            if 'element' not in schema:
+            result = self.get_schema(location)
+            if len(result['result']['element']) == 0:
                 continue
 
-            if len(schema['element']) > 0:
-                logging.info('Getting element {} from {} as main doc'.format(
-                    str(schema['element'][0]), location))
-                return schema['element'][0]
+            element = result['result']['element'][0]
+
+            logging.info('Getting element {} from {}'.format(str(element), location))
+
+            return {
+                'element': element,
+                'location': location,
+                'namespaces': result['namespaces']['namespaces']
+            }
 
         logging.error('No main element found')
         return None

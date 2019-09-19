@@ -34,7 +34,16 @@ parser.add_argument('--run-debug-tests', action='store_true', help='Run the debu
 parser.add_argument('--run-bad-tests', action='store_true', help='Run the tests that are known to be bad')
 
 
-def exec_cmd(cmd, success_expected, cwd=None, abort_on_failure=True):
+class ExecData:
+    def __init__(self, test_identifier):
+        self.test_identifier = test_identifier
+        self.duration = None
+        self.passed = None
+
+
+def exec_cmd(cmd, success_expected, test_identifier, cwd=None, abort_on_failure=True):
+    exec_data = ExecData(test_identifier)
+
     print('============================================================')
     print('--------------------------COMMAND---------------------------')
 
@@ -63,19 +72,26 @@ def exec_cmd(cmd, success_expected, cwd=None, abort_on_failure=True):
     start_time = time.time()
     print('-----------------------COMMAND OUTPUT-----------------------')
     return_code = subprocess.call(cmd, cwd=cwd)
+    exec_data.duration = int(time.time() - start_time)
+
     print('--------------------------DURATION--------------------------')
-    print(str(int(time.time() - start_time)) + ' seconds')
+    print(str(exec_data.duration) + ' seconds')
     print('---------------------------RESULT---------------------------')
 
     if return_code == 0 and success_expected:
+        exec_data.passed = True
         print('PASS')
         print('============================================================\n\n')
+        return exec_data
 
     elif return_code != 0 and not success_expected:
+        exec_data.passed = True
         print('PASS (Failure Expected)')
         print('============================================================\n\n')
+        return exec_data
 
     else:
+        exec_data.passed = False
         print('############################FAIL############################')
         print('############################FAIL############################')
         print('############################FAIL############################')
@@ -92,6 +108,8 @@ def exec_cmd(cmd, success_expected, cwd=None, abort_on_failure=True):
         if abort_on_failure:
             exit(return_code)
 
+        return exec_data
+
 
 def resolve_file(filepath):
     if os.path.exists(filepath):
@@ -104,19 +122,24 @@ def resolve_file(filepath):
     return filepath
 
 
-def run_test(request_file, inventory_file, success_expected, simple_solver=False, use_jar=True, abort_on_failure=True):
+def run_test(request_file, inventory_file, success_expected, simple_solver=False, use_jar=True, abort_on_failure=True,
+             scenario_identifier=None):
     """
     :type request_file str
     :type inventory_file str
     :type success_expected bool
     :type simple_solver bool
     :type use_jar bool
+    :type scenario_identifier str
 
     :type abort_on_failure bool
     :return:
     """
 
     global JAR_FILE
+
+    if scenario_identifier is None:
+        scenario_identifier = 'UNDEFINED'
 
     request_file = resolve_file(request_file)
     inventory_file = resolve_file(inventory_file)
@@ -128,9 +151,9 @@ def run_test(request_file, inventory_file, success_expected, simple_solver=False
 
         if simple_solver:
             cmd.append('--simple-solver')
-            exec_cmd(cmd, success_expected, None, abort_on_failure)
+            return exec_cmd(cmd, success_expected, None, abort_on_failure)
         else:
-            exec_cmd(cmd, success_expected, None, abort_on_failure)
+            return exec_cmd(cmd, success_expected, None, abort_on_failure)
 
     else:
         if simple_solver:
@@ -141,7 +164,7 @@ def run_test(request_file, inventory_file, success_expected, simple_solver=False
                    '--inventory-file', inventory_file,
                    '--request-file', request_file]
 
-            exec_cmd(cmd, success_expected, DSL_DIR, abort_on_failure)
+            return exec_cmd(cmd, success_expected, scenario_identifier, DSL_DIR, abort_on_failure)
 
 
 def main():
@@ -165,19 +188,23 @@ def main():
             'The "--run-staging-tests", "--run-regression-tests", "--run-debug-tests", and "--run-bad-tests"' +
             ' parameters cannot be used with any other parameters!')
 
-    def run_scenario(scenario):
+    def run_scenario(scenario_identifier, scenario):
         if 'request_file_hash' in scenario:
             scenario.pop('request_file_hash')
         if 'inventory_file_hash' in scenario:
             scenario.pop('inventory_file_hash')
 
-        run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
-                 abort_on_failure=(not args.keep_running_on_failure), **scenario)
+        return run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
+                        abort_on_failure=(not args.keep_running_on_failure), scenario_identifier=scenario_identifier,
+                        **scenario)
 
     def run_scenarios(scenario_set):
+        run_results = list()
         for name in scenario_set.keys():
             input_group = scenario_set[name]
-            run_scenario(input_group)
+            run_results.append(run_scenario(name, input_group))
+
+        return run_results
 
     if args.simple_solver:
         use_simple_solver = True
@@ -202,38 +229,61 @@ def main():
         if not os.path.exists(RULES_FILE):
             raise Exception('The file "' + RULES_FILE + '" does not exist!')
 
+    results = list()
+
     if args.input_inventory is not None or args.input_request is not None:
         run_test(inventory_file=args.input_inventory, request_file=args.input_request,
                  simple_solver=use_simple_solver, use_jar=use_full_jar,
                  abort_on_failure=(not args.keep_running_on_failure), success_expected=True)
 
     elif args.run_staging_tests:
-        run_scenarios(staging_scenarios)
+        results = run_scenarios(staging_scenarios)
     elif args.run_regression_tests:
-        run_scenarios(regression_scenarios)
+        results = run_scenarios(regression_scenarios)
     elif args.run_debug_tests:
-        run_scenarios(debug_scenarios)
+        results = run_scenarios(debug_scenarios)
     elif args.run_bad_tests:
-        run_scenarios(bad_scenarios)
+        results = run_scenarios(bad_scenarios)
 
     elif args.scenario is None:
-        run_scenarios(regression_scenarios)
-        run_scenarios(debug_scenarios)
-        run_scenarios(staging_scenarios)
-        run_scenarios(bad_scenarios)
+        results = results + run_scenarios(regression_scenarios)
+        results = results + run_scenarios(debug_scenarios)
+        results = results + run_scenarios(staging_scenarios)
+        results = results + run_scenarios(bad_scenarios)
 
     else:
         if args.scenario in regression_scenarios:
-            run_scenario(regression_scenarios[args.scenario])
+            results = run_scenario(args.scenario, regression_scenarios[args.scenario])
         elif args.scenario in debug_scenarios:
-            run_scenario(debug_scenarios[args.scenario])
+            results = run_scenario(args.scenario, debug_scenarios[args.scenario])
         elif args.scenario in bad_scenarios:
-            run_scenario(bad_scenarios[args.scenario])
+            results = run_scenario(args.scenario, bad_scenarios[args.scenario])
         elif args.scenario in staging_scenarios:
-            run_scenario(staging_scenarios[args.scenario])
+            results = run_scenario(args.scenario, staging_scenarios[args.scenario])
         else:
             print("Invalid scenario '" + args.scenario + "'!")
             exit(-1)
+
+    test_identifier_label = 'Test Identifier'
+    duration_label = 'Duration'
+    passed_label = 'Passed'
+    max_identifier_length = len(test_identifier_label)
+    max_duration_length = len(duration_label)
+    max_pass_length = len(passed_label)
+    for result in results:  # type: ExecData
+        max_identifier_length = max(max_identifier_length, len(result.test_identifier))
+        max_duration_length = max(max_duration_length, len(str(result.duration)) + 5)
+        max_pass_length = max(max_pass_length, len(str(result.passed)))
+
+    print('| ' + test_identifier_label.ljust(max_identifier_length, ' ') + ' | ' +
+          duration_label.ljust(max_duration_length, ' ') + ' | ' +
+          passed_label.ljust(max_pass_length, ' ') + ' |'
+          )
+    for result in results:
+        print('| ' + result.test_identifier.ljust(max_identifier_length, ' ') + ' | ' +
+              (str(result.duration) + ' secs').ljust(max_duration_length, ' ') + ' | ' +
+              str(result.passed).ljust(max_pass_length, ' ') + ' |'
+              )
 
 
 if __name__ == '__main__':

@@ -15,12 +15,12 @@ public class FlitconsIntegrationTests {
 
 	@Test
 	public void testServerReady() {
-		JarTestScenarioRunner.createScenario5Runner("bs5eThermocoupleExtensions_iThermocoupleExtensions").execute();
+		JarTestScenarioRunner.createScenario5Runner("bs5eNoThermocoupleExtensions_iThermocoupleExtensions").execute();
 	}
 
 	@Test
 	public void testServerWaitForReady() {
-		JarTestScenarioRunner.createScenario5Runner("bs5eThermocoupleExtensions_iThermocoupleExtensions").execute(4000);
+		JarTestScenarioRunner.createScenario5Runner("bs5eThermocoupleExtensions_iNoThermocoupleExtensions").execute(4000);
 	}
 
 

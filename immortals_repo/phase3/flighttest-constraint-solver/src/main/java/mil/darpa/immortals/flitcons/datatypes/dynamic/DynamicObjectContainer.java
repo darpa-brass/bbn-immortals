@@ -1,6 +1,7 @@
 package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import mil.darpa.immortals.flitcons.NestedPathException;
+import mil.darpa.immortals.flitcons.datatypes.AdvancedComparisonInterface;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static mil.darpa.immortals.flitcons.Utils.GLOBALLY_UNIQUE_ID;
 
-public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectContainer>, Comparable<DynamicObjectContainer>, Comparator<DynamicObjectContainer> {
+public class DynamicObjectContainer implements AdvancedComparisonInterface<DynamicObjectContainer>, DuplicateInterface<DynamicObjectContainer>, Comparable<DynamicObjectContainer>, Comparator<DynamicObjectContainer> {
 
 	public static final Map<String, DebugData> aliases = new HashMap<>();
 
@@ -28,27 +29,51 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 
 	public final TreeMap<String, DynamicValue> children = new TreeMap<>();
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		String guidStr = "";
-		String sguidsStr = "";
-		String sguidStr = "";
-		for (String key : children.keySet()) {
-			if (key.equals("GloballyUniqueId")) {
-				guidStr = "GloballyUniqueId=" + children.get(key).toString() + "\n";
+	@Override
+	public boolean equivalent(DynamicObjectContainer obj, boolean includeUniqueData) {
+		return this.toString(includeUniqueData).equals(obj.toString(includeUniqueData));
+	}
 
-			} else if (key.equals("SupersededGloballyUniqueId")) {
-				sguidStr = "SupersededGloballyUniqueId=" + children.get(key) + "\n";
+	@Override
+	public String toString(boolean includeUniqueData) {
+		try {
+			StringBuilder sb = new StringBuilder();
+			String guidStr = "";
+			String sguidsStr = "";
+			String sguidStr = "";
 
-			} else if (key.equals("SupersededGloballyUniqueIds")) {
-				sguidsStr = "SupersededGloballyUniqueIds=" + children.get(key) + "\n";
+			for (String key : children.keySet()) {
+				DynamicValue child = children.get(key);
+				switch (key) {
+					case "GloballyUniqueId":
+						guidStr = "GloballyUniqueId=" + child.parseString() + "\n";
+						break;
 
-			} else {
-				sb.append(key).append("=").append(children.get(key).toString()).append("\n");
+					case "SupersededGloballyUniqueId":
+						sguidStr = "SupersededGloballyUniqueId=" + child.parseString() + "\n";
+						break;
+
+					case "SupersededGloballyUniqueIds":
+						sguidsStr = "SupersededGloballyUniqueIds=" + child.parseStringArray().iterator().next() + "\n";
+						break;
+
+					default:
+						sb.append(key).append("=").append(child.toString(includeUniqueData)).append("\n");
+						break;
+				}
 			}
+			if (includeUniqueData) {
+				sb.append(guidStr).append(sguidStr).append(sguidsStr);
+			}
+			return sb.toString();
+		} catch (NestedPathException e) {
+			throw AdaptationnException.internal(e);
 		}
-		sb.append(guidStr).append(sguidStr).append(sguidsStr);
-		return sb.toString();
+	}
+
+	public String toString() {
+		String rval = toString(true);
+		return rval;
 	}
 
 	public DynamicObjectContainer(@Nonnull HierarchicalIdentifier identifier, @Nullable DebugData debugData) {
@@ -207,7 +232,7 @@ public class DynamicObjectContainer implements DuplicateInterface<DynamicObjectC
 		if (dynamicObjectContainer == null) {
 			return 1;
 		}
-		return this.toString().compareTo(dynamicObjectContainer.toString());
+		return this.toString(true).compareTo(dynamicObjectContainer.toString(true));
 	}
 
 	@Override

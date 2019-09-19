@@ -202,12 +202,12 @@ public class MdlIntegrityChecker {
                 
                 try(FileInputStream fis = new FileInputStream(doc)){
                     schema.checkConformance(new StreamSource(fis));
+                    
+                    docs.add(doc);
                 } catch(Exception e){
                     e.printStackTrace();
                     exceptionMap.put(doc, e);
                 }
-                
-                docs.add(doc);
             }
         }
         

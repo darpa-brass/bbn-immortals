@@ -55,6 +55,38 @@ $ make test
 $ make test
 ```
 
+## Testing MDL files translation in command line
+
+### Mac version (maybe linux works well, but not tested)
+
+Required `xmllint` and `xsltproc` installed.
+
+To performa a translation based on XSLT result from server endpoint:
+
+```
+$ xsltproc translation.xslt mdl17.xml > result.xml
+```
+
+Now, result is with new version provided by `translation.xslt`, we can now perform a validation with new verison (considering here MDL 19**:
+
+**Important: to run this we need to put all imported files by MDL 19 in the same dir, like Tmats, etc...**
+
+```
+$ xmllint --noout --schema MDL_v0_8_19.xsd result.xml > xmllint_validation_result.txt 2>&1
+```
+
+Now `xmllint_validation_result.txt` has validation results using MDL 19 spec:
+
+```
+result.xml:846: element Position: Schemas validity error : Element '{http://inetprogram.org/projects/MDL}Position': Warning: No precomputed value available, the value was either invalid or something strange happend.
+result.xml:846: element MACAddress: Schemas validity error : Element '{http://inetprogram.org/projects/MDL}MACAddress': [facet 'pattern'] The value '' is not accepted by the pattern '([0-9a-fA-F]{2}(:|\-)){5}[0-9a-fA-F]{2}'.
+result.xml:846: element SIUnits: Schemas validity error : Element '{http://inetprogram.org/projects/MDL}SIUnits': This element is not expected.
+result.xml:846: element RadioLinkRef: Schemas validity error : Element '{http://inetprogram.org/projects/MDL}RadioLinkRef': This element is not expected.
+result.xml:846: element PortType: Schemas validity error : Element '{http://inetprogram.org/projects/MDL}PortType': [facet 'enumeration'] The value '' is not an element of the set {'Analog', 'Audio', 'TestPoint', 'Serial', 'Video', 'ARINC429', 'Ethernet', 'ARINC629', 'Fiberchannel', 'IEEE1394', 'CANbus', 'MIL-STD-1553', 'IntelliBus', 'Extension'}.
+result.xml:846: element Position: Schemas validity error : Element '{http://inetprogram.org/projects/MDL}Position': Warning: No precomputed value available, the value was either invalid or something strange happend.
+result.xml:846: element PortType: Schemas validity error : Element '{http://inetprogram.org/projects/MDL}PortType': [facet 'enumeration'] The value '' is not an element of the set {'Analog', 'Audio', 'TestPoint', 'Serial', 'Video', 'ARINC429', 'Ethernet', 'ARINC629', 'Fiberchannel', 'IEEE1394', 'CANbus', 'MIL-STD-1553', 'IntelliBus', 'Extension'}.
+```
+
 ## Implementation
 
 ### Tree hashing comparison

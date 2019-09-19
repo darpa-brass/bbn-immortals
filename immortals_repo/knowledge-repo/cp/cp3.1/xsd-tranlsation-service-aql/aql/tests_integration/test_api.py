@@ -32,20 +32,20 @@ def test_api(client, request_json):
     template_tags = document.getElementsByTagName('xsl:template')
 
     # For now this is the number with improvements of course it must change
-    assert len(template_tags) == 150
+    assert len(template_tags) == 157
 
     # Checking some arbitrary data
 
     matches = {i.getAttribute('match') for i in template_tags}
 
     # Additions
-    assert '/MDLRoot/NetworkDomains/Network/Device/GenericParameter' in matches
+    assert '/mdl:MDLRoot/mdl:NetworkDomains/mdl:Network/mdl:Device/mdl:GenericParameter' in matches
 
     # Removals
-    assert '/MDLRoot/NetworkDomains/Network/Device/Ports' in matches
+    assert '/mdl:MDLRoot/mdl:NetworkDomains/mdl:Network/mdl:Device/mdl:Ports' in matches
 
     # A structural change
-    assert '/MDLRoot/NetworkDomains/Network/NetworkNode' in matches
+    assert '/mdl:MDLRoot/mdl:NetworkDomains/mdl:Network/mdl:NetworkNode' in matches
 
 
 @mark.parametrize('field', ['srcSchema', 'dstSchema'])

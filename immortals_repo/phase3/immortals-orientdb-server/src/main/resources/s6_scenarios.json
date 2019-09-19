@@ -40,6 +40,17 @@
       "expectedJsonOutputStructure": {}
     },
     {
+      "shortName": "s6_17to19_embeddedSchemaUpdate",
+      "scenarioType": "Scenario6bbn",
+      "prettyName": "Scenario 6 - v0.8.17 to v0.8.19 - Embedded Schema Update",
+      "timeoutMS": 600000,
+      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_17to19_embeddedSchemaUpdate.json",
+      "expectedStatusSequence": [
+        "AdaptationSuccessful"
+      ],
+      "expectedJsonOutputStructure": {}
+    },
+    {
       "shortName": "s6_7to14",
       "scenarioType": "Scenario6bbn",
       "prettyName": "Scenario 6 - v0.8.7 to v0.8.14",

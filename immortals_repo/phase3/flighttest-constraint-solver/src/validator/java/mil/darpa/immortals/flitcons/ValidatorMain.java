@@ -2,6 +2,8 @@ package mil.darpa.immortals.flitcons;
 
 import com.google.gson.stream.JsonWriter;
 import mil.darpa.immortals.EnvironmentConfiguration;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
+import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainerFactory;
 import mil.darpa.immortals.flitcons.mdl.MdlDataValidator;
 import mil.darpa.immortals.flitcons.mdl.OrientVertexDataSource;
 import mil.darpa.immortals.flitcons.mdl.ValidationScenario;
@@ -11,6 +13,7 @@ import mil.darpa.immortals.flitcons.reporting.ResultEnum;
 import mil.darpa.immortals.flitcons.validation.ValidationDataContainer;
 import mil.darpa.immortals.orientdbserver.OdbEmbeddedServer;
 import mil.darpa.immortals.orientdbserver.TestScenario;
+import mil.darpa.immortals.orientdbserver.TestScenarios;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -152,6 +155,72 @@ public class ValidatorMain {
 		return results;
 	}
 
+	private static void compareOdbTestScenariosToXml() {
+		OdbEmbeddedServer server = null;
+		try {
+			List<TestScenario> scenarios = TestScenarios.getAllScenario5TestScenarios();
+			server = new OdbEmbeddedServer(scenarios.toArray(new TestScenario[0]));
+			server.init(OdbEmbeddedServer.OdbDeploymentMode.BackupsOnly);
+
+
+			for (TestScenario testScenario : scenarios) {
+				String label = testScenario.getShortName();
+				String odbPath = server.getOdbPath(testScenario);
+
+				OrientVertexDataSource ovds = new OrientVertexDataSource(odbPath);
+
+				DynamicObjectContainer odbRequestData =
+						DynamicObjectContainerFactory.create(ovds.getInterconnectedTransformedFaultyConfiguration(true));
+				EnvironmentConfiguration.storeFile(
+						label + "-request-odb.json", Utils.difGson.toJson(odbRequestData).getBytes());
+				String odbRequestString = odbRequestData.toString(false);
+				EnvironmentConfiguration.storeFile(
+						label + "-request-odb-str.txt", odbRequestString.getBytes());
+
+				DynamicObjectContainer odbInventoryData =
+						DynamicObjectContainerFactory.create(ovds.getTransformedDauInventory(true));
+				EnvironmentConfiguration.storeFile(label + "-inventory-odb.json", Utils.difGson.toJson(odbInventoryData).getBytes());
+				String odbInventoryString = odbInventoryData.toString(false);
+				EnvironmentConfiguration.storeFile(label + "-inventory-odb-str.txt", odbInventoryString.getBytes());
+
+				XmlElementDataSource requestXeds = new XmlElementDataSource(testScenario.getXmlMdlrootInputPath());
+				DynamicObjectContainer xmlRequestData =
+						DynamicObjectContainerFactory.create(requestXeds.getInterconnectedTransformedFaultyConfiguration(true));
+				EnvironmentConfiguration.storeFile(
+						label + "-request-xml.json", Utils.difGson.toJson(xmlRequestData).getBytes());
+				String xmlRequestString = xmlRequestData.toString(false);
+				EnvironmentConfiguration.storeFile(label + "-request-xml-str.txt", xmlRequestString.getBytes());
+
+
+				XmlElementDataSource inventoryXeds = new XmlElementDataSource(testScenario.getXmlInventoryPath());
+				DynamicObjectContainer xmlInventoryData =
+						DynamicObjectContainerFactory.create(inventoryXeds.getTransformedDauInventory(true));
+				EnvironmentConfiguration.storeFile(
+						label + "-inventory-xml.json", Utils.difGson.toJson(xmlInventoryData).getBytes());
+				String xmlInventoryString = xmlInventoryData.toString(false);
+				EnvironmentConfiguration.storeFile(label + "-inventory-xml-str.txt", xmlInventoryString.getBytes());
+
+				if (odbRequestString.equals(xmlRequestString)) {
+					System.out.println("The ODB and XML request data for the scenario '" + label + "' is equivalent!");
+				} else {
+					System.err.println("ERROR!! The ODB and XML request data for the scenario '" + label + "' is not equivalent!");
+				}
+
+				if (odbInventoryString.equals(xmlInventoryString)) {
+					System.out.println("The ODB and XML inventory data for the scenario '" + label + "' is equivalent!");
+				} else {
+					System.err.println("ERROR!! The ODB and XML inventory data for the scenario '" + label + "' is not equivalent!");
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (server != null) {
+				server.shutdown();
+			}
+		}
+	}
+
 	private static List<ValidationResult> validateOdbTestSession(@Nonnull String odbPath, @Nonnull String label, @Nonnull ValidatorConfiguration config) {
 		List<ValidationResult> results = new LinkedList<>();
 
@@ -256,6 +325,11 @@ public class ValidatorMain {
 			for (File xmlFile : xmlFilesToValidate) {
 				vrc.results.addAll(validate_single_file(xmlFile, config));
 			}
+		}
+
+		if (config.compareXMlToOdbAll) {
+			compareOdbTestScenariosToXml();
+			System.exit(0);
 		}
 
 		if (config.outputPath != null) {

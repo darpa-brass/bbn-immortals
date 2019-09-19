@@ -12,30 +12,6 @@
           "PortDirection": "Input"
         },
         {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": true,
-          "GloballyUniqueId": "I#49:172",
-          "Measurement": [
-            {
-              "DataLength": {
-                "Min": 16,
-                "Max": 16
-              },
-              "DataRate": {
-                "Min": 4000,
-                "Max": 4000
-              },
-              "GloballyUniqueId": "19a5c43e-1c79-423c-833a-c6a9eabaae2f",
-              "SampleRate": {
-                "Min": 250,
-                "Max": 250
-              }
-            }
-          ],
-          "PortDirection": "Input",
-          "PortType": "SignalConditioner"
-        },
-        {
           "BBNPortFunctionality": "Bus",
           "Excitation": false,
           "GloballyUniqueId": "I#49:183",
@@ -44,7 +20,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#49:173",
+          "GloballyUniqueId": "I#49:176",
           "Measurement": [
             {
               "DataLength": {
@@ -55,31 +31,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "4e633231-fdf7-4285-9705-c940b1bf6097",
-              "SampleRate": {
-                "Min": 250,
-                "Max": 250
-              }
-            }
-          ],
-          "PortDirection": "Input",
-          "PortType": "SignalConditioner"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": true,
-          "GloballyUniqueId": "I#49:177",
-          "Measurement": [
-            {
-              "DataLength": {
-                "Min": 16,
-                "Max": 16
-              },
-              "DataRate": {
-                "Min": 4000,
-                "Max": 4000
-              },
-              "GloballyUniqueId": "63851fff-8b74-4b74-b9c5-dc48e5291e67",
+              "GloballyUniqueId": "16523944-d5f2-430e-af83-d9b9aab92e50",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -103,7 +55,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "d9cf3964-6726-4a7c-8589-5d0eb17ccdb3",
+              "GloballyUniqueId": "27c8b35e-1c91-47d3-b903-15c76619f7de",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -116,7 +68,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#49:176",
+          "GloballyUniqueId": "I#49:177",
           "Measurement": [
             {
               "DataLength": {
@@ -127,7 +79,7 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "c13bf252-6417-45a7-aca8-e83b4c1ebe3d",
+              "GloballyUniqueId": "916c9208-d59a-4cd8-96c8-2f0a1d70d675",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250
@@ -151,7 +103,55 @@
                 "Min": 4000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "9352c14d-22db-4fc1-99ca-e4971ec5f599",
+              "GloballyUniqueId": "93cf4c0f-a7f4-4e2d-b37b-e7607851608d",
+              "SampleRate": {
+                "Min": 250,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#49:172",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 16,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 4000,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "a1d2f2d7-50b3-4319-bb78-69513c4fb986",
+              "SampleRate": {
+                "Min": 250,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#49:173",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 16,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 4000,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "b9abacc0-573b-42c0-9877-8423acb8bd06",
               "SampleRate": {
                 "Min": 250,
                 "Max": 250

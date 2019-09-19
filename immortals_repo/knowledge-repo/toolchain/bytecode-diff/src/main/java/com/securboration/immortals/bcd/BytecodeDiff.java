@@ -81,6 +81,9 @@ public class BytecodeDiff {
         }
         
         final StringBuilder sb = new StringBuilder();
+        $a(sb, 0, "L is %s",left.src.getName());
+        $a(sb, 0, "R is %s",right.src.getName());
+        $a(sb, 0, "");
         
         $a(sb, 0, "only in L:");
         for(final String cpe:onlyInLeft){

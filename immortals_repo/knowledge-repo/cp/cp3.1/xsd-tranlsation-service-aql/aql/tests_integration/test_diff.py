@@ -7,10 +7,10 @@ from mappers import diff
 @fixture
 def simple_mdl_versions(shared_datadir, get_main_element_single):
     with open(shared_datadir / 'SIMPLE_MDL_v0_8_17.xsd', 'r') as xsd_file:
-        first = get_main_element_single(xsd_file.read())
+        first = get_main_element_single(xsd_file.read())['element']
 
     with open(shared_datadir / 'SIMPLE_MDL_v0_8_19.xsd', 'r') as xsd_file:
-        second = get_main_element_single(xsd_file.read())
+        second = get_main_element_single(xsd_file.read())['element']
 
     return (first, second)
 
@@ -18,10 +18,10 @@ def simple_mdl_versions(shared_datadir, get_main_element_single):
 @fixture
 def full_mdl_versions(shared_datadir, get_main_element_single):
     with open(shared_datadir / 'MDL_v0_8_17.xsd', 'r') as xsd_file:
-        first = get_main_element_single(xsd_file.read())
+        first = get_main_element_single(xsd_file.read())['element']
 
     with open(shared_datadir / 'MDL_v0_8_19.xsd', 'r') as xsd_file:
-        second = get_main_element_single(xsd_file.read())
+        second = get_main_element_single(xsd_file.read())['element']
 
     return (first, second)
 
@@ -37,13 +37,15 @@ def test_simple_mdl_versions_must_return_expected_compare_result(simple_mdl_vers
         'relocations': [('/MDLRoot/NetworkDomains/Network/NetworkNode/Routes',
                          '/MDLRoot/NetworkDomains/Network/NetworkNode/InternalStructure/Module/Routes'),
                         ('/MDLRoot/DatabaseID', '/MDLRoot/NetworkDomains/DatabaseID')],
-        'removals': [
-            '/MDLRoot/NetworkDomains/Network/NetworkNode/Routes',
+        'removals': sorted([
             '/MDLRoot/NetworkDomains/Network/NetworkNode/NetworkName',
+            '/MDLRoot/NetworkDomains/Network/NetworkNode/Routes',
             '/MDLRoot/DatabaseID',
-        ],
+        ]),
         'renames': [('/MDLRoot/ConfigurationVersion', '/MDLRoot/ConfigVersion')]
     }
+
+    result['removals'].sort()
 
     assert result == expected_result
 
@@ -58,8 +60,8 @@ def test_full_mdl_versions_must_return_expected_compare_result(full_mdl_versions
 
     assert current_keys == expected_keys
 
-    assert len(result['additions']) == 92
-    assert len(result['removals']) == 88
+    assert len(result['additions']) == 74
+    assert len(result['removals']) == 70
     assert len(result['relocations']) == 61
     assert len(result['renames']) == 4
 

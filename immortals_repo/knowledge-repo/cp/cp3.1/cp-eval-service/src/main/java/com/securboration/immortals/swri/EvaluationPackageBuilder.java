@@ -1,14 +1,23 @@
 package com.securboration.immortals.swri;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.securboration.immortals.bridge.CannedSchemaVersionDetector;
 import com.securboration.immortals.service.eos.api.types.Document;
 import com.securboration.immortals.service.eos.api.types.EvaluationConfiguration;
@@ -387,125 +396,125 @@ public class EvaluationPackageBuilder {
     }
     
     
-//    public static void main(String[] args) throws Exception {
-//        final File mdlArchive = new File("C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\etc\\mdl\\mdl-clean.zip");
-//        
-//        final File extracted = extract(mdlArchive.getCanonicalPath());
-//        final File out = new File("./configs.zip");
-//        
-//        try(
-//                FileOutputStream fos = new FileOutputStream(out);
-//                ZipOutputStream zos = new ZipOutputStream(fos);
-//                ){
-//            
-//            System.out.printf("%s\n", extracted.getCanonicalPath());
-//            for(final File src:extracted.listFiles()){
-//                if(!src.isDirectory()){
-//                    continue;
-//                }
-//                
-//                for(final File dst:extracted.listFiles()){
-//                    if(!dst.isDirectory()){
-//                        continue;
-//                    }
-//                    
-//                    for(final File ds:extracted.listFiles()){
-//                        if(!ds.isDirectory()){
-//                            continue;
-//                        }
-//                        
-//                        if(!ds.getName().equals(src.getName())){
-//                            continue;
-//                        }//TODO: this skips over all cases where datasource != dst
-//                        
-//                        final String tag = String.format(
-//                            "client=%sdatasource=%sserver=%s", 
-//                            src.getName(),
-//                            ds.getName(),
-//                            dst.getName()
-//                            );
-//                        
-//                        
-//                        System.out.printf("\t%s\n",tag);
-//                        
-//                        //dir
-//                        // datasource
-//                        // schema
-//                        //  client
-//                        //  datasource
-//                        //  server
-//
-//                        final File datasourceDir = new File(ds,"datasource");
-//                        final File datasourceSchemaDir = new File(ds,"schema");
-//                        final File clientSchemaDir = new File(src,"schema");
-//                        final File serverSchemaDir = new File(dst,"schema");
-//                        
-//                        final EvaluationConfiguration config = createCustomEvaluationPackage(
-//                                clientSchemaDir,//final File dirContainingClientXsds,
-//                                serverSchemaDir,//final File dirContainingServerXsds,
-//                                datasourceSchemaDir,//final File dirContainingDatasourceXsds,
-//                                datasourceDir,//final File dirContainingDatasourceXmlDocs,
-//                                null//final byte[] cheatZip
-//                                );
-//
-//                        final String json = new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(config);
-//                        
-//                        ZipEntry e = new ZipEntry("configs/" + tag);
-//                        {
-//                            zos.putNextEntry(e);
-//                            IOUtils.write(json.getBytes(StandardCharsets.UTF_8), zos);
-//                            zos.closeEntry();
-//                        }
-//                    }
-//                }
-//            }
-//            
-//        }
-//        
-//        
-//    }
+    public static void main(String[] args) throws Exception {
+        final File mdlArchive = new File("C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\etc\\mdl\\mdl-clean.zip");
+        
+        final File extracted = extract(mdlArchive.getCanonicalPath());
+        final File out = new File("./configs.zip");
+        
+        try(
+                FileOutputStream fos = new FileOutputStream(out);
+                ZipOutputStream zos = new ZipOutputStream(fos);
+                ){
+            
+            System.out.printf("%s\n", extracted.getCanonicalPath());
+            for(final File src:extracted.listFiles()){
+                if(!src.isDirectory()){
+                    continue;
+                }
+                
+                for(final File dst:extracted.listFiles()){
+                    if(!dst.isDirectory()){
+                        continue;
+                    }
+                    
+                    for(final File ds:extracted.listFiles()){
+                        if(!ds.isDirectory()){
+                            continue;
+                        }
+                        
+                        if(!ds.getName().equals(src.getName())){
+                            continue;
+                        }//TODO: this skips over all cases where datasource != dst
+                        
+                        final String tag = String.format(
+                            "client=%sdatasource=%sserver=%s", 
+                            src.getName(),
+                            ds.getName(),
+                            dst.getName()
+                            );
+                        
+                        
+                        System.out.printf("\t%s\n",tag);
+                        
+                        //dir
+                        // datasource
+                        // schema
+                        //  client
+                        //  datasource
+                        //  server
+
+                        final File datasourceDir = new File(ds,"datasource");
+                        final File datasourceSchemaDir = new File(ds,"schema");
+                        final File clientSchemaDir = new File(src,"schema");
+                        final File serverSchemaDir = new File(dst,"schema");
+                        
+                        final EvaluationConfiguration config = createCustomEvaluationPackage(
+                                clientSchemaDir,//final File dirContainingClientXsds,
+                                serverSchemaDir,//final File dirContainingServerXsds,
+                                datasourceSchemaDir,//final File dirContainingDatasourceXsds,
+                                datasourceDir,//final File dirContainingDatasourceXmlDocs,
+                                null//final byte[] cheatZip
+                                );
+
+                        final String json = new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(config);
+                        
+                        ZipEntry e = new ZipEntry("configs/" + tag);
+                        {
+                            zos.putNextEntry(e);
+                            IOUtils.write(json.getBytes(StandardCharsets.UTF_8), zos);
+                            zos.closeEntry();
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+        
+    }
     
     
-//    private static File extract(final String zipPath) throws IOException{
-//        final File zipInput = new File(zipPath);
-//        final File unzippedOutput = new File("./tmp");
-//        
-//        {
-//            if(unzippedOutput.exists()){
-//                FileUtils.deleteDirectory(unzippedOutput);
-//            }
-//            FileUtils.forceMkdir(unzippedOutput);
-//            unzippedOutput.deleteOnExit();
-//        }
-//
-//        System.out.printf("unzipping %s into %s\n", zipInput, unzippedOutput.getCanonicalPath());
-//        {
-//            try (
-//                    java.util.zip.ZipFile zipFile = new ZipFile(zipInput);
-//                    ) {
-//                final Enumeration<? extends ZipEntry> entries = zipFile.entries();
-//                while (entries.hasMoreElements()) {
-//                    final ZipEntry entry = entries.nextElement();
-//                    final File entryDestination = new File(unzippedOutput, entry.getName());
-//                    if (entry.isDirectory()) {
-//                        entryDestination.mkdirs();
-//                        System.out.printf("\t%s\n",entry.getName());
-//                    } else {
-//                        entryDestination.getParentFile().mkdirs();
-//                        try (
-//                                final InputStream in = zipFile.getInputStream(entry);
-//                                final OutputStream out = new FileOutputStream(entryDestination);
-//                                ) {
-//                            IOUtils.copy(in, out);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        System.out.printf("done unzipping into %s\n", unzippedOutput.getCanonicalPath());
-//        
-//        return new File(unzippedOutput,"mdl-clean");
-//    }
+    private static File extract(final String zipPath) throws IOException{
+        final File zipInput = new File(zipPath);
+        final File unzippedOutput = new File("./tmp");
+        
+        {
+            if(unzippedOutput.exists()){
+                FileUtils.deleteDirectory(unzippedOutput);
+            }
+            FileUtils.forceMkdir(unzippedOutput);
+            unzippedOutput.deleteOnExit();
+        }
+
+        System.out.printf("unzipping %s into %s\n", zipInput, unzippedOutput.getCanonicalPath());
+        {
+            try (
+                    java.util.zip.ZipFile zipFile = new ZipFile(zipInput);
+                    ) {
+                final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                while (entries.hasMoreElements()) {
+                    final ZipEntry entry = entries.nextElement();
+                    final File entryDestination = new File(unzippedOutput, entry.getName());
+                    if (entry.isDirectory()) {
+                        entryDestination.mkdirs();
+                        System.out.printf("\t%s\n",entry.getName());
+                    } else {
+                        entryDestination.getParentFile().mkdirs();
+                        try (
+                                final InputStream in = zipFile.getInputStream(entry);
+                                final OutputStream out = new FileOutputStream(entryDestination);
+                                ) {
+                            IOUtils.copy(in, out);
+                        }
+                    }
+                }
+            }
+        }
+        System.out.printf("done unzipping into %s\n", unzippedOutput.getCanonicalPath());
+        
+        return new File(unzippedOutput,"mdl-clean");
+    }
 //    
 //    
 //    public static void main(String[] args) throws IOException{

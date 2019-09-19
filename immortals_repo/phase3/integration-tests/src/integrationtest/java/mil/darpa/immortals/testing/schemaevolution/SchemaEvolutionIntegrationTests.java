@@ -13,10 +13,10 @@ public class SchemaEvolutionIntegrationTests {
 		SLF4JBridgeHandler.install();
 	}
 
-//	@Test
-//	public void s6_12to10() {
-//		JarTestScenarioRunner.createScenario6Runner("s6_12to10").execute();
-//	}
+	@Test
+	public void s6_12to10() {
+		JarTestScenarioRunner.createScenario6Runner("s6_12to10").execute();
+	}
 
 //	@Test
 //	public void s6_16to19() {
@@ -29,7 +29,12 @@ public class SchemaEvolutionIntegrationTests {
 //	}
 
 	@Test
-	public void s6_7to14() {
-		JarTestScenarioRunner.createScenario6Runner("s6_7to14").execute();
+	public void s6_17to19_embeddedSchemaUpdate() {
+		JarTestScenarioRunner.createScenario6Runner("s6_17to19_embeddedSchemaUpdate").execute();
 	}
+
+//	@Test
+//	public void s6_7to14() {
+//		JarTestScenarioRunner.createScenario6Runner("s6_7to14").execute();
+//	}
 }

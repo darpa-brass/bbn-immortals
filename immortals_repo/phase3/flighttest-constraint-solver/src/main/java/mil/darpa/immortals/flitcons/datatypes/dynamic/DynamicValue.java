@@ -1,6 +1,7 @@
 package mil.darpa.immortals.flitcons.datatypes.dynamic;
 
 import mil.darpa.immortals.flitcons.NestedPathException;
+import mil.darpa.immortals.flitcons.datatypes.AdvancedComparisonInterface;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 import static mil.darpa.immortals.flitcons.Utils.duplicateObject;
 
-public class DynamicValue implements DuplicateInterface<DynamicValue>, Comparator<DynamicValue>, Comparable<DynamicValue> {
+public class DynamicValue implements AdvancedComparisonInterface<DynamicValue>, DuplicateInterface<DynamicValue>, Comparator<DynamicValue>, Comparable<DynamicValue> {
 
 	public final HierarchicalIdentifier dataSource;
 	public transient final DynamicValueMultiplicity multiplicity;
@@ -29,6 +30,48 @@ public class DynamicValue implements DuplicateInterface<DynamicValue>, Comparato
 		this.multiplicity = validateAndReturnMultiplicity();
 	}
 
+	@Override
+	public boolean equivalent(DynamicValue obj, boolean includeUniqueData) {
+		return this.toString(includeUniqueData).equals(obj.toString(includeUniqueData));
+	}
+
+	@Override
+	public String toString(boolean includeUniqueData) {
+		switch (multiplicity) {
+			case NullValue:
+				return "null";
+			case Range:
+				return range.toString();
+			case Set:
+				if (valueArray.length > 0) {
+					if (valueArray[0] instanceof AdvancedComparisonInterface) {
+						List<String> values = new LinkedList<>();
+						for (Object obj : valueArray) {
+							values.add(((AdvancedComparisonInterface) obj).toString(includeUniqueData));
+						}
+						Collections.sort(values);
+						return "[" + String.join(",", values) + "]";
+
+					} else {
+						List<String> values = Arrays.stream(valueArray).map(Object::toString).collect(Collectors.toList());
+						Collections.sort(values);
+						return "[" + String.join(",", values) + "]";
+					}
+				} else {
+					return "[]";
+				}
+
+			case SingleValue:
+				if (singleValue instanceof AdvancedComparisonInterface) {
+					return ((AdvancedComparisonInterface) singleValue).toString(includeUniqueData);
+				}
+				return singleValue.toString();
+			default:
+				throw AdaptationnException.internal("Invalid Multiplicity type '" + multiplicity.name() + "'!");
+		}
+
+	}
+
 	public String toString() {
 		switch (multiplicity) {
 			case NullValue:
@@ -37,11 +80,8 @@ public class DynamicValue implements DuplicateInterface<DynamicValue>, Comparato
 				return range.toString();
 			case Set:
 				List<String> values = Arrays.stream(valueArray).map(Object::toString).collect(Collectors.toList());
-				Object firstValue = valueArray[0];
-				if (firstValue instanceof  DynamicValue || firstValue instanceof  DynamicObjectContainer) {
-					Collections.sort(values);
-				}
-				return "[" + String.join("", values) + "]";
+				Collections.sort(values);
+				return "[" + String.join(",", values) + "]";
 			case SingleValue:
 				return singleValue.toString();
 			default:

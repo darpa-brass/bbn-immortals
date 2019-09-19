@@ -103,16 +103,16 @@ public class DynamicValueTest {
 			JsonArray ja = (JsonArray) je;
 			Assert.assertEquals(ja.size(), 4);
 			Assert.assertEquals((long) long0, ja.get(0).getAsLong());
-			Assert.assertEquals((long) long1, ja.get(1).getAsLong());
-			Assert.assertEquals((long) long2, ja.get(2).getAsLong());
-			Assert.assertEquals((long) long3, ja.get(3).getAsLong());
+			Assert.assertEquals((long) long3, ja.get(1).getAsLong());
+			Assert.assertEquals((long) long1, ja.get(2).getAsLong());
+			Assert.assertEquals((long) long2, ja.get(3).getAsLong());
 
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
 			Assert.assertNotNull(dv.valueArray);
 			Assert.assertEquals(dv.valueArray[0], long0);
-			Assert.assertEquals(dv.valueArray[1], long1);
-			Assert.assertEquals(dv.valueArray[2], long2);
-			Assert.assertEquals(dv.valueArray[3], long3);
+			Assert.assertEquals(dv.valueArray[1], long3);
+			Assert.assertEquals(dv.valueArray[2], long1);
+			Assert.assertEquals(dv.valueArray[3], long2);
 
 		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
@@ -228,16 +228,16 @@ public class DynamicValueTest {
 			JsonArray ja = (JsonArray) je;
 			Assert.assertEquals(ja.size(), 4);
 			Assert.assertEquals(float0, ja.get(0).getAsFloat());
-			Assert.assertEquals(float1, ja.get(1).getAsFloat());
-			Assert.assertEquals(float2, ja.get(2).getAsFloat());
-			Assert.assertEquals(float3, ja.get(3).getAsFloat());
+			Assert.assertEquals(float3, ja.get(1).getAsFloat());
+			Assert.assertEquals(float1, ja.get(2).getAsFloat());
+			Assert.assertEquals(float2, ja.get(3).getAsFloat());
 
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
 			Assert.assertNotNull(dv.valueArray);
 			Assert.assertEquals(dv.valueArray[0], float0);
-			Assert.assertEquals(dv.valueArray[1], float1);
-			Assert.assertEquals(dv.valueArray[2], float2);
-			Assert.assertEquals(dv.valueArray[3], float3);
+			Assert.assertEquals(dv.valueArray[1], float3);
+			Assert.assertEquals(dv.valueArray[2], float1);
+			Assert.assertEquals(dv.valueArray[3], float2);
 
 		} catch (NestedPathException e) {
 			throw new RuntimeException(e);
@@ -352,16 +352,16 @@ public class DynamicValueTest {
 			Assert.assertTrue(je instanceof JsonArray);
 			JsonArray ja = (JsonArray) je;
 			Assert.assertEquals(ja.size(), 4);
-			Assert.assertEquals((boolean) boolean0, ja.get(0).getAsBoolean());
-			Assert.assertEquals((boolean) boolean1, ja.get(1).getAsBoolean());
-			Assert.assertEquals((boolean) boolean2, ja.get(2).getAsBoolean());
+			Assert.assertEquals((boolean) boolean1, ja.get(0).getAsBoolean());
+			Assert.assertEquals((boolean) boolean2, ja.get(1).getAsBoolean());
+			Assert.assertEquals((boolean) boolean0, ja.get(2).getAsBoolean());
 			Assert.assertEquals((boolean) boolean3, ja.get(3).getAsBoolean());
 
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
 			Assert.assertNotNull(dv.valueArray);
-			Assert.assertEquals(dv.valueArray[0], boolean0);
-			Assert.assertEquals(dv.valueArray[1], boolean1);
-			Assert.assertEquals(dv.valueArray[2], boolean2);
+			Assert.assertEquals(dv.valueArray[0], boolean1);
+			Assert.assertEquals(dv.valueArray[1], boolean2);
+			Assert.assertEquals(dv.valueArray[2], boolean0);
 			Assert.assertEquals(dv.valueArray[3], boolean3);
 
 		} catch (NestedPathException e) {
@@ -439,16 +439,16 @@ public class DynamicValueTest {
 			JsonArray ja = (JsonArray) je;
 			Assert.assertEquals(ja.size(), 4);
 			Assert.assertEquals(str0, ja.get(0).getAsString());
-			Assert.assertEquals(str1, ja.get(1).getAsString());
+			Assert.assertEquals(str3, ja.get(1).getAsString());
 			Assert.assertEquals(str2, ja.get(2).getAsString());
-			Assert.assertEquals(str3, ja.get(3).getAsString());
+			Assert.assertEquals(str1, ja.get(3).getAsString());
 
 			DynamicValue dv = gson.fromJson(je, DynamicValue.class);
 			Assert.assertNotNull(dv.valueArray);
 			Assert.assertEquals(str0, dv.valueArray[0]);
-			Assert.assertEquals(str1, dv.valueArray[1]);
+			Assert.assertEquals(str3, dv.valueArray[1]);
 			Assert.assertEquals(str2, dv.valueArray[2]);
-			Assert.assertEquals(str3, dv.valueArray[3]);
+			Assert.assertEquals(str1, dv.valueArray[3]);
 
 		} catch (NestedPathException e) {
 			throw new RuntimeException(e);

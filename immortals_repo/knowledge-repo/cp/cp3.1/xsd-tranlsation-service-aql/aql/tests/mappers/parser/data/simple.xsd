@@ -4,6 +4,10 @@
    <xsd:import namespace="https://wsmrc2vger.wsmr.army.mil/rcc/manuals/106-11" schemaLocation="Tmats_01-2011.xsd" />
    <xsd:element name="Root" type="RootType" />
    <xsd:complexType name="RootType">
+      <xsd:annotation>
+         <xsd:documentation>Our root type with a simple documentation</xsd:documentation>
+         <xsd:documentation>This is a second line for our documentation</xsd:documentation>
+      </xsd:annotation>
       <xsd:sequence>
          <xsd:element name="ReadOnly" type="xsd:boolean" default="true" minOccurs="1" />
          <xsd:element name="Owner" type="xsd:token" minOccurs="0" />

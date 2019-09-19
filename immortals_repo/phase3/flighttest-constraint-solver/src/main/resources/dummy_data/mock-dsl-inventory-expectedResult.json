@@ -8,26 +8,7 @@
 			"Port": [
 				{
 					"BBNPortFunctionality": "SignalConditionerPort",
-					"Measurement": [
-						{
-							"DataLength": 12,
-							"DataRate": "@SampleRate * @DataLength",
-							"GloballyUniqueId": "I#85:86",
-							"SampleRate": 1000
-						},
-						{
-							"DataLength": 16,
-							"DataRate": "@SampleRate * @DataLength",
-							"GloballyUniqueId": "I#85:85",
-							"SampleRate": 250
-						}
-					],
 					"GloballyUniqueId": "#73:46",
-					"PortDirection": "Input",
-					"PortType": "Analog"
-				},
-				{
-					"BBNPortFunctionality": "SignalConditionerPort",
 					"Measurement": [
 						{
 							"DataLength": 12,
@@ -42,12 +23,12 @@
 							"SampleRate": 250
 						}
 					],
+					"PortDirection": "Input",
+					"PortType": "Analog"
+				},
+				{
+					"BBNPortFunctionality": "SignalConditionerPort",
 					"GloballyUniqueId": "#73:47",
-					"PortDirection": "Input",
-					"PortType": "Analog"
-				},
-				{
-					"BBNPortFunctionality": "SignalConditionerPort",
 					"Measurement": [
 						{
 							"DataLength": 12,
@@ -62,12 +43,12 @@
 							"SampleRate": 250
 						}
 					],
+					"PortDirection": "Input",
+					"PortType": "Analog"
+				},
+				{
+					"BBNPortFunctionality": "SignalConditionerPort",
 					"GloballyUniqueId": "#73:48",
-					"PortDirection": "Input",
-					"PortType": "Analog"
-				},
-				{
-					"BBNPortFunctionality": "SignalConditionerPort",
 					"Measurement": [
 						{
 							"DataLength": 12,
@@ -82,12 +63,12 @@
 							"SampleRate": 250
 						}
 					],
+					"PortDirection": "Input",
+					"PortType": "Analog"
+				},
+				{
+					"BBNPortFunctionality": "SignalConditionerPort",
 					"GloballyUniqueId": "#73:49",
-					"PortDirection": "Input",
-					"PortType": "Analog"
-				},
-				{
-					"BBNPortFunctionality": "SignalConditionerPort",
 					"Measurement": [
 						{
 							"DataLength": 12,
@@ -102,12 +83,32 @@
 							"SampleRate": 250
 						}
 					],
+					"PortDirection": "Input",
+					"PortType": "Analog"
+				},
+				{
+					"BBNPortFunctionality": "SignalConditionerPort",
 					"GloballyUniqueId": "#73:50",
+					"Measurement": [
+						{
+							"DataLength": 12,
+							"DataRate": "@SampleRate * @DataLength",
+							"GloballyUniqueId": "I#85:86",
+							"SampleRate": 1000
+						},
+						{
+							"DataLength": 16,
+							"DataRate": "@SampleRate * @DataLength",
+							"GloballyUniqueId": "I#85:85",
+							"SampleRate": 250
+						}
+					],
 					"PortDirection": "Input",
 					"PortType": "Analog"
 				},
 				{
 					"BBNPortFunctionality": "SignalConditionerPort",
+					"GloballyUniqueId": "#73:51",
 					"Measurement": [
 						{
 							"DataLength": 12,
@@ -122,75 +123,12 @@
 							"SampleRate": 250
 						}
 					],
-					"GloballyUniqueId": "#73:51",
 					"PortDirection": "Input",
 					"PortType": "Analog"
 				},
 				{
 					"BBNPortFunctionality": "ThermocoupleConditionerPort",
-					"Measurement": [
-						{
-							"DataLength": 12,
-							"DataRate": "@SampleRate * @DataLength",
-							"GloballyUniqueId": "I#85:86",
-							"SampleRate": 1000
-						},
-						{
-							"DataLength": 16,
-							"DataRate": "@SampleRate * @DataLength",
-							"GloballyUniqueId": "I#85:85",
-							"SampleRate": 250
-						}
-					],
-					"Thermocouple": ["T", "J", "K"],
-					"GloballyUniqueId": "#73:71",
-					"PortDirection": "Input",
-					"PortType": "Thermocouple"
-				},
-				{
-					"BBNPortFunctionality": "ThermocoupleConditionerPort",
-					"Measurement": [
-						{
-							"DataLength": 12,
-							"DataRate": "@SampleRate * @DataLength",
-							"GloballyUniqueId": "I#85:86",
-							"SampleRate": 1000
-						},
-						{
-							"DataLength": 16,
-							"DataRate": "@SampleRate * @DataLength",
-							"GloballyUniqueId": "I#85:85",
-							"SampleRate": 250
-						}
-					],
-					"Thermocouple": ["T", "J", "K"],
-					"GloballyUniqueId": "#73:72",
-					"PortDirection": "Input",
-					"PortType": "Thermocouple"
-				},
-				{
-					"BBNPortFunctionality": "ThermocoupleConditionerPort",
-					"Measurement": [
-						{
-							"DataLength": 12,
-							"DataRate": "@SampleRate * @DataLength",
-							"GloballyUniqueId": "I#85:86",
-							"SampleRate": 1000
-						},
-						{
-							"DataLength": 16,
-							"DataRate": "@SampleRate * @DataLength",
-							"GloballyUniqueId": "I#85:85",
-							"SampleRate": 250
-						}
-					],
-					"Thermocouple": ["T", "K", "J"],
 					"GloballyUniqueId": "#73:67",
-					"PortDirection": "Input",
-					"PortType": "Thermocouple"
-				},
-				{
-					"BBNPortFunctionality": "ThermocoupleConditionerPort",
 					"Measurement": [
 						{
 							"DataLength": 12,
@@ -205,13 +143,13 @@
 							"SampleRate": 250
 						}
 					],
-					"Thermocouple": ["T", "K", "J"],
+					"PortDirection": "Input",
+					"PortType": "Thermocouple",
+					"Thermocouple": ["J", "K", "T"]
+				},
+				{
+					"BBNPortFunctionality": "ThermocoupleConditionerPort",
 					"GloballyUniqueId": "#73:68",
-					"PortDirection": "Input",
-					"PortType": "Thermocouple"
-				},
-				{
-					"BBNPortFunctionality": "ThermocoupleConditionerPort",
 					"Measurement": [
 						{
 							"DataLength": 12,
@@ -226,13 +164,13 @@
 							"SampleRate": 250
 						}
 					],
-					"Thermocouple": ["T", "K", "J"],
+					"PortDirection": "Input",
+					"PortType": "Thermocouple",
+					"Thermocouple": ["J", "K", "T"]
+				},
+				{
+					"BBNPortFunctionality": "ThermocoupleConditionerPort",
 					"GloballyUniqueId": "#73:69",
-					"PortDirection": "Input",
-					"PortType": "Thermocouple"
-				},
-				{
-					"BBNPortFunctionality": "ThermocoupleConditionerPort",
 					"Measurement": [
 						{
 							"DataLength": 12,
@@ -247,13 +185,13 @@
 							"SampleRate": 250
 						}
 					],
-					"Thermocouple": ["T", "K", "J"],
+					"PortDirection": "Input",
+					"PortType": "Thermocouple",
+					"Thermocouple": ["J", "K", "T"]
+				},
+				{
+					"BBNPortFunctionality": "ThermocoupleConditionerPort",
 					"GloballyUniqueId": "#73:70",
-					"PortDirection": "Input",
-					"PortType": "Thermocouple"
-				},
-				{
-					"BBNPortFunctionality": "ThermocoupleConditionerPort",
 					"Measurement": [
 						{
 							"DataLength": 12,
@@ -268,13 +206,55 @@
 							"SampleRate": 250
 						}
 					],
-					"Thermocouple": ["T", "K", "J"],
+					"PortDirection": "Input",
+					"PortType": "Thermocouple",
+					"Thermocouple": ["J", "K", "T"]
+				},
+				{
+					"BBNPortFunctionality": "ThermocoupleConditionerPort",
+					"GloballyUniqueId": "#73:71",
+					"Measurement": [
+						{
+							"DataLength": 12,
+							"DataRate": "@SampleRate * @DataLength",
+							"GloballyUniqueId": "I#85:86",
+							"SampleRate": 1000
+						},
+						{
+							"DataLength": 16,
+							"DataRate": "@SampleRate * @DataLength",
+							"GloballyUniqueId": "I#85:85",
+							"SampleRate": 250
+						}
+					],
+					"PortDirection": "Input",
+					"PortType": "Thermocouple",
+					"Thermocouple": ["J", "K", "T"]
+				},
+				{
+					"BBNPortFunctionality": "ThermocoupleConditionerPort",
+					"GloballyUniqueId": "#73:72",
+					"Measurement": [
+						{
+							"DataLength": 12,
+							"DataRate": "@SampleRate * @DataLength",
+							"GloballyUniqueId": "I#85:86",
+							"SampleRate": 1000
+						},
+						{
+							"DataLength": 16,
+							"DataRate": "@SampleRate * @DataLength",
+							"GloballyUniqueId": "I#85:85",
+							"SampleRate": 250
+						}
+					],
+					"PortDirection": "Input",
+					"PortType": "Thermocouple",
+					"Thermocouple": ["J", "K", "T"]
+				},
+				{
+					"BBNPortFunctionality": "ThermocoupleConditionerPort",
 					"GloballyUniqueId": "#73:73",
-					"PortDirection": "Input",
-					"PortType": "Thermocouple"
-				},
-				{
-					"BBNPortFunctionality": "ThermocoupleConditionerPort",
 					"Measurement": [
 						{
 							"DataLength": 12,
@@ -289,10 +269,30 @@
 							"SampleRate": 250
 						}
 					],
-					"Thermocouple": ["T", "K", "J"],
-					"GloballyUniqueId": "#73:74",
 					"PortDirection": "Input",
-					"PortType": "Thermocouple"
+					"PortType": "Thermocouple",
+					"Thermocouple": ["J", "K", "T"]
+				},
+				{
+					"BBNPortFunctionality": "ThermocoupleConditionerPort",
+					"GloballyUniqueId": "#73:74",
+					"Measurement": [
+						{
+							"DataLength": 12,
+							"DataRate": "@SampleRate * @DataLength",
+							"GloballyUniqueId": "I#85:86",
+							"SampleRate": 1000
+						},
+						{
+							"DataLength": 16,
+							"DataRate": "@SampleRate * @DataLength",
+							"GloballyUniqueId": "I#85:85",
+							"SampleRate": 250
+						}
+					],
+					"PortDirection": "Input",
+					"PortType": "Thermocouple",
+					"Thermocouple": ["J", "K", "T"]
 				}
 			]
 		}

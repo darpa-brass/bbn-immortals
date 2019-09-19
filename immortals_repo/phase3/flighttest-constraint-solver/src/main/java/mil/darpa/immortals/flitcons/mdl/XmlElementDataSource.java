@@ -297,8 +297,6 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 
 		Set<Node> parentNodes = input.keySet();
 
-		Map<HierarchicalIdentifier, Map<String, Integer>> localNodeTypeDuplicationCounter = new HashMap<>();
-
 		for (Node parentNode : parentNodes) {
 			if (!(parentNode instanceof Element)) {
 				throw AdaptationnException.internal("Root nodes must be XML Elements!");
@@ -318,7 +316,6 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 						HierarchicalData childData = createData(childElement, false, collectionInstructions);
 
 						if (childData != null) {
-							DebugData debugData = childData.getDebugData();
 							identifierDataMap.put(childData.node, childData);
 
 							if (children.contains(childData)) {
@@ -556,7 +553,31 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 				} else {
 					// Gather attributes/outbound references
 					gatherProperties(src, collectionInstructions, collectedProps, debugData, outboundReferences);
-					// Ignore Text data
+
+					// Add the text data if it matches
+					String nodeType = src.getLocalName();
+					if (collectionInstructions.collectedChildProperties.containsKey(nodeType) &&
+							collectionInstructions.collectedChildProperties.get(nodeType).contains(nodeType)) {
+						// Add to values
+						String value = textNodes.iterator().next().getValue();
+
+						if (value == null) {
+							collectedProps.put(nodeType, nullValuePlaceholder);
+						} else {
+							collectedProps.put(nodeType, value);
+						}
+
+					} else if (collectionInstructions.collectedDebugProperties.containsKey(nodeType) &&
+					collectionInstructions.collectedDebugProperties.get(nodeType).contains(nodeType)) {
+
+						String value = textNodes.iterator().next().getValue();
+
+						if (value == null) {
+							debugData.addAttribute(nodeType, nullValuePlaceholder);
+						} else {
+							debugData.addAttribute(nodeType, value);
+						}
+					}
 				}
 
 			} else {

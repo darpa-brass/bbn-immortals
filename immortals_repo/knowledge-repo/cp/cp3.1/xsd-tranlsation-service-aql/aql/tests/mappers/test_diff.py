@@ -21,7 +21,9 @@ def create_network_type(basic_types):
         entities.Element(name='ReadOnly', element_type=basic_types['boolean_type']),
     ]
 
-    return entities.ElementType(name='NetworkType', children=network_children)
+    e_type = entities.ElementType(name='NetworkType', children=network_children)
+    e_type.annotation = 'Node to describe network elements'
+    return e_type
 
 
 def create_root_type(basic_types, network_type):
@@ -187,6 +189,38 @@ def test_rename_in_two_different_levels_must_return_expected_operation(basic_tre
     expected_renames = [
         ('/Root/Network/Owner', '/Root/Network/Person'),
         ('/Root/ReadOnly', '/Root/DisableChanges'),
+    ]
+
+    # As we are using sets, we need to sort our result to compare it.
+    result['renames'].sort(key=lambda x: x[0])
+
+    assert result['renames'] == expected_renames
+
+    others_empty(result, 'renames')
+
+
+def test_rename_and_sub_tree_changes_must_return_expected_renames(basic_trees, basic_types):
+    root, new_root = basic_trees
+
+    # Renaming Network to another name
+    assert new_root.children[0].name == 'Network'
+    new_root.children[0].name = 'NewNetwork'
+
+    # Inside network, lets change Owner to Person
+    assert new_root.children[0].children[0].name == 'Owner'
+    new_root.children[0].children[0].name = 'Person'
+
+    recalculate_hashes(new_root)
+    recalculate_hashes(root)
+
+    # Now, they must be different
+    assert root != new_root
+
+    result = compare(root, new_root)
+
+    expected_renames = [
+        ('/Root/Network', '/Root/NewNetwork'),
+        ('/Root/Network/Owner', '/Root/Network/Person'),
     ]
 
     # As we are using sets, we need to sort our result to compare it.

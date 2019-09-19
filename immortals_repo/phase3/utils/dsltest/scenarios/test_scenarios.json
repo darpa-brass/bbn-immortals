@@ -1,183 +1,183 @@
 {
-	"regression_scenarios": {
-		"basic": {
-			"request_file": "scenarios/basic/dsl-swap-request.json",
-			"inventory_file": "scenarios/basic/dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "",
-			"inventory_file_hash": ""
-		},
-		"s5": {
-			"request_file": "scenarios/s5/dsl-swap-request.json",
-			"inventory_file": "scenarios/s5/dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "",
-			"inventory_file_hash": ""
-		},
-		"bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions": {
-			"request_file": "scenarios/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-request.json",
-			"inventory_file": "scenarios/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "f448437f3e3a444217668105fb5e77e120ba0c6c2a9472808dea1c955dd443b6",
-			"inventory_file_hash": "a6eaf65c4da890b8d164a4da4a4487f7898398611cec5ffa453bb5deb1b95d49"
-		},
-		"bs5eNoThermocoupleExtensions_iThermocoupleExtensions": {
-			"request_file": "scenarios/bs5eNoThermocoupleExtensions_iThermocoupleExtensions/bs5eNoThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-request.json",
-			"inventory_file": "scenarios/bs5eNoThermocoupleExtensions_iThermocoupleExtensions/bs5eNoThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "b866cd306306d9c6ac1d6c7798bd9b1db55742497c0b45954195a6e24bb09a41",
-			"inventory_file_hash": "b990bbe94e1654137a1e1ce78460031419e552ab16fd5bd0b4c9940f7f287fe0"
-		},
-		"bs5eThermocoupleExtensions_iNoThermocoupleExtensions": {
-			"request_file": "scenarios/bs5eThermocoupleExtensions_iNoThermocoupleExtensions/bs5eThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-request.json",
-			"inventory_file": "scenarios/bs5eThermocoupleExtensions_iNoThermocoupleExtensions/bs5eThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-inventory.json",
-			"success_expected": false,
-			"request_file_hash": "fb89bd9a5e4467c98c94984f6a4449c97458cc56040d470be6b052337c6646e0",
-			"inventory_file_hash": "cb9e25e1ec29c37449d06a6e6305084f9d2b8beb68e04d5890b216425ad61f16"
-		},
-		"bs5eThermocoupleExtensions_iThermocoupleExtensions": {
-			"request_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensions/bs5eThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-request.json",
-			"inventory_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensions/bs5eThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "f34ea96c00290a54558f235fd876a443bbccb2d3004de7bab21d08d99fc7b48b",
-			"inventory_file_hash": "2ccdf614b45a710f01478f4964b9c8687417be9a7a6a33355dc04f408a728e43"
-		},
-		"bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential": {
-			"request_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential-dsl-swap-request.json",
-			"inventory_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "ea7e41a1951284ea7fdab25c8ba23c938c66103722b5abec2a1bb4e4e15b4e80",
-			"inventory_file_hash": "e4044427ad08afac6f5cf717933407f4335710ec805f218d3c36ef443d3fbc27"
-		},
-		"s5e01i01": {
-			"request_file": "scenarios/s5e01i01/s5e01i01-dsl-swap-request.json",
-			"inventory_file": "scenarios/s5e01i01/s5e01i01-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "3bc1f7394cab2aca9637d109db1dd00ed1a948fcd8bd58fa148c9c241019fdfb",
-			"inventory_file_hash": "b1c966ac94e050cb1992daab4aa0bae4fc1956e2183c86469d9092846356d22d"
-		},
-		"s5e02i01": {
-			"request_file": "scenarios/s5e02i01/s5e02i01-dsl-swap-request.json",
-			"inventory_file": "scenarios/s5e02i01/s5e02i01-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "d5a1ca05dc5fdeabbd377bf302d645ea39d32f449d553096bba0ba30f61a5d10",
-			"inventory_file_hash": "992d37d883619b28194badc51ed9b8e19bf88656d7a1ed66bfd0897d9bca9fff"
-		},
-		"s5e03i01": {
-			"request_file": "scenarios/s5e03i01/s5e03i01-dsl-swap-request.json",
-			"inventory_file": "scenarios/s5e03i01/s5e03i01-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "93ec05331a8050a890de7f88f90df546022187e9c74f704bb4441e5a37261000",
-			"inventory_file_hash": "627ffe64b7cf74c013df5538f35504c5ad5c0f156e111138c66edcf245e12fd2"
-		},
-		"s5e04i01": {
-			"request_file": "scenarios/s5e04i01/s5e04i01-dsl-swap-request.json",
-			"inventory_file": "scenarios/s5e04i01/s5e04i01-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "2fc57e9b82ac025fea45df5f0604d1d6fea756b6badf14015e1678d4c5e3f168",
-			"inventory_file_hash": "daddda850ad8e3eeedeac604ca9d3a50da9f5ec21444905b5f04aef1db7467b9"
-		},
-		"s5e05i01": {
-			"request_file": "scenarios/s5e05i01/s5e05i01-dsl-swap-request.json",
-			"inventory_file": "scenarios/s5e05i01/s5e05i01-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "5dd9353459964d82c655868878883530234eae2bfa090a13d85bcdc36537f444",
-			"inventory_file_hash": "24f59b887b03c41ad2d19e71bd889023b37b0906d55091ec4bee8ce75a97f405"
-		},
-		"s5e06i01": {
-			"request_file": "scenarios/s5e06i01/s5e06i01-dsl-swap-request.json",
-			"inventory_file": "scenarios/s5e06i01/s5e06i01-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "838543104202ad38fad7690e0472fee271b2d5abfb1f73b9be4a6da6d50223c5",
-			"inventory_file_hash": "adcd95954c73059d1feb6dc416d2ea1c3f9a6de9583e4066536ae3efa6f5cd39"
-		}
+    "regression_scenarios": {
+        "bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions": {
+            "request_file": "scenarios/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-request.json",
+            "inventory_file": "scenarios/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "38635e87915337527c0f315c1e6e2706bd48692e7599f0590887e87f4d234e45",
+            "inventory_file_hash": "094094bea4834d8e69d2129b3fced99d18ccb90368a7d5f2aefaeb1ccbc5ccf0"
+        },
+        "bs5eNoThermocoupleExtensions_iThermocoupleExtensions": {
+            "request_file": "scenarios/bs5eNoThermocoupleExtensions_iThermocoupleExtensions/bs5eNoThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-request.json",
+            "inventory_file": "scenarios/bs5eNoThermocoupleExtensions_iThermocoupleExtensions/bs5eNoThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "97f15369081b26da3c575c9fb04deced01fe09aeaec7b1ba3db0b18020941772",
+            "inventory_file_hash": "d56328f89c67336652835bf59bcb733085fe7f5c67db835debc228a0b96ef486"
+        },
+        "bs5eThermocoupleExtensions_iNoThermocoupleExtensions": {
+            "request_file": "scenarios/bs5eThermocoupleExtensions_iNoThermocoupleExtensions/bs5eThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-request.json",
+            "inventory_file": "scenarios/bs5eThermocoupleExtensions_iNoThermocoupleExtensions/bs5eThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-inventory.json",
+            "success_expected": false,
+            "request_file_hash": "cd338c0f74ddd693492d265492e1fe3d3f83173526dd7da6034452a36842068d",
+            "inventory_file_hash": "50eb63fffcd868fb37271f6826859191a62263f90546dc47913b860b6dee0803"
+        },
+        "bs5eThermocoupleExtensions_iThermocoupleExtensions": {
+            "request_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensions/bs5eThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-request.json",
+            "inventory_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensions/bs5eThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "b768babce899139aaf87930eff77c9f5ca5eef161949a8a1429a3840ec20e09d",
+            "inventory_file_hash": "f02472beb3bfa0edb063cb3bdc23060dbfb6205028cf8b432eac9dd565351dcf"
+        },
+        "bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential": {
+            "request_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential-dsl-swap-request.json",
+            "inventory_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "67284dd8a37919c93bb82baba9a34d6477ce3085965f288655231a69e2b3b54c",
+            "inventory_file_hash": "c15055fb7c1289b3864ef164d17c8f23e9f1c8812330a25938966141d62da2f5"
+        },
+        "s5e01i01": {
+            "request_file": "scenarios/s5e01i01/s5e01i01-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e01i01/s5e01i01-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "20a59420fdb5c6467a877a41a70b1765ce169d3ecd3a78b75fec521e14152714",
+            "inventory_file_hash": "19dd04f42d942ab97e915075c4aa2d76e3033dbfe3d595c1c4ca109fd1e49821"
+        },
+        "s5e02i01": {
+            "request_file": "scenarios/s5e02i01/s5e02i01-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e02i01/s5e02i01-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "a5b19e5a35f733548a5a0c73bf95a0b9df865d964bf7ecc5f10bd6bd19334d29",
+            "inventory_file_hash": "666245ab758e2985e861914ad909faeee5d3ae07a51b0ea9a7bbcd1e0e34e698"
+        },
+        "s5e03i01": {
+            "request_file": "scenarios/s5e03i01/s5e03i01-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01/s5e03i01-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "52dd33fec5f5956e95b72c290970af085b455585fc1b05f72a65c133f99c8095",
+            "inventory_file_hash": "908b0b13d010b246b7781a978c3c6d080f58798a86eb37b5fa027be8014d58a9"
+        },
+        "s5e04i01": {
+            "request_file": "scenarios/s5e04i01/s5e04i01-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e04i01/s5e04i01-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "1ce9e03927d9372d9b70cc366fd96a9a224bfe857aaebbbd2473dabaf851ebb7",
+            "inventory_file_hash": "e3f442c3083f96e4efefd241f64e290ab8831698ab0b4d4b87222c177dee0335"
+        },
+        "s5e05i01": {
+            "request_file": "scenarios/s5e05i01/s5e05i01-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e05i01/s5e05i01-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "eb2eac95af810faaba3770d0b210d90625980166df31ee7718422e95d2624bf6",
+            "inventory_file_hash": "3151c4538641f53fa59230f2ff3d5dfd116f79fb9913b2d8da762f1e3815c3d3"
+        },
+        "s5e06i01": {
+            "request_file": "scenarios/s5e06i01/s5e06i01-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e06i01/s5e06i01-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "0d2e118912db28cf802de82bdb52d45266be26d07a2e4ca0903c5b3751660e8a",
+            "inventory_file_hash": "0be849f85271ba3fb53c01eed3357d9415eb11a6db053e4dd08105d8cbce7836"
+        }
+    },
+    "bad_scenarios": {
+        "basic": {
+            "request_file": "scenarios/basic/dsl-swap-request.json",
+            "inventory_file": "scenarios/basic/dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "",
+            "inventory_file_hash": ""
+        }
+    },
+    "staging_scenarios": {
+	        "s5": {
+            "request_file": "scenarios/s5/dsl-swap-request.json",
+            "inventory_file": "scenarios/s5/dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "",
+            "inventory_file_hash": ""
+        },
+        "bs5eThermocoupleExtensions_iMoreMeasurements": {
+            "request_file": "scenarios/bs5eThermocoupleExtensions_iMoreMeasurements/bs5eThermocoupleExtensions_iMoreMeasurements-dsl-swap-request.json",
+            "inventory_file": "scenarios/bs5eThermocoupleExtensions_iMoreMeasurements/bs5eThermocoupleExtensions_iMoreMeasurements-dsl-swap-inventory.json",
+            "success_expected": true,
+            "request_file_hash": "90bdd3614290f9980b8ff110550cf4683922812993f4a014b7e23d05800449b5",
+            "inventory_file_hash": "ca284409fefb8cc96bdbcf108679112aed8d1734008e720ad8466459ebd6e204"
+        }
 	},
-	"bad_scenarios": {
-		"bs5eThermocoupleExtensions_iMoreMeasurements": {
-			"request_file": "scenarios/bs5eThermocoupleExtensions_iMoreMeasurements/bs5eThermocoupleExtensions_iMoreMeasurements-dsl-swap-request.json",
-			"inventory_file": "scenarios/bs5eThermocoupleExtensions_iMoreMeasurements/bs5eThermocoupleExtensions_iMoreMeasurements-dsl-swap-inventory.json",
-			"success_expected": true,
-			"request_file_hash": "467b6985b2b34adb5a5ebebe7ae2037ec21b7cfe77c466c2c11faeb5d15fe482",
-			"inventory_file_hash": "29f0834e05ddee59989d1450d3b27229478ba7084af74cf517c59604cf2af1a0"
-		}
-	},
-	"staging_scenarios": {
-  },
-	"debug_scenarios": {
-		"RP0IP0": {
-			"request_file": "input-RP0.json",
-			"inventory_file": "inventory-IP0.json",
-			"success_expected": true
-		},
-		"RP1IP0": {
-			"request_file": "input-RP1.json",
-			"inventory_file": "inventory-IP0.json",
-			"success_expected": true
-		},
-		"RP0IP1": {
-			"request_file": "input-RP0.json",
-			"inventory_file": "inventory-IP1.json",
-			"success_expected": true
-		},
-		"RP1IP1": {
-			"request_file": "input-RP1.json",
-			"inventory_file": "inventory-IP1.json",
-			"success_expected": true
-		},
-		"RP0IP0IP1": {
-			"request_file": "input-RP0.json",
-			"inventory_file": "inventory-IP0IP1.json",
-			"success_expected": true
-		},
-		"RP1IP0IP1": {
-			"request_file": "input-RP1.json",
-			"inventory_file": "inventory-IP0IP1.json",
-			"success_expected": true
-		},
-		"RP0IP0IP1-TwoDaus": {
-			"request_file": "input-RP0.json",
-			"inventory_file": "inventory-IP0IP1-twoDaus.json",
-			"success_expected": true
-		},
-		"RP1IP0IP1-twoDaus": {
-			"request_file": "input-RP1.json",
-			"inventory_file": "inventory-IP0IP1-twoDaus.json",
-			"success_expected": true
-		},
-		"RP0RP1IP0IP1": {
-			"request_file": "input-RP0RP1.json",
-			"inventory_file": "inventory-IP0IP1.json",
-			"success_expected": true
-		},
-		"RP0RP1IP0IP1-twoDaus": {
-			"request_file": "input-RP0RP1.json",
-			"inventory_file": "inventory-IP0IP1-twoDaus.json",
-			"success_expected": true
-		},
-		"DSLInterchangeFormat": {
-			"request_file": "DSLInterchangeFormat-dsl-input.json",
-			"inventory_file": "DSLInterchangeFormat-dsl-dauinventory.json",
-			"success_expected": true
-		},
-		"s5e2-bus-only": {
-			"request_file": "s5e2/dsl-swap-request-bus.json",
-			"inventory_file": "s5e2/dsl-swap-inventory.json",
-			"success_expected": true
-		},
-		"s5e2-no-signalconditioners": {
-			"request_file": "s5e2/dsl-swap-request-nosignalconditioners.json",
-			"inventory_file": "s5e2/dsl-swap-inventory.json",
-			"success_expected": true
-		},
-		"s5e2-signalconditioners": {
-			"request_file": "s5e2/dsl-swap-request-signalconditioners.json",
-			"inventory_file": "s5e2/dsl-swap-inventory.json",
-			"success_expected": true
-		},
-		"freeze": {
-			"request_file": "freeze/dsl-swap-request.json",
-			"inventory_file": "freeze/dsl-swap-inventory.json",
-			"success_expected": true
-		}
-	}
+    "debug_scenarios": {
+        "RP0IP0": {
+            "request_file": "input-RP0.json",
+            "inventory_file": "inventory-IP0.json",
+            "success_expected": true
+        },
+        "RP1IP0": {
+            "request_file": "input-RP1.json",
+            "inventory_file": "inventory-IP0.json",
+            "success_expected": true
+        },
+        "RP0IP1": {
+            "request_file": "input-RP0.json",
+            "inventory_file": "inventory-IP1.json",
+            "success_expected": true
+        },
+        "RP1IP1": {
+            "request_file": "input-RP1.json",
+            "inventory_file": "inventory-IP1.json",
+            "success_expected": true
+        },
+        "RP0IP0IP1": {
+            "request_file": "input-RP0.json",
+            "inventory_file": "inventory-IP0IP1.json",
+            "success_expected": true
+        },
+        "RP1IP0IP1": {
+            "request_file": "input-RP1.json",
+            "inventory_file": "inventory-IP0IP1.json",
+            "success_expected": true
+        },
+        "RP0IP0IP1-TwoDaus": {
+            "request_file": "input-RP0.json",
+            "inventory_file": "inventory-IP0IP1-twoDaus.json",
+            "success_expected": true
+        },
+        "RP1IP0IP1-twoDaus": {
+            "request_file": "input-RP1.json",
+            "inventory_file": "inventory-IP0IP1-twoDaus.json",
+            "success_expected": true
+        },
+        "RP0RP1IP0IP1": {
+            "request_file": "input-RP0RP1.json",
+            "inventory_file": "inventory-IP0IP1.json",
+            "success_expected": true
+        },
+        "RP0RP1IP0IP1-twoDaus": {
+            "request_file": "input-RP0RP1.json",
+            "inventory_file": "inventory-IP0IP1-twoDaus.json",
+            "success_expected": true
+        },
+        "DSLInterchangeFormat": {
+            "request_file": "DSLInterchangeFormat-dsl-input.json",
+            "inventory_file": "DSLInterchangeFormat-dsl-dauinventory.json",
+            "success_expected": true
+        },
+        "s5e2-bus-only": {
+            "request_file": "s5e2/dsl-swap-request-bus.json",
+            "inventory_file": "s5e2/dsl-swap-inventory.json",
+            "success_expected": true
+        },
+        "s5e2-no-signalconditioners": {
+            "request_file": "s5e2/dsl-swap-request-nosignalconditioners.json",
+            "inventory_file": "s5e2/dsl-swap-inventory.json",
+            "success_expected": true
+        },
+        "s5e2-signalconditioners": {
+            "request_file": "s5e2/dsl-swap-request-signalconditioners.json",
+            "inventory_file": "s5e2/dsl-swap-inventory.json",
+            "success_expected": true
+        },
+        "freeze": {
+            "request_file": "freeze/dsl-swap-request.json",
+            "inventory_file": "freeze/dsl-swap-inventory.json",
+            "success_expected": true
+        }
+    }
 }

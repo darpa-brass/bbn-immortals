@@ -17,10 +17,8 @@ class DocParser(object):
     since xml root
 
     To ignore:
-    - annotation
     - key
-    - attribute
-    - documentation
+
     - field
     - key
     - keyref
@@ -30,6 +28,9 @@ class DocParser(object):
     - selector
 
     # Process content:
+    - attribute
+    - documentation
+    - annotation
     - any (A global element that matches any type = ELEMENT_ANY_TYPE)
     - complexType
     - sequence
@@ -55,6 +56,7 @@ class DocParser(object):
         # with a proper function instead of just split by ':' and get
         # second param
         self._map_parsers = {
+            'attribute': self._parse_attribute,
             'complexType': self._parse_complex_type,
             'sequence': self._parse_sequence,
             'choice': self._parse_sequence,
@@ -67,12 +69,16 @@ class DocParser(object):
             'restriction': self._parse_restriction,
             'import': self._parse_import,
             'enumeration': self._parse_enumeration,
+            'annotation': self._parse_annotation,
+            'documentation': self._parse_documentation,
         }
 
         # Namespace for XML Schema tags (base of Schema definition)
         self.xmlsns = None
 
         self.namespaces = {}
+        self.target_namespace = None
+        self.namespace = None
         self.get_schema = get_schema
 
     def parse(self, file_contents):
@@ -83,7 +89,14 @@ class DocParser(object):
 
         parse_result = self._parse(dom.documentElement)
 
-        return parse_result, self.types
+        return {
+            'result': parse_result,
+            'types': self.types,
+            'namespaces': {
+                'target': self.target_namespace,
+                'namespaces': self.namespaces
+            }
+        }
 
     def _fill_types(self, dom):
         elements = chain(dom.getElementsByTagName(f'{self.xmlsns}:complexType'),
@@ -97,12 +110,25 @@ class DocParser(object):
 
     def _fill_namespaces(self, el):
         for k, v in el.attributes.items():
+            value = v.strip()
+
+            if k == 'xmlns':
+                self.namespace = value
+                continue
+
+            if k == 'targetNamespace':
+                self.target_namespace = value
+                continue
+
             if ':' not in k:
                 continue
 
             first, second = k.split(':')
             if first == 'xmlns':
-                self.namespaces[v.strip()] = second.strip()
+                self.namespaces[value] = second.strip()
+
+        logging.info(f'Target namespace: {self.target_namespace}')
+        logging.info(f'Document namespace: {self.namespace}')
 
         # Defining xml schema definition namespace (like 'xs' or 'xsd')
         self.xmlsns = self.namespaces[XML_SCHEMA_URL]
@@ -163,8 +189,7 @@ class DocParser(object):
                 **result))
             return result
 
-        _, types = schema_imported
-        self.types.add_namespace(local_namespace, types)
+        self.types.add_namespace(local_namespace, schema_imported['types'])
 
         return result
 
@@ -183,6 +208,13 @@ class DocParser(object):
             return result.get('restriction')[0]['base']
 
         return result.get('extension')[0]
+
+    def _parse_attribute(self, el):
+        return {
+            'name': el.getAttribute('name'),
+            'type': el.getAttribute('type'),
+            'use': el.getAttribute('use'),
+        }
 
     def _parse_sequence(self, el):
         result = self._parse(el)
@@ -221,6 +253,9 @@ class DocParser(object):
             # TODO for now, not handling 'base' from restriction
             el_type.restriction_enum = restriction[0]['enumeration']
 
+        if result.get('annotation'):
+            el_type.annotation = '\n'.join(result.get('annotation', []))
+
         return el_type
 
     def _parse_complex_type(self, el):
@@ -235,11 +270,23 @@ class DocParser(object):
         sequence = result.get('sequence', [None])
         children = sequence[0]
         if children:
-            logging.warning('ELEMENT type with name {} children: {}'.format(
+            logging.debug('ELEMENT type with name {} children: {}'.format(
                 el_name,
                 ','.join([str(i) for i in children])))
 
-        return ElementType(el_name, children)
+        el_type = ElementType(el_name, children)
+
+        if result.get('simpleContent'):
+            el_type.annotation = result.get('simpleContent')[0].annotation
+            el_type.attributes = result.get('simpleContent')[0].attributes
+        else:
+            if result.get('annotation'):
+                el_type.annotation = '\n'.join(result.get('annotation', []))
+
+            if result.get('attribute'):
+                el_type.attributes = result.get('attribute', [])
+
+        return el_type
 
     def _parse_element(self, el):
         logging.debug('Checking element: {}'.format(el.getAttribute('name')))
@@ -275,10 +322,29 @@ class DocParser(object):
             str(el_attributes),
             ','.join([str(i) for i in el_type.children])))
 
-        return Element(el.getAttribute('name'), el_type, attrs=el_attributes)
+        el = Element(el.getAttribute('name'), el_type, attrs=el_attributes)
+
+        if self.namespace:
+            el.namespace = self.namespace
+
+        return el
+
+    def _find_ancestor_with_name(self, el):
+        if el.parentNode is None:
+            return None
+        if el.parentNode.getAttribute("name"):
+            return el.parentNode.getAttribute("name")
+        else:
+            return self._find_ancestor_with_name(el.parentNode)
 
     def _parse_extension(self, el):
-        return self.types.get_or_create(el.getAttribute('base'))
+        base = self.types.get_or_create(el.getAttribute('base'))
+        extension = self._parse(el)
+        extension_element = self.types.get_or_create(self._find_ancestor_with_name(el) + "_extension")
+        extension_element.fill_with(base)
+        extension_element.attributes.extend(extension.get('attribute', []))
+        extension_element.children.extend(extension.get('children', []))
+        return extension_element
 
     def _parse_restriction(self, el):
         result = self._parse(el)
@@ -290,3 +356,10 @@ class DocParser(object):
 
     def _parse_enumeration(self, el):
         return el.getAttribute('value')
+
+    def _parse_annotation(self, el):
+        result = self._parse(el)
+        return '\n'.join(result.get('documentation', []))
+
+    def _parse_documentation(self, el):
+        return '\n'.join([i.data.strip() for i in el.childNodes])

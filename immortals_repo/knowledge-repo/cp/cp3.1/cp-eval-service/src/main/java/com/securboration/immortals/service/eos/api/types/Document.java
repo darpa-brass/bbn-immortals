@@ -4,6 +4,7 @@ public class Document extends EosType {
     
     private String documentContent;
     private String documentName;
+    private boolean primarySchemaDoc;
     
     public Document(){
         
@@ -31,6 +32,16 @@ public class Document extends EosType {
     
     public void setDocumentName(String documentName) {
         this.documentName = documentName;
+    }
+
+    
+    public boolean isPrimarySchemaDoc() {
+        return primarySchemaDoc;
+    }
+
+    
+    public void setPrimarySchemaDoc(boolean primarySchemaDoc) {
+        this.primarySchemaDoc = primarySchemaDoc;
     }
     
     

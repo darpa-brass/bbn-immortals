@@ -7,16 +7,49 @@ from lxml import etree as et
 import constants
 
 
-def build_ast(include_comments=False):
+def build_ast(namespaces, include_comments=False):
+    initial_namespaces = {
+        None: constants.HTML_NS,
+        'xsl': constants.XSL_NS,
+        'xsi': constants.XSI_NS,
+        'my': 'http://233analytics.com/my'
+    }
+
+    # Merge namespaces
+    for k, v in namespaces.items():
+        if v in initial_namespaces:
+            continue
+
+        initial_namespaces[v] = k
+
     root_node = et.Element(
         et.QName(constants.XSL_NS, 'stylesheet'),
-        version='1.0',
-        nsmap={
-            None: constants.HTML_NS,
-            'mdl': constants.MDL_NS,
-            'xsl': constants.XSL_NS,
-            'xsi': constants.XSI_NS
-        },
+        version='2.0',
+        nsmap=initial_namespaces,
+    )
+    gen_id_params = {'name': "my:gen-id", 'as': "xsd:string"}
+    function_gen_id = et.SubElement(
+        root_node,
+        et.QName(constants.XSL_NS, 'function'),
+        **gen_id_params
+    )
+
+    et.SubElement(
+        function_gen_id,
+        et.QName(constants.XSL_NS, 'sequence'),
+        select="generate-id(my:gen-id-getnode())"
+    )
+
+    node_fx_params = {"name": "my:gen-id-getnode", "as": "element()"}
+    node_fxn = et.SubElement(
+        root_node,
+        et.QName(constants.XSL_NS, 'function'),
+        **node_fx_params
+    )
+
+    et.SubElement(
+        node_fxn,
+        et.QName(constants.HTML_NS, "node")
     )
 
     # include initial comments if requested by user
@@ -33,12 +66,13 @@ def build_ast(include_comments=False):
     return ast
 
 
-def generate_xslt(first_tree, second_tree, compare_result):
+def generate_xslt(first_tree, second_tree, compare_result, namespaces, location):
     # build XSLT file AST
-    ast = build_ast()
+    ast = build_ast(namespaces)
 
     # get root node of tree
     ast_root_node = ast.getroot()
+
 
     to_ignore = set(compare_result['additions']) & set(compare_result['removals'])
 
@@ -48,11 +82,11 @@ def generate_xslt(first_tree, second_tree, compare_result):
     relocations, additions_with_relocation = _fetch_additions_with_relocations(compare_result)
 
     # copy/maintain all content by default
-    handle_default(ast_root_node)
-    handle_additions(ast_root_node, second_tree, additions, additions_with_relocation)
-    handle_renames(ast_root_node, compare_result['renames'])
-    handle_removals(ast_root_node, removals)
-    handle_relocations(ast_root_node, relocations)
+    handle_default(ast_root_node, first_tree, namespaces, location)
+    handle_additions(ast_root_node, additions, additions_with_relocation, first_tree, second_tree, namespaces)
+    handle_renames(ast_root_node, compare_result['renames'], first_tree, namespaces)
+    handle_removals(ast_root_node, removals, first_tree, namespaces)
+    handle_relocations(ast_root_node, relocations, first_tree, second_tree, namespaces)
 
     sheet_bytes = et.tostring(ast, xml_declaration=True, pretty_print=True, encoding='utf-8')
     return sheet_bytes.decode()
@@ -75,7 +109,7 @@ def _fetch_additions_with_relocations(compare_result):
     return new_relocations, relocations
 
 
-def handle_default(ast_root_node):
+def handle_default(ast_root_node, first_tree, namespaces, location):
     template_node = et.SubElement(
         ast_root_node,
         et.QName(constants.XSL_NS, 'template'),
@@ -96,21 +130,51 @@ def handle_default(ast_root_node):
     # add comments and extra info
     template_node.addprevious(et.Comment(' identity template, copies everything as is '))
 
+    rootName = first_tree.lxml_name(namespaces)
 
-def handle_additions(ast_root_node, second_tree, additions, relocations):
-    for addition in additions:
-        *path, _ = addition.split('/')
+    # Remove target namespace
+    # remove_schema_attr = et.SubElement(
+    #     ast_root_node,
+    #     et.QName(constants.XSL_NS, 'template'),
+    #     match=f'{rootName}/@xsi:schemaLocation',
+    # )
+    #
+    # remove_schema_attr.addprevious(et.Comment('Remove schemaLocation attr'))
+    handle_relocate_document(ast_root_node, location)
 
+
+def handle_relocate_document(parent_node, location):
+
+    template_node = et.SubElement(
+        parent_node,
+        et.QName(constants.XSL_NS, 'template'),
+        match='/mdl:MDLRoot/@xsi:schemaLocation'
+    )
+
+    attribute_node = et.SubElement(
+        template_node,
+        et.QName(constants.XSL_NS, 'attribute'),
+        name='xsi:schemaLocation'
+    )
+
+    attribute_node.text = 'http://inetprogram.org/projects/MDL/ ' + location
+
+
+def handle_additions(ast_root_node, additions, relocations, first_tree, second_tree, namespaces):
+    for addition in sorted(additions):
         # Set relocations
         for rel_from, rel_to in relocations:
             if rel_to.startswith(addition):
                 *_, element = _path_as_nodes(rel_to, second_tree)
-                element.copy_of = rel_from
+                element.copy_of = _path_with_namespaces(rel_from, first_tree, namespaces)
+
+        # Get parent element of our addition
+        *path_addition, _ = addition.split('/')
 
         template_node = et.SubElement(
             ast_root_node,
             et.QName(constants.XSL_NS, 'template'),
-            match='/'.join(path)
+            match=_path_with_namespaces('/'.join(path_addition), second_tree, namespaces)
         )
 
         copy_node = et.SubElement(
@@ -130,37 +194,24 @@ def handle_additions(ast_root_node, second_tree, additions, relocations):
         template_node.addprevious(et.Comment(f' Add node "{addition}" '))
 
 
-def _path_as_nodes(path, second_tree):
-    _, root_node_name, *node_names = path.split('/')
-
-    current_node = second_tree
-
-    # Always check root_node_Name if it's equal to our current_node
-    assert current_node.name == root_node_name
-
-    for node_name in node_names:
-        for child in current_node.children:
-            if child.name == node_name:
-                yield child
-                current_node = child
-
-
-def handle_renames(ast_root_node, renames):
-    for renames in renames:
+def handle_renames(ast_root_node, renames, first_tree, namespaces):
+    for renames in sorted(renames, key=lambda x: x[0]):
         from_path, to_path = renames
 
         *_, new_name = to_path.split('/')
 
+        old_path = _path_with_namespaces(from_path, first_tree, namespaces)
+
         template_node = et.SubElement(
             ast_root_node,
             et.QName(constants.XSL_NS, 'template'),
-            match=from_path,
+            match=old_path,
         )
 
         element_node = et.SubElement(
             template_node,
             et.QName(constants.XSL_NS, 'element'),
-            name=new_name
+            name=old_path.split("/")[len(old_path.split("/")) - 1].split(":")[0] + ":" + new_name
         )
 
         et.SubElement(
@@ -172,35 +223,36 @@ def handle_renames(ast_root_node, renames):
         template_node.addprevious(et.Comment(f' Renaming element "{from_path}" to "{new_name}"'))
 
 
-def handle_removals(ast_root_node, removals):
-    for i, removal in enumerate(removals):
+def handle_removals(ast_root_node, removals, first_tree, namespaces):
+    for i, removal in enumerate(sorted(removals)):
         template_node = et.SubElement(
             ast_root_node,
             et.QName(constants.XSL_NS, 'template'),
-            match=removal,
+            match=_path_with_namespaces(removal, first_tree, namespaces),
         )
 
         if i == 0:
             template_node.addprevious(et.Comment(' handle removals'))
 
 
-def handle_relocations(ast_root_node, relocations):
-    for rel_from, rel_to in relocations:
+def handle_relocations(ast_root_node, relocations, first_tree, second_tree, namespaces):
+    for rel_from, rel_to in sorted(relocations, key=lambda x: x[0]):
         # Removing element
         removal_template_node = et.SubElement(
             ast_root_node,
             et.QName(constants.XSL_NS, 'template'),
-            match=rel_from,
+            match=_path_with_namespaces(rel_from, first_tree, namespaces),
         )
 
         removal_template_node.addprevious(et.Comment(f' Moving element from "{rel_from}" to "{rel_to}"'))
 
-        *path, _ = rel_to.split('/')
+        # Get parent element of our addition
+        *path_to, _ = rel_to.split('/')
 
         template_node = et.SubElement(
             ast_root_node,
             et.QName(constants.XSL_NS, 'template'),
-            match='/'.join(path),
+            match=_path_with_namespaces('/'.join(path_to), second_tree, namespaces),
         )
 
         copy_node = et.SubElement(
@@ -217,5 +269,31 @@ def handle_relocations(ast_root_node, relocations):
         et.SubElement(
             copy_node,
             et.QName(constants.XSL_NS, 'copy-of'),
-            select=rel_from
+            select=_path_with_namespaces(rel_from, first_tree, namespaces)
         )
+
+
+def _path_with_namespaces(path, second_tree, namespaces):
+    new_path = []
+
+    for i in _path_as_nodes(path, second_tree):
+        new_path.append(i.lxml_name(namespaces))
+
+    return '/' + '/'.join(new_path)
+
+
+def _path_as_nodes(path, element_tree):
+    root_node_name, *node_names = path.strip('/').split('/')
+
+    current_node = element_tree
+
+    # Always check root_node_Name if it's equal to our current_node
+    assert current_node.name == root_node_name
+
+    yield current_node
+
+    for node_name in node_names:
+        for child in current_node.children:
+            if child.name == node_name:
+                yield child
+                current_node = child

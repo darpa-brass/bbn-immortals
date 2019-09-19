@@ -223,14 +223,17 @@ public class MessageListenerClient {
 				throw new RuntimeException("expected \"message\" but got " + message.getNodeName());
 			}
 			
-			final Node renamedMessage = doc.renameNode(message, null, "MDLRoot");
+			final Node renamedMessage = doc.renameNode(message, "http://inetprogram.org/projects/MDL", "MDLRoot");
 			
 				@mil.darpa.immortals.annotation.dsl.ontology.resources.xml.XmlDocument(xmlVersion="1.0", encoding="UTF-8", schemaNamespace="http://inetprogram.org/projects/MDL", schemaVersion = "17")
 				final String processedMdl = processMdlSentToServer(nodeToString(renamedMessage));
 				
 				{
 					final Document result = dbFactory.newDocumentBuilder().newDocument();
-					final Element ingestMessageRequest = result.createElement("ingestMessageRequest");
+					final Element ingestMessageRequest = result.createElementNS(
+							"http://mls.securboration.com/wsdl",
+							"ingestMessageRequest"
+							);
 					
 					result.appendChild(ingestMessageRequest);
 					
@@ -241,8 +244,9 @@ public class MessageListenerClient {
 						messageElement = result.adoptNode(messageElement);
 						ingestMessageRequest.appendChild(messageElement);
 						
-						result.renameNode(messageElement, null, "message");
-						result.renameNode(ingestMessageRequest, "http://mls.securboration.com/wsdl", "ingestMessageRequest");
+						Node r = result.renameNode(messageElement, null, "message");
+						
+						discoverNodesInDefaultNamespaceRecursive(result, r,new ArrayList<String>());
 					}
 					
 					String transformed = nodeToString(result);
@@ -251,12 +255,46 @@ public class MessageListenerClient {
 						transformed = transformed.replace("</ingestMessageRequest>", "</wsdlns:ingestMessageRequest>");
 					}//magic
 					
+					{//magic2
+						transformed = transformed.replace("<message xmlns=\"http://inetprogram.org/projects/MDL\"", "<message ");
+					}//magic2
+					
+					{//magic 3
+						transformed = transformed.replace("http://inetprogram.org/projects/MDLQQQQQQ","http://inetprogram.org/projects/MDL");
+					}//magic 3
+					
 					return transformed;
 				}
     	} catch(Exception e) {
     		throw new RuntimeException(e);
     	}
 	}
+    
+    private static void discoverNodesInDefaultNamespaceRecursive(Document d, Node n, List<String> path) {
+    	if(n.getNodeName() == null) {
+    		return;
+    	}
+    	
+    	if(n.getNodeName().startsWith("#")) {
+    		return;
+    	}
+    	
+    	path.add(n.getNodeName());
+    	
+    	
+    	if(!n.getNodeName().contains(":") && n.getNamespaceURI() == null) {
+    		
+    		if(path.size() > 1) {
+    			d.renameNode(n, "http://inetprogram.org/projects/MDLQQQQQQ", n.getNodeName());
+    		}
+    		System.out.printf("found node in default ns:  %s %s (a %d) @ %s\n",n.getNodeName(),n.getNamespaceURI(),n.getNodeType(), path);
+    	}
+    	
+    	NodeList children = n.getChildNodes();
+    	for(int i=0;i<children.getLength();i++) {
+    		discoverNodesInDefaultNamespaceRecursive(d, children.item(i), new ArrayList<String>(path));
+    	}
+    }
     
     /**
      * Emulates application-specific XML parsing logic (DOM API)

@@ -115,9 +115,10 @@ public class MethodPrinter extends ClassVisitor
   public static String printJimple(
           final File jar, 
           final ClassNode cn,
-          final MethodNode mn
+          final MethodNode mn,
+          final File...cp
           ) throws IOException{
-      final SootClass sc = BytecodeUtils.getSootClass(jar, cn.name.replace("/", "."));
+      final SootClass sc = BytecodeUtils.getSootClass(jar, cn.name.replace("/", "."), cp);
       final SootMethod sm = BytecodeUtils.getSootMethod(sc, mn);
       
 //      System.out.println(jar.getName());

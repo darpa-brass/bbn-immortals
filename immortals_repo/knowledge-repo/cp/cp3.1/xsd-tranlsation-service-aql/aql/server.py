@@ -60,25 +60,32 @@ def get_xslt():
     repo_src = _build_repository(data['srcSchema']['documents'])
     repo_dst = _build_repository(data['dstSchema']['documents'])
 
-    src_element = repo_src.get_main_element()
-    dst_element = repo_dst.get_main_element()
+    src_result = repo_src.get_main_element()
+    dst_result = repo_dst.get_main_element()
 
-    if not src_element:
+    if not src_result:
         return jsonify({
             'error': 'Bad Request, expected at least one document as primary in "srcSchema"',
             'xslt': ''}), 400
 
-    if not dst_element:
+    if not dst_result:
         return jsonify({
             'error': 'Bad Request, expected at least one document as primary in "dstSchema"',
             'xslt': ''}), 400
+
+    src_element = src_result['element']
+    dst_element = dst_result['element']
 
     recalculate_hashes(src_element)
     recalculate_hashes(dst_element)
 
     compare_result = compare(src_element, dst_element)
 
-    xslt = generate_xslt(src_element, dst_element, compare_result)
+    xslt = generate_xslt(src_element,
+                         dst_element,
+                         compare_result,
+                         src_result['namespaces'],
+                         dst_result['location'])
 
     # TODO
     old_field_count = None

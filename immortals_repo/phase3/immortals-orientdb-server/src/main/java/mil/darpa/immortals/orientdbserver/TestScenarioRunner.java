@@ -24,8 +24,6 @@ public abstract class TestScenarioRunner {
 
 	protected OdbEmbeddedServer odbServer;
 
-	private static final Timer timer = new Timer(true);
-
 	protected abstract void startAdaptationService();
 
 	protected abstract void killAdaptationService();
@@ -55,15 +53,16 @@ public abstract class TestScenarioRunner {
 
 		odbServer = new OdbEmbeddedServer(scenario);
 
-		TimerTask task = new TimerTask() {
+		Timer timer = new Timer(true);
+		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				kill();
 				logger.info("TEST FAILURE: Test exceeded timeout!");
+				kill();
 				Assert.fail("Test exceeded timout!");
+
 			}
-		};
-		timer.schedule(task, scenario.getTimeoutMS());
+		}, scenario.getTimeoutMS());
 
 		try {
 			List<String> expectedStates = new ArrayList<>(scenario.getExpectedStatusSequence());
@@ -147,7 +146,7 @@ public abstract class TestScenarioRunner {
 			Assert.fail(e.getMessage(), e);
 			throw new RuntimeException(e);
 		} finally {
-			task.cancel();
+			timer.cancel();
 			odbServer.shutdown();
 		}
 	}

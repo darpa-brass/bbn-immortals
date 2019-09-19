@@ -4,7 +4,9 @@ import com.google.gson.*;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeMap;
 
 public class DynamicValueSerializer implements JsonSerializer<DynamicValue> {
 
@@ -39,29 +41,19 @@ public class DynamicValueSerializer implements JsonSerializer<DynamicValue> {
 		} else if (src.valueArray != null) {
 			JsonArray rval = new JsonArray();
 
-			Object firstValue = src.valueArray[0];
+			TreeMap<String, List<JsonElement>> sortedValues = new TreeMap<>();
 
-			if (firstValue instanceof DynamicValue || firstValue instanceof DynamicObjectContainer) {
-				TreeMap<String, List<JsonElement>> sortedValues = new TreeMap<>();
-
-				for (Object val : src.valueArray) {
-					String valString = val.toString();
-					List<JsonElement> entryList = sortedValues.computeIfAbsent(valString, k -> new LinkedList<>());
-					entryList.add(getSingleJsonPrimitive(val, context));
-				}
-				for (String key : sortedValues.keySet()) {
-					for (JsonElement element : sortedValues.get(key)) {
-						rval.add(element);
-					}
-				}
-				return rval;
-
-			} else {
-				for (Object val : src.valueArray) {
-					rval.add(getSingleJsonPrimitive(val, context));
-				}
-				return rval;
+			for (Object val : src.valueArray) {
+				String valString = val.toString();
+				List<JsonElement> entryList = sortedValues.computeIfAbsent(valString, k -> new LinkedList<>());
+				entryList.add(getSingleJsonPrimitive(val, context));
 			}
+			for (String key : sortedValues.keySet()) {
+				for (JsonElement element : sortedValues.get(key)) {
+					rval.add(element);
+				}
+			}
+			return rval;
 
 		} else if (src.range.Min != null && src.range.Max != null) {
 			JsonObject jo = new JsonObject();

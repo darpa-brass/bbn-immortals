@@ -19,12 +19,17 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.securboration.immortals.bcd.BytecodeDiff;
+import com.securboration.immortals.bcd.BytecodeDiffTree;
 import com.securboration.immortals.bridge.BridgePojo;
 import com.securboration.immortals.service.eos.api.types.EosType;
 import com.securboration.immortals.service.eos.api.types.EvaluationConfiguration;
+import com.securboration.immortals.service.eos.api.types.EvaluationMetric;
+import com.securboration.immortals.service.eos.api.types.EvaluationMetricAdaptationImpact;
 import com.securboration.immortals.service.eos.api.types.EvaluationMetricCategory;
 import com.securboration.immortals.service.eos.api.types.EvaluationMetricCostOfAdaptation;
 import com.securboration.immortals.service.eos.api.types.EvaluationReport;
@@ -38,6 +43,7 @@ import com.securboration.immortals.swri.EvaluationPackageBuilder.MdlSchemaVersio
 import com.securboration.immortals.swri.EvaluationProperties.EvaluationPropertyKey;
 import com.securboration.immortals.swri.eval.EvaluationReportDiff;
 import com.securboration.immortals.swri.eval.Out;
+import com.securboration.immortals.swri.eval.PreflightSanityChecker;
 
 import mil.darpa.immortals.schemaevolution.ChallengeProblemBridge;
 import mil.darpa.immortals.schemaevolution.TerminalStatus;
@@ -90,6 +96,41 @@ public class SwriEvaluationHelper {
         Out.println(System.out,"EVAL", format, args);
     }
     
+    private static String completedRunToResultJson(
+            final TerminalStatus status,
+            final Double successPercentage,
+            final EvaluationReport r
+            ) throws JsonProcessingException{
+        final Map<String,Object> map = new LinkedHashMap<>();
+        
+        map.put("resultState", status.name());
+        map.put("successPercentage", successPercentage);
+        map.put("_detailedData", r);
+        
+        return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
+    }
+    
+    private static String errorToResultJson(
+            final TerminalStatus status,
+            final String summary,
+            final Exception e
+            ) throws JsonProcessingException{
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("resultState", TerminalStatus.PerturbationInputInvalid.name());
+        map.put("successPercentage", Double.NaN);
+        
+        final Map<String,Object> m = new LinkedHashMap<>();
+        map.put("_detailedData", m);
+        
+        m.put("errorSummary", summary);
+        m.put("errorMessage", e.getMessage());
+        m.put("errorMessageLocal", e.getLocalizedMessage());
+        m.put("errorClass", e.getClass().getName());
+        m.put("errorStackTrace", ExceptionUtils.getFullStackTrace(e));
+        
+        return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
+    }
+    
     private void evaluateInternal(
             final ChallengeProblemBridge bridge,
             final EosClient client
@@ -120,7 +161,6 @@ public class SwriEvaluationHelper {
             println("executing evaluation workflow");
             {
                 final String json = 
-//                        FileUtils.readFileToString(new File("test2.json"));
                         bridge.getConfigurationJson(uuid);
                 
                 final EvaluationConfiguration config;
@@ -147,6 +187,40 @@ public class SwriEvaluationHelper {
                         e
                         );
                 }
+                
+                {//begin input sanity checks
+                    try{//make sure the client schema definition is sensible
+                        PreflightSanityChecker.verify(
+                            config.getClientSchemaDefinition(), 
+                            new ArrayList<>(config.getDatasourceXmls())
+                            );
+                    } catch(Exception e){
+                        e.printStackTrace();
+                        
+                        bridge.postResultsJson(
+                            uuid,
+                            TerminalStatus.PerturbationInputInvalid,
+                            errorToResultJson(TerminalStatus.PerturbationInputInvalid,"client (src) schema definition or document dataset invalid",e)
+                            );
+                        return;//early return due to invalid input
+                    }
+                    
+                    try{//make sure the server schema definition is sensible
+                        PreflightSanityChecker.verify(
+                            config.getServerSchemaDefinition(), 
+                            new ArrayList<>()
+                            );
+                    } catch(Exception e){
+                        e.printStackTrace();
+                        
+                        bridge.postResultsJson(
+                            uuid,
+                            TerminalStatus.PerturbationInputInvalid,
+                            errorToResultJson(TerminalStatus.PerturbationInputInvalid,"server (dst) schema definition invalid",e)
+                            );
+                        return;//early return due to invalid input
+                    }
+                }//end input sanity checks
     
                 
                 // kick off an evaluation run
@@ -337,7 +411,6 @@ public class SwriEvaluationHelper {
             final EvaluationStatusReport status,
             final Throwable caughtDuringEval
             ) throws Exception{
-        
         final byte[] evalZip = status == null ? null : status.getEvaluationReportZip();
         
         if(status != null && evalZip != null){//store the evaluation data
@@ -369,30 +442,6 @@ public class SwriEvaluationHelper {
         
         //if we're here, we know the evaluation run completed successfully
         
-        {
-            //immortals-bytecode-diff
-            final byte[] original = ZipHelper.getZipEntry(evalZip, "ess/ess/client/target/immortals-cp3.1-client-1.0.0.jar");
-            final byte[] modified = ZipHelper.getZipEntry(evalZip, "ess/ess/client/target/immortals-cp3.1-client-1.0.0MODIFIED.jar");
-            
-            final File originalJar = new File("./tmp/immortals-cp3.1-ess.jar");
-            final File adaptedJar = new File("./tmp/immortals-cp3.1-ess.REPAIRED.jar");
-            try{
-                FileUtils.writeByteArrayToFile(originalJar, original);
-                FileUtils.writeByteArrayToFile(adaptedJar, modified);
-                
-                final String diff = BytecodeDiff.diffJars(originalJar, adaptedJar);
-                
-                bridge.storeLargeBinaryData(
-                    uuid, 
-                    "bytecode.diff", 
-                    diff.getBytes(StandardCharsets.UTF_8)
-                    );
-            } finally {
-                FileUtils.forceDelete(originalJar);
-                FileUtils.forceDelete(adaptedJar);
-            }
-        }
-        
         final EvaluationReport report = new EvaluationReport();
         
         {//status rollup section
@@ -411,80 +460,7 @@ public class SwriEvaluationHelper {
             }
         }
         
-        {//evaluation metrics section
-            EvaluationMetricCategory category = new EvaluationMetricCategory();
-            category.setCategoryDesc("metrics relevant to evaluation workflow");
-            
-            category.getMetricsForCategory().add(
-                new EvaluationMetricCostOfAdaptation(
-                    "eval context ID", 
-                    "a unique identifier for the evaluation context",
-                    uuid
-                    )
-                );
-            
-            category.getMetricsForCategory().add(
-                new EvaluationMetricCostOfAdaptation(
-                    "eval start time", 
-                    "the starting time of the evaluation run",
-                    new Date(startTime).toString()
-                    )
-                );
-            
-            final long endTime = System.currentTimeMillis();
-            
-            category.getMetricsForCategory().add(
-                new EvaluationMetricCostOfAdaptation(
-                    "eval end time", 
-                    "the ending time of the evaluation run",
-                    new Date(endTime).toString()
-                    )
-                );
-            
-            final long elapsed = endTime - startTime;
-            
-            category.getMetricsForCategory().add(
-                new EvaluationMetricCostOfAdaptation(
-                    "eval elapsed millis", 
-                    "the duration of the evaluation run in milliseconds",
-                    ""+elapsed
-                    )
-                );
-            
-            category.getMetricsForCategory().add(
-                new EvaluationMetricCostOfAdaptation(
-                    "eval # cores", 
-                    "the number of cores available to the JVM performing evaluation",
-                    ""+Runtime.getRuntime().availableProcessors()
-                    )
-                );
-            
-            category.getMetricsForCategory().add(
-                new EvaluationMetricCostOfAdaptation(
-                    "eval max memory", 
-                    "the memory available to the JVM performing evaluation",
-                    ""+Runtime.getRuntime().maxMemory()
-                    )
-                );
-            
-            report.getCategories().add(category);
-        }
-        
-        {//add a diff showing the qualitative impacts of adaptation
-            final EvaluationMetricCategory diff = EvaluationReportDiff.diff(
-                ZipHelper.getZipEntry(
-                    evalZip, 
-                    "ess/ess/reports/baselineRun/report.dat"
-                    ), 
-                ZipHelper.getZipEntry(
-                    evalZip, 
-                    "ess/ess/reports/evaluationRun/report.dat"
-                    )
-                );
-            
-            report.getCategories().add(diff);
-        }
-        
+        boolean adaptationNotRequired = false;
         {//
             final byte[] data = ZipHelper.getZipEntry(
                 evalZip, 
@@ -499,72 +475,246 @@ public class SwriEvaluationHelper {
             final EvaluationMetricCategory translationCategory = new EvaluationMetricCategory();
             translationCategory.setCategoryDesc("metrics related to schema translation");
             
-            report.getCategories().add(getMetricsFromMapDump("fidelity of client->server translation",lines[0]));
-            report.getCategories().add(getMetricsFromMapDump("fidelity of server->client translation",lines[1]));
+            final EvaluationMetricCategory clientToServer = getMetricsFromMapDump("fidelity of client->server translation",lines[0]);
+            final EvaluationMetricCategory serverToClient = getMetricsFromMapDump("fidelity of server->client translation",lines[1]);
+            report.getCategories().add(clientToServer);
+            report.getCategories().add(serverToClient);
+            
+            {
+                //determine whether the status should be TerminalStatus.AdaptationNotRequired
+                
+                boolean foundNonzeroNonNull = false;
+                for(EvaluationMetric m:clientToServer.getMetricsForCategory()){
+                    if(m instanceof EvaluationMetricCostOfAdaptation){
+                        EvaluationMetricCostOfAdaptation a = (EvaluationMetricCostOfAdaptation)m;
+                        
+                        if(!isZeroOrNull(a)){
+                            foundNonzeroNonNull = true;
+                        }
+                    }
+                }
+                
+                for(EvaluationMetric m:serverToClient.getMetricsForCategory()){
+                    if(m instanceof EvaluationMetricCostOfAdaptation){
+                        EvaluationMetricCostOfAdaptation a = (EvaluationMetricCostOfAdaptation)m;
+                        
+                        if(!isZeroOrNull(a)){
+                            foundNonzeroNonNull = true;
+                        }
+                    }
+                }
+                
+                if(!foundNonzeroNonNull){//found nothing nonzero/non-null
+                    adaptationNotRequired = true;//adaptation not required
+                }
+            }
         }
         
-        {//add analysis metrics
-            final byte[] entry = ZipHelper.getZipEntry(
-                evalZip, 
-                "ess/ess/immortals-gradle-plugin-output/AnalysisReport.txt"
+        TerminalStatus terminalStatus = TerminalStatus.AdaptationSuccessful;
+        Double successPercentage = Double.NaN;
+        
+        //TODO: differentiate between successful and partial successful
+        if(adaptationNotRequired){
+            terminalStatus = TerminalStatus.AdaptationNotRequired;
+        } else {
+            {//evaluation metrics section
+                EvaluationMetricCategory category = new EvaluationMetricCategory();
+                category.setCategoryDesc("metrics relevant to evaluation workflow");
+                
+                category.getMetricsForCategory().add(
+                    new EvaluationMetricCostOfAdaptation(
+                        "eval context ID", 
+                        "a unique identifier for the evaluation context",
+                        uuid
+                        )
+                    );
+                
+                category.getMetricsForCategory().add(
+                    new EvaluationMetricCostOfAdaptation(
+                        "eval start time", 
+                        "the starting time of the evaluation run",
+                        new Date(startTime).toString()
+                        )
+                    );
+                
+                final long endTime = System.currentTimeMillis();
+                
+                category.getMetricsForCategory().add(
+                    new EvaluationMetricCostOfAdaptation(
+                        "eval end time", 
+                        "the ending time of the evaluation run",
+                        new Date(endTime).toString()
+                        )
+                    );
+                
+                final long elapsed = endTime - startTime;
+                
+                category.getMetricsForCategory().add(
+                    new EvaluationMetricCostOfAdaptation(
+                        "eval elapsed millis", 
+                        "the duration of the evaluation run in milliseconds",
+                        ""+elapsed
+                        )
+                    );
+                
+                category.getMetricsForCategory().add(
+                    new EvaluationMetricCostOfAdaptation(
+                        "eval # cores", 
+                        "the number of cores available to the JVM performing evaluation",
+                        ""+Runtime.getRuntime().availableProcessors()
+                        )
+                    );
+                
+                category.getMetricsForCategory().add(
+                    new EvaluationMetricCostOfAdaptation(
+                        "eval max memory", 
+                        "the memory available to the JVM performing evaluation",
+                        ""+Runtime.getRuntime().maxMemory()
+                        )
+                    );
+                
+                report.getCategories().add(category);
+            }
+            
+            {//add a diff showing the qualitative impacts of adaptation
+                final EvaluationMetricCategory diff = EvaluationReportDiff.diff(
+                    ZipHelper.getZipEntry(
+                        evalZip, 
+                        "ess/ess/reports/baselineRun/report.dat"
+                        ), 
+                    ZipHelper.getZipEntry(
+                        evalZip, 
+                        "ess/ess/reports/evaluationRun/report.dat"
+                        )
+                    );
+                
+                report.getCategories().add(diff);
+                
+                {
+                    EvaluationMetricAdaptationImpact metric = 
+                            (EvaluationMetricAdaptationImpact)getMetricByKey(
+                                diff,
+                                "mean bad document fraction (lower is better)"
+                                );
+                    
+                    Double d = Double.parseDouble(metric.getMetricValueBefore());
+                    Double dPrime = Double.parseDouble(metric.getMetricValueAfter());
+                    
+                    //dPrime = 0.03
+                    //d = 0.19
+                    
+                    //succ = 1 - dPrime/d
+                    //dPrime = 0 (best possible score), succ = 1.0
+                    //dPrime = 1 (worst possible score), succ = 0.0
+                    
+                    successPercentage = (1d - (dPrime / d)) * 100d;//TODO
+                    
+                    if(successPercentage <= 0){
+                        //adaptation made things WORSE
+                        terminalStatus = TerminalStatus.AdaptationUnsuccessful;
+                    } else if (successPercentage < 0.5){
+                        //adaptation made things better
+                        terminalStatus = TerminalStatus.AdaptationPartiallySuccessful;
+                    } else {
+                        terminalStatus = TerminalStatus.AdaptationSuccessful;
+                    }
+                }
+            }
+            
+            {//immortals-bytecode-diff
+                final byte[] original = ZipHelper.getZipEntry(evalZip, "ess/ess/client/target/immortals-cp3.1-client-1.0.0.jar");
+                final byte[] modified = ZipHelper.getZipEntry(evalZip, "ess/ess/client/target/immortals-cp3.1-client-1.0.0MODIFIED.jar");
+                
+                final File originalJar = new File("./tmp/immortals-cp3.1-ess.jar");
+                final File adaptedJar = new File("./tmp/immortals-cp3.1-ess.REPAIRED.jar");
+                try{
+                    FileUtils.writeByteArrayToFile(originalJar, original);
+                    FileUtils.writeByteArrayToFile(adaptedJar, modified);
+                    
+                    final String diff = BytecodeDiff.diffJars(originalJar, adaptedJar);
+                    
+                    bridge.storeLargeBinaryData(
+                        uuid, 
+                        "bytecode.diff", 
+                        diff.getBytes(StandardCharsets.UTF_8)
+                        );
+                    
+                    final String diffVisualization = 
+                            BytecodeDiffTree.diffJars(originalJar, adaptedJar);
+                    
+                    bridge.storeLargeBinaryData(
+                        uuid, 
+                        "bytecode.diff.py", 
+                        diffVisualization.getBytes(StandardCharsets.UTF_8)
+                        );
+                } finally {
+                    FileUtils.forceDelete(originalJar);
+                    FileUtils.forceDelete(adaptedJar);
+                }
+            }
+            
+            {//add analysis metrics
+                final byte[] entry = ZipHelper.getZipEntry(
+                    evalZip, 
+                    "ess/ess/immortals-gradle-plugin-output/AnalysisReport.txt"
+                    );
+                
+                report.getCategories().add(
+                    getAnalysisMetrics(
+                        new String(entry,StandardCharsets.UTF_8)
+                        )
+                    );
+            }
+        }
+        
+        
+//        asfd
+//        final String json = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(report);
+        
+        final String json = completedRunToResultJson(
+                terminalStatus,
+                successPercentage,
+                report
                 );
-            
-            report.getCategories().add(
-                getAnalysisMetrics(
-                    new String(entry,StandardCharsets.UTF_8)
-                    )
-                );
-        }
-        
-        if(false){//add mock sections
-            
-            report.getCategories().add(getMockEvalSection(
-                "# triples",
-                "# triples provided",
-                "# triples derived after analysis",
-                "# triples derived after mining",
-                "# triples derived after constraint analysis",
-                "# triples derived through inference rule execution",
-                "# triples derived elsewhere during eval workflow",
-                "# triples in adaptation graph (should equal sum of above)"
-                ));
-            
-            
-            report.getCategories().add(getMockEvalSection(
-                "timings",
-                "# millis required to perform bytecode task",
-                "# millis required to perform mine task",
-                "# millis required to perform ingest task",
-                "# millis required to perform adapt task"
-                ));
-            
-            report.getCategories().add(getMockEvalSection(
-                "adaptation process",
-                "# problematic dataflows with discovered constraint violations",
-                "# problematic dataflows resolved"
-                ));
-            
-            report.getCategories().add(getMockEvalSection(
-                "code impact of adaptation",
-                "# existing classes modified",
-                "# existing methods modified",
-                "% of anterior code surface modified",
-                "# new classes synthesized",
-                "# new methods synthesized",
-                "% of posterior code surface synthesized",
-                "# new libraries added"
-                ));
-        }
-        
-        final String json = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(report);
         
         System.out.println(json);
         
         bridge.postResultsJson(
             uuid,
-            getTerminalStatus(status,evalZip),
+            terminalStatus,
             json
             );
+    }
+    
+    private static boolean isZeroOrNull(EvaluationMetricCostOfAdaptation metric){
+        final String value = metric.getMetricValue();
+        
+        if(value == null){
+            return true;
+        }
+        
+        if(value.equals("null")){
+            return true;
+        }
+        
+        if(value.equals("0")){
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private static EvaluationMetric getMetricByKey(
+            final EvaluationMetricCategory category, 
+            final String key
+            ){
+        for(EvaluationMetric m:category.getMetricsForCategory()){
+            if(m.getMetricType().equals(key)){
+                return m;
+            }
+        }
+        
+        throw new RuntimeException("no metric with key " + key);
     }
     
     private static EvaluationMetricCategory getMetricsFromMapDump(
@@ -593,21 +743,6 @@ public class SwriEvaluationHelper {
         category.getMetricsForCategory().addAll(metrics);
         
         return category;
-    }
-    
-    private static TerminalStatus getTerminalStatus(
-            final EvaluationStatusReport evalStatus,
-            final byte[] evalZip
-            ){
-        //TODO: dive into the emitted zip archive to determine the correct 
-        //      fine-grained status
-        
-//        return TerminalStatus.AdaptationNotRequired;
-//        return TerminalStatus.AdaptationPartiallySuccessful;
-//        return TerminalStatus.AdaptationUnsuccessful;
-//        return TerminalStatus.PerturbationInputInvalid;
-        
-        return TerminalStatus.AdaptationSuccessful;
     }
     
     private static EvaluationMetricCategory getMockEvalSection(String category,String...fields){

@@ -40,13 +40,23 @@ import com.securboration.test.XsltTransformer;
 public class Main {
     
     public static void main(String[] args) throws Exception {
-//        {//TODO
-//            System.setProperty("translationProblemsDir", "C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\xsd-translation-service-test\\output\\translationProblemInstances");
-//            System.setProperty("clientUrl", "http://localhost:8090/xsdsts");
-//            
-//            System.setProperty("resultsDir", "./results/zzz");
-//            
-//        }//TODO
+        if(false){
+            System.setProperty("translationProblemsDir", "C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\xsd-translation-service-test\\output\\translationProblemInstances");
+            System.setProperty("clientUrl", "http://localhost:8090/xsdsts");
+            
+            System.setProperty("resultsDir", "./results/zzz");
+            
+            System.setProperty("translationProblemsPrefix", "MDL_v0_8_17-MDL_v0_8_19");
+        }
+        
+        
+        if(false){//TODO
+            System.setProperty("translationProblemsDir", "C:\\Users\\Securboration\\Desktop\\code\\immortals\\trunk\\knowledge-repo\\cp\\cp3.1\\xsd-translation-service-test\\output\\translationProblemInstances");
+            System.setProperty("clientUrl", "http://localhost:8090/xsdsts");
+            
+            System.setProperty("resultsDir", "./results/zzz");
+            
+        }//TODO
         
         
         
@@ -72,8 +82,10 @@ public class Main {
         
         final String testInstancesDir = getProperty("translationProblemsDir","path to a dir containing multiple translation problem instances to iterate through",null,true);
         
+        final String testInstancesDirNamePrefix = getProperty("translationProblemsPrefix","prefix for names of translation problems",null,true);
+        
         if(testInstancesDir != null){//we instead perform a batch-mode evaluation if this property is set
-            main2(clientUrl,testInstancesDir,resultsDir);
+            main2(clientUrl,testInstancesDir,resultsDir,testInstancesDirNamePrefix);
             return;
         }
         
@@ -100,7 +112,8 @@ public class Main {
     private static void main2(
             final String clientUrl,
             final String testInstancesDir,
-            final File resultsDir
+            final File resultsDir,
+            final String testInstancesDirNamePrefix
             ) throws Exception{
         
         final File testInputDir = new File(testInstancesDir);
@@ -108,6 +121,16 @@ public class Main {
         final MetricsTracker parent = new MetricsTracker("all translation problem instances");
         
         for(File f:testInputDir.listFiles()){
+            
+            if(testInstancesDirNamePrefix != null && !f.getName().startsWith(testInstancesDirNamePrefix)){
+                System.out.printf(
+                    "skipping %s @ %s because it does not match prefix %s\n", 
+                    f.getName(), 
+                    f.getAbsolutePath(), 
+                    testInstancesDirNamePrefix
+                    );
+                continue;
+            }
             
             final File localResultsDir = new File(resultsDir,f.getName());
             
@@ -268,117 +291,195 @@ public class Main {
                 }
             }
             
-            final String xslt;
             {
-                report.$("\ntesting acquisition of schema translation\n");
+                report.$("\nperforming baseline badness check\n");
                 
-                final TranslationProblemDefinition t = new TranslationProblemDefinition();
-                t.setSrcSchema(ClientHelper.getDocumentSetFromSchema(srcSchemaFile));
-                t.setDstSchema(ClientHelper.getDocumentSetFromSchema(dstSchemaFile));
-                
-                FileUtils.writeStringToFile(
-                    new File(resultsDir,"service/translation-request.json"),
-                    new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(t),
-                    StandardCharsets.UTF_8
-                    );
-                
-                final long start = System.currentTimeMillis();
-                xslt = client.getXsdTranslation(t);
-                final long elapsed = System.currentTimeMillis() - start;
-                
-                FileUtils.writeStringToFile(
-                    new File(resultsDir,"service/translation-response.xslt"),
-                    xslt,
-                    StandardCharsets.UTF_8
-                    );
-                
-                localMetrics.addValue("xsltAcquisitionTimeMillis",elapsed);
-                localMetrics.addValue("xsltSizeBytes",xslt.getBytes().length);
-                
-                report.$("obtained a %dB XSLT in %dms\n",xslt.getBytes().length,elapsed);
+                {
+                    report.$("\ntesting fidelity of schema translation\n");
+                    
+                    double normalizedBadness = 0d;
+                    double weightedBadness = 0d;
+                    double numPerfect = 0d;
+                    double numProblematic = 0d;
+                    int numDocuments = 0;
+                    
+                    for(File f:docsToTranslate){
+                        try{
+                            final String inputXml = FileUtils.readFileToString(f, StandardCharsets.UTF_8);
+                            //no translation
+                            final String convertedXml = inputXml;
+                            FileUtils.writeStringToFile(
+                                new File(resultsDir,"output/" + f.getName()), 
+                                convertedXml, 
+                                StandardCharsets.UTF_8
+                                );
+                            
+                            final BadnessReport r = SchemaComplianceChecker.getDocumentBadnessScore(
+                                dstSchemaFile, 
+                                convertedXml
+                                );
+                            
+                            numDocuments++;
+                            
+                            localMetrics.addValue("badElementsCountBefore",r.getNumBadElements());
+                            localMetrics.addValue("badLinesCountBefore",r.getWeightedBadnessScore());
+                            localMetrics.addValue("badLinesFractionBefore",r.getBadnessScore());
+                            
+                            if(r.getBadnessScore() > 0){
+                                normalizedBadness += r.getBadnessScore();
+                                weightedBadness += r.getWeightedBadnessScore();
+                                numProblematic += 1d;
+                                
+                                localMetrics.incrementValue("documentsTranslatedImperfectlyCountBefore");
+                                report.$("\tthe translated document is NOT schema compliant because:\n%s\n", r.toString());
+                                
+                                for(BadnessReportElement bre:r.getReportElements()){
+                                    localMetrics.incrementFrequency("validatorExceptionClassBefore",bre.getE().getClass().getName());//TODO
+                                    localMetrics.incrementFrequency("validatorProblematicElementNameBefore", extractElementName(bre.getE()));
+                                    localMetrics.incrementFrequency("validatorProblemDescBefore", bre.getE().getMessage());
+                                }
+                            } else {
+                                numPerfect += 1d;
+                                
+                                localMetrics.incrementValue("documentsTranslatedPerfectlyCountBefore");
+                                report.$("\tthe translated document is schema compliant\n");
+                            }
+                        } catch(Exception e){
+                            System.out.println(f.getAbsolutePath());
+                            e.printStackTrace(System.out);
+                            
+                            report.$("\t\tthe translated document is not compliant with the dst schema");
+                            report.$(" because %s\n",e.getMessage());
+                        }
+                    }
+                    
+                    report.$(
+                        "performed %d compliance checks against the target schema of which " +
+                        "%d were perfect and %d were imperfect with " +
+                        "normalized badness score %1.4f and " +
+                        "weighted badness score %1.4f\n",
+                        numDocuments,
+                        (int)numPerfect,
+                        (int)numProblematic,
+                        normalizedBadness,
+                        weightedBadness
+                        );
+                }
             }
             
-            {
-                report.$("\ntesting fidelity of schema translation\n");
-                
-                double normalizedBadness = 0d;
-                double weightedBadness = 0d;
-                double numPerfect = 0d;
-                double numProblematic = 0d;
-                int numDocuments = 0;
-                
-                for(File f:docsToTranslate){
-                    localMetrics.incrementValue("documentsTranslatedCount");
-                    localMetrics.incrementValue("documentsTranslatedPerfectlyCount",0L);
-                    localMetrics.incrementValue("documentsTranslatedImperfectlyCount",0L);
+            {//actually perform the translation
+                final String xslt;
+                {
+                    report.$("\ntesting acquisition of schema translation\n");
                     
-                    report.$("\tusing %s...\n",f.getCanonicalPath());
+                    final TranslationProblemDefinition t = new TranslationProblemDefinition();
+                    t.setSrcSchema(ClientHelper.getDocumentSetFromSchema(srcSchemaFile));
+                    t.setDstSchema(ClientHelper.getDocumentSetFromSchema(dstSchemaFile));
                     
-                    try{
-                        final String inputXml = FileUtils.readFileToString(f, StandardCharsets.UTF_8);
-                        FileUtils.writeStringToFile(
-                            new File(resultsDir,"input/" + f.getName()), 
-                            inputXml, 
-                            StandardCharsets.UTF_8
-                            );
-                        
-                        final String convertedXml = XsltTransformer.translate(xslt, inputXml);
-                        FileUtils.writeStringToFile(
-                            new File(resultsDir,"output/" + f.getName()), 
-                            convertedXml, 
-                            StandardCharsets.UTF_8
-                            );
-                        
-                        final BadnessReport r = SchemaComplianceChecker.getDocumentBadnessScore(
-                            dstSchemaFile, 
-                            convertedXml
-                            );
-                        
-                        numDocuments++;
-                        
-                        localMetrics.addValue("badElementsCount",r.getNumBadElements());
-                        localMetrics.addValue("badLinesCount",r.getWeightedBadnessScore());
-                        localMetrics.addValue("badLinesFraction",r.getBadnessScore());
-                        
-                        if(r.getBadnessScore() > 0){
-                            normalizedBadness += r.getBadnessScore();
-                            weightedBadness += r.getWeightedBadnessScore();
-                            numProblematic += 1d;
-                            
-                            localMetrics.incrementValue("documentsTranslatedImperfectlyCount");
-                            report.$("\tthe translated document is NOT schema compliant because:\n%s\n", r.toString());
-                            
-                            for(BadnessReportElement bre:r.getReportElements()){
-                                localMetrics.incrementFrequency("validatorExceptionClass",bre.getE().getClass().getName());//TODO
-                                localMetrics.incrementFrequency("validatorProblematicElementName", extractElementName(bre.getE()));
-                                localMetrics.incrementFrequency("validatorProblemDesc", bre.getE().getMessage());
-                            }
-                        } else {
-                            numPerfect += 1d;
-                            
-                            localMetrics.incrementValue("documentsTranslatedPerfectlyCount");
-                            report.$("\tthe translated document is schema compliant\n");
-                        }
-                    } catch(Exception e){
-                        System.out.println(f.getAbsolutePath());
-                        e.printStackTrace(System.out);
-                        
-                        report.$("\t\tthe translated document is not compliant with the dst schema");
-                        report.$(" because %s\n",e.getMessage());
-                    }
+                    FileUtils.writeStringToFile(
+                        new File(resultsDir,"service/translation-request.json"),
+                        new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(t),
+                        StandardCharsets.UTF_8
+                        );
+                    
+                    final long start = System.currentTimeMillis();
+                    xslt = client.getXsdTranslation(t);
+                    final long elapsed = System.currentTimeMillis() - start;
+                    
+                    FileUtils.writeStringToFile(
+                        new File(resultsDir,"service/translation-response.xslt"),
+                        xslt,
+                        StandardCharsets.UTF_8
+                        );
+                    
+                    localMetrics.addValue("xsltAcquisitionTimeMillis",elapsed);
+                    localMetrics.addValue("xsltSizeBytes",xslt.getBytes().length);
+                    
+                    report.$("obtained a %dB XSLT in %dms\n",xslt.getBytes().length,elapsed);
                 }
                 
-                report.$(
-                    "performed %d test translations of which " +
-                    "%d were perfect and %d were imperfect with " +
-                    "normalized badness score %1.4f and " +
-                    "weighted badness score %1.4f\n",
-                    numDocuments,
-                    (int)numPerfect,
-                    (int)numProblematic,
-                    normalizedBadness,
-                    weightedBadness
-                    );
+                {
+                    report.$("\ntesting fidelity of schema translation\n");
+                    
+                    double normalizedBadness = 0d;
+                    double weightedBadness = 0d;
+                    double numPerfect = 0d;
+                    double numProblematic = 0d;
+                    int numDocuments = 0;
+                    
+                    for(File f:docsToTranslate){
+                        localMetrics.incrementValue("documentsTranslatedCountAfter");
+                        localMetrics.incrementValue("documentsTranslatedPerfectlyCountAfter",0L);
+                        localMetrics.incrementValue("documentsTranslatedImperfectlyCountAfter",0L);
+                        
+                        report.$("\tusing %s...\n",f.getCanonicalPath());
+                        
+                        try{
+                            final String inputXml = FileUtils.readFileToString(f, StandardCharsets.UTF_8);
+                            FileUtils.writeStringToFile(
+                                new File(resultsDir,"input/" + f.getName()), 
+                                inputXml, 
+                                StandardCharsets.UTF_8
+                                );
+                            
+                            final String convertedXml = XsltTransformer.translate(xslt, inputXml);
+                            FileUtils.writeStringToFile(
+                                new File(resultsDir,"output/" + f.getName()), 
+                                convertedXml, 
+                                StandardCharsets.UTF_8
+                                );
+                            
+                            final BadnessReport r = SchemaComplianceChecker.getDocumentBadnessScore(
+                                dstSchemaFile, 
+                                convertedXml
+                                );
+                            
+                            numDocuments++;
+                            
+                            localMetrics.addValue("badElementsCountAfter",r.getNumBadElements());
+                            localMetrics.addValue("badLinesCountAfter",r.getWeightedBadnessScore());
+                            localMetrics.addValue("badLinesFractionAfter",r.getBadnessScore());
+                            
+                            if(r.getBadnessScore() > 0){
+                                normalizedBadness += r.getBadnessScore();
+                                weightedBadness += r.getWeightedBadnessScore();
+                                numProblematic += 1d;
+                                
+                                localMetrics.incrementValue("documentsTranslatedImperfectlyCountAfter");
+                                report.$("\tthe translated document is NOT schema compliant because:\n%s\n", r.toString());
+                                
+                                for(BadnessReportElement bre:r.getReportElements()){
+                                    localMetrics.incrementFrequency("validatorExceptionClassAfter",bre.getE().getClass().getName());//TODO
+                                    localMetrics.incrementFrequency("validatorProblematicElementNameAfter", extractElementName(bre.getE()));
+                                    localMetrics.incrementFrequency("validatorProblemDescAfter", bre.getE().getMessage());
+                                }
+                            } else {
+                                numPerfect += 1d;
+                                
+                                localMetrics.incrementValue("documentsTranslatedPerfectlyCountAfter");
+                                report.$("\tthe translated document is schema compliant\n");
+                            }
+                        } catch(Exception e){
+                            System.out.println(f.getAbsolutePath());
+                            e.printStackTrace(System.out);
+                            
+                            report.$("\t\tthe translated document is not compliant with the dst schema");
+                            report.$(" because %s\n",e.getMessage());
+                        }
+                    }
+                    
+                    report.$(
+                        "performed %d test translations of which " +
+                        "%d were perfect and %d were imperfect with " +
+                        "normalized badness score %1.4f and " +
+                        "weighted badness score %1.4f\n",
+                        numDocuments,
+                        (int)numPerfect,
+                        (int)numProblematic,
+                        normalizedBadness,
+                        weightedBadness
+                        );
+                }
             }
             
         } finally {
@@ -754,5 +855,15 @@ public class Main {
             return ds;
         }
     }
+    
+    private static final String identityXslt = 
+            "<xsl:stylesheet version=\"3.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\r\n" + 
+            "    <xsl:template match=\"@*|node()\">\r\n" + 
+            "        <xsl:copy>\r\n" + 
+            "            <xsl:apply-templates select=\"@*|node()\"/>\r\n" + 
+            "        </xsl:copy>\r\n" + 
+            "    </xsl:template>\r\n" + 
+            "</xsl:stylesheet>"
+            ;
 
 }
