@@ -109,13 +109,9 @@ if [[ ${DO_SCENARIO_5} == true ]];then
     cp "${SCRIPT_DIR}/start.sh" "${ARTIFACT_ROOT}/phase3/"
 
     cp -R "${SCRIPT_DIR}/../dsl" "${ARTIFACT_ROOT}/"
+    cp -R "${SCRIPT_DIR}/utils" "${ARTIFACT_ROOT}/phase3/"
 
-    mkdir "${ARTIFACT_ROOT}/phase3/utils"
-    cp "${SCRIPT_DIR}/utils/ingest.py" "${ARTIFACT_ROOT}/phase3/utils/"
     mkdir -p "${ARTIFACT_ROOT}/phase3/immortals-orientdb-server/src/main"
-
-
-    echo cp -R "${SCRIPT_DIR}/immortals-orientdb-server/src/main/resources" "${ARTIFACT_ROOT}/phase3/immortals-orientdb-server/src/main/"
     cp -R "${SCRIPT_DIR}/immortals-orientdb-server/src/main/resources" "${ARTIFACT_ROOT}/phase3/immortals-orientdb-server/src/main/resources/"
 
     echo Scenario 5 Finished Building.
