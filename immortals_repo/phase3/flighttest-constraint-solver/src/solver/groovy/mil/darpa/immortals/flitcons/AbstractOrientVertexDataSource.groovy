@@ -456,4 +456,56 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 		init()
 	}
 
+	Map<String, List<String>> checkForMysteriousEmptyValues() {
+		init()
+
+		Map<String, List<String>> invalidValues = new HashMap<>();
+
+		def checkValuesIdMappings = [
+				["Port", "PortDirection"],
+				["Port", "PortTypes", "PortType", "Thermocouple"],
+				["Port", "PortTypes", "PortType"],
+				["Port", "PortTypes", "PortType", "PortType"],
+				["Port", "PortTypes", "Thermocouple"],
+				["Port", "GenericParameter", "BBNPortFunctionality"],
+				["NetworkNode", "GenericParameter", "BBNDauMonetaryCost"],
+				["Port", "GenericParameter", "Measurement", "SampleRate"],
+				["Port", "GenericParameter", "Measurement", "DataLength"],
+				["Port", "GenericParameter", "Measurement", "DataRate"],
+				["Measurement", "GenericParameter", "SampleRate", "Min"],
+				["Measurement", "GenericParameter", "SampleRate", "Max"],
+				["Measurement", "GenericParameter", "DataLength", "Min"],
+				["Measurement", "GenericParameter", "DataLength", "Max"],
+				["Measurement", "GenericParameter", "DataRate", "Min"],
+				["Measurement", "GenericParameter", "DataRate", "Max"],
+				["DeviceModule", "ExcitationSource"]
+		]
+
+		for (def attributePath : checkValuesIdMappings) {
+
+			def root = attributePath[0]
+			def attribute = attributePath[attributePath.size() - 1]
+			def intermediates = attributePath.subList(1, attributePath.size() - 1)
+
+
+			def pipe = testFlightConfigurationGraph.V.has("@class", root).as("root")
+			for (def intermediate : intermediates) {
+				pipe = pipe.in("Containment").has("@class", intermediate)
+			}
+			def result = pipe.has(attribute, "").back("root").toList()
+			if (result != null && result.size() > 0) {
+				String label = String.join(":", attributePath)
+				def resultList = new LinkedList()
+				invalidValues.put(label, resultList)
+				for (OrientVertex ov : result) {
+					resultList.add(ov.getProperty("ID"))
+				}
+			}
+			System.out.println("MEH")
+		}
+
+		def values = invalidValues
+		return values
+	}
+
 }

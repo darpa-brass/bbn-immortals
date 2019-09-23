@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 
 public class ValidatorMain {
@@ -153,6 +154,68 @@ public class ValidatorMain {
 			results.addAll(validateOdbTestSession(odbPath, label, config));
 		}
 		return results;
+	}
+
+	private static void checkForEmptyOdbValues(OrientVertexDataSource dataSource) {
+		boolean failure = false;
+		Map<String, List<String>> rval = dataSource.checkForMysteriousEmptyValues();
+		if (!rval.isEmpty()) {
+			for (String key : rval.keySet()) {
+				for (String value : rval.get(key)) {
+					System.err.println("Parent with ID '" + value + "' has empty value at path '" + key + "'!");
+					failure = true;
+				}
+			}
+		}
+		if (!failure) {
+			System.err.println("No unexpected empty values found.");
+		}
+	}
+
+	private static void checkForEmptyOdbValues(ValidatorConfiguration configuration) {
+		String odbTarget = configuration.getOdbTarget();
+		OrientVertexDataSource ovds;
+
+		if (configuration.checkForEmptyValues && odbTarget != null) {
+			System.out.println("Checking server at '" + odbTarget + "' for unexpected empty attributes.");
+			ovds = new OrientVertexDataSource(odbTarget);
+			checkForEmptyOdbValues(ovds);
+		} else {
+
+			OdbEmbeddedServer server = null;
+			OdbEmbeddedServer.OdbDeploymentMode deploymentMode;
+			if (configuration.checkForEmptyValues) {
+				deploymentMode = OdbEmbeddedServer.OdbDeploymentMode.XmlOnly;
+			} else if (configuration.checkBackupsForEmptyValues) {
+				deploymentMode = OdbEmbeddedServer.OdbDeploymentMode.BackupsOnly;
+			} else {
+				throw new RuntimeException("checkForEmptyValues and checkBackupsForEmptyValues are both false!");
+			}
+
+			try {
+				List<TestScenario> scenarios = TestScenarios.getAllScenario5TestScenarios();
+				server = new OdbEmbeddedServer(scenarios.toArray(new TestScenario[0]));
+				server.init(deploymentMode);
+				for (TestScenario testScenario : scenarios) {
+					String label = testScenario.getShortName();
+					String odbPath = server.getOdbPath(testScenario);
+					System.out.println("Checking scenario '" + label + "' with server created from " +
+							(deploymentMode == OdbEmbeddedServer.OdbDeploymentMode.BackupsOnly ? "backups" : "XML files") +
+							" at '" + odbTarget + "' for unexpected empty attributes.");
+
+					ovds = new OrientVertexDataSource(odbPath);
+					checkForEmptyOdbValues(ovds);
+
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			} finally {
+				if (server != null) {
+					server.shutdown();
+				}
+			}
+		}
+
 	}
 
 	private static void compareOdbTestScenariosToXml() {
@@ -329,6 +392,11 @@ public class ValidatorMain {
 
 		if (config.compareXMlToOdbAll) {
 			compareOdbTestScenariosToXml();
+			System.exit(0);
+		}
+
+		if (config.checkForEmptyValues || config.checkBackupsForEmptyValues) {
+			checkForEmptyOdbValues(config);
 			System.exit(0);
 		}
 

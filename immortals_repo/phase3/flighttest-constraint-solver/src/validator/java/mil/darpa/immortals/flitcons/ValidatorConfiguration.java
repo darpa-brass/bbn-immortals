@@ -131,6 +131,12 @@ public class ValidatorConfiguration {
 	@CommandLine.Option(names = {"--compare-xml-odb-all"}, description = "Loads the XML and OrientDB data for all known scenarios and compares the otuput")
 	public boolean compareXMlToOdbAll = false;
 
+	@CommandLine.Option(names = {"--check-for-empty-values"}, description = "Checks for mysterious empty values in OrientDB attributes from the known scenarios or the supplied odb target")
+	public boolean checkForEmptyValues = false;
+
+	@CommandLine.Option(names = {"--check-backups-for-empty-values"}, description = "Checks for mysterious empty values in OrientDB attributes using the backups")
+	public boolean checkBackupsForEmptyValues = false;
+
 
 	public String getOdbTarget() {
 		return odbTarget;
@@ -194,7 +200,8 @@ public class ValidatorConfiguration {
 
 	public void validateParams() {
 		if (helpRequested || (inputFiles == null && scenarios == null && validationSource == null &&
-				odbTarget == null && !validateAll && !validateBbn && !validateSwri && !compareXMlToOdbAll)) {
+				odbTarget == null && !validateAll && !validateBbn && !validateSwri && !compareXMlToOdbAll &&
+				!checkForEmptyValues && !checkBackupsForEmptyValues)) {
 			CommandLine.usage(this, System.out);
 			System.exit(-1);
 		}
