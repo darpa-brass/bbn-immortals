@@ -3,8 +3,6 @@
 import argparse
 import os
 
-from lxml import etree
-
 _parser = None
 _subparsers = None
 
@@ -30,6 +28,7 @@ def init_parser(parent_parser=None):
 
 
 def _fix(src_file: str):
+    from lxml import etree
     doc = etree.parse(src_file)
     generic_parameters = doc.xpath('//GenericParameter')  # , namespaces={"mdl": ns})
 

@@ -1,0 +1,29 @@
+{
+  "identifier": "orientdb",
+  "version": "2.2.37",
+  "home": "{installationRoot}orientdb",
+  "packageDependencies": [
+    "wget",
+    "unzip",
+    "python3",
+    "python3-pip"
+  ],
+  "linux": {
+    "ubuntu": {
+      "setupCommands": [
+        "pip3 install pyorient",
+        "pip3 install lxml",
+        "pip3 install plotly",
+        "export ORIENTDB_ROOT_PASSWORD=th3r3c@nb3onlyon3",
+        "wget https://s3.us-east-2.amazonaws.com/orientdb3/releases/2.2.37/orientdb-community-2.2.37.tar.gz -O {tempDirectory}/orientdb-community-{version}.zip",
+        "tar xvzf {tempDirectory}/orientdb-community-{version}.zip -C {tempDirectory}",
+        "mv {tempDirectory}/orientdb-community-{version} {home}"
+      ]
+    },
+    "requiredExecutables": [
+      "bin/orientdb.sh"
+    ],
+    "homeExportVariable": "ORIENTDB_HOME",
+    "homeExportRequired": true
+  }
+}

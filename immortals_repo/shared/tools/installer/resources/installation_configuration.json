@@ -34,7 +34,7 @@
     "applicationIdentifiers": [
         "java-1.8",
         "stack",
-        "z3-4.7.1",
+        "z3-4.8.4",
         "maven-3",
         "fuseki-2.3.1",
         "anaconda"
@@ -96,9 +96,9 @@
         "phase3": {
             "applicationIdentifiers": [
                 "java-1.8",
-                "orientdb-2.2.24",
+                "orientdb-2.2.37",
                 "stack",
-                "z3-4.7.1",
+                "z3-4.8.4",
                 "maven-3",
                 "fuseki-2.3.1",
                 "anaconda"
@@ -107,15 +107,15 @@
         "phase3scenario5": {
             "applicationIdentifiers": [
                 "java-1.8",
-                "orientdb-2.2.24",
+                "orientdb-2.2.37",
                 "stack",
-                "z3-4.7.1"
+                "z3-4.8.4"
             ]
         },
         "phase3scenario6": {
             "applicationIdentifiers": [
                 "java-1.8",
-                "orientdb-2.2.24",
+                "orientdb-2.2.37",
                 "maven-3",
                 "fuseki-2.3.1",
                 "anaconda"
