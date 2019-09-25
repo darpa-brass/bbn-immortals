@@ -38,6 +38,7 @@ public abstract class TestScenarioRunner {
 	}
 
 	protected TestScenarioRunner(@Nonnull TestScenario scenario) {
+		EnvironmentConfiguration.setArtifactDirectorySubdirectory(scenario.getShortName());
 		this.scenario = scenario;
 	}
 

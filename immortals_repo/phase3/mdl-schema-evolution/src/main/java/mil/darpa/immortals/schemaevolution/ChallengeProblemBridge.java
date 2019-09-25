@@ -81,6 +81,13 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 	}
 
 	public String saveToFile(@Nonnull String evaluationInstanceIdentifier, @Nonnull byte[] data, @Nonnull String filename) throws IOException {
+		String prefix = EnvironmentConfiguration.getArtifactPrefix();
+		if (filename.startsWith("_")) {
+			filename = filename.substring(1);
+			filename = "_" + prefix + filename;
+		} else {
+			filename = prefix + filename;
+		}
 		File target = EnvironmentConfiguration.getArtifactDirectory().resolve(filename).toFile();
 		FileOutputStream fos = new FileOutputStream(target);
 		fos.write(data);

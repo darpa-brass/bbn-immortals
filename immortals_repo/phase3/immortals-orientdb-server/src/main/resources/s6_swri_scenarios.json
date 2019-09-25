@@ -1,0 +1,76 @@
+{
+	"scenarios": [
+		{
+			"shortName": "s6_v17_embedded_add",
+			"scenarioType": "Scenario6swri",
+			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - Add",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "V0_8_17",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_add.xsd",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_v17_embedded_move",
+			"scenarioType": "Scenario6swri",
+			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - Move ",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "V0_8_17",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_move.xsd",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_v17_embedded_move2",
+			"scenarioType": "Scenario6swri",
+			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - ",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "V0_8_17",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_move2.xsd",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_v17_embedded_remove",
+			"scenarioType": "Scenario6swri",
+			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - Remove",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "V0_8_17",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_remove.xsd",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_v17_embedded_rename",
+			"scenarioType": "Scenario6swri",
+			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - Rename",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "V0_8_17",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_rename.xsd",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_v17_embedded_rename2",
+			"scenarioType": "Scenario6swri",
+			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - Rename 2",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "V0_8_17",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_rename2.xsd",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			],
+			"expectedJsonOutputStructure": {}
+		}
+	]
+}

@@ -20,6 +20,14 @@ sourceSets {
 			srcDirs = ['src/integrationtest/resources']
 		}
 	}
+	unstable6test {
+		java {
+			srcDirs = ['src/unstable6test/java']
+		}
+		resources {
+			srcDirs = ['src/integrationtest/resources']
+		}
+	}
 }
 
 task integrationTest(type: Test) {
@@ -43,6 +51,28 @@ task integrationTest(type: Test) {
 	reports.html.enabled = true
 }
 
+task unstable6test(type: Test) {
+	useTestNG()
+	group = 'Verification'
+	description = 'Executes Unstable Scenario 6 tests.'
+	testClassesDirs = sourceSets.unstable6test.output.classesDirs
+	classpath = sourceSets.unstable6test.runtimeClasspath
+	testLogging {
+		showStandardStreams = true
+	}
+	systemProperty "mil.darpa.immortals.root", projectDir.toPath().parent.parent.toFile().getCanonicalFile().absolutePath
+	systemProperty "mil.darpa.immortals.artifactdirectory", buildDir.toPath().resolve("tmp/unstable6test").toFile().getCanonicalFile().absolutePath
+	systemProperty "immortalsLogLevel", "DEBUG"
+	systemProperty "mil.darpa.immortals.basicDisplayMode", ""
+	// Nulling these properties since tests should run from canned backup data
+	environment "IMMORTALS_CHALLENGE_PROBLEMS_ROOT", null
+	environment "IMMORTALS_ADAPTIVE_CONSTRAINT_SATISFACTION_ROOT", null
+	setWorkingDir(buildDir.toPath().resolve("tmp/unstable6test").toFile())
+	reports.junitXml.enabled = true
+	reports.html.enabled = true
+}
+
+
 dependencies {
 	integrationTestCompile 'ch.qos.logback:logback-classic:1.1.7'
 	integrationTestCompile 'ch.qos.logback:logback-core:1.1.7'
@@ -59,4 +89,23 @@ dependencies {
 	integrationTestCompile 'com.google.code.gson:gson:2.7'
 	integrationTestCompile 'mil.darpa.immortals:mdl-immortals-bridge:0.2'
 	integrationTestCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
+
+
+
+
+	unstable6testCompile 'ch.qos.logback:logback-classic:1.1.7'
+	unstable6testCompile 'ch.qos.logback:logback-core:1.1.7'
+	unstable6testCompile 'org.slf4j:slf4j-api:1.7.5'
+	unstable6testCompile 'org.slf4j:jul-to-slf4j:1.7.5'
+
+	unstable6testCompile 'com.orientechnologies:orientdb-core:2.2.24'
+	unstable6testCompile 'com.orientechnologies:orientdb-graphdb:2.2.24'
+	unstable6testCompile 'com.orientechnologies:orientdb-server:2.2.24'
+	unstable6testCompile 'com.google.code.findbugs:jsr305:3.0.1'
+
+	unstable6testCompile project(':')
+	unstable6testCompile 'org.testng:testng:6.14.3'
+	unstable6testCompile 'com.google.code.gson:gson:2.7'
+	unstable6testCompile 'mil.darpa.immortals:mdl-immortals-bridge:0.2'
+	unstable6testCompile 'mil.darpa.immortals:immortals-orientdb-server:0.2'
 }

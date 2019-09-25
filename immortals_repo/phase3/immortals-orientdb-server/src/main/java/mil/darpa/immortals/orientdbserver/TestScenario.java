@@ -1,9 +1,6 @@
 package mil.darpa.immortals.orientdbserver;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 import org.apache.tools.ant.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +20,23 @@ import java.util.Map;
 
 public class TestScenario {
 
+	private final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
 	private final static String DB_NAME_PREFIX = "IMMORTALS_";
 
 	private final static Logger logger = LoggerFactory.getLogger(TestScenario.class);
 
+	public static class Scenario6InputData {
+		public final String initialMdlVersion;
+		public final String updatedMdlVersion;
+		public final String updatedMdlSchema;
+
+		public Scenario6InputData(@Nonnull String initialMdlVersion, @Nullable String updatedMdlVersion, @Nullable String updatedMdlSchema) {
+			this.initialMdlVersion = initialMdlVersion;
+			this.updatedMdlVersion = updatedMdlVersion;
+			this.updatedMdlSchema = updatedMdlSchema;
+		}
+	}
 
 	private final String shortName;
 	private final String prettyName;
@@ -36,7 +46,10 @@ public class TestScenario {
 	private final String xmlMdlrootInputPath;
 	private final String ingestedXmlInventoryHash;
 	private final String ingestedXmlMdlrootInputHash;
-	private final String jsonInputPath;
+	private final String initialXsdVersion;
+	private final String updatedXsdVersion;
+	private final String updatedXsdInputPath;
+	private final String updatedXsdInputPathHash;
 	private final LinkedList<String> expectedStatusSequence;
 	private final JsonObject expectedJsonOutputStructure;
 
@@ -60,8 +73,9 @@ public class TestScenario {
 	public TestScenario(@Nonnull String shortName, @Nonnull String prettyName, @Nonnull String scenarioType,
 	                    @Nonnull int timeoutMS, @Nullable String xmlInventoryPath, @Nullable String xmlMdlrootInputPath,
 	                    @Nonnull String ingestedXmlInventoryHash, @Nonnull String ingestedXmlMdlrootInputHash,
-	                    @Nullable String jsonInputPath, @Nonnull List<String> expectedStatusSequence,
-	                    @Nullable JsonObject expectedJsonOutputStructure) {
+	                    @Nonnull String initialXsdVersion, @Nonnull String updatedXsdVersion,
+	                    @Nonnull String updatedXsdInputPath, @Nonnull String updatedXsdInputPathHash,
+	                    @Nonnull List<String> expectedStatusSequence, @Nullable JsonObject expectedJsonOutputStructure) {
 		this.shortName = shortName;
 		this.scenarioType = scenarioType;
 		this.prettyName = prettyName;
@@ -70,7 +84,10 @@ public class TestScenario {
 		this.xmlMdlrootInputPath = xmlMdlrootInputPath;
 		this.ingestedXmlInventoryHash = ingestedXmlInventoryHash;
 		this.ingestedXmlMdlrootInputHash = ingestedXmlMdlrootInputHash;
-		this.jsonInputPath = jsonInputPath;
+		this.initialXsdVersion = initialXsdVersion;
+		this.updatedXsdVersion = updatedXsdVersion;
+		this.updatedXsdInputPath = updatedXsdInputPath;
+		this.updatedXsdInputPathHash = updatedXsdInputPathHash;
 		this.expectedStatusSequence = new LinkedList<>(expectedStatusSequence);
 		this.expectedJsonOutputStructure = expectedJsonOutputStructure;
 	}
@@ -106,19 +123,17 @@ public class TestScenario {
 		return getBackupInputStream() != null;
 	}
 
-	public InputStream getInputJsonData() {
-		InputStream inputJsonData;
-		Path dataPath;
-		if ((inputJsonData = TestScenarios.class.getClassLoader().getResourceAsStream("inputJsonData/" + this.shortName + ".json")) != null) {
-			return inputJsonData;
-		} else if (getJsonInputPath() != null && (dataPath = getPathInParentsIfExists(getJsonInputPath())) != null) {
-			try {
-				return new FileInputStream(dataPath.toFile());
-			} catch (FileNotFoundException e) {
-				throw new RuntimeException(e);
-			}
+	public String getInputJsonDataString() {
+		try {
+			Scenario6InputData data = new Scenario6InputData(
+					initialXsdVersion,
+					updatedXsdVersion,
+					FileUtils.readFully(new InputStreamReader(new FileInputStream(updatedXsdInputPath)))
+			);
+			return gson.toJson(data);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-		return null;
 	}
 
 	public String getDbName() {
@@ -159,8 +174,23 @@ public class TestScenario {
 		return f;
 	}
 
+	public File getUpdatedXsdInputPath() {
+		if (updatedXsdInputPath == null) {
+			throw new RuntimeException("Updated XSD is null!");
+		}
+		File f = new File(updatedXsdInputPath);
+		if (!f.exists()) {
+			throw new RuntimeException("The Updated XSD file '" + f.toString() + "' does not exist!");
+		}
+		return f;
+	}
+
 	public boolean hasXmlInventoryInput() {
 		return xmlInventoryPath != null;
+	}
+
+	public boolean hasUpdatedXsdInputPath() {
+		return updatedXsdInputPath != null;
 	}
 
 	public boolean hasXmlMdlrootInput() {
@@ -168,9 +198,9 @@ public class TestScenario {
 
 	}
 
-	public String getJsonInputPath() {
-		return jsonInputPath;
-	}
+//	public String getJsonInputPath() {
+//		return jsonInputPath;
+//	}
 
 	public List<String> getExpectedStatusSequence() {
 		return expectedStatusSequence;
@@ -198,11 +228,13 @@ public class TestScenario {
 	}
 
 	public boolean backupIsOutdated() {
-		if (!(hasXmlMdlrootInput() || hasXmlInventoryInput())) {
+		if (!(hasXmlMdlrootInput() || hasXmlInventoryInput() || hasUpdatedXsdInputPath())) {
 			throw new RuntimeException("Cannot validate backup since no source files can be found!");
 		}
+
 		return ((hasXmlMdlrootInput() && fileIsOutdated(getXmlMdlrootInputPath(), ingestedXmlMdlrootInputHash)) ||
 				(hasXmlInventoryInput() && fileIsOutdated(getXmlInventoryPath(), ingestedXmlInventoryHash)) ||
+				(hasUpdatedXsdInputPath() && fileIsOutdated(getUpdatedXsdInputPath(), updatedXsdInputPathHash)) ||
 				(!hasBackup()));
 	}
 

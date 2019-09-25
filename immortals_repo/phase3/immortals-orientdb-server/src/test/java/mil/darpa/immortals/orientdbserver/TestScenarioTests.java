@@ -9,24 +9,24 @@ public class TestScenarioTests {
 	public void generalTest() {
 		TestScenario s5 = TestScenarios.getTestScenario("s5DummyTest5BackupExists");
 		Assert.assertNotNull(s5.getBackupInputStream());
-		Assert.assertNull(s5.getInputJsonData());
+		Assert.assertNull(s5.getInputJsonDataString());
 		// Not necessary since Python is used to deal with raw XML files
 //		Assert.assertNull(s5.getXmlInventoryPath());
 //		Assert.assertNull(s5.getXmlMdlrootInputPath());
 
 		s5 = TestScenarios.getTestScenario("s5DummyTest5BackupDoesNotExist");
 		Assert.assertNull(s5.getBackupInputStream());
-		Assert.assertNull(s5.getInputJsonData());
+		Assert.assertNull(s5.getInputJsonDataString());
 //		Assert.assertNotNull(s5.getXmlInventoryPath());
 //		Assert.assertNotNull(s5.getXmlMdlrootInputPath());
 
 		TestScenario s6 = TestScenarios.getTestScenario("s6DummyJsonInputInResources");
-		Assert.assertNotNull(s6.getInputJsonData());
+		Assert.assertNotNull(s6.getInputJsonDataString());
 
 		s6 = TestScenarios.getTestScenario("s6DummyJsonInputInResources");
-		Assert.assertNotNull(s6.getInputJsonData());
+		Assert.assertNotNull(s6.getInputJsonDataString());
 
 		s6 = TestScenarios.getTestScenario("s6DummyJsonFileAndResourceExists");
-		Assert.assertNotNull(s6.getInputJsonData());
+		Assert.assertNotNull(s6.getInputJsonDataString());
 	}
 }

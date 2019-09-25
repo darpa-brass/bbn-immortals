@@ -198,6 +198,7 @@ public class OdbEmbeddedServer {
 						"' without a challenge-problems-root set! " + EnvironmentConfiguration.CHALLENGE_PROBLEMS_ROOT.getDisplayableUsage());
 			}
 
+			Orient.instance().startup();
 			logger.info("Starting Embedded OrientDB Server...");
 			server = OServerMain.create();
 
@@ -327,7 +328,7 @@ public class OdbEmbeddedServer {
 						db.command(new OCommandSQL("CREATE PROPERTY BBNEvaluationData.currentState STRING")).execute();
 						db.command(new OCommandSQL("CREATE PROPERTY BBNEvaluationData.currentStateInfo STRING")).execute();
 
-						String data = FileUtils.readFully(new InputStreamReader(scenario.getInputJsonData()));
+						String data = scenario.getInputJsonDataString();
 
 						ODocument doc = new ODocument("BBNEvaluationData");
 						doc.field("inputJsonData", data);
@@ -390,7 +391,6 @@ public class OdbEmbeddedServer {
 				break;
 		}
 		System.setProperty(EnvironmentConfiguration.ODB_TARGET.javaArg, "remote:" + host + ":" + port + "/" + scenario.getDbName());
-		System.setProperty(EnvironmentConfiguration.ARTIFACT_DIRECTORY.javaArg, EnvironmentConfiguration.getArtifactDirectory().toString());
 	}
 
 	public boolean isRunning() {

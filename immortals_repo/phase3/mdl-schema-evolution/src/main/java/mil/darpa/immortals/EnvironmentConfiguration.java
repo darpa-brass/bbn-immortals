@@ -19,12 +19,13 @@ public enum EnvironmentConfiguration {
 	ODB_PASSWORD("ORIENTDB_EVAL_PASSWORD", "mil.darpa.immortals.odbPassword", "admin"),
 	ARTIFACT_DIRECTORY("IMMORTALS_ARTIFACT_DIRECTORY", "mil.darpa.immortals.artifactdirectory",
 			tryResolveRelativeToImmortalsRoot(true, "phase3", "DEFAULT_ARTIFACT_DIRECTORY")),
+	ARTIFACT_DIRECTORY_SUBDIRECTORY("IMMORTALS_ARTIFACT_DIRECTORY_SUBDIRECTORY", "mil.darpa.immortals.artifactsubdirectory", null),
+	ARTIFACT_PREFIX("IMMORTALS_ARTIFACT_PREFIX", "mil.darpa.immortals.artifactprefix", ""),
 	CHALLENGE_PROBLEMS_ROOT("IMMORTALS_CHALLENGE_PROBLEMS_ROOT", "mil.darpa.immortals.challengeProblemsRoot", null),
 	ADAPTIVE_CONSTRAINT_SATISFACTION_ROOT("IMMORTALS_ADAPTIVE_CONSTRAINT_SATISFACTION_ROOT", "mil.darpa.immortals.adaptiveConstraintSatisfactionRoot", null),
 	DSL_PATH("IMMORTALS_RESOURCE_DSL", "mil.darpa.immortals.resourceDslRoot",
 			tryResolveRelativeToImmortalsRoot(false, "dsl", "resource-dsl")),
 	BASIC_DISPLAY_MODE("IMMORTALS_BASIC_DISPLAY_MODE", "mil.darpa.immortals.basicDisplayMode", true);
-
 
 	private static final Logger logger = LoggerFactory.getLogger(EnvironmentConfiguration.class.getName());
 
@@ -40,8 +41,35 @@ public enum EnvironmentConfiguration {
 		return ODB_PASSWORD.getValue();
 	}
 
+	public static void setArtifactDirectorySubdirectory(@Nonnull String subdirectory) {
+		System.setProperty(ARTIFACT_DIRECTORY_SUBDIRECTORY.javaArg, subdirectory);
+	}
+
+	public static void setArtifactPrefix(@Nonnull String artifactPrefix) {
+		System.setProperty(ARTIFACT_PREFIX.javaArg, artifactPrefix);
+	}
+
+	public static String getArtifactPrefix() {
+		return ARTIFACT_PREFIX.getValue();
+	}
+
 	public static Path getArtifactDirectory() {
-		return Paths.get(ARTIFACT_DIRECTORY.getValue()).toAbsolutePath();
+		try {
+
+			Path artifactDirectory = Paths.get(ARTIFACT_DIRECTORY.getValue()).toAbsolutePath();
+			if (!Files.exists(artifactDirectory)) {
+				throw new RuntimeException("The artifact directory '" + artifactDirectory.toString() + "' does not exist!");
+			}
+			if (ARTIFACT_DIRECTORY_SUBDIRECTORY.isPresent()) {
+				artifactDirectory = artifactDirectory.resolve(ARTIFACT_DIRECTORY_SUBDIRECTORY.getValue());
+				if (!Files.exists(artifactDirectory)) {
+					Files.createDirectory(artifactDirectory);
+				}
+			}
+			return artifactDirectory;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static boolean isDefaultArtifactDirectory() {
@@ -82,6 +110,10 @@ public enum EnvironmentConfiguration {
 		if (challengeProblemBridge != null) {
 			return challengeProblemBridge.saveToFile(evaluationIdentifier, data, filename);
 		} else {
+			if (filename.startsWith("_")) {
+				filename = filename.substring(1);
+				filename = "_" + getArtifactPrefix() + filename;
+			}
 			Path target = getArtifactDirectory().resolve(filename);
 			Files.write(target, data);
 			return target.toString();

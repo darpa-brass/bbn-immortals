@@ -10,7 +10,8 @@
       // How long to allow the test to run until it is likely it has hung for some reason
       "timeoutMS": 600000,
       // The input path relative to the <immortals_root>/phase3 directory for the input JSON to provide SwRI
-      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_12to10.json",
+			"initialXsdVersion": "v0_8_12",
+      "updatedXsdVersion": "v0_8_10",
       // The expected terminal status. Only provide a single status for scenario 6!
       "expectedStatusSequence": [
         "AdaptationSuccessful"
@@ -22,7 +23,8 @@
       "scenarioType": "Scenario6bbn",
       "prettyName": "Scenario 6 - v0.8.16 to v0.8.19",
       "timeoutMS": 600000,
-      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_16to19.json",
+      "initialXsdVersion": "v0_8_16",
+      "updatedXsdVersion": "v0_8_19",
       "expectedStatusSequence": [
         "AdaptationSuccessful"
       ],
@@ -33,7 +35,8 @@
       "scenarioType": "Scenario6bbn",
       "prettyName": "Scenario 6 - v0.8.17 to v0.8.19",
       "timeoutMS": 600000,
-      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_17to19.json",
+      "initialXsdVersion": "V0_8_17",
+      "updatedXsdVersion": "v0_8_19",
       "expectedStatusSequence": [
         "AdaptationSuccessful"
       ],
@@ -44,7 +47,8 @@
       "scenarioType": "Scenario6bbn",
       "prettyName": "Scenario 6 - v0.8.17 to v0.8.19 - Embedded Schema Update",
       "timeoutMS": 600000,
-      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_17to19_embeddedSchemaUpdate.json",
+      "initialXsdVersion": "V0_8_17",
+			"updatedXsdInputPath": "knowledge-repo/cp/cp3.1/cp-ess-min/etc/schemas/v19/MDL_v0_8_19.xsd",
       "expectedStatusSequence": [
         "AdaptationSuccessful"
       ],
@@ -55,7 +59,8 @@
       "scenarioType": "Scenario6bbn",
       "prettyName": "Scenario 6 - v0.8.7 to v0.8.14",
       "timeoutMS": 600000,
-      "jsonInputPath": "shared/tools/odb/resources/dummy_data/s6_7to14.json",
+      "initialXsdVersion": "V0_8_17",
+      "updatedXsdVersion": "V0_8_14",
       "expectedStatusSequence": [
         "AdaptationSuccessful"
       ],

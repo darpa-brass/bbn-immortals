@@ -89,7 +89,11 @@ public class SolverMain {
 
 			TerminalStatus state;
 
+			int iterationCounter = 0;
+
 			while ((state = cpb.waitForReadyOrHalt()) != TerminalStatus.Halt) {
+				EnvironmentConfiguration.setArtifactPrefix("iteration_" + Integer.toString(iterationCounter++) + "-");
+
 				logger.info("Starting Adaptation");
 				if (state == TerminalStatus.ReadyForAdaptation) {
 					evaluationInstanceIdentifier = config.getEvaluationIdentifier() == null ? ("I" + System.currentTimeMillis()) : config.getEvaluationIdentifier();

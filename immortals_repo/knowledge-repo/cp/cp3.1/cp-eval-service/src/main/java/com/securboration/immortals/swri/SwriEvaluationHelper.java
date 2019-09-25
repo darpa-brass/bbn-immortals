@@ -653,6 +653,32 @@ public class SwriEvaluationHelper {
                 }
             }
             
+            {//src -> dst schema translation
+                final byte[] xslt = ZipHelper.getZipEntry(
+                    evalZip, 
+                    "ess/ess/xsdts-client/0/response.xslt"
+                    );
+                
+                bridge.storeLargeBinaryData(
+                    uuid, 
+                    "srcToDst.xslt", 
+                    xslt
+                    );
+            }
+            
+            {//dst -> src schema translation
+                final byte[] xslt = ZipHelper.getZipEntry(
+                    evalZip, 
+                    "ess/ess/xsdts-client/1/response.xslt"
+                    );
+                
+                bridge.storeLargeBinaryData(
+                    uuid, 
+                    "dstToSrc.xslt", 
+                    xslt
+                    );
+            }
+            
             {//add analysis metrics
                 final byte[] entry = ZipHelper.getZipEntry(
                     evalZip, 

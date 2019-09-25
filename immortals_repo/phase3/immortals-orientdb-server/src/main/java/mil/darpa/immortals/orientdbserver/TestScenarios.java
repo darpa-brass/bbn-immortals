@@ -51,7 +51,8 @@ public class TestScenarios {
 		List<TestScenario> scenarios = new LinkedList<>();
 		scenarios.addAll(initTestScenarios(cl.getResourceAsStream("s5_bbn_scenarios.json")));
 		scenarios.addAll(initTestScenarios(cl.getResourceAsStream("s5_swri_scenarios.json")));
-		scenarios.addAll(initTestScenarios(cl.getResourceAsStream("s6_scenarios.json")));
+		scenarios.addAll(initTestScenarios(cl.getResourceAsStream("s6_bbn_scenarios.json")));
+		scenarios.addAll(initTestScenarios(cl.getResourceAsStream("s6_swri_scenarios.json")));
 		internal = new TestScenarios(scenarios);
 	}
 
@@ -98,7 +99,8 @@ public class TestScenarios {
 			for (Map.Entry<String, JsonElement> elementAttributeEntry : scenarioElement.getAsJsonObject().entrySet()) {
 				String elementAttributeKey = elementAttributeEntry.getKey();
 				JsonElement elementAttributeValue = elementAttributeEntry.getValue();
-				if (elementAttributeKey.equals("xmlInventoryPath") || elementAttributeKey.equals("xmlMdlrootInputPath")) {
+				if (elementAttributeKey.equals("xmlInventoryPath") || elementAttributeKey.equals("xmlMdlrootInputPath") ||
+						elementAttributeKey.equals("updatedXsdInputPath")) {
 					String path = injectEnvironmentVariables(elementAttributeValue.getAsString());
 					if (path != null) {
 						Path p = Paths.get(path);
@@ -152,7 +154,6 @@ public class TestScenarios {
 		return stream.map(TestScenario::getShortName).collect(Collectors.toList());
 	}
 
-
 	public static List<String> getBbnScenario5TestScenarioIdentifiers() {
 		return filterScenarioNames(TestScenario::isBbn, TestScenario::isScenario5);
 	}
@@ -177,20 +178,43 @@ public class TestScenarios {
 		return filterScenarioNames(TestScenario::isSwri, TestScenario::isScenario5);
 	}
 
-	public static List<String> getScenario6TestScenarioIdentifiers() {
-		return filterScenarioNames(TestScenario::isScenario6);
+	public static List<String> getBbnScenario6TestScenarioIdentifiers() {
+		return filterScenarioNames(TestScenario::isBbn, TestScenario::isScenario6);
 	}
 
-	public static List<String> getAllTestScenarioIdentifiers() {
-		return internal.scenarios.stream().map(TestScenario::getShortName).collect(Collectors.toList());
+	public static List<TestScenario> getBbnScenario6TestScenarios() {
+		return filterScenarios(TestScenario::isBbn, TestScenario::isScenario6);
+	}
+
+	public static List<TestScenario> getSwriScenario6TestScenarios() {
+		return filterScenarios(TestScenario::isSwri, TestScenario::isScenario6);
 	}
 
 	public static List<TestScenario> getAllScenario6TestScenarios() {
 		return filterScenarios(TestScenario::isScenario6);
 	}
 
+	public static List<String> getAllScenario6TestScenarioIdentifiers() {
+		return filterScenarioNames(TestScenario::isScenario6);
+	}
+
+	public static List<String> getSwriScenario6TestScenarioIdentifiers() {
+		return filterScenarioNames(TestScenario::isSwri, TestScenario::isScenario6);
+	}
+
+	public static List<String> getAllTestScenarioIdentifiers() {
+		return internal.scenarios.stream().map(TestScenario::getShortName).collect(Collectors.toList());
+	}
+
 	public static TestScenario getTestScenario(@Nonnull String shortName) {
 		Optional<TestScenario> match = internal.scenarios.stream().filter(x -> x.getShortName().equals(shortName)).findFirst();
 		return match.orElse(null);
+	}
+
+	public static void main(String[] args) {
+		List<TestScenario> scenarios = TestScenarios.getSwriScenario6TestScenarios();
+		for (TestScenario scenario : scenarios) {
+
+		}
 	}
 }
