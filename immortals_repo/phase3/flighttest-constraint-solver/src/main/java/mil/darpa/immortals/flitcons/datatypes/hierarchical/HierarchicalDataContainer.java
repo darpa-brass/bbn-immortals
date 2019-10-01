@@ -3,7 +3,6 @@ package mil.darpa.immortals.flitcons.datatypes.hierarchical;
 import mil.darpa.immortals.flitcons.Configuration;
 import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.datatypes.DataType;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.Equation;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +37,22 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 			data.setParentContainer(this);
 		}
 	}
+
+//	public Set<HierarchicalData> checkForDummyNodes() {
+//		int emptyNodeCount = 0;
+//		Set<HierarchicalData> emptyNodes = new HashSet<>();
+//		Iterator<HierarchicalData> dataIterator = getDataIterator();
+//		while (dataIterator.hasNext()) {
+//			HierarchicalData data = dataIterator.next();
+//			if (data.getAssociatedObject() == null) {
+//			} else if (!(data.getAssociatedObject() instanceof OrientVertex)) {
+//				emptyNodes.add(data);
+//				emptyNodeCount++;
+//			}
+//		}
+//		System.out.println("EmptyNodeCount: " + emptyNodeCount);
+//		return emptyNodes;
+//	}
 
 	//	 Useful functions for debugging node trees since the relations are through identifiers and not direct
 	private Map<HierarchicalData, Map> debugMap;
@@ -218,8 +233,36 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 		}
 	}
 
-	public void cloneTrimmedTreeIntoContainer(@Nonnull HierarchicalData sourceData,
-	                                          @Nonnull HierarchicalData targetParentNode) {
+	public HierarchicalData clonePotentiallyConflictingTreeTreeIntoContainer(@Nonnull HierarchicalData sourceData,
+	                                                                         @Nonnull HierarchicalData targetParentNode) {
+		validated = false;
+
+		// Duplicate the node
+		HierarchicalData clone = sourceData.duplicatePotentiallyConflictingDisconnectedClone(targetParentNode.node);
+		clone.setParentContainer(this);
+		clone.isRootNode = false;
+		if (clone.getParent() != null) {
+			clone.clearParentNode();
+		}
+
+		setParentNode(clone, targetParentNode);
+
+		// And do the same for all children
+		Iterator<String> nodeTypeIterator = sourceData.getChildrenClassIterator();
+		while (nodeTypeIterator.hasNext()) {
+			String nodeTypeObject = nodeTypeIterator.next();
+
+			Iterator<HierarchicalData> childDataIter = sourceData.getChildrenDataIterator(nodeTypeObject);
+			while (childDataIter.hasNext()) {
+				HierarchicalData originalChildNode = childDataIter.next();
+				clonePotentiallyConflictingTreeTreeIntoContainer(originalChildNode, clone);
+			}
+		}
+		return clone;
+	}
+
+	public HierarchicalData cloneTrimmedTreeIntoContainer(@Nonnull HierarchicalData sourceData,
+	                                                      @Nonnull HierarchicalData targetParentNode) {
 		validated = false;
 
 		// Duplicate the node
@@ -243,6 +286,7 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 				cloneTrimmedTreeIntoContainer(originalChildNode, clone);
 			}
 		}
+		return clone;
 	}
 
 	@Override
@@ -484,20 +528,6 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 			String nodeType = childNodeTypeIter.next();
 			parentNode.removeAttribute(nodeType);
 		}
-	}
-
-	public void injectEquation(@Nonnull HierarchicalIdentifier parentNode, @Nonnull String equationTargetValue, @Nonnull Equation equation) {
-		validated = false;
-		HierarchicalData parentData = existingDataIdentifierMap.get(parentNode);
-
-		Map<String, Object> attributes = new HashMap<>();
-		attributes.put("Equation", equation.Equation);
-		HierarchicalIdentifier identifier = HierarchicalIdentifier.produceTraceableNode(UUID.randomUUID().toString(), equationTargetValue);
-		HierarchicalData equationData = new HierarchicalData(identifier,
-				attributes, new Object(), false, parentNode, null, null, null, null);
-		existingDataIdentifierMap.put(equationData.node, equationData);
-		superParentChildElements.get(parentData.getRootNode()).add(equationData);
-		parentData.addChildNode(equationData.node);
 	}
 
 	public Set<HierarchicalData> getNodesAtPath(@Nonnull List<String> path) {

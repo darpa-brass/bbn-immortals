@@ -19,6 +19,7 @@ library
   hs-source-dirs:   src
   default-language: Haskell2010
   ghc-options:
+    -- -fprof-auto
     -Wall
     -Wredundant-constraints
     -Wno-missing-signatures
@@ -30,11 +31,14 @@ library
       ConstraintKinds
     , DeriveDataTypeable
     , DeriveGeneric
+    , DeriveTraversable
     , FlexibleContexts
     , FlexibleInstances
     , GeneralizedNewtypeDeriving
+    , LambdaCase
     , MultiParamTypeClasses
     , OverloadedStrings
+    , TupleSections
   other-extensions:
       UndecidableInstances
   build-depends:
@@ -52,39 +56,35 @@ library
     , mtl
     , optparse-applicative
     , parser-combinators
-    , sbv
     , scientific
     , split
     , text
     , vector
-
+    , z3
   exposed-modules:
-      DSL.Driver
-    , DSL.Effect
+      DSL.Boolean
+    , DSL.Condition
+    , DSL.Driver
     , DSL.Environment
-    , DSL.Expression
-    , DSL.Model
-    , DSL.Name
-    , DSL.Options
+    , DSL.Evaluation
     , DSL.Parser
     , DSL.Path
-    , DSL.Predicate
     , DSL.Pretty
     , DSL.Primitive
-    , DSL.Profile
-    , DSL.Resource
     , DSL.SAT
-    , DSL.SegList
     , DSL.Serialize
     , DSL.Sugar
     , DSL.Types
-    , DSL.V
-    , DSL.VEnv
-    , DSL.Value
+    , DSL.Variational
     , DSL.Example.CrossApp
     , DSL.Example.Location
     , DSL.Example.Network
     , DSL.Example.SwapDau
+    , DSL.Example.SwapDau.Driver
+    , DSL.Example.SwapDau.Encoding
+    , DSL.Example.SwapDau.Search
+    , DSL.Example.SwapDau.Serialize
+    , DSL.Example.SwapDau.Types
 
 executable resource-dsl
   hs-source-dirs:   app
@@ -111,16 +111,15 @@ test-suite test
     , aeson
     , aeson-better-errors
     , aeson-pretty
+    , containers
     , megaparsec
-    , sbv
     , text
     , tasty
     , tasty-hunit
     , tasty-th
   other-modules:
-      DSL.Example.SwapDau.Test
+      DSL.Evaluation.Test
+    , DSL.Example.SwapDau.Test
     , DSL.Parser.Test
     , DSL.Primitive.Test
     , DSL.SAT.Test
-    , DSL.V.Test
-    , DSL.Value.Test

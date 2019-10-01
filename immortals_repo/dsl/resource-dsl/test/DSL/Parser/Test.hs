@@ -7,16 +7,18 @@ import Data.Bifunctor (first)
 import Data.Either
 import Test.Tasty
 import Test.Tasty.HUnit
-import DSL.Name
+
+import DSL.Parser hiding (cond)
+import DSL.Sugar hiding (int)
 import DSL.Types
-import DSL.Parser
+
 
 testParser = testGroup "DSL.Parser"
   [
     parseBool
     , parseInt
     , parseFloat
-    , parseSymbol
+    , parseString
     , parseVar
     , parsePath
     , parseIExpr
@@ -54,12 +56,12 @@ parseFloat = testGroup "floats"
     testCase "abc" $ fails (runp float "abc") @? "abc fails"
   ]
 
-parseSymbol = testGroup "symbol"
+parseString = testGroup "string"
   [
-    testCase ":hello" $ runp symbol ":hello" @?= success (Symbol "hello"),
-    testCase "hello" $ fails (runp symbol "hello") @? "hello fails",
-    testCase ":a-b-c" $ runp symbol ":a-b_c" @?= success (Symbol "a-b_c"),
-    testCase ":-a-b-c" $ fails (runp symbol ":-a-b-c") @? ":-a-b-c fails"
+    testCase "\"hello\"" $ runp stringLit "\"hello\"" @?= success "hello",
+    testCase "hello" $ fails (runp stringLit "hello") @? "hello fails",
+    testCase "\"a b c\"" $ runp stringLit "\"a b c\"" @?= success "a b c",
+    testCase "\"_A,b-3?\"" $ runp stringLit "\"_A,b-3?\"" @?= success "_A,b-3?"
   ]
 
 parseVar = testGroup "var"
@@ -126,26 +128,26 @@ parsePVal = testGroup "pval"
     testCase "55" $ runp pval "55" @?= success (I 55),
     testCase "3.14" $ runp pval "3.14" @?= success (F 3.14),
     testCase "9.319664492078285e-4" $ runp pval "9.319664492078285e-4" @?= success (F 9.319664492078285e-4),
-    testCase ":abc" $ runp pval ":abc" @?= success (S "abc")
+    testCase "\"abc\"" $ runp pval "\"abc\"" @?= success (S "abc")
   ]
 
 parseExpr = testGroup "expr"
   [
     testCase "()" $ runp expr "()" @?= success (Lit (One Unit)),
-    testCase ":abc" $ runp expr ":abc" @?= success (Lit (One (S "abc"))),
+    testCase "\"abc\"" $ runp expr "\"abc\"" @?= success (Lit (One (S "abc"))),
     testCase "false" $ runp expr "false" @?= success (Lit (One (B False))),
     testCase "9.319664492078285e-4" $ runp expr "9.319664492078285e-4" @?= success (Lit (One (F 9.319664492078285e-4))),
-    testCase "[a]{(),false}" $ runp expr "[a]{(),false}" @?= success (Lit (Chc (BRef "a") (One Unit) (One (B False)))),
-    testCase "[true||(1>a)]{55,3.14}" $ runp expr "[true||(1>a)]{55,3.14}" @?= success (Lit (Chc (OpBB Or (BLit True) (OpIB GT (ILit 1) (IRef "a"))) (One (I 55)) (One (F 3.14)))),
-    testCase "[a]{[b]{1,2},3}" $ runp expr "[a]{[b]{1,2},3}" @?= success (Lit (Chc (BRef "a") (Chc (BRef "b") (One (I 1)) (One (I 2))) (One (I 3)))),
+    testCase "[a]{(),false}" $ runp expr "[a]{(),false}" @?= success (Lit (chc "a" Unit (B False))),
+    testCase "[true||(1>a)]{55,3.14}" $ runp expr "[true||(1>a)]{55,3.14}" @?= success (Lit (Chc (cond (OpBB Or (BLit True) (OpIB GT (ILit 1) (IRef "a")))) (One (I 55)) (One (F 3.14)))),
+    testCase "[a]{[b]{1,2},3}" $ runp expr "[a]{[b]{1,2},3}" @?= success (Lit (Chc (cond "a") (chc "b" (I 1) (I 2)) (One (I 3)))),
     testCase "@." $ runp expr "@." @?= success (Res (Path Relative ["."])),
     testCase "@/this/is/the/path" $ runp expr "@/this/is/the/path" @?= success (Res (Path Absolute ["this","is","the","path"])),
     testCase "$x" $ runp expr "$x" @?= success (Ref "$x"),
     testCase "unit ()" $ runp expr "unit ()" @?= success (P1 U_U (One (Lit (One Unit)))),
-    testCase "unit [a]{1,2}" $ runp expr "unit [a]{1,2}" @?= success (P1 U_U (One (Lit (Chc (BRef "a") (One (I 1)) (One (I 2)))))),
+    testCase "unit [a]{1,2}" $ runp expr "unit [a]{1,2}" @?= success (P1 U_U (One (Lit (chc "a" (I 1) (I 2))))),
     testCase "abs 5" $ runp expr "abs 5" @?= success (P1 (N_N Abs) (One (Lit (One (I 5))))),
     testCase "round 7.9" $ runp expr "round 7.9" @?= success (P1 (F_I Round) (One (Lit (One (F 7.9))))),
-    testCase "if true then false else $var" $ runp expr "if true then false else $var" @?= success (P3 Cond (One (Lit (One (B True)))) (One (Lit (One (B False)))) (One (Ref "$var"))),
+    testCase "if true then false else $var" $ runp expr "if true then false else $var" @?= success (P3 OpIf (One (Lit (One (B True)))) (One (Lit (One (B False)))) (One (Ref "$var"))),
     testCase "-5" $ runp expr "-5" @?= success (P1 (N_N Neg) (One (Lit (One (I 5))))),
     testCase "!true" $ runp expr "!true" @?= success (P1 (B_B Not) (One (Lit (One (B True))))),
     testCase "5*7" $ runp expr "5*7" @?= success (P2 (NN_N Mul) (One (Lit (One (I 5)))) (One (Lit (One (I 7))))),

@@ -46,6 +46,15 @@ public class SolutionInjector {
 		HierarchicalData rawNodeData = node.getRawData();
 		String rawNodeType = rawNodeData.getNodeType();
 
+		if (rawNodeType.equals("Port") && node.getValues().containsKey("Measurement")) {
+			HierarchicalData supersededData = node.getSupersededData();
+			Set<HierarchicalData> children = supersededData.getChildNodesByPath("Measurement");
+			if (children.size() > 1) {
+				// TODO: Is this right?
+				throw AdaptationnException.internal("Unexpected number of measurements!");
+			}
+		}
+
 		TreeMap<String, Object> nodeValues = new TreeMap<>(node.getValues());
 
 		// And for each attribute in that child
@@ -56,7 +65,7 @@ public class SolutionInjector {
 				HierarchicalData realParent = node.getSupersededData();
 
 				// And update it
-				dataSource.update_NodeAttribute((OrientVertex) realParent.associatedObject, attrName, nodeValues.remove(attrName));
+				dataSource.update_NodeAttribute((OrientVertex) realParent.getAssociatedObject(), attrName, nodeValues.remove(attrName));
 			}
 		}
 
@@ -68,7 +77,7 @@ public class SolutionInjector {
 				// If a Thermocouple PortType is necessary
 
 				// Remove the existing "PortType" attribute if it exists
-				dataSource.update_removeAttribute(rawNodeData.associatedObject, "PortType", "PortTypes");
+				dataSource.update_removeAttribute(rawNodeData.getAssociatedObject(), "PortType", "PortTypes");
 
 				// Add the protType object containing the Thermocouple data
 				TreeMap<String, Object> values = new TreeMap<>();
@@ -77,7 +86,7 @@ public class SolutionInjector {
 				List<String> childPath = new LinkedList<>();
 				childPath.add("PortTypes");
 				childPath.add("PortType");
-				dataSource.update_createOrUpdateChildWithAttributes((OrientVertex) rawNodeData.associatedObject, childPath, values);
+				dataSource.update_createOrUpdateChildWithAttributes((OrientVertex) rawNodeData.getAssociatedObject(), childPath, values);
 
 				// And remove the values forom the list to be updated
 				nodeValues.remove("Thermocouple");
@@ -92,12 +101,12 @@ public class SolutionInjector {
 				HierarchicalData childNode = rawNodeData.getChildNodeByPath(childNodePath);
 				if (childNode != null) {
 					// And remove it if so
-					dataSource.update_removeNodeTree(childNode.associatedObject);
+					dataSource.update_removeNodeTree(childNode.getAssociatedObject());
 
 					// Add the attribute to the parent
 					childNodePath.remove(1);
 					HierarchicalData parentNode = rawNodeData.getChildNodeByPath(childNodePath);
-					dataSource.add_NodeAttribute(parentNode.associatedObject, "PortType", nodeValues.get("PortType"));
+					dataSource.add_NodeAttribute(parentNode.getAssociatedObject(), "PortType", nodeValues.get("PortType"));
 
 					// And remove the value from the attributes to update
 					nodeValues.remove("PortType");
@@ -122,7 +131,7 @@ public class SolutionInjector {
 					// Otherwise, it must be remapped using the same data set as the target node
 					HierarchicalData realParentNode = rawNodeData.getChildNodeByPath(childNodeAttributePath.subList(0, childNodeAttributePath.size() - 1));
 					if (realParentNode != null) {
-						dataSource.update_NodeAttribute((OrientVertex) realParentNode.associatedObject, childNodeAttributePath.get(childNodeAttributePath.size() - 1), nodeValues.get(attrName));
+						dataSource.update_NodeAttribute((OrientVertex) realParentNode.getAssociatedObject(), childNodeAttributePath.get(childNodeAttributePath.size() - 1), nodeValues.get(attrName));
 						childAccountedFor = true;
 						break;
 					}
@@ -134,7 +143,7 @@ public class SolutionInjector {
 					HierarchicalData supsersededData = node.getSupersededData();
 					HierarchicalData realParentNode = supsersededData.getChildNodeByPath(childNodeAttributePath.subList(0, childNodeAttributePath.size() - 1));
 					if (realParentNode != null) {
-						dataSource.update_NodeAttribute((OrientVertex) realParentNode.associatedObject, childNodeAttributePath.get(childNodeAttributePath.size() - 1), nodeValues.get(attrName));
+						dataSource.update_NodeAttribute((OrientVertex) realParentNode.getAssociatedObject(), childNodeAttributePath.get(childNodeAttributePath.size() - 1), nodeValues.get(attrName));
 						childAccountedFor = true;
 						break;
 					}
@@ -171,44 +180,12 @@ public class SolutionInjector {
 							HierarchicalData realParentNode = supsersededData.getChildNodeByPath(remappingConfiguration.targetAttributePath.subList(0, remappingConfiguration.targetAttributePath.size() - 1));
 							String nodeName = remappingConfiguration.targetAttributePath.getLast();
 							if (realParentNode != null) {
-								try {
-									// TODO: Handle deconfliction properly
-									if (realParentNode.originalNodeClonedFrom != null) {
-
-										HierarchicalData originalNode = realParentNode.originalNodeClonedFrom;
-										Map<String, Object> newValues = new HashMap<>();
-
-										for (HierarchicalData clone : originalNode.clones) {
-											if (newValues.isEmpty()) {
-												newValues.putAll(clone.getAttributes());
-											} else {
-												for (String name : clone.getAttributeNames()) {
-													if (!newValues.containsKey(name) ||
-															newValues.get(name) != clone.getAttribute(name)) {
-														throw new RuntimeException("Conflict detected!");
-													}
-
-												}
-											}
-										}
-
-
-										dataSource.update_NodeAttribute((OrientVertex) realParentNode.originalNodeClonedFrom.associatedObject, nodeName, currentValue);
-									} else {
-										dataSource.update_NodeAttribute((OrientVertex) realParentNode.associatedObject, nodeName, currentValue);
-									}
-									continue;
-								} catch (Exception e) {
-									throw new RuntimeException(e);
-								}
-
+								dataSource.update_NodeAttribute((OrientVertex) realParentNode.getAssociatedObject(), nodeName, currentValue);
+								continue;
 							}
 						}
 					}
-//					childAccountedFor = false;
 				}
-
-
 			}
 
 			if (!childAccountedFor) {
@@ -220,6 +197,18 @@ public class SolutionInjector {
 	public void injectSolution() {
 		logger.info(Utils.padCenter("Initial PortMapping Configuration", 80, '#'));
 		logger.info(Utils.padCenter("", 80, '#'));
+
+		for (SolutionPreparer.ParentAdaptationData parent : adaptationData) {
+			for (SolutionPreparer.ChildAdaptationData portAdaptationData : parent.ports) {
+				HierarchicalData portData = portAdaptationData.getSupersededData();
+				if (portData.getNodeType().equals("Port") && portAdaptationData.getValues().containsKey("Measurement")) {
+					HierarchicalData measurementData = portData.getChildNodeByPath("Measurement");
+					if (measurementData.originalNodeClonedFrom != null) {
+						OrientVertex newMeasurementVertex = (OrientVertex) dataSource.update_isolatePortMeasurement(portData, measurementData);
+					}
+				}
+			}
+		}
 
 
 		//// 1.  Update the inventory node attributes to match the chosen values
@@ -244,8 +233,8 @@ public class SolutionInjector {
 			for (SolutionPreparer.ChildAdaptationData child : parent.ports) {
 				// Rewire the original node into where the old node was
 				dataSource.update_rewireNode(
-						(OrientVertex) child.supersededRawData.associatedObject,
-						(OrientVertex) child.rawData.associatedObject);
+						(OrientVertex) child.supersededRawData.getAssociatedObject(),
+						(OrientVertex) child.rawData.getAssociatedObject());
 			}
 
 			// Then for the parent, get the replacement data node
@@ -265,15 +254,15 @@ public class SolutionInjector {
 			}
 
 			// Insert the replacement node as a child of the original parent
-			OrientVertex newParentParentNode = (OrientVertex) ((OrientVertex) parentOriginals.iterator().next().associatedObject).getEdges(Direction.OUT, "Containment").iterator().next().getVertex(Direction.IN);
-			dataSource.update_insertNodeAsChild((OrientVertex) parentReplacement.associatedObject, newParentParentNode);
+			OrientVertex newParentParentNode = (OrientVertex) ((OrientVertex) parentOriginals.iterator().next().getAssociatedObject()).getEdges(Direction.OUT, "Containment").iterator().next().getVertex(Direction.IN);
+			dataSource.update_insertNodeAsChild((OrientVertex) parentReplacement.getAssociatedObject(), newParentParentNode);
 
 			nodeTreesToRemove.addAll(parentOriginals);
 		}
 
 		// And remove the old parent nodes
 		for (HierarchicalData data : nodeTreesToRemove) {
-			dataSource.update_removeNodeTree((OrientVertex) data.associatedObject);
+			dataSource.update_removeNodeTree((OrientVertex) data.getAssociatedObject());
 		}
 
 		if (!SolverConfiguration.getInstance().isNoCommit()) {

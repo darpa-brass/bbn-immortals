@@ -185,10 +185,11 @@ public class HierarchicalDataTransformer {
 								node.addAttribute(HierarchicalIdentifier.createBlankNode(), newAttributeName, newAttributeValue);
 							}
 						}
-					} else if (!newAttributeValue.equals(node.getAttribute(originalAttributeName))){ {
-						node.removeAttribute(originalAttributeName);
-						node.addAttribute(HierarchicalIdentifier.createBlankNode(), originalAttributeName, newAttributeValue);
-					}
+					} else if (!newAttributeValue.equals(node.getAttribute(originalAttributeName))) {
+						{
+							node.removeAttribute(originalAttributeName);
+							node.addAttribute(HierarchicalIdentifier.createBlankNode(), originalAttributeName, newAttributeValue);
+						}
 						if (attrNames.contains(originalAttributeName)) {
 							node.removeAttribute(originalAttributeName);
 							node.addAttribute(HierarchicalIdentifier.createBlankNode(), newAttributeName, newAttributeValue);
@@ -592,6 +593,8 @@ public class HierarchicalDataTransformer {
 		Map<HierarchicalData, Set<HierarchicalData>> parentChildMap = new HashMap<>();
 		Map<HierarchicalData, Set<HierarchicalData>> childParentMap = new HashMap<>();
 
+		externalStructure.fillDebugMap();
+
 		// For each DAU node
 		for (HierarchicalData dauNode : primaryStructure.getDauRootNodes()) {
 
@@ -663,41 +666,31 @@ public class HierarchicalDataTransformer {
 				}
 
 			} else if (multiParentChild.node.getNodeType().equals("Measurement")) {
-				// TODO: Add support for deconflicting Measurements
+				// Ignore
 			} else if (multiParentChild.node.getNodeType().equals("DataStream")) {
 				// Ignore
 			} else {
 				throw AdaptationnException.input("Unexpected type '" + multiParentChild.toString() + "' referenced multiple times within a PortMapping!");
 			}
-
-//			todo: Add proper creation of duplicates
-			// And for each one
-//			Iterator<String> childIterator = multiParentChild.getChildrenClassIterator();
-//			while (childIterator.hasNext()) {
-//				String type = childIterator.next();
-//
-//				Iterator<HierarchicalData> dataIterator = multiParentChild.getChildrenDataIterator(type);
-//				while (dataIterator.hasNext()) {
-//					HierarchicalData child = dataIterator.next();
-//					if (child.getChildrenClassIterator().hasNext()) {
-//						// TODO: Make this clearer?
-//						throw AdaptationnException.internal("Complex objects are not currently supported if multiple PortMappings utilize a single measurement!");
-//					}
-//					Set<String> childAttributeNames = child.getAttributeNames();
-//					if (!(childAttributeNames.size() == 2 && childAttributeNames.contains("Min") &&
-//							childAttributeNames.contains("Max") && child.getAttribute("Min").equals(child.getAttribute("Max")))) {
-//						throw AdaptationnException.internal("A single Measurement or DataStream cannot be referenced by multiple PortMappings if it has multiple possible configurations!");
-//					}
-//				}
-//			}
 		}
 
-		// Then remap the nodes;
+		Set<HierarchicalData> deconflictionObjects = new HashSet<>();
+
 		for (Map.Entry<HierarchicalData, Set<HierarchicalData>> entry : parentChildMap.entrySet()) {
 			HierarchicalData parentNode = entry.getKey();
 			for (HierarchicalData externalChild : entry.getValue()) {
 				if (multiParentChildren.contains(externalChild)) {
-					primaryStructure.cloneTrimmedTreeIntoContainer(externalChild, parentNode);
+					if (instructions.potentiallyConflictingNodes.contains(externalChild.getNodeType())) {
+						if (deconflictionObjects.contains(externalChild)) {
+							primaryStructure.clonePotentiallyConflictingTreeTreeIntoContainer(externalChild, parentNode);
+						} else {
+							deconflictionObjects.add(externalChild);
+							primaryStructure.cloneTrimmedTreeIntoContainer(externalChild, parentNode);
+						}
+					} else {
+						primaryStructure.cloneTrimmedTreeIntoContainer(externalChild, parentNode);
+					}
+
 				} else {
 					primaryStructure.cloneTreeIntoContainer(externalChild, parentNode);
 				}

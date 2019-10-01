@@ -14,8 +14,7 @@ import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
 import DSL.Types
-import DSL.Name
-import DSL.Pretty ()
+import DSL.Pretty
 import DSL.Primitive
 
 type Parser = Parsec Void Text
@@ -35,19 +34,27 @@ parseExprText = first errorBundlePretty . parse (topLevel expr) ""
 parseExprString :: String -> Either String Expr
 parseExprString = parseExprText . pack
 
--- | Parse a Text value as an expression.
+-- | Parse a Text value as a boolean expression.
 parseBExprText :: Text -> Either String BExpr
 parseBExprText = first errorBundlePretty . parse (topLevel bexpr) ""
 
--- | Parse a String value as an expression.
+-- | Parse a String value as a boolean expression.
 parseBExprString :: String -> Either String BExpr
 parseBExprString = parseBExprText . pack
 
--- | Parse a Text value as a Value.
+-- | Parse a Text value as a choice condition.
+parseCondText :: Text -> Either String Cond
+parseCondText = first errorBundlePretty . parse (topLevel cond) ""
+
+-- | Parse a String value as a choice condition.
+parseCondString :: String -> Either String Cond
+parseCondString = parseCondText . pack
+
+-- | Parse a Text value as a variational value.
 parseValueText :: Text -> Either String Value
 parseValueText = first errorBundlePretty . parse (topLevel value) ""
 
--- | Parse a String value as an expression.
+-- | Parse a String value as a variational value.
 parseValueString :: String -> Either String Value
 parseValueString = parseValueText . pack
 
@@ -104,6 +111,9 @@ int = fmap fromInteger (lexeme L.decimal) <?> "integer literal"
 
 float :: Parser Double
 float = lexeme L.float <?> "float literal"
+
+stringLit :: Parser Text
+stringLit = between (char '"') (char '"') (pack <$> many (anySingleBut '"'))
 
 maybe' :: Parser a -> Parser (Maybe a)
 maybe' some = none <|> Just <$> some <?> "maybe"
@@ -185,6 +195,9 @@ bterm = try (parens bexpr)
 bexpr :: Parser BExpr
 bexpr = makeExprParser bterm opTableBExpr <?> "boolean expression"
 
+cond :: Parser Cond
+cond = bexpr >>= \e -> return (Cond e Nothing)
+
 -- ** Variational Parser
 
 v :: Parser a -> Parser (V a)
@@ -192,7 +205,7 @@ v a = chc <|> one <?> "choice expression"
   where
     chc = do
       verbatim "["
-      d <- bexpr
+      d <- cond
       verbatim "]"
       verbatim "{"
       l <- v a
@@ -207,7 +220,7 @@ v' e = chc <|> one <?> "choice expression"
   where
     chc = do
       verbatim "["
-      d <- bexpr
+      d <- cond
       verbatim "]"
       verbatim "{"
       trylit d <|> ex d
@@ -232,25 +245,13 @@ value = v (maybe' pval)
 
 -- ** Expression Parser
 
-symbol :: Parser Symbol
-symbol = char ':' >> Symbol <$> name start rest <?> "symbol"
-  where
-    start = char '_' <|> letterChar
-    rest  = choice [char '_', char '-', alphaNumChar]
-
 pval :: Parser PVal
-pval = unit
-    <|> b
-    <|> s
-    <|> f
-    <|> i
+pval = Unit <$ verbatim "()"
+    <|> B <$> bool
+    <|> F <$> try float
+    <|> I <$> int
+    <|> S <$> stringLit
     <?> "primitive value"
-  where
-    unit = Unit <$ verbatim "()"
-    b = B <$> bool
-    i = I <$> int
-    f = F <$> try float
-    s = S <$> symbol
 
 path :: Parser Path
 path = char '@' >> absolute <|> relative <?> "resource path"
@@ -260,7 +261,7 @@ path = char '@' >> absolute <|> relative <?> "resource path"
     steps = sepBy step (char '/')
     step = verbatim ".." <|> verbatim "." <|> (pack <$> many (char '_' <|> alphaNumChar))
 
-keyword :: (Pretty a) => a -> Parser ()
+keyword :: Pretty a => a -> Parser ()
 keyword = rword . pretty
 
 eterm :: Parser Expr
@@ -294,7 +295,7 @@ eterm =
       t <- v' expr
       rword "else"
       e <- v' expr
-      return (P3 Cond c t e)
+      return (P3 OpIf c t e)
 
 p2 :: Op2 -> Parser (V Expr -> V Expr -> Expr)
 p2 o = P2 o <$ verbatim (pretty o)

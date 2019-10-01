@@ -13,6 +13,11 @@ public class SanityTests {
 	}
 
 	@Test
+	public void measurementDuplicationTest() {
+		EmbeddedTestScenario5Runner.createScenario5Runner("bs5eVariedMeasurements_iSharedMeasurements").execute();
+	}
+
+	@Test
 	public void testServerWaitForReady() {
 		EmbeddedTestScenario5Runner.createScenario5Runner("bs5eThermocoupleExtensions_iThermocoupleExtensions").execute(4000);
 	}

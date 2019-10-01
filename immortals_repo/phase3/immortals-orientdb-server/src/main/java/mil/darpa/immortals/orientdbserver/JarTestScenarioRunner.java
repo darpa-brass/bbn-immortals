@@ -45,12 +45,15 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 						"--odb-url", odbServer.getOdbPath(scenario).replace("plocal", "remote"),
 						"--scenario", "5",
 						"--artifact-directory", EnvironmentConfiguration.getArtifactDirectory().toString(),
-						"--debug-mode",
-						"--monochrome-mode"
+						"--debug-mode"
 				};
 				if (useSimpleSolver) {
 					cmd = Arrays.copyOf(cmd, cmd.length + 1);
 					cmd[cmd.length - 1] = "--simple-solver";
+				}
+				if (EnvironmentConfiguration.isBasicDisplayMode()) {
+					cmd = Arrays.copyOf(cmd, cmd.length + 1);
+					cmd[cmd.length -1] = "--monochrome-mode";
 				}
 
 			} else if (scenario.getScenarioType().isScenario6) {

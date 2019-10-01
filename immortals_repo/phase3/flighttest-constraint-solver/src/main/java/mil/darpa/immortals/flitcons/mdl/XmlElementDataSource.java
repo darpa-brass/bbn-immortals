@@ -487,7 +487,9 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 		}
 	}
 
-	private synchronized HierarchicalData createData(@Nonnull Node srcNode, boolean isRootObject, @Nonnull Configuration.PropertyCollectionInstructions collectionInstructions) {
+	private synchronized HierarchicalData createData(
+			@Nonnull Node srcNode, boolean isRootObject,
+			@Nonnull Configuration.PropertyCollectionInstructions collectionInstructions) {
 
 		if (!(srcNode instanceof Element)) {
 			throw AdaptationnException.internal("Cannot create data from a Text node!");
@@ -568,7 +570,7 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 						}
 
 					} else if (collectionInstructions.collectedDebugProperties.containsKey(nodeType) &&
-					collectionInstructions.collectedDebugProperties.get(nodeType).contains(nodeType)) {
+							collectionInstructions.collectedDebugProperties.get(nodeType).contains(nodeType)) {
 
 						String value = textNodes.iterator().next().getValue();
 
@@ -594,16 +596,16 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 			debugData = null;
 		}
 		return new HierarchicalData(
-				identifier,
-				collectedProps,
-				src,
-				isRootObject,
-				parent,
-				inboundReferences,
-				outboundReferences,
-				childMap,
-				debugData
-		);
+					identifier,
+					collectedProps,
+					src,
+					isRootObject,
+					parent,
+					inboundReferences,
+					outboundReferences,
+					childMap,
+					debugData
+			);
 	}
 
 	@Override

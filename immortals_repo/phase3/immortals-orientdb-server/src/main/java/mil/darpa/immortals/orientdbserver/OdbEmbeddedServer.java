@@ -198,7 +198,7 @@ public class OdbEmbeddedServer {
 						"' without a challenge-problems-root set! " + EnvironmentConfiguration.CHALLENGE_PROBLEMS_ROOT.getDisplayableUsage());
 			}
 
-			Orient.instance().startup();
+//			Orient.instance().startup();
 			logger.info("Starting Embedded OrientDB Server...");
 			server = OServerMain.create();
 

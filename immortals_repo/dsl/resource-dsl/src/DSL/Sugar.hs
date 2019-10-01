@@ -3,11 +3,8 @@ module DSL.Sugar where
 import qualified Data.Text as T
 import qualified Data.Set as S
 
-import Data.SBV (Boolean(..))
-
-import DSL.Name
+import DSL.Boolean
 import DSL.Types
-import DSL.Parser
 
 
 --
@@ -16,37 +13,34 @@ import DSL.Parser
 
 -- ** Variational values
 
+-- | Construct a condition from a boolean expression.
+cond :: BExpr -> Cond
+cond e = Cond e Nothing
+
 -- | Construct a binary choice in the given dimension.
 chc :: Var -> a -> a -> V a
-chc d l r = Chc (BRef d) (One l) (One r)
+chc d l r = Chc (Cond (BRef d) Nothing) (One l) (One r)
 
 -- | Construct an n-ary choice by cascading binary choices drawn from the
 --   given list of dimensions.
 chcN :: [Var] -> [a] -> V a
 chcN _      [a]    = One a
-chcN (d:ds) (a:as) = Chc (BRef d) (One a) (chcN ds as)
+chcN (d:ds) (a:as) = Chc (Cond (BRef d) Nothing) (One a) (chcN ds as)
 chcN _ _ = error "chcN: illegal arguments"
 
 
 -- ** Variational blocks
 
--- | Construct an n-ary variational block by cascading choices drawn from the
+-- | Construct a variational statement by branching on a choice.
+split :: Var -> Block -> Block -> Stmt
+split d = If (chc d true false)
+
+-- | Construct an n-ary variational block by cascading if-statement drawn from the
 --   given list of dimensions.
 splitN :: [Var] -> [Block] -> Block
 splitN _      [b]    = b
-splitN (d:ds) (b:bs) = [Split (BRef d) b (splitN ds bs)]
+splitN (d:ds) (b:bs) = [split d b (splitN ds bs)]
 splitN _ _ = error "splitN: illegal arguments"
-
-
--- ** Types
-
--- | Non-variational primitive types.
-tUnit, tBool, tInt, tFloat, tSymbol :: V PType
-tUnit   = One TUnit
-tInt    = One TInt
-tBool   = One TBool
-tFloat  = One TFloat
-tSymbol = One TSymbol
 
 
 -- ** Expressions
@@ -59,6 +53,10 @@ lit = One . Lit . One
 int :: Int -> V Expr
 int = lit . I
 
+-- | Literal string.
+str :: Name -> V Expr
+str = lit . S
+
 -- | Non-variational variable reference.
 ref :: Var -> V Expr
 ref = One . Ref
@@ -66,14 +64,6 @@ ref = One . Ref
 -- | Non-variational resource reference.
 res :: Path -> V Expr
 res = One . Res
-
--- | Literal symbol name.
-sym :: Name -> V Expr
-sym = One . Lit . One . S . mkSymbol
-
--- | Literal component ID.
-dfu :: Name -> V Expr
-dfu = sym
 
 -- | Primitive floor operation.
 pFloor :: V Expr -> Expr
@@ -87,6 +77,12 @@ pCeil = P1 (F_I Ceil)
 pRound :: V Expr -> Expr
 pRound = P1 (F_I Round)
 
+-- | Conditional expressions.
+(??) :: V Expr -> (V Expr, V Expr) -> Expr
+c ?? (t,e) = P3 OpIf c t e
+
+infix 1 ??
+
 
 -- ** Statements
 
@@ -95,19 +91,12 @@ create :: Path -> V Expr -> Stmt
 create p e = Do p (Create e)
 
 -- | Check a resource.
-check :: Path -> VType -> V Expr -> Stmt
+check :: Path -> PType -> V Expr -> Stmt
 check p t e = Do p (Check (Fun (Param "$val" t) e))
 
 -- | Modify a resource.
-modify' :: Path -> VType -> V Expr -> Stmt
-modify' p t e = Do p (Modify (Fun (Param "$val" t) e))
-
 modify :: Path -> PType -> V Expr -> Stmt
-modify p t e = modify' p (One t) e
-
--- | Conditional statement.
-if' :: V Expr -> [Stmt] -> [Stmt] -> Stmt
-if' c t e = If c [Elems t] [Elems e]
+modify p t e = Do p (Modify (Fun (Param "$val" t) e))
 
 -- | Reference the current value of a resource.
 --   For use with the 'check' and 'modify' smart constructors.
@@ -116,7 +105,7 @@ val = One (Ref "$val")
 
 -- | Check whether a unit-valued resource is present.
 checkUnit :: Path -> Stmt
-checkUnit p = Do p (Check (Fun (Param "$val" (One TUnit)) true))
+checkUnit p = Do p (Check (Fun (Param "$val" TUnit) true))
 
 -- | Create a unit-valued resource.
 createUnit :: Path -> Stmt
@@ -124,11 +113,6 @@ createUnit p = Do p (Create (One . Lit . One $ Unit))
 
 mkVExpr :: PVal -> V Expr
 mkVExpr = One . Lit . One
-
-dim :: T.Text -> BExpr
-dim t | Right b <- parseBExprText t = b
-      | Left s <- parseBExprText t = error s
-      | otherwise = error "impossible"
 
 exclusive' :: S.Set T.Text -> S.Set T.Text -> Maybe BExpr
 exclusive' all yes = combine (yesExpr yesList) (noExpr noList)
@@ -159,14 +143,3 @@ exclusive all yes = exclusive' (S.fromList all) (S.fromList yes)
 
 (.==.) :: V Expr -> V Expr -> V Expr
 x .==. y = (One (P2 (SS_B SEqu) x y))
-
-{- TODO TODO TODO
--- | Macro for an integer-case construct. Evaluates the expression, then
---   compares the resulting integer value against each case in turn, executing
---   the first matching block, otherwise executes the final block arugment.
-caseOf :: V Expr -> [(Int,Block)] -> Block -> Stmt
-caseOf expr cases other = Let x expr (foldr ifs other cases)
-  where
-    ifs (i,thn) els = [If (Ref x .== Lit (One (I i))) thn els]
-    x = "$case"
--}

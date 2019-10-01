@@ -1,6 +1,5 @@
 package mil.darpa.immortals.flitcons.datatypes.hierarchical;
 
-import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import mil.darpa.immortals.flitcons.Utils;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.validation.DebugData;
@@ -36,9 +35,13 @@ public class HierarchicalData implements DuplicateInterface {
 
 	private final Map<String, Set<HierarchicalIdentifier>> childNodeMap;
 
-	public final Object associatedObject;
+	private Object associatedObject;
 
-	private HierarchicalDataContainer parentContainer;
+	public void changeAssociatedObject(@Nonnull Object newAssocatedObject) {
+		associatedObject = newAssocatedObject;
+	}
+
+	public HierarchicalDataContainer parentContainer;
 
 	public boolean isRootNode() {
 		return isRootNode;
@@ -91,7 +94,24 @@ public class HierarchicalData implements DuplicateInterface {
 
 	public HierarchicalData duplicateDisconnectedClone(@Nullable HierarchicalIdentifier targetParentNode) {
 		HierarchicalData rval = new HierarchicalData(
-				HierarchicalIdentifier.produceTraceableNode(UUID.randomUUID().toString(), node.getNodeType()),
+				HierarchicalIdentifier.produceTraceableNode(node.getSourceIdentifier() + "-" + UUID.randomUUID().toString(), node.getNodeType()),
+				Utils.duplicateMap(attributes),
+				new Object(),
+				false,
+				targetParentNode,
+				null,
+				null,
+				null,
+				debugData,
+				this,
+				foreignAttributeSources
+		);
+		return rval;
+	}
+
+	public HierarchicalData duplicatePotentiallyConflictingDisconnectedClone(@Nullable HierarchicalIdentifier targetParentNode) {
+		HierarchicalData rval = new HierarchicalData(
+				node.createIdentitylessClone(),
 				Utils.duplicateMap(attributes),
 				new Object(),
 				false,
@@ -197,6 +217,62 @@ public class HierarchicalData implements DuplicateInterface {
 		this.originalNodeClonedFrom = originalNodeClonedFrom;
 		this.foreignAttributeSources = foreignAttributeSources == null ? new HashMap<>() : foreignAttributeSources;
 		validate();
+	}
+
+	public boolean needsDeconfliction() {
+		if (originalNodeClonedFrom != null) {
+			return !compareData(originalNodeClonedFrom);
+		}
+		return false;
+	}
+
+	private boolean compareData(HierarchicalData node) {
+		Set<String> myAttributeKeys = new HashSet<>(attributes.keySet());
+		Set<String> otherAttributeKeys = new HashSet<>(node.attributes.keySet());
+		myAttributeKeys.remove("GloballyUniqueId");
+		otherAttributeKeys.remove("GloballyUniqueId");
+
+		if (myAttributeKeys.size() != otherAttributeKeys.size()) {
+			return false;
+		}
+
+		for (String attributeName : myAttributeKeys) {
+			if (!attributes.get(attributeName).equals(node.attributes.get(attributeName))) {
+				return false;
+			}
+		}
+
+		if (childNodeMap.keySet().size() != node.childNodeMap.keySet().size()) {
+			return false;
+		}
+
+		for (String childName : childNodeMap.keySet()) {
+			if (!node.childNodeMap.containsKey(childName)) {
+				return false;
+			}
+
+			Set<HierarchicalIdentifier> myChildIdentifiers = childNodeMap.get(childName);
+			Set<HierarchicalIdentifier> othersChildIdentifiers = new HashSet<>(node.childNodeMap.get(childName));
+
+			for (HierarchicalIdentifier childIdentifier : myChildIdentifiers) {
+				boolean matchFound = false;
+				for (HierarchicalIdentifier othersChildIdentifier : othersChildIdentifiers) {
+					HierarchicalData myChild = parentContainer.getNode(childIdentifier);
+					HierarchicalData otherChild = node.parentContainer.getNode(othersChildIdentifier);
+					if (myChild.compareData(otherChild)) {
+						matchFound = true;
+						break;
+					}
+				}
+				if (matchFound) {
+					othersChildIdentifiers.remove(childIdentifier);
+				} else {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	private void validate() {
@@ -336,7 +412,6 @@ public class HierarchicalData implements DuplicateInterface {
 		return outboundReferences.iterator();
 	}
 
-
 	public void updateOutboundReference(@Nonnull HierarchicalIdentifier fullOutboundReference) {
 		Optional<HierarchicalIdentifier> currentIdentifier =
 				outboundReferences.stream().filter(
@@ -380,5 +455,9 @@ public class HierarchicalData implements DuplicateInterface {
 
 	public Set<String> getAttributeNames() {
 		return attributes.keySet();
+	}
+
+	public Object getAssociatedObject() {
+		return associatedObject;
 	}
 }

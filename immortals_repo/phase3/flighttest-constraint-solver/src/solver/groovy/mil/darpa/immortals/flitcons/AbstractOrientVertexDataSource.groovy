@@ -2,19 +2,23 @@ package mil.darpa.immortals.flitcons
 
 import com.tinkerpop.blueprints.Direction
 import com.tinkerpop.blueprints.Vertex
+import com.tinkerpop.blueprints.impls.orient.OrientEdge
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
 import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import com.tinkerpop.gremlin.groovy.Gremlin
 import com.tinkerpop.pipes.Pipe
 import com.tinkerpop.pipes.branch.LoopPipe
 import mil.darpa.immortals.EnvironmentConfiguration
+import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier
 import mil.darpa.immortals.flitcons.mdl.validation.*
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import javax.annotation.Nonnull
 import javax.annotation.Nullable
+import java.util.concurrent.atomic.AtomicInteger
 
 abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientVertex> {
 
@@ -28,9 +32,14 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 
 	private String serverPath
 
+	private Map<String, PortMapping> portMappingDetails
+
 	public String getServerPath() {
-		return serverPath;
+		return serverPath
 	}
+
+	private static AtomicInteger cloneIdCounter = new AtomicInteger(0);
+
 
 	AbstractOrientVertexDataSource(@Nullable String serverPath) {
 		super()
@@ -413,6 +422,7 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 										(pr - ar) + " unaccounted for!")
 					}
 				}.iterate()
+		portMappingDetails = Utils.duplicateMap(rval)
 		return rval
 	}
 
@@ -501,11 +511,130 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 					resultList.add(ov.getProperty("ID"))
 				}
 			}
-			System.out.println("MEH")
 		}
 
 		def values = invalidValues
 		return values
 	}
 
+	private OrientVertex get(@Nonnull Direction direction, @Nonnull String edgeLabel, @Nonnull OrientVertex relativeNode, @Nullable String label) {
+		List<OrientVertex> values = relativeNode.getVertices(direction, edgeLabel).toList()
+		if (values.size() == 0) {
+			throw new RuntimeException("Expected an " + direction.toString() + " " + edgeLabel + " to '" + relativeNode.toString() + "'!")
+		} else if (values.size() == 1) {
+			OrientVertex rval = values.get(0)
+			if (label == null || rval.getLabel().equals(label)) {
+				return rval;
+			} else {
+				throw new RuntimeException("Could not find a " + direction.toString() + " " + edgeLabel + " to a node of type '" + label + "'!")
+			}
+
+		} else {
+			if (label == null) {
+				throw new RuntimeException("Expected a single " + direction.toString() + " " + edgeLabel + " to '" + relativeNode.toString() + "'!")
+
+			} else {
+
+				OrientVertex rval = null
+				for (OrientVertex candidate : values) {
+					if (candidate.getLabel().equals(label)) {
+						if (rval == null) {
+							rval = candidate
+						} else {
+							throw new RuntimeException("Expected a single " + direction.toString() + " " + edgeLabel +
+									" from a node of type '" + label + "'  to '" + relativeNode.toString() + "'!")
+						}
+					}
+				}
+				if (rval == null) {
+					throw new RuntimeException("Expected a " + direction.toString() + " " + edgeLabel +
+							" from a node of type '" + label + "'  to '" + relativeNode.toString() + "'!")
+				} else {
+					return rval
+				}
+			}
+		}
+	}
+
+	private OrientVertex getSingleOutboundReference(@Nonnull OrientVertex relativeNode) {
+		return get(Direction.OUT, "Reference", relativeNode, null)
+	}
+
+	private OrientVertex getSingleInboundReference(@Nonnull OrientVertex relativeNode) {
+		return get(Direction.IN, "Reference", relativeNode, null)
+	}
+
+	private OrientVertex getSingleParent(@Nonnull OrientVertex node) {
+		return get(Direction.OUT, "Containment", node, null)
+	}
+
+	private OrientVertex getSingleChild(@Nonnull OrientVertex node, @Nullable String label) {
+		return get(Direction.IN, "Containment", node, label)
+	}
+
+
+	@Override
+	protected OrientVertex update_isolatePortMeasurement(@Nonnull HierarchicalData portData, @Nonnull HierarchicalData measurementData) {
+		OrientVertex port = (OrientVertex) portData.associatedObject
+		OrientVertex portReff = getSingleInboundReference(port)
+		OrientVertex portMapping = getSingleParent(portReff)
+		OrientVertex measurementRefs = getSingleChild(portMapping, "MeasurementRefs")
+		OrientVertex measurementRef = getSingleChild(measurementRefs, "MeasurementRef")
+		OrientVertex measurement = getSingleOutboundReference(measurementRef)
+		OrientVertex measurements = getSingleParent(measurement)
+
+		if (!measurementData.originalNodeClonedFrom.associatedObject.equals(measurement)) {
+			throw new RuntimeException("Objects should be equal!")
+		}
+
+		OrientVertex clone = update_replaceNodeWithDuplicate(measurement, measurements, measurementData)
+
+		List<OrientEdge> edgesToRemove = measurementRef.getEdges(Direction.OUT, "Reference").toList();
+		if (edgesToRemove.size() != 1) {
+			throw new RuntimeException("Expected one edge, not " + edgesToRemove.size() + "!");
+		}
+
+		edgesToRemove.get(0).remove();
+		measurementRef.setProperty("IDREF", clone.getProperty("ID"))
+		measurementRef.addEdge("Reference", clone);
+
+		return clone;
+	}
+
+	protected OrientVertex update_replaceNodeWithDuplicate(@Nonnull OrientVertex node, @Nonnull OrientVertex newParent,
+	                                                       @Nonnull HierarchicalData correspondingData) {
+		String ID = null
+
+		String label = node.getLabel()
+		OrientVertex newNode = testFlightConfigurationGraph.addVertex(label, (String) null)
+		for (String propertyKey : node.getPropertyKeys()) {
+			if (propertyKey.equals("ID")) {
+				ID = node.getProperty(propertyKey) + "-e5224a9b-" + cloneIdCounter.getAndAdd(1)
+				newNode.setProperty("ID", ID)
+			} else if (propertyKey.equals("IDREF")) {
+				throw AdaptationnException.input("IDREF values on Measurement trees are not supported due to " +
+						"potentially unintended consequences when Measurements must be duplicated!")
+			} else {
+				newNode.setProperty(propertyKey, node.getProperty(propertyKey))
+			}
+		}
+
+		Iterator<String> childClassIterator = correspondingData.getChildrenClassIterator();
+		while (childClassIterator.hasNext()) {
+			String childClassName = childClassIterator.next()
+			HierarchicalData childData = correspondingData.getChildNodeByPath(childClassName)
+			OrientVertex childVertex = childData.originalNodeClonedFrom.associatedObject
+			update_replaceNodeWithDuplicate(childVertex, newNode, childData)
+		}
+
+		List<OrientVertex> outboundReferences = node.getVertices(Direction.OUT, "Reference").toList()
+		if (outboundReferences.size() > 0) {
+			throw new RuntimeException("Outbound references not supported on Measurement trees are not supported due " +
+					"to potentially unintended consequences when Measurements must be duplicated!")
+		}
+
+		newNode.addEdge("Containment", newParent)
+		correspondingData.changeAssociatedObject(newNode)
+		return newNode
+	}
 }

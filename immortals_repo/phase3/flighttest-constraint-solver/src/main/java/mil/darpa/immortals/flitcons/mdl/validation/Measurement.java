@@ -1,5 +1,7 @@
 package mil.darpa.immortals.flitcons.mdl.validation;
 
+import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
@@ -9,7 +11,7 @@ import static mil.darpa.immortals.flitcons.Utils.Sym.LTE;
 import static mil.darpa.immortals.flitcons.Utils.Sym.NLTE;
 
 
-public class Measurement {
+public class Measurement implements DuplicateInterface<Measurement> {
 
 	public final String id;
 	public Long dataLength;
@@ -44,7 +46,17 @@ public class Measurement {
 		return toString(sampleRate, dataLength, dataRate);
 	}
 
-	public static class Requirements {
+	@Override
+	public Measurement duplicate() {
+		Measurement rval = new Measurement(id);
+		rval.dataLength = dataLength;
+		rval.dataRate = dataRate;
+		rval.sampleRate = sampleRate;
+		rval.requirements = requirements.duplicate();
+		return rval;
+	}
+
+	public static class Requirements implements DuplicateInterface<Requirements> {
 		public Long minDataLength;
 		public Long maxDataLength;
 		public Long minDataRate;
@@ -131,6 +143,18 @@ public class Measurement {
 			} catch (ValidationFailureException e) {
 				displayablePortMapping.setDataRateRangeResult(e.getMessage(), false);
 			}
+		}
+
+		@Override
+		public Requirements duplicate() {
+			Requirements rval = new Requirements();
+			rval.minDataLength = minDataLength;
+			rval.maxDataLength = maxDataLength;
+			rval.minDataRate = minDataRate;
+			rval.maxDataRate = maxDataRate;
+			rval.minSampleRate = minSampleRate;
+			rval.maxSampleRate = maxSampleRate;
+			return rval;
 		}
 	}
 }

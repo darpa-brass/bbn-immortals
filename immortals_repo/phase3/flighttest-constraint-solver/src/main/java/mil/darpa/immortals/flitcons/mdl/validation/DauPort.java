@@ -1,5 +1,8 @@
 package mil.darpa.immortals.flitcons.mdl.validation;
 
+import mil.darpa.immortals.flitcons.Utils;
+import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
@@ -10,7 +13,7 @@ import java.util.stream.Collectors;
 import static mil.darpa.immortals.flitcons.Utils.Sym.EE;
 import static mil.darpa.immortals.flitcons.Utils.Sym.NEE;
 
-public class DauPort {
+public class DauPort implements DuplicateInterface<DauPort> {
 
 	public final String parentDauId;
 	public final String id;
@@ -26,7 +29,19 @@ public class DauPort {
 		this.parentDauId = parentDauId;
 	}
 
-	public static class PortMeasurementCombination {
+	@Override
+	public DauPort duplicate() {
+		DauPort rval = new DauPort(id, parentDauId);
+		rval.isFlaggedForRemoval = isFlaggedForRemoval;
+		rval.requirements = requirements.duplicate();
+		rval.thermocouple = thermocouple;
+		rval.portType = portType;
+		rval.direction = direction;
+		rval.excitationPortIsPresent = excitationPortIsPresent;
+		return rval;
+	}
+
+	public static class PortMeasurementCombination implements DuplicateInterface<PortMeasurementCombination> {
 		public Long sampleRate;
 		public Long dataLength;
 		public Long dataRate;
@@ -40,9 +55,18 @@ public class DauPort {
 		public String toString() {
 			return Measurement.toString(sampleRate, dataLength, dataRate);
 		}
+
+		@Override
+		public PortMeasurementCombination duplicate() {
+			PortMeasurementCombination rval = new PortMeasurementCombination();
+			rval.sampleRate = sampleRate;
+			rval.dataLength = dataLength;
+			rval.dataRate = dataRate;
+			return rval;
+		}
 	}
 
-	public static class Requirements {
+	public static class Requirements implements DuplicateInterface<Requirements> {
 		public List<PortMeasurementCombination> validMeasurementCombinations = new LinkedList<>();
 		public List<String> validThermocouples = new LinkedList<>();
 
@@ -111,6 +135,13 @@ public class DauPort {
 			}
 		}
 
+		@Override
+		public Requirements duplicate() {
+			Requirements rval = new Requirements();
+			rval.validMeasurementCombinations = Utils.duplicateList(validMeasurementCombinations);
+			rval.validThermocouples = Utils.duplicateList(validThermocouples);
+			return rval;
+		}
 	}
 	// TODO: Do I need to consider DataRate?
 }

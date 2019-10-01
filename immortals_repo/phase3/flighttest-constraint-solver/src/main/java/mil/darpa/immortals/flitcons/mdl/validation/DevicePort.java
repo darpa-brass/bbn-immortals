@@ -1,5 +1,6 @@
 package mil.darpa.immortals.flitcons.mdl.validation;
 
+import mil.darpa.immortals.flitcons.datatypes.hierarchical.DuplicateInterface;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
@@ -8,7 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class DevicePort {
+public class DevicePort implements DuplicateInterface<DevicePort> {
 
 	private static final Map<String, Set<String>> validDevicePortMappings = new HashMap<>();
 
@@ -83,5 +84,13 @@ public class DevicePort {
 		} else {
 			return toString().equals(o.toString());
 		}
+	}
+
+	@Override
+	public DevicePort duplicate() {
+		DevicePort rval = new DevicePort(id);
+		rval.excitationSource = excitationSource;
+		rval.direction = direction;
+		return rval;
 	}
 }

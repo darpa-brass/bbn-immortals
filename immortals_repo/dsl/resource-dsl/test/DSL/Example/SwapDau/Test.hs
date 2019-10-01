@@ -5,7 +5,6 @@ import Test.Tasty.HUnit
 
 import DSL.Environment
 import DSL.Example.SwapDau
-import DSL.Name
 import DSL.Types
 
 
@@ -124,9 +123,9 @@ groupResponse1 = MkResponse
         , MkResponsePort "S1-G1-P2"
           $ mkPort "I1-G1-P2" "F1" [("Foo", B True)]
         , MkResponsePort "S2-G1-P1"
-          $ mkPort "I1-G1-P3" "F1" [("Foo", B True)]
+          $ mkPort "I1-G1-P3" "F1" [("Foo", B False)]
         , MkResponsePort "S2-G2-P1"
-          $ mkPort "I1-G2-P1" "F2" [("Foo", B True)]
+          $ mkPort "I1-G2-P1" "F2" [("Foo", B False)]
         ]
         10
     ]
@@ -291,7 +290,7 @@ testSwap =
     , testGroup "equation end-to-end tests"
       [ testCase "1" $ do
           res <- runSwapTest (equationOpts "json/test/swap-request-equation1.json")
-          res @?= Just (equationResponse "S1P2" 64 8 "S1P1" 1024 4)
+          res @?= Just (equationResponse "S1P2" 128 4 "S1P1" 1024 4)
       , testCase "2" $ do
           res <- runSwapTest (equationOpts "json/test/swap-request-equation2.json")
           res @?= Just (equationResponse "S1P1" 256 16 "S1P2" 768 2)

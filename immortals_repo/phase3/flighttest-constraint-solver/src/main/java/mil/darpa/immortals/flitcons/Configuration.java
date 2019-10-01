@@ -320,7 +320,6 @@ public class Configuration {
 		 * Data that is collected for debugging but will be removed prior to being send to the DSL
 		 */
 		public Map<String, Set<String>> collectedDebugProperties;
-
 	}
 
 	/**
@@ -397,6 +396,11 @@ public class Configuration {
 		 */
 		public List<ResolutionStrategy> resolutionStrategies;
 
+		/**
+		 * A list of nodes that if the adaptation results in different resultant values, can be cloned
+		 */
+		public Set<String> potentiallyConflictingNodes;
+
 		private static TransformationInstructions mergeTransformationInstructions(
 				@Nonnull TransformationInstructions globalInstructions,
 				@Nonnull TransformationInstructions specificInstructions) {
@@ -441,6 +445,10 @@ public class Configuration {
 				targetInstructions.taggedNodes.addAll(specificInstructions.taggedNodes);
 			}
 
+			if (specificInstructions.potentiallyConflictingNodes != null) {
+				targetInstructions.potentiallyConflictingNodes.addAll(specificInstructions.potentiallyConflictingNodes);
+			}
+
 			if (specificInstructions.resolutionStrategies != null) {
 				throw new RuntimeException("Not adding support for this unless needed!");
 			}
@@ -464,6 +472,7 @@ public class Configuration {
 			rval.valueRemappingInstructions = Utils.duplicateSet(valueRemappingInstructions);
 			rval.transferAttributeToChildren = Utils.duplicateList(transferAttributeToChildren);
 			rval.resolutionStrategies = Utils.duplicateList(resolutionStrategies);
+			rval.potentiallyConflictingNodes = new HashSet<>(potentiallyConflictingNodes);
 			rval.allowedDanglingReferences = new LinkedHashSet<>(allowedDanglingReferences);
 
 			rval.combineSquashedChildNodeAttributes = new HashMap<>();

@@ -2,25 +2,26 @@
 
 module DSL.Example.CrossApp where
 
-import Data.Data (Data,Typeable)
+import Data.Data (Typeable)
 import GHC.Generics (Generic)
-import Data.Aeson hiding (Value)
 
 import Control.Monad (when)
-import Options.Applicative
-import Data.Foldable
+import Data.Foldable (foldl')
 import Data.List ((\\))
-import Data.SBV ((|||),(&&&),bnot)
-import qualified Data.Text as T
+import Data.String (fromString)
 import qualified Data.Set as S
+import qualified Data.Text as T
 
-import DSL.Types
-import DSL.Name
+import Data.Aeson hiding (Value)
+import Options.Applicative hiding (str)
+
+import DSL.Boolean
 import DSL.Environment
-import DSL.Model
+import DSL.Evaluation
+import DSL.Parser (parseValueText)
 import DSL.Serialize
 import DSL.Sugar
-import DSL.Options
+import DSL.Types
 
 
 -- ** Initial environment
@@ -51,26 +52,25 @@ crossAppResEnvAll = envFromList
 -- ** Application model
 
 appModel = Model
-  [
-    Param "serverProvider" (One TSymbol),
-    Param "clientProvider" (One TSymbol)
-  ]
-  (checkSEP ++ checkRules ++ [Elems [
-    In "/Server/Cipher" [Elems [Load (ref "serverProvider") []]],
-    In "/Client/Cipher" [Elems [Load (ref "clientProvider") []]],
-    check "/Server/Cipher/Algorithm" tSymbol (val .==. res "/Client/Cipher/Algorithm"),
-    check "/Server/Cipher/Mode"      tSymbol (val .==. res "/Client/Cipher/Mode"),
-    check "/Server/Cipher/KeySize"   tSymbol (val .==. res "/Client/Cipher/KeySize"),
-    check "/Server/Cipher/Padding"   tSymbol (val .==. res "/Client/Cipher/Padding")
-  ]])
+    [ Param "serverProvider" TString
+    , Param "clientProvider" TString
+    ]
+    ( checkSEP ++ checkRules ++
+    [ In "/Server/Cipher" [Load (ref "serverProvider") []]
+    , In "/Client/Cipher" [Load (ref "clientProvider") []]
+    , check "/Server/Cipher/Algorithm" TString (val .==. res "/Client/Cipher/Algorithm")
+    , check "/Server/Cipher/Mode"      TString (val .==. res "/Client/Cipher/Mode")
+    , check "/Server/Cipher/KeySize"   TString (val .==. res "/Client/Cipher/KeySize")
+    , check "/Server/Cipher/Padding"   TString (val .==. res "/Client/Cipher/Padding")
+    ])
   where
     checkSEP :: Block
-    checkSEP = [
-        Split (foldOr (mkKeys [24,32,40,48,56,64]))
-          [Elems [ checkUnit "/Server/StrongEncryptionPolicy"
-                 , checkUnit "/Client/StrongEncryptionPolicy" ]]
-          []
-      ]
+    checkSEP =
+        [ If (Chc (cond (foldOr (mkKeys [24,32,40,48,56,64]))) true false)
+          [ checkUnit "/Server/StrongEncryptionPolicy"
+          , checkUnit "/Client/StrongEncryptionPolicy"
+          ] []
+        ]
 
     algRules = [
         ("AES", [16, 24, 32]),
@@ -108,11 +108,10 @@ appModel = Model
     checkRules = foldMap (uncurry keyRule) algRules
 
     keyRule :: T.Text -> [Int] -> Block
-    keyRule alg is = [
-        Split (BRef alg &&& foldOr (allKeys \\ (mkKeys is)))
-          [Elems [checkUnit "Fail"]]
-          []
-      ]
+    keyRule alg is =
+        [ If (Chc (cond (BRef alg &&& foldOr (allKeys \\ (mkKeys is)))) true false)
+          [ checkUnit "Fail" ] []
+        ]
 
     foldOr [] = BLit False
     foldOr [x] = BRef x
@@ -131,16 +130,16 @@ allModes = ["ECB", "CBC", "CTR", "CFB", "CTS", "OFB", "OpenPGPCFB", "PGPCFBBlock
 
 mkCrossAppDFU :: T.Text -> [T.Text] -> [T.Text] -> [T.Text] -> Block
 mkCrossAppDFU name algs pads modes =
-    [ Elems [ create "DFU-Type" (sym "Cipher")
-            , create "DFU-Name" (sym name) ]]
-        ++ mk "Algorithm" algs allAlgs
-        ++ mk "Mode" modes allModes
-        ++ mk "Padding" pads allPads
-        ++ mk "KeySize" allKeys allKeys
-    where
-      mk name good all = foldMap (\a -> [Split (foldOthers a all) [Elems [create name (mkVExpr (S . Symbol $ a)) ]] []]) good
-      others x xs = S.difference (S.fromList xs) (S.singleton x)
-      foldOthers x xs = foldl' (\b a -> b &&& (bnot (BRef a))) (BRef x) (S.toList (others x xs))
+    [ create "DFU-Type" (str "Cipher")
+    , create "DFU-Name" (str name)
+    ] ++ mk "Algorithm" algs allAlgs
+      ++ mk "Mode" modes allModes
+      ++ mk "Padding" pads allPads
+      ++ mk "KeySize" allKeys allKeys
+  where
+    mk name good all = foldMap (\a -> [If (Chc (cond (foldOthers a all)) true false) [create name (mkVExpr (S a)) ] []]) good
+    others x xs = S.difference (S.fromList xs) (S.singleton x)
+    foldOthers x xs = foldl' (\b a -> b &&& (bnot (BRef a))) (BRef x) (S.toList (others x xs))
 
 javaxDFU :: Model
 javaxDFU = Model [] $ mkCrossAppDFU "Javax"
@@ -150,27 +149,27 @@ javaxDFU = Model [] $ mkCrossAppDFU "Javax"
 
 bouncyDFU :: Model
 bouncyDFU = Model [] $ mkCrossAppDFU "BouncyCastle" allAlgs allPads allModes
-              ++ [Elems [If (res "Algorithm" .==. sym "AES") [Elems [checkUnit "../AES-NI"]] []]]
+              ++ [If (res "Algorithm" .==. str "AES") [checkUnit "../AES-NI"] []]
 
 crossAppDFUs :: Dictionary
-crossAppDFUs = modelDict [("Javax", javaxDFU), ("BouncyCastle", bouncyDFU)]
+crossAppDFUs = envFromList [("Javax", javaxDFU), ("BouncyCastle", bouncyDFU)]
 
 
 -- * Config
 
-crossAppConfig :: Symbol -> Symbol -> [V PVal]
-crossAppConfig s c = [One . S $ s, One . S $ c]
+crossAppConfig :: Name -> Name -> [V PVal]
+crossAppConfig s c = [One (S s), One (S c)]
 
 crossAppConfigAll :: [V PVal]
-crossAppConfigAll = [ Chc "ServerJavax" (One "Javax") (One "BouncyCastle")
-                    , Chc "ClientJavax" (One "Javax") (One "BouncyCastle") ]
+crossAppConfigAll = [ chc "ServerJavax" "Javax" "BouncyCastle"
+                    , chc "ClientJavax" "Javax" "BouncyCastle" ]
 
 --
 -- * Requirements
 --
 
-crossAppReqs :: Profile
-crossAppReqs = toProfile $ Model [] []
+crossAppReqs :: Model
+crossAppReqs = Model [] []
 
 --
 -- * Driver
@@ -179,14 +178,14 @@ crossAppReqs = toProfile $ Model [] []
 data CrossAppConfig = CrossAppConfig
      { serverProv :: String
      , clientProv :: String }
-  deriving (Show,Read,Eq,Data,Typeable,Generic,FromJSON)
+  deriving (Show,Read,Eq,Typeable,Generic,FromJSON)
 
 data CrossAppInit = CrossAppInit
      { serverAESNI :: Value
      , serverSEP   :: Value
      , clientAESNI :: Value
      , clientSEP   :: Value }
-  deriving (Eq,Read,Show,Data,Typeable,Generic,FromJSON)
+  deriving (Eq,Read,Show,Typeable,Generic,FromJSON)
 
 data CrossAppOpts = CrossAppOpts
      { genDict      :: Bool
@@ -196,7 +195,7 @@ data CrossAppOpts = CrossAppOpts
      , genConfig    :: Maybe CrossAppConfig
      , genConfigAll :: Bool
      , genReqs      :: Bool }
-  deriving (Eq,Read,Show,Data,Typeable,Generic)
+  deriving (Eq,Read,Show,Typeable,Generic)
 
 parseCrossAppOpts :: Parser CrossAppOpts
 parseCrossAppOpts = CrossAppOpts
@@ -241,6 +240,17 @@ parseCrossAppOpts = CrossAppOpts
        ( long "reqs"
       <> help "Generate empty mission requirements" )
 
+readRecord :: FromJSON a => ReadM a
+readRecord = eitherReader $ \arg -> case decode (fromString arg) of
+  Just r -> return r
+  _      -> Left $ "cannot parse value `" ++ arg ++ "'"
+
+instance FromJSON Value where
+  parseJSON = withText "Value" $
+      \x -> case parseValueText x of
+              Right v -> return v
+              Left s  -> fail s
+
 runCrossApp :: CrossAppOpts -> IO ()
 runCrossApp opts = do
     when (genDict opts)   (writeJSON defaultDict crossAppDFUs)
@@ -250,9 +260,7 @@ runCrossApp opts = do
       Nothing -> return ()
     when (genInitAll opts) (writeJSON defaultInit crossAppResEnvAll)
     case (genConfig opts) of
-      Just (CrossAppConfig s c) -> writeJSON defaultConfig (crossAppConfig (str2sym s) (str2sym c))
+      Just (CrossAppConfig s c) -> writeJSON defaultConfig (crossAppConfig (T.pack s) (T.pack c))
       Nothing -> return ()
     when (genConfigAll opts) (writeJSON defaultConfig crossAppConfigAll)
     when (genReqs opts) (writeJSON defaultReqs crossAppReqs)
-    where
-      str2sym = Symbol . T.pack

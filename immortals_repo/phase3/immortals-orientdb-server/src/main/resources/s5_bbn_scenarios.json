@@ -70,6 +70,20 @@
 			"scenarioType": "Scenario5bbn"
 		},
 		{
+			"xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_ThermocoupleExtensionsAndVariedMeasurements.xml",
+			"xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensionsAndSharedMeasurements.xml",
+			"shortName": "bs5eVariedMeasurements_iSharedMeasurements",
+			"prettyName": "BBN Scenario 5 ThermocoupleExtensionsAndVariedMeasurements_ThermocoupleExtensionsAndSharedMeasurements",
+			"timeoutMS": 120000,
+			"ingestedXmlInventoryHash": "",
+			"ingestedXmlMdlrootInputHash": "",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful",
+				"AdaptationUnsuccessful"
+			],
+			"scenarioType": "Scenario5bbn"
+		},
+		{
 			"xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_ThermocoupleExtensionsSequential.xml",
 			"xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensions.xml",
 			"shortName": "bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential",

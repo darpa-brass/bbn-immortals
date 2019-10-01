@@ -5,10 +5,7 @@ import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -25,6 +22,8 @@ public class HierarchicalIdentifier implements Comparator<HierarchicalIdentifier
 	private static Set<HierarchicalIdentifier> identifierDatastore = new HashSet<>();
 
 	private static AtomicInteger tagCounter = new AtomicInteger(1248576);
+
+	private static AtomicInteger cloneCounter = new AtomicInteger(0);
 
 	/**
 	 * An identifier that can be used to match this with the corresponding node in the original data source
@@ -83,6 +82,7 @@ public class HierarchicalIdentifier implements Comparator<HierarchicalIdentifier
 		}
 	}
 
+
 	public static HierarchicalIdentifier produceTraceableNode(@Nonnull String identifier, @Nullable String nodeType) {
 		Optional<HierarchicalIdentifier> candidate = identifierDatastore.stream().filter(x ->
 				identifier.equals(x.sourceIdentifier) && (nodeType == null || x.nodeType == null || nodeType.equals(x.nodeType))).findFirst();
@@ -96,6 +96,10 @@ public class HierarchicalIdentifier implements Comparator<HierarchicalIdentifier
 		} else {
 			return new HierarchicalIdentifier(identifier, nodeType, null);
 		}
+	}
+
+	public HierarchicalIdentifier createIdentitylessClone() {
+		return new HierarchicalIdentifier(sourceIdentifier + "-d3715d0d-" + cloneCounter.getAndAdd(1), nodeType, null);
 	}
 
 	public static HierarchicalIdentifier getByStringIdentifier(@Nonnull String identifier) {

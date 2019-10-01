@@ -1,6 +1,9 @@
 package mil.darpa.immortals.flitcons;
 
+import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -21,4 +24,6 @@ public abstract class AbstractDataTarget<T> extends AbstractDataSource<T> {
 	                                                                 @Nonnull Map<String, Object> attributes);
 
 	protected abstract void update_removeAttribute(@Nonnull T parentNode, @Nonnull String attributeName, String... childPath);
+
+	protected abstract T update_isolatePortMeasurement(@Nonnull HierarchicalData portData, @Nonnull HierarchicalData measurementData);
 }

@@ -129,6 +129,8 @@ dependencies {
 	solverCompile 'org.codehaus.groovy:groovy-all:2.4.15'
 	solverCompile 'com.orientechnologies:orientdb-core:2.2.24'
 	solverCompile 'com.orientechnologies:orientdb-graphdb:2.2.24'
+//	solverCompile 'com.orientechnologies:orientdb-core:2.2.37'
+//	solverCompile 'com.orientechnologies:orientdb-graphdb:2.2.37'
 	solverCompile sourceSets.main.output
 	solverCompile sourceSets.main.compileClasspath
 

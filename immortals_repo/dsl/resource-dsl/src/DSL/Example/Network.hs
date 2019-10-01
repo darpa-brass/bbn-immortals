@@ -4,13 +4,11 @@ import Data.Data (Data,Typeable)
 import GHC.Generics (Generic)
 
 import Control.Monad (when)
-import Data.SBV (Boolean(..))
-import Options.Applicative
+import Options.Applicative hiding (str)
 
 import DSL.Types
 import DSL.Environment
-import DSL.Expression
-import DSL.Model
+import DSL.Evaluation
 import DSL.Serialize
 import DSL.Sugar
 
@@ -23,30 +21,30 @@ import DSL.Sugar
 
 imageParams :: [Param]
 imageParams =
-    [ Param "imageRate" (One TInt)
-    , Param "resX"      (One TInt)
-    , Param "resY"      (One TInt)
-    , Param "color"     (One TBool) --choice
-    , Param "scale"     (One TFloat)
-    , Param "compress"  (One TBool) --choice
+    [ Param "imageRate" TInt
+    , Param "resX"      TInt
+    , Param "resY"      TInt
+    , Param "color"     TBool
+    , Param "scale"     TFloat
+    , Param "compress"  TBool
     ]
 
 saParams :: [Param]
 saParams =
-    [ Param "pliRate"   (One TInt)  -- position location information
+    [ Param "pliRate"   TInt  -- position location information
     -- , Param "logging" TBool
     ]
 
 -- | Application model.
 appModel :: Model
-appModel = Model (Param "clients" (One TInt) : imageParams ++ saParams)
-    [ Elems [ Load (dfu "image-producer") [imageRate, resX, resY, color, scale, compress]
-    , Load (dfu "situational-awareness-producer") [pliRate]
+appModel = Model (Param "clients" TInt : imageParams ++ saParams)
+    [ Load (str "image-producer") [imageRate, resX, resY, color, scale, compress]
+    , Load (str "situational-awareness-producer") [pliRate]
     , modify "/Network/Bandwidth" TFloat
         (val - clients * clients * convert imageRate (One (Res "Image/Size")))
     , modify "/Network/Bandwidth" TFloat
         (val - clients * clients * convert pliRate (One (Res "SA/Size")))
-    ]]
+    ]
   where
     convert rate size = (rate ./ (One (Lit (One (F 60.0))))) * (size ./ One (Lit (One (F 1000.0))))
 
@@ -55,7 +53,7 @@ appModel = Model (Param "clients" (One TInt) : imageParams ++ saParams)
 
 -- | A dictionary of all the network DFUs with associated names.
 networkDFUs :: Dictionary
-networkDFUs = modelDict
+networkDFUs = envFromList
     [ ("image-producer", imageProducer)
     , ("image-producer-scale", imageScale)
     , ("image-producer-compress", imageCompress)
@@ -65,23 +63,24 @@ networkDFUs = modelDict
 -- | Base image producer.
 imageProducer :: Model
 imageProducer = Model imageParams
-   [Elems [ createUnit "Image"
+    [ createUnit "Image"
     , In "Image"
-     [Elems [ create "Rate"  imageRate
+      [ create "Rate"  imageRate
       , create "ResX"  resX
       , create "ResY"  resY
       , create "Color" color
-      , create "Size"  (resX * resY * (One (color ?? (24,8))) ./ One (Lit (One (F 15.0)))) ]] -- bits
-      , Load (dfu "image-producer-scale") [scale]
+      , create "Size"  (resX * resY * (One (color ?? (24,8))) ./ One (Lit (One (F 15.0)))) -- bits
+      ]
+    , Load (str "image-producer-scale") [scale]
     , If compress
-        [Elems [ Load (dfu "image-producer-compress") [] ]]
-        []
-    ]]
+      [ Load (str "image-producer-compress") [] ]
+      []
+    ]
 
 -- | Image scaling DFU.
 imageScale :: Model
-imageScale = Model [Param "scale" (One TFloat)]
-    [ Elems [ modify "Image/Size" TFloat (val * scale) ]]
+imageScale = Model [Param "scale" TFloat]
+    [ modify "Image/Size" TFloat (val * scale) ]
     -- [ In "Image"
     --   [ modify "ResX" TInt (val ./ scale)
     --   , modify "ResY" TInt (val ./ scale)
@@ -94,19 +93,19 @@ imageScale = Model [Param "scale" (One TFloat)]
 -- | Image compression DFU.
 imageCompress :: Model
 imageCompress = Model []
-    [Elems [ modify "Image/Size" TFloat (val ./ 2)
+    [ modify "Image/Size" TFloat (val ./ 2)
     -- , modify "CPU" TInt (val - Res "Image/ResX" * Res "Image/ResY")
-    ]]
+    ]
 
 -- | Situational awareness producer.
 saProducer :: Model
 saProducer = Model saParams
-    [Elems [ createUnit "SA"
+    [ createUnit "SA"
     , In "SA"
-        [Elems [ create "Size" (400 * 8) -- bits
-        , create "Rate" pliRate
-        ]]
-    ]]
+      [ create "Size" (400 * 8) -- bits
+      , create "Rate" pliRate
+      ]
+    ]
 
 clients   = One (Ref "clients")
 imageRate = One (Ref "imageRate") -- images / minute
@@ -129,9 +128,9 @@ networkConfigCP2 cs pli img scale =
     , One $ I img   -- imageRate
     , One $ I 2500  -- resX
     , One $ I 2000  -- resY
-    , Chc (BRef "color") (One $ B true) (One $ B false) -- color
+    , chc "color" (B True) (B False) -- color
     , One $ F scale -- scale
-    , Chc (BRef "compress") (One $ B true) (One $ B false) -- compress
+    , chc "compress" (B True) (B False) -- compress
     , One $ I pli   -- pliRate
     ]
 
@@ -146,9 +145,8 @@ networkEnv kbs = envSingle "/Network/Bandwidth" (One . Just $ (F kbs))
 -- ** Mission requirements
 
 -- | The only mission requirement is that we don't run out of bandwidth.
-networkReqs :: Profile
-networkReqs = toProfile $ Model []
-    [Elems [ check "/Network/Bandwidth" (One TFloat) (val .>= 0) ]]
+networkReqs :: Model
+networkReqs = Model [] [check "/Network/Bandwidth" TFloat (val .>= 0)]
 
 
 --

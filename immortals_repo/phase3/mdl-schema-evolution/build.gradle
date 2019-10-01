@@ -54,6 +54,8 @@ jar.finalizedBy(getTasksByName("publishToMavenLocal", true))
 dependencies {
 	compile 'com.orientechnologies:orientdb-core:2.2.24'
 	compile 'com.orientechnologies:orientdb-graphdb:2.2.24'
+//	compile 'com.orientechnologies:orientdb-core:2.2.37'
+//	compile 'com.orientechnologies:orientdb-graphdb:2.2.37'
 	compile 'com.google.code.findbugs:jsr305:3.0.1'
 	compile 'org.slf4j:slf4j-api:1.7.5'
 

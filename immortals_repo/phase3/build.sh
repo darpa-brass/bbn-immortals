@@ -96,8 +96,17 @@ if [[ ${DO_SCENARIO_5} == true ]];then
 	if [ -f resource-dsl.tix ];then
 		rm resource-dsl.tix
 	fi
-    stack setup
-    stack build
+
+	if [ -d "${HOME}/.immortals/z3/bin" ];then
+		echo "extra-lib-dirs:
+  - ${HOME}/.immortals/z3/bin" >> stack.yaml
+        LD_LIBRARY_PATH=${HOME}/.immortals/z3/bin stack setup
+        LD_LIBRARY_PATH=${HOME}/.immortals/z3/bin stack build
+	else
+        stack setup
+        stack build
+	fi
+
     cd "${PPWD}"
 
     mkdir "${ARTIFACT_ROOT}/phase3"

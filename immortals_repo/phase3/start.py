@@ -177,6 +177,11 @@ def main():
                 print('IMMoRTALS Scenario 5/Scenario 6 Launcher: error: the following arguments are required: --odb-url')
                 exit(1)
 
+        if "LD_LIBRARY_PATH" in os.environ:
+            env_values['LD_LIBRARY_PATH'] = os.environ['LD_LIBRARY_PATH'] + ':' + os.path.join(os.environ['HOME'], ".immortals/z3/bin")
+        else:
+            env_values['LD_LIBRARY_PATH'] =  os.path.join(os.environ['HOME'], ".immortals/z3/bin")
+
         env_values['ORIENTDB_EVAL_TARGET'] = args.odb_url
         env_values['IMMORTALS_RESOURCE_DSL'] = os.path.abspath(os.path.join(SCRIPT_DIR, '../dsl/resource-dsl'))
 

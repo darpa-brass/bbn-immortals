@@ -257,6 +257,9 @@
 					"b862c60433e5": true
 				}
 			}
+		],
+		"potentiallyConflictingNodes": [
+			"Measurement"
 		]
 	},
 	"inventoryTransformation": {
