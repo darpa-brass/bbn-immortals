@@ -1,0 +1,19 @@
+{
+	"ARINC429-Example-1.xml": false,
+	"AssetAssociations.xml": true,
+	"Bandpass-Measurement.xml": false,
+	"Extract-Bus-Measurements.xml": false,
+	"Mapping-24bit-measurement-into-16bit-fields.xml": false,
+	"Measurements-and-Data-Operations.xml": false,
+	"Measurements-with-TMATS.xml": false,
+	"MissionQoS.xml": true,
+	"Modules-and-Children.xml": false,
+	"MultipleAppsPerNetworkNode.xml": true,
+	"Network-Example.xml": true,
+	"PackagingMeasurements.xml": false,
+	"PackagingPCMStream.xml": false,
+	"PCM-Example.xml": false,
+	"PCM-with-TMATS.xml": false,
+	"Select-Bus-Measurements.xml": false,
+	"Standalone-Example.xml": true
+}

@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xmlns:mdl="http://inetprogram.org/projects/MDL" 
+         xsi:schemaLocation="http://inetprogram.org/projects/MDL MDL_v0_8_19.xsd">
+  <DatabaseID>example ID string</DatabaseID>
+  <Checksum>TBD checksum</Checksum>
+  <ConfigurationVersion>-TBD-</ConfigurationVersion>
+  <DirtyBit>false</DirtyBit>
+</MDLRoot>

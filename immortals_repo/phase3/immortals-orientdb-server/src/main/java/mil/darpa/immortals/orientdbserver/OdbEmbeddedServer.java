@@ -377,7 +377,7 @@ public class OdbEmbeddedServer {
 				break;
 
 			case BackupsWithUpdatedXml:
-				if (!(scenario.hasXmlInventoryInput() || scenario.hasXmlMdlrootInput())) {
+				if (!(scenario.hasXmlInventoryInput() || scenario.hasXmlMdlrootInput() || scenario.hasUpdatedXsdInputPath())) {
 					throw new RuntimeException("No input XML files could be found!");
 				}
 

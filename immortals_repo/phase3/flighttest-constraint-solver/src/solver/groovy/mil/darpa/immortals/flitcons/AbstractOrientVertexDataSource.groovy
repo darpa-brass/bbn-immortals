@@ -299,6 +299,9 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 								currentDauPort.isFlaggedForRemoval = flaggedForReplacement
 								currentPortMapping.dauPorts.put(dauPortId, currentDauPort)
 								currentDauPort.direction = it['PortDirection'] as String
+								if (it.hasProperty('PortPolarity')) {
+									currentDauPort.portPolarity = it['PortPolarity']
+								}
 							}
 							.copySplit(
 									_().in.has('@class', 'PortTypes').has('PortType').sideEffect {

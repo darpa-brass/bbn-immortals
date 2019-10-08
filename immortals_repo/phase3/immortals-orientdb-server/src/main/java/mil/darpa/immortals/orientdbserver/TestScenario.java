@@ -14,9 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TestScenario {
 
@@ -52,6 +50,7 @@ public class TestScenario {
 	private final String updatedXsdInputPathHash;
 	private final LinkedList<String> expectedStatusSequence;
 	private final JsonObject expectedJsonOutputStructure;
+	private final List<Set<String>> expectedDauSelections;
 
 	private transient TestScenarios.ScenarioType _scenarioType;
 
@@ -75,7 +74,8 @@ public class TestScenario {
 	                    @Nonnull String ingestedXmlInventoryHash, @Nonnull String ingestedXmlMdlrootInputHash,
 	                    @Nonnull String initialXsdVersion, @Nonnull String updatedXsdVersion,
 	                    @Nonnull String updatedXsdInputPath, @Nonnull String updatedXsdInputPathHash,
-	                    @Nonnull List<String> expectedStatusSequence, @Nullable JsonObject expectedJsonOutputStructure) {
+	                    @Nonnull List<String> expectedStatusSequence, @Nullable JsonObject expectedJsonOutputStructure,
+	                    @Nullable List<Set<String>> expectedDauSelections) {
 		this.shortName = shortName;
 		this.scenarioType = scenarioType;
 		this.prettyName = prettyName;
@@ -90,6 +90,7 @@ public class TestScenario {
 		this.updatedXsdInputPathHash = updatedXsdInputPathHash;
 		this.expectedStatusSequence = new LinkedList<>(expectedStatusSequence);
 		this.expectedJsonOutputStructure = expectedJsonOutputStructure;
+		this.expectedDauSelections = expectedDauSelections;
 	}
 
 	public synchronized TestScenarios.ScenarioType getScenarioType() {
@@ -116,6 +117,10 @@ public class TestScenario {
 	}
 
 	public InputStream getBackupInputStream() {
+		InputStream option1 = TestScenarios.class.getClassLoader().getResourceAsStream("test_databases/generated/" + this.shortName + "-backup.zip");
+		if (option1 != null) {
+			return option1;
+		}
 		return TestScenarios.class.getClassLoader().getResourceAsStream("test_databases/" + this.shortName + "-backup.zip");
 	}
 
@@ -221,7 +226,7 @@ public class TestScenario {
 			}
 			String currentHash = hexString.toString();
 
-			return !knownHash.equals(currentHash);
+			return !currentHash.equals(knownHash);
 		} catch (IOException | NoSuchAlgorithmException e) {
 			throw new RuntimeException(e);
 		}

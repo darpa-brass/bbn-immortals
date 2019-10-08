@@ -1,72 +1,172 @@
 {
 	"scenarios": [
 		{
-			"shortName": "s6_v17_embedded_add",
-			"scenarioType": "Scenario6swri",
-			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - Add",
+			"shortName": "s6_7tov0_8_8",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0_8_7 to v0_8_8",
 			"timeoutMS": 600000,
-			"initialXsdVersion": "V0_8_17",
-			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_add.xsd",
+			"initialXsdVersion": "v0_8_7",
+			"updatedXsdVersion": "v0_8_8",
+			"expectedStatusSequence": ["AdaptationSuccessful"],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_8tov0_8_9",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0_8_8 to v0_8_9",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "v0_8_8",
+			"updatedXsdVersion": "v0_8_9",
+			"expectedStatusSequence": ["AdaptationSuccessful"],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_9tov0_8_10",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0_8_9 to v0_8_10",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "v0_8_9",
+			"updatedXsdVersion": "v0_8_10",
+			"expectedStatusSequence": ["AdaptationSuccessful"],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_10tov0_8_11",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0_8_10 to v0_8_11",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "v0_8_10",
+			"updatedXsdVersion": "v0_8_11",
+			"expectedStatusSequence": ["AdaptationSuccessful"],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_11tov0_8_12",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0_8_11 to v0_8_12",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "v0_8_11",
+			"updatedXsdVersion": "v0_8_12",
+			"expectedStatusSequence": ["AdaptationSuccessful"],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_12tov0_8_13",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0_8_12 to v0_8_13",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "v0_8_12",
+			"updatedXsdVersion": "v0_8_13",
+			"expectedStatusSequence": ["AdaptationSuccessful"],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_13tov0_8_14",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0_8_13 to v0_8_14",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "v0_8_13",
+			"updatedXsdVersion": "v0_8_14",
+			"expectedStatusSequence": ["AdaptationSuccessful"],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_14tov0_8_16",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0_8_14 to v0_8_16",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "v0_8_14",
+			"updatedXsdVersion": "v0_8_16",
+			"expectedStatusSequence": ["AdaptationSuccessful"],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_16tov0_8_17",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0_8_16 to v0_8_17",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "v0_8_16",
+			"updatedXsdVersion": "v0_8_17",
+			"expectedStatusSequence": ["AdaptationSuccessful"],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_17tov0_8_19",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0_8_17 to v0_8_19",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "v0_8_17",
+			"updatedXsdVersion": "v0_8_19",
+			"expectedStatusSequence": ["AdaptationSuccessful"],
+			"expectedJsonOutputStructure": {}
+		},
+		{
+			"shortName": "s6_v19_embedded_add",
+			"scenarioType": "Scenario6swri",
+			"prettyName": "Scenario 6 - SwRI - v0.8.19 - Embedded Schema Update - Add",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "V0_8_19",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v0_8_19_add.xsd",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful"
 			],
 			"expectedJsonOutputStructure": {}
 		},
 		{
-			"shortName": "s6_v17_embedded_move",
+			"shortName": "s6_v19_embedded_move",
 			"scenarioType": "Scenario6swri",
-			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - Move ",
+			"prettyName": "Scenario 6 - SwRI - v0.8.19 - Embedded Schema Update - Move ",
 			"timeoutMS": 600000,
-			"initialXsdVersion": "V0_8_17",
-			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_move.xsd",
+			"initialXsdVersion": "V0_8_19",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v0_8_19_move.xsd",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful"
 			],
 			"expectedJsonOutputStructure": {}
 		},
 		{
-			"shortName": "s6_v17_embedded_move2",
+			"shortName": "s6_v19_embedded_move2",
 			"scenarioType": "Scenario6swri",
-			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - ",
+			"prettyName": "Scenario 6 - SwRI - v0.8.19 - Embedded Schema Update - ",
 			"timeoutMS": 600000,
-			"initialXsdVersion": "V0_8_17",
-			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_move2.xsd",
+			"initialXsdVersion": "V0_8_19",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v0_8_19_move2.xsd",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful"
 			],
 			"expectedJsonOutputStructure": {}
 		},
 		{
-			"shortName": "s6_v17_embedded_remove",
+			"shortName": "s6_v19_embedded_remove",
 			"scenarioType": "Scenario6swri",
-			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - Remove",
+			"prettyName": "Scenario 6 - SwRI - v0.8.19 - Embedded Schema Update - Remove",
 			"timeoutMS": 600000,
-			"initialXsdVersion": "V0_8_17",
-			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_remove.xsd",
+			"initialXsdVersion": "V0_8_19",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v0_8_19_remove.xsd",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful"
 			],
 			"expectedJsonOutputStructure": {}
 		},
 		{
-			"shortName": "s6_v17_embedded_rename",
+			"shortName": "s6_v19_embedded_rename",
 			"scenarioType": "Scenario6swri",
-			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - Rename",
+			"prettyName": "Scenario 6 - SwRI - v0.8.19 - Embedded Schema Update - Rename",
 			"timeoutMS": 600000,
-			"initialXsdVersion": "V0_8_17",
-			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_rename.xsd",
+			"initialXsdVersion": "V0_8_19",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v0_8_19_rename.xsd",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful"
 			],
 			"expectedJsonOutputStructure": {}
 		},
 		{
-			"shortName": "s6_v17_embedded_rename2",
+			"shortName": "s6_v19_embedded_rename2",
 			"scenarioType": "Scenario6swri",
-			"prettyName": "Scenario 6 - SwRI - v0.8.17 - Embedded Schema Update - Rename 2",
+			"prettyName": "Scenario 6 - SwRI - v0.8.19 - Embedded Schema Update - Rename 2",
 			"timeoutMS": 600000,
-			"initialXsdVersion": "V0_8_17",
-			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v1_0_0_rename2.xsd",
+			"initialXsdVersion": "V0_8_19",
+			"updatedXsdInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/MDL_v0_8_19_rename2.xsd",
 			"expectedStatusSequence": [
 				"AdaptationSuccessful"
 			],

@@ -93,8 +93,9 @@ public class HierarchicalData implements DuplicateInterface {
 	}
 
 	public HierarchicalData duplicateDisconnectedClone(@Nullable HierarchicalIdentifier targetParentNode) {
+		String sourceIdentifier = node.hasSourceIdentifier() ? node.getSourceIdentifier() : null;
 		HierarchicalData rval = new HierarchicalData(
-				HierarchicalIdentifier.produceTraceableNode(node.getSourceIdentifier() + "-" + UUID.randomUUID().toString(), node.getNodeType()),
+				HierarchicalIdentifier.produceTraceableNode(sourceIdentifier + "-" + UUID.randomUUID().toString(), node.getNodeType()),
 				Utils.duplicateMap(attributes),
 				new Object(),
 				false,

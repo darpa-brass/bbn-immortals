@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,59 @@ public class PortMappingValidator {
 
 	public PortMappingValidator(@Nonnull Map<String, PortMapping> initialData) {
 		this.initialData = initialData;
+	}
+
+	public static void validateEqual(@Nonnull String label, @Nullable String originalValue, @Nullable String subsequentValue,
+	                                 @Nonnull Map<String, Object> columnData, Map<String, Boolean> passData) {
+
+		if (originalValue == null) {
+			if (subsequentValue == null) {
+				columnData.put(label, "null==null");
+				passData.put(label, true);
+			} else {
+				columnData.put(label, "null!=" + subsequentValue);
+				passData.put(label, false);
+			}
+		} else {
+			if (subsequentValue == null) {
+				columnData.put(label, originalValue + "!= null");
+				passData.put(label, false);
+			} else {
+				if (originalValue.equals(subsequentValue)) {
+					columnData.put(label, originalValue + "==" + subsequentValue);
+					passData.put(label, true);
+				} else {
+					columnData.put(label, originalValue + "!=" + subsequentValue);
+					passData.put(label, false);
+				}
+			}
+		}
+	}
+
+	public static void validateEqualOrNullToAny(@Nonnull String label, @Nullable String originalValue, @Nullable String subsequentValue,
+	                                            @Nonnull Map<String, Object> columnData, Map<String, Boolean> passData) {
+		if (originalValue == null) {
+			if (subsequentValue == null) {
+				columnData.put(label, "null==null");
+				passData.put(label, true);
+			} else {
+				columnData.put(label, "null" + EQT + subsequentValue);
+				passData.put(label, true);
+			}
+		} else {
+			if (subsequentValue == null) {
+				columnData.put(label, originalValue + "!= null");
+				passData.put(label, false);
+			} else {
+				if (originalValue.equals(subsequentValue)) {
+					columnData.put(label, originalValue + "==" + subsequentValue);
+					passData.put(label, true);
+				} else {
+					columnData.put(label, originalValue + "!=" + subsequentValue);
+					passData.put(label, false);
+				}
+			}
+		}
 	}
 
 	public static void validateResultDataPortMappings(@Nonnull Map<String, PortMapping> initialData, @Nonnull Map<String, PortMapping> resultData, @Nonnull String title) {
@@ -85,9 +139,23 @@ public class PortMappingValidator {
 				passData.put("DAU Port Replacement", false);
 			}
 
+			if (resultMapping.dauPorts.size() > 1) {
+				throw AdaptationnException.internal("Multiple DAU Ports shouldn't be in a PortMapping!");
+			}
+
+			if (initialMapping.dauPorts.size() > 1) {
+				throw AdaptationnException.internal("Multiple DAU Ports shouldn't be in a PortMapping!");
+			}
 
 			for (String resultDauPortId : resultMapping.dauPorts.keySet()) {
 				DauPort subsequent = resultMapping.dauPorts.get(resultDauPortId);
+				DauPort original = initialData.get(mappingId).dauPorts.values().iterator().next();
+
+				validateEqual("PortType", original.portType, subsequent.portType, columnData, passData);
+				validateEqualOrNullToAny("Thermocouple", original.thermocouple, subsequent.thermocouple, columnData, passData);
+				validateEqualOrNullToAny("PortPolarity", original.portPolarity, subsequent.portPolarity, columnData, passData);
+				validateEqual("PortDirection", original.direction, subsequent.direction, columnData,passData);
+
 				if (badPortIdentifiers.contains(resultDauPortId)) {
 					columnData.put("Replacement Faulty", "true");
 					passData.put("Replacement Faulty", false);
@@ -131,11 +199,19 @@ public class PortMappingValidator {
 
 			if (result.dauPorts.isEmpty()) {
 				throw AdaptationnException.input("All PortMappings must contain a DAU Port!");
+			} else if (result.dauPorts.size() > 1) {
+				throw AdaptationnException.input("No more than a single DAU Port is expected in a PortMapping!");
 			}
 
 			if (result.measurements.isEmpty() && result.dataStreams.isEmpty()) {
 				throw AdaptationnException.input("All PortMappings must contain DataStream or Measurement!");
 			}
+
+			if (result.measurements.size() > 1) {
+				throw AdaptationnException.input("Only a single measurement should be used within a PortMapping!");
+			}
+
+			// TODO: What about datastream port lengths?
 			if (!result.devicePorts.isEmpty()) {
 				if (result.measurements.isEmpty()) {
 					throw AdaptationnException.input("All PortMappings that contain a Device Port must contain a Measurement!");
@@ -146,6 +222,7 @@ public class PortMappingValidator {
 			}
 
 			if (!result.dataStreams.isEmpty()) {
+				// TODO: Are all these N/A?
 				portMappingResult.setMeasurementSelectionResult("N/A", true);
 				portMappingResult.setDataLengthRangeResult("N/A", true);
 				portMappingResult.setDataRateRangeResult("N/A", true);

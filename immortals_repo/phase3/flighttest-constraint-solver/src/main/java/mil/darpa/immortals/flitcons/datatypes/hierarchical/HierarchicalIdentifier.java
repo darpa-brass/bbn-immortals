@@ -30,6 +30,10 @@ public class HierarchicalIdentifier implements Comparator<HierarchicalIdentifier
 	 */
 	private String sourceIdentifier;
 
+	public boolean hasSourceIdentifier() {
+		return sourceIdentifier != null;
+	}
+
 	/**
 	 * An identifier that provides a concrete reference for this node to be used globally in this session
 	 */
@@ -81,7 +85,6 @@ public class HierarchicalIdentifier implements Comparator<HierarchicalIdentifier
 			return new HierarchicalIdentifier(null, nodeType, referenceIdentifier);
 		}
 	}
-
 
 	public static HierarchicalIdentifier produceTraceableNode(@Nonnull String identifier, @Nullable String nodeType) {
 		Optional<HierarchicalIdentifier> candidate = identifierDatastore.stream().filter(x ->

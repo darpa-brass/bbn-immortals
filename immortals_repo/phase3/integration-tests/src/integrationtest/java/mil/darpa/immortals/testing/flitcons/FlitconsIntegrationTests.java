@@ -62,4 +62,54 @@ public class FlitconsIntegrationTests {
 	public void testSwriExample6() {
 		JarTestScenarioRunner.createScenario5Runner("s5e06i01").execute();
 	}
+
+	@Test
+	public void testSwriExample7() {
+		JarTestScenarioRunner.createScenario5Runner("s5e07i01").execute();
+	}
+
+	@Test
+	public void testSwriExample8() {
+		JarTestScenarioRunner.createScenario5Runner("s5e08i01").execute();
+	}
+
+	@Test
+	public void testSwriExample9() {
+		JarTestScenarioRunner.createScenario5Runner("s5e09i01").execute();
+	}
+
+	@Test
+	public void testSwriExample10() {
+		JarTestScenarioRunner.createScenario5Runner("s5e10i01").execute();
+	}
+
+	@Test
+	public void testSwriExample11() {
+		JarTestScenarioRunner.createScenario5Runner("s5e11i01").execute();
+	}
+
+	@Test
+	public void testSwriExample12() {
+		JarTestScenarioRunner.createScenario5Runner("s5e12i01").execute();
+	}
+
+	@Test
+	public void testSwriExample13() {
+		JarTestScenarioRunner.createScenario5Runner("s5e13i01").execute();
+	}
+
+	@Test
+	public void testSwriExample14() {
+		JarTestScenarioRunner.createScenario5Runner("s5e14i01").execute();
+	}
+
+	@Test
+	public void testSwriExample15() {
+		JarTestScenarioRunner.createScenario5Runner("s5e15i01").execute();
+	}
+
+	@Test
+	public void testSwriExample16() {
+		JarTestScenarioRunner.createScenario5Runner("s5e16i01").execute();
+	}
 }

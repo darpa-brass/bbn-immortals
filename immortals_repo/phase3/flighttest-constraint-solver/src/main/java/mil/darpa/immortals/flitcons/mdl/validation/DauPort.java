@@ -22,6 +22,7 @@ public class DauPort implements DuplicateInterface<DauPort> {
 	public String thermocouple;
 	public String portType;
 	public String direction;
+	public String portPolarity;
 	public boolean excitationPortIsPresent;
 
 	public DauPort(@Nonnull String id, @Nonnull String parentDauId) {
@@ -37,6 +38,7 @@ public class DauPort implements DuplicateInterface<DauPort> {
 		rval.thermocouple = thermocouple;
 		rval.portType = portType;
 		rval.direction = direction;
+		rval.portPolarity = portPolarity;
 		rval.excitationPortIsPresent = excitationPortIsPresent;
 		return rval;
 	}

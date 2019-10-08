@@ -50,6 +50,7 @@ public class TestScenarios {
 		ClassLoader cl = TestScenarios.class.getClassLoader();
 		List<TestScenario> scenarios = new LinkedList<>();
 		scenarios.addAll(initTestScenarios(cl.getResourceAsStream("s5_bbn_scenarios.json")));
+		scenarios.addAll(initTestScenarios(cl.getResourceAsStream("s5_bbn_generated_scenarios.json")));
 		scenarios.addAll(initTestScenarios(cl.getResourceAsStream("s5_swri_scenarios.json")));
 		scenarios.addAll(initTestScenarios(cl.getResourceAsStream("s6_bbn_scenarios.json")));
 		scenarios.addAll(initTestScenarios(cl.getResourceAsStream("s6_swri_scenarios.json")));

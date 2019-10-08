@@ -21,8 +21,9 @@ with open(os.path.join(SD, 'scenarios/test_scenarios.json'), 'r') as f:
 scenario_choices = sorted(list(regression_scenarios.keys()) + list(debug_scenarios.keys()) +
                           list(staging_scenarios) + list(bad_scenarios))
 
-parser = argparse.ArgumentParser('DSL Tester', add_help=True)
-parser.add_argument('--scenario', type=str, choices=scenario_choices, help='The scenario to execute')
+parser = argparse.ArgumentParser('DSL Tester', add_help=True, formatter_class=argparse.RawTextHelpFormatter)
+parser.add_argument('--scenario', type=str, choices=scenario_choices, metavar='',
+                    help='The scenario to execute. Valid choices:\n' + '\n'.join(scenario_choices))
 parser.add_argument('--simple-solver', '-s', action='store_true', help='Use the simple solver')
 parser.add_argument('--use-jar-with-dsl', '-j', action='store_true', help='Use the Jar if the DSL is used')
 parser.add_argument('--keep-running-on-failure', action='store_true', help='Keep running the tests on failure')
@@ -71,7 +72,18 @@ def exec_cmd(cmd, success_expected, test_identifier, cwd=None, abort_on_failure=
 
     start_time = time.time()
     print('-----------------------COMMAND OUTPUT-----------------------')
-    return_code = subprocess.call(cmd, cwd=cwd)
+
+    env_values = os.environ.copy()
+    z3_lib_dir = os.path.join(os.environ['HOME'], ".immortals/z3/bin")
+    if os.path.exists(z3_lib_dir):
+        if 'LD_LIBRARY_PATH' in env_values:
+            env_values['LD_LIBRARY_PATH'] = os.environ['LD_LIBRARY_PATH'] + ':' + os.path.join(os.environ['HOME'],
+                                                                                               ".immortals/z3/bin")
+        else:
+            env_values['LD_LIBRARY_PATH'] = z3_lib_dir
+
+    return_code = subprocess.call(cmd, cwd=cwd, env=env_values)
+
     exec_data.duration = int(time.time() - start_time)
 
     print('--------------------------DURATION--------------------------')
@@ -189,10 +201,8 @@ def main():
             ' parameters cannot be used with any other parameters!')
 
     def run_scenario(scenario_identifier, scenario):
-        if 'request_file_hash' in scenario:
-            scenario.pop('request_file_hash')
-        if 'inventory_file_hash' in scenario:
-            scenario.pop('inventory_file_hash')
+        if 'backup_hash' in scenario:
+            scenario.pop('backup_hash')
 
         return run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
                         abort_on_failure=(not args.keep_running_on_failure), scenario_identifier=scenario_identifier,
@@ -225,16 +235,18 @@ def main():
         if not os.path.exists(DSL_DIR):
             raise Exception('The DSL directory "' + DSL_DIR + '" does not exist!')
 
-        RULES_FILE = os.path.realpath(os.path.join(SD, 'swap-rules.json'))
+        RULES_FILE = os.path.realpath(os.path.join(SD, 'scenarios/swap-rules.json'))
         if not os.path.exists(RULES_FILE):
             raise Exception('The file "' + RULES_FILE + '" does not exist!')
 
     results = list()
 
     if args.input_inventory is not None or args.input_request is not None:
-        run_test(inventory_file=args.input_inventory, request_file=args.input_request,
-                 simple_solver=use_simple_solver, use_jar=use_full_jar,
-                 abort_on_failure=(not args.keep_running_on_failure), success_expected=True)
+        results.append(
+            run_test(inventory_file=args.input_inventory, request_file=args.input_request,
+                     simple_solver=use_simple_solver, use_jar=use_full_jar,
+                     abort_on_failure=(not args.keep_running_on_failure), success_expected=True)
+        )
 
     elif args.run_staging_tests:
         results = run_scenarios(staging_scenarios)
@@ -253,13 +265,13 @@ def main():
 
     else:
         if args.scenario in regression_scenarios:
-            results = run_scenario(args.scenario, regression_scenarios[args.scenario])
+            results.append(run_scenario(args.scenario, regression_scenarios[args.scenario]))
         elif args.scenario in debug_scenarios:
-            results = run_scenario(args.scenario, debug_scenarios[args.scenario])
+            results.append(run_scenario(args.scenario, debug_scenarios[args.scenario]))
         elif args.scenario in bad_scenarios:
-            results = run_scenario(args.scenario, bad_scenarios[args.scenario])
+            results.append(run_scenario(args.scenario, bad_scenarios[args.scenario]))
         elif args.scenario in staging_scenarios:
-            results = run_scenario(args.scenario, staging_scenarios[args.scenario])
+            results.append(run_scenario(args.scenario, staging_scenarios[args.scenario]))
         else:
             print("Invalid scenario '" + args.scenario + "'!")
             exit(-1)

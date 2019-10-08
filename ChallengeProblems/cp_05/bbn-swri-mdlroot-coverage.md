@@ -63,3 +63,61 @@ ignored:
 ```
 
 The document can be found [here](example_assumptions/ExampleCoverage.xml)
+
+## Matching Guidelines
+
+These indicate the rules governing when a **DAUInventory** value is a valid match for 
+an **MDLRoot** value. 
+
+
+#### Matching definitions
+| Definition          | Description                                     |
+|---------------------|-------------------------------------------------|
+| AnyValue            | Any value, not including the absence of a value |
+| AnyOrNoValue        | Any value or no value                           |
+| Present             | The element or attribute is present             |
+| NotPresent          | The element or attribute is not present         |
+| ExactValue         | The exact value must match                      |
+| CorrespondingValue | The corresponding value as documented here      |
+
+
+
+
+#### Thermocouple Matching Rules
+
+This is considered to be the Thermocouple extension value parsed from the PortType
+
+| MDLRoot Value         | Matching Inventory Values |
+|-----------------------|---------------------------|
+| **ThermocoupleEnum**  | ExactValue                     |
+| NotPresent            | AnyOrNoValue              |
+
+
+#### PortDirection Matching Rules
+
+| MDLRoot Value   | Matching Inventory Values   |
+|-----------------|-----------------------------|
+| "Input"         | ["Input", "Bidirectional"]  |
+| "Output"        | ["Output", "Bidirectional"] |
+| "Bidirectional" | "Bidirectional"             |
+| "Unspecified"   | [NotPresent, "Unspecified"] |
+
+
+#### Excitation Matching Rules
+
+| Device ExcitationSource | Matching DAU Port ExcitationIsPresent presence  |
+|-------------------------|-----------------------------------------------|
+| "Internal"              | [Present, NotPresent]
+| "External"              | Present
+| NotPresent              | [Present, NotPresent]
+
+
+#### Overall Matching Rules
+| MDLRoot Attribute             | Matching Behavior When Present  | Matching Behavior When Not Present  |
+|-------------------------------|---------------------------------|-------------------------------------|
+| Measurement.SampleRate.Range  | ExactValue                      | AnyOrNoValue                        |
+| Measurement.DataRate.Range    | ExactValue                      | AnyOrNoValue                        |
+| Device.ExcitationSource       | CorrespondingValue              | AnyOrNoValue                        |
+| PortDirection                 | CorrespondingValue              | N/A (Always Present)                |
+| PortPolarity                  | ExactValue                      | AnyOrNoValue                        |
+| PortType                      | ExactValue                      | NoValue                             |

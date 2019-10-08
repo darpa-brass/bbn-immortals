@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<MDLRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://inetprogram.org/projects/MDL" 
+         xmlns:mdl="http://inetprogram.org/projects/MDL" 
+         xsi:schemaLocation="http://inetprogram.org/projects/MDL MDL_v0_8_19.xsd">
+  <DatabaseID>example ID string</DatabaseID>
+  <Checksum>TBD checksum</Checksum>
+  <ConfigurationVersion>-TBD-</ConfigurationVersion>
+  <DirtyBit>false</DirtyBit>
+  <TestMissions>
+    <TestMission>
+      <Name>Measurements and Data Operations Example</Name>
+      <Description>TBD description</Description>
+      <TmNSCompleteness>false</TmNSCompleteness>
+      <TmNSCompletenessDescription>-TBD-</TmNSCompletenessDescription>
+      <NetworkReferences>
+      </NetworkReferences>
+    </TestMission>
+  </TestMissions>
+  <Units>
+    <DerivedUnit ID="ByteEU">
+      <Name>Byte</Name>
+      <Description>8 binary digits (1 byte)</Description>
+      <Symbol>B</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>8.0</NumericalConstant>
+        <SIUnits>Bit</SIUnits>
+      </UnitsNumerator>
+    </DerivedUnit>
+    <DerivedUnit ID="GForceUnits">
+      <Name>G Force</Name>
+      <Description>TBD description</Description>
+      <Symbol>G</Symbol>
+      <UnitsNumerator>
+        <NumericalConstant>9.80665</NumericalConstant>
+        <SIUnits>MeterPerSecondSquared</SIUnits>
+      </UnitsNumerator>
+    </DerivedUnit>
+  </Units>
+
+</MDLRoot>

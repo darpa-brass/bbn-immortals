@@ -1,0 +1,349 @@
+{
+    "scenarios": [
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "4f76950ef8a81b9e126dc43fec2face396b7ef2de80579d5a87f0c5984e173f2",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "d916ff45591dd2e393d13a2ed060856930cee1d59a88cacd2540b60eefc71100",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "a2b872e0de936bf970eefc5b5d36ed27a241cff6dc2df3359d91f6f7de54353d",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "756c971e11d535fc5adc44f22758101594e88ad1426283868ec3b5dc1b962047",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "717331ed550c29ffea6a756647b2de60b619d8e3e590b081472e9ed0e8a0d948",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "798e11f0663dedad210848ea986300479b1e26011ba37e942ebc5b3d2ef026db",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "03ed1bc2e9398364a20aa2539cb83b8c73d224a399f03847f59b5847a76fb7e7",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "db460911e97d66824067d1d6d3bb04a18c8310ad0cae53bcbd2f307fe6992e8f",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "eb9e2510a28e0b1246f4fc6fa739fd0aed74803e5caa2c2ec4ae203bdcee4471",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "4f3718a934a47b36da221186befee4fd533a50bb3f10d4be5533378099a29ff1",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "c5edb44cf0b193bee3cbc364f5eb285fe8f8d20eebe44ad10df1f52d3b1f69b1",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "4d725e4b025955fde4f4f6ba776e36abf62f6847bf4b71517bbe54fead7e25ae",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "07013feebbbddad346850a93b8753544461bf6393453115d31ceb95b5802a612",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "fe3349e94c73e3116e1b5585f932d14de0dcdb5a233c1c6b9c6efc6924b336c9",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "e1742d491c7a7ed7c2f206e415a059a77e96c00490bd3b6882537f6eb566156b",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "4d61a1ed19ec2a30f1e66146dc655b4963b71347b7dafd51697179318a8d76a1",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "5f4417a9a74452ea7bd18f8724972239cbc682987102561ca67748c7c3a3ed1d",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "efe04e31fab5322462f10a14b9fef76c19315bdb8533ddb1df783c6506e6338c",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "ac2461d7250746d416748f19efbc7f5ce643212abee350e205f651bcaf096bed",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "31100a07b51287e7492444f2d8ebaac09985e54cf641d084975837b6aa70133e",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0",
+            "prettyName": "Generated Scenario: s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "45663e2cbe1cf3e891a562bfe0b72e57018f0df14dca0be2fa95bf370f0271d2",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-two-dau-along-modules-adaptation.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-two-dau-along-modules-adaptation",
+            "prettyName": "Generated Scenario: s5e03i01-two-dau-along-modules-adaptation",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "a2cb5f9cb8cb66cd7b26e55b18dda7a410319b4da7323720c47fd5ebf52752fc",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        },
+        {
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/generated/s5e03i01-two-dau-split-modules-adaptation.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "shortName": "s5e03i01-two-dau-split-modules-adaptation",
+            "prettyName": "Generated Scenario: s5e03i01-two-dau-split-modules-adaptation",
+            "timeoutMS": 120000,
+            "ingestedXmlInventoryHash": "47d7e7c03dd93a4729e9ec41e0ab4ba6dbbab853432bcfc0cd700d10cfd52602",
+            "ingestedXmlMdlrootInputHash": "95de300f67e0cb5cff0b541e20d04095b75d5c937dcabf58716c62e6c10f2dc3",
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "expectedDauSelections": null
+        }
+    ]
+}

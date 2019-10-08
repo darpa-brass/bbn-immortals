@@ -3,12 +3,12 @@
     {
       "BBNDauFlaggedForReplacement": true,
       "BBNDauMonetaryCost": 90000,
-      "GloballyUniqueId": "I#99:5",
+      "GloballyUniqueId": "I#97:15",
       "Port": [
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#48:177",
+          "GloballyUniqueId": "I#85:427",
           "Measurement": [
             {
               "DataLength": {
@@ -19,7 +19,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:167",
+              "GloballyUniqueId": "I#25:461",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -32,7 +32,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#48:178",
+          "GloballyUniqueId": "I#85:428",
           "Measurement": [
             {
               "DataLength": {
@@ -43,7 +43,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:168",
+              "GloballyUniqueId": "I#25:462",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -56,7 +56,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#48:179",
+          "GloballyUniqueId": "I#85:429",
           "Measurement": [
             {
               "DataLength": {
@@ -67,7 +67,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:169",
+              "GloballyUniqueId": "I#25:463",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -80,7 +80,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#48:180",
+          "GloballyUniqueId": "I#85:430",
           "Measurement": [
             {
               "DataLength": {
@@ -91,7 +91,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:170",
+              "GloballyUniqueId": "I#25:464",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -104,7 +104,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#48:181",
+          "GloballyUniqueId": "I#85:431",
           "Measurement": [
             {
               "DataLength": {
@@ -115,7 +115,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:171",
+              "GloballyUniqueId": "I#25:465",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -128,7 +128,7 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": true,
-          "GloballyUniqueId": "I#48:182",
+          "GloballyUniqueId": "I#85:432",
           "Measurement": [
             {
               "DataLength": {
@@ -139,7 +139,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:172",
+              "GloballyUniqueId": "I#25:466",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -152,7 +152,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#48:198",
+          "GloballyUniqueId": "I#85:448",
           "Measurement": [
             {
               "DataLength": {
@@ -163,7 +163,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:173",
+              "GloballyUniqueId": "I#25:467",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -177,7 +177,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#48:199",
+          "GloballyUniqueId": "I#85:449",
           "Measurement": [
             {
               "DataLength": {
@@ -188,7 +188,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:174",
+              "GloballyUniqueId": "I#25:468",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -202,7 +202,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#48:200",
+          "GloballyUniqueId": "I#85:450",
           "Measurement": [
             {
               "DataLength": {
@@ -213,7 +213,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:175",
+              "GloballyUniqueId": "I#25:469",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -227,7 +227,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#48:201",
+          "GloballyUniqueId": "I#85:451",
           "Measurement": [
             {
               "DataLength": {
@@ -238,7 +238,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:176",
+              "GloballyUniqueId": "I#25:470",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -252,7 +252,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#48:202",
+          "GloballyUniqueId": "I#85:452",
           "Measurement": [
             {
               "DataLength": {
@@ -263,7 +263,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:177",
+              "GloballyUniqueId": "I#25:471",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -277,7 +277,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#48:203",
+          "GloballyUniqueId": "I#85:453",
           "Measurement": [
             {
               "DataLength": {
@@ -288,7 +288,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:178",
+              "GloballyUniqueId": "I#25:472",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -302,7 +302,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#48:204",
+          "GloballyUniqueId": "I#85:454",
           "Measurement": [
             {
               "DataLength": {
@@ -313,7 +313,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:179",
+              "GloballyUniqueId": "I#25:473",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
@@ -327,7 +327,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#48:205",
+          "GloballyUniqueId": "I#85:455",
           "Measurement": [
             {
               "DataLength": {
@@ -338,7 +338,7 @@
                 "Min": 2048,
                 "Max": 4096
               },
-              "GloballyUniqueId": "I#39:180",
+              "GloballyUniqueId": "I#25:474",
               "SampleRate": {
                 "Min": 128,
                 "Max": 256
