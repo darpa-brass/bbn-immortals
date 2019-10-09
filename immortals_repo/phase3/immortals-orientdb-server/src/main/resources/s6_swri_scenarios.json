@@ -101,6 +101,18 @@
 			"expectedJsonOutputStructure": {}
 		},
 		{
+			"shortName": "s6_17to19_embeddedSchemaUpdate",
+			"scenarioType": "Scenario6bbn",
+			"prettyName": "Scenario 6 - v0.8.17 to v0.8.19 - Embedded Schema Update",
+			"timeoutMS": 600000,
+			"initialXsdVersion": "V0_8_17",
+			"updatedXsdInputPath": "knowledge-repo/cp/cp3.1/cp-ess-min/etc/schemas/v19/MDL_v0_8_19.xsd",
+			"expectedStatusSequence": [
+				"AdaptationSuccessful"
+			],
+			"expectedJsonOutputStructure": {}
+		},
+		{
 			"shortName": "s6_v19_embedded_add",
 			"scenarioType": "Scenario6swri",
 			"prettyName": "Scenario 6 - SwRI - v0.8.19 - Embedded Schema Update - Add",

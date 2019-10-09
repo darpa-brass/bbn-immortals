@@ -17,10 +17,10 @@ It requires the following:
 General setup of the requirements is as follows:
 ```
 
-# Activate anaconda and install lxml
+# Activate anaconda and install lxml and xmldiff
 source <CONDA_DIR>/bin/activate
 conda activate aql
-pip3 install lxml
+pip3 install lxml xmldiff
 
 # clone using SSH key
 git clone --branch master --depth=1 --single-branch git@git.isis.vanderbilt.edu:SwRI/challenge-problems.git
@@ -39,6 +39,21 @@ cd knowledge-repo/cp/cp3.1/xsd-translation-service-test
 mvn
 
 # Go to the tester directory
+cd ../../../../phase3/utils/xtstest/
+```
+
+the script I use on my test image is as follows:
+```
+#!/usr/bin/env bash
+
+source ~/.immortals/anaconda/bin/activate
+conda activate aql
+pip3 install lxml xmldiff
+git clone --branch master --depth=1 --single-branch git@git.isis.vanderbilt.edu:SwRI/challenge-problems.git
+cd immortals_rsync
+cp knowledge-repo/cp/cp3.1/cp-ess-min/etc/schemas/v19/Tmats* ${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/
+cd knowledge-repo/cp/cp3.1/xsd-translation-service-test
+mvn
 cd ../../../../phase3/utils/xtstest/
 ```
 
