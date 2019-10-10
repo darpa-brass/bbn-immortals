@@ -4,8 +4,8 @@ import argparse
 import atexit
 import json
 import os
+import shutil
 import subprocess
-import sys
 import time
 from typing import List, Union, Dict
 
@@ -14,12 +14,9 @@ from lxml.etree import XSLTApplyError
 from xmldiff.actions import UpdateAttrib
 from xmldiff.main import diff_files
 
-_SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.realpath(os.path.join(_SCRIPT_DIR, '../common/')))
-
 from immortals_utils import IMMORTALS_ROOT, TestScenario, get_s6_scenarios, \
     get_s6_all_custom_scenarios, get_s6_bbn_custom_scenario_names, get_s6_swri_custom_scenario_names, \
-    get_s6_swri_predefined_scenario_names
+    get_s6_swri_predefined_scenario_names, KR_XTS_TESTER_JAR
 
 scenarios = get_s6_scenarios()
 scenario_names = list(scenarios.keys())
@@ -48,9 +45,10 @@ parser.add_argument('--test-all-swri', '-s', action='store_true',
 parser.add_argument('--show-all-xsd-diff-commands', '-d', action='store_true',
                     help='Outputs a list of diff commands for comparing the initial and target XSD files')
 
-_JAR_FILE = os.path.join(
-    IMMORTALS_ROOT,
-    'knowledge-repo/cp/cp3.1/xsd-translation-service-test/target/immortals-xsd-translation-service-tester-boot.jar')
+if 'XTS_ROOT_DIR' in os.environ:
+    XTS_ROOT_DIR = os.environ['XTS_ROOT_DIR']
+else:
+    XTS_ROOT_DIR = os.path.join(IMMORTALS_ROOT, 'knowledge-repo', 'cp', 'cp3.1', 'xsd-tranlsation-service-aql', 'aql')
 
 
 def make_diff_command(file1, file2):
@@ -63,14 +61,13 @@ def make_diff_command(file1, file2):
 
 
 class XsdTranslationService:
-    _CWD = os.path.join(IMMORTALS_ROOT, 'knowledge-repo', 'cp', 'cp3.1', 'xsd-tranlsation-service-aql', 'aql')
     _process = None
 
     @staticmethod
     def start():
         if XsdTranslationService._process is None or XsdTranslationService._process.returncode is not None:
             XsdTranslationService._process = subprocess.Popen(['python3', 'server.py'],
-                                                              cwd=XsdTranslationService._CWD)
+                                                              cwd=XTS_ROOT_DIR)
             time.sleep(4)
 
     @staticmethod
@@ -110,6 +107,14 @@ class ValidationError:
         self.message = schema_error_log_entry.message
         self.error_type = schema_error_log_entry.type_name
 
+    def to_dict(self):
+        return {
+            "filename": self.filename,
+            "fileLine": self.file_line,
+            "message": self.message,
+            "errorType": self.error_type
+        }
+
 
 class ValidationResult:
     def __init__(self):
@@ -126,7 +131,6 @@ class XmlTester:
         self.src_xml_dir = src_xml_dir
         self.target_result_dir = target_result_dir
         self.label = label
-        self.validation_xml_dir = validation_xml_dir
         self.transformed_xml_dir = os.path.join(self.target_result_dir, 'transformed_documents')
         os.mkdir(self.transformed_xml_dir)
         self._transformer_filepath = None
@@ -134,11 +138,25 @@ class XmlTester:
         self.validation_errors = dict()  # type: Dict[str, List[ValidationError]]
         self.must_pass = True
         if validation_xml_dir is None:
+            self.validation_xml_dir = None
             self.unchanged_filenames = dict()
         else:
             unchanged_filepath = os.path.join(validation_xml_dir, 'unchanged.json')
             if os.path.exists(unchanged_filepath):
                 self.unchanged_filenames = json.load(open(unchanged_filepath))
+                self.validation_xml_dir = os.path.join(self.target_result_dir, 'expected_documents')
+                os.mkdir(self.validation_xml_dir)
+
+                for xml_file in os.listdir(src_xml_dir):
+                    if self.unchanged_filenames[xml_file]:
+                        src_root = self.src_xml_dir
+                    else:
+                        src_root = validation_xml_dir
+
+                    shutil.copy(os.path.join(src_root, xml_file), os.path.join(self.validation_xml_dir, xml_file))
+
+            else:
+                self.validation_xml_dir = validation_xml_dir
 
     def set_must_pass(self, must_pass: bool):
         self.must_pass = must_pass
@@ -151,6 +169,21 @@ class XmlTester:
                 self.validation_errors[key] = list()
 
             self.validation_errors[key].append(ve)
+
+    def save_validation_errors(self):
+        if len(self.validation_errors) > 0:
+            save_val = dict()
+
+            for key in self.validation_errors.keys():
+                inner_val = list()
+                save_val[key] = inner_val
+                for error in self.validation_errors[key]:
+                    inner_val.append({
+                        "fileName": error.filename,
+                        "fileLine": error.file_line,
+                    })
+
+            json.dump(save_val, open(os.path.join(self.target_result_dir, 'validation_errors.json'), 'w'), indent=4)
 
     def validate_docs(self, src_xsd: str, xml_files: Union[str, List[str]]) -> ValidationResult:
         validation_result = ValidationResult()
@@ -227,14 +260,13 @@ class XmlTester:
     def test(self) -> str:
         XsdTranslationService.start()
 
-        results_dir = os.path.join(IMMORTALS_ROOT, "TestResults")
         cmd = ['java',
                '-DclientUrl=http://127.0.0.1:8090/xsdsts',
                '-DsrcSchema=' + self.src_xsd,
                '-DdstSchema=' + self.dst_xsd,
                '-DsrcDocs=' + self.src_xml_dir,
-               '-DresultsDir=' + results_dir,
-               '-jar', _JAR_FILE
+               '-DresultsDir=' + os.path.join(self.target_result_dir, 'kr_tester_results'),
+               '-jar', KR_XTS_TESTER_JAR
                ]
 
         process_result = subprocess.run(cmd, cwd=self.target_result_dir)
@@ -245,7 +277,7 @@ class XmlTester:
             if not self.must_pass:
                 return self.label + "\n\tTranslation service executed successfully. Skipping validation since it is a predefined scenario."
 
-            self._transformer_filepath = os.path.join(self.target_result_dir, 'xsdts-client/0/response.xslt')
+            self._transformer_filepath = os.path.join(self.target_result_dir, 'xsdts-client', '0', 'response.xslt')
             self._transformer = etree.XSLT(etree.XML(
                 open(self._transformer_filepath, 'r').read().encode()))
 
@@ -294,6 +326,7 @@ class XmlTester:
                                                                    self.transformed_xml_dir)
                         )
 
+            self.save_validation_errors()
             return rval + '\n\n'
 
         else:
@@ -370,7 +403,7 @@ def main():
     if test_all_swri or test_all_swri_custom:
         test_names.extend(get_s6_swri_custom_scenario_names())
 
-    cwd = os.path.join(_SCRIPT_DIR, 'TEST_RESULTS')
+    cwd = os.path.abspath('TEST_RESULTS')
     if os.path.exists(cwd):
         os.rename(cwd, cwd + '-' + str(int(os.path.getctime(cwd))))
     os.mkdir(cwd)

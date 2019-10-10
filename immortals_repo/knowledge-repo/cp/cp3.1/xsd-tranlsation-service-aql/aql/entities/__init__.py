@@ -1,7 +1,7 @@
-from copy import copy
+from copy import copy, deepcopy
 from difflib import SequenceMatcher
 from lxml import etree as et
-import random
+from mappers.utils import gen_default_value
 
 from constants import XSL_NS
 
@@ -9,10 +9,12 @@ from constants import XSL_NS
 class ElementType(object):
     # TODO add slots
 
-    DEFAULTS = {
-        'xsd:nonNegativeInteger': "1",
+    # TODO Handle choices_groups with children manipulation
+    # we need to check if a child is in choices_groups and remove it, etc..
 
-    }
+    # TODO children and children_original_order could be just one attr, now we are using
+    # children_original_order to calculate hashing, so children attr could be with original order and
+    # we just remove children_original_order attr.
 
     # An weighted arithmetic mean over these fields
     SIMILARITY_WEIGHT = {
@@ -28,11 +30,14 @@ class ElementType(object):
         self._set_children(children)
         self.restriction_enum = []
         self.attributes = []
-        # self._children = []
-        # self.children_original_order = []
+        self.choices_groups = []
 
         # Annotation with documentation about type (useful for similarity comparisson)
         self.annotation = None
+
+    # TODO add tests
+    def default(self):
+        return gen_default_value(self.name)
 
     # TODO add tests
     def fill_with(self, other):
@@ -43,19 +48,10 @@ class ElementType(object):
         self._children = list(other._children)
         self.children_original_order = list(other.children_original_order)
         self.name = other.name
-        self.restriction_enum = other.restriction_enum
+        self.restriction_enum = deepcopy(other.restriction_enum)
         self.annotation = other.annotation
-        self.attributes = list(other.attributes)
-
-        self.changed()
-
-    def copy_from(self, other):
-        self._children = list(other._children)
-        self.children_original_order = list(other.children_original_order)
-        self.name = other.name
-        self.restriction_enum = other.restriction_enum
-        self.annotation = other.annotation
-        self.attributes = list(other.attributes)
+        self.attributes = deepcopy(other.attributes)
+        self.choices_groups = deepcopy(other.choices_groups)
 
         self.changed()
 
@@ -120,7 +116,7 @@ class ElementType(object):
         # tree is different from other
 
         self._hash = hash('-'.join(
-            [str(hash(str(self)))] + [str(hash(i)) for i in self._children]
+            [str(hash(str(self)))] + [str(hash(i)) for i in self.children_original_order]
         ))
 
     def _set_children(self, val):
@@ -130,6 +126,45 @@ class ElementType(object):
         self.changed()
 
     children = property(_get_children, _set_children)
+
+    # TODO add tests
+    def skip_from_output_by_choice(self, child):
+        found_in_groups = False
+        for group in self.choices_groups:
+            try:
+                if group.index(child) == 0:
+                    return False
+
+                found_in_groups = True
+            except ValueError:
+                pass
+
+        return found_in_groups
+
+    def in_choices_group(self, child):
+        for group in self.choices_groups:
+            if child in group:
+                return True
+
+        return False
+
+    def in_same_choices_group(self, first_child, second_child):
+        for group in self.choices_groups:
+            if first_child in group and second_child in group:
+                return True
+
+        return False
+
+    # TODO add tests
+    def output_children(self):
+        for child in self.children_original_order:
+            if not child.lxml_must_create():
+                continue
+
+            if self.skip_from_output_by_choice(child):
+                continue
+
+            yield child
 
 
 class ElementAnyType(ElementType):
@@ -173,7 +208,15 @@ class Element(object):
         return self.element_type.children
 
     @property
+    def children_original_order(self):
+        return self.element_type.children_original_order
+
+    @property
     def self_hash(self):
+        return hash(str(self))
+
+    @property
+    def self_hash_unordered(self):
         return hash(str(self))
 
     @property
@@ -188,10 +231,10 @@ class Element(object):
 
         # Element type similarity
         final_ratio += self.SIMILARITY_WEIGHT['element_type'] * \
-                       self.element_type.similarity(other.element_type)
+            self.element_type.similarity(other.element_type)
 
         final_ratio += self.SIMILARITY_WEIGHT['name'] * \
-                       SequenceMatcher(None, self.name, other.name).ratio()
+            SequenceMatcher(None, self.name, other.name).ratio()
 
         return final_ratio / self.TOTAL_SIMILARITY_WEIGHT
 
@@ -215,7 +258,7 @@ class Element(object):
         self.calc_hash()
 
     def calc_hash(self):
-        # Calculate my hash, considering my name and type
+        # Calculate my hash, considering my name, type, and sequence index
         self._hash = hash(str(self.self_hash) + '-' + str(self.type_hash))
 
     def __str__(self):
@@ -226,6 +269,10 @@ class Element(object):
 
     def __hash__(self):
         return self._hash
+
+    # TODO add tests
+    def lxml_must_create(self):
+        return self.attrs.get('minoccurs', '1') != '0' or self.has_copy_of()
 
     def lxml_name(self, namespaces=None):
         if namespaces and self.namespace in namespaces:
@@ -257,6 +304,30 @@ class Element(object):
 
         return (if_exists, if_not_exists)
 
+    # TODO add tests
+    def has_copy_of(self):
+        '''
+        Search recursivelly for a copy-of element and returns true if found
+        '''
+
+        if self.copy_of:
+            return True
+
+        for child in self.children:
+            if child.has_copy_of():
+                return True
+
+        return False
+
+    def lxml_choices_comment(self, element_type):
+        if element_type.in_choices_group(self):
+            comment = et.Element(et.QName(XSL_NS, 'comment'))
+            comment.text = 'Element "{}" choosed from choices group'.format(self.name)
+
+            return comment
+
+        return None
+
     def _create_lxml_element(self, parent):
         params = dict(name=self.name)
 
@@ -267,26 +338,31 @@ class Element(object):
                                 **params)
 
         for attr in self.element_type.attributes:
+            # TODO add tests
             if attr['use'] == 'required':
                 attr_params = {'name': attr['name']}
                 attr_element = et.SubElement(element, et.QName(XSL_NS, 'attribute'),
                                              **attr_params)
-                # TODO clean this up
-                if attr['type'] == "xsd:ID":
-                    et.SubElement(attr_element, et.QName(XSL_NS, "value-of"),
-                                  select="my:gen-id()")
-                elif attr['type'] == "xsd:IDREF":
-                    attr_element.text = "INSERT_REF"
-                elif attr['type'] == "xsd:positiveInteger":
-                    attr_element.text = str(random.randint(1, 100000000000))
-                elif attr['type'] == "xsd:token":
-                    attr_element.text = "TOKEN_DEFAULT"
+                if attr['type'].endswith("IDREF"):
+                    et.SubElement(attr_element, et.QName(XSL_NS, 'value-of'), select='ancestor::mdl:' + self.element_type.name.replace('Ref', '') + "/@ID")
                 else:
-                    print(f'Not supported attribute type {attr["type"]}')
+                    attr_value = gen_default_value(attr['type'])
+                    if attr_value is not None:
+                        attr_element.text = attr_value
+                        continue
 
-        for child in self.element_type.children_original_order:
-            if 'minoccurs' not in child.attrs or child.attrs['minoccurs'] != '0':
-                child.to_lxml_element(element)
+                if attr['type'].endswith(':ID'):
+                    et.SubElement(attr_element,
+                                  et.QName(XSL_NS, 'value-of'),
+                                  select='my:gen-id()')
+
+        for child in self.element_type.output_children():
+            # Adding a choices comment
+            choices_comment = child.lxml_choices_comment(self.element_type)
+            if choices_comment is not None:
+                element.append(choices_comment)
+
+            child.to_lxml_element(element)
 
         if self.attrs.get('default'):
             element.text = self.attrs.get('default')
@@ -294,7 +370,9 @@ class Element(object):
         elif self.element_type.restriction_enum:
             element.text = self.element_type.restriction_enum[0]
             element.addprevious(et.Comment('CHECK! Created with first element of restriction from type spec'))
-        elif self.element_type.name in ElementType.DEFAULTS:
-            element.text = ElementType.DEFAULTS[self.element_type.name]
+        else:
+            type_default_value = self.element_type.default()
+            if type_default_value:
+                element.text = type_default_value
 
         return (element,)

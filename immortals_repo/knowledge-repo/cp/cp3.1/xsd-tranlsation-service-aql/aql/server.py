@@ -97,23 +97,13 @@ def get_xslt():
     similar_doc = None
 
     # TODO (handle nodes in additions and removals)
-    removed_count = None
-    added_count = None
+    removed_count = len(compare_result['removals'])
+    added_count = len(compare_result['additions'])
+    relocations = len(compare_result['relocations'])
+    reorders = len(compare_result['reorders'])
 
     renamed_count = len(compare_result['renames'])
 
-    print(f' > Old field count: {old_field_count}')
-    print(f' > New field count: {new_field_count}')
-    print(f' > Unchanged field count: {unchanged_count}')
-    print(f' > Removed fields (present in old and not in new): {removed_count}')
-    print(f' > Added fields (present in new and not in old): {added_count}')
-    print(f' > Fields with small diff in name: {renamed_count}')
-    print(f' > Fields with small diff in type name: {typerenamed_count}')
-    print(f' > Removed fields with similar graphs: {graph_similar}')
-    print(f' > Added fields with similar graphs: {add_graph_similar}')
-    print(f' > Similar documentation: {similar_doc}')
-    print('')
-    print(f' > Percent of fields mapped ((added/new_fields) + (removed/old_fields))/2: None')
 
     return jsonify({
         'xslt': xslt,
@@ -122,11 +112,10 @@ def get_xslt():
             'newFieldCount': new_field_count,
             'removedFields': removed_count,
             'addedFields': added_count,
+            'reorders': reorders,
             'renamedFields': renamed_count,
+            'relocatedFields': relocations,
             'renamedTypes': typerenamed_count,
-            'graphSimilarRemoved': graph_similar,
-            'graphSimilarAdded': add_graph_similar,
-            'similarDocumentation': similar_doc,
             'percentMapped': None  # TODO
         }
     })

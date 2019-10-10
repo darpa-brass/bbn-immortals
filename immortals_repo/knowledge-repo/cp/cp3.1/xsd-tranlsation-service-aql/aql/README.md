@@ -61,10 +61,16 @@ $ make test
 
 Required `xmllint` and `xsltproc` installed.
 
-To performa a translation based on XSLT result from server endpoint:
+To perform a translation based on XSLT result from server endpoint (works only with XSLT < `2.0`):
 
 ```
 $ xsltproc translation.xslt mdl17.xml > result.xml
+```
+
+To work with things from XSLT 2.0 version (like `xsl:function`) you must use another tool, like `Saxon` (http://saxon.sourceforge.net/):
+
+```
+$ saxon -s:mdl17.xml -xsl:translation.xslt -o:result.xml
 ```
 
 Now, result is with new version provided by `translation.xslt`, we can now perform a validation with new verison (considering here MDL 19**:

@@ -26,8 +26,17 @@
          <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
          <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
          <xsd:element name="Name" type="xsd:token" />
-         <xsd:element name="Description" type="xsd:string" />
+         <xsd:element name="Description" type="DescriptionType" />
          <xsd:element name="NetworkNode" type="NetworkNodeType" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
+      <xsd:attribute name="ID" type="xsd:ID" use="required" />
+   </xsd:complexType>
+   <xsd:complexType name="DescriptionType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+         <xsd:element name="Name" type="xsd:token" />
+         <xsd:element name="Text" type="xsd:string" />
       </xsd:sequence>
       <xsd:attribute name="ID" type="xsd:ID" use="required" />
    </xsd:complexType>

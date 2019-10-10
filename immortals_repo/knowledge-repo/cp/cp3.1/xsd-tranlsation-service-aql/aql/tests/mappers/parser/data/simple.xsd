@@ -19,6 +19,11 @@
          <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
          <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
 	 <xsd:element name="DeliveryClass" type="DeliveryClassEnum" default="BestEffort"/>
+         <xsd:choice>
+            <xsd:element name="IPV4" type="xsd:string" />
+            <xsd:element name="IPV6" type="xsd:string" />
+         </xsd:choice>
+	 <xsd:element name="DestinationAddress" type="IPAddress"/>
       </xsd:sequence>
    </xsd:complexType>
    <xsd:simpleType name="DeliveryClassEnum">
@@ -27,5 +32,13 @@
        <xsd:enumeration value="FlightSafety"/>
        <xsd:enumeration value="BestEffort"/>tw
      </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="IPAddress">
+      <xsd:union memberTypes="IPv4Address IPv6Address" />
+   </xsd:simpleType>
+   <xsd:simpleType name="IPv4Address">
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" />
+      </xsd:restriction>
    </xsd:simpleType>
 </xsd:schema>

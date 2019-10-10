@@ -14,16 +14,21 @@
          <xsd:element name="ConfigVersion" type="xsd:string" />
          <xsd:element name="DirtyBit" type="xsd:boolean" />
          <xsd:element name="NetworkDomains" type="NetworkDomainsType" minOccurs="0" />
+         <xsd:choice>
+            <xsd:element name="IPV4" type="xsd:string" />
+            <xsd:element name="IPV6" type="xsd:token" />
+         </xsd:choice>
       </xsd:sequence>
    </xsd:complexType>
    <xsd:complexType name="NetworkDomainsType">
       <xsd:sequence>
          <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
          <!-- THIS IS A NEW FIELD -->
-         <xsd:element name="Domain" type="xsd:string" minOccurs="0" />
+         <xsd:element name="Domain" type="xsd:string" />
          <xsd:element name="DatabaseID" type="xsd:string" />
-         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+	 <!-- THIS FIELD WAS REORDERED -->
          <xsd:element name="Network" type="NetworkType" maxOccurs="unbounded" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
       </xsd:sequence>
    </xsd:complexType>
    <xsd:complexType name="NetworkType">
@@ -31,9 +36,20 @@
          <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
          <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
          <xsd:element name="Name" type="xsd:token" />
-         <xsd:element name="Description" type="xsd:string" />
+         <xsd:element name="Description" type="DescriptionType" />
          <xsd:element name="NetworkNode" type="NetworkNodeType" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="DescriptionType">
+      <xsd:sequence>
+         <xsd:element name="ReadOnly" type="xsd:boolean" default="false" minOccurs="0" />
+         <xsd:element name="Owner" type="xsd:token" minOccurs="0" />
+	 <!-- Reorder element here (this parent type, DescriptionType, must have only this reorder
+              to test elements with only a reorder, without any other changes) -->
+         <xsd:element name="Text" type="xsd:string" />
+         <xsd:element name="Name" type="xsd:token" />
+      </xsd:sequence>
+      <xsd:attribute name="ID" type="xsd:ID" use="required" />
    </xsd:complexType>
    <xsd:complexType name="NetworkNodeType">
       <xsd:sequence>

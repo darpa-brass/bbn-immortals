@@ -32,7 +32,7 @@ def test_api(client, request_json):
     template_tags = document.getElementsByTagName('xsl:template')
 
     # For now this is the number with improvements of course it must change
-    assert len(template_tags) == 157
+    assert len(template_tags) > 145 and len(template_tags) < 165
 
     # Checking some arbitrary data
 

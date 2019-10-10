@@ -3,6 +3,7 @@ from functools import reduce
 from collections import defaultdict
 from itertools import chain
 from xml.dom import minidom
+from constants import PRIMITIVE_TYPES_DEFAULT, SIMPLE_TYPES_DEFAULT
 
 from entities import ElementType, Element, ELEMENT_ANY_TYPE
 
@@ -59,7 +60,7 @@ class DocParser(object):
             'attribute': self._parse_attribute,
             'complexType': self._parse_complex_type,
             'sequence': self._parse_sequence,
-            'choice': self._parse_sequence,
+            'choice': self._parse_choice,
             'complexContent': self._parse_complex_content,
             'simpleContent': self._parse_simple_content,
             'simpleType': self._parse_simple_type,
@@ -221,22 +222,52 @@ class DocParser(object):
 
         elements = result['element']
 
-        if result.get('sequence'):
-            # Flat sub elements in arrays
-            elements = reduce(lambda x, y: x + y, result.get('sequence'), elements)
+        # Flat sub elements in arrays
+        sequences = result.get('sequence', [{}])
+        elements = reduce(lambda x, y: x + y.get('elements', []), sequences, elements)
 
-        # Here, we add all options of choice to handle it as a possible element
-        # It's necessary to think about colateral effects of this
-        if result.get('choice'):
-            # Flat sub elements in arrays
-            elements = reduce(lambda x, y: x + y, result.get('choice'), elements)
+        # Flat sub elements from choices in elements, we are doing this to handle it as a normal
+        # child element
+        choices = result.get('choice', [])
+        elements = reduce(lambda x, y: x + y, choices, elements)
 
-        return elements
+        return {
+            'elements': elements,
+            'choices': choices
+        }
+
+    def _parse_choice(self, el):
+        result = self._parse(el)
+
+        return result.get('element', [])
 
     def _parse_union(self, el):
         member_types = [i.strip() for i in el.getAttribute('memberTypes').split(' ')]
-        first_type, *_ = member_types
 
+        primitive_types = [i for i in member_types if i.startswith(f'{self.xmlsns}:')]
+        primitive_types = [i for i in primitive_types
+                           if PRIMITIVE_TYPES_DEFAULT.get(i.split(':')[1]) is not None]
+
+        # Primitive types are easy to generate default values
+        if primitive_types:
+            first_type, *_ = primitive_types
+            return self.types.get_or_create(first_type)
+
+        # Let's try to find types with an enumeration, it's also easy to generate values
+        types = [self.types.get_or_create(i) for i in member_types]
+        types_with_enum_restriction = [i for i in types if i.restriction_enum]
+        if types_with_enum_restriction:
+            first_type_el, *_ = types_with_enum_restriction
+            return first_type_el
+
+        # Now, let's try to find for simple types with default value..
+        simple_types = [i for i in member_types if i.lower() in SIMPLE_TYPES_DEFAULT]
+        if simple_types:
+            first_simple_type, *_ = simple_types
+            return self.types.get_or_create(first_simple_type)
+
+        # Ok, give up! lets get the first one and GG
+        first_type, *_ = member_types
         return self.types.get_or_create(first_type)
 
     def _parse_simple_type(self, el):
@@ -267,8 +298,8 @@ class DocParser(object):
 
         el_name = el.getAttribute('name') or ''
 
-        sequence = result.get('sequence', [None])
-        children = sequence[0]
+        sequence = result.get('sequence', [{}])[0]
+        children = sequence.get('elements')
         if children:
             logging.debug('ELEMENT type with name {} children: {}'.format(
                 el_name,
@@ -276,9 +307,13 @@ class DocParser(object):
 
         el_type = ElementType(el_name, children)
 
+        # Choices groups
+        el_type.choices_groups = sequence.get('choices', [])
+
         if result.get('simpleContent'):
-            el_type.annotation = result.get('simpleContent')[0].annotation
-            el_type.attributes = result.get('simpleContent')[0].attributes
+            el_type.fill_with(result.get('simpleContent')[0])
+            el_type.name = el_name
+            el_type.changed()
         else:
             if result.get('annotation'):
                 el_type.annotation = '\n'.join(result.get('annotation', []))

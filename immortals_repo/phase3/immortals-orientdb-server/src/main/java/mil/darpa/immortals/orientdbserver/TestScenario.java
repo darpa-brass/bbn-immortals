@@ -14,7 +14,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class TestScenario {
 
@@ -133,7 +136,7 @@ public class TestScenario {
 			Scenario6InputData data = new Scenario6InputData(
 					initialXsdVersion,
 					updatedXsdVersion,
-					FileUtils.readFully(new InputStreamReader(new FileInputStream(updatedXsdInputPath)))
+					hasUpdatedXsdInputPath() ? FileUtils.readFully(new InputStreamReader(new FileInputStream(updatedXsdInputPath))) : null
 			);
 			return gson.toJson(data);
 		} catch (IOException e) {

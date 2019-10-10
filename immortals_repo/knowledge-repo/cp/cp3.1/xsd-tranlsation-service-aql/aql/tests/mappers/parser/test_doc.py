@@ -63,3 +63,19 @@ def test_parser_must_parse_type_annotation(simple_doc):
     ])
 
     assert simple_doc.element_type.annotation == expected
+
+
+def test_parser_must_parse_choices(simple_doc):
+    network = simple_doc.get_child_by_name('Network')
+
+    expected_choices = [
+        [network.get_child_by_name('IPV4'), network.get_child_by_name('IPV6')]
+    ]
+
+    assert network.element_type.choices_groups == expected_choices
+
+
+def test_parser_must_parse_union(simple_doc):
+    destination = simple_doc.get_child_by_name('Network').get_child_by_name('DestinationAddress')
+
+    assert destination.element_type.name == 'IPv4Address'

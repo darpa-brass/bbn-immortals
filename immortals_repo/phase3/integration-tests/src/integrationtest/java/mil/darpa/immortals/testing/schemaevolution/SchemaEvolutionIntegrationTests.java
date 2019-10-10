@@ -14,27 +14,31 @@ public class SchemaEvolutionIntegrationTests {
 	}
 
 	@Test
-	public void s6_12to10() {
-		JarTestScenarioRunner.createScenario6Runner("s6_12to10").execute();
+	public void s6_17to19() {
+		JarTestScenarioRunner.createScenario6Runner("s6_17to19").execute();
 	}
-
-//	@Test
-//	public void s6_16to19() {
-//		JarTestScenarioRunner.createScenario6Runner("s6_16to19").execute();
-//	}
-
-//	@Test
-//	public void s6_17to19() {
-//		JarTestScenarioRunner.createScenario6Runner("s6_17to19").execute();
-//	}
 
 	@Test
-	public void s6_17to19_embeddedSchemaUpdate() {
-		JarTestScenarioRunner.createScenario6Runner("s6_17to19_embeddedSchemaUpdate").execute();
+	public void s6_v19_embedded_add() {
+		JarTestScenarioRunner.createScenario6Runner("s6_v19_embedded_add").execute();
 	}
 
-//	@Test
-//	public void s6_7to14() {
-//		JarTestScenarioRunner.createScenario6Runner("s6_7to14").execute();
-//	}
+	@Test
+	public void s6_v19_embedded_move() {
+		JarTestScenarioRunner.createScenario6Runner("s6_v19_embedded_move").execute();
+	}
+
+	@Test
+	public void s6_v19_embedded_move2() {
+		JarTestScenarioRunner.createScenario6Runner("s6_v19_embedded_move2").execute();
+	}
+
+	@Test
+	public void s6_v19_embedded_remove() {
+		JarTestScenarioRunner.createScenario6Runner("s6_v19_embedded_remove").execute();
+	}
+
+	@Test
+	public void s6_v19_embedded_rename() {
+		JarTestScenarioRunner.createScenario6Runner("s6_v19_embedded_rename").execute(); }
 }

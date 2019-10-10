@@ -46,10 +46,13 @@ the script I use on my test image is as follows:
 ```
 #!/usr/bin/env bash
 
+set -e
+
 source ~/.immortals/anaconda/bin/activate
 conda activate aql
 pip3 install lxml xmldiff
 git clone --branch master --depth=1 --single-branch git@git.isis.vanderbilt.edu:SwRI/challenge-problems.git
+export IMMORTALS_CHALLENGE_PROBLEMS_ROOT="`pwd`/challenge-problems"
 cd immortals_rsync
 cp knowledge-repo/cp/cp3.1/cp-ess-min/etc/schemas/v19/Tmats* ${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_6/test_schemas/
 cd knowledge-repo/cp/cp3.1/xsd-translation-service-test

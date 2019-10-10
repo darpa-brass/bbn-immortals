@@ -1,3 +1,21 @@
+from constants import PRIMITIVE_TYPES_DEFAULT, SIMPLE_TYPES_DEFAULT
+
+
+def gen_default_value(type_name):
+    if not type_name:
+        return None
+
+    type_name = str(type_name).strip()
+    if ':' in type_name:
+        _, name = type_name.split(':')
+    else:
+        name = type_name
+
+    if type_name.lower() in SIMPLE_TYPES_DEFAULT:
+        return SIMPLE_TYPES_DEFAULT.get(type_name.lower())
+
+    return PRIMITIVE_TYPES_DEFAULT.get(name)
+
 
 def tree_print(element, path=None):
     '''

@@ -36,7 +36,7 @@ def test_element_type_with_same_elements_must_be_equal():
     assert hash(f) == hash(f2)
 
 
-def test_element_type_same_children_in_different_order_must_have_same_hash():
+def test_element_type_same_children_in_different_order_must_have_different_hash():
     element_type = ElementType('xsd:string')
     child1 = Element(name='Name', element_type=element_type)
     child2 = Element(name='Owner', element_type=element_type)
@@ -44,8 +44,8 @@ def test_element_type_same_children_in_different_order_must_have_same_hash():
     f = ElementType(name='ModelType', children=[child1, child2])
     f2 = ElementType(name='ModelType', children=[child2, child1])
 
-    assert f == f2
-    assert hash(f) == hash(f2)
+    assert f != f2
+    assert hash(f) != hash(f2)
 
 
 def test_element_type_change_children_must_recalculate_hash():

@@ -82,7 +82,10 @@ def test_removal_with_one_level(basic_trees):
     root, new_root = basic_trees
 
     # Let's remove RootType->Owner
-    del new_root.element_type.children[1]
+    children = new_root.element_type.children
+    del children[1]
+    new_root.element_type.children = children
+
     recalculate_hashes(new_root)
     recalculate_hashes(root)
 
@@ -104,7 +107,9 @@ def test_removal_two_levels(basic_trees):
     root, new_root = basic_trees
 
     # Let's remove RootType->Network->Owner
-    del new_root.children[0].children[0]
+    network = new_root.get_child_by_name('Network')
+    del network.children[0]
+    network.element_type.children = network.children
 
     recalculate_hashes(new_root)
     recalculate_hashes(root)
@@ -356,6 +361,37 @@ def test_relocation_with_one_level_must_return_expected_result(basic_trees, basi
     others_empty(result, 'relocations', 'removals')
 
 
+def test_upwards_relocation_with_one_level_must_return_expected_result(basic_trees, basic_types):
+    root, new_root = basic_trees
+
+    new_element = entities.Element(name='Employee', element_type=basic_types['token_type'])
+
+    # New element was moved from network upwards
+    new_root.add_child(new_element)
+    root.get_child_by_name('Network').add_child(new_element)
+
+    recalculate_hashes(new_root)
+    recalculate_hashes(root)
+
+    # Now, they must be different
+    assert root != new_root
+
+    result = compare(root, new_root)
+
+    expected_relocations = [
+        ('/Root/Network/Employee', '/Root/Employee')
+    ]
+
+    expected_removals = [
+        '/Root/Network/Employee'
+    ]
+
+    assert result['relocations'] == expected_relocations
+    assert result['removals'] == expected_removals
+
+    others_empty(result, 'relocations', 'removals')
+
+
 def test_relocation_with_new_sub_element_must_return_expected_result(basic_trees, basic_types):
     root, new_root = basic_trees
 
@@ -401,6 +437,26 @@ def test_relocation_with_new_sub_element_must_return_expected_result(basic_trees
     others_empty(result, 'relocations', 'additions', 'removals')
 
 
+def test_reorder_with_only_order_changes(basic_trees, basic_types):
+    root, new_root = basic_trees
+
+    network = new_root.get_child_by_name('Network')
+    network.element_type.children = list(reversed(network.children))
+
+    recalculate_hashes(new_root)
+    recalculate_hashes(root)
+
+    result = compare(root, new_root)
+
+    expected_reorder = [
+        '/Root/Network'
+    ]
+
+    assert result['reorders'] == expected_reorder
+
+    others_empty(result, 'reorders')
+
+
 def test_circular_dependency_rename_tag_must_return_expected_result(basic_trees, basic_types):
     root, new_root = basic_trees
     network = new_root.children[0]
@@ -442,7 +498,7 @@ def test_imediate_circular_dependency_rename_must_return_expected_result(basic_t
     root, new_root = basic_trees
 
     # Circular dependency of network just inside network
-    root_network = root.children[0]
+    root_network = root.get_child_by_name('Network')
     root_network.add_child(root_network)
 
     # Add a new module node inside network of our ORIGINAL tree
@@ -457,11 +513,12 @@ def test_imediate_circular_dependency_rename_must_return_expected_result(basic_t
         entities.Element(name='Name', element_type=basic_types['token_type']),
     ])
 
-    network = new_root.children[0]
-    network.add_child(entities.Element(name='Module', element_type=module_type))
+    network = new_root.get_child_by_name('Network')
 
     # Adding a circular dependency
     network.add_child(network)
+
+    network.add_child(entities.Element(name='Module', element_type=module_type))
 
     recalculate_hashes(new_root)
     recalculate_hashes(root)

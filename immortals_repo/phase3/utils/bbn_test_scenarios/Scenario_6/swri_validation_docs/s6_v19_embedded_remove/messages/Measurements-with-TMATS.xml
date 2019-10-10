@@ -668,29 +668,6 @@
                 <SIUnits>Volt</SIUnits>
               </ConditionParameter>
             </Excitation>
-            <Calibration>
-              <CalibrationDate>2010-10-24</CalibrationDate>
-              <CalibrationPair>
-                <InputValue>
-                  <FloatValue>-3</FloatValue>
-                  <UnitsRef IDREF="GForceUnits"/>
-                </InputValue>
-                <OutputValue>
-                  <FloatValue>-1.43</FloatValue>
-                  <SIUnits>Volt</SIUnits>
-                </OutputValue>
-              </CalibrationPair>
-              <CalibrationPair>
-                <InputValue>
-                  <FloatValue>3</FloatValue>
-                  <UnitsRef IDREF="GForceUnits"/>
-                </InputValue>
-                <OutputValue>
-                  <FloatValue>1.52</FloatValue>
-                  <SIUnits>Volt</SIUnits>
-                </OutputValue>
-              </CalibrationPair>
-            </Calibration>
             <Connector>
               <Name>Analog Connector</Name>
               <Description>TBD description</Description>

@@ -33,7 +33,8 @@ def test_simple_mdl_versions_must_return_expected_compare_result(simple_mdl_vers
 
     expected_result = {
         'additions': ['/MDLRoot/NetworkDomains/Network/NetworkNode/InternalStructure',
-                      '/MDLRoot/NetworkDomains/Domain'],
+                      '/MDLRoot/NetworkDomains/Domain',
+                      '/MDLRoot/IPV4'],
         'relocations': [('/MDLRoot/NetworkDomains/Network/NetworkNode/Routes',
                          '/MDLRoot/NetworkDomains/Network/NetworkNode/InternalStructure/Module/Routes'),
                         ('/MDLRoot/DatabaseID', '/MDLRoot/NetworkDomains/DatabaseID')],
@@ -42,7 +43,11 @@ def test_simple_mdl_versions_must_return_expected_compare_result(simple_mdl_vers
             '/MDLRoot/NetworkDomains/Network/NetworkNode/Routes',
             '/MDLRoot/DatabaseID',
         ]),
-        'renames': [('/MDLRoot/ConfigurationVersion', '/MDLRoot/ConfigVersion')]
+        'renames': [('/MDLRoot/ConfigurationVersion', '/MDLRoot/ConfigVersion')],
+        'reorders': [
+            '/MDLRoot/NetworkDomains',
+            '/MDLRoot/NetworkDomains/Network/Description'
+        ]
     }
 
     result['removals'].sort()
@@ -55,15 +60,16 @@ def test_full_mdl_versions_must_return_expected_compare_result(full_mdl_versions
 
     result = diff.compare(v17_tree, v19_tree)
 
-    expected_keys = {'renames', 'additions', 'relocations', 'removals'}
+    expected_keys = {'renames', 'additions', 'relocations', 'removals', 'reorders'}
     current_keys = set(result.keys())
 
     assert current_keys == expected_keys
 
-    assert len(result['additions']) == 74
-    assert len(result['removals']) == 70
-    assert len(result['relocations']) == 61
+    assert len(result['additions']) == 59
+    assert len(result['removals']) == 68
+    assert len(result['relocations']) == 59
     assert len(result['renames']) == 4
+    assert len(result['reorders']) == 0
 
 
 @mark.skip(reason='TODO: think about intersections between additions and removals, this must not happen')

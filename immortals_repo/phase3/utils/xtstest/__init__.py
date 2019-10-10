@@ -1,1 +1,0 @@
-IMMORTALS_ROOT = 'meh'

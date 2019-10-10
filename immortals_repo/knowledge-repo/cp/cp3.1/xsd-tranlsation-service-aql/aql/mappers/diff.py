@@ -1,4 +1,3 @@
-
 def _join_paths(elems):
     return '/{}'.format('/'.join([i.name for i in elems]))
 
@@ -18,6 +17,7 @@ def _compare(first_el, second_el, path=None, result=None):
         'additions': [],
         'relocations': [],
         'removals': [],
+        'reorders': [],
     }
 
     path = path or []
@@ -25,6 +25,10 @@ def _compare(first_el, second_el, path=None, result=None):
     # Avoiding circular dependency
     if _type_in_path(first_el.element_type, path):
         return result
+
+    # Checking elements order
+    if not is_children_with_same_order(first_el, second_el):
+        result['reorders'].append(_join_paths(path + [first_el]))
 
     first_set = set(first_el.children)
     second_set = set(second_el.children)
@@ -64,12 +68,7 @@ def _compare(first_el, second_el, path=None, result=None):
 
             # Here, store best rename option to analize in next step
             if removed.type_hash == added.type_hash:
-                renaming_options.add(
-                    (removed.similarity(added),
-                     _join_paths(path + [removed]),
-                     removed,
-                     _join_paths(path + [added]),
-                     added))
+                renaming_options.add((removed.similarity(added), removed, added))
 
     # Now, sorting renaming possibilities
     # by best similarity between all field options at beginning
@@ -77,12 +76,23 @@ def _compare(first_el, second_el, path=None, result=None):
                                    key=lambda i: i[0], reverse=True)
 
     # Now, just iterate over it and add it to rename options
-    for _, removed_path, removed, added_path, added in renaming_options_list:
+    for _, removed, added in renaming_options_list:
         # Ignore already checked nodes
         if removed not in to_remove or added not in to_add:
             continue
 
-        result['renames'].append((removed_path, added_path))
+        # Lets check if this element renamed is not in a choices group
+        # and other element being added is in the same choices group
+        # if so, we need to remove this other element being added.
+        for added_with_group in additions:
+            if added_with_group not in to_add or added_with_group == added:
+                continue
+
+            if second_el.element_type.in_same_choices_group(added, added_with_group):
+                to_add.remove(added_with_group)
+
+        result['renames'].append((_join_paths(path + [removed]), _join_paths(path + [added])))
+
         to_remove.remove(removed)
         to_add.remove(added)
 
@@ -113,29 +123,57 @@ def _compare(first_el, second_el, path=None, result=None):
             break
 
     for elem in to_add:
-        result['additions'].append(_join_paths(path + [elem]))
+        if elem.lxml_must_create():
+            result['additions'].append(_join_paths(path + [elem]))
 
     # After additions, we need to check one last time if removals were not
     # moved to a deeper level
     for removed in removals:
         for added in additions:
+            # Searching for elements moved UP
+            moved_path = _find_moved_path(added, removed, path)
+            if moved_path:
+                original_moved_path = _join_paths(path + [added])
+                result['relocations'].append((moved_path, original_moved_path))
+
+                if original_moved_path in result['additions']:
+                    result['additions'].remove(original_moved_path)
+
+            # Finding for elements moved DOWN
             moved_path = _find_moved_path(removed, added, path)
             if moved_path:
                 # Check if this moved path is present in additions (or its parent node)
                 found = False
                 for added_path in result['additions']:
-                    if added_path == moved_path or moved_path.startswith(moved_path):
+                    if added_path == moved_path or moved_path.startswith(added_path):
                         found = True
                         break
 
                 if not found:
                     continue
 
-                result['relocations'].append((_join_paths(path + [removed]), moved_path))
+                original_moved_path = _join_paths(path + [removed])
 
-                # Remove from additions if it self is present
+                result['relocations'].append((original_moved_path, moved_path))
+                result['removals'].append(original_moved_path)
+
+                if removed in to_remove:
+                    to_remove.remove(removed)
+
+                # Remove from additions if it is present
                 if moved_path in result['additions']:
                     result['additions'].remove(moved_path)
+
+                # Remove from renames if original path for relocation is present
+                for rename_index, renames in enumerate(result['renames']):
+                    rename_from, rename_to = renames
+
+                    # if is equal to origin element, we must to add destination element to additions
+                    # and remove renames entry
+                    if rename_from == original_moved_path:
+                        result['additions'].append(rename_to)
+                        result['renames'].pop(rename_index)
+                        break
 
     # Store removals
     for elem in to_remove:
@@ -144,6 +182,26 @@ def _compare(first_el, second_el, path=None, result=None):
     path.pop()
 
     return result
+
+
+def is_children_with_same_order(first_el, second_el):
+    # Let's consider only self hash for our children
+    first_children = [i.self_hash for i in first_el.children_original_order]
+    second_children = [i.self_hash for i in second_el.children_original_order]
+
+    common_children = set(first_children) & set(second_children)
+
+    if len(common_children) == 0:
+        return True
+
+    iterator = zip([i for i in first_el.children_original_order if i.self_hash in common_children],
+                   [i for i in second_el.children_original_order if i.self_hash in common_children])
+
+    for first_child, second_child in iterator:
+        if first_child.self_hash != second_child.self_hash:
+            return False
+
+    return True
 
 
 def _find_moved_path(needle, haystack, path):
