@@ -172,12 +172,6 @@
             "timeoutMS": 420000,
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
@@ -192,8 +186,6 @@
             "timeoutMS": 420000,
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
@@ -207,17 +199,6 @@
             "prettyName": "Scenario 5 SwRI Example 12 Inventory 1",
             "timeoutMS": 420000,
             "expectedStatusSequence": [
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
                 "AdaptationSuccessful",
                 "AdaptationUnsuccessful"
             ],

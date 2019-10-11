@@ -63,12 +63,18 @@ public class SolutionInjector {
 				// Get the source node (which may be another parent prior to squashing)
 				HierarchicalData realParent = node.getSupersededData();
 
-				// And update it
-				dataSource.update_NodeAttribute((OrientVertex) realParent.getAssociatedObject(), attrName, nodeValues.remove(attrName));
+				if (!(attrName.equals("PortPolarity") && !realParent.getAttributes().containsKey("PortPolarity"))) {
+					// And update it
+					dataSource.update_NodeAttribute((OrientVertex) realParent.getAssociatedObject(), attrName, nodeValues.remove(attrName));
+				}
 			}
 		}
 
 		// Then, for any remaining attributes
+		if (nodeValues.containsKey("PortPolarity") && !node.getSupersededData().getAttributes().containsKey("PortPolarity")) {
+			dataSource.update_removeAttribute(rawNodeData.getAssociatedObject(), "PortPolarity");
+			nodeValues.remove("PortPolarity");
+		}
 
 		// TODO: Abstract this somehow so the SolutionInjector stays clean of MDL
 		if (nodeValues.containsKey("PortType") && nodeValues.get("PortType").equals("Thermocouple")) {

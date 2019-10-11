@@ -45,11 +45,6 @@ public class FlitconsIntegrationTests {
 	}
 
 	@Test
-	public void myTest() {
-		JarTestScenarioRunner.createScenario5Runner("s5e01i01-four-dau-solution-adaptation").setMaxDauCount(4).execute();
-	}
-
-	@Test
 	public void testSwriExample1() {
 		JarTestScenarioRunner.createScenario5Runner("s5e01i01").execute();
 	}
@@ -74,10 +69,10 @@ public class FlitconsIntegrationTests {
 		JarTestScenarioRunner.createScenario5Runner("s5e05i01").execute();
 	}
 
-	@Test
-	public void testSwriExample6() {
-		JarTestScenarioRunner.createScenario5Runner("s5e06i01").execute();
-	}
+//	@Test
+//	public void testSwriExample6() {
+//		JarTestScenarioRunner.createScenario5Runner("s5e06i01").execute();
+//	}
 
 	@Test
 	public void testSwriExample7() {

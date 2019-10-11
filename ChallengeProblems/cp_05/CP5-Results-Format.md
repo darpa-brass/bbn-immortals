@@ -103,10 +103,8 @@ result in failure since no solution could be found.
 
 The files are as follows:  
 
-`dsl-swap-rules.json`
-`dsl-swap-inventory.json`
-`dsl-swap-request.json`
-`dsl-swap-response.json`
-`dsl-swap-metrics.json`
-
-The output to **BBNEvaluationData** is stored 
+`dsl-swap-rules.json` - The input rules provided to the DSL
+`dsl-swap-inventory.json` - The input inventory provided to the DSL
+`dsl-swap-request.json` - The input configuration provided to the DSL
+`dsl-swap-response.json` - The replacement values returned by the DSL
+`dsl-swap-metrics.json` - Metrics associated with the DSL's decision

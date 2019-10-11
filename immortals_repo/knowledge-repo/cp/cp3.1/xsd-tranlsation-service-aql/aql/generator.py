@@ -2,18 +2,19 @@
 Automatic generation of XSLT files
 """
 
+from collections import OrderedDict
 from lxml import etree as et
 
 import constants
 
 
 def build_ast(namespaces, include_comments=False):
-    initial_namespaces = {
-        None: constants.HTML_NS,
-        'xsl': constants.XSL_NS,
-        'xsi': constants.XSI_NS,
-        'my': 'http://233analytics.com/my'
-    }
+    initial_namespaces = OrderedDict([
+        (None, constants.HTML_NS),
+        ('xsl', constants.XSL_NS),
+        ('xsi', constants.XSI_NS),
+        ('my', 'http://233analytics.com/my')
+    ])
 
     # Merge namespaces
     for k, v in namespaces.items():
@@ -27,7 +28,11 @@ def build_ast(namespaces, include_comments=False):
         version='2.0',
         nsmap=initial_namespaces,
     )
-    gen_id_params = {'name': "my:gen-id", 'as': "xsd:string"}
+
+    gen_id_params = OrderedDict([
+        ['name', 'my:gen-id'],
+        ['as', 'xsd:string']
+    ])
     function_gen_id = et.SubElement(
         root_node,
         et.QName(constants.XSL_NS, 'function'),
@@ -40,7 +45,11 @@ def build_ast(namespaces, include_comments=False):
         select="generate-id(my:gen-id-getnode())"
     )
 
-    node_fx_params = {"name": "my:gen-id-getnode", "as": "element()"}
+    node_fx_params = OrderedDict([
+        ['name', 'my:gen-id-getnode'],
+        ['as', 'element()']
+    ])
+
     node_fxn = et.SubElement(
         root_node,
         et.QName(constants.XSL_NS, 'function'),
@@ -201,24 +210,32 @@ def handle_additions(ast_root_node, additions, relocations, first_tree, second_t
             match=_path_with_namespaces('/'.join(path_addition), second_tree, namespaces)
         )
 
-        copy_node = et.SubElement(
+        element_node = et.SubElement(
             template_node,
-            et.QName(constants.XSL_NS, 'copy')
+            et.QName(constants.XSL_NS, 'element'),
+            name=el_parent.lxml_name(namespaces)
         )
 
         et.SubElement(
-            copy_node,
-            et.QName(constants.XSL_NS, 'apply-templates'),
-            select='@*|node()')
+            element_node,
+            et.QName(constants.XSL_NS, 'copy-of'),
+            select="@*"
+        )
 
+        for child in el_parent.element_type.children_original_order:
+            if child.name == element.name:
+                # Adding a choices comment
+                choices_comment = element.lxml_choices_comment(el_parent.element_type)
+                if choices_comment is not None:
+                    element_node.append(choices_comment)
 
-
-        # Adding a choices comment
-        choices_comment = element.lxml_choices_comment(el_parent.element_type)
-        if choices_comment is not None:
-            copy_node.append(choices_comment)
-
-        element.to_lxml_element(copy_node)
+                element.to_lxml_element(element_node)
+            else:
+                et.SubElement(
+                    element_node,
+                    et.QName(constants.XSL_NS, 'copy-of'),
+                    select=child.lxml_name(namespaces)
+                )
 
         template_node.addprevious(et.Comment(f' Add node "{addition}" '))
 
@@ -271,7 +288,32 @@ def handle_removals(ast_root_node, removals, first_tree, namespaces):
 
 def handle_relocations(ast_root_node, relocations, first_tree, second_tree, namespaces):
     for rel_from, rel_to in sorted(relocations, key=lambda x: x[0]):
-        # Removing element
+        # Get parent element of our addition
+        *path_to, _ = rel_to.split('/')
+
+        *_, target = _path_as_nodes(rel_to, second_tree)
+        *_, parent = _path_as_nodes('/'.join(path_to), second_tree)
+
+        parent_template = et.SubElement(
+            ast_root_node,
+            et.QName(constants.XSL_NS, 'template'),
+            match=_path_with_namespaces('/'.join(path_to), second_tree, namespaces),
+        )
+
+        parent_node = et.SubElement(
+            parent_template,
+            et.QName(constants.XSL_NS, 'element'),
+            name=parent.lxml_name(namespaces)
+        )
+
+        # copy parent attrs
+        et.SubElement(
+            parent_node,
+            et.QName(constants.XSL_NS, 'copy-of'),
+            select="@*"
+        )
+
+        # Removing element, needs to occur after the parent so that the removal takes precedence over copy
         removal_template_node = et.SubElement(
             ast_root_node,
             et.QName(constants.XSL_NS, 'template'),
@@ -280,31 +322,30 @@ def handle_relocations(ast_root_node, relocations, first_tree, second_tree, name
 
         removal_template_node.addprevious(et.Comment(f' Moving element from "{rel_from}" to "{rel_to}"'))
 
-        # Get parent element of our addition
-        *path_to, _ = rel_to.split('/')
+        for child in parent.element_type.children_original_order:
+            if child.name == target.name:
+                copy_node = et.SubElement(
+                    parent_node,
+                    et.QName(constants.XSL_NS, 'element'),
+                    name=target.lxml_name(namespaces)
+                )
+                et.SubElement(
+                    copy_node,
+                    et.QName(constants.XSL_NS, 'apply-templates'),
+                    select='@*|node()'
+                )
 
-        template_node = et.SubElement(
-            ast_root_node,
-            et.QName(constants.XSL_NS, 'template'),
-            match=_path_with_namespaces('/'.join(path_to), second_tree, namespaces),
-        )
-
-        copy_node = et.SubElement(
-            template_node,
-            et.QName(constants.XSL_NS, 'copy')
-        )
-
-        et.SubElement(
-            copy_node,
-            et.QName(constants.XSL_NS, 'apply-templates'),
-            select='@*|node()'
-        )
-
-        et.SubElement(
-            copy_node,
-            et.QName(constants.XSL_NS, 'copy-of'),
-            select=_path_with_namespaces(rel_from, first_tree, namespaces)
-        )
+                et.SubElement(
+                    copy_node,
+                    et.QName(constants.XSL_NS, 'copy-of'),
+                    select=_path_with_namespaces(rel_from, first_tree, namespaces)
+                )
+            else:
+                et.SubElement(
+                    parent_node,
+                    et.QName(constants.XSL_NS, 'copy-of'),
+                    select=child.lxml_name(namespaces)
+                )
 
 
 def _path_with_namespaces(path, second_tree, namespaces):

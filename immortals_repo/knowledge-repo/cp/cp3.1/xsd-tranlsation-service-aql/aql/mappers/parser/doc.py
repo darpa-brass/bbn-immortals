@@ -7,7 +7,6 @@ from constants import PRIMITIVE_TYPES_DEFAULT, SIMPLE_TYPES_DEFAULT
 
 from entities import ElementType, Element, ELEMENT_ANY_TYPE
 
-
 # URL for XMLSchema specification
 XML_SCHEMA_URL = 'http://www.w3.org/2001/XMLSchema'
 
@@ -143,6 +142,11 @@ class DocParser(object):
                 continue
 
             tag_name, parse_result = result
+
+            # fix to ensure choices get put in the right spot
+            if tag_name == 'choice':
+                results['element'].extend(parse_result)
+
             results[tag_name].append(parse_result)
 
         return results
@@ -229,7 +233,7 @@ class DocParser(object):
         # Flat sub elements from choices in elements, we are doing this to handle it as a normal
         # child element
         choices = result.get('choice', [])
-        elements = reduce(lambda x, y: x + y, choices, elements)
+        # elements = reduce(lambda x, y: x + y, choices, elements)
 
         return {
             'elements': elements,

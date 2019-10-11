@@ -4,7 +4,8 @@
 		"primaryNode": "NetworkNode",
 		"collectedChildProperties": {
 			"Port": [
-				"PortDirection"
+				"PortDirection",
+				"PortPolarity"
 			],
 			"PortType": [
 				"Extension",

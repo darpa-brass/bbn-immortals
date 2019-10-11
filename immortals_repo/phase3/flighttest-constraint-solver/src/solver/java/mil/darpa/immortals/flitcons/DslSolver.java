@@ -159,8 +159,8 @@ public class DslSolver implements SolverInterface<DslSolver> {
 	@Override
 	public JsonObject getMetrics() {
 		try {
-			if (Files.exists(responsePath)) {
-				return Utils.getGson().fromJson(new FileReader(responsePath.toFile()), JsonObject.class);
+			if (Files.exists(metricsPath)) {
+				return Utils.getGson().fromJson(new FileReader(metricsPath.toFile()), JsonObject.class);
 			}
 			return null;
 		} catch (FileNotFoundException e) {
