@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class JarTestScenarioRunner extends TestScenarioRunner {
@@ -16,12 +18,20 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 
 	public boolean useSimpleSolver = false;
 
+	private Integer maxDauCount = null;
+
 	private JarTestScenarioRunner(@Nonnull TestScenario testScenario) {
 		super(testScenario);
 	}
 
 	public static TestScenarioRunner createScenario5Runner(@Nonnull String shortTestLabel) {
 		return new JarTestScenarioRunner(TestScenarios.getTestScenario(shortTestLabel));
+	}
+
+	@Override
+	public TestScenarioRunner setMaxDauCount(int count) {
+		maxDauCount = count;
+		return this;
 	}
 
 	public static TestScenarioRunner createScenario6Runner(@Nonnull String shortTestLabel) {
@@ -54,6 +64,11 @@ public class JarTestScenarioRunner extends TestScenarioRunner {
 				if (EnvironmentConfiguration.isBasicDisplayMode()) {
 					cmd = Arrays.copyOf(cmd, cmd.length + 1);
 					cmd[cmd.length -1] = "--monochrome-mode";
+				}
+				if (maxDauCount != null) {
+					cmd = Arrays.copyOf(cmd, cmd.length + 2);
+					cmd[cmd.length -2] = "--max-dau-result-count";
+					cmd[cmd.length -1] = Integer.toString(maxDauCount);
 				}
 
 			} else if (scenario.getScenarioType().isScenario6) {

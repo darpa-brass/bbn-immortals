@@ -1,9 +1,9 @@
 package mil.darpa.immortals.flitcons;
 
+import com.google.gson.JsonObject;
 import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainerFactory;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValue;
 import mil.darpa.immortals.flitcons.mdl.MdlHacks;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
@@ -12,12 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 public class DslSolver implements SolverInterface<DslSolver> {
 
@@ -27,6 +28,7 @@ public class DslSolver implements SolverInterface<DslSolver> {
 	private static final String SWAP_INVENTORY = "dsl-swap-inventory.json";
 	private static final String SWAP_RESPONSE = "dsl-swap-response.json";
 	private static final String SWAP_RULES = "dsl-swap-rules.json";
+	private static final String SWAP_METRICS = "dsl-swap-metrics.json";
 	private static final Logger logger = LoggerFactory.getLogger(DslSolver.class);
 
 	private final Path dslDirectory;
@@ -35,6 +37,7 @@ public class DslSolver implements SolverInterface<DslSolver> {
 	private Path inventoryPath;
 	private Path rulesPath;
 	private Path responsePath;
+	private Path metricsPath;
 
 	public DslSolver() {
 		dslDirectory = EnvironmentConfiguration.getDslRoot();
@@ -58,6 +61,7 @@ public class DslSolver implements SolverInterface<DslSolver> {
 			requestPath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_REQUEST, Utils.difGson.toJson(inputConfiguration).getBytes()));
 			inventoryPath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_INVENTORY, Utils.difGson.toJson(dauInventory).getBytes()));
 			responsePath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_RESPONSE, new byte[0]));
+			metricsPath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_METRICS, new byte[0]));
 			rulesPath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_RULES, Utils.getGson().toJson(Configuration.getInstance().adaptation.resolutionOptions).getBytes()));
 			Files.delete(responsePath);
 			FileUtils.forceMkdir(dslDirectory.resolve("outbox").toFile());
@@ -74,8 +78,10 @@ public class DslSolver implements SolverInterface<DslSolver> {
 			requestPath = inputJsonFile;
 			inventoryPath = inventoryJsonFile;
 			responsePath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_RESPONSE, new byte[0]));
+			metricsPath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_METRICS, new byte[0]));
 			rulesPath = Paths.get(EnvironmentConfiguration.storeFile(SWAP_RULES, Utils.getGson().toJson(Configuration.getInstance().adaptation.resolutionOptions).getBytes()));
 			Files.delete(responsePath);
+			Files.delete(metricsPath);
 			FileUtils.forceMkdir(dslDirectory.resolve("outbox").toFile());
 		} catch (Exception e) {
 			throw AdaptationnException.internal(e);
@@ -94,6 +100,7 @@ public class DslSolver implements SolverInterface<DslSolver> {
 
 			String[] cmd = {
 					"stack", "exec", "resource-dsl", "--", "swap-dau", "--run",
+					"--max-daus", Integer.toString(EnvironmentConfiguration.getMaxDauSelectionCount()),
 					"--rules-file", rulesPath.toString(),
 					"--inventory-file", inventoryPath.toString(), "--request-file", requestPath.toString(),
 					"--response-file", responsePath.toString()
@@ -115,6 +122,10 @@ public class DslSolver implements SolverInterface<DslSolver> {
 			logger.info("########################END DSL OUTPUT HERE########################");
 
 			if (rval == 0) {
+				Path metricsFile = dslDirectory.resolve("outbox/swap-metrics.json");
+				if (Files.exists(metricsPath)) {
+					FileUtils.copyFile(metricsFile.toFile(), metricsPath.toFile());
+				}
 
 
 //				Path dslOutputFile = dslDirectory.resolve("outbox").resolve("swap-response.json");
@@ -140,6 +151,19 @@ public class DslSolver implements SolverInterface<DslSolver> {
 				throw AdaptationnException.internal("DSL exited with an unexpected failure status!");
 			}
 		} catch (IOException | InterruptedException e) {
+			throw AdaptationnException.internal(e);
+		}
+	}
+
+	@Nullable
+	@Override
+	public JsonObject getMetrics() {
+		try {
+			if (Files.exists(responsePath)) {
+				return Utils.getGson().fromJson(new FileReader(responsePath.toFile()), JsonObject.class);
+			}
+			return null;
+		} catch (FileNotFoundException e) {
 			throw AdaptationnException.internal(e);
 		}
 	}

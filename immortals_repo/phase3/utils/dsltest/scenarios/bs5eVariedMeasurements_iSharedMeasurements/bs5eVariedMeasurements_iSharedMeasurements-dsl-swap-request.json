@@ -163,7 +163,7 @@
                 "Min": 0,
                 "Max": 32768
               },
-              "GloballyUniqueId": "I#69:34-5e94d93c-ac83-4465-ac16-7998d66ed7bd",
+              "GloballyUniqueId": "I#69:34-18d25da4-4d64-4e9c-97b6-9e19509f5cbf",
               "SampleRate": {
                 "Min": 60,
                 "Max": 130
@@ -202,7 +202,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#57:70",
+          "GloballyUniqueId": "I#57:71",
           "Measurement": [
             {
               "DataLength": {
@@ -227,7 +227,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#57:68",
+          "GloballyUniqueId": "I#57:70",
           "Measurement": [
             {
               "DataLength": {
@@ -277,7 +277,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#57:71",
+          "GloballyUniqueId": "I#57:72",
           "Measurement": [
             {
               "DataLength": {
@@ -302,7 +302,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#57:72",
+          "GloballyUniqueId": "I#57:67",
           "Measurement": [
             {
               "DataLength": {
@@ -327,7 +327,7 @@
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#57:67",
+          "GloballyUniqueId": "I#57:68",
           "Measurement": [
             {
               "DataLength": {

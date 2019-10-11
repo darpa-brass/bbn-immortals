@@ -106,9 +106,14 @@ public class SolverMain {
 
 					FlighttestConstraintSolver fcs = new FlighttestConstraintSolver();
 					fcs.solve();
+					JsonObject metrics = fcs.getMetrics();
 					fcs.shutdown();
 					logger.info("Adaptation finished with result 'AdaptationSuccessful'. Submitting to OrientDB....");
-					cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.AdaptationSuccessful, "");
+					if (metrics == null) {
+						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.AdaptationSuccessful, "");
+					} else {
+						cpb.postResultsJson(evaluationInstanceIdentifier, TerminalStatus.AdaptationSuccessful, Utils.getGson().toJson(metrics));
+					}
 					logger.info("Results submitted to OrientDB.");
 
 					if (config.isStopOnFinish()) {

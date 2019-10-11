@@ -2,14 +2,14 @@
   "daus": [
     {
       "BBNDauMonetaryCost": 40000,
-      "GloballyUniqueId": "I#71:3",
+      "GloballyUniqueId": "I#96:3",
       "Port": [
         {
           "BBNPortFunctionality": "Ethernet",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:100",
+          "GloballyUniqueId": "I#64:100",
           "PortDirection": "Bidirectional",
           "PortType": "Ethernet"
         },
@@ -18,28 +18,30 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:133",
-          "PortDirection": "Input"
+          "GloballyUniqueId": "I#64:133",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:134",
-          "PortDirection": "Input"
+          "GloballyUniqueId": "I#64:134",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:98",
+          "GloballyUniqueId": "I#64:98",
           "Measurement": [
             {
               "DataLength": 1,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:89",
+              "GloballyUniqueId": "I#60:89",
               "SampleRate": 1250000
             }
           ],
@@ -51,18 +53,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:106",
+          "GloballyUniqueId": "I#64:106",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:101",
+              "GloballyUniqueId": "I#60:101",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:100",
+              "GloballyUniqueId": "I#60:100",
               "SampleRate": 250
             }
           ],
@@ -74,18 +76,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:107",
+          "GloballyUniqueId": "I#64:107",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:103",
+              "GloballyUniqueId": "I#60:103",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:102",
+              "GloballyUniqueId": "I#60:102",
               "SampleRate": 250
             }
           ],
@@ -97,18 +99,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:108",
+          "GloballyUniqueId": "I#64:108",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:105",
+              "GloballyUniqueId": "I#60:105",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:104",
+              "GloballyUniqueId": "I#60:104",
               "SampleRate": 250
             }
           ],
@@ -120,18 +122,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:109",
+          "GloballyUniqueId": "I#64:109",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:107",
+              "GloballyUniqueId": "I#60:107",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:106",
+              "GloballyUniqueId": "I#60:106",
               "SampleRate": 250
             }
           ],
@@ -143,18 +145,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:110",
+          "GloballyUniqueId": "I#64:110",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:109",
+              "GloballyUniqueId": "I#60:109",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:108",
+              "GloballyUniqueId": "I#60:108",
               "SampleRate": 250
             }
           ],
@@ -166,18 +168,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:111",
+          "GloballyUniqueId": "I#64:111",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:111",
+              "GloballyUniqueId": "I#60:111",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:110",
+              "GloballyUniqueId": "I#60:110",
               "SampleRate": 250
             }
           ],
@@ -189,18 +191,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:112",
+          "GloballyUniqueId": "I#64:112",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:113",
+              "GloballyUniqueId": "I#60:113",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:112",
+              "GloballyUniqueId": "I#60:112",
               "SampleRate": 250
             }
           ],
@@ -212,18 +214,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:113",
+          "GloballyUniqueId": "I#64:113",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:115",
+              "GloballyUniqueId": "I#60:115",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:114",
+              "GloballyUniqueId": "I#60:114",
               "SampleRate": 250
             }
           ],
@@ -235,18 +237,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:114",
+          "GloballyUniqueId": "I#64:114",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:117",
+              "GloballyUniqueId": "I#60:117",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:116",
+              "GloballyUniqueId": "I#60:116",
               "SampleRate": 250
             }
           ],
@@ -258,18 +260,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:115",
+          "GloballyUniqueId": "I#64:115",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:119",
+              "GloballyUniqueId": "I#60:119",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:118",
+              "GloballyUniqueId": "I#60:118",
               "SampleRate": 250
             }
           ],
@@ -281,18 +283,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:116",
+          "GloballyUniqueId": "I#64:116",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:121",
+              "GloballyUniqueId": "I#60:121",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:120",
+              "GloballyUniqueId": "I#60:120",
               "SampleRate": 250
             }
           ],
@@ -304,18 +306,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:101",
+          "GloballyUniqueId": "I#64:101",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:91",
+              "GloballyUniqueId": "I#60:91",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:90",
+              "GloballyUniqueId": "I#60:90",
               "SampleRate": 250
             }
           ],
@@ -327,18 +329,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:102",
+          "GloballyUniqueId": "I#64:102",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:93",
+              "GloballyUniqueId": "I#60:93",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:92",
+              "GloballyUniqueId": "I#60:92",
               "SampleRate": 250
             }
           ],
@@ -350,18 +352,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:103",
+          "GloballyUniqueId": "I#64:103",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:95",
+              "GloballyUniqueId": "I#60:95",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:94",
+              "GloballyUniqueId": "I#60:94",
               "SampleRate": 250
             }
           ],
@@ -373,18 +375,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:104",
+          "GloballyUniqueId": "I#64:104",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:97",
+              "GloballyUniqueId": "I#60:97",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:96",
+              "GloballyUniqueId": "I#60:96",
               "SampleRate": 250
             }
           ],
@@ -396,18 +398,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:105",
+          "GloballyUniqueId": "I#64:105",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:99",
+              "GloballyUniqueId": "I#60:99",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:98",
+              "GloballyUniqueId": "I#60:98",
               "SampleRate": 250
             }
           ],
@@ -419,12 +421,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:125",
+          "GloballyUniqueId": "I#64:125",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:130",
+              "GloballyUniqueId": "I#60:130",
               "SampleRate": 200
             }
           ],
@@ -436,12 +438,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:126",
+          "GloballyUniqueId": "I#64:126",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:131",
+              "GloballyUniqueId": "I#60:131",
               "SampleRate": 200
             }
           ],
@@ -453,12 +455,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:127",
+          "GloballyUniqueId": "I#64:127",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:132",
+              "GloballyUniqueId": "I#60:132",
               "SampleRate": 200
             }
           ],
@@ -470,12 +472,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:128",
+          "GloballyUniqueId": "I#64:128",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:133",
+              "GloballyUniqueId": "I#60:133",
               "SampleRate": 200
             }
           ],
@@ -487,12 +489,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:129",
+          "GloballyUniqueId": "I#64:129",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:134",
+              "GloballyUniqueId": "I#60:134",
               "SampleRate": 200
             }
           ],
@@ -504,12 +506,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:130",
+          "GloballyUniqueId": "I#64:130",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:135",
+              "GloballyUniqueId": "I#60:135",
               "SampleRate": 200
             }
           ],
@@ -521,12 +523,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:131",
+          "GloballyUniqueId": "I#64:131",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:136",
+              "GloballyUniqueId": "I#60:136",
               "SampleRate": 200
             }
           ],
@@ -538,12 +540,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:132",
+          "GloballyUniqueId": "I#64:132",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:137",
+              "GloballyUniqueId": "I#60:137",
               "SampleRate": 200
             }
           ],
@@ -555,12 +557,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:117",
+          "GloballyUniqueId": "I#64:117",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:122",
+              "GloballyUniqueId": "I#60:122",
               "SampleRate": 1250
             }
           ],
@@ -572,12 +574,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:118",
+          "GloballyUniqueId": "I#64:118",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:123",
+              "GloballyUniqueId": "I#60:123",
               "SampleRate": 1250
             }
           ],
@@ -589,12 +591,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:119",
+          "GloballyUniqueId": "I#64:119",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:124",
+              "GloballyUniqueId": "I#60:124",
               "SampleRate": 1250
             }
           ],
@@ -606,12 +608,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:120",
+          "GloballyUniqueId": "I#64:120",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:125",
+              "GloballyUniqueId": "I#60:125",
               "SampleRate": 1250
             }
           ],
@@ -623,12 +625,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:121",
+          "GloballyUniqueId": "I#64:121",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:126",
+              "GloballyUniqueId": "I#60:126",
               "SampleRate": 1250
             }
           ],
@@ -640,12 +642,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:122",
+          "GloballyUniqueId": "I#64:122",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:127",
+              "GloballyUniqueId": "I#60:127",
               "SampleRate": 1250
             }
           ],
@@ -657,12 +659,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:123",
+          "GloballyUniqueId": "I#64:123",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:128",
+              "GloballyUniqueId": "I#60:128",
               "SampleRate": 1250
             }
           ],
@@ -674,12 +676,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:124",
+          "GloballyUniqueId": "I#64:124",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:129",
+              "GloballyUniqueId": "I#60:129",
               "SampleRate": 1250
             }
           ],
@@ -690,244 +692,14 @@
     },
     {
       "BBNDauMonetaryCost": 50000,
-      "GloballyUniqueId": "I#71:0",
+      "GloballyUniqueId": "I#96:4",
       "Port": [
         {
           "BBNPortFunctionality": "Bus",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:12",
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "Bus",
-          "Excitation": [
-            false
-          ],
-          "GloballyUniqueId": "I#93:13",
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "Ethernet",
-          "Excitation": [
-            false
-          ],
-          "GloballyUniqueId": "I#93:1",
-          "PortDirection": "Bidirectional"
-        },
-        {
-          "BBNPortFunctionality": "Power",
-          "Excitation": [
-            false
-          ],
-          "GloballyUniqueId": "I#93:0",
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "Power",
-          "Excitation": [
-            false
-          ],
-          "GloballyUniqueId": "I#93:14",
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#93:2",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:1",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:0",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#93:7",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:11",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:10",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#93:8",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:13",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:12",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#93:9",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:15",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:14",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#93:3",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:3",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:2",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#93:4",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:5",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:4",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#93:5",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:7",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:6",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#93:6",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:9",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:8",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        }
-      ]
-    },
-    {
-      "BBNDauMonetaryCost": 50000,
-      "GloballyUniqueId": "I#71:4",
-      "Port": [
-        {
-          "BBNPortFunctionality": "Bus",
-          "Excitation": [
-            false
-          ],
-          "GloballyUniqueId": "I#93:146",
+          "GloballyUniqueId": "I#64:146",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -936,7 +708,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:147",
+          "GloballyUniqueId": "I#64:147",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -945,7 +717,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:148",
+          "GloballyUniqueId": "I#64:148",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -954,7 +726,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:149",
+          "GloballyUniqueId": "I#64:149",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -963,7 +735,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:150",
+          "GloballyUniqueId": "I#64:150",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -972,7 +744,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:151",
+          "GloballyUniqueId": "I#64:151",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -981,7 +753,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:152",
+          "GloballyUniqueId": "I#64:152",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -990,7 +762,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:153",
+          "GloballyUniqueId": "I#64:153",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -999,7 +771,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:154",
+          "GloballyUniqueId": "I#64:154",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1008,7 +780,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:155",
+          "GloballyUniqueId": "I#64:155",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1017,7 +789,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:137",
+          "GloballyUniqueId": "I#64:137",
           "PortDirection": "Bidirectional",
           "PortType": "Ethernet"
         },
@@ -1026,28 +798,30 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:156",
-          "PortDirection": "Input"
+          "GloballyUniqueId": "I#64:156",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:157",
-          "PortDirection": "Input"
+          "GloballyUniqueId": "I#64:157",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:135",
+          "GloballyUniqueId": "I#64:135",
           "Measurement": [
             {
               "DataLength": 1,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:138",
+              "GloballyUniqueId": "I#60:138",
               "SampleRate": 1250000
             }
           ],
@@ -1059,205 +833,254 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:138",
+          "GloballyUniqueId": "I#64:138",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:140",
+              "GloballyUniqueId": "I#60:140",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:139",
+              "GloballyUniqueId": "I#60:139",
               "SampleRate": 250
             }
           ],
           "PortDirection": "Input",
-          "PortType": "Thermocouple"
+          "PortType": "Thermocouple",
+          "Thermocouple": [
+            "E",
+            "J",
+            "K",
+            "T"
+          ]
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:139",
+          "GloballyUniqueId": "I#64:139",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:142",
+              "GloballyUniqueId": "I#60:142",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:141",
+              "GloballyUniqueId": "I#60:141",
               "SampleRate": 250
             }
           ],
           "PortDirection": "Input",
-          "PortType": "Thermocouple"
+          "PortType": "Thermocouple",
+          "Thermocouple": [
+            "E",
+            "J",
+            "K",
+            "T"
+          ]
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:140",
+          "GloballyUniqueId": "I#64:140",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:144",
+              "GloballyUniqueId": "I#60:144",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:143",
+              "GloballyUniqueId": "I#60:143",
               "SampleRate": 250
             }
           ],
           "PortDirection": "Input",
-          "PortType": "Thermocouple"
+          "PortType": "Thermocouple",
+          "Thermocouple": [
+            "E",
+            "J",
+            "K",
+            "T"
+          ]
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:141",
+          "GloballyUniqueId": "I#64:141",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:146",
+              "GloballyUniqueId": "I#60:146",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:145",
+              "GloballyUniqueId": "I#60:145",
               "SampleRate": 250
             }
           ],
           "PortDirection": "Input",
-          "PortType": "Thermocouple"
+          "PortType": "Thermocouple",
+          "Thermocouple": [
+            "E",
+            "J",
+            "K",
+            "T"
+          ]
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:142",
+          "GloballyUniqueId": "I#64:142",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:148",
+              "GloballyUniqueId": "I#60:148",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:147",
+              "GloballyUniqueId": "I#60:147",
               "SampleRate": 250
             }
           ],
           "PortDirection": "Input",
-          "PortType": "Thermocouple"
+          "PortType": "Thermocouple",
+          "Thermocouple": [
+            "E",
+            "J",
+            "K",
+            "T"
+          ]
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:143",
+          "GloballyUniqueId": "I#64:143",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:150",
+              "GloballyUniqueId": "I#60:150",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:149",
+              "GloballyUniqueId": "I#60:149",
               "SampleRate": 250
             }
           ],
           "PortDirection": "Input",
-          "PortType": "Thermocouple"
+          "PortType": "Thermocouple",
+          "Thermocouple": [
+            "E",
+            "J",
+            "K",
+            "T"
+          ]
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:144",
+          "GloballyUniqueId": "I#64:144",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:152",
+              "GloballyUniqueId": "I#60:152",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:151",
+              "GloballyUniqueId": "I#60:151",
               "SampleRate": 250
             }
           ],
           "PortDirection": "Input",
-          "PortType": "Thermocouple"
+          "PortType": "Thermocouple",
+          "Thermocouple": [
+            "E",
+            "J",
+            "K",
+            "T"
+          ]
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:145",
+          "GloballyUniqueId": "I#64:145",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:154",
+              "GloballyUniqueId": "I#60:154",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:153",
+              "GloballyUniqueId": "I#60:153",
               "SampleRate": 250
             }
           ],
           "PortDirection": "Input",
-          "PortType": "Thermocouple"
+          "PortType": "Thermocouple",
+          "Thermocouple": [
+            "E",
+            "J",
+            "K",
+            "T"
+          ]
         },
         {
           "BBNPortFunctionality": "Time",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:136",
-          "PortDirection": "Output"
+          "GloballyUniqueId": "I#64:136",
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
     {
       "BBNDauMonetaryCost": 50000,
-      "GloballyUniqueId": "I#71:5",
+      "GloballyUniqueId": "I#96:5",
       "Port": [
         {
           "BBNPortFunctionality": "Bus",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:173",
+          "GloballyUniqueId": "I#64:173",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1266,7 +1089,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:174",
+          "GloballyUniqueId": "I#64:174",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1275,7 +1098,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:175",
+          "GloballyUniqueId": "I#64:175",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1284,7 +1107,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:176",
+          "GloballyUniqueId": "I#64:176",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1293,7 +1116,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:177",
+          "GloballyUniqueId": "I#64:177",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1302,7 +1125,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:178",
+          "GloballyUniqueId": "I#64:178",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1311,7 +1134,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:179",
+          "GloballyUniqueId": "I#64:179",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1320,7 +1143,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:180",
+          "GloballyUniqueId": "I#64:180",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1329,7 +1152,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:181",
+          "GloballyUniqueId": "I#64:181",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1338,7 +1161,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:182",
+          "GloballyUniqueId": "I#64:182",
           "PortDirection": "Input",
           "PortType": "Bus"
         },
@@ -1347,7 +1170,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:160",
+          "GloballyUniqueId": "I#64:160",
           "PortDirection": "Bidirectional",
           "PortType": "Ethernet"
         },
@@ -1356,28 +1179,30 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:183",
-          "PortDirection": "Input"
+          "GloballyUniqueId": "I#64:183",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:184",
-          "PortDirection": "Input"
+          "GloballyUniqueId": "I#64:184",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:158",
+          "GloballyUniqueId": "I#64:158",
           "Measurement": [
             {
               "DataLength": 1,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:155",
+              "GloballyUniqueId": "I#60:155",
               "SampleRate": 1250000
             }
           ],
@@ -1390,12 +1215,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:161",
+          "GloballyUniqueId": "I#64:161",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:156",
+              "GloballyUniqueId": "I#60:156",
               "SampleRate": 250
             }
           ],
@@ -1408,12 +1233,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:162",
+          "GloballyUniqueId": "I#64:162",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:157",
+              "GloballyUniqueId": "I#60:157",
               "SampleRate": 250
             }
           ],
@@ -1426,12 +1251,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:163",
+          "GloballyUniqueId": "I#64:163",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:158",
+              "GloballyUniqueId": "I#60:158",
               "SampleRate": 250
             }
           ],
@@ -1444,12 +1269,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:164",
+          "GloballyUniqueId": "I#64:164",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:159",
+              "GloballyUniqueId": "I#60:159",
               "SampleRate": 250
             }
           ],
@@ -1462,12 +1287,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:165",
+          "GloballyUniqueId": "I#64:165",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:160",
+              "GloballyUniqueId": "I#60:160",
               "SampleRate": 250
             }
           ],
@@ -1480,12 +1305,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:166",
+          "GloballyUniqueId": "I#64:166",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:161",
+              "GloballyUniqueId": "I#60:161",
               "SampleRate": 250
             }
           ],
@@ -1498,12 +1323,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:167",
+          "GloballyUniqueId": "I#64:167",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:162",
+              "GloballyUniqueId": "I#60:162",
               "SampleRate": 250
             }
           ],
@@ -1516,12 +1341,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:168",
+          "GloballyUniqueId": "I#64:168",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:163",
+              "GloballyUniqueId": "I#60:163",
               "SampleRate": 250
             }
           ],
@@ -1534,12 +1359,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:169",
+          "GloballyUniqueId": "I#64:169",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:164",
+              "GloballyUniqueId": "I#60:164",
               "SampleRate": 250
             }
           ],
@@ -1552,12 +1377,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:170",
+          "GloballyUniqueId": "I#64:170",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:165",
+              "GloballyUniqueId": "I#60:165",
               "SampleRate": 250
             }
           ],
@@ -1570,12 +1395,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:171",
+          "GloballyUniqueId": "I#64:171",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:166",
+              "GloballyUniqueId": "I#60:166",
               "SampleRate": 250
             }
           ],
@@ -1588,12 +1413,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:172",
+          "GloballyUniqueId": "I#64:172",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:167",
+              "GloballyUniqueId": "I#60:167",
               "SampleRate": 250
             }
           ],
@@ -1605,21 +1430,265 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:159",
-          "PortDirection": "Output"
+          "GloballyUniqueId": "I#64:159",
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
     {
       "BBNDauMonetaryCost": 50000,
-      "GloballyUniqueId": "I#71:1",
+      "GloballyUniqueId": "I#96:0",
+      "Port": [
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": [
+            false
+          ],
+          "GloballyUniqueId": "I#64:12",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": [
+            false
+          ],
+          "GloballyUniqueId": "I#64:13",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "Ethernet",
+          "Excitation": [
+            false
+          ],
+          "GloballyUniqueId": "I#64:1",
+          "PortDirection": "Bidirectional",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "Power",
+          "Excitation": [
+            false
+          ],
+          "GloballyUniqueId": "I#64:0",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "Power",
+          "Excitation": [
+            false
+          ],
+          "GloballyUniqueId": "I#64:14",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#64:2",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:1",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:0",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#64:7",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:11",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:10",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#64:8",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:13",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:12",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#64:9",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:15",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:14",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#64:3",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:3",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:2",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#64:4",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:5",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:4",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#64:5",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:7",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:6",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#64:6",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:9",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#60:8",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        }
+      ]
+    },
+    {
+      "BBNDauMonetaryCost": 50000,
+      "GloballyUniqueId": "I#96:1",
       "Port": [
         {
           "BBNPortFunctionality": "Ethernet",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:16",
+          "GloballyUniqueId": "I#64:16",
           "PortDirection": "Bidirectional",
           "PortType": "Ethernet"
         },
@@ -1628,7 +1697,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:15",
+          "GloballyUniqueId": "I#64:15",
           "PortDirection": "Output",
           "PortType": "PCM"
         },
@@ -1637,8 +1706,9 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:68",
-          "PortDirection": "Input"
+          "GloballyUniqueId": "I#64:68",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "SignalConditioning",
@@ -1646,18 +1716,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:36",
+          "GloballyUniqueId": "I#64:36",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:17",
+              "GloballyUniqueId": "I#60:17",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:16",
+              "GloballyUniqueId": "I#60:16",
               "SampleRate": 250
             }
           ],
@@ -1670,18 +1740,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:37",
+          "GloballyUniqueId": "I#64:37",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:19",
+              "GloballyUniqueId": "I#60:19",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:18",
+              "GloballyUniqueId": "I#60:18",
               "SampleRate": 250
             }
           ],
@@ -1694,18 +1764,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:38",
+          "GloballyUniqueId": "I#64:38",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:21",
+              "GloballyUniqueId": "I#60:21",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:20",
+              "GloballyUniqueId": "I#60:20",
               "SampleRate": 250
             }
           ],
@@ -1718,18 +1788,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:39",
+          "GloballyUniqueId": "I#64:39",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:23",
+              "GloballyUniqueId": "I#60:23",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:22",
+              "GloballyUniqueId": "I#60:22",
               "SampleRate": 250
             }
           ],
@@ -1742,18 +1812,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:40",
+          "GloballyUniqueId": "I#64:40",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:25",
+              "GloballyUniqueId": "I#60:25",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:24",
+              "GloballyUniqueId": "I#60:24",
               "SampleRate": 250
             }
           ],
@@ -1766,18 +1836,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:41",
+          "GloballyUniqueId": "I#64:41",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:27",
+              "GloballyUniqueId": "I#60:27",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:26",
+              "GloballyUniqueId": "I#60:26",
               "SampleRate": 250
             }
           ],
@@ -1790,18 +1860,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:42",
+          "GloballyUniqueId": "I#64:42",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:29",
+              "GloballyUniqueId": "I#60:29",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:28",
+              "GloballyUniqueId": "I#60:28",
               "SampleRate": 250
             }
           ],
@@ -1814,18 +1884,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:43",
+          "GloballyUniqueId": "I#64:43",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:31",
+              "GloballyUniqueId": "I#60:31",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:30",
+              "GloballyUniqueId": "I#60:30",
               "SampleRate": 250
             }
           ],
@@ -1838,18 +1908,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:44",
+          "GloballyUniqueId": "I#64:44",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:33",
+              "GloballyUniqueId": "I#60:33",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:32",
+              "GloballyUniqueId": "I#60:32",
               "SampleRate": 250
             }
           ],
@@ -1862,18 +1932,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:45",
+          "GloballyUniqueId": "I#64:45",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:35",
+              "GloballyUniqueId": "I#60:35",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:34",
+              "GloballyUniqueId": "I#60:34",
               "SampleRate": 250
             }
           ],
@@ -1886,18 +1956,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:46",
+          "GloballyUniqueId": "I#64:46",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:37",
+              "GloballyUniqueId": "I#60:37",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:36",
+              "GloballyUniqueId": "I#60:36",
               "SampleRate": 250
             }
           ],
@@ -1910,18 +1980,18 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:47",
+          "GloballyUniqueId": "I#64:47",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:39",
+              "GloballyUniqueId": "I#60:39",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:38",
+              "GloballyUniqueId": "I#60:38",
               "SampleRate": 250
             }
           ],
@@ -1933,12 +2003,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:50",
+          "GloballyUniqueId": "I#64:50",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:40",
+              "GloballyUniqueId": "I#60:40",
               "SampleRate": 1250
             }
           ],
@@ -1950,12 +2020,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:51",
+          "GloballyUniqueId": "I#64:51",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:41",
+              "GloballyUniqueId": "I#60:41",
               "SampleRate": 1250
             }
           ],
@@ -1967,12 +2037,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:52",
+          "GloballyUniqueId": "I#64:52",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:42",
+              "GloballyUniqueId": "I#60:42",
               "SampleRate": 1250
             }
           ],
@@ -1984,12 +2054,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:53",
+          "GloballyUniqueId": "I#64:53",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:43",
+              "GloballyUniqueId": "I#60:43",
               "SampleRate": 1250
             }
           ],
@@ -2001,12 +2071,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:54",
+          "GloballyUniqueId": "I#64:54",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:44",
+              "GloballyUniqueId": "I#60:44",
               "SampleRate": 1250
             }
           ],
@@ -2018,12 +2088,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:55",
+          "GloballyUniqueId": "I#64:55",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:45",
+              "GloballyUniqueId": "I#60:45",
               "SampleRate": 1250
             }
           ],
@@ -2035,12 +2105,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:56",
+          "GloballyUniqueId": "I#64:56",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:46",
+              "GloballyUniqueId": "I#60:46",
               "SampleRate": 1250
             }
           ],
@@ -2052,12 +2122,12 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:57",
+          "GloballyUniqueId": "I#64:57",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:47",
+              "GloballyUniqueId": "I#60:47",
               "SampleRate": 1250
             }
           ],
@@ -2069,18 +2139,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:58",
+          "GloballyUniqueId": "I#64:58",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:49",
+              "GloballyUniqueId": "I#60:49",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:48",
+              "GloballyUniqueId": "I#60:48",
               "SampleRate": 250
             }
           ],
@@ -2092,18 +2162,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:59",
+          "GloballyUniqueId": "I#64:59",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:51",
+              "GloballyUniqueId": "I#60:51",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:50",
+              "GloballyUniqueId": "I#60:50",
               "SampleRate": 250
             }
           ],
@@ -2115,18 +2185,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:60",
+          "GloballyUniqueId": "I#64:60",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:53",
+              "GloballyUniqueId": "I#60:53",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:52",
+              "GloballyUniqueId": "I#60:52",
               "SampleRate": 250
             }
           ],
@@ -2138,18 +2208,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:61",
+          "GloballyUniqueId": "I#64:61",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:55",
+              "GloballyUniqueId": "I#60:55",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:54",
+              "GloballyUniqueId": "I#60:54",
               "SampleRate": 250
             }
           ],
@@ -2161,18 +2231,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:62",
+          "GloballyUniqueId": "I#64:62",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:57",
+              "GloballyUniqueId": "I#60:57",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:56",
+              "GloballyUniqueId": "I#60:56",
               "SampleRate": 250
             }
           ],
@@ -2184,18 +2254,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:63",
+          "GloballyUniqueId": "I#64:63",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:59",
+              "GloballyUniqueId": "I#60:59",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:58",
+              "GloballyUniqueId": "I#60:58",
               "SampleRate": 250
             }
           ],
@@ -2207,18 +2277,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:64",
+          "GloballyUniqueId": "I#64:64",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:61",
+              "GloballyUniqueId": "I#60:61",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:60",
+              "GloballyUniqueId": "I#60:60",
               "SampleRate": 250
             }
           ],
@@ -2230,18 +2300,18 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:65",
+          "GloballyUniqueId": "I#64:65",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:63",
+              "GloballyUniqueId": "I#60:63",
               "SampleRate": 1000
             },
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:62",
+              "GloballyUniqueId": "I#60:62",
               "SampleRate": 250
             }
           ],
@@ -2253,7 +2323,7 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:17",
+          "GloballyUniqueId": "I#64:17",
           "PortDirection": "Output",
           "PortType": "Video"
         }
@@ -2261,14 +2331,14 @@
     },
     {
       "BBNDauMonetaryCost": 75000,
-      "GloballyUniqueId": "I#71:2",
+      "GloballyUniqueId": "I#96:2",
       "Port": [
         {
           "BBNPortFunctionality": "Ethernet",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:71",
+          "GloballyUniqueId": "I#64:71",
           "PortDirection": "Bidirectional",
           "PortType": "Ethernet"
         },
@@ -2277,28 +2347,30 @@
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:96",
-          "PortDirection": "Input"
+          "GloballyUniqueId": "I#64:96",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:97",
-          "PortDirection": "Input"
+          "GloballyUniqueId": "I#64:97",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
           "Excitation": [
             false
           ],
-          "GloballyUniqueId": "I#93:69",
+          "GloballyUniqueId": "I#64:69",
           "Measurement": [
             {
               "DataLength": 1,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:64",
+              "GloballyUniqueId": "I#60:64",
               "SampleRate": 1250000
             }
           ],
@@ -2311,12 +2383,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:84",
+          "GloballyUniqueId": "I#64:84",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:77",
+              "GloballyUniqueId": "I#60:77",
               "SampleRate": 400
             }
           ],
@@ -2329,12 +2401,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:85",
+          "GloballyUniqueId": "I#64:85",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:78",
+              "GloballyUniqueId": "I#60:78",
               "SampleRate": 400
             }
           ],
@@ -2347,12 +2419,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:86",
+          "GloballyUniqueId": "I#64:86",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:79",
+              "GloballyUniqueId": "I#60:79",
               "SampleRate": 400
             }
           ],
@@ -2365,12 +2437,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:87",
+          "GloballyUniqueId": "I#64:87",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:80",
+              "GloballyUniqueId": "I#60:80",
               "SampleRate": 400
             }
           ],
@@ -2383,12 +2455,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:88",
+          "GloballyUniqueId": "I#64:88",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:81",
+              "GloballyUniqueId": "I#60:81",
               "SampleRate": 400
             }
           ],
@@ -2401,12 +2473,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:89",
+          "GloballyUniqueId": "I#64:89",
           "Measurement": [
             {
               "DataLength": 12,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:82",
+              "GloballyUniqueId": "I#60:82",
               "SampleRate": 400
             }
           ],
@@ -2419,12 +2491,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:72",
+          "GloballyUniqueId": "I#64:72",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:65",
+              "GloballyUniqueId": "I#60:65",
               "SampleRate": 250
             }
           ],
@@ -2437,12 +2509,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:73",
+          "GloballyUniqueId": "I#64:73",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:66",
+              "GloballyUniqueId": "I#60:66",
               "SampleRate": 250
             }
           ],
@@ -2455,12 +2527,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:74",
+          "GloballyUniqueId": "I#64:74",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:67",
+              "GloballyUniqueId": "I#60:67",
               "SampleRate": 250
             }
           ],
@@ -2473,12 +2545,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:75",
+          "GloballyUniqueId": "I#64:75",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:68",
+              "GloballyUniqueId": "I#60:68",
               "SampleRate": 250
             }
           ],
@@ -2491,12 +2563,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:76",
+          "GloballyUniqueId": "I#64:76",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:69",
+              "GloballyUniqueId": "I#60:69",
               "SampleRate": 250
             }
           ],
@@ -2509,12 +2581,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:77",
+          "GloballyUniqueId": "I#64:77",
           "Measurement": [
             {
               "DataLength": 16,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:70",
+              "GloballyUniqueId": "I#60:70",
               "SampleRate": 250
             }
           ],
@@ -2527,12 +2599,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:90",
+          "GloballyUniqueId": "I#64:90",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:83",
+              "GloballyUniqueId": "I#60:83",
               "SampleRate": 200
             }
           ],
@@ -2545,12 +2617,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:91",
+          "GloballyUniqueId": "I#64:91",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:84",
+              "GloballyUniqueId": "I#60:84",
               "SampleRate": 200
             }
           ],
@@ -2563,12 +2635,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:92",
+          "GloballyUniqueId": "I#64:92",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:85",
+              "GloballyUniqueId": "I#60:85",
               "SampleRate": 200
             }
           ],
@@ -2581,12 +2653,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:93",
+          "GloballyUniqueId": "I#64:93",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:86",
+              "GloballyUniqueId": "I#60:86",
               "SampleRate": 200
             }
           ],
@@ -2599,12 +2671,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:94",
+          "GloballyUniqueId": "I#64:94",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:87",
+              "GloballyUniqueId": "I#60:87",
               "SampleRate": 200
             }
           ],
@@ -2617,12 +2689,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:95",
+          "GloballyUniqueId": "I#64:95",
           "Measurement": [
             {
               "DataLength": 24,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:88",
+              "GloballyUniqueId": "I#60:88",
               "SampleRate": 200
             }
           ],
@@ -2635,12 +2707,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:78",
+          "GloballyUniqueId": "I#64:78",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:71",
+              "GloballyUniqueId": "I#60:71",
               "SampleRate": 500
             }
           ],
@@ -2653,12 +2725,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:79",
+          "GloballyUniqueId": "I#64:79",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:72",
+              "GloballyUniqueId": "I#60:72",
               "SampleRate": 500
             }
           ],
@@ -2671,12 +2743,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:80",
+          "GloballyUniqueId": "I#64:80",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:73",
+              "GloballyUniqueId": "I#60:73",
               "SampleRate": 500
             }
           ],
@@ -2689,12 +2761,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:81",
+          "GloballyUniqueId": "I#64:81",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:74",
+              "GloballyUniqueId": "I#60:74",
               "SampleRate": 500
             }
           ],
@@ -2707,12 +2779,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:82",
+          "GloballyUniqueId": "I#64:82",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:75",
+              "GloballyUniqueId": "I#60:75",
               "SampleRate": 500
             }
           ],
@@ -2725,12 +2797,12 @@
             false,
             true
           ],
-          "GloballyUniqueId": "I#93:83",
+          "GloballyUniqueId": "I#64:83",
           "Measurement": [
             {
               "DataLength": 8,
               "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#65:76",
+              "GloballyUniqueId": "I#60:76",
               "SampleRate": 500
             }
           ],

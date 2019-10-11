@@ -195,6 +195,7 @@ public class ChallengeProblemBridge implements ChallengeProblemBridgeInterface {
 
 	public synchronized void storeLargeBinaryDebugData(@Nonnull String evaluationInstanceIdentifier, @Nonnull String artifactIdentifier, @Nonnull byte[] binaryData) throws Exception {
 		// TODO: Change to debug specific directory
+		// This is not used. So ignoring it for the final release
 		if (artifactIdentifier.startsWith("_")) {
 			throw new RuntimeException("Artifact identifiers starting with an underscore cannot be used!");
 		}

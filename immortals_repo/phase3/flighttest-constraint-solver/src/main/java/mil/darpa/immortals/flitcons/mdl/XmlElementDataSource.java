@@ -130,7 +130,6 @@ public class XmlElementDataSource extends AbstractDataSource<Node> {
 				throw AdaptationnException.internal("No IDREF found on node!");
 			}
 
-			// TODO: Replace doc with node doc
 			Nodes nodes = doc.query("//*[@ID='" + id + "']", mdlContext);
 
 			if (nodes.size() == 0) {

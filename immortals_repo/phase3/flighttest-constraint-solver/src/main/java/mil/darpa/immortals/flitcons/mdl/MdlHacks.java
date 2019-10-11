@@ -2,18 +2,14 @@ package mil.darpa.immortals.flitcons.mdl;
 
 import mil.darpa.immortals.flitcons.NestedPathException;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValue;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicValueMultiplicity;
-import mil.darpa.immortals.flitcons.datatypes.dynamic.Range;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalData;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalDataContainer;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 
 import javax.annotation.Nonnull;
-import java.util.*;
-
-import static mil.darpa.immortals.flitcons.Utils.duplicateObject;
+import java.util.Iterator;
+import java.util.Set;
 
 public class MdlHacks {
 
@@ -75,6 +71,18 @@ public class MdlHacks {
 				HierarchicalData currentPort = portIterator.next();
 				if (currentPort.getAttribute("Excitation") == null) {
 					currentPort.getAttributes().put("Excitation", false);
+				}
+			}
+		}
+	}
+
+	public static void injectPortTypeDefaults(@Nonnull HierarchicalDataContainer combinedDataContainer) {
+		for (HierarchicalData dauNode : combinedDataContainer.getDauRootNodes()) {
+			Iterator<HierarchicalData> portIterator = dauNode.getChildrenDataIterator("Port");
+			while (portIterator.hasNext()) {
+				HierarchicalData currentPort = portIterator.next();
+				if (currentPort.getAttribute("PortType") == null) {
+					currentPort.getAttributes().put("PortType", "_N0_V4LU3_");
 				}
 			}
 		}

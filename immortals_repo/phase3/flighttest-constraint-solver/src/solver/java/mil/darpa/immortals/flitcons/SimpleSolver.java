@@ -1,5 +1,6 @@
 package mil.darpa.immortals.flitcons;
 
+import com.google.gson.JsonObject;
 import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.*;
 import mil.darpa.immortals.flitcons.datatypes.hierarchical.HierarchicalIdentifier;
@@ -7,6 +8,7 @@ import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -616,4 +618,9 @@ public class SimpleSolver implements SolverInterface<SimpleSolver> {
 		}
 	}
 
+	@Nullable
+	@Override
+	public JsonObject getMetrics() {
+		return null;
+	}
 }

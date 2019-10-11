@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import copy
 import hashlib
 import json
 import logging
@@ -8,12 +7,13 @@ import os
 import shutil
 import subprocess
 import time
-import uuid
 from enum import Enum
 from logging import Logger
 from typing import List, Dict, Union, Tuple
 
 from lxml import etree
+
+from common import clean_json_str
 
 CP_ROOT_ERROR_EXIT_CODE = -66
 BBN_ERROR_EXIT_CODE = -77
@@ -62,6 +62,7 @@ VALIDATOR_JAR = os.path.join(FCS_DIR, 'validator.jar')
 
 BBN_TEST_LISTING = os.path.join(IODBS_DIR, 'src/main/resources/s5_bbn_scenarios.json')
 BBN_GENERATED_TEST_LISTING = os.path.join(IODBS_DIR, 'src/main/resources/s5_bbn_generated_scenarios.json')
+BBN_GENERATED_S5_XML_ROOT = os.path.join(IMMORTALS_ROOT, 'phase3/utils/bbn_test_scenarios/Scenario_5/generated/')
 SWRIX_TEST_LISTING = os.path.join(IODBS_DIR, 'src/main/resources/s5_swri_scenarios.json')
 
 if 'IMMORTALS_CHALLENGE_PROBLEMS_ROOT' not in os.environ:
@@ -89,7 +90,7 @@ parser.add_argument('--validate-examples', '-v', action='store_true',
                     help='Scans for and validates examples')
 parser.add_argument('--bbn', '-b', action='store_true',
                     help='Performs the operation on BBN authored scenarios')
-parser.add_argument('--bbn-generated', action='store_true',
+parser.add_argument('--bbn-generated', '-g', action='store_true',
                     help='Performs the operation on BBN generated scenarios')
 parser.add_argument('--swri', '-s', action='store_true',
                     help='Performs the operation on SwRI authored scenarios.')
@@ -216,31 +217,24 @@ def build_validator():
 
 
 def update_odb_backups(outdated_scenario_identifiers: List[str], conserve_absolute_paths: bool):
-        logger.info("Starting creation of OrientDB backups to be used during testing. This may take a while...")
-        # Then build a command to regenerate all SwRI backup databases
-        cmd = ['java', '-XX:MaxDirectMemorySize=8000m', '-jar', IODBS_JAR, '--deployment-mode', 'BackupsWithUpdatedXml']
-        for scenario in outdated_scenario_identifiers:
-            cmd.append('--regen-scenario')
-            cmd.append(scenario)
+    logger.info("Starting creation of OrientDB backups to be used during testing. This may take a while...")
+    # Then build a command to regenerate all SwRI backup databases
+    cmd = ['java', '-XX:MaxDirectMemorySize=8000m', '-jar', IODBS_JAR, '--deployment-mode', 'BackupsWithUpdatedXml']
+    for scenario in outdated_scenario_identifiers:
+        cmd.append('--regen-scenario')
+        cmd.append(scenario)
 
-        # artifact_dir = _exec_cmd(cmd=cmd, cwd=IODBS_DIR, label='immortals-orientdb-server.jar')
-        artifact_dir = _exec_cmd(cmd=cmd, label='update_backups_immortals-orientdb-server_jar')
+    # artifact_dir = _exec_cmd(cmd=cmd, cwd=IODBS_DIR, label='immortals-orientdb-server.jar')
+    artifact_dir = _exec_cmd(cmd=cmd, label='update_backups_immortals-orientdb-server_jar')
 
-        logger.info('Creation of backups finished.')
+    logger.info('Creation of backups finished.')
 
-        for identifier in outdated_scenario_identifiers:
-            scenario = TestScenarioContainer.get(identifier)
-            filename = identifier + '-backup.zip'
-            # Then, copy the produced backup databases to the database directory
-            src = os.path.join(artifact_dir, 'PRODUCED_TEST_DATABASES', filename)
-            tgt = scenario.backup_path
-            logger.info('Updating backup file "' + filename + '".')
-            if not os.path.isfile(src):
-                raise Exception('The file "' + src + '" should have been created by the previous command!')
-
-            if os.path.isfile(tgt):
-                os.remove(tgt)
-            shutil.copy(src, tgt)
+    for identifier in outdated_scenario_identifiers:
+        scenario = TestScenarioContainer.get(identifier)
+        filename = identifier + '-backup.zip'
+        # Then, copy the produced backup databases to the database directory
+        src = os.path.join(artifact_dir, 'PRODUCED_TEST_DATABASES', filename)
+        scenario.save_backup_file(src)
 
 
 class TestScenario:
@@ -289,6 +283,29 @@ class TestScenario:
             raise Exception('No backup found for "' + self.shortName + '"!')
         else:
             return rval
+
+    def save_backup_file(self, source_path: str):
+        print("BF: " + source_path)
+        logger.info('Updating backup file "' + os.path.basename(source_path) + '".')
+        if not os.path.isfile(source_path):
+            raise Exception('The file "' + source_path + '" should have been created by the previous command!')
+
+        file_name = self.shortName + '-backup.zip'
+
+        if (self.xmlMdlrootInputPath is not None and self.xmlMdlrootInputPath.startswith(BBN_GENERATED_S5_XML_ROOT) or
+                (self.xmlInventoryPath is not None and self.xmlInventoryPath.startswith(BBN_GENERATED_S5_XML_ROOT))):
+            backup_path = os.path.join(IMMORTALS_ROOT,
+                                       'phase3/immortals-orientdb-server/src/main/resources/test_databases/generated/',
+                                       file_name)
+        else:
+            backup_path = os.path.join(
+                IMMORTALS_ROOT, 'phase3/immortals-orientdb-server/src/main/resources/test_databases/', file_name)
+
+        if os.path.isfile(backup_path):
+            os.remove(backup_path)
+
+        print("TGT: " + backup_path)
+        shutil.copy(source_path, backup_path)
 
     @property
     def backup_hash(self):
@@ -381,26 +398,23 @@ class TestScenarioContainer:
         TestType.SwriTest: _swri_tests,
     }
 
-    with open(BBN_TEST_LISTING, 'r') as f:
-        bbn_test_json = json.load(f)
-        for test_json in bbn_test_json['scenarios']:
-            test = TestScenario(**test_json)
-            _bbn_tests[test.shortName] = test
-            _all_tests[test.shortName] = test
+    bbn_test_json = json.loads(clean_json_str(open(BBN_TEST_LISTING, 'r').read()))
+    for test_json in bbn_test_json['scenarios']:
+        test = TestScenario(**test_json)
+        _bbn_tests[test.shortName] = test
+        _all_tests[test.shortName] = test
 
-    with open(BBN_GENERATED_TEST_LISTING, 'r') as f:
-        bbn_gen_test_json = json.load(f)
-        for test_json in bbn_gen_test_json['scenarios']:
-            test = TestScenario(**test_json)
-            _bbn_gen_tests[test.shortName] = test
-            _all_tests[test.shortName] = test
+    bbn_gen_test_json = json.loads(clean_json_str(open(BBN_GENERATED_TEST_LISTING, 'r').read()))
+    for test_json in bbn_gen_test_json['scenarios']:
+        test = TestScenario(**test_json)
+        _bbn_gen_tests[test.shortName] = test
+        _all_tests[test.shortName] = test
 
-    with open(SWRIX_TEST_LISTING, 'r') as f:
-        swri_test_json = json.load(f)
-        for test_json in swri_test_json['scenarios']:
-            test = TestScenario(**test_json)
-            _swri_tests[test.shortName] = test
-            _all_tests[test.shortName] = test
+    swri_test_json = json.loads(clean_json_str(open(SWRIX_TEST_LISTING, 'r').read()))
+    for test_json in swri_test_json['scenarios']:
+        test = TestScenario(**test_json)
+        _swri_tests[test.shortName] = test
+        _all_tests[test.shortName] = test
 
     @classmethod
     def _write(cls, testType: TestType, target_path: str, conserve_absolute_path: bool):
@@ -409,7 +423,7 @@ class TestScenarioContainer:
 
         scenarios = list()
         for test_scenario in test_identifiers:
-            clone = copy.deepcopy(test_scenario.__dict__)
+            clone = test_scenario.to_dict()
             if not conserve_absolute_path:
                 clone['xmlInventoryPath'] = _unresolve_file(clone['xmlInventoryPath'])
                 clone['xmlMdlrootInputPath'] = _unresolve_file(clone['xmlMdlrootInputPath'])
@@ -876,9 +890,9 @@ class Ingester:
 
         update_odb_backups(outdated_scenario_identifiers, conserve_absolute_paths)
 
-            # Update the source XML hash in the database inventory
-            TestScenarioContainer.update_scenario_hashes(outdated_scenario_identifiers, self.testType,
-                                                         conserve_absolute_paths)
+        # Update the source XML hash in the database inventory
+        TestScenarioContainer.update_scenario_hashes(outdated_scenario_identifiers, self.testType,
+                                                     conserve_absolute_paths)
 
     def update_dsltest_sceanrios(self) -> Union[List[str], None]:
         outdated_test_scenario_names = TestScenarioContainer.get_outdated_dsltest_scenarios_states()
@@ -1014,6 +1028,7 @@ class Ingester:
             self.validate_odb_scenarios(examples, inventories)
         self.update_dsltest_sceanrios()
 
+
 def list_scenario_states():
     swri_test_names = TestScenarioContainer.swri_test_names()
     bbn_test_names = TestScenarioContainer.bbn_test_names()
@@ -1056,6 +1071,7 @@ def list_scenario_states():
 
     for line in lines:
         print(line)
+
 
 def ingest_bbn_scenario6_examples() -> List[str]:
     scenarios_needing_update = list()

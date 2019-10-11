@@ -1,67 +1,63 @@
 {
     "scenarios": [
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_1/BRASS_Scenario5_Example1_TTC.xml",
             "shortName": "s5e01i01",
             "prettyName": "Scenario 5 SwRI Example 1 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "5fab84eed8dbeefa217a390b752078d468a016cc856925b1dd66e8b459589ecd",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
-        },
-        {
             "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_2/BRASS_Scenario5_Example2_TTC.xml",
-            "shortName": "s5e02i01",
-            "prettyName": "Scenario 5 SwRI Example 2 Inventory 1",
-            "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "cfa13f8bef7d365e43b93b8144d1743cf0866a7d2919c83a256a4a1f23829238",
-            "expectedStatusSequence": [
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationUnsuccessful"
-            ],
-            "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
-        },
-        {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
-            "shortName": "s5e03i01",
-            "prettyName": "Scenario 5 SwRI Example 3 Inventory 1",
-            "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "08f288cb6f49c702e73f2db37155f0d3e2edbb04391368acf70e98af20e0f455",
-            "expectedStatusSequence": [
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationSuccessful",
-                "AdaptationUnsuccessful"
-            ],
-            "scenarioType": "Scenario5swri",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_1/BRASS_Scenario5_Example1_TTC.xml",
             "expectedDauSelections": [
                 [
                     "inventory-nn-dau"
                 ]
-            ]
+            ],
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "5fab84eed8dbeefa217a390b752078d468a016cc856925b1dd66e8b459589ecd"
         },
         {
+            "shortName": "s5e02i01",
+            "prettyName": "Scenario 5 SwRI Example 2 Inventory 1",
+            "timeoutMS": 420000,
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationSuccessful",
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5swri",
             "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_4/BRASS_Scenario5_Example4_TTC.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_2/BRASS_Scenario5_Example2_TTC.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "cfa13f8bef7d365e43b93b8144d1743cf0866a7d2919c83a256a4a1f23829238"
+        },
+        {
+            "shortName": "s5e03i01",
+            "prettyName": "Scenario 5 SwRI Example 3 Inventory 1",
+            "timeoutMS": 420000,
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5swri",
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_3/BRASS_Scenario5_Example3_Acra.xml",
+            "expectedDauSelections": [
+                [
+                    "inventory-nn-dau"
+                ]
+            ],
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "cc376a50b85edfed77aded2422606de19b0e87a0ed8b10fe29ba085f39e58971"
+        },
+        {
             "shortName": "s5e04i01",
             "prettyName": "Scenario 5 SwRI Example 04 Inventory 01",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "46322ac14f283bf6863ba8673255fd3fbc6cd376a625b27de682409da1509e5a",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -74,16 +70,15 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_4/BRASS_Scenario5_Example4_TTC.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "46322ac14f283bf6863ba8673255fd3fbc6cd376a625b27de682409da1509e5a"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_5/BRASS_Scenario5_Example5_TTC.xml",
             "shortName": "s5e05i01",
             "prettyName": "Scenario 5 SwRI Example 5 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "a20b2f5f8decaacb2a3f2dc5254b9cd8cf9802c6e46c5211df3a4b8b3f15ba75",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -93,31 +88,29 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_5/BRASS_Scenario5_Example5_TTC.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "a20b2f5f8decaacb2a3f2dc5254b9cd8cf9802c6e46c5211df3a4b8b3f15ba75"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_6/BRASS_Scenario5_Example6_TTC.xml",
             "shortName": "s5e06i01",
             "prettyName": "Scenario 5 SwRI Example 6 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "9d477f34d43ab127c56ddd9a0c2ae5e9df69be244631825f0c39ddb9d57e9b74",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_6/BRASS_Scenario5_Example6_TTC.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "9d477f34d43ab127c56ddd9a0c2ae5e9df69be244631825f0c39ddb9d57e9b74"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_7/BRASS_Scenario5_Example7_ACME.xml",
             "shortName": "s5e07i01",
             "prettyName": "Scenario 5 SwRI Example 7 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "d47fd9c406d546f1372deac2a784c32125a563218c768f5307c2152c2b945c11",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -132,16 +125,15 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_7/BRASS_Scenario5_Example7_ACME.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "d47fd9c406d546f1372deac2a784c32125a563218c768f5307c2152c2b945c11"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_8/BRASS_Scenario5_Example8_ACME.xml",
             "shortName": "s5e08i01",
             "prettyName": "Scenario 5 SwRI Example 8 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "f350216e6d1a48144ae25cb53e37e4fd044f5c3d58f641c8de0bdd2274f6314e",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -149,16 +141,15 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_8/BRASS_Scenario5_Example8_ACME.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "f350216e6d1a48144ae25cb53e37e4fd044f5c3d58f641c8de0bdd2274f6314e"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_9/BRASS_Scenario5_Example9_ACME.xml",
             "shortName": "s5e09i01",
             "prettyName": "Scenario 5 SwRI Example 9 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "48ab49d43151c1ac48b2a69c441397054c7f7dee3e58767c14d1f7817a45d020",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -170,16 +161,15 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_9/BRASS_Scenario5_Example9_ACME.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "48ab49d43151c1ac48b2a69c441397054c7f7dee3e58767c14d1f7817a45d020"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_10/BRASS_Scenario5_Example10_ACME.xml",
             "shortName": "s5e10i01",
             "prettyName": "Scenario 5 SwRI Example 10 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "45907fd1596a42969236ccb27ff737d8e84f6fce441c04a80ae2426954faa4a8",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -191,16 +181,15 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_10/BRASS_Scenario5_Example10_ACME.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "45907fd1596a42969236ccb27ff737d8e84f6fce441c04a80ae2426954faa4a8"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_11/BRASS_Scenario5_Example11_ACME.xml",
             "shortName": "s5e11i01",
             "prettyName": "Scenario 5 SwRI Example 11 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "b134dcb3e4e0641a9b6d7a30ccbd8b614c17b5eedd25e5850568145e14c807b4",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -208,16 +197,15 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_11/BRASS_Scenario5_Example11_ACME.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "b134dcb3e4e0641a9b6d7a30ccbd8b614c17b5eedd25e5850568145e14c807b4"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_12/BRASS_Scenario5_Example12_ACME.xml",
             "shortName": "s5e12i01",
             "prettyName": "Scenario 5 SwRI Example 12 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "569dd360cb1899e9e9c118fa2db9675ecf461211cc7b4bc0dccf96560b2aa0de",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -234,16 +222,15 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_12/BRASS_Scenario5_Example12_ACME.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "569dd360cb1899e9e9c118fa2db9675ecf461211cc7b4bc0dccf96560b2aa0de"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_13/BRASS_Scenario5_Example13_ACME.xml",
             "shortName": "s5e13i01",
             "prettyName": "Scenario 5 SwRI Example 13 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "2b352dac0207a67da6465f465a0e2c5176b5afc0eb989bba30187b2dd3f17454",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -255,16 +242,15 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_13/BRASS_Scenario5_Example13_ACME.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "2b352dac0207a67da6465f465a0e2c5176b5afc0eb989bba30187b2dd3f17454"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_14/BRASS_Scenario5_Example14_ACME.xml",
             "shortName": "s5e14i01",
             "prettyName": "Scenario 5 SwRI Example 14 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "2c4e458be62c9ad871e00b4a2ba9c82e23f855a34cb179dba2c5c9516b884454",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -279,16 +265,15 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_14/BRASS_Scenario5_Example14_ACME.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "2c4e458be62c9ad871e00b4a2ba9c82e23f855a34cb179dba2c5c9516b884454"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_15/BRASS_Scenario5_Example15_ACME.xml",
             "shortName": "s5e15i01",
             "prettyName": "Scenario 5 SwRI Example 15 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "dd831892d4cf8c57bfa3e41ec48d118cba23ea11b9691fae3bde9baa6415879f",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -305,16 +290,15 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_15/BRASS_Scenario5_Example15_ACME.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "dd831892d4cf8c57bfa3e41ec48d118cba23ea11b9691fae3bde9baa6415879f"
         },
         {
-            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
-            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_16/BRASS_Scenario5_Example16_ACME.xml",
             "shortName": "s5e16i01",
             "prettyName": "Scenario 5 SwRI Example 16 Inventory 1",
             "timeoutMS": 420000,
-            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
-            "ingestedXmlMdlrootInputHash": "2cd40062d06ade522c67b80beb6b5ad56c73e463de19e1c2b161d44303539b28",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
@@ -329,7 +313,10 @@
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5swri",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Inventory_1/BRASS_Scenario5_Inventory1_Prefixed.xml",
+            "xmlMdlrootInputPath": "${IMMORTALS_CHALLENGE_PROBLEMS_ROOT}/Scenarios/FlightTesting/Scenario_5/Examples/Example_16/BRASS_Scenario5_Example16_ACME.xml",
+            "ingestedXmlInventoryHash": "f5b880c12ba74a8e8bc90268a58f2736d084152e38c831d031f72f422baf8959",
+            "ingestedXmlMdlrootInputHash": "2cd40062d06ade522c67b80beb6b5ad56c73e463de19e1c2b161d44303539b28"
         }
     ]
 }

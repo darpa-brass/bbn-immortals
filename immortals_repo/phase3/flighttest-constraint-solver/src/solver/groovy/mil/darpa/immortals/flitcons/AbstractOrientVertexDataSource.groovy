@@ -187,7 +187,6 @@ abstract class AbstractOrientVertexDataSource extends AbstractDataTarget<OrientV
 		for (OrientVertex vertex : vertices) {
 			String value = vertex.getProperty("ID")
 			if (seenIds.contains(value)) {
-				// TODO: Resolve
 				String err = "The ID value '" + value + "' is assigned to multiple elements!";
 				if (errorCount.containsKey(err)) {
 					errorCount.put(err, errorCount.get(err) + 1)

@@ -202,7 +202,6 @@ public class HierarchicalDataContainer implements DuplicateInterface<Hierarchica
 
 		} else if (existingDataIdentifierMap.containsKey(sourceData.node)) {
 			// TODO: Enforce proper cardinality
-			// It already exists and is expected to be referenced more than once;
 
 			if (sourceData.node.referenceIdentifier == null) {
 				throw AdaptationnException.internal("Node already exists!");

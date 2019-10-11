@@ -7,8 +7,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#98:7",
           "Measurement": [
@@ -31,8 +31,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#98:24",
           "Measurement": [
@@ -55,8 +55,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#98:8",
           "Measurement": [
@@ -79,8 +79,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#98:15",
           "Measurement": [
@@ -103,8 +103,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#98:16",
           "Measurement": [
@@ -127,8 +127,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#98:23",
           "Measurement": [
@@ -172,9 +172,9 @@
           "PortType": "Thermocouple",
           "Thermocouple": [
             "E",
-            "T",
+            "J",
             "K",
-            "J"
+            "T"
           ]
         },
         {
@@ -201,9 +201,9 @@
           "PortType": "Thermocouple",
           "Thermocouple": [
             "E",
-            "T",
+            "J",
             "K",
-            "J"
+            "T"
           ]
         },
         {
@@ -230,9 +230,9 @@
           "PortType": "Thermocouple",
           "Thermocouple": [
             "E",
-            "T",
+            "J",
             "K",
-            "J"
+            "T"
           ]
         },
         {
@@ -259,9 +259,9 @@
           "PortType": "Thermocouple",
           "Thermocouple": [
             "E",
-            "T",
+            "J",
             "K",
-            "J"
+            "T"
           ]
         },
         {
@@ -288,9 +288,9 @@
           "PortType": "Thermocouple",
           "Thermocouple": [
             "E",
-            "T",
+            "J",
             "K",
-            "J"
+            "T"
           ]
         },
         {
@@ -317,9 +317,9 @@
           "PortType": "Thermocouple",
           "Thermocouple": [
             "E",
-            "T",
+            "J",
             "K",
-            "J"
+            "T"
           ]
         },
         {
@@ -346,9 +346,9 @@
           "PortType": "Thermocouple",
           "Thermocouple": [
             "E",
-            "T",
+            "J",
             "K",
-            "J"
+            "T"
           ]
         },
         {
@@ -375,9 +375,9 @@
           "PortType": "Thermocouple",
           "Thermocouple": [
             "E",
-            "T",
+            "J",
             "K",
-            "J"
+            "T"
           ]
         }
       ]

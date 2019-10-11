@@ -1,5 +1,6 @@
 package mil.darpa.immortals.testing.flitcons;
 
+import mil.darpa.immortals.EnvironmentConfiguration;
 import mil.darpa.immortals.orientdbserver.JarTestScenarioRunner;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.testng.annotations.BeforeClass;
@@ -31,6 +32,21 @@ public class FlitconsIntegrationTests {
 	@Test
 	public void testMeasurementDuplication() {
 		JarTestScenarioRunner.createScenario5Runner("bs5eVariedMeasurements_iSharedMeasurements").execute();
+	}
+
+	@Test
+	public void testSequenceA() {
+		JarTestScenarioRunner.createScenario5Runner("s5e01i01-sequential-2-1-4-2").setMaxDauCount(4).execute();
+	}
+
+	@Test
+	public void testSequenceB() {
+		JarTestScenarioRunner.createScenario5Runner("s5e01i01-sequential-4-2-1-2").setMaxDauCount(4).execute();
+	}
+
+	@Test
+	public void myTest() {
+		JarTestScenarioRunner.createScenario5Runner("s5e01i01-four-dau-solution-adaptation").setMaxDauCount(4).execute();
 	}
 
 	@Test

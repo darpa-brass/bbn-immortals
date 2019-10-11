@@ -28,6 +28,8 @@ public abstract class TestScenarioRunner {
 
 	protected abstract void killAdaptationService();
 
+	public abstract TestScenarioRunner setMaxDauCount(int count);
+
 	private void kill() {
 		System.err.print("Killing OrientDB Server...");
 		odbServer.shutdown();

@@ -1,5 +1,5 @@
 {
-	"nullValuePlaceholder": "b862c60433e5",
+	"nullValuePlaceholder": "_N0_V4LU3_",
 	"dataCollectionInstructions": {
 		"primaryNode": "NetworkNode",
 		"collectedChildProperties": {
@@ -254,7 +254,7 @@
 				"parentPath": ["GenericParameter"],
 				"childAttributeName": "BBNDauFlaggedForReplacement",
 				"optionalChildAttributeValueRemap": {
-					"b862c60433e5": true
+					"_N0_V4LU3_": true
 				}
 			}
 		],
@@ -294,14 +294,14 @@
 				"childAttributeName": "ExcitationPortIsPresent",
 				"optionalNewChildAttributeName": "Excitation",
 				"optionalChildAttributeValueSelectionRemap": {
-					"b862c60433e5": [true, false]
+					"_N0_V4LU3_": [true, false]
 				},
 				"optionalValueToCreateIfMissing": [false]
 //			},
 //			{
 //				"parentPath": ["NetworkNode", "InternalStructure", "Modules", "Module", "Ports", "Port", "PortTypes", "PortType"],
 //				"childAttributeName": "Thermocouple",
-//				"optionalValueToCreateIfMissing": "b862c60433e5"
+//				"optionalValueToCreateIfMissing": "_N0_V4LU3_"
 			}
 		]
 	},
@@ -332,7 +332,7 @@
 //			{
 //				"parentPath": ["NetworkNode", "InternalStructure", "Modules", "Module", "Ports", "Port", "PortTypes", "PortType"],
 //				"childAttributeName": "Thermocouple",
-//				"optionalValueToCreateIfMissing": ["b862c60433e5", "K", "E", "J", "N", "B", "R", "S", "T", "C", "N"]
+//				"optionalValueToCreateIfMissing": ["_N0_V4LU3_", "K", "E", "J", "N", "B", "R", "S", "T", "C", "N"]
 			}
 		]
 	},

@@ -64,7 +64,7 @@ public class OrientVertexDataSource extends AbstractOrientVertexDataSource {
 
 	@Override
 	public void update_removeNodeTree(@Nonnull OrientVertex vertex) {
-		// TODO: This is probably slow. But otherwise errors sometimes pop up regarding stale references. I'm sure there is a better way to handle it...
+		// This is probably slow. But otherwise errors sometimes pop up regarding stale references. I'm sure there is a better way to handle it...
 		OrientVertex node = (OrientVertex) vertex.getGraph().getElement(vertex.getId());
 
 		Edge childContainmentToSelf = null;

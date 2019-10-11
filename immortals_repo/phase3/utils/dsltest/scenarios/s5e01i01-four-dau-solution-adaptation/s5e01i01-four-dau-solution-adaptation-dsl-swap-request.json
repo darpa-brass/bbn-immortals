@@ -1,0 +1,355 @@
+{
+  "daus": [
+    {
+      "BBNDauFlaggedForReplacement": true,
+      "BBNDauMonetaryCost": 90000,
+      "GloballyUniqueId": "I#100:8",
+      "Port": [
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#72:222",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:170",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#72:223",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:171",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#72:224",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:172",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#72:225",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:173",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#72:226",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:174",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#72:227",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:175",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "Thermocouple",
+          "Excitation": false,
+          "GloballyUniqueId": "I#72:243",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:176",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Thermocouple": "J"
+        },
+        {
+          "BBNPortFunctionality": "Thermocouple",
+          "Excitation": false,
+          "GloballyUniqueId": "I#72:244",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:177",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Thermocouple": "J"
+        },
+        {
+          "BBNPortFunctionality": "Thermocouple",
+          "Excitation": false,
+          "GloballyUniqueId": "I#72:245",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:178",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Thermocouple": "J"
+        },
+        {
+          "BBNPortFunctionality": "Thermocouple",
+          "Excitation": false,
+          "GloballyUniqueId": "I#72:246",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:179",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Thermocouple": "J"
+        },
+        {
+          "BBNPortFunctionality": "Thermocouple",
+          "Excitation": false,
+          "GloballyUniqueId": "I#72:247",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:180",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Thermocouple": "J"
+        },
+        {
+          "BBNPortFunctionality": "Thermocouple",
+          "Excitation": false,
+          "GloballyUniqueId": "I#72:248",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:181",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Thermocouple": "J"
+        },
+        {
+          "BBNPortFunctionality": "Thermocouple",
+          "Excitation": false,
+          "GloballyUniqueId": "I#72:249",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:182",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Thermocouple": "J"
+        },
+        {
+          "BBNPortFunctionality": "Thermocouple",
+          "Excitation": false,
+          "GloballyUniqueId": "I#72:250",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 2048,
+                "Max": 4096
+              },
+              "GloballyUniqueId": "I#39:183",
+              "SampleRate": {
+                "Min": 128,
+                "Max": 256
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "Thermocouple",
+          "Thermocouple": "J"
+        }
+      ]
+    }
+  ]
+}

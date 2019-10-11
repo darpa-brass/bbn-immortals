@@ -3736,7 +3736,10 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -3759,7 +3762,10 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -3782,7 +3788,10 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -3805,7 +3814,10 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -3828,7 +3840,10 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -3851,7 +3866,10 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -3874,7 +3892,10 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -3897,7 +3918,10 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>

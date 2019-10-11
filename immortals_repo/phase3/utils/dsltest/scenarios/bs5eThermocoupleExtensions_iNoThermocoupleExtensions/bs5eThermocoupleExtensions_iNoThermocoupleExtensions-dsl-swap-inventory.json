@@ -7,8 +7,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#63:7",
           "Measurement": [
@@ -31,8 +31,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#63:24",
           "Measurement": [
@@ -55,8 +55,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#63:8",
           "Measurement": [
@@ -79,8 +79,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#63:15",
           "Measurement": [
@@ -103,8 +103,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#63:16",
           "Measurement": [
@@ -127,8 +127,8 @@
         {
           "BBNPortFunctionality": "SignalConditioning",
           "Excitation": [
-            true,
-            false
+            false,
+            true
           ],
           "GloballyUniqueId": "I#63:23",
           "Measurement": [

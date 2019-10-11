@@ -1,110 +1,174 @@
 {
     "scenarios": [
         {
-			"xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_NoThermocoupleExtensions.xml",
-			"xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_NoThermocoupleExtensions.xml",
             "shortName": "bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions",
             "prettyName": "BBN Scenario 5 Thermocouple Extensions not in Input, Thermocouple Extensions not in Inventory",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "a3f65588c296a89a6633204f005f79ee98ddab1c101f7777919378895f109ed3",
-            "ingestedXmlMdlrootInputHash": "06009e8fd3ee560e8ad2e0bb2ed454a7e31cdd6dd23d56455dc80471af9128f7",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5bbn",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_NoThermocoupleExtensions.xml",
+            "xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_NoThermocoupleExtensions.xml",
+            "ingestedXmlInventoryHash": "a3f65588c296a89a6633204f005f79ee98ddab1c101f7777919378895f109ed3",
+            "ingestedXmlMdlrootInputHash": "06009e8fd3ee560e8ad2e0bb2ed454a7e31cdd6dd23d56455dc80471af9128f7"
         },
         {
-			"xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_ThermocoupleExtensions.xml",
-			"xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_NoThermocoupleExtensions.xml",
             "shortName": "bs5eNoThermocoupleExtensions_iThermocoupleExtensions",
             "prettyName": "BBN Scenario 5 Thermocouple Extensions not in Input, Thermocouple Extensions in Inventory",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "9aa5ea04adb9988e9c889f7384015e77d3efa4090309a1bc64bb8b10ea7b8f49",
-            "ingestedXmlMdlrootInputHash": "06009e8fd3ee560e8ad2e0bb2ed454a7e31cdd6dd23d56455dc80471af9128f7",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5bbn",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_ThermocoupleExtensions.xml",
+            "xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_NoThermocoupleExtensions.xml",
+            "ingestedXmlInventoryHash": "9aa5ea04adb9988e9c889f7384015e77d3efa4090309a1bc64bb8b10ea7b8f49",
+            "ingestedXmlMdlrootInputHash": "06009e8fd3ee560e8ad2e0bb2ed454a7e31cdd6dd23d56455dc80471af9128f7"
         },
         {
-			"xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_MoreMeasurements.xml",
-			"xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensions.xml",
             "shortName": "bs5eThermocoupleExtensions_iMoreMeasurements",
             "prettyName": "BBN Scenario 5 Basic With More Measurements",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "15eebe920ba9b1683eb8a31395a980cabf4cf8f574672c7f195059e650e5e465",
-            "ingestedXmlMdlrootInputHash": "5653c8d6e7cdecf31c55875ad8b8001e5f62cf0c6536a1396dc2b019abb31334",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5bbn",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_MoreMeasurements.xml",
+            "xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensions.xml",
+            "ingestedXmlInventoryHash": "15eebe920ba9b1683eb8a31395a980cabf4cf8f574672c7f195059e650e5e465",
+            "ingestedXmlMdlrootInputHash": "5653c8d6e7cdecf31c55875ad8b8001e5f62cf0c6536a1396dc2b019abb31334"
         },
         {
-			"xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_NoThermocoupleExtensions.xml",
-			"xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensions.xml",
             "shortName": "bs5eThermocoupleExtensions_iNoThermocoupleExtensions",
             "prettyName": "BBN Scenario 5 Thermocouple Extensions in Input, Thermocouple Extensions not in Inventory",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "a3f65588c296a89a6633204f005f79ee98ddab1c101f7777919378895f109ed3",
-            "ingestedXmlMdlrootInputHash": "5653c8d6e7cdecf31c55875ad8b8001e5f62cf0c6536a1396dc2b019abb31334",
             "expectedStatusSequence": [
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5bbn",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_NoThermocoupleExtensions.xml",
+            "xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensions.xml",
+            "ingestedXmlInventoryHash": "a3f65588c296a89a6633204f005f79ee98ddab1c101f7777919378895f109ed3",
+            "ingestedXmlMdlrootInputHash": "5653c8d6e7cdecf31c55875ad8b8001e5f62cf0c6536a1396dc2b019abb31334"
         },
         {
-			"xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_ThermocoupleExtensions.xml",
-			"xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensions.xml",
             "shortName": "bs5eThermocoupleExtensions_iThermocoupleExtensions",
             "prettyName": "BBN Scenario 5 Basic",
             "timeoutMS": 120000,
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_ThermocoupleExtensions.xml",
+            "xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensions.xml",
             "ingestedXmlInventoryHash": "9aa5ea04adb9988e9c889f7384015e77d3efa4090309a1bc64bb8b10ea7b8f49",
-            "ingestedXmlMdlrootInputHash": "5653c8d6e7cdecf31c55875ad8b8001e5f62cf0c6536a1396dc2b019abb31334",
-            "expectedStatusSequence": [
-                "AdaptationSuccessful",
-                "AdaptationUnsuccessful"
-            ],
-            "scenarioType": "Scenario5bbn",
-            "expectedDauSelections": null
-
+            "ingestedXmlMdlrootInputHash": "5653c8d6e7cdecf31c55875ad8b8001e5f62cf0c6536a1396dc2b019abb31334"
         },
         {
-			"xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_ThermocoupleExtensionsAndVariedMeasurements.xml",
-			"xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensionsAndSharedMeasurements.xml",
-            "shortName": "bs5eVariedMeasurements_iSharedMeasurements",
-            "prettyName": "BBN Scenario 5 ThermocoupleExtensionsAndVariedMeasurements_ThermocoupleExtensionsAndSharedMeasurements",
-            "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "bb958561ce490ba3764c3a5cc08b26ab2f784354ced69fe78af4cc7847380b78",
-            "ingestedXmlMdlrootInputHash": "2e5ed5d8cbabe39fba9d51db879bed5c405e958ddcc2c49a0d9648d3557fe190",
-            "expectedStatusSequence": [
-                "AdaptationSuccessful",
-                "AdaptationUnsuccessful"
-            ],
-            "scenarioType": "Scenario5bbn",
-            "expectedDauSelections": null
-        },
-        {
-			"xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_ThermocoupleExtensionsSequential.xml",
-			"xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensions.xml",
             "shortName": "bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential",
             "prettyName": "BBN Scenario 5 Basic Sequential",
             "timeoutMS": 120000,
-            "ingestedXmlInventoryHash": "89761c30e5bebe9ae8390719ba8340cb6ed44ed7276bd0e025d8563009df8f41",
-            "ingestedXmlMdlrootInputHash": "5653c8d6e7cdecf31c55875ad8b8001e5f62cf0c6536a1396dc2b019abb31334",
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationSuccessful",
                 "AdaptationUnsuccessful"
             ],
             "scenarioType": "Scenario5bbn",
-            "expectedDauSelections": null
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_ThermocoupleExtensionsSequential.xml",
+            "xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensions.xml",
+            "ingestedXmlInventoryHash": "89761c30e5bebe9ae8390719ba8340cb6ed44ed7276bd0e025d8563009df8f41",
+            "ingestedXmlMdlrootInputHash": "5653c8d6e7cdecf31c55875ad8b8001e5f62cf0c6536a1396dc2b019abb31334"
+        },
+        {
+            "shortName": "bs5eVariedMeasurements_iSharedMeasurements",
+            "prettyName": "BBN Scenario 5 ThermocoupleExtensionsAndVariedMeasurements_ThermocoupleExtensionsAndSharedMeasurements",
+            "timeoutMS": 120000,
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_dauInventory_ThermocoupleExtensionsAndVariedMeasurements.xml",
+            "xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/Examples/s5_inputMdlRoot_ThermocoupleExtensionsAndSharedMeasurements.xml",
+            "ingestedXmlInventoryHash": "bb958561ce490ba3764c3a5cc08b26ab2f784354ced69fe78af4cc7847380b78",
+            "ingestedXmlMdlrootInputHash": "2e5ed5d8cbabe39fba9d51db879bed5c405e958ddcc2c49a0d9648d3557fe190"
+        },
+        {
+            "shortName": "s5e01i01-sequential-2-1-4-2",
+            "prettyName": "BBN Scenario 5 Example 1 - Sequential - 2-1-4-2",
+            "timeoutMS": 480000,
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationSuccessful",
+                "AdaptationSuccessful",
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/custom/s5e01i01-sequential-2-1-4-2/s5e01i01_dauInventory_sequential-2-1-4-2.xml",
+            "xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/custom/s5e01i01-sequential-2-1-4-2/s5e01i01_inputMdlRoot_sequential-2-1-4-2.xml",
+            "expectedDauSelections": [
+                [
+                    "inventory-nn-dau-14debec05a4c",
+                    "inventory-nn-dau-af4d17a8ed7d"
+                ],
+                [
+                    "inventory-nn-dau"
+                ],
+                [
+                    "inventory-nn-dau-4850d7e5c19e-20f8623ff45c",
+                    "inventory-nn-dau-4850d7e5c19e-dad98b55256b",
+                    "inventory-nn-dau-b96a3b24b152-a05f4d6acc47",
+                    "inventory-nn-dau-b96a3b24b152-de2c851ce4a3"
+                ],
+                [
+                    "inventory-nn-dau-bade47819d1a",
+                    "inventory-nn-dau-a2fa7d389d3d"
+                ]
+            ],
+            "ingestedXmlInventoryHash": "ad357757bb604db369d7dd89e867c124f389ac37fe97bb78278d14ea736bf6ec",
+            "ingestedXmlMdlrootInputHash": "5fab84eed8dbeefa217a390b752078d468a016cc856925b1dd66e8b459589ecd"
+        },
+        {
+            "shortName": "s5e01i01-sequential-4-2-1-2",
+            "prettyName": "BBN Scenario 5 Example 1 - Sequential - 4-2-1-2",
+            "timeoutMS": 480000,
+            "expectedStatusSequence": [
+                "AdaptationSuccessful",
+                "AdaptationSuccessful",
+                "AdaptationSuccessful",
+                "AdaptationSuccessful",
+                "AdaptationUnsuccessful"
+            ],
+            "scenarioType": "Scenario5bbn",
+            "xmlInventoryPath": "phase3/utils/bbn_test_scenarios/Scenario_5/custom/s5e01i01-sequential-4-2-1-2/s5e01i01_dauInventory_sequential-2-1-4-2.xml",
+            "xmlMdlrootInputPath": "phase3/utils/bbn_test_scenarios/Scenario_5/custom/s5e01i01-sequential-4-2-1-2/s5e01i01_inputMdlRoot_sequential-2-1-4-2.xml",
+            "expectedDauSelections": [
+                [
+                    "inventory-nn-dau-4850d7e5c19e-20f8623ff45c",
+                    "inventory-nn-dau-4850d7e5c19e-dad98b55256b",
+                    "inventory-nn-dau-b96a3b24b152-a05f4d6acc47",
+                    "inventory-nn-dau-b96a3b24b152-de2c851ce4a3"
+                ],
+                [
+                    "inventory-nn-dau-bade47819d1a",
+                    "inventory-nn-dau-a2fa7d389d3d"
+                ],
+                [
+                    "inventory-nn-dau"
+                ],
+                [
+                    "inventory-nn-dau-14debec05a4c",
+                    "inventory-nn-dau-af4d17a8ed7d"
+                ]
+            ],
+            "ingestedXmlInventoryHash": "a7da43841731b3da8477e9be2e33593707fb21e3aed3936caeb39c75483ca676",
+            "ingestedXmlMdlrootInputHash": "5fab84eed8dbeefa217a390b752078d468a016cc856925b1dd66e8b459589ecd"
         }
     ]
 }

@@ -42,4 +42,10 @@ public class EmbeddedTestScenario5Runner extends TestScenarioRunner {
 	protected void killAdaptationService() {
 		solverThread.interrupt();
 	}
+
+	@Override
+	public TestScenarioRunner setMaxDauCount(int count) {
+		// No-op. Doesn't matter for the Simple Solver
+		return this;
+	}
 }

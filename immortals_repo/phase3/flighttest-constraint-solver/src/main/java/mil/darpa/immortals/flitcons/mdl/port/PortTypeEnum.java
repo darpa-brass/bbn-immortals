@@ -39,7 +39,8 @@ public enum PortTypeEnum {
 	Thermocouple,
 	Video,
 	Virtual,
-	Extension;
+	Extension,
+	_N0_V4LU3_;
 
 	private static final Set<String> valueNames = Collections.unmodifiableSet(Arrays.stream(PortTypeEnum.values()).map(PortTypeEnum::name).collect(Collectors.toSet()));
 

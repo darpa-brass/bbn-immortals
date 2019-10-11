@@ -3,27 +3,32 @@
         "bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions": {
             "request_file": "scenarios/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-inventory.json",
-            "success_expected": true
+            "success_expected": true,
+            "backup_hash": "a7dce34ef041e8e1b83cbd991827eb20ef607163927600e154e6f5e296c3fbd9"
         },
         "bs5eNoThermocoupleExtensions_iThermocoupleExtensions": {
             "request_file": "scenarios/bs5eNoThermocoupleExtensions_iThermocoupleExtensions/bs5eNoThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eNoThermocoupleExtensions_iThermocoupleExtensions/bs5eNoThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-inventory.json",
-            "success_expected": true
+            "success_expected": true,
+            "backup_hash": "b0dae3448ad66423ee0624262fc74364c9612a8246f79ef867ceea291a032c32"
         },
         "bs5eThermocoupleExtensions_iNoThermocoupleExtensions": {
             "request_file": "scenarios/bs5eThermocoupleExtensions_iNoThermocoupleExtensions/bs5eThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eThermocoupleExtensions_iNoThermocoupleExtensions/bs5eThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-inventory.json",
-            "success_expected": false
+            "success_expected": false,
+            "backup_hash": "f58d7b5dcb00ad5e838a2c19b192a6c193dce42d6d301676e17d5a19b3980692"
         },
         "bs5eThermocoupleExtensions_iThermocoupleExtensions": {
             "request_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensions/bs5eThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensions/bs5eThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-inventory.json",
-            "success_expected": true
+            "success_expected": true,
+            "backup_hash": "a2aff02a7e85f8d4b089caab346ffa5b69b3ddfc3384c96b0efdd470817d5e28"
         },
         "bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential": {
             "request_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential-dsl-swap-inventory.json",
-            "success_expected": true
+            "success_expected": true,
+            "backup_hash": "faaa10b318301ee94090ef166b9f128b0fd83399ed5248573df82edb743509a4"
         },
         "s5e01i01": {
             "request_file": "scenarios/s5e01i01/s5e01i01-dsl-swap-request.json",
@@ -41,7 +46,7 @@
             "request_file": "scenarios/s5e03i01/s5e03i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e03i01/s5e03i01-dsl-swap-inventory.json",
             "success_expected": true,
-            "backup_hash": "39d26cc659d6f52dbeaf5e366f9e191eba5fbdfaf8df25b69278a038dd0208ce"
+            "backup_hash": "9f947445c5682d4fee9ecc74149ea229de5020b26e0f181f2788aa5c603adff1"
         },
         "s5e04i01": {
             "request_file": "scenarios/s5e04i01/s5e04i01-dsl-swap-request.json",
@@ -78,22 +83,14 @@
         "bs5eThermocoupleExtensions_iMoreMeasurements": {
             "request_file": "scenarios/bs5eThermocoupleExtensions_iMoreMeasurements/bs5eThermocoupleExtensions_iMoreMeasurements-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eThermocoupleExtensions_iMoreMeasurements/bs5eThermocoupleExtensions_iMoreMeasurements-dsl-swap-inventory.json",
-            "success_expected": true
+            "success_expected": true,
+            "backup_hash": "73abe6334e2b80673cb8d9bc5444c733b29798a721cf2b6f8e343b98b63cd84b"
         },
         "bs5eVariedMeasurements_iSharedMeasurements": {
             "request_file": "scenarios/bs5eVariedMeasurements_iSharedMeasurements/bs5eVariedMeasurements_iSharedMeasurements-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eVariedMeasurements_iSharedMeasurements/bs5eVariedMeasurements_iSharedMeasurements-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-two-dau-along-modules-adaptation": {
-            "request_file": "scenarios/s5e03i01-two-dau-along-modules-adaptation/s5e03i01-two-dau-along-modules-adaptation-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-two-dau-along-modules-adaptation/s5e03i01-two-dau-along-modules-adaptation-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-two-dau-split-modules-adaptation": {
-            "request_file": "scenarios/s5e03i01-two-dau-split-modules-adaptation/s5e03i01-two-dau-split-modules-adaptation-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-two-dau-split-modules-adaptation/s5e03i01-two-dau-split-modules-adaptation-dsl-swap-inventory.json",
-            "success_expected": true
+            "success_expected": true,
+            "backup_hash": "640a23da45a38c0620599e84b2b2afa388e93a500c9d5003345d867aa0bfce63"
         },
         "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0": {
             "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0-dsl-swap-request.json",
@@ -259,6 +256,36 @@
             "inventory_file": "scenarios/s5e16i01/s5e16i01-dsl-swap-inventory.json",
             "success_expected": true,
             "backup_hash": "e38b4c80ebaee5208d9759450abeaa37c642b5caf117746178518761befac577"
+        },
+        "s5e01i01-two-dau-along-modules-adaptation": {
+            "request_file": "scenarios/s5e01i01-two-dau-along-modules-adaptation/s5e01i01-two-dau-along-modules-adaptation-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e01i01-two-dau-along-modules-adaptation/s5e01i01-two-dau-along-modules-adaptation-dsl-swap-inventory.json",
+            "success_expected": true,
+            "backup_hash": "2eb58a060503e123994572634905724d964e226114b3805871193a7d0bb04524"
+        },
+        "s5e01i01-two-dau-split-modules-adaptation": {
+            "request_file": "scenarios/s5e01i01-two-dau-split-modules-adaptation/s5e01i01-two-dau-split-modules-adaptation-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e01i01-two-dau-split-modules-adaptation/s5e01i01-two-dau-split-modules-adaptation-dsl-swap-inventory.json",
+            "success_expected": true,
+            "backup_hash": "39bd3cb1efc39a376c4199be5c62a450c2fa09c43e6c529a91177bf8e35d4ad4"
+        },
+        "s5e01i01-four-dau-solution-adaptation": {
+            "request_file": "scenarios/s5e01i01-four-dau-solution-adaptation/s5e01i01-four-dau-solution-adaptation-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e01i01-four-dau-solution-adaptation/s5e01i01-four-dau-solution-adaptation-dsl-swap-inventory.json",
+            "success_expected": true,
+            "backup_hash": "e7ed5e716e182afc547a6af6cac4b9ef7df56bce2d08dd9fd7df0d499a0128ef"
+        },
+        "s5e01i01-sequential-2-1-4-2": {
+            "request_file": "scenarios/s5e01i01-sequential-2-1-4-2/s5e01i01-sequential-2-1-4-2-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e01i01-sequential-2-1-4-2/s5e01i01-sequential-2-1-4-2-dsl-swap-inventory.json",
+            "success_expected": true,
+            "backup_hash": "f86d26eaeaafd39e53d87e2cc3633f6d2641ae91b9190c5c21e56bceb56d7824"
+        },
+        "s5e01i01-sequential-4-2-1-2": {
+            "request_file": "scenarios/s5e01i01-sequential-4-2-1-2/s5e01i01-sequential-4-2-1-2-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e01i01-sequential-4-2-1-2/s5e01i01-sequential-4-2-1-2-dsl-swap-inventory.json",
+            "success_expected": true,
+            "backup_hash": "9df143d266fe3f2f3374dcd2671354ea5e9722f2436d27a5eb72d77bfdce3176"
         }
     },
     "debug_scenarios": {

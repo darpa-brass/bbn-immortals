@@ -27,6 +27,9 @@ _parser.add_argument('--odb-password', action='store', type=str, default='admin'
 _parser.add_argument('--artifact-directory', action='store', type=str,
                      help='The directory to use for storage of any artifacts for analysis')
 
+_parser.add_argument('--max-dau-result-count', type=int, default=None,
+                     help='Adjusts the maximum number of DAUs returned for a solution for Scenario 5. The default " + '
+                          '"is 2. Adjusting this number could have a significant impact in run time!')
 _parser.add_argument('--debug-mode', action='store_true',
                      help='Enables debug logging and log formatting')
 
@@ -193,6 +196,9 @@ def main():
 
         if args.odb_password is not None:
             env_values['ORIENTDB_EVAL_PASSWORD'] = args.odb_password
+
+        if args.max_dau_result_count is not None:
+            env_values['IMMORTALS_MAX_DSL_SOLVER_DAUS'] = str(args.max_dau_result_count)
 
         if args.scenario == '5':
             exec_scenario_5(env_values, pass_through_args, args.debug_mode, args.monochrome_mode)

@@ -25,7 +25,8 @@ public enum EnvironmentConfiguration {
 	ADAPTIVE_CONSTRAINT_SATISFACTION_ROOT("IMMORTALS_ADAPTIVE_CONSTRAINT_SATISFACTION_ROOT", "mil.darpa.immortals.adaptiveConstraintSatisfactionRoot", null),
 	DSL_PATH("IMMORTALS_RESOURCE_DSL", "mil.darpa.immortals.resourceDslRoot",
 			tryResolveRelativeToImmortalsRoot(false, "dsl", "resource-dsl")),
-	BASIC_DISPLAY_MODE("IMMORTALS_BASIC_DISPLAY_MODE", "mil.darpa.immortals.basicDisplayMode", true);
+	BASIC_DISPLAY_MODE("IMMORTALS_BASIC_DISPLAY_MODE", "mil.darpa.immortals.basicDisplayMode", true),
+	MAX_DSL_SOLVER_DAUS("IMMORTALS_MAX_DSL_SOLVER_DAUS", "mil.darpa.immortals.maxDausSelected", "2");
 
 	private static final Logger logger = LoggerFactory.getLogger(EnvironmentConfiguration.class.getName());
 
@@ -47,6 +48,10 @@ public enum EnvironmentConfiguration {
 
 	public static void setArtifactPrefix(@Nonnull String artifactPrefix) {
 		System.setProperty(ARTIFACT_PREFIX.javaArg, artifactPrefix);
+	}
+
+	public static int getMaxDauSelectionCount() {
+			return Integer.parseInt(MAX_DSL_SOLVER_DAUS.getValue());
 	}
 
 	public static String getArtifactPrefix() {

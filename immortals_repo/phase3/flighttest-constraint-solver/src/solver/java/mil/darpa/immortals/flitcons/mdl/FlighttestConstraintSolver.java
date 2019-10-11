@@ -1,13 +1,11 @@
 package mil.darpa.immortals.flitcons.mdl;
 
+import com.google.gson.JsonObject;
 import mil.darpa.immortals.flitcons.*;
 import mil.darpa.immortals.flitcons.datatypes.dynamic.DynamicObjectContainer;
-import mil.darpa.immortals.flitcons.mdl.validation.PortMapping;
 import mil.darpa.immortals.flitcons.mdl.validation.PortMappingValidator;
 import mil.darpa.immortals.flitcons.reporting.AdaptationnException;
 import mil.darpa.immortals.flitcons.reporting.ResultEnum;
-
-import java.util.Map;
 
 public class FlighttestConstraintSolver {
 
@@ -39,6 +37,8 @@ public class FlighttestConstraintSolver {
 
 			solver.loadData(dataSource);
 			DynamicObjectContainer solution = solver.solve();
+			JsonObject metrics = solver.getMetrics();
+
 
 			if (solution == null) {
 				throw new AdaptationnException(ResultEnum.AdaptationUnsuccessful, "Could not find a valid adaptation.");
@@ -56,6 +56,10 @@ public class FlighttestConstraintSolver {
 		} catch (NestedPathException e) {
 			throw AdaptationnException.internal(e);
 		}
+	}
+
+	public JsonObject getMetrics() {
+		return solver.getMetrics();
 	}
 
 	public void shutdown() {

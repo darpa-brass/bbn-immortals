@@ -20,7 +20,6 @@ public class InputData {
 	/**
 	 * The updated MDL schema. Required if {@link InputData#updatedMdlVersion} is null.
 	 *
-	 * TODO: Confirm with SwRI the new schema will be less than 4MB (or we cannot use Json. The current one is 500KB, so we should be safe)
 	 */
 	public final String updatedMdlSchema;
 

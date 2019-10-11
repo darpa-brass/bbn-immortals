@@ -19,8 +19,10 @@ SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
 IMMORTALS_ROOT = os.path.realpath(os.path.join(SCRIPT_DIRECTORY, "../../../"))
 SCENARIO_XML_TARGET_DIR = os.path.join(IMMORTALS_ROOT, 'phase3/utils/bbn_test_scenarios/Scenario_5/generated/')
-SCENARIO_XML_LISTING_FILE = os.path.join(IMMORTALS_ROOT, 'phase3/immortals-orientdb-server/src/main/resources/s5_bbn_generated_scenarios.json')
-SCENARIO_BACKUP_TARGET_DIR = os.path.join(IMMORTALS_ROOT, 'phase3/immortals-orientdb-server/src/main/resources/test_databases/generated/')
+SCENARIO_XML_LISTING_FILE = os.path.join(IMMORTALS_ROOT,
+                                         'phase3/immortals-orientdb-server/src/main/resources/s5_bbn_generated_scenarios.json')
+SCENARIO_BACKUP_TARGET_DIR = os.path.join(IMMORTALS_ROOT,
+                                          'phase3/immortals-orientdb-server/src/main/resources/test_databases/generated/')
 SWRI_EXAMPLE_ROOT = os.environ['IMMORTALS_CHALLENGE_PROBLEMS_ROOT']
 
 ITERATIVE_TMP_FILE_PATH = '/tmp/immortals_tmp_xml_inventory.xml'
@@ -434,7 +436,7 @@ class DauModule:
 
     def _recreate_module(self, ports: List[DauPort]) -> 'DauModule':
         module_xml = copy.deepcopy(self._xml_element)
-        module_xml_ports = module_xml.xpath('./Ports/Port')
+        module_xml_ports = module_xml.xpath('./Ports')[0]
         module_xml_ports.clear()
         for port in ports:
             port_xml = copy.deepcopy(port.xml)
@@ -801,7 +803,6 @@ def print_metrics(inventory_file: str, matching_daus: List[str]):
 
 def duplicate_matching_perturbed_daus(scenario_name: str, count: int,
                                       port_transformations: List[PortTransformation]) -> TestScenario:
-
     amb_count = 0
     ama_count = 0
     ame_count = 0
@@ -820,9 +821,6 @@ def duplicate_matching_perturbed_daus(scenario_name: str, count: int,
 
     label = ('duplicate-matching-perturbed-daus-x' + str(count) + '-cpt' + str(cpt_count) +
              '-amb' + str(amb_count) + '-ama' + str(ama_count) + '-ame' + str(ame_count))
-
-
-
 
     tsie = TestScenarioInventoryExpander(scenario_name, label)
     tsie.duplicate_matches(count)
@@ -846,96 +844,104 @@ def main():
     #     TestScenarioInventoryExpander('s5e03i01', '128_nonmatching_daus').duplicate_non_matches(30)
     #         .get_created_test_scenario())
 
-    #     # 1 -> 2 DAUS along modules
-    generated_scenarios.append(TestScenarioInventoryExpander('s5e03i01', 'two-dau-along-modules-adaptation')
-                               .transform_matching_dau(
-        DauTransformation.DauSplitInTwoByModules).get_created_test_scenario())
+    # 1 -> 2 DAUS along modules
+    generated_scenarios.append(
+        TestScenarioInventoryExpander('s5e01i01', 'two-dau-along-modules-adaptation')
+            .transform_matching_dau(DauTransformation.DauSplitInTwoByModules)
+            .get_created_test_scenario())
 
     # 1 -> 2 DAUS split modules
     generated_scenarios.append(
-        TestScenarioInventoryExpander('s5e03i01', 'two-dau-split-modules-adaptation')
+        TestScenarioInventoryExpander('s5e01i01', 'two-dau-split-modules-adaptation')
             .transform_matching_dau(DauTransformation.DauSplitInTwoMixedModules).get_created_test_scenario())
+
+    # 1 -> 4 DAUS mixed
+    generated_scenarios.append(
+        TestScenarioInventoryExpander('s5e01i01', 'four-dau-solution-adaptation')
+            .transform_matching_dau(DauTransformation.DauSplitInTwoMixedModules)
+            .transform_matching_dau(DauTransformation.DauSplitInTwoByModules)
+            .get_created_test_scenario())
 
     # generated_scenarios.append(
     #     TestScenarioInventoryExpander('s5e03i01', 'duplicate_matching_dau')
     #         .add_matching_dau_variation().get_created_test_scenario())
 
-    generated_scenarios.extend(gen_space(
-        's5e03i01',
-        [2, 4, 8],
-        # [10, 20, 30, 40, 50],
-        [
-            [
-                PortTransformation.AddMeasurementsArbitrarily,
-            ],
-            [
-                PortTransformation.AddMeasurementsArbitrarily,
-                PortTransformation.AddMeasurementsArbitrarily,
-            ],
-            [
-                PortTransformation.AddMeasurementsArbitrarily,
-                PortTransformation.AddMeasurementsArbitrarily,
-                PortTransformation.AddMeasurementsArbitrarily,
-            ],
-            # [
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            # ],
-            # [
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            # ],
-            # [
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            #     PortTransformation.AddMeasurementsArbitrarily,
-            # ],
-            [
-                PortTransformation.AddMeasurementsToEnd,
-            ],
-            [
-                PortTransformation.AddMeasurementsToEnd,
-                PortTransformation.AddMeasurementsToEnd,
-            ],
-            [
-                PortTransformation.AddMeasurementsToEnd,
-                PortTransformation.AddMeasurementsToEnd,
-                PortTransformation.AddMeasurementsToEnd,
-            ],
-            # [
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            # ],
-            # [
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            # ],
-            # [
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            #     PortTransformation.AddMeasurementsToEnd,
-            # ],
-            [
-                PortTransformation.ChangePortType
-            ]
-        ]
-    ))
+    # generated_scenarios.extend(gen_space(
+    #     's5e03i01',
+    #     [2, 4, 8],
+    #     # [10, 20, 30, 40, 50],
+    #     [
+    #         [
+    #             PortTransformation.AddMeasurementsArbitrarily,
+    #         ],
+    #         [
+    #             PortTransformation.AddMeasurementsArbitrarily,
+    #             PortTransformation.AddMeasurementsArbitrarily,
+    #         ],
+    #         [
+    #             PortTransformation.AddMeasurementsArbitrarily,
+    #             PortTransformation.AddMeasurementsArbitrarily,
+    #             PortTransformation.AddMeasurementsArbitrarily,
+    #         ],
+    #         # [
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         # ],
+    #         # [
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         # ],
+    #         # [
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         #     PortTransformation.AddMeasurementsArbitrarily,
+    #         # ],
+    #         [
+    #             PortTransformation.AddMeasurementsToEnd,
+    #         ],
+    #         [
+    #             PortTransformation.AddMeasurementsToEnd,
+    #             PortTransformation.AddMeasurementsToEnd,
+    #         ],
+    #         [
+    #             PortTransformation.AddMeasurementsToEnd,
+    #             PortTransformation.AddMeasurementsToEnd,
+    #             PortTransformation.AddMeasurementsToEnd,
+    #         ],
+    #         # [
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         # ],
+    #         # [
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         # ],
+    #         # [
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         #     PortTransformation.AddMeasurementsToEnd,
+    #         # ],
+    #         [
+    #             PortTransformation.ChangePortType
+    #         ]
+    #     ]
+    # ))
 
     if os.path.exists(SCENARIO_XML_LISTING_FILE):
         scenario_listings_root = json.load(open(SCENARIO_XML_LISTING_FILE))

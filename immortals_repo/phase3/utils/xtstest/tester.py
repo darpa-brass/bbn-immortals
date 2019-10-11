@@ -87,8 +87,8 @@ def diff_xml_files(desired_filepath: str, actual_filepath: str):
     marked_for_removal = list()
     for difference in list(diff):
         if (isinstance(difference, UpdateAttrib) and
-                difference.name == '{http://www.w3.org/2001/XMLSchema-instance}schemaLocation' and
-                difference.node == '/*[1]'):
+                    difference.name == '{http://www.w3.org/2001/XMLSchema-instance}schemaLocation' and
+                    difference.node == '/*[1]'):
             marked_for_removal.append(difference)
 
     for difference in marked_for_removal:
@@ -161,14 +161,21 @@ class XmlTester:
     def set_must_pass(self, must_pass: bool):
         self.must_pass = must_pass
 
-    def add_validation_errors(self, schema_error_log):
+    def is_valid_error(self, schema_error_log) -> bool:
+        is_valid_error = False
         for error_instance in schema_error_log:
             ve = ValidationError(error_instance)
-            key = ve.error_type + ': ' + ve.message
-            if key not in self.validation_errors:
-                self.validation_errors[key] = list()
 
-            self.validation_errors[key].append(ve)
+            if not(ve.error_type == 'SCHEMAV_CVC_IDC' and 
+                    'No match found for key-sequence' in ve.message):
+                key = ve.error_type + ': ' + ve.message
+                if key not in self.validation_errors:
+                    self.validation_errors[key] = list()
+
+                self.validation_errors[key].append(ve)
+                is_valid_error = True
+
+        return is_valid_error
 
     def save_validation_errors(self):
         if len(self.validation_errors) > 0:
@@ -199,9 +206,11 @@ class XmlTester:
             if schema.validate(doc):
                 validation_result.successes.append('XML file "' + display_doc_path + "' Adheres to the target schema.")
             else:
-                err = 'XML file "' + display_doc_path + '" does not adhere to the target schema!'
-                validation_result.errors.append(err)
-                self.add_validation_errors(schema.error_log)
+                if self.is_valid_error(schema.error_log):
+                    err = 'XML file "' + display_doc_path + '" does not adhere to the target schema!'
+                    validation_result.errors.append(err)
+                else:
+                    validation_result.warnings.append('XML file "' + display_doc_path + '" Contains an allowable validation error.')
 
             if self.validation_xml_dir is None:
                 validation_result.warnings.append(

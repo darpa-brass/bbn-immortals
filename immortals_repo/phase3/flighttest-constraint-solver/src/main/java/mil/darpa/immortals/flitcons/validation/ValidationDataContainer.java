@@ -66,9 +66,6 @@ public class ValidationDataContainer {
 	 * @throws NestedPathException if an exception occurs
 	 */
 	private ValidationDataContainer(@Nonnull DynamicObjectContainer source, @Nonnull Configuration.ValidationConfiguration configuration, boolean isWellDefined) throws NestedPathException {
-
-		// TODO: Add validation that complex child types (Port or Measurement) counts are as expected for their parent containers
-
 		Map<String, Set<String>> bootstrapData = configuration.defaultPropertyList;
 
 		this.identifier = source.identifier;

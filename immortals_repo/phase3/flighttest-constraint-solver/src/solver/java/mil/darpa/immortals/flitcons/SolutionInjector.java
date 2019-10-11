@@ -50,7 +50,6 @@ public class SolutionInjector {
 			HierarchicalData supersededData = node.getSupersededData();
 			Set<HierarchicalData> children = supersededData.getChildNodesByPath("Measurement");
 			if (children.size() > 1) {
-				// TODO: Is this right?
 				throw AdaptationnException.internal("Unexpected number of measurements!");
 			}
 		}
@@ -121,8 +120,9 @@ public class SolutionInjector {
 
 			LinkedList<Configuration.AttributeRemappingConfiguration> remappingConfigurationList;
 
-			if (config.ignoredAttributes.containsKey(rawNodeType) &&
-					config.ignoredAttributes.get(rawNodeType).contains(attrName)) {
+			if ((config.ignoredAttributes.containsKey(rawNodeType) &&
+					config.ignoredAttributes.get(rawNodeType).contains(attrName)) ||
+					(attrName.equals("PortType") && nodeValues.get(attrName).equals("_N0_V4LU3_"))) {
 				// Pass, It should be ignored
 				childAccountedFor = true;
 

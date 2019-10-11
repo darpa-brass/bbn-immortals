@@ -171,7 +171,7 @@ def run_test(request_file, inventory_file, success_expected, simple_solver=False
         if simple_solver:
             raise Exception('The SimpleSolver can only be used through the jar!')
         else:
-            cmd = ['stack', 'exec', 'resource-dsl', '--', 'swap-dau', '--run',
+            cmd = ['stack', 'exec', 'resource-dsl', '--', 'swap-dau', '--run', '--max-daus', '4',
                    '--rules-file', RULES_FILE,
                    '--inventory-file', inventory_file,
                    '--request-file', request_file]

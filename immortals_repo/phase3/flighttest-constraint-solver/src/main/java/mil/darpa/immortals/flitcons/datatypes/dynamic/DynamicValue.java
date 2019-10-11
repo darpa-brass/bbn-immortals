@@ -313,8 +313,6 @@ public class DynamicValue implements AdvancedComparisonInterface<DynamicValue>, 
 	}
 
 	private DynamicValueMultiplicity validateAndReturnMultiplicity() throws NestedPathException {
-		// TODO: Validate range is only float or long?
-
 		if (range != null) {
 			if (range.Min == null) {
 				throw new NestedPathException("", "Value found with Max defined but not Min!");

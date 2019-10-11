@@ -4010,33 +4010,7 @@
                 <PinRef IDREF="inventory-pin-sigcond1-j1-16-60a93ce5c04b"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-sigcond1-j1-ch2-cb2483d18ceb" Index="2">
-              <Name>Ch2</Name>
-              <Description>Ch2 : Channel 2 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-5-0687d548f656"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-18-28a0320d77e3"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-9-f91c2481ad83"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-22-d030daab34b0"/>
-              </PinRefs>
-            </Port>
-            <Port ID="inventory-port-sigcond1-j1-ch3-8eadcd1e3064" Index="3">
+            <Port ID="inventory-port-sigcond1-j1-ch3-cb2483d18ceb" Index="3">
               <Name>Ch3</Name>
               <Description>Ch3 : Channel 3 Signal Input</Description>
               <GenericParameter>
@@ -4062,33 +4036,7 @@
                 <PinRef IDREF="inventory-pin-sigcond1-j1-25-d5ac0afd3248"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-sigcond1-j2-ch1-ea6cbfb60b47" Index="4">
-              <Name>Ch4</Name>
-              <Description>Ch4 : Channel 4 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-2-0772b6b3598b"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-15-0327e09d483e"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-3-7237ff30bbc8"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-16-f524dac2913d"/>
-              </PinRefs>
-            </Port>
-            <Port ID="inventory-port-sigcond1-j2-ch2-1aba028035d1" Index="5">
+            <Port ID="inventory-port-sigcond1-j2-ch2-8eadcd1e3064" Index="5">
               <Name>Ch5</Name>
               <Description>Ch5 : Channel 5 Signal Input</Description>
               <GenericParameter>
@@ -4114,35 +4062,9 @@
                 <PinRef IDREF="inventory-pin-sigcond1-j2-22-66d78d5f59ec"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-sigcond1-j2-ch3-cec72406ab1a" Index="6">
-              <Name>Ch6</Name>
-              <Description>Ch6 : Channel 6 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-11-cf63fe3a01a1"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-14-123682b498a3"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-12-21d3ef788ce0"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-25-521ca582becf"/>
-              </PinRefs>
-            </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-sigcond2-fceaa6ca4931">
+        <Module ID="inventory-mod-sigcond2-ea6cbfb60b47">
           <Name>SignalConditioner2</Name>
           <Description>TTC MSCD-606D-13 6-channel signal conditioner.</Description>
           <GenericParameter>
@@ -4162,127 +4084,127 @@
               <Name>J1</Name>
               <Description>J1: 25 pin D-subminiature, Signal I/O, Channels 1-3</Description>
               <Pins>
-                <Pin ID="inventory-pin-sigcond2-j1-1-d054d1a13e4b" Index="1">
+                <Pin ID="inventory-pin-sigcond2-j1-1-1aba028035d1" Index="1">
                   <Name>EX1</Name>
                   <Description>Channel 1 Voltage Excitation Out</Description>
                   <Designator>EX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-2-80d0a31b84b8" Index="2">
+                <Pin ID="inventory-pin-sigcond2-j1-2-cec72406ab1a" Index="2">
                   <Name>IN1+</Name>
                   <Description>Channel 1 Differential Signal Input +</Description>
                   <Designator>IN1+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-3-28f179cf042b" Index="3">
+                <Pin ID="inventory-pin-sigcond2-j1-3-fceaa6ca4931" Index="3">
                   <Name>IOUT_1</Name>
                   <Description>Channel 1 Current Excitation Out</Description>
                   <Designator>IOUT1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-4-24d50631b2d9" Index="4">
+                <Pin ID="inventory-pin-sigcond2-j1-4-d054d1a13e4b" Index="4">
                   <Name>EX2</Name>
                   <Description>Channel 2 Voltage Excitation Out</Description>
                   <Designator>EX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-5-340da4b4a807" Index="5">
+                <Pin ID="inventory-pin-sigcond2-j1-5-80d0a31b84b8" Index="5">
                   <Name>IN2+</Name>
                   <Description>Channel 2 Differential Signal Input +</Description>
                   <Designator>IN2+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-6-7cabe4908bee" Index="6">
+                <Pin ID="inventory-pin-sigcond2-j1-6-28f179cf042b" Index="6">
                   <Name>RSVD 0</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-7-e66fbaa3a55d" Index="7">
+                <Pin ID="inventory-pin-sigcond2-j1-7-24d50631b2d9" Index="7">
                   <Name>RSVD 1</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-8-150548fd680f" Index="8">
+                <Pin ID="inventory-pin-sigcond2-j1-8-340da4b4a807" Index="8">
                   <Name>AGND 0</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-9-5612cf65d645" Index="9">
+                <Pin ID="inventory-pin-sigcond2-j1-9-7cabe4908bee" Index="9">
                   <Name>IOUT_2</Name>
                   <Description>Channel 2 Current Excitation Out</Description>
                   <Designator>IOUT2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-10-a124a36d8755" Index="10">
+                <Pin ID="inventory-pin-sigcond2-j1-10-e66fbaa3a55d" Index="10">
                   <Name>EX3</Name>
                   <Description>Channel 3 Voltage Excitation Out</Description>
                   <Designator>EX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-11-dae53a3481cf" Index="11">
+                <Pin ID="inventory-pin-sigcond2-j1-11-150548fd680f" Index="11">
                   <Name>IN3+</Name>
                   <Description>Channel 3 Differential Signal Input +</Description>
                   <Designator>Pos2-J1-Pin11</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-12-aa0108b6a3cc" Index="12">
+                <Pin ID="inventory-pin-sigcond2-j1-12-5612cf65d645" Index="12">
                   <Name>IOUT_3</Name>
                   <Description>Channel 3 Current Excitation Out</Description>
                   <Designator>IOUT3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-13-238c871e85ef" Index="13">
+                <Pin ID="inventory-pin-sigcond2-j1-13-a124a36d8755" Index="13">
                   <Name>CGND</Name>
                   <Description>Chassis Ground</Description>
                   <Designator>CGND</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-14-080212754ae7" Index="14">
+                <Pin ID="inventory-pin-sigcond2-j1-14-dae53a3481cf" Index="14">
                   <Name>REX1</Name>
                   <Description>Channel 1 Voltage Excitation Return</Description>
                   <Designator>REX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-15-671632663c48" Index="15">
+                <Pin ID="inventory-pin-sigcond2-j1-15-aa0108b6a3cc" Index="15">
                   <Name>IN1-</Name>
                   <Description>Channel 1 Differential Signal Input -</Description>
                   <Designator>IN1-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-16-051e763ff140" Index="16">
+                <Pin ID="inventory-pin-sigcond2-j1-16-238c871e85ef" Index="16">
                   <Name>IRTN_1</Name>
                   <Description>Channel 1 Current Excitation Return</Description>
                   <Designator>IRTN1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-17-ab8d36f88791" Index="17">
+                <Pin ID="inventory-pin-sigcond2-j1-17-080212754ae7" Index="17">
                   <Name>REX2</Name>
                   <Description>Channel 2 Voltage Excitation Return</Description>
                   <Designator>REX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-18-67f7724ee829" Index="18">
+                <Pin ID="inventory-pin-sigcond2-j1-18-671632663c48" Index="18">
                   <Name>IN2-</Name>
                   <Description>Channel 2 Differential Signal Input -</Description>
                   <Designator>IN2-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-19-b5ccc1da14f7" Index="19">
+                <Pin ID="inventory-pin-sigcond2-j1-19-051e763ff140" Index="19">
                   <Name>RSVD 2</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-20-d467bd0092ac" Index="20">
+                <Pin ID="inventory-pin-sigcond2-j1-20-ab8d36f88791" Index="20">
                   <Name>RSVD 3</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-21-7d0a0fc037dd" Index="21">
+                <Pin ID="inventory-pin-sigcond2-j1-21-67f7724ee829" Index="21">
                   <Name>AGND 1</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-22-238894e1c161" Index="22">
+                <Pin ID="inventory-pin-sigcond2-j1-22-b5ccc1da14f7" Index="22">
                   <Name>IRTN_2</Name>
                   <Description>Channel 2 Current Excitation Return</Description>
                   <Designator>IRTN2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-23-60a463b7286c" Index="23">
+                <Pin ID="inventory-pin-sigcond2-j1-23-d467bd0092ac" Index="23">
                   <Name>REX3</Name>
                   <Description>Channel 3 Voltage Excitation Return</Description>
                   <Designator>REX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-24-50ec87743d00" Index="24">
+                <Pin ID="inventory-pin-sigcond2-j1-24-7d0a0fc037dd" Index="24">
                   <Name>IN3-</Name>
                   <Description>Channel 3 Differential Signal Input -</Description>
                   <Designator>IN3-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-25-c8712d0a8717" Index="25">
+                <Pin ID="inventory-pin-sigcond2-j1-25-238894e1c161" Index="25">
                   <Name>IRTN_3</Name>
                   <Description>Channel 3 Current Excitation Return</Description>
                   <Designator>IRTN3</Designator>
@@ -4293,127 +4215,127 @@
               <Name>J2</Name>
               <Description>J2: 25 pin D-subminiature, Signal I/O, Channels 1-3</Description>
               <Pins>
-                <Pin ID="inventory-pin-sigcond2-j2-1-28b493d02d10" Index="1">
+                <Pin ID="inventory-pin-sigcond2-j2-1-60a463b7286c" Index="1">
                   <Name>EX1</Name>
                   <Description>Channel 1 Voltage Excitation Out</Description>
                   <Designator>EX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-2-40610c6c985f" Index="2">
+                <Pin ID="inventory-pin-sigcond2-j2-2-50ec87743d00" Index="2">
                   <Name>IN1+</Name>
                   <Description>Channel 1 Differential Signal Input +</Description>
                   <Designator>IN1+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-3-00bede0adc32" Index="3">
+                <Pin ID="inventory-pin-sigcond2-j2-3-c8712d0a8717" Index="3">
                   <Name>IOUT_1</Name>
                   <Description>Channel 1 Current Excitation Out</Description>
                   <Designator>IOUT1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-4-fc1128880b1c" Index="4">
+                <Pin ID="inventory-pin-sigcond2-j2-4-28b493d02d10" Index="4">
                   <Name>EX2</Name>
                   <Description>Channel 2 Voltage Excitation Out</Description>
                   <Designator>EX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-5-ce703d6b0035" Index="5">
+                <Pin ID="inventory-pin-sigcond2-j2-5-40610c6c985f" Index="5">
                   <Name>IN2+</Name>
                   <Description>Channel 2 Differential Signal Input +</Description>
                   <Designator>IN2+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-6-ca1a53244e67" Index="6">
+                <Pin ID="inventory-pin-sigcond2-j2-6-00bede0adc32" Index="6">
                   <Name>RSVD 0</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-7-417a1d8ed2b0" Index="7">
+                <Pin ID="inventory-pin-sigcond2-j2-7-fc1128880b1c" Index="7">
                   <Name>RSVD 1</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-8-efbdf34bd156" Index="8">
+                <Pin ID="inventory-pin-sigcond2-j2-8-ce703d6b0035" Index="8">
                   <Name>AGND 0</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-9-1d69fdf55310" Index="9">
+                <Pin ID="inventory-pin-sigcond2-j2-9-ca1a53244e67" Index="9">
                   <Name>IOUT_2</Name>
                   <Description>Channel 2 Current Excitation Out</Description>
                   <Designator>IOUT2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-10-2243d0ce862a" Index="10">
+                <Pin ID="inventory-pin-sigcond2-j2-10-417a1d8ed2b0" Index="10">
                   <Name>EX3</Name>
                   <Description>Channel 3 Voltage Excitation Out</Description>
                   <Designator>EX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-11-59cc5169f352" Index="11">
+                <Pin ID="inventory-pin-sigcond2-j2-11-efbdf34bd156" Index="11">
                   <Name>IN3+</Name>
                   <Description>Channel 3 Differential Signal Input +</Description>
                   <Designator>Pos2-J1-Pin11</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-12-cd28ab494f8d" Index="12">
+                <Pin ID="inventory-pin-sigcond2-j2-12-1d69fdf55310" Index="12">
                   <Name>IOUT_3</Name>
                   <Description>Channel 3 Current Excitation Out</Description>
                   <Designator>IOUT3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-13-a9eb0a199a71" Index="13">
+                <Pin ID="inventory-pin-sigcond2-j2-13-2243d0ce862a" Index="13">
                   <Name>CGND</Name>
                   <Description>Chassis Ground</Description>
                   <Designator>CGND</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-14-be336cf66ed4" Index="14">
+                <Pin ID="inventory-pin-sigcond2-j2-14-59cc5169f352" Index="14">
                   <Name>REX1</Name>
                   <Description>Channel 1 Voltage Excitation Return</Description>
                   <Designator>REX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-15-6a392b6e723b" Index="15">
+                <Pin ID="inventory-pin-sigcond2-j2-15-cd28ab494f8d" Index="15">
                   <Name>IN1-</Name>
                   <Description>Channel 1 Differential Signal Input -</Description>
                   <Designator>IN1-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-16-109547d0d419" Index="16">
+                <Pin ID="inventory-pin-sigcond2-j2-16-a9eb0a199a71" Index="16">
                   <Name>IRTN_1</Name>
                   <Description>Channel 1 Current Excitation Return</Description>
                   <Designator>IRTN1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-17-2d095279b84e" Index="17">
+                <Pin ID="inventory-pin-sigcond2-j2-17-be336cf66ed4" Index="17">
                   <Name>REX2</Name>
                   <Description>Channel 2 Voltage Excitation Return</Description>
                   <Designator>REX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-18-372a685f7f96" Index="18">
+                <Pin ID="inventory-pin-sigcond2-j2-18-6a392b6e723b" Index="18">
                   <Name>IN2-</Name>
                   <Description>Channel 2 Differential Signal Input -</Description>
                   <Designator>IN2-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-19-c5cd177a2ab2" Index="19">
+                <Pin ID="inventory-pin-sigcond2-j2-19-109547d0d419" Index="19">
                   <Name>RSVD 2</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-20-e651b41b72b7" Index="20">
+                <Pin ID="inventory-pin-sigcond2-j2-20-2d095279b84e" Index="20">
                   <Name>RSVD 3</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-21-d025aeb20b0a" Index="21">
+                <Pin ID="inventory-pin-sigcond2-j2-21-372a685f7f96" Index="21">
                   <Name>AGND 1</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-22-85d5a884e103" Index="22">
+                <Pin ID="inventory-pin-sigcond2-j2-22-c5cd177a2ab2" Index="22">
                   <Name>IRTN_2</Name>
                   <Description>Channel 2 Current Excitation Return</Description>
                   <Designator>IRTN2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-23-6f5a8eb06254" Index="23">
+                <Pin ID="inventory-pin-sigcond2-j2-23-e651b41b72b7" Index="23">
                   <Name>REX3</Name>
                   <Description>Channel 3 Voltage Excitation Return</Description>
                   <Designator>REX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-24-449103aa3a71" Index="24">
+                <Pin ID="inventory-pin-sigcond2-j2-24-d025aeb20b0a" Index="24">
                   <Name>IN3-</Name>
                   <Description>Channel 3 Differential Signal Input -</Description>
                   <Designator>IN3-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-25-41b41712eb6f" Index="25">
+                <Pin ID="inventory-pin-sigcond2-j2-25-85d5a884e103" Index="25">
                   <Name>IRTN_3</Name>
                   <Description>Channel 3 Current Excitation Return</Description>
                   <Designator>IRTN3</Designator>
@@ -4422,7 +4344,7 @@
             </Connector>
           </Connectors>
           <Ports>
-            <Port ID="inventory-port-sigcond2-j1-ch1-cfd9779d81dc" Index="1">
+            <Port ID="inventory-port-sigcond2-j1-ch1-6f5a8eb06254" Index="1">
               <Name>Ch1</Name>
               <Description>Ch1 : Channel 1 Signal Input</Description>
               <GenericParameter>
@@ -4448,33 +4370,7 @@
                 <PinRef IDREF="inventory-pin-sigcond1-j1-16-60a93ce5c04b"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-sigcond2-j1-ch2-9803a16079ff" Index="2">
-              <Name>Ch2</Name>
-              <Description>Ch2 : Channel 2 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-5-0687d548f656"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-18-28a0320d77e3"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-9-f91c2481ad83"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-22-d030daab34b0"/>
-              </PinRefs>
-            </Port>
-            <Port ID="inventory-port-sigcond2-j1-ch3-f6efaeeef065" Index="3">
+            <Port ID="inventory-port-sigcond2-j1-ch3-449103aa3a71" Index="3">
               <Name>Ch3</Name>
               <Description>Ch3 : Channel 3 Signal Input</Description>
               <GenericParameter>
@@ -4500,33 +4396,7 @@
                 <PinRef IDREF="inventory-pin-sigcond1-j1-25-d5ac0afd3248"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-sigcond2-j2-ch1-f88625480c23" Index="4">
-              <Name>Ch4</Name>
-              <Description>Ch4 : Channel 4 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-2-0772b6b3598b"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-15-0327e09d483e"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-3-7237ff30bbc8"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-16-f524dac2913d"/>
-              </PinRefs>
-            </Port>
-            <Port ID="inventory-port-sigcond2-j2-ch2-ede3d9bdf7bb" Index="5">
+            <Port ID="inventory-port-sigcond2-j2-ch2-41b41712eb6f" Index="5">
               <Name>Ch5</Name>
               <Description>Ch5 : Channel 5 Signal Input</Description>
               <GenericParameter>
@@ -4552,35 +4422,9 @@
                 <PinRef IDREF="inventory-pin-sigcond1-j2-22-66d78d5f59ec"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-sigcond2-j2-ch3-d0c0f457aa5c" Index="6">
-              <Name>Ch6</Name>
-              <Description>Ch6 : Channel 6 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-11-cf63fe3a01a1"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-14-123682b498a3"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-12-21d3ef788ce0"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-25-521ca582becf"/>
-              </PinRefs>
-            </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-thermo-46ffe6846ad0">
+        <Module ID="inventory-mod-thermo-cfd9779d81dc">
           <Name>ThermocoupleConditioner</Name>
           <Description>TTC MTCD-208B-1 8-channel thermocouple conditioner.</Description>
           <GenericParameter>
@@ -4596,7 +4440,7 @@
           <Position>3</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <Ports>
-            <Port ID="inventory-port-thermo-j1-ch1-ba0712a39e0b" Index="1">
+            <Port ID="inventory-port-thermo-j1-ch1-9803a16079ff" Index="1">
               <Name>Ch1</Name>
               <Description>Ch1 : Channel 1 Signal Input</Description>
               <GenericParameter>
@@ -4612,37 +4456,17 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Thermocouple</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-thermo-j1-ch2-b677c7912029" Index="2">
-              <Name>Ch2</Name>
-              <Description>Ch2 : Channel 2 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <Measurement>
-                  <SampleRate>1000</SampleRate>
-                  <DataLength>12</DataLength>
-                </Measurement>
-                <PortType>Thermocouple</PortType>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>Thermocouple</PortType>
-              </PortTypes>
-            </Port>
-            <Port ID="inventory-port-thermo-j1-ch3-c7c18205d898" Index="3">
+            <Port ID="inventory-port-thermo-j1-ch3-f6efaeeef065" Index="3">
               <Name>Ch3</Name>
               <Description>Ch3 : Channel 3 Signal Input</Description>
               <GenericParameter>
@@ -4658,37 +4482,17 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Thermocouple</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-thermo-j1-ch4-2a56aa51f389" Index="4">
-              <Name>Ch4</Name>
-              <Description>Ch4 : Channel 4 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <Measurement>
-                  <SampleRate>1000</SampleRate>
-                  <DataLength>12</DataLength>
-                </Measurement>
-                <PortType>Thermocouple</PortType>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>Thermocouple</PortType>
-              </PortTypes>
-            </Port>
-            <Port ID="inventory-port-thermo-j1-ch5-c9fbe693746b" Index="5">
+            <Port ID="inventory-port-thermo-j1-ch5-f88625480c23" Index="5">
               <Name>Ch5</Name>
               <Description>Ch5 : Channel 5 Signal Input</Description>
               <GenericParameter>
@@ -4704,37 +4508,17 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Thermocouple</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-thermo-j1-ch6-4d3b36dc94e4" Index="6">
-              <Name>Ch6</Name>
-              <Description>Ch6 : Channel 6 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <Measurement>
-                  <SampleRate>1000</SampleRate>
-                  <DataLength>12</DataLength>
-                </Measurement>
-                <PortType>Thermocouple</PortType>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>Thermocouple</PortType>
-              </PortTypes>
-            </Port>
-            <Port ID="inventory-port-thermo-j1-ch7-0ed85e550adc" Index="7">
+            <Port ID="inventory-port-thermo-j1-ch7-ede3d9bdf7bb" Index="7">
               <Name>Ch7</Name>
               <Description>Ch7 : Channel 7 Signal Input</Description>
               <GenericParameter>
@@ -4750,30 +4534,10 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>Thermocouple</PortType>
-              </PortTypes>
-            </Port>
-            <Port ID="inventory-port-thermo-j1-ch8-a7fc27d6f50e" Index="8">
-              <Name>Ch8</Name>
-              <Description>Ch8 : Channel 8 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <Measurement>
-                  <SampleRate>1000</SampleRate>
-                  <DataLength>12</DataLength>
-                </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -4782,7 +4546,7 @@
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-bus1-90bebf534c94">
+        <Module ID="inventory-mod-bus1-d0c0f457aa5c">
           <Name>BusMonitor1</Name>
           <Description>TTC MBIM-429C-1 8-channel bus monitor.</Description>
           <GenericParameter>
@@ -4798,7 +4562,7 @@
           <Position>4</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <Ports>
-            <Port ID="inventory-port-bus1-j1-ch1-9292a8e51479" Index="1">
+            <Port ID="inventory-port-bus1-j1-ch1-46ffe6846ad0" Index="1">
               <Name>Ch1</Name>
               <Description>Ch1 : Channel 1 Signal Input</Description>
               <GenericParameter>
@@ -4813,7 +4577,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch2-9a009fc594a8" Index="2">
+            <Port ID="inventory-port-bus1-j1-ch2-ba0712a39e0b" Index="2">
               <Name>Ch2</Name>
               <Description>Ch2 : Channel 2 Signal Input</Description>
               <GenericParameter>
@@ -4828,7 +4592,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch3-84fd294dc5c9" Index="3">
+            <Port ID="inventory-port-bus1-j1-ch3-b677c7912029" Index="3">
               <Name>Ch3</Name>
               <Description>Ch3 : Channel 3 Signal Input</Description>
               <GenericParameter>
@@ -4843,7 +4607,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch4-98cae77ce743" Index="4">
+            <Port ID="inventory-port-bus1-j1-ch4-c7c18205d898" Index="4">
               <Name>Ch4</Name>
               <Description>Ch4 : Channel 4 Signal Input</Description>
               <GenericParameter>
@@ -4858,7 +4622,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch5-596eb0829892" Index="5">
+            <Port ID="inventory-port-bus1-j1-ch5-2a56aa51f389" Index="5">
               <Name>Ch5</Name>
               <Description>Ch5 : Channel 5 Signal Input</Description>
               <GenericParameter>
@@ -4873,7 +4637,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch6-14debec05a4c" Index="6">
+            <Port ID="inventory-port-bus1-j1-ch6-c9fbe693746b" Index="6">
               <Name>Ch6</Name>
               <Description>Ch6 : Channel 6 Signal Input</Description>
               <GenericParameter>
@@ -4888,7 +4652,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch7-a9af3f4e3c34" Index="7">
+            <Port ID="inventory-port-bus1-j1-ch7-4d3b36dc94e4" Index="7">
               <Name>Ch7</Name>
               <Description>Ch7 : Channel 7 Signal Input</Description>
               <GenericParameter>
@@ -4903,7 +4667,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch8-3aa8e5e4a8c4" Index="8">
+            <Port ID="inventory-port-bus1-j1-ch8-0ed85e550adc" Index="8">
               <Name>Ch8</Name>
               <Description>Ch8 : Channel 8 Signal Input</Description>
               <GenericParameter>
@@ -4920,7 +4684,7 @@
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-bus2-a8466431fca7">
+        <Module ID="inventory-mod-bus2-a7fc27d6f50e">
           <Name>BusMonitor2</Name>
           <Description>TTC MBIM-553A-1 dual redundant bus monitor.</Description>
           <GenericParameter>
@@ -4936,7 +4700,7 @@
           <Position>5</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <Ports>
-            <Port ID="inventory-port-bus2-j1-ch1-2a1e021c6621" Index="1">
+            <Port ID="inventory-port-bus2-j1-ch1-90bebf534c94" Index="1">
               <Name>Ch1</Name>
               <Description>Ch1 : Channel 1 Signal Input</Description>
               <GenericParameter>
@@ -4951,7 +4715,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus2-j2-ch1-454a984fbe16" Index="2">
+            <Port ID="inventory-port-bus2-j2-ch1-9292a8e51479" Index="2">
               <Name>Ch2</Name>
               <Description>Ch2 : Channel 2 Signal Input</Description>
               <GenericParameter>
@@ -4968,7 +4732,7 @@
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-power1-6f82c4f707db">
+        <Module ID="inventory-mod-power1-9a009fc594a8">
           <Name>PowerSupply1</Name>
           <Description>TTC MPFM-461-1 mini power supply. Overhead.</Description>
           <GenericParameter>
@@ -4984,7 +4748,7 @@
           <Position>201</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <Ports>
-            <Port ID="inventory-port-power1-j1-ch1-3db63e5c7f36" Index="1">
+            <Port ID="inventory-port-power1-j1-ch1-84fd294dc5c9" Index="1">
               <Name>Ch1</Name>
               <Description>Ch1 : Channel 1 Power</Description>
               <GenericParameter>
@@ -4997,7 +4761,7 @@
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-power2-6046eca35a24">
+        <Module ID="inventory-mod-power2-98cae77ce743">
           <Name>PowerSupply2</Name>
           <Description>TTC MPSM-2515-1 mini power supply. Overhead.</Description>
           <GenericParameter>
@@ -5013,7 +4777,7 @@
           <Position>202</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <Ports>
-            <Port Enabled="false" ID="inventory-port-power2-j1-dummy-60d1e9e78524" Index="1">
+            <Port Enabled="false" ID="inventory-port-power2-j1-dummy-596eb0829892" Index="1">
               <Name>Ch1</Name>
               <Description>Ch1 : Channel 1 Dummy</Description>
               <GenericParameter>
@@ -5029,7 +4793,7 @@
       </Modules>
     </InternalStructure>
   </NetworkNode>
-  <NetworkNode ID="inventory-nn-dau-31813408a5f3">
+  <NetworkNode ID="inventory-nn-dau-14debec05a4c">
     <Name>Example2DAU</Name>
     <Description>Scenario 5 example 2 DAU.</Description>
     <GenericParameter>
@@ -5047,7 +4811,7 @@
     <SerialID>123456789</SerialID>
     <IEEE1588Version>2008e2e</IEEE1588Version>
     <TmNSApps>
-      <TmNSApp ID="inventory-tma-dau-901033be71d4">
+      <TmNSApp ID="inventory-tma-dau-a9af3f4e3c34">
         <Name>Example2DAUApp</Name>
         <Description>Scenario 5 example 2 DAU application.</Description>
         <RoleID>Example2DAUApp</RoleID>
@@ -5075,7 +4839,7 @@
             <NotificationPort>1234</NotificationPort>
             <DSCPTableEntryRef IDREF="dscp-0"/>
             <NetworkInterfaceRefs>
-              <NetworkInterfaceRef IDREF="inventory-ni-ieee-eth0-537452c0a190"/>
+              <NetworkInterfaceRef IDREF="inventory-ni-ieee-eth0-6046eca35a24"/>
             </NetworkInterfaceRefs>
           </SNMPSetup>
         </SMInterface>
@@ -5083,7 +4847,7 @@
     </TmNSApps>
     <InternalStructure>
       <Modules>
-        <Module ID="inventory-mod-processor-a16f53f34ed5">
+        <Module ID="inventory-mod-processor-3aa8e5e4a8c4">
           <Name>ProcessingModule</Name>
           <Description>TTC MPPC-500-2 processing unit. Overhead.</Description>
           <GenericParameter>
@@ -5099,24 +4863,24 @@
           <Position>101</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <RunningAppRefs>
-            <TmNSAppRef IDREF="inventory-tma-dau-901033be71d4"/>
+            <TmNSAppRef IDREF="inventory-tma-dau-a9af3f4e3c34"/>
           </RunningAppRefs>
           <Connectors>
             <Connector>
               <Name>J1</Name>
               <Description>J1 : 9-pin D-subminiature.</Description>
               <Pins>
-                <Pin ID="inventory-pin-processor-j1-2-69a38277cdc3" Index="2">
+                <Pin ID="inventory-pin-processor-j1-2-a8466431fca7" Index="2">
                   <Name>RS232 RCV</Name>
                   <Description>RS-232: receive signal from the host</Description>
                   <Designator>SerialRx</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-processor-j1-3-f14d44933189" Index="3">
+                <Pin ID="inventory-pin-processor-j1-3-2a1e021c6621" Index="3">
                   <Name>RS232 XMT</Name>
                   <Description>RS-232: transmit signal to the host</Description>
                   <Designator>SerialTx</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-processor-j1-9-4cf2273b999d" Index="9">
+                <Pin ID="inventory-pin-processor-j1-9-454a984fbe16" Index="9">
                   <Name>1PPS OUT</Name>
                   <Description>One pulse per second output</Description>
                   <Designator>1PPS</Designator>
@@ -5125,7 +4889,7 @@
             </Connector>
           </Connectors>
           <Ports>
-            <Port ID="inventory-port-processor-j1-ch1-c3391f2bf255" Index="1">
+            <Port ID="inventory-port-processor-j1-ch1-6f82c4f707db" Index="1">
               <Name>J1 Console</Name>
               <Description>Console Serial Port</Description>
               <GenericParameter>
@@ -5144,14 +4908,14 @@
                 <PortType>Serial</PortType>
               </PortTypes>
               <PinRefs>
-                <PinRef IDREF="inventory-pin-processor-j1-2-69a38277cdc3"/>
-                <PinRef IDREF="inventory-pin-processor-j1-3-f14d44933189"/>
-                <PinRef IDREF="inventory-pin-processor-j1-9-4cf2273b999d"/>
+                <PinRef IDREF="inventory-pin-processor-j1-2-a8466431fca7"/>
+                <PinRef IDREF="inventory-pin-processor-j1-3-2a1e021c6621"/>
+                <PinRef IDREF="inventory-pin-processor-j1-9-454a984fbe16"/>
               </PinRefs>
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-ieee-e7878f6ea0f0">
+        <Module ID="inventory-mod-ieee-3db63e5c7f36">
           <Name>TimeAndEthernetModule</Name>
           <Description>TTC MACQ-500-4 time and ethernet. Overhead.</Description>
           <GenericParameter>
@@ -5168,12 +4932,12 @@
           <Position>102</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <NetworkInterfaces>
-            <NetworkInterface ID="inventory-ni-ieee-eth0-537452c0a190">
+            <NetworkInterface ID="inventory-ni-ieee-eth0-6046eca35a24">
               <Name>eth0</Name>
               <DHCPEnable>false</DHCPEnable>
               <IPAddress>10.1.101.201</IPAddress>
               <PhysicalNetworkPorts>
-                <PhysicalNetworkPort ID="inventory-pnp-ieee-ethernet-c9e5fc8a807a">
+                <PhysicalNetworkPort ID="inventory-pnp-ieee-ethernet-60d1e9e78524">
                   <Name>Ethernet</Name>
                   <Description>MACQ j2 10/100Base-T Ethernet</Description>
                   <Medium>Copper</Medium>
@@ -5191,67 +4955,67 @@
               <Name>J1</Name>
               <Description>J1 GPIO RS422 : 15 pin D-subminiature</Description>
               <Pins>
-                <Pin ID="inventory-pin-ieee-j1-1-d38378919008" Index="1">
+                <Pin ID="inventory-pin-ieee-j1-1-31813408a5f3" Index="1">
                   <Name>GND</Name>
                   <Description>Digital ground</Description>
                   <Designator>GND</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-2-76610d7cae65" Index="2">
+                <Pin ID="inventory-pin-ieee-j1-2-901033be71d4" Index="2">
                   <Name>Port2+</Name>
                   <Description>RS-422 Output port 2 +</Description>
                   <Designator>Port2_plus</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-3-c7fb6af4ceb8" Index="3">
+                <Pin ID="inventory-pin-ieee-j1-3-a16f53f34ed5" Index="3">
                   <Name>Port2-</Name>
                   <Description>RS-422 Output port 2 -</Description>
                   <Designator>Port2_minus</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-4-90e36a3adc47" Index="4">
+                <Pin ID="inventory-pin-ieee-j1-4-69a38277cdc3" Index="4">
                   <Name>Port4+</Name>
                   <Description>RS-422 Output port 4 +</Description>
                   <Designator>Port4_plus</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-5-6913cdc60a64" Index="5">
+                <Pin ID="inventory-pin-ieee-j1-5-f14d44933189" Index="5">
                   <Name>Port4-</Name>
                   <Description>RS-422 Output port 4 -</Description>
                   <Designator>Port4_minus</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-7-18f2a8e65b02" Index="7">
+                <Pin ID="inventory-pin-ieee-j1-7-4cf2273b999d" Index="7">
                   <Name>GPO1_A</Name>
                   <Description>General-purpose opto-isolated switch 1</Description>
                   <Designator>GPO1_A</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-8-35b01551de6a" Index="8">
+                <Pin ID="inventory-pin-ieee-j1-8-c3391f2bf255" Index="8">
                   <Name>GPO1_B</Name>
                   <Description>General-purpose opto-isolated switch 1</Description>
                   <Designator>GPO1_B</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-9-79165961a8d1" Index="9">
+                <Pin ID="inventory-pin-ieee-j1-9-e7878f6ea0f0" Index="9">
                   <Name>Port1+</Name>
                   <Description>RS-422 Output port 1 +</Description>
                   <Designator>Port1_plus</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-10-e6eedc68772b" Index="10">
+                <Pin ID="inventory-pin-ieee-j1-10-537452c0a190" Index="10">
                   <Name>Port1-</Name>
                   <Description>RS-422 Output port 1 -</Description>
                   <Designator>Port1_minus</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-11-9c24e7a23a85" Index="11">
+                <Pin ID="inventory-pin-ieee-j1-11-c9e5fc8a807a" Index="11">
                   <Name>Port3+</Name>
                   <Description>RS-422 Output port 3 +</Description>
                   <Designator>Port3_plus</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-12-b2b5343f6a8e" Index="12">
+                <Pin ID="inventory-pin-ieee-j1-12-d38378919008" Index="12">
                   <Name>Port3-</Name>
                   <Description>RS-422 Output port 3 -</Description>
                   <Designator>Port3_minus</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-14-d3a3f5e31c87" Index="14">
+                <Pin ID="inventory-pin-ieee-j1-14-76610d7cae65" Index="14">
                   <Name>GPO2_A</Name>
                   <Description>General-purpose opto-isolated switch 2</Description>
                   <Designator>GPO2_A</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j1-15-716e9194913c" Index="15">
+                <Pin ID="inventory-pin-ieee-j1-15-c7fb6af4ceb8" Index="15">
                   <Name>GPO2_B</Name>
                   <Description>General-purpose opto-isolated switch 2</Description>
                   <Designator>GPO2_B</Designator>
@@ -5262,27 +5026,27 @@
               <Name>J2</Name>
               <Description>J2 Ethernet : 9 pin D-subminiature</Description>
               <Pins>
-                <Pin ID="inventory-pin-ieee-j2-1-5f3e9e72c3b2" Index="1">
+                <Pin ID="inventory-pin-ieee-j2-1-90e36a3adc47" Index="1">
                   <Name>TXDN</Name>
                   <Description>Transmit signal (negative polarity)</Description>
                   <Designator>TXDN</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j2-2-0817fba608dd" Index="2">
+                <Pin ID="inventory-pin-ieee-j2-2-6913cdc60a64" Index="2">
                   <Name>TXDP</Name>
                   <Description>Transmit signal (positive polarity)</Description>
                   <Designator>TXDP</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j2-4-2b2e85f8ce39" Index="4">
+                <Pin ID="inventory-pin-ieee-j2-4-18f2a8e65b02" Index="4">
                   <Name>RXDN</Name>
                   <Description>Receive signal (negative polarity)</Description>
                   <Designator>RXDN</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j2-5-cfc1ca82b3b7" Index="5">
+                <Pin ID="inventory-pin-ieee-j2-5-35b01551de6a" Index="5">
                   <Name>RXDP</Name>
                   <Description>Receive signal (positive polarity)</Description>
                   <Designator>RXDP</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-ieee-j2-6-ccda8062b4ee" Index="6">
+                <Pin ID="inventory-pin-ieee-j2-6-79165961a8d1" Index="6">
                   <Name>CHASSIS GND</Name>
                   <Description>Chassis ground</Description>
                   <Designator>GND</Designator>
@@ -5291,7 +5055,7 @@
             </Connector>
           </Connectors>
           <Ports>
-            <Port ID="inventory-port-ieee-j1-ch1-dadfe3f25664" Index="1">
+            <Port ID="inventory-port-ieee-j1-ch1-e6eedc68772b" Index="1">
               <Name>Time</Name>
               <Description>RS-422 Port 1</Description>
               <GenericParameter>
@@ -5302,22 +5066,22 @@
               </GenericParameter>
               <PortDirection>Output</PortDirection>
               <PinRefs>
-                <PinRef IDREF="inventory-pin-ieee-j1-1-d38378919008"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-2-76610d7cae65"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-3-c7fb6af4ceb8"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-4-90e36a3adc47"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-5-6913cdc60a64"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-7-18f2a8e65b02"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-8-35b01551de6a"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-9-79165961a8d1"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-10-e6eedc68772b"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-11-9c24e7a23a85"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-12-b2b5343f6a8e"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-14-d3a3f5e31c87"/>
-                <PinRef IDREF="inventory-pin-ieee-j1-15-716e9194913c"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-1-31813408a5f3"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-2-901033be71d4"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-3-a16f53f34ed5"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-4-69a38277cdc3"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-5-f14d44933189"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-7-4cf2273b999d"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-8-c3391f2bf255"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-9-e7878f6ea0f0"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-10-537452c0a190"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-11-c9e5fc8a807a"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-12-d38378919008"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-14-76610d7cae65"/>
+                <PinRef IDREF="inventory-pin-ieee-j1-15-c7fb6af4ceb8"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-ieee-j2-ch1-70a1cf435ff3" Index="2">
+            <Port ID="inventory-port-ieee-j2-ch1-9c24e7a23a85" Index="2">
               <Name>Ethernet</Name>
               <Description>10/100 Fast Ethernet</Description>
               <GenericParameter>
@@ -5332,17 +5096,17 @@
                 <PortType>Ethernet</PortType>
               </PortTypes>
               <PinRefs>
-                <PinRef IDREF="inventory-pin-ieee-j2-1-5f3e9e72c3b2"/>
-                <PinRef IDREF="inventory-pin-ieee-j2-2-0817fba608dd"/>
-                <PinRef IDREF="inventory-pin-ieee-j2-4-2b2e85f8ce39"/>
-                <PinRef IDREF="inventory-pin-ieee-j2-5-cfc1ca82b3b7"/>
-                <PinRef IDREF="inventory-pin-ieee-j2-6-ccda8062b4ee"/>
+                <PinRef IDREF="inventory-pin-ieee-j2-1-90e36a3adc47"/>
+                <PinRef IDREF="inventory-pin-ieee-j2-2-6913cdc60a64"/>
+                <PinRef IDREF="inventory-pin-ieee-j2-4-18f2a8e65b02"/>
+                <PinRef IDREF="inventory-pin-ieee-j2-5-35b01551de6a"/>
+                <PinRef IDREF="inventory-pin-ieee-j2-6-79165961a8d1"/>
               </PinRefs>
-              <PhysicalNetworkPortRef IDREF="inventory-pnp-ieee-ethernet-c9e5fc8a807a"/>
+              <PhysicalNetworkPortRef IDREF="inventory-pnp-ieee-ethernet-60d1e9e78524"/>
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-sigcond1-ba6510927eaa">
+        <Module ID="inventory-mod-sigcond1-b2b5343f6a8e">
           <Name>SignalConditioner1</Name>
           <Description>TTC MSCD-606D-13 6-channel signal conditioner.</Description>
           <GenericParameter>
@@ -5362,127 +5126,127 @@
               <Name>J1</Name>
               <Description>J1: 25 pin D-subminiature, Signal I/O, Channels 1-3</Description>
               <Pins>
-                <Pin ID="inventory-pin-sigcond1-j1-1-1565ca2e588a" Index="1">
+                <Pin ID="inventory-pin-sigcond1-j1-1-d3a3f5e31c87" Index="1">
                   <Name>EX1</Name>
                   <Description>Channel 1 Voltage Excitation Out</Description>
                   <Designator>EX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-2-bb510e20b498" Index="2">
+                <Pin ID="inventory-pin-sigcond1-j1-2-716e9194913c" Index="2">
                   <Name>IN1+</Name>
                   <Description>Channel 1 Differential Signal Input +</Description>
                   <Designator>IN1+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-3-5bad16c3157b" Index="3">
+                <Pin ID="inventory-pin-sigcond1-j1-3-5f3e9e72c3b2" Index="3">
                   <Name>IOUT_1</Name>
                   <Description>Channel 1 Current Excitation Out</Description>
                   <Designator>IOUT1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-4-9649ba9a9055" Index="4">
+                <Pin ID="inventory-pin-sigcond1-j1-4-0817fba608dd" Index="4">
                   <Name>EX2</Name>
                   <Description>Channel 2 Voltage Excitation Out</Description>
                   <Designator>EX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-5-2bf557504573" Index="5">
+                <Pin ID="inventory-pin-sigcond1-j1-5-2b2e85f8ce39" Index="5">
                   <Name>IN2+</Name>
                   <Description>Channel 2 Differential Signal Input +</Description>
                   <Designator>IN2+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-6-1dca2e30dcc1" Index="6">
+                <Pin ID="inventory-pin-sigcond1-j1-6-cfc1ca82b3b7" Index="6">
                   <Name>RSVD 0</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-7-5ba84264514f" Index="7">
+                <Pin ID="inventory-pin-sigcond1-j1-7-ccda8062b4ee" Index="7">
                   <Name>RSVD 1</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-8-97e9b44e2dc5" Index="8">
+                <Pin ID="inventory-pin-sigcond1-j1-8-dadfe3f25664" Index="8">
                   <Name>AGND 0</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-9-ef5f6cfd9ef5" Index="9">
+                <Pin ID="inventory-pin-sigcond1-j1-9-70a1cf435ff3" Index="9">
                   <Name>IOUT_2</Name>
                   <Description>Channel 2 Current Excitation Out</Description>
                   <Designator>IOUT2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-10-49915f573a90" Index="10">
+                <Pin ID="inventory-pin-sigcond1-j1-10-ba6510927eaa" Index="10">
                   <Name>EX3</Name>
                   <Description>Channel 3 Voltage Excitation Out</Description>
                   <Designator>EX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-11-eb98de548746" Index="11">
+                <Pin ID="inventory-pin-sigcond1-j1-11-1565ca2e588a" Index="11">
                   <Name>IN3+</Name>
                   <Description>Channel 3 Differential Signal Input +</Description>
                   <Designator>Pos2-J1-Pin11</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-12-4d603426e6b8" Index="12">
+                <Pin ID="inventory-pin-sigcond1-j1-12-bb510e20b498" Index="12">
                   <Name>IOUT_3</Name>
                   <Description>Channel 3 Current Excitation Out</Description>
                   <Designator>IOUT3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-13-14aa0004a9d8" Index="13">
+                <Pin ID="inventory-pin-sigcond1-j1-13-5bad16c3157b" Index="13">
                   <Name>CGND</Name>
                   <Description>Chassis Ground</Description>
                   <Designator>CGND</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-14-a75c2be965e1" Index="14">
+                <Pin ID="inventory-pin-sigcond1-j1-14-9649ba9a9055" Index="14">
                   <Name>REX1</Name>
                   <Description>Channel 1 Voltage Excitation Return</Description>
                   <Designator>REX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-15-fe56ae0ddbb2" Index="15">
+                <Pin ID="inventory-pin-sigcond1-j1-15-2bf557504573" Index="15">
                   <Name>IN1-</Name>
                   <Description>Channel 1 Differential Signal Input -</Description>
                   <Designator>IN1-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-16-ce201896aa1a" Index="16">
+                <Pin ID="inventory-pin-sigcond1-j1-16-1dca2e30dcc1" Index="16">
                   <Name>IRTN_1</Name>
                   <Description>Channel 1 Current Excitation Return</Description>
                   <Designator>IRTN1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-17-be068825b45d" Index="17">
+                <Pin ID="inventory-pin-sigcond1-j1-17-5ba84264514f" Index="17">
                   <Name>REX2</Name>
                   <Description>Channel 2 Voltage Excitation Return</Description>
                   <Designator>REX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-18-886744ba79e8" Index="18">
+                <Pin ID="inventory-pin-sigcond1-j1-18-97e9b44e2dc5" Index="18">
                   <Name>IN2-</Name>
                   <Description>Channel 2 Differential Signal Input -</Description>
                   <Designator>IN2-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-19-c4787483013e" Index="19">
+                <Pin ID="inventory-pin-sigcond1-j1-19-ef5f6cfd9ef5" Index="19">
                   <Name>RSVD 2</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-20-d34e73aaa6ad" Index="20">
+                <Pin ID="inventory-pin-sigcond1-j1-20-49915f573a90" Index="20">
                   <Name>RSVD 3</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-21-b7f99087ca08" Index="21">
+                <Pin ID="inventory-pin-sigcond1-j1-21-eb98de548746" Index="21">
                   <Name>AGND 1</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-22-3c86e6ce2706" Index="22">
+                <Pin ID="inventory-pin-sigcond1-j1-22-4d603426e6b8" Index="22">
                   <Name>IRTN_2</Name>
                   <Description>Channel 2 Current Excitation Return</Description>
                   <Designator>IRTN2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-23-717b8807bd26" Index="23">
+                <Pin ID="inventory-pin-sigcond1-j1-23-14aa0004a9d8" Index="23">
                   <Name>REX3</Name>
                   <Description>Channel 3 Voltage Excitation Return</Description>
                   <Designator>REX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-24-f532f660ed4b" Index="24">
+                <Pin ID="inventory-pin-sigcond1-j1-24-a75c2be965e1" Index="24">
                   <Name>IN3-</Name>
                   <Description>Channel 3 Differential Signal Input -</Description>
                   <Designator>IN3-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j1-25-6c0d6287f1fb" Index="25">
+                <Pin ID="inventory-pin-sigcond1-j1-25-fe56ae0ddbb2" Index="25">
                   <Name>IRTN_3</Name>
                   <Description>Channel 3 Current Excitation Return</Description>
                   <Designator>IRTN3</Designator>
@@ -5493,127 +5257,127 @@
               <Name>J2</Name>
               <Description>J2: 25 pin D-subminiature, Signal I/O, Channels 1-3</Description>
               <Pins>
-                <Pin ID="inventory-pin-sigcond1-j2-1-5b5005afc62d" Index="1">
+                <Pin ID="inventory-pin-sigcond1-j2-1-ce201896aa1a" Index="1">
                   <Name>EX1</Name>
                   <Description>Channel 1 Voltage Excitation Out</Description>
                   <Designator>EX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-2-3e09059584b1" Index="2">
+                <Pin ID="inventory-pin-sigcond1-j2-2-be068825b45d" Index="2">
                   <Name>IN1+</Name>
                   <Description>Channel 1 Differential Signal Input +</Description>
                   <Designator>IN1+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-3-6daa2d05594e" Index="3">
+                <Pin ID="inventory-pin-sigcond1-j2-3-886744ba79e8" Index="3">
                   <Name>IOUT_1</Name>
                   <Description>Channel 1 Current Excitation Out</Description>
                   <Designator>IOUT1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-4-12546bfa5e19" Index="4">
+                <Pin ID="inventory-pin-sigcond1-j2-4-c4787483013e" Index="4">
                   <Name>EX2</Name>
                   <Description>Channel 2 Voltage Excitation Out</Description>
                   <Designator>EX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-5-857a0080f0e3" Index="5">
+                <Pin ID="inventory-pin-sigcond1-j2-5-d34e73aaa6ad" Index="5">
                   <Name>IN2+</Name>
                   <Description>Channel 2 Differential Signal Input +</Description>
                   <Designator>IN2+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-6-7965c827c11b" Index="6">
+                <Pin ID="inventory-pin-sigcond1-j2-6-b7f99087ca08" Index="6">
                   <Name>RSVD 0</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-7-edcc927db519" Index="7">
+                <Pin ID="inventory-pin-sigcond1-j2-7-3c86e6ce2706" Index="7">
                   <Name>RSVD 1</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-8-bebd8f25d3e9" Index="8">
+                <Pin ID="inventory-pin-sigcond1-j2-8-717b8807bd26" Index="8">
                   <Name>AGND 0</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-9-a2b2a8930835" Index="9">
+                <Pin ID="inventory-pin-sigcond1-j2-9-f532f660ed4b" Index="9">
                   <Name>IOUT_2</Name>
                   <Description>Channel 2 Current Excitation Out</Description>
                   <Designator>IOUT2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-10-2dde73614ee4" Index="10">
+                <Pin ID="inventory-pin-sigcond1-j2-10-6c0d6287f1fb" Index="10">
                   <Name>EX3</Name>
                   <Description>Channel 3 Voltage Excitation Out</Description>
                   <Designator>EX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-11-cb10c691834d" Index="11">
+                <Pin ID="inventory-pin-sigcond1-j2-11-5b5005afc62d" Index="11">
                   <Name>IN3+</Name>
                   <Description>Channel 3 Differential Signal Input +</Description>
                   <Designator>Pos2-J1-Pin11</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-12-50320290824f" Index="12">
+                <Pin ID="inventory-pin-sigcond1-j2-12-3e09059584b1" Index="12">
                   <Name>IOUT_3</Name>
                   <Description>Channel 3 Current Excitation Out</Description>
                   <Designator>IOUT3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-13-6b029e27548c" Index="13">
+                <Pin ID="inventory-pin-sigcond1-j2-13-6daa2d05594e" Index="13">
                   <Name>CGND</Name>
                   <Description>Chassis Ground</Description>
                   <Designator>CGND</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-14-f2a0f1948a89" Index="14">
+                <Pin ID="inventory-pin-sigcond1-j2-14-12546bfa5e19" Index="14">
                   <Name>REX1</Name>
                   <Description>Channel 1 Voltage Excitation Return</Description>
                   <Designator>REX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-15-a712950f3d35" Index="15">
+                <Pin ID="inventory-pin-sigcond1-j2-15-857a0080f0e3" Index="15">
                   <Name>IN1-</Name>
                   <Description>Channel 1 Differential Signal Input -</Description>
                   <Designator>IN1-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-16-35afb8c0a407" Index="16">
+                <Pin ID="inventory-pin-sigcond1-j2-16-7965c827c11b" Index="16">
                   <Name>IRTN_1</Name>
                   <Description>Channel 1 Current Excitation Return</Description>
                   <Designator>IRTN1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-17-6da6468b2e75" Index="17">
+                <Pin ID="inventory-pin-sigcond1-j2-17-edcc927db519" Index="17">
                   <Name>REX2</Name>
                   <Description>Channel 2 Voltage Excitation Return</Description>
                   <Designator>REX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-18-441b05178bf1" Index="18">
+                <Pin ID="inventory-pin-sigcond1-j2-18-bebd8f25d3e9" Index="18">
                   <Name>IN2-</Name>
                   <Description>Channel 2 Differential Signal Input -</Description>
                   <Designator>IN2-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-19-12990cbecb7a" Index="19">
+                <Pin ID="inventory-pin-sigcond1-j2-19-a2b2a8930835" Index="19">
                   <Name>RSVD 2</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-20-aeec215376c8" Index="20">
+                <Pin ID="inventory-pin-sigcond1-j2-20-2dde73614ee4" Index="20">
                   <Name>RSVD 3</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-21-d77a9c97846d" Index="21">
+                <Pin ID="inventory-pin-sigcond1-j2-21-cb10c691834d" Index="21">
                   <Name>AGND 1</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-22-7dd6c13aa8e9" Index="22">
+                <Pin ID="inventory-pin-sigcond1-j2-22-50320290824f" Index="22">
                   <Name>IRTN_2</Name>
                   <Description>Channel 2 Current Excitation Return</Description>
                   <Designator>IRTN2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-23-05ef7ac943a7" Index="23">
+                <Pin ID="inventory-pin-sigcond1-j2-23-6b029e27548c" Index="23">
                   <Name>REX3</Name>
                   <Description>Channel 3 Voltage Excitation Return</Description>
                   <Designator>REX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-24-619c7e5e2fc6" Index="24">
+                <Pin ID="inventory-pin-sigcond1-j2-24-f2a0f1948a89" Index="24">
                   <Name>IN3-</Name>
                   <Description>Channel 3 Differential Signal Input -</Description>
                   <Designator>IN3-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond1-j2-25-fd5d727158c4" Index="25">
+                <Pin ID="inventory-pin-sigcond1-j2-25-a712950f3d35" Index="25">
                   <Name>IRTN_3</Name>
                   <Description>Channel 3 Current Excitation Return</Description>
                   <Designator>IRTN3</Designator>
@@ -5622,33 +5386,7 @@
             </Connector>
           </Connectors>
           <Ports>
-            <Port ID="inventory-port-sigcond1-j1-ch1-35b5a481696e" Index="1">
-              <Name>Ch1</Name>
-              <Description>Ch1 : Channel 1 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-2-bb510e20b498"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-15-fe56ae0ddbb2"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-3-5bad16c3157b"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-16-ce201896aa1a"/>
-              </PinRefs>
-            </Port>
-            <Port ID="inventory-port-sigcond1-j1-ch2-f223de1dca91" Index="2">
+            <Port ID="inventory-port-sigcond1-j1-ch2-35afb8c0a407" Index="2">
               <Name>Ch2</Name>
               <Description>Ch2 : Channel 2 Signal Input</Description>
               <GenericParameter>
@@ -5668,39 +5406,13 @@
                 <PortType>SignalConditioner</PortType>
               </PortTypes>
               <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-5-2bf557504573"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-18-886744ba79e8"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-9-ef5f6cfd9ef5"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-22-3c86e6ce2706"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j1-5-2b2e85f8ce39"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j1-18-97e9b44e2dc5"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j1-9-70a1cf435ff3"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j1-22-4d603426e6b8"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-sigcond1-j1-ch3-f0dfae469f95" Index="3">
-              <Name>Ch3</Name>
-              <Description>Ch3 : Channel 3 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-11-eb98de548746"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-14-a75c2be965e1"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-12-4d603426e6b8"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-25-6c0d6287f1fb"/>
-              </PinRefs>
-            </Port>
-            <Port ID="inventory-port-sigcond1-j2-ch1-6f5bd59f1772" Index="4">
+            <Port ID="inventory-port-sigcond1-j2-ch1-6da6468b2e75" Index="4">
               <Name>Ch4</Name>
               <Description>Ch4 : Channel 4 Signal Input</Description>
               <GenericParameter>
@@ -5720,39 +5432,13 @@
                 <PortType>SignalConditioner</PortType>
               </PortTypes>
               <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-2-3e09059584b1"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-15-a712950f3d35"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-3-6daa2d05594e"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-16-35afb8c0a407"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-2-be068825b45d"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-15-857a0080f0e3"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-3-886744ba79e8"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-16-7965c827c11b"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-sigcond1-j2-ch2-12ede64bc2d2" Index="5">
-              <Name>Ch5</Name>
-              <Description>Ch5 : Channel 5 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-5-857a0080f0e3"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-18-441b05178bf1"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-9-a2b2a8930835"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-22-7dd6c13aa8e9"/>
-              </PinRefs>
-            </Port>
-            <Port ID="inventory-port-sigcond1-j2-ch3-5cd758eab947" Index="6">
+            <Port ID="inventory-port-sigcond1-j2-ch3-441b05178bf1" Index="6">
               <Name>Ch6</Name>
               <Description>Ch6 : Channel 6 Signal Input</Description>
               <GenericParameter>
@@ -5772,15 +5458,15 @@
                 <PortType>SignalConditioner</PortType>
               </PortTypes>
               <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-11-cb10c691834d"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-14-f2a0f1948a89"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-12-50320290824f"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-25-fd5d727158c4"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-11-5b5005afc62d"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-14-12546bfa5e19"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-12-3e09059584b1"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-25-a712950f3d35"/>
               </PinRefs>
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-sigcond2-de3efb032110">
+        <Module ID="inventory-mod-sigcond2-12990cbecb7a">
           <Name>SignalConditioner2</Name>
           <Description>TTC MSCD-606D-13 6-channel signal conditioner.</Description>
           <GenericParameter>
@@ -5800,127 +5486,127 @@
               <Name>J1</Name>
               <Description>J1: 25 pin D-subminiature, Signal I/O, Channels 1-3</Description>
               <Pins>
-                <Pin ID="inventory-pin-sigcond2-j1-1-a92e538b0328" Index="1">
+                <Pin ID="inventory-pin-sigcond2-j1-1-aeec215376c8" Index="1">
                   <Name>EX1</Name>
                   <Description>Channel 1 Voltage Excitation Out</Description>
                   <Designator>EX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-2-2612aac6963b" Index="2">
+                <Pin ID="inventory-pin-sigcond2-j1-2-d77a9c97846d" Index="2">
                   <Name>IN1+</Name>
                   <Description>Channel 1 Differential Signal Input +</Description>
                   <Designator>IN1+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-3-c9272088dd41" Index="3">
+                <Pin ID="inventory-pin-sigcond2-j1-3-7dd6c13aa8e9" Index="3">
                   <Name>IOUT_1</Name>
                   <Description>Channel 1 Current Excitation Out</Description>
                   <Designator>IOUT1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-4-09cef226dbaf" Index="4">
+                <Pin ID="inventory-pin-sigcond2-j1-4-05ef7ac943a7" Index="4">
                   <Name>EX2</Name>
                   <Description>Channel 2 Voltage Excitation Out</Description>
                   <Designator>EX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-5-c4fa310d9aed" Index="5">
+                <Pin ID="inventory-pin-sigcond2-j1-5-619c7e5e2fc6" Index="5">
                   <Name>IN2+</Name>
                   <Description>Channel 2 Differential Signal Input +</Description>
                   <Designator>IN2+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-6-9b89fa4f7da2" Index="6">
+                <Pin ID="inventory-pin-sigcond2-j1-6-fd5d727158c4" Index="6">
                   <Name>RSVD 0</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-7-70ea71e7c625" Index="7">
+                <Pin ID="inventory-pin-sigcond2-j1-7-35b5a481696e" Index="7">
                   <Name>RSVD 1</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-8-b2e8018861c1" Index="8">
+                <Pin ID="inventory-pin-sigcond2-j1-8-f223de1dca91" Index="8">
                   <Name>AGND 0</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-9-cbd17594fcfb" Index="9">
+                <Pin ID="inventory-pin-sigcond2-j1-9-f0dfae469f95" Index="9">
                   <Name>IOUT_2</Name>
                   <Description>Channel 2 Current Excitation Out</Description>
                   <Designator>IOUT2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-10-03602012be7f" Index="10">
+                <Pin ID="inventory-pin-sigcond2-j1-10-6f5bd59f1772" Index="10">
                   <Name>EX3</Name>
                   <Description>Channel 3 Voltage Excitation Out</Description>
                   <Designator>EX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-11-b21c33ffbf07" Index="11">
+                <Pin ID="inventory-pin-sigcond2-j1-11-12ede64bc2d2" Index="11">
                   <Name>IN3+</Name>
                   <Description>Channel 3 Differential Signal Input +</Description>
                   <Designator>Pos2-J1-Pin11</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-12-f80c54cf5cfd" Index="12">
+                <Pin ID="inventory-pin-sigcond2-j1-12-5cd758eab947" Index="12">
                   <Name>IOUT_3</Name>
                   <Description>Channel 3 Current Excitation Out</Description>
                   <Designator>IOUT3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-13-8e6fef997a23" Index="13">
+                <Pin ID="inventory-pin-sigcond2-j1-13-de3efb032110" Index="13">
                   <Name>CGND</Name>
                   <Description>Chassis Ground</Description>
                   <Designator>CGND</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-14-381331726905" Index="14">
+                <Pin ID="inventory-pin-sigcond2-j1-14-a92e538b0328" Index="14">
                   <Name>REX1</Name>
                   <Description>Channel 1 Voltage Excitation Return</Description>
                   <Designator>REX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-15-48c66dbd764b" Index="15">
+                <Pin ID="inventory-pin-sigcond2-j1-15-2612aac6963b" Index="15">
                   <Name>IN1-</Name>
                   <Description>Channel 1 Differential Signal Input -</Description>
                   <Designator>IN1-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-16-99ddaab495c9" Index="16">
+                <Pin ID="inventory-pin-sigcond2-j1-16-c9272088dd41" Index="16">
                   <Name>IRTN_1</Name>
                   <Description>Channel 1 Current Excitation Return</Description>
                   <Designator>IRTN1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-17-402a6c83e017" Index="17">
+                <Pin ID="inventory-pin-sigcond2-j1-17-09cef226dbaf" Index="17">
                   <Name>REX2</Name>
                   <Description>Channel 2 Voltage Excitation Return</Description>
                   <Designator>REX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-18-22a92d5beee9" Index="18">
+                <Pin ID="inventory-pin-sigcond2-j1-18-c4fa310d9aed" Index="18">
                   <Name>IN2-</Name>
                   <Description>Channel 2 Differential Signal Input -</Description>
                   <Designator>IN2-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-19-2ddee41cb7b0" Index="19">
+                <Pin ID="inventory-pin-sigcond2-j1-19-9b89fa4f7da2" Index="19">
                   <Name>RSVD 2</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-20-62ec8c087964" Index="20">
+                <Pin ID="inventory-pin-sigcond2-j1-20-70ea71e7c625" Index="20">
                   <Name>RSVD 3</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-21-6fc3a68d8f03" Index="21">
+                <Pin ID="inventory-pin-sigcond2-j1-21-b2e8018861c1" Index="21">
                   <Name>AGND 1</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-22-8370d448082e" Index="22">
+                <Pin ID="inventory-pin-sigcond2-j1-22-cbd17594fcfb" Index="22">
                   <Name>IRTN_2</Name>
                   <Description>Channel 2 Current Excitation Return</Description>
                   <Designator>IRTN2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-23-8daab1c21a88" Index="23">
+                <Pin ID="inventory-pin-sigcond2-j1-23-03602012be7f" Index="23">
                   <Name>REX3</Name>
                   <Description>Channel 3 Voltage Excitation Return</Description>
                   <Designator>REX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-24-42cb5529a0ca" Index="24">
+                <Pin ID="inventory-pin-sigcond2-j1-24-b21c33ffbf07" Index="24">
                   <Name>IN3-</Name>
                   <Description>Channel 3 Differential Signal Input -</Description>
                   <Designator>IN3-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j1-25-aeb6136fd41b" Index="25">
+                <Pin ID="inventory-pin-sigcond2-j1-25-f80c54cf5cfd" Index="25">
                   <Name>IRTN_3</Name>
                   <Description>Channel 3 Current Excitation Return</Description>
                   <Designator>IRTN3</Designator>
@@ -5931,127 +5617,127 @@
               <Name>J2</Name>
               <Description>J2: 25 pin D-subminiature, Signal I/O, Channels 1-3</Description>
               <Pins>
-                <Pin ID="inventory-pin-sigcond2-j2-1-91e9efbff82e" Index="1">
+                <Pin ID="inventory-pin-sigcond2-j2-1-8e6fef997a23" Index="1">
                   <Name>EX1</Name>
                   <Description>Channel 1 Voltage Excitation Out</Description>
                   <Designator>EX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-2-4846d5b57b66" Index="2">
+                <Pin ID="inventory-pin-sigcond2-j2-2-381331726905" Index="2">
                   <Name>IN1+</Name>
                   <Description>Channel 1 Differential Signal Input +</Description>
                   <Designator>IN1+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-3-a77e4ad50503" Index="3">
+                <Pin ID="inventory-pin-sigcond2-j2-3-48c66dbd764b" Index="3">
                   <Name>IOUT_1</Name>
                   <Description>Channel 1 Current Excitation Out</Description>
                   <Designator>IOUT1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-4-74d4e745ca8e" Index="4">
+                <Pin ID="inventory-pin-sigcond2-j2-4-99ddaab495c9" Index="4">
                   <Name>EX2</Name>
                   <Description>Channel 2 Voltage Excitation Out</Description>
                   <Designator>EX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-5-0408df946d4d" Index="5">
+                <Pin ID="inventory-pin-sigcond2-j2-5-402a6c83e017" Index="5">
                   <Name>IN2+</Name>
                   <Description>Channel 2 Differential Signal Input +</Description>
                   <Designator>IN2+</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-6-a9cdad9aef34" Index="6">
+                <Pin ID="inventory-pin-sigcond2-j2-6-22a92d5beee9" Index="6">
                   <Name>RSVD 0</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-7-956fa273b875" Index="7">
+                <Pin ID="inventory-pin-sigcond2-j2-7-2ddee41cb7b0" Index="7">
                   <Name>RSVD 1</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-8-63f3b10d210d" Index="8">
+                <Pin ID="inventory-pin-sigcond2-j2-8-62ec8c087964" Index="8">
                   <Name>AGND 0</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND0</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-9-f27c730e472b" Index="9">
+                <Pin ID="inventory-pin-sigcond2-j2-9-6fc3a68d8f03" Index="9">
                   <Name>IOUT_2</Name>
                   <Description>Channel 2 Current Excitation Out</Description>
                   <Designator>IOUT2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-10-d8609ed11ae5" Index="10">
+                <Pin ID="inventory-pin-sigcond2-j2-10-8370d448082e" Index="10">
                   <Name>EX3</Name>
                   <Description>Channel 3 Voltage Excitation Out</Description>
                   <Designator>EX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-11-46d09f63a336" Index="11">
+                <Pin ID="inventory-pin-sigcond2-j2-11-8daab1c21a88" Index="11">
                   <Name>IN3+</Name>
                   <Description>Channel 3 Differential Signal Input +</Description>
                   <Designator>Pos2-J1-Pin11</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-12-9c10add5985a" Index="12">
+                <Pin ID="inventory-pin-sigcond2-j2-12-42cb5529a0ca" Index="12">
                   <Name>IOUT_3</Name>
                   <Description>Channel 3 Current Excitation Out</Description>
                   <Designator>IOUT3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-13-037536175a11" Index="13">
+                <Pin ID="inventory-pin-sigcond2-j2-13-aeb6136fd41b" Index="13">
                   <Name>CGND</Name>
                   <Description>Chassis Ground</Description>
                   <Designator>CGND</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-14-c9308071fda7" Index="14">
+                <Pin ID="inventory-pin-sigcond2-j2-14-91e9efbff82e" Index="14">
                   <Name>REX1</Name>
                   <Description>Channel 1 Voltage Excitation Return</Description>
                   <Designator>REX1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-15-362a35c0a8bb" Index="15">
+                <Pin ID="inventory-pin-sigcond2-j2-15-4846d5b57b66" Index="15">
                   <Name>IN1-</Name>
                   <Description>Channel 1 Differential Signal Input -</Description>
                   <Designator>IN1-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-16-71badb97d0e5" Index="16">
+                <Pin ID="inventory-pin-sigcond2-j2-16-a77e4ad50503" Index="16">
                   <Name>IRTN_1</Name>
                   <Description>Channel 1 Current Excitation Return</Description>
                   <Designator>IRTN1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-17-7d0affe5bbff" Index="17">
+                <Pin ID="inventory-pin-sigcond2-j2-17-74d4e745ca8e" Index="17">
                   <Name>REX2</Name>
                   <Description>Channel 2 Voltage Excitation Return</Description>
                   <Designator>REX2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-18-e725064a5f49" Index="18">
+                <Pin ID="inventory-pin-sigcond2-j2-18-0408df946d4d" Index="18">
                   <Name>IN2-</Name>
                   <Description>Channel 2 Differential Signal Input -</Description>
                   <Designator>IN2-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-19-2867da42148e" Index="19">
+                <Pin ID="inventory-pin-sigcond2-j2-19-a9cdad9aef34" Index="19">
                   <Name>RSVD 2</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-20-eea8b5ee1164" Index="20">
+                <Pin ID="inventory-pin-sigcond2-j2-20-956fa273b875" Index="20">
                   <Name>RSVD 3</Name>
                   <Description>Reserved</Description>
                   <Designator>RSVD3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-21-3cebbb1eb857" Index="21">
+                <Pin ID="inventory-pin-sigcond2-j2-21-63f3b10d210d" Index="21">
                   <Name>AGND 1</Name>
                   <Description>Analog Ground</Description>
                   <Designator>AGND1</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-22-b3eff773499a" Index="22">
+                <Pin ID="inventory-pin-sigcond2-j2-22-f27c730e472b" Index="22">
                   <Name>IRTN_2</Name>
                   <Description>Channel 2 Current Excitation Return</Description>
                   <Designator>IRTN2</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-23-e346aae85d1f" Index="23">
+                <Pin ID="inventory-pin-sigcond2-j2-23-d8609ed11ae5" Index="23">
                   <Name>REX3</Name>
                   <Description>Channel 3 Voltage Excitation Return</Description>
                   <Designator>REX3</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-24-96406e17b9aa" Index="24">
+                <Pin ID="inventory-pin-sigcond2-j2-24-46d09f63a336" Index="24">
                   <Name>IN3-</Name>
                   <Description>Channel 3 Differential Signal Input -</Description>
                   <Designator>IN3-</Designator>
                 </Pin>
-                <Pin ID="inventory-pin-sigcond2-j2-25-d64e3f0c7c57" Index="25">
+                <Pin ID="inventory-pin-sigcond2-j2-25-9c10add5985a" Index="25">
                   <Name>IRTN_3</Name>
                   <Description>Channel 3 Current Excitation Return</Description>
                   <Designator>IRTN3</Designator>
@@ -6060,33 +5746,7 @@
             </Connector>
           </Connectors>
           <Ports>
-            <Port ID="inventory-port-sigcond2-j1-ch1-d75c016c6e77" Index="1">
-              <Name>Ch1</Name>
-              <Description>Ch1 : Channel 1 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-2-bb510e20b498"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-15-fe56ae0ddbb2"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-3-5bad16c3157b"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-16-ce201896aa1a"/>
-              </PinRefs>
-            </Port>
-            <Port ID="inventory-port-sigcond2-j1-ch2-d0622ee9bce5" Index="2">
+            <Port ID="inventory-port-sigcond2-j1-ch2-037536175a11" Index="2">
               <Name>Ch2</Name>
               <Description>Ch2 : Channel 2 Signal Input</Description>
               <GenericParameter>
@@ -6106,39 +5766,13 @@
                 <PortType>SignalConditioner</PortType>
               </PortTypes>
               <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-5-2bf557504573"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-18-886744ba79e8"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-9-ef5f6cfd9ef5"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-22-3c86e6ce2706"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j1-5-2b2e85f8ce39"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j1-18-97e9b44e2dc5"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j1-9-70a1cf435ff3"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j1-22-4d603426e6b8"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-sigcond2-j1-ch3-24ae008c9fc9" Index="3">
-              <Name>Ch3</Name>
-              <Description>Ch3 : Channel 3 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-11-eb98de548746"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-14-a75c2be965e1"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-12-4d603426e6b8"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j1-25-6c0d6287f1fb"/>
-              </PinRefs>
-            </Port>
-            <Port ID="inventory-port-sigcond2-j2-ch1-c1a518696154" Index="4">
+            <Port ID="inventory-port-sigcond2-j2-ch1-c9308071fda7" Index="4">
               <Name>Ch4</Name>
               <Description>Ch4 : Channel 4 Signal Input</Description>
               <GenericParameter>
@@ -6158,39 +5792,13 @@
                 <PortType>SignalConditioner</PortType>
               </PortTypes>
               <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-2-3e09059584b1"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-15-a712950f3d35"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-3-6daa2d05594e"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-16-35afb8c0a407"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-2-be068825b45d"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-15-857a0080f0e3"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-3-886744ba79e8"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-16-7965c827c11b"/>
               </PinRefs>
             </Port>
-            <Port ID="inventory-port-sigcond2-j2-ch2-0b5b5f92cb36" Index="5">
-              <Name>Ch5</Name>
-              <Description>Ch5 : Channel 5 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>SignalConditioning</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <PortType>SignalConditioner</PortType>
-                <ExcitationPortIsPresent/>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>SignalConditioner</PortType>
-              </PortTypes>
-              <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-5-857a0080f0e3"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-18-441b05178bf1"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-9-a2b2a8930835"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-22-7dd6c13aa8e9"/>
-              </PinRefs>
-            </Port>
-            <Port ID="inventory-port-sigcond2-j2-ch3-1ebb57bb02d1" Index="6">
+            <Port ID="inventory-port-sigcond2-j2-ch3-362a35c0a8bb" Index="6">
               <Name>Ch6</Name>
               <Description>Ch6 : Channel 6 Signal Input</Description>
               <GenericParameter>
@@ -6210,15 +5818,15 @@
                 <PortType>SignalConditioner</PortType>
               </PortTypes>
               <PinRefs>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-11-cb10c691834d"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-14-f2a0f1948a89"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-12-50320290824f"/>
-                <PinRef IDREF="inventory-pin-sigcond1-j2-25-fd5d727158c4"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-11-5b5005afc62d"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-14-12546bfa5e19"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-12-3e09059584b1"/>
+                <PinRef IDREF="inventory-pin-sigcond1-j2-25-a712950f3d35"/>
               </PinRefs>
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-thermo-86a2b7e3a5c4">
+        <Module ID="inventory-mod-thermo-71badb97d0e5">
           <Name>ThermocoupleConditioner</Name>
           <Description>TTC MTCD-208B-1 8-channel thermocouple conditioner.</Description>
           <GenericParameter>
@@ -6234,30 +5842,7 @@
           <Position>3</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <Ports>
-            <Port ID="inventory-port-thermo-j1-ch1-bb6352ee0eb2" Index="1">
-              <Name>Ch1</Name>
-              <Description>Ch1 : Channel 1 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <Measurement>
-                  <SampleRate>1000</SampleRate>
-                  <DataLength>12</DataLength>
-                </Measurement>
-                <PortType>Thermocouple</PortType>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>Thermocouple</PortType>
-              </PortTypes>
-            </Port>
-            <Port ID="inventory-port-thermo-j1-ch2-58948996fc78" Index="2">
+            <Port ID="inventory-port-thermo-j1-ch2-7d0affe5bbff" Index="2">
               <Name>Ch2</Name>
               <Description>Ch2 : Channel 2 Signal Input</Description>
               <GenericParameter>
@@ -6273,37 +5858,17 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Thermocouple</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-thermo-j1-ch3-ac4b25b03875" Index="3">
-              <Name>Ch3</Name>
-              <Description>Ch3 : Channel 3 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <Measurement>
-                  <SampleRate>1000</SampleRate>
-                  <DataLength>12</DataLength>
-                </Measurement>
-                <PortType>Thermocouple</PortType>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>Thermocouple</PortType>
-              </PortTypes>
-            </Port>
-            <Port ID="inventory-port-thermo-j1-ch4-c8c39477b7cc" Index="4">
+            <Port ID="inventory-port-thermo-j1-ch4-e725064a5f49" Index="4">
               <Name>Ch4</Name>
               <Description>Ch4 : Channel 4 Signal Input</Description>
               <GenericParameter>
@@ -6319,37 +5884,17 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Thermocouple</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-thermo-j1-ch5-b96a3b24b152" Index="5">
-              <Name>Ch5</Name>
-              <Description>Ch5 : Channel 5 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <Measurement>
-                  <SampleRate>1000</SampleRate>
-                  <DataLength>12</DataLength>
-                </Measurement>
-                <PortType>Thermocouple</PortType>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>Thermocouple</PortType>
-              </PortTypes>
-            </Port>
-            <Port ID="inventory-port-thermo-j1-ch6-fe3c8324ac4b" Index="6">
+            <Port ID="inventory-port-thermo-j1-ch6-2867da42148e" Index="6">
               <Name>Ch6</Name>
               <Description>Ch6 : Channel 6 Signal Input</Description>
               <GenericParameter>
@@ -6365,37 +5910,17 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
                 <PortType>Thermocouple</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-thermo-j1-ch7-1f61c37fd023" Index="7">
-              <Name>Ch7</Name>
-              <Description>Ch7 : Channel 7 Signal Input</Description>
-              <GenericParameter>
-                <NameValues>
-                  <NameValue Name="User" Index="1">BBN</NameValue>
-                </NameValues>
-                <BBNPortFunctionality>Thermocouple</BBNPortFunctionality>
-                <Measurement>
-                  <SampleRate>250</SampleRate>
-                  <DataLength>16</DataLength>
-                </Measurement>
-                <Measurement>
-                  <SampleRate>1000</SampleRate>
-                  <DataLength>12</DataLength>
-                </Measurement>
-                <PortType>Thermocouple</PortType>
-              </GenericParameter>
-              <PortDirection>Input</PortDirection>
-              <PortTypes>
-                <PortType>Thermocouple</PortType>
-              </PortTypes>
-            </Port>
-            <Port ID="inventory-port-thermo-j1-ch8-41e9cd1a02e7" Index="8">
+            <Port ID="inventory-port-thermo-j1-ch8-eea8b5ee1164" Index="8">
               <Name>Ch8</Name>
               <Description>Ch8 : Channel 8 Signal Input</Description>
               <GenericParameter>
@@ -6411,7 +5936,10 @@
                   <SampleRate>1000</SampleRate>
                   <DataLength>12</DataLength>
                 </Measurement>
-                <PortType>Thermocouple</PortType>
+                <PortType Thermocouple="J">Thermocouple</PortType>
+                <PortType Thermocouple="K">Thermocouple</PortType>
+                <PortType Thermocouple="T">Thermocouple</PortType>
+                <PortType Thermocouple="E">Thermocouple</PortType>
               </GenericParameter>
               <PortDirection>Input</PortDirection>
               <PortTypes>
@@ -6420,7 +5948,7 @@
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-bus1-629b50c510ee">
+        <Module ID="inventory-mod-bus1-3cebbb1eb857">
           <Name>BusMonitor1</Name>
           <Description>TTC MBIM-429C-1 8-channel bus monitor.</Description>
           <GenericParameter>
@@ -6436,7 +5964,7 @@
           <Position>4</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <Ports>
-            <Port ID="inventory-port-bus1-j1-ch1-3de4b9c30af8" Index="1">
+            <Port ID="inventory-port-bus1-j1-ch1-b3eff773499a" Index="1">
               <Name>Ch1</Name>
               <Description>Ch1 : Channel 1 Signal Input</Description>
               <GenericParameter>
@@ -6451,7 +5979,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch2-ad9fc7376aed" Index="2">
+            <Port ID="inventory-port-bus1-j1-ch2-e346aae85d1f" Index="2">
               <Name>Ch2</Name>
               <Description>Ch2 : Channel 2 Signal Input</Description>
               <GenericParameter>
@@ -6466,7 +5994,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch3-cc02ce0e49bb" Index="3">
+            <Port ID="inventory-port-bus1-j1-ch3-96406e17b9aa" Index="3">
               <Name>Ch3</Name>
               <Description>Ch3 : Channel 3 Signal Input</Description>
               <GenericParameter>
@@ -6481,7 +6009,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch4-8e334ac77fd1" Index="4">
+            <Port ID="inventory-port-bus1-j1-ch4-d64e3f0c7c57" Index="4">
               <Name>Ch4</Name>
               <Description>Ch4 : Channel 4 Signal Input</Description>
               <GenericParameter>
@@ -6496,7 +6024,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch5-e97c761d9a9c" Index="5">
+            <Port ID="inventory-port-bus1-j1-ch5-d75c016c6e77" Index="5">
               <Name>Ch5</Name>
               <Description>Ch5 : Channel 5 Signal Input</Description>
               <GenericParameter>
@@ -6511,7 +6039,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch6-7088742e72a0" Index="6">
+            <Port ID="inventory-port-bus1-j1-ch6-d0622ee9bce5" Index="6">
               <Name>Ch6</Name>
               <Description>Ch6 : Channel 6 Signal Input</Description>
               <GenericParameter>
@@ -6526,7 +6054,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch7-8f8d1c325085" Index="7">
+            <Port ID="inventory-port-bus1-j1-ch7-24ae008c9fc9" Index="7">
               <Name>Ch7</Name>
               <Description>Ch7 : Channel 7 Signal Input</Description>
               <GenericParameter>
@@ -6541,7 +6069,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus1-j1-ch8-49e67bc0eadd" Index="8">
+            <Port ID="inventory-port-bus1-j1-ch8-c1a518696154" Index="8">
               <Name>Ch8</Name>
               <Description>Ch8 : Channel 8 Signal Input</Description>
               <GenericParameter>
@@ -6558,7 +6086,7 @@
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-bus2-8db2612a061a">
+        <Module ID="inventory-mod-bus2-0b5b5f92cb36">
           <Name>BusMonitor2</Name>
           <Description>TTC MBIM-553A-1 dual redundant bus monitor.</Description>
           <GenericParameter>
@@ -6574,7 +6102,7 @@
           <Position>5</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <Ports>
-            <Port ID="inventory-port-bus2-j1-ch1-bdc806abfb72" Index="1">
+            <Port ID="inventory-port-bus2-j1-ch1-1ebb57bb02d1" Index="1">
               <Name>Ch1</Name>
               <Description>Ch1 : Channel 1 Signal Input</Description>
               <GenericParameter>
@@ -6589,7 +6117,7 @@
                 <PortType>Bus</PortType>
               </PortTypes>
             </Port>
-            <Port ID="inventory-port-bus2-j2-ch1-d4e475618d56" Index="2">
+            <Port ID="inventory-port-bus2-j2-ch1-86a2b7e3a5c4" Index="2">
               <Name>Ch2</Name>
               <Description>Ch2 : Channel 2 Signal Input</Description>
               <GenericParameter>
@@ -6606,7 +6134,7 @@
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-power1-731b1bf6b0ff">
+        <Module ID="inventory-mod-power1-bb6352ee0eb2">
           <Name>PowerSupply1</Name>
           <Description>TTC MPFM-461-1 mini power supply. Overhead.</Description>
           <GenericParameter>
@@ -6622,7 +6150,7 @@
           <Position>201</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <Ports>
-            <Port ID="inventory-port-power1-j1-ch1-54daf473b749" Index="1">
+            <Port ID="inventory-port-power1-j1-ch1-58948996fc78" Index="1">
               <Name>Ch1</Name>
               <Description>Ch1 : Channel 1 Power</Description>
               <GenericParameter>
@@ -6635,7 +6163,7 @@
             </Port>
           </Ports>
         </Module>
-        <Module ID="inventory-mod-power2-862ea598d74e">
+        <Module ID="inventory-mod-power2-ac4b25b03875">
           <Name>PowerSupply2</Name>
           <Description>TTC MPSM-2515-1 mini power supply. Overhead.</Description>
           <GenericParameter>
@@ -6651,7 +6179,7 @@
           <Position>202</Position>
           <PositionsOccupied>1</PositionsOccupied>
           <Ports>
-            <Port Enabled="false" ID="inventory-port-power2-j1-dummy-f75da1be97d7" Index="1">
+            <Port Enabled="false" ID="inventory-port-power2-j1-dummy-c8c39477b7cc" Index="1">
               <Name>Ch1</Name>
               <Description>Ch1 : Channel 1 Dummy</Description>
               <GenericParameter>

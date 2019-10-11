@@ -472,6 +472,7 @@ public class HierarchicalDataTransformer {
 		}
 
 		MdlHacks.injectExcitationPortDefaults(primaryClone);
+		MdlHacks.injectPortTypeDefaults(primaryClone);
 
 		return primaryClone;
 	}
