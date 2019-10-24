@@ -109,7 +109,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:202",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -117,7 +118,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:203",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -142,7 +144,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:190",
-          "PortDirection": "Output"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
@@ -237,7 +240,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:281",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -245,7 +249,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:282",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -285,6 +290,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -308,6 +314,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -331,6 +338,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -354,6 +362,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -377,6 +386,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -400,6 +410,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -423,6 +434,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -446,6 +458,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -454,7 +467,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:263",
-          "PortDirection": "Output"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
@@ -477,7 +491,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:187",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -485,7 +500,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:188",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -802,7 +818,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:171",
-          "PortDirection": "Output"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
@@ -825,7 +842,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:235",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -833,7 +851,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:236",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -1442,7 +1461,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:205",
-          "PortDirection": "Output"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
@@ -1465,7 +1485,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:376",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -1473,7 +1494,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:377",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -2342,7 +2364,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:336",
-          "PortDirection": "Output"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
@@ -2365,7 +2388,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:418",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -2373,7 +2397,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:419",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -2690,7 +2715,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:402",
-          "PortDirection": "Output"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
@@ -2713,7 +2739,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:168",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -2721,7 +2748,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:169",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -3401,7 +3429,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:260",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -3409,7 +3438,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:261",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -3444,6 +3474,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3462,6 +3493,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3480,6 +3512,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3498,6 +3531,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3516,6 +3550,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3534,6 +3569,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3552,6 +3588,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3570,6 +3607,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3588,6 +3626,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3606,6 +3645,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3624,6 +3664,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3642,6 +3683,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -3665,6 +3707,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -3688,6 +3731,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -3711,6 +3755,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -3734,6 +3779,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -3757,6 +3803,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -3780,6 +3827,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -3803,6 +3851,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -3826,6 +3875,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -3834,237 +3884,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:238",
-          "PortDirection": "Output"
-        }
-      ]
-    },
-    {
-      "BBNDauMonetaryCost": 50000,
-      "GloballyUniqueId": "I#58:1",
-      "Port": [
-        {
-          "BBNPortFunctionality": "Bus",
-          "Excitation": [
-            false
-          ],
-          "GloballyUniqueId": "I#33:47",
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "Bus",
-          "Excitation": [
-            false
-          ],
-          "GloballyUniqueId": "I#33:48",
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "Ethernet",
-          "Excitation": [
-            false
-          ],
-          "GloballyUniqueId": "I#33:36",
-          "PortDirection": "Bidirectional"
-        },
-        {
-          "BBNPortFunctionality": "Power",
-          "Excitation": [
-            false
-          ],
-          "GloballyUniqueId": "I#33:35",
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "Power",
-          "Excitation": [
-            false
-          ],
-          "GloballyUniqueId": "I#33:49",
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#33:37",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:30",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:29",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#33:38",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:32",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:31",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#33:39",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:34",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:33",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#33:40",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:36",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:35",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#33:41",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:38",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:37",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#33:42",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:40",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:39",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#33:43",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:42",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:41",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": [
-            false,
-            true
-          ],
-          "GloballyUniqueId": "I#33:44",
-          "Measurement": [
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:44",
-              "SampleRate": 192000
-            },
-            {
-              "DataLength": 16,
-              "DataRate": "@SampleRate * @DataLength",
-              "GloballyUniqueId": "I#80:43",
-              "SampleRate": 96000
-            }
-          ],
-          "PortDirection": "Input"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
@@ -4177,7 +3998,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:33",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -4185,7 +4007,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:34",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -4658,7 +4481,251 @@
             false
           ],
           "GloballyUniqueId": "I#33:1",
-          "PortDirection": "Output"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
+        }
+      ]
+    },
+    {
+      "BBNDauMonetaryCost": 50000,
+      "GloballyUniqueId": "I#58:1",
+      "Port": [
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": [
+            false
+          ],
+          "GloballyUniqueId": "I#33:47",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "Bus",
+          "Excitation": [
+            false
+          ],
+          "GloballyUniqueId": "I#33:48",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "Ethernet",
+          "Excitation": [
+            false
+          ],
+          "GloballyUniqueId": "I#33:36",
+          "PortDirection": "Bidirectional",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "Power",
+          "Excitation": [
+            false
+          ],
+          "GloballyUniqueId": "I#33:35",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "Power",
+          "Excitation": [
+            false
+          ],
+          "GloballyUniqueId": "I#33:49",
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#33:37",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:30",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:29",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#33:38",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:32",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:31",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#33:39",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:34",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:33",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#33:40",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:36",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:35",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#33:41",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:38",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:37",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#33:42",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:40",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:39",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#33:43",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:42",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:41",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": [
+            false,
+            true
+          ],
+          "GloballyUniqueId": "I#33:44",
+          "Measurement": [
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:44",
+              "SampleRate": 192000
+            },
+            {
+              "DataLength": 16,
+              "DataRate": "@SampleRate * @DataLength",
+              "GloballyUniqueId": "I#80:43",
+              "SampleRate": 96000
+            }
+          ],
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
@@ -4690,7 +4757,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:103",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "SignalConditioning",
@@ -5330,7 +5398,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:399",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -5338,7 +5407,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:400",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -5727,7 +5797,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:379",
-          "PortDirection": "Output"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
@@ -5768,7 +5839,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:296",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -5776,7 +5848,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:297",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -5816,6 +5889,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -5839,6 +5913,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -5862,6 +5937,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -5885,6 +5961,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -5908,6 +5985,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -5931,6 +6009,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -5954,6 +6033,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -5977,6 +6057,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -5985,7 +6066,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:284",
-          "PortDirection": "Output"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     },
@@ -6008,7 +6090,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:131",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -6016,7 +6099,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:132",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -6488,7 +6572,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:333",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Power",
@@ -6496,7 +6581,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:334",
-          "PortDirection": "Input"
+          "PortDirection": "Input",
+          "PortType": "_N0_V4LU3_"
         },
         {
           "BBNPortFunctionality": "Serial",
@@ -7137,7 +7223,8 @@
             false
           ],
           "GloballyUniqueId": "I#33:299",
-          "PortDirection": "Output"
+          "PortDirection": "Output",
+          "PortType": "_N0_V4LU3_"
         }
       ]
     }

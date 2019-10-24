@@ -27,12 +27,13 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#32:430",
+          "GloballyUniqueId": "I#32:423",
           "Measurement": [
             {
               "DataLength": {
@@ -43,7 +44,7 @@
                 "Min": 1000,
                 "Max": 4000
               },
-              "GloballyUniqueId": "I#57:461-41abf44f-a35c-4828-9628-2f81cd4b9164",
+              "GloballyUniqueId": "I#57:461-c4efd5f2-7a22-40f2-98a2-1c75faa3d75a",
               "SampleRate": {
                 "Min": 125,
                 "Max": 250
@@ -51,12 +52,13 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#32:423",
+          "GloballyUniqueId": "I#32:424",
           "Measurement": [
             {
               "DataLength": {
@@ -75,12 +77,13 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#32:426",
+          "GloballyUniqueId": "I#32:427",
           "Measurement": [
             {
               "DataLength": {
@@ -99,12 +102,13 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#32:424",
+          "GloballyUniqueId": "I#32:426",
           "Measurement": [
             {
               "DataLength": {
@@ -123,12 +127,13 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#32:428",
+          "GloballyUniqueId": "I#32:430",
           "Measurement": [
             {
               "DataLength": {
@@ -147,6 +152,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -171,12 +177,13 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
           "BBNPortFunctionality": "Thermocouple",
           "Excitation": false,
-          "GloballyUniqueId": "I#32:427",
+          "GloballyUniqueId": "I#32:428",
           "Measurement": [
             {
               "DataLength": {
@@ -195,6 +202,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         }
       ]

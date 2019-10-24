@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import time
 
@@ -10,6 +11,7 @@ SD = os.path.dirname(os.path.realpath(__file__))
 JAR_FILE = None
 DSL_DIR = None
 RULES_FILE = None
+SCRATCH_DIR = os.path.join(SD, 'scratch_dir')
 
 with open(os.path.join(SD, 'scenarios/test_scenarios.json'), 'r') as f:
     test_scenario_data = json.load(f)
@@ -33,6 +35,7 @@ parser.add_argument('--run-staging-tests', action='store_true', help='Run the st
 parser.add_argument('--run-regression-tests', action='store_true', help='Run the regression tests')
 parser.add_argument('--run-debug-tests', action='store_true', help='Run the debug tests')
 parser.add_argument('--run-bad-tests', action='store_true', help='Run the tests that are known to be bad')
+parser.add_argument('--no-iterative', action='store_true', help='Do not run the tests iteratively')
 
 
 class ExecData:
@@ -42,8 +45,11 @@ class ExecData:
         self.passed = None
 
 
-def exec_cmd(cmd, success_expected, test_identifier, cwd=None, abort_on_failure=True):
-    exec_data = ExecData(test_identifier)
+def exec_cmd(cmd, success_expected, test_identifier, cwd=None, abort_on_failure=True, iteration=None):
+    if iteration is None:
+        exec_data = ExecData(test_identifier)
+    else:
+        exec_data = ExecData(test_identifier + ' (' + str(iteration) + ')')
 
     print('============================================================')
     print('--------------------------COMMAND---------------------------')
@@ -134,8 +140,56 @@ def resolve_file(filepath):
     return filepath
 
 
-def run_test(request_file, inventory_file, success_expected, simple_solver=False, use_jar=True, abort_on_failure=True,
-             scenario_identifier=None):
+def update_inventory(scenario_identifier, inventory_file, iteration, response_file=None):
+    """
+    :type scenario_identifier: str
+    :type inventory_file: str
+    :type iteration: int
+    :type response_file: str
+    """
+
+    scratch_dir = os.path.join(SCRATCH_DIR, scenario_identifier)
+    if not os.path.exists(scratch_dir):
+        os.mkdir(scratch_dir)
+
+    previous_iteration_tag = 'iteration_' + str(iteration - 1)
+    base_name = os.path.basename(inventory_file)
+    if previous_iteration_tag in base_name:
+        base_name = base_name.replace(previous_iteration_tag, 'iteration_' + str(iteration))
+    else:
+        base_name = 'iteration_' + str(iteration) + '-' + base_name
+
+    inventory_target_file = os.path.join(
+        scratch_dir, base_name)
+
+    shutil.copy(resolve_file(inventory_file), inventory_target_file)
+
+    if response_file is not None:
+        response_json = json.load(open(response_file, 'r'))
+        inventory_json = json.load(open(inventory_file, 'r'))
+
+        marked_for_removal = list()
+
+        for response_dau in response_json['daus']:
+            dau_identifier = response_dau['GloballyUniqueId']
+
+            for inventory_dau in inventory_json['daus']:
+                if inventory_dau['GloballyUniqueId'] == dau_identifier:
+                    marked_for_removal.append(inventory_dau)
+
+        for obj in marked_for_removal:
+            inventory_json['daus'].remove(obj)
+
+        json.dump(inventory_json, open(inventory_target_file, 'w'))
+
+    return inventory_target_file
+
+
+def inner_run_test(request_file, inventory_file, success_expected, simple_solver=False, use_jar=True,
+                   abort_on_failure=True,
+                   scenario_identifier=None,
+                   max_daus=2,
+                   iteration=None):
     """
     :type request_file str
     :type inventory_file str
@@ -143,9 +197,10 @@ def run_test(request_file, inventory_file, success_expected, simple_solver=False
     :type simple_solver bool
     :type use_jar bool
     :type scenario_identifier str
+    :type iteration: int
 
     :type abort_on_failure bool
-    :return:
+    :rtype: ExecData
     """
 
     global JAR_FILE
@@ -171,12 +226,63 @@ def run_test(request_file, inventory_file, success_expected, simple_solver=False
         if simple_solver:
             raise Exception('The SimpleSolver can only be used through the jar!')
         else:
-            cmd = ['stack', 'exec', 'resource-dsl', '--', 'swap-dau', '--run', '--max-daus', '4',
+            cmd = ['stack', 'exec', 'resource-dsl', '--', 'swap-dau', '--run', '--max-daus', str(max_daus),
                    '--rules-file', RULES_FILE,
                    '--inventory-file', inventory_file,
                    '--request-file', request_file]
 
-            return exec_cmd(cmd, success_expected, scenario_identifier, DSL_DIR, abort_on_failure)
+            return exec_cmd(cmd, success_expected, scenario_identifier, DSL_DIR, abort_on_failure, iteration)
+
+
+def run_test(request_file, inventory_file, expected_success_count, iterative, simple_solver=False,
+             use_jar=True, abort_on_failure=True, scenario_identifier=None, max_daus=2):
+    global DSL_DIR
+
+    rval = list()
+
+    iteration_count = 0
+    remaining_successes = expected_success_count
+
+    inventory_file = update_inventory(scenario_identifier, resolve_file(inventory_file), iteration_count)
+
+    while remaining_successes > 0:
+        result = inner_run_test(
+            request_file=request_file,
+            inventory_file=inventory_file,
+            success_expected=True,
+            simple_solver=simple_solver,
+            use_jar=use_jar,
+            abort_on_failure=abort_on_failure,
+            scenario_identifier=scenario_identifier,
+            max_daus=max_daus,
+            iteration=iteration_count
+        )
+
+        rval.append(result)
+
+        iteration_count = iteration_count + 1
+        remaining_successes = remaining_successes - 1
+
+        if not iterative or not result.passed:
+            return rval
+
+        inventory_file = update_inventory(
+            scenario_identifier,
+            inventory_file, iteration_count,
+            response_file=os.path.join(DSL_DIR, 'outbox/swap-response.json'))
+
+    rval.append(inner_run_test(
+        request_file=request_file,
+        inventory_file=inventory_file,
+        success_expected=False,
+        simple_solver=simple_solver,
+        use_jar=use_jar,
+        abort_on_failure=abort_on_failure,
+        scenario_identifier=scenario_identifier,
+        max_daus=max_daus,
+        iteration=iteration_count))
+
+    return rval
 
 
 def main():
@@ -195,24 +301,34 @@ def main():
 
     total_scenarios = args.run_staging_tests + args.run_regression_tests + args.run_debug_tests + args.run_bad_tests
 
+    run_iterative = not args.no_iterative
+
     if total_scenarios > 1:
         raise Exception(
             'The "--run-staging-tests", "--run-regression-tests", "--run-debug-tests", and "--run-bad-tests"' +
             ' parameters cannot be used with any other parameters!')
 
     def run_scenario(scenario_identifier, scenario):
+        rval = list()
         if 'backup_hash' in scenario:
             scenario.pop('backup_hash')
 
-        return run_test(simple_solver=use_simple_solver, use_jar=use_full_jar,
-                        abort_on_failure=(not args.keep_running_on_failure), scenario_identifier=scenario_identifier,
-                        **scenario)
+        scratch_dir = os.path.join(SCRATCH_DIR, scenario_identifier)
+        if not os.path.exists(scratch_dir):
+            os.mkdir(scratch_dir)
+
+        rval.extend(run_test(simple_solver=use_simple_solver, use_jar=use_full_jar, iterative=run_iterative,
+                             abort_on_failure=(not args.keep_running_on_failure),
+                             scenario_identifier=scenario_identifier,
+                             **scenario))
+
+        return rval
 
     def run_scenarios(scenario_set):
         run_results = list()
         for name in scenario_set.keys():
             input_group = scenario_set[name]
-            run_results.append(run_scenario(name, input_group))
+            run_results.extend(run_scenario(name, input_group))
 
         return run_results
 
@@ -239,13 +355,16 @@ def main():
         if not os.path.exists(RULES_FILE):
             raise Exception('The file "' + RULES_FILE + '" does not exist!')
 
+    if not os.path.exists(SCRATCH_DIR):
+        os.mkdir(SCRATCH_DIR)
+
     results = list()
 
     if args.input_inventory is not None or args.input_request is not None:
         results.append(
             run_test(inventory_file=args.input_inventory, request_file=args.input_request,
-                     simple_solver=use_simple_solver, use_jar=use_full_jar,
-                     abort_on_failure=(not args.keep_running_on_failure), success_expected=True)
+                     iterative=run_iterative, simple_solver=use_simple_solver, use_jar=use_full_jar,
+                     abort_on_failure=(not args.keep_running_on_failure), expected_success_count=1)
         )
 
     elif args.run_staging_tests:
@@ -259,19 +378,17 @@ def main():
 
     elif args.scenario is None:
         results = results + run_scenarios(regression_scenarios)
-        results = results + run_scenarios(debug_scenarios)
-        results = results + run_scenarios(staging_scenarios)
         results = results + run_scenarios(bad_scenarios)
 
     else:
         if args.scenario in regression_scenarios:
-            results.append(run_scenario(args.scenario, regression_scenarios[args.scenario]))
+            results.extend(run_scenario(args.scenario, regression_scenarios[args.scenario]))
         elif args.scenario in debug_scenarios:
-            results.append(run_scenario(args.scenario, debug_scenarios[args.scenario]))
+            results.extend(run_scenario(args.scenario, debug_scenarios[args.scenario]))
         elif args.scenario in bad_scenarios:
-            results.append(run_scenario(args.scenario, bad_scenarios[args.scenario]))
+            results.extend(run_scenario(args.scenario, bad_scenarios[args.scenario]))
         elif args.scenario in staging_scenarios:
-            results.append(run_scenario(args.scenario, staging_scenarios[args.scenario]))
+            results.extend(run_scenario(args.scenario, staging_scenarios[args.scenario]))
         else:
             print("Invalid scenario '" + args.scenario + "'!")
             exit(-1)

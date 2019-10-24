@@ -312,8 +312,6 @@
 								<Name>Therm N</Name>
 								<Description>J1</Description>
 								<PortDirection>Output</PortDirection>
-								<PinRef IDREF="id_0x0000004d"/>
-								<PinRef IDREF="id_0x00000055"/>
 							</Port>
 						</Ports>
 					</DeviceModule>
@@ -342,8 +340,6 @@
 								<Name>Therm N</Name>
 								<Description>J1</Description>
 								<PortDirection>Output</PortDirection>
-								<PinRef IDREF="id_0x0000006e"/>
-                        					<PinRef IDREF="id_0x00000015"/>
 							</Port>
 						</Ports>
 					</DeviceModule>
@@ -372,8 +368,6 @@
 								<Name>Therm N</Name>
 								<Description>J1</Description>
 								<PortDirection>Output</PortDirection>
-								<PinRef IDREF="id_0x0000004a"/>
-								<PinRef IDREF="id_0x0000004c"/>
 							</Port>
 						</Ports>
 					</DeviceModule>
@@ -402,8 +396,6 @@
 								<Name>Therm N</Name>
 								<Description>J1</Description>
 								<PortDirection>Output</PortDirection>
-								<PinRef IDREF="id_0x0000004a01"/>
-								<PinRef IDREF="id_0x0000004c01"/>
 							</Port>
 						</Ports>
 					</DeviceModule>

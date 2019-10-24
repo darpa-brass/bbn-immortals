@@ -27,6 +27,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -51,6 +52,32 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
+          "PortType": "SignalConditioner"
+        },
+        {
+          "BBNPortFunctionality": "SignalConditioning",
+          "Excitation": true,
+          "GloballyUniqueId": "I#45:423",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 1000,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "I#54:461-1be9b97d-70c3-4404-9a96-f2ddec5cf4f7",
+              "SampleRate": {
+                "Min": 125,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -75,6 +102,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -99,6 +127,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -123,6 +152,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -147,6 +177,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -171,6 +202,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -195,6 +227,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -219,6 +252,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -243,6 +277,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
         },
         {
@@ -267,55 +302,8 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "SignalConditioner"
-        },
-        {
-          "BBNPortFunctionality": "SignalConditioning",
-          "Excitation": true,
-          "GloballyUniqueId": "I#45:423",
-          "Measurement": [
-            {
-              "DataLength": {
-                "Min": 8,
-                "Max": 16
-              },
-              "DataRate": {
-                "Min": 1000,
-                "Max": 4000
-              },
-              "GloballyUniqueId": "I#54:461-f7187c0c-a88e-4698-a43f-91396f3258cc",
-              "SampleRate": {
-                "Min": 125,
-                "Max": 250
-              }
-            }
-          ],
-          "PortDirection": "Input",
-          "PortType": "SignalConditioner"
-        },
-        {
-          "BBNPortFunctionality": "Thermocouple",
-          "Excitation": false,
-          "GloballyUniqueId": "I#45:436",
-          "Measurement": [
-            {
-              "DataLength": {
-                "Min": 8,
-                "Max": 16
-              },
-              "DataRate": {
-                "Min": 1000,
-                "Max": 4000
-              },
-              "GloballyUniqueId": "I#54:462-3094b6a2-f2a9-4184-834c-13d5de212c28",
-              "SampleRate": {
-                "Min": 125,
-                "Max": 250
-              }
-            }
-          ],
-          "PortDirection": "Input",
-          "PortType": "Thermocouple"
         },
         {
           "BBNPortFunctionality": "Thermocouple",
@@ -339,6 +327,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -363,6 +352,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -387,6 +377,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -411,6 +402,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -435,6 +427,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -459,6 +452,7 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
           "PortType": "Thermocouple"
         },
         {
@@ -483,6 +477,32 @@
             }
           ],
           "PortDirection": "Input",
+          "PortPolarity": "Bipolar",
+          "PortType": "Thermocouple"
+        },
+        {
+          "BBNPortFunctionality": "Thermocouple",
+          "Excitation": false,
+          "GloballyUniqueId": "I#45:436",
+          "Measurement": [
+            {
+              "DataLength": {
+                "Min": 8,
+                "Max": 16
+              },
+              "DataRate": {
+                "Min": 1000,
+                "Max": 4000
+              },
+              "GloballyUniqueId": "I#54:462-db73fdce-962d-4afb-a455-ea7c9ce0dab8",
+              "SampleRate": {
+                "Min": 125,
+                "Max": 250
+              }
+            }
+          ],
+          "PortDirection": "Input",
+          "PortPolarity": "Unipolar",
           "PortType": "Thermocouple"
         }
       ]

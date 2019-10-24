@@ -40,6 +40,12 @@ mvn
 
 # Go to the tester directory
 cd ../../../../phase3/utils/xtstest/
+
+# Get the saxon parser.
+mkdir saxon
+wget https://downloads.sourceforge.net/project/saxon/Saxon-HE/9.9/SaxonHE9-9-1-5J.zip -O saxon/saxon.zip
+unzip -d saxon saxon/saxon.zip
+rm saxon/saxon.zip
 ```
 
 the script I use on my test image is as follows:
@@ -58,6 +64,10 @@ cp knowledge-repo/cp/cp3.1/cp-ess-min/etc/schemas/v19/Tmats* ${IMMORTALS_CHALLEN
 cd knowledge-repo/cp/cp3.1/xsd-translation-service-test
 mvn
 cd ../../../../phase3/utils/xtstest/
+mkdir saxon
+wget https://downloads.sourceforge.net/project/saxon/Saxon-HE/9.9/SaxonHE9-9-1-5J.zip -O saxon/saxon.zip
+unzip -d saxon saxon/saxon.zip
+rm saxon/saxon.zip
 ```
 
 At the end of testing either errors will be displayed or a diff command to 

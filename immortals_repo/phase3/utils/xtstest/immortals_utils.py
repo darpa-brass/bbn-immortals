@@ -259,6 +259,17 @@ def get_s6_swri_custom_scenario_names():
                     )
                 )
 
+def get_s6_swri_predefined_scenario_names():
+    """
+    :rtype: list[str]
+    """
+    scenarios = _get_scenarios(['s6_swri_scenarios.json']).values()
+
+    return list(map(lambda x: x.shortName,
+                    list(filter(lambda x: x.updatedXsdVersion is not None, scenarios))
+                    )
+                )
+
 
 def get_s6_swri_predefined_scenario_names():
     """
@@ -280,6 +291,11 @@ def get_s6_all_custom_scenarios():
     scenarios.extend(list(_get_scenarios(['s6_swri_scenarios.json']).values()))
     return list(filter(lambda x: x.updatedXsdInputPath is not None, scenarios))
 
+def get_s6_all_custom_scenarios_names():
+    """
+    :rtype: list[str]
+    """
+    return list(map(lambda x: x.shortName, get_s6_all_custom_scenarios()))
 
 def get_s6_scenarios():
     return _get_scenarios(['s6_bbn_scenarios.json', 's6_swri_scenarios.json'])

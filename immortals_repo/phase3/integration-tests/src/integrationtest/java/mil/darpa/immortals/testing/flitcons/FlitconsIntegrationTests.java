@@ -69,10 +69,10 @@ public class FlitconsIntegrationTests {
 		JarTestScenarioRunner.createScenario5Runner("s5e05i01").execute();
 	}
 
-//	@Test
-//	public void testSwriExample6() {
-//		JarTestScenarioRunner.createScenario5Runner("s5e06i01").execute();
-//	}
+	@Test
+	public void testSwriExample6() {
+		JarTestScenarioRunner.createScenario5Runner("s5e06i01").execute();
+	}
 
 	@Test
 	public void testSwriExample7() {

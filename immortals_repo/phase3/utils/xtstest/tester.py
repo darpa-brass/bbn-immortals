@@ -4,27 +4,66 @@ import argparse
 import atexit
 import json
 import os
+import re
 import shutil
 import subprocess
+from typing import List, Dict, Iterable, Union
+
 import time
-from typing import List, Union, Dict
-
-from lxml import etree
-from lxml.etree import XSLTApplyError
-from xmldiff.actions import UpdateAttrib
-from xmldiff.main import diff_files
-
 from immortals_utils import IMMORTALS_ROOT, TestScenario, get_s6_scenarios, \
     get_s6_all_custom_scenarios, get_s6_bbn_custom_scenario_names, get_s6_swri_custom_scenario_names, \
-    get_s6_swri_predefined_scenario_names, KR_XTS_TESTER_JAR
+    get_s6_all_custom_scenarios_names, KR_XTS_TESTER_JAR, \
+    get_s6_swri_predefined_scenario_names
+from lxml import etree
+from xmldiff.actions import UpdateAttrib
+from xmldiff.main import diff_files
 
 scenarios = get_s6_scenarios()
 scenario_names = list(scenarios.keys())
 sorted(scenario_names)
 
+validation_exceptions = [
+    # 'SCHEMAV_CVC_IDC'
+]
+
+VALIDATION_ERR_MSG_PREFIX_MATCHES = {
+    ", attribute 'IDREF': '' is not a valid value of the atomic type 'xs:IDREF'.",
+    ": This element is not expected.",
+    ": '0' is not a valid value of the atomic type 'xs:positiveInteger'.",
+    ": [facet 'enumeration'] The value 'Byte' is not an element of the set",
+    ": [facet 'enumeration'] The value 'Other' is not an element of the set",
+    ": Missing child element(s).",
+    ": Element content is not allowed, because the type definition is simple.",
+    ": Element content is not allowed, because the content type is empty.",
+    ": The attribute 'IDREF' is required but missing.",
+    " evaluate to a node.",
+    ": Character content is not allowed, because the content type is empty.",
+    ": Warning: No precomputed value available, the value was either invalid or something strange happend.",
+    ", attribute 'IDREF': Warning: No precomputed value available, the value was either invalid or something strange happend.",
+    ", attribute 'ID': The attribute 'ID' is not allowed.",
+    ": 'Other' is not a valid value of the atomic type",
+    ": No match found for key-sequence",
+    ": The attribute",
+    ": 'Byte' is not a valid value of the atomic type",
+    ": Not all fields of key identity-constraint",
+    ": '' is not a valid value of the atomic type ",
+    ": [facet 'pattern'] The value '' is not accepted by the pattern",
+    ": Duplicate key-sequence"
+}
+
+VALIDATION_ERR_MSG_PREFIX_TRANSLATIONS = {
+    ": The attribute": "Missing Attribute",
+    ": Not all fields of key identity-constraint ": "Not all fields of key identity-constraint evaluate to a node.",
+    ": [facet 'pattern'] The value '' is not accepted by the pattern": ": [facet 'pattern'] The value '' is not accepted by the pattern.",
+    ": Duplicate key-sequence": ": Duplicate key-sequence in unique identity-constraint.",
+    ": No match found for key-sequence": "Expected IDREF value does not have a matching ID."
+}
+
 NO_DIFF_EXPECTED_FILE_CONTENTS = 'NO_DIFF_EXPECTED-6f01c82c-2179-44be-81e2-d1710e0e15d5-NO_DIFF_EXPECTED'
 
 IMMORTALS_DIFF_TOOL = 'meld' if 'IMMORTALS_DIFF_TOOL' not in os.environ else os.environ['IMMORTALS_DIFF_TOOL']
+
+SAXON_JAR_PATH = os.path.abspath('saxon/saxon9he.jar')
 
 parser = argparse.ArgumentParser(description="XML Translation Service Tester",
                                  formatter_class=argparse.RawTextHelpFormatter)
@@ -44,6 +83,8 @@ parser.add_argument('--test-all-swri', '-s', action='store_true',
 
 parser.add_argument('--show-all-xsd-diff-commands', '-d', action='store_true',
                     help='Outputs a list of diff commands for comparing the initial and target XSD files')
+parser.add_argument('--use-lxml', '-l', action='store_true',
+                    help='Uses lxml to process the XSLT instead of saxon. This does not work for all sceanrios!')
 
 if 'XTS_ROOT_DIR' in os.environ:
     XTS_ROOT_DIR = os.environ['XTS_ROOT_DIR']
@@ -82,22 +123,59 @@ class XsdTranslationService:
                     p.kill()
 
 
-def diff_xml_files(desired_filepath: str, actual_filepath: str):
-    diff = diff_files(desired_filepath, actual_filepath)
-    marked_for_removal = list()
-    for difference in list(diff):
-        if (isinstance(difference, UpdateAttrib) and
-                    difference.name == '{http://www.w3.org/2001/XMLSchema-instance}schemaLocation' and
-                    difference.node == '/*[1]'):
-            marked_for_removal.append(difference)
+def jsonify_output(displayable_results: List[str]):
+    try:
+        result_length = len(displayable_results)
+        top_dict = dict()
+        curr_list = None
+        curr_idx = 0
 
-    for difference in marked_for_removal:
-        diff.remove(difference)
+        while curr_idx < result_length:
+            curr_value = displayable_results[curr_idx]
+            if (curr_idx + 1) < result_length:
+                next_value = displayable_results[curr_idx + 1]
+            else:
+                next_value = None
 
-    if len(diff) > 0:
-        return False
+            if next_value is not None:
+                if curr_value.startswith('\t\t\t') or next_value.startswith('\t\t\t'):
+                    raise Exception("Pparsing of triple tabs not supported!")
 
-    return True
+                elif not curr_value.startswith('\t') and (
+                        next_value.startswith('\t') or next_value.startswith('ERROR')):
+                    curr_list = list()
+                    top_dict[curr_value] = curr_list
+                    curr_idx = curr_idx + 1
+
+                elif curr_value.startswith('\t') and next_value.startswith('\t\t'):
+                    curr_list.append(curr_value + '  ' + next_value)
+                    curr_idx = curr_idx + 2
+
+                elif ((curr_value.startswith('\t') or curr_value.startswith('ERROR')) and
+                      (next_value.startswith('\t') or next_value.startswith('ERROR'))):
+                    curr_list.append(curr_value)
+                    curr_idx = curr_idx + 1
+
+                elif curr_value == '\n':
+                    curr_list = None
+                    curr_idx = curr_idx + 1
+                else:
+                    raise Exception("Bad conversion logic!")
+
+            elif curr_value.startswith('\t'):
+                curr_list.append(curr_value)
+                curr_idx = curr_idx + 1
+
+            elif curr_value == '\n':
+                curr_idx = curr_idx + 1
+
+            else:
+                raise Exception("Bad conversion logic!")
+
+        return top_dict
+    except Exception as e:
+        print(e)
+        return displayable_results
 
 
 class ValidationError:
@@ -106,26 +184,209 @@ class ValidationError:
         self.file_line = schema_error_log_entry.line
         self.message = schema_error_log_entry.message
         self.error_type = schema_error_log_entry.type_name
+        self.is_allowable_error = False
 
     def to_dict(self):
         return {
             "filename": self.filename,
-            "fileLine": self.file_line,
+            "file_line": self.file_line,
             "message": self.message,
-            "errorType": self.error_type
+            "error_type": self.error_type,
+            "is_allowable_error": self.is_allowable_error
         }
 
 
-class ValidationResult:
-    def __init__(self):
+class ResultantData:
+    def __init__(self, identifier: str):
+        self.identifier = identifier
         self.errors = list()  # type: List[str]
         self.warnings = list()  # type: List[str]
-        self.successes = list()  # type: List[str]
+        self.info = list()  # type: List[str]
+        self.validation_errors = dict()  # type: Dict[str, List[ValidationError]]
+        self.difference_errors = dict()  # type: Dict[str, List[str]]
+
+    @staticmethod
+    def create_fine_grained_validation_error_metrics(
+            result_data: Union[Iterable['ResultantData'], 'ResultantData']) -> Dict:
+        if isinstance(result_data, ResultantData):
+            result_data = [result_data]
+
+        subcategory_dict = dict()
+
+        total_errors = 0
+
+        p = re.compile(r"Element \'{(?P<namespace>[a-zA-Z0-9.:/\-]*)\}(?P<label>\w*)\'(?P<remainder>.*)")
+
+        for data in result_data:
+            for ve_type in data.validation_errors.keys():
+                error_msgs = list(map(lambda x: x.message, data.validation_errors[ve_type]))
+
+                for msg in error_msgs:
+                    result_dict = re.match(p, msg).groupdict()
+                    sub_msg = result_dict['remainder']
+
+                    match_found = False
+                    for candidate in VALIDATION_ERR_MSG_PREFIX_MATCHES:
+                        if sub_msg.startswith(candidate):
+                            match_found = True
+                            if candidate in VALIDATION_ERR_MSG_PREFIX_TRANSLATIONS:
+                                candidate = VALIDATION_ERR_MSG_PREFIX_TRANSLATIONS[candidate]
+
+                            label = ve_type + ' - ' + candidate
+                            total_errors = total_errors + 1
+
+                            if label in subcategory_dict:
+                                subcategory_dict[label] = subcategory_dict[label] + 1
+                            else:
+                                subcategory_dict[label] = 1
+                            break
+
+                    if not match_found:
+                        print('Could not find a candidate for sub "' + sub_msg + '"!')
+                        print('Could not find a candidate for "' + msg + '"!')
+
+        esp = dict()
+        esc = dict()
+
+        for key in subcategory_dict:
+            esp[key] = subcategory_dict[key] / total_errors
+            esc[key] = subcategory_dict[key]
+
+        esp = {k: v for k, v in sorted(esp.items(), key=lambda x: x[1], reverse=True)}
+        esc = {k: v for k, v in sorted(esc.items(), key=lambda x: x[1], reverse=True)}
+
+        return {
+            'errorSubtypePercentages': esp,
+            'errorSubtypeCounts': esc
+        }
+
+    @staticmethod
+    def produce_validation_error_metrics(result_data: Union[Iterable['ResultantData'], 'ResultantData']) -> Dict:
+        if isinstance(result_data, ResultantData):
+            result_data = [result_data]
+
+        results = dict()
+
+        etp = dict()
+        etc = dict()
+
+        total_validation_errors = 0
+        error_type_count_dict = dict()
+
+        for data in result_data:
+            for error_id in data.validation_errors.keys():
+                error_data_list = data.validation_errors[error_id]
+                err_count = len(error_data_list)
+                total_validation_errors = total_validation_errors + err_count
+
+                if error_id in error_type_count_dict:
+                    error_type_count_dict[error_id] = error_type_count_dict[error_id] + err_count
+                else:
+                    error_type_count_dict[error_id] = err_count
+
+        results['totalErrors'] = total_validation_errors
+
+        for key in error_type_count_dict.keys():
+            etp[key] = error_type_count_dict[key] / total_validation_errors
+            etc[key] = error_type_count_dict[key]
+
+        etp = {k: v for k, v in sorted(etp.items(), key=lambda x: x[1], reverse=True)}
+        etc = {k: v for k, v in sorted(etc.items(), key=lambda x: x[1], reverse=True)}
+        results['errorTypePercentages'] = etp
+        results['errorTypeCounts'] = etc
+        subcategory_results = ResultantData.create_fine_grained_validation_error_metrics(result_data)
+        results.update(subcategory_results)
+
+        return results
+
+    def to_dict(self):
+        rval = {
+            'identifier': self.identifier,
+            'errors': self.errors,
+            'warinings': self.warnings,
+            'info': self.info
+        }
+
+        if len(self.validation_errors) > 0:
+            ve_dict = dict()
+            rval['validation_errors'] = ve_dict
+
+            for err in self.validation_errors.keys():
+                ve_list = list()
+                ve_dict[err] = ve_list
+                validation_error_list = self.validation_errors[err]
+
+                for validation_error in validation_error_list:
+                    ve_list.append(validation_error.to_dict())
+
+        rval['difference_errors'] = self.difference_errors
+
+        return rval
+
+
+class ScenarioResultantDataSet:
+    def __init__(self, identifier: str):
+        self.identifier = identifier
+        self.document_results = dict()  # type: Dict[str, ResultantData]
+        self.display_data = list()
+
+    def to_dict(self):
+        raw_results_dict = dict()
+        rval = {
+            'raw_results': raw_results_dict
+        }
+
+        for value in self.document_results.keys():
+            raw_result = self.document_results[value]
+            raw_results_dict[value] = raw_result.to_dict()
+
+        return rval
+
+
+class CombinedResults:
+    def __init__(self):
+        self.raw_data = dict()  # type: Dict[str, ScenarioResultantDataSet]
+
+    def create_digest(self, displayable_results: List[str] = None):
+        CUSTOM_SCENARIO_NAMES = get_s6_all_custom_scenarios_names()
+        PREDEFINED_SCENARIO_NAMES = get_s6_swri_predefined_scenario_names()
+
+        scenario_metrics_dict = dict()
+
+        custom_scenarios_validation_errors = list()
+        predefined_scenario_validation_errors = list()
+        all_scenarios_validation_errors = list()
+
+        for scenario in self.raw_data.values():
+            scenario_validation_results = scenario.document_results.values()
+            all_scenarios_validation_errors.extend(scenario_validation_results)
+            if scenario.identifier in PREDEFINED_SCENARIO_NAMES:
+                predefined_scenario_validation_errors.extend(scenario_validation_results)
+            if scenario.identifier in CUSTOM_SCENARIO_NAMES:
+                custom_scenarios_validation_errors.extend(scenario_validation_results)
+
+            scenario_metrics_dict[scenario.identifier] = ResultantData.produce_validation_error_metrics(
+                scenario_validation_results)
+
+        results_dict = dict()
+        results_dict['allScenarios'] = ResultantData.produce_validation_error_metrics(all_scenarios_validation_errors)
+        results_dict['customScenarios'] = ResultantData.produce_validation_error_metrics(
+            custom_scenarios_validation_errors)
+        results_dict['predefinedScenarios'] = ResultantData.produce_validation_error_metrics(
+            predefined_scenario_validation_errors)
+
+        if displayable_results is not None:
+            results_dict['displayedResults'] = jsonify_output(displayable_results)
+
+        results_dict['scenarioBreakdown'] = scenario_metrics_dict
+
+        results_digest_path = os.path.join(os.path.abspath('TEST_RESULTS'), 'collated_results.json')
+        json.dump(results_dict, open(results_digest_path, 'w'), indent=4)
 
 
 class XmlTester:
     def __init__(self, src_xsd: str, dst_xsd: str, src_xml_dir: str, target_result_dir: str, label: str,
-                 validation_xml_dir=None):
+                 validation_xml_dir=None, use_lxml=False):
         self.src_xsd = src_xsd
         self.dst_xsd = dst_xsd
         self.src_xml_dir = src_xml_dir
@@ -133,10 +394,10 @@ class XmlTester:
         self.label = label
         self.transformed_xml_dir = os.path.join(self.target_result_dir, 'transformed_documents')
         os.mkdir(self.transformed_xml_dir)
-        self._transformer_filepath = None
-        self._transformer = None
-        self.validation_errors = dict()  # type: Dict[str, List[ValidationError]]
-        self.must_pass = True
+        self.predefined_mode = False
+        self.use_lxml = use_lxml
+        self.results = list()  # type: List[ResultantData]
+
         if validation_xml_dir is None:
             self.validation_xml_dir = None
             self.unchanged_filenames = dict()
@@ -158,115 +419,101 @@ class XmlTester:
             else:
                 self.validation_xml_dir = validation_xml_dir
 
-    def set_must_pass(self, must_pass: bool):
-        self.must_pass = must_pass
+    def set_predefined_mode(self, predefined_mode: bool):
+        self.predefined_mode = predefined_mode
 
-    def is_valid_error(self, schema_error_log) -> bool:
-        is_valid_error = False
-        for error_instance in schema_error_log:
-            ve = ValidationError(error_instance)
+    def diff_xml_files(self, desired_filepath: str, actual_filepath: str) -> List[str]:
+        print ("DesiredDoc: " + desired_filepath)
+        print ("ActualDoc: " + actual_filepath)
+        diff = diff_files(desired_filepath, actual_filepath)
+        marked_for_removal = list()
+        for difference in list(diff):
+            if (isinstance(difference, UpdateAttrib) and
+                    difference.name == '{http://www.w3.org/2001/XMLSchema-instance}schemaLocation' and
+                    difference.node == '/*[1]'):
+                marked_for_removal.append(difference)
 
-            if not(ve.error_type == 'SCHEMAV_CVC_IDC' and 
-                    'No match found for key-sequence' in ve.message):
-                key = ve.error_type + ': ' + ve.message
-                if key not in self.validation_errors:
-                    self.validation_errors[key] = list()
+        for difference in marked_for_removal:
+            diff.remove(difference)
 
-                self.validation_errors[key].append(ve)
-                is_valid_error = True
+        if len(diff) > 0:
+            rval = list()
+            for val in diff:
+                rval.append(str(val))
+            return rval
 
-        return is_valid_error
+        return None
 
-    def save_validation_errors(self):
-        if len(self.validation_errors) > 0:
-            save_val = dict()
+    def validate_xml_contents(self, results_data: ScenarioResultantDataSet = None) -> ScenarioResultantDataSet:
+        if results_data is None:
+            results_data = ScenarioResultantDataSet(self.label)
 
-            for key in self.validation_errors.keys():
-                inner_val = list()
-                save_val[key] = inner_val
-                for error in self.validation_errors[key]:
-                    inner_val.append({
-                        "fileName": error.filename,
-                        "fileLine": error.file_line,
-                    })
+        raw_results = dict() if results_data.document_results is None else results_data.document_results
 
-            json.dump(save_val, open(os.path.join(self.target_result_dir, 'validation_errors.json'), 'w'), indent=4)
+        xml_files = list(
+            map(lambda x: os.path.abspath(os.path.join(self.transformed_xml_dir, x)),
+                os.listdir(self.transformed_xml_dir)))
 
-    def validate_docs(self, src_xsd: str, xml_files: Union[str, List[str]]) -> ValidationResult:
-        validation_result = ValidationResult()
-
-        if isinstance(xml_files, str):
-            xml_files = list(map(lambda x: os.path.abspath(os.path.join(xml_files, x)), os.listdir(xml_files)))
-
-        schema = etree.XMLSchema(etree.parse(src_xsd))
         for doc_path in xml_files:
-            doc = etree.parse(doc_path)
             display_doc_path = os.path.relpath(doc_path)
-
-            if schema.validate(doc):
-                validation_result.successes.append('XML file "' + display_doc_path + "' Adheres to the target schema.")
+            doc_name = os.path.basename(doc_path)
+            if doc_name in raw_results:
+                resultant_data = raw_results[doc_name]
             else:
-                if self.is_valid_error(schema.error_log):
-                    err = 'XML file "' + display_doc_path + '" does not adhere to the target schema!'
-                    validation_result.errors.append(err)
-                else:
-                    validation_result.warnings.append('XML file "' + display_doc_path + '" Contains an allowable validation error.')
+                resultant_data = ResultantData(doc_name)
+                raw_results[doc_name] = resultant_data
 
             if self.validation_xml_dir is None:
-                validation_result.warnings.append(
+                resultant_data.warnings.append(
                     'XML file "' + display_doc_path +
                     '" has no documents to compare contents against so semantic integrity is indeterminate!')
+
             else:
                 file_name = os.path.basename(doc_path)
                 desired_file = os.path.join(self.validation_xml_dir, file_name)
                 initial_file = os.path.join(self.src_xml_dir, os.path.basename(doc_path))
 
                 if not os.path.exists(desired_file):
-                    if file_name in self.unchanged_filenames and self.unchanged_filenames[file_name] == True:
-                        if not diff_xml_files(initial_file, doc_path):
+                    if file_name in self.unchanged_filenames and self.unchanged_filenames[file_name] is True:
+                        diff_error_list = self.diff_xml_files(initial_file, doc_path)
+                        if diff_error_list is not None:
                             err = 'XML file "' + display_doc_path + '" does not match the expected unmodified state!'
-                            validation_result.errors.append(err)
+                            resultant_data.errors.append(err)
+
+                            if doc_name in raw_results:
+                                resultant_data = raw_results[doc_name]
+                            else:
+                                resultant_data = ResultantData(doc_name)
+                                raw_results[doc_name] = resultant_data
+                            resultant_data.difference_errors[os.path.basename(desired_file)] = diff_error_list
+
                         else:
-                            validation_result.successes.append(
+                            resultant_data.info.append(
                                 'XML file "' + display_doc_path + '" contents are unchanged as expected."')
 
                     else:
                         raise Exception("The filepath '" + desired_file + "' does not exist to validate the scenario!")
 
                 else:
-                    if not diff_xml_files(desired_file, doc_path):
+                    diff_error_list = self.diff_xml_files(desired_file, doc_path)
+                    if diff_error_list is not None:
                         err = 'XML file "' + display_doc_path + '" does not match the expected state!'
-                        validation_result.errors.append(err)
+                        resultant_data.errors.append(err)
+
+                        if doc_name in raw_results:
+                            resultant_data = raw_results[doc_name]
+                        else:
+                            resultant_data = ResultantData(doc_name)
+                            raw_results[doc_name] = resultant_data
+                        resultant_data.difference_errors[os.path.basename(desired_file)] = diff_error_list
+
                     else:
-                        validation_result.successes.append(
+                        resultant_data.info.append(
                             'XML file "' + display_doc_path + '" Contents matched expectation."')
 
-        return validation_result
+        return results_data
 
-    @staticmethod
-    def produce_visual_diff_command(produced_xml_path: str, target_xml_path: str):
-        pass
-
-    def _transform_document(self, doc_name: str) -> Union[str, None]:
-        src_xml_filepath = os.path.join(self.src_xml_dir, doc_name)
-        src_xml_document = etree.parse(open(src_xml_filepath, 'r'))
-        try:
-            transformed_document = self._transformer(src_xml_document)
-            transformed_filepath = os.path.join(self.transformed_xml_dir, doc_name)
-
-            transformed_str = etree.tostring(transformed_document, pretty_print=True).decode()
-            open(transformed_filepath, 'w').write(transformed_str)
-            return None
-
-        except XSLTApplyError as e:
-            if 'XPath evaluation returned no result.' == str(e):
-                return ('ERROR: No transformation occurred applying "' + os.path.relpath(self._transformer_filepath) +
-                        '" to "' + os.path.relpath(src_xml_filepath) + '"!'
-                        )
-            else:
-                raise e
-
-    def test(self) -> str:
+    def _produce_translation(self):
         XsdTranslationService.start()
 
         cmd = ['java',
@@ -282,69 +529,158 @@ class XmlTester:
 
         return_code = process_result.returncode
 
-        if return_code == 0:
-            if not self.must_pass:
-                return self.label + "\n\tTranslation service executed successfully. Skipping validation since it is a predefined scenario."
+        if return_code != 0:
+            print('CMD: [' + '\\ \n'.join(cmd) + ']')
+            raise Exception('translation service failed with return code ' + str(return_code) + '!')
 
-            self._transformer_filepath = os.path.join(self.target_result_dir, 'xsdts-client', '0', 'response.xslt')
-            self._transformer = etree.XSLT(etree.XML(
-                open(self._transformer_filepath, 'r').read().encode()))
+    def _transform(self):
+        transformer_filepath = os.path.join(self.target_result_dir, 'xsdts-client', '0', 'response.xslt')
 
-            results = list()
+        if self.use_lxml:
+            transformer = etree.XSLT(etree.XML(open(transformer_filepath, 'r').read().encode()))
 
             for doc_name in os.listdir(self.src_xml_dir):
-                transform_result = self._transform_document(doc_name)
+                src_xml_filepath = os.path.join(self.src_xml_dir, doc_name)
+                transformed_filepath = os.path.join(self.transformed_xml_dir, doc_name)
 
-                if transform_result is not None:
-                    vr = ValidationResult()
-                    vr.errors.append(transform_result)
-                    results.append(vr)
-                else:
-                    results.append(self.validate_docs(self.dst_xsd, [os.path.join(self.transformed_xml_dir, doc_name)]))
+                src_xml_document = etree.parse(open(src_xml_filepath, 'r'))
+                transformed_document = transformer(src_xml_document)
 
-            final_result = ValidationResult()
-            for result in results:  # type: ValidationResult
-                final_result.successes.extend(result.successes)
-                final_result.warnings.extend(result.warnings)
-                final_result.errors.extend(result.errors)
-
-            rval = self.label + '\n'
-
-            for success in final_result.successes:
-                rval = (rval + '\t' + success + '\n')
-
-            if not (len(final_result.errors) == 0 and len(final_result.warnings) == 0):
-                for warning in final_result.warnings:
-                    rval = (rval + 'WARNING: ' + warning + '\n')
-                for error in final_result.errors:
-                    rval = (rval + 'ERROR: ' + error + '\n')
-
-            if self.validation_xml_dir is not None:
-                rval = (rval +
-                        '\tXSDDelta: \n\t\t' + make_diff_command(self.src_xsd, self.dst_xsd) +
-                        '\n\tXMLDelta: \n\t\t' + make_diff_command(self.src_xml_dir,
-                                                                   self.transformed_xml_dir) +
-                        '\n\tDesiredDelta: \n\t\t' + make_diff_command(self.transformed_xml_dir,
-                                                                       self.validation_xml_dir)
-                        )
-
-            else:
-                rval = (rval +
-                        '\tXSDDelta: \n\t\t' + make_diff_command(self.src_xsd, self.dst_xsd) +
-                        '\n\tXMLDelta: \n\t\t' + make_diff_command(self.src_xml_dir,
-                                                                   self.transformed_xml_dir)
-                        )
-
-            self.save_validation_errors()
-            return rval + '\n\n'
+                transformed_str = etree.tostring(transformed_document, pretty_print=True).decode()
+                open(transformed_filepath, 'w').write(transformed_str)
 
         else:
-            print('CMD: [' + '\n'.join(cmd) + ']')
-            raise Exception('translation service failed with return code ' + str(return_code) + '!')
+            saxon_processes = list()
+            cmds = list()
+
+            for doc_name in os.listdir(self.src_xml_dir):
+                src_xml_filepath = os.path.join(self.src_xml_dir, doc_name)
+                transformed_filepath = os.path.join(self.transformed_xml_dir, doc_name)
+
+                cmd = ['java', '-jar', SAXON_JAR_PATH,
+                       '-s:' + src_xml_filepath,
+                       '-xsl:' + transformer_filepath,
+                       '-o:' + transformed_filepath]
+                cmds.append(cmd)
+                saxon_processes.append(subprocess.Popen(cmd))
+
+            for idx in range(len(saxon_processes)):
+                process = saxon_processes[idx]
+                process.wait()
+
+                if process.returncode != 0:
+                    print('CMD: [' + ' \\ \n'.join(cmds[idx]) + ']')
+                    raise Exception("Saxon XLST translator had a return code of '" + str(process.returncode) + "'!")
+
+    def _validate_schema_compliance(self, results: ScenarioResultantDataSet = None) -> ScenarioResultantDataSet:
+        if results is None:
+            results = ScenarioResultantDataSet(self.label)
+
+        results_dict = results.document_results
+
+        xml_files = list(
+            map(lambda x: os.path.abspath(os.path.join(self.transformed_xml_dir, x)),
+                os.listdir(self.transformed_xml_dir)))
+
+        # Load the schema
+        schema = etree.XMLSchema(etree.parse(self.dst_xsd))
+        for doc_path in xml_files:
+            display_doc_path = os.path.relpath(doc_path)
+            doc_name = os.path.basename(doc_path)
+            if doc_name in results_dict:
+                resultant_data = results_dict[doc_name]
+            else:
+                resultant_data = ResultantData(doc_name)
+                results_dict[doc_name] = resultant_data
+
+            # For each doc in the source folder
+            doc = etree.parse(doc_path)
+
+            # If it validates, add a success
+            if schema.validate(doc):
+                resultant_data.info.append('XML file "' + display_doc_path + "' Adheres to the target schema.")
+            else:
+                is_valid_error = True
+
+                for error_instance in schema.error_log:
+                    # Otherwise, iterate through the errors
+                    ve = ValidationError(error_instance)
+
+                    if ve.error_type in resultant_data.validation_errors:
+                        ve_list = resultant_data.validation_errors[ve.error_type]
+                    else:
+                        ve_list = list()
+                        resultant_data.validation_errors[ve.error_type] = ve_list
+
+                    ve_list.append(ve)
+
+                    if ve.error_type in validation_exceptions:
+                        # TODO: Investigate error message here
+                        ve.is_allowable_error = True
+                        is_valid_error = False
+
+                if is_valid_error:
+                    err = 'XML file "' + display_doc_path + '" does not adhere to the target schema!'
+                    if self.predefined_mode:
+                        resultant_data.warnings.append(err)
+                    else:
+                        resultant_data.errors.append(err)
+                else:
+                    resultant_data.warnings.append(
+                        'XML file "' + display_doc_path + '" Contains an allowable validation error.')
+
+        return results
+
+    def test(self) -> ScenarioResultantDataSet:
+        self._produce_translation()
+        self._transform()
+        validation_results = self._validate_schema_compliance()
+        if not self.predefined_mode:
+            self.validate_xml_contents(validation_results)
+
+        json.dump(validation_results.to_dict(),
+                  open(os.path.join(self.target_result_dir, 'validation_results.json'), 'w'), indent=4)
+        #        if not self.must_pass:
+        #            return self.label + "\n\tTranslation service executed successfully. Skipping validation since it is a predefined scenario."
+
+        displayData = list()
+        displayData.append(self.label)
+
+        for doc_name in validation_results.document_results.keys():
+            validation_data = validation_results.document_results[doc_name]
+
+            for warning in validation_data.warnings:
+                displayData.append('\tWARNING: ' + warning)
+            for error in validation_data.errors:
+                displayData.append('ERROR: ' + error)
+
+            for info in validation_data.info:
+                displayData.append('\t\t' + info)
+
+        displayData.append('')
+
+        if self.validation_xml_dir is not None:
+            displayData.append('\tXSDDelta:')
+            displayData.append('\t\t' + make_diff_command(self.src_xsd, self.dst_xsd))
+            displayData.append('\tXMLDelta:')
+            displayData.append('\t\t' + make_diff_command(self.src_xml_dir, self.transformed_xml_dir))
+            displayData.append('\tDesiredDelta')
+            displayData.append('\t\t' + make_diff_command(self.transformed_xml_dir, self.validation_xml_dir))
+
+        else:
+            displayData.append('\tXSDDelta:')
+            displayData.append('\t\t' + make_diff_command(self.src_xsd, self.dst_xsd))
+            displayData.append('\tXMLDelta:')
+            displayData.append('\t\t' + make_diff_command(self.src_xml_dir, self.transformed_xml_dir))
+
+        validation_results.display_data.extend(displayData)
+        validation_results.display_data.append('\n')
+        validation_results.display_data.append('\n')
+        return validation_results
 
 
 class TestScenarioXmlTester:
-    def __init__(self, test_scenario: TestScenario, result_parent_dir: str):
+    def __init__(self, test_scenario: TestScenario, result_parent_dir: str, use_lxml: bool):
         self.test_scenario = test_scenario
         self.src_xsd = test_scenario.get_initial_xsd_path()
         self.dst_xsd = test_scenario.get_updated_xsd_path()
@@ -356,11 +692,11 @@ class TestScenarioXmlTester:
         self.result_dir = os.path.join(result_parent_dir, test_scenario.shortName)
         os.mkdir(self.result_dir)
         self.tester = XmlTester(self.src_xsd, self.dst_xsd, self.xml_dir, self.result_dir, test_scenario.shortName,
-                                validation_xml_dir)
+                                validation_xml_dir, use_lxml=use_lxml)
         if test_scenario.is_updated_xsd_predefined():
-            self.tester.set_must_pass(False)
+            self.tester.set_predefined_mode(True)
 
-    def test(self) -> str:
+    def test(self) -> ScenarioResultantDataSet:
         return self.tester.test()
 
 
@@ -417,13 +753,22 @@ def main():
         os.rename(cwd, cwd + '-' + str(int(os.path.getctime(cwd))))
     os.mkdir(cwd)
 
-    result = ''
+    if not args.use_lxml:
+        if not os.path.exists(SAXON_JAR_PATH):
+            raise Exception('Please use "get_saxon.sh" to get saxon prior to using the "--use-saxon" flag!')
+
+    combined_results = CombinedResults()
+    displayable_results = list()
     for test_scenario_name in test_names:
-        tester = TestScenarioXmlTester(scenarios[test_scenario_name], cwd)
-        result = result + tester.test()
+        tester = TestScenarioXmlTester(scenarios[test_scenario_name], cwd, use_lxml=args.use_lxml)
+        result = tester.test()
+        combined_results.raw_data[test_scenario_name] = result
+        displayable_results.extend(result.display_data)
+
+    combined_results.create_digest(displayable_results)
 
     print("Results: ")
-    print(result)
+    print('\n'.join(displayable_results))
 
 
 if __name__ == '__main__':

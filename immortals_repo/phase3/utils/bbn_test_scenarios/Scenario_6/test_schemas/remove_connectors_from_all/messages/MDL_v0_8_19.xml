@@ -126,40 +126,30 @@
 								<Name>Ch1</Name>
 								<Description>MTCD Channel 1</Description>
 								<PortDirection>Input</PortDirection>
-								<PinRef IDREF="Pos2-J1-Pin19"/>
-								<PinRef IDREF="Pos2-J1-Pin37"/>
 							</Port>
 							<Port Enabled="true" ID="Module2-Ch2" Index="2">
 								<Name>Ch2</Name>
 								<Description>MTCD Channel 2</Description>
 								<PortDirection>Input</PortDirection>
 								<PortType extension="K">CANbus</PortType>
-								<PinRef IDREF="Pos2-J1-Pin18"/>
-								<PinRef IDREF="Pos2-J1-Pin36"/>
 							</Port>
 							<Port Enabled="true" ID="Module2-Ch3" Index="3">
 								<Name>Ch3</Name>
 								<Description>MTCD Channel 3</Description>
 								<PortDirection>Input</PortDirection>
 								<PortType extension="K">CANbus</PortType>
-								<PinRef IDREF="Pos2-J1-Pin17"/>
-								<PinRef IDREF="Pos2-J1-Pin35"/>
 							</Port>
 							<Port Enabled="true" ID="Module2-Ch4" Index="4">
 								<Name>Ch4</Name>
 								<Description>MTCD Channel 4</Description>
 								<PortDirection>Input</PortDirection>
 								<PortType extension="K">CANbus</PortType>
-								<PinRef IDREF="Pos2-J1-Pin10"/>
-								<PinRef IDREF="Pos2-J1-Pin29"/>
 							</Port>
 							<Port Enabled="false" ID="Module2-Ch9" Index="9">
 								<Name>Ch9</Name>
 								<Description>MTCD Channel 9: RJC</Description>
 								<PortDirection>Input</PortDirection>
 								<PortType extension="K">CANbus</PortType>
-								<PinRef IDREF="Pos2-J1-Pin5"/>
-								<PinRef IDREF="Pos2-J1-Pin24"/>
 							</Port>
 						</Ports>
 					</Module>
@@ -188,8 +178,6 @@
 								<Name>Therm N</Name>
 								<Description>J1</Description>
 								<PortDirection>Output</PortDirection>
-								<PinRef IDREF="id_0x0000004d"/>
-								<PinRef IDREF="id_0x00000055"/>
 							</Port>
 						</Ports>
 					</DeviceModule>
@@ -218,8 +206,6 @@
 								<Name>Therm N</Name>
 								<Description>J1</Description>
 								<PortDirection>Output</PortDirection>
-								<PinRef IDREF="id_0x0000006e"/>
-                        					<PinRef IDREF="id_0x00000015"/>
 							</Port>
 						</Ports>
 					</DeviceModule>
@@ -248,8 +234,6 @@
 								<Name>Therm N</Name>
 								<Description>J1</Description>
 								<PortDirection>Output</PortDirection>
-								<PinRef IDREF="id_0x0000004a"/>
-								<PinRef IDREF="id_0x0000004c"/>
 							</Port>
 						</Ports>
 					</DeviceModule>
@@ -278,8 +262,6 @@
 								<Name>Therm N</Name>
 								<Description>J1</Description>
 								<PortDirection>Output</PortDirection>
-								<PinRef IDREF="id_0x0000004a01"/>
-								<PinRef IDREF="id_0x0000004c01"/>
 							</Port>
 						</Ports>
 					</DeviceModule>

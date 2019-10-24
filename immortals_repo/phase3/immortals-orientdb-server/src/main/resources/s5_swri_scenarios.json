@@ -96,7 +96,7 @@
         {
             "shortName": "s5e06i01",
             "prettyName": "Scenario 5 SwRI Example 6 Inventory 1",
-            "timeoutMS": 420000,
+            "timeoutMS": 10000000,
             "expectedStatusSequence": [
                 "AdaptationSuccessful",
                 "AdaptationUnsuccessful"

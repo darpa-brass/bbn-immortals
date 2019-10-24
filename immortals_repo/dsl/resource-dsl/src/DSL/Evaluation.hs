@@ -10,7 +10,6 @@ import Control.Monad.Fail
 import Control.Monad.Reader
 import Control.Monad.State
 import Data.Composition ((.:))
-import Data.Maybe (fromMaybe)
 import Data.Set (Set)
 import qualified Z3.Monad as Z3
 
@@ -133,13 +132,21 @@ instance Z3.MonadZ3 (StateT StateCtx (ReaderT ReaderCtx IO)) where
 -- ** Core operations
 
 -- | Execute a computation in an extended variation context.
-inVCtx :: MonadEval m => Cond -> m a -> m a
+inVCtx :: Cond -> EvalM a -> EvalM a
 inVCtx (Cond (BLit True) _) mx = mx
-inVCtx new@(Cond _ (Just s)) mx = do
+inVCtx new@(Cond _ (Just s)) (EvalM mx) = EvalM $ do
     old <- getVCtx
-    Z3.local $ do
+    if condSame new old then mx
+    else Z3.local $ do
       c <- condAnd new old
       Z3.assert s
+      -- TODO: Following seems like the right thing to do, i.e. don't execute
+      -- branches in contexts that are not viable variants. However, we rarely
+      -- trigger the aborted case and it approx. doubles execution time.
+      --
+      -- b <- checkSat
+      -- if b then local (\r -> r { vCtx = c }) mx
+      -- else liftIO (putStrLn "aborted") >> return (One Nothing)
       local (\r -> r { vCtx = c }) mx
 inVCtx c _ = errorUnprepped c
 
@@ -154,7 +161,7 @@ mapV f va = EvalM $ do
     if b then return (One Nothing)
     else getVCtx >>= \c -> go c va
   where
-    go c (One a)     = inVCtx c (unEvalM (f a))
+    go c (One a)     = unEvalM (inVCtx c (f a))
     go c (Chc d l r) = do
       lc <- condAnd c d
       l' <- go lc l
@@ -174,7 +181,7 @@ mapVOpt f va = EvalM $ do
     else getVCtx >>= \c -> go c va
   where
     go _ (One Nothing)  = return (One Nothing)
-    go c (One (Just a)) = inVCtx c (unEvalM (f a))
+    go c (One (Just a)) = unEvalM (inVCtx c (f a))
     go c (Chc d l r)    = do
       lc <- condAnd c d
       l' <- go lc l
@@ -334,7 +341,7 @@ selectValue d v = inVCtx d (shrinkValueInCtx v)
 shrinkValueInCtx :: Value -> EvalM Value
 shrinkValueInCtx (One a) = return (One a)
 shrinkValueInCtx (Chc c@(Cond e (Just s)) l r) =
-    case shrinkBExpr e of
+    case e of
       BLit True  -> shrinkValueInCtx l
       BLit False -> shrinkValueInCtx r
       OpB Not e' -> do
@@ -357,10 +364,11 @@ shrinkValueInCtx (Chc c _ _) = errorUnprepped c
 
 -- | Shrink a value independent of context and without the SAT solver by
 --   applying some basic restructuring rules.
+--   NOTE: This is a *very* expensive operation. Call with care!
 shrinkValue :: Value -> EvalM Value
 shrinkValue (One a) = return (One a)
 shrinkValue (Chc (Cond e (Just s)) l r) =
-    case shrinkBExpr e of
+    case e of
       BLit True  -> shrinkValue l
       BLit False -> shrinkValue r
       OpB Not e' -> do
@@ -474,8 +482,24 @@ updateRes :: ResID -> Value -> EvalM ()
 updateRes rID new = do
     ctx <- getVCtx
     env <- getResEnv
-    let old = fromMaybe (One Nothing) (envLookup rID env)
-    v <- shrinkValue (Chc ctx new old)
+    v <- case envLookup rID env of
+      Nothing -> return $
+        if condIsTrue ctx
+          then new
+          else Chc ctx new (One Nothing)
+      Just old ->
+        -- TODO: It would be nice to shrink this value before storing in the
+        -- environment, but we need to do it in the global (i.e. true/empty)
+        -- variation context. Unfortunately, there's no way to temporarily
+        -- ignore z3's assertion stack to do this efficiently... The function
+        -- 'shrinkValue' doesn't use the solver but is way too slow.
+        --
+        -- A possible solution might be to maintain two solvers and keep one
+        -- in the global context, but then every condition must maintain two
+        -- symbolic values corresponding to each solver, which is super annoying.
+        --
+        -- shrinkValue (Chc ctx new old)
+        return (Chc ctx new old)
     updateResEnv (envExtend rID v)
 
 -- | Execute the effect on the given resource environment.

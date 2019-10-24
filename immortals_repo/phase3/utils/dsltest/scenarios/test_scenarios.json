@@ -3,366 +3,437 @@
         "bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions": {
             "request_file": "scenarios/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions/bs5eNoThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 1,
+            "max_daus": 2,
             "backup_hash": "a7dce34ef041e8e1b83cbd991827eb20ef607163927600e154e6f5e296c3fbd9"
         },
         "bs5eNoThermocoupleExtensions_iThermocoupleExtensions": {
             "request_file": "scenarios/bs5eNoThermocoupleExtensions_iThermocoupleExtensions/bs5eNoThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eNoThermocoupleExtensions_iThermocoupleExtensions/bs5eNoThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 1,
+            "max_daus": 2,
             "backup_hash": "b0dae3448ad66423ee0624262fc74364c9612a8246f79ef867ceea291a032c32"
         },
         "bs5eThermocoupleExtensions_iNoThermocoupleExtensions": {
             "request_file": "scenarios/bs5eThermocoupleExtensions_iNoThermocoupleExtensions/bs5eThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eThermocoupleExtensions_iNoThermocoupleExtensions/bs5eThermocoupleExtensions_iNoThermocoupleExtensions-dsl-swap-inventory.json",
-            "success_expected": false,
+            "expected_success_count": 0,
+            "max_daus": 2,
             "backup_hash": "f58d7b5dcb00ad5e838a2c19b192a6c193dce42d6d301676e17d5a19b3980692"
         },
         "bs5eThermocoupleExtensions_iThermocoupleExtensions": {
             "request_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensions/bs5eThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensions/bs5eThermocoupleExtensions_iThermocoupleExtensions-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 1,
+            "max_daus": 2,
             "backup_hash": "a2aff02a7e85f8d4b089caab346ffa5b69b3ddfc3384c96b0efdd470817d5e28"
         },
         "bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential": {
             "request_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential-dsl-swap-request.json",
             "inventory_file": "scenarios/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential/bs5eThermocoupleExtensions_iThermocoupleExtensionsSequential-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 2,
+            "max_daus": 2,
             "backup_hash": "faaa10b318301ee94090ef166b9f128b0fd83399ed5248573df82edb743509a4"
         },
         "s5e01i01": {
             "request_file": "scenarios/s5e01i01/s5e01i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e01i01/s5e01i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 1,
+            "max_daus": 2,
             "backup_hash": "22f0c96adcfacd4dcc70f4358f8167dcd9d335fa95abe5ddaee1db28dbe05322"
         },
         "s5e02i01": {
             "request_file": "scenarios/s5e02i01/s5e02i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e02i01/s5e02i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 3,
+            "max_daus": 2,
             "backup_hash": "845ca5e35c163c9bb9bfa38e77d7800a8e8f26b74041a2b3ebf34b8044c4ba8d"
         },
         "s5e03i01": {
             "request_file": "scenarios/s5e03i01/s5e03i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e03i01/s5e03i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 1,
+            "max_daus": 2,
             "backup_hash": "9f947445c5682d4fee9ecc74149ea229de5020b26e0f181f2788aa5c603adff1"
         },
         "s5e04i01": {
             "request_file": "scenarios/s5e04i01/s5e04i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e04i01/s5e04i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 8,
+            "max_daus": 2,
             "backup_hash": "23d2c8d6fa65f9b1b928ac242ef0844f2297570b0264333e401ef38d3a8a8f33"
         },
         "s5e05i01": {
             "request_file": "scenarios/s5e05i01/s5e05i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e05i01/s5e05i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 5,
+            "max_daus": 2,
             "backup_hash": "a8d28658c34640a020fdf0fc30fcf8a97d42013ad69474fe1942fd68894f1329"
         },
         "s5e06i01": {
             "request_file": "scenarios/s5e06i01/s5e06i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e06i01/s5e06i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 1,
             "backup_hash": "b324c3a8524c823937e62d5cf82659f0c3d2157c7babc37a1738ea0e799e3417"
-        }
-    },
-    "bad_scenarios": {
-        "basic": {
-            "request_file": "scenarios/basic/dsl-swap-request.json",
-            "inventory_file": "scenarios/basic/dsl-swap-inventory.json",
-            "success_expected": true
-        }
-    },
-    "staging_scenarios": {
-        "s5": {
-            "request_file": "scenarios/s5/dsl-swap-request.json",
-            "inventory_file": "scenarios/s5/dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "bs5eThermocoupleExtensions_iMoreMeasurements": {
-            "request_file": "scenarios/bs5eThermocoupleExtensions_iMoreMeasurements/bs5eThermocoupleExtensions_iMoreMeasurements-dsl-swap-request.json",
-            "inventory_file": "scenarios/bs5eThermocoupleExtensions_iMoreMeasurements/bs5eThermocoupleExtensions_iMoreMeasurements-dsl-swap-inventory.json",
-            "success_expected": true,
-            "backup_hash": "73abe6334e2b80673cb8d9bc5444c733b29798a721cf2b6f8e343b98b63cd84b"
-        },
-        "bs5eVariedMeasurements_iSharedMeasurements": {
-            "request_file": "scenarios/bs5eVariedMeasurements_iSharedMeasurements/bs5eVariedMeasurements_iSharedMeasurements-dsl-swap-request.json",
-            "inventory_file": "scenarios/bs5eVariedMeasurements_iSharedMeasurements/bs5eVariedMeasurements_iSharedMeasurements-dsl-swap-inventory.json",
-            "success_expected": true,
-            "backup_hash": "640a23da45a38c0620599e84b2b2afa388e93a500c9d5003345d867aa0bfce63"
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3-dsl-swap-inventory.json",
-            "success_expected": true
-        },
-        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0": {
-            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0-dsl-swap-inventory.json",
-            "success_expected": true
         },
         "s5e07i01": {
             "request_file": "scenarios/s5e07i01/s5e07i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e07i01/s5e07i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 10,
+            "max_daus": 2,
             "backup_hash": "bcb0e0ce134f97b3b9fe23a08fad69ba698e36893d779a410e5ed01bf05e34bd"
         },
         "s5e08i01": {
             "request_file": "scenarios/s5e08i01/s5e08i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e08i01/s5e08i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 3,
+            "max_daus": 2,
             "backup_hash": "13f1ed355443a39d484ccb18f7dce306382209cf238a2c480cf4508190f861ad"
         },
         "s5e09i01": {
             "request_file": "scenarios/s5e09i01/s5e09i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e09i01/s5e09i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 7,
+            "max_daus": 2,
             "backup_hash": "b47f95839bd22ca46df8773e4dc5a3764be54e527f7f7417e7e4aeee2cdb50c5"
         },
         "s5e10i01": {
             "request_file": "scenarios/s5e10i01/s5e10i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e10i01/s5e10i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 1,
+            "max_daus": 2,
             "backup_hash": "f9738a1f2196e5b789d8f9c597647501f927cbc42b7ad1dc05e8e3e07b8ce393"
         },
         "s5e11i01": {
             "request_file": "scenarios/s5e11i01/s5e11i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e11i01/s5e11i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 1,
+            "max_daus": 2,
             "backup_hash": "0dc9b98dfa437943ca01973e9edaf2931e0f6dfaa2785fe9d5aca3538e5077fb"
         },
         "s5e12i01": {
             "request_file": "scenarios/s5e12i01/s5e12i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e12i01/s5e12i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 1,
+            "max_daus": 2,
             "backup_hash": "36b22bd0d3ba9e26011a8d8edb45779302d5178e6900e8165abb4e56cb9c7323"
         },
         "s5e13i01": {
             "request_file": "scenarios/s5e13i01/s5e13i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e13i01/s5e13i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 7,
+            "max_daus": 2,
             "backup_hash": "17a8a16c952b3692756581b897529fc22183f1b23c5c6b6827a683015701cdd4"
         },
         "s5e14i01": {
             "request_file": "scenarios/s5e14i01/s5e14i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e14i01/s5e14i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 10,
+            "max_daus": 2,
             "backup_hash": "a921c81fd12d76afb123b87a3ad3adf740754540a002b0b954b3fd154bb78492"
         },
         "s5e15i01": {
             "request_file": "scenarios/s5e15i01/s5e15i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e15i01/s5e15i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 12,
+            "max_daus": 2,
             "backup_hash": "805ec0e7317dd982e49c922c150406c1b888c9083cede875daee1412dceb20ac"
         },
         "s5e16i01": {
             "request_file": "scenarios/s5e16i01/s5e16i01-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e16i01/s5e16i01-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 10,
+            "max_daus": 2,
             "backup_hash": "e38b4c80ebaee5208d9759450abeaa37c642b5caf117746178518761befac577"
         },
-        "s5e01i01-two-dau-along-modules-adaptation": {
-            "request_file": "scenarios/s5e01i01-two-dau-along-modules-adaptation/s5e01i01-two-dau-along-modules-adaptation-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e01i01-two-dau-along-modules-adaptation/s5e01i01-two-dau-along-modules-adaptation-dsl-swap-inventory.json",
-            "success_expected": true,
-            "backup_hash": "2eb58a060503e123994572634905724d964e226114b3805871193a7d0bb04524"
-        },
-        "s5e01i01-two-dau-split-modules-adaptation": {
-            "request_file": "scenarios/s5e01i01-two-dau-split-modules-adaptation/s5e01i01-two-dau-split-modules-adaptation-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e01i01-two-dau-split-modules-adaptation/s5e01i01-two-dau-split-modules-adaptation-dsl-swap-inventory.json",
-            "success_expected": true,
-            "backup_hash": "39bd3cb1efc39a376c4199be5c62a450c2fa09c43e6c529a91177bf8e35d4ad4"
-        },
-        "s5e01i01-four-dau-solution-adaptation": {
-            "request_file": "scenarios/s5e01i01-four-dau-solution-adaptation/s5e01i01-four-dau-solution-adaptation-dsl-swap-request.json",
-            "inventory_file": "scenarios/s5e01i01-four-dau-solution-adaptation/s5e01i01-four-dau-solution-adaptation-dsl-swap-inventory.json",
-            "success_expected": true,
-            "backup_hash": "e7ed5e716e182afc547a6af6cac4b9ef7df56bce2d08dd9fd7df0d499a0128ef"
+        "basic": {
+            "request_file": "scenarios/basic/dsl-swap-request.json",
+            "inventory_file": "scenarios/basic/dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "s5e01i01-sequential-2-1-4-2": {
             "request_file": "scenarios/s5e01i01-sequential-2-1-4-2/s5e01i01-sequential-2-1-4-2-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e01i01-sequential-2-1-4-2/s5e01i01-sequential-2-1-4-2-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 4,
+            "max_daus": 4,
             "backup_hash": "f86d26eaeaafd39e53d87e2cc3633f6d2641ae91b9190c5c21e56bceb56d7824"
         },
         "s5e01i01-sequential-4-2-1-2": {
             "request_file": "scenarios/s5e01i01-sequential-4-2-1-2/s5e01i01-sequential-4-2-1-2-dsl-swap-request.json",
             "inventory_file": "scenarios/s5e01i01-sequential-4-2-1-2/s5e01i01-sequential-4-2-1-2-dsl-swap-inventory.json",
-            "success_expected": true,
+            "expected_success_count": 4,
+            "max_daus": 4,
             "backup_hash": "9df143d266fe3f2f3374dcd2671354ea5e9722f2436d27a5eb72d77bfdce3176"
+        },
+        "s5": {
+            "request_file": "scenarios/s5/dsl-swap-request.json",
+            "inventory_file": "scenarios/s5/dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "bs5eThermocoupleExtensions_iMoreMeasurements": {
+            "request_file": "scenarios/bs5eThermocoupleExtensions_iMoreMeasurements/bs5eThermocoupleExtensions_iMoreMeasurements-dsl-swap-request.json",
+            "inventory_file": "scenarios/bs5eThermocoupleExtensions_iMoreMeasurements/bs5eThermocoupleExtensions_iMoreMeasurements-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2,
+            "backup_hash": "73abe6334e2b80673cb8d9bc5444c733b29798a721cf2b6f8e343b98b63cd84b"
+        },
+        "bs5eVariedMeasurements_iSharedMeasurements": {
+            "request_file": "scenarios/bs5eVariedMeasurements_iSharedMeasurements/bs5eVariedMeasurements_iSharedMeasurements-dsl-swap-request.json",
+            "inventory_file": "scenarios/bs5eVariedMeasurements_iSharedMeasurements/bs5eVariedMeasurements_iSharedMeasurements-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2,
+            "backup_hash": "640a23da45a38c0620599e84b2b2afa388e93a500c9d5003345d867aa0bfce63"
+        },
+        "s5e06i01-secondIteration": {
+            "request_file": "scenarios/s5e06i01-secondIteration/s5e06i01-secondIteration-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e06i01-secondIteration/s5e06i01-secondIteration-dsl-swap-inventory.json",
+            "expected_success_count": 0,
+            "max_daus": 2,
+            "backup_hash": "null"
+        }
+    },
+    "bad_scenarios": {},
+    "staging_scenarios": {
+        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama1-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 3,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama2-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama3-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame1-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame2-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt0-amb0-ama0-ame3-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x2-cpt1-amb0-ama0-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama1-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama2-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama3-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame1-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame2-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt0-amb0-ama0-ame3-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x4-cpt1-amb0-ama0-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama1-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama2-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama3-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame1-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame2-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt0-amb0-ama0-ame3-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0": {
+            "request_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0/s5e03i01-duplicate-matching-perturbed-daus-x8-cpt1-amb0-ama0-ame0-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2
         }
     },
     "debug_scenarios": {
         "RP0IP0": {
             "request_file": "scenarios/debug/input-RP0.json",
             "inventory_file": "scenarios/debug/inventory-IP0.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "RP1IP0": {
             "request_file": "scenarios/debug/input-RP1.json",
             "inventory_file": "scenarios/debug/inventory-IP0.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "RP0IP1": {
             "request_file": "scenarios/debug/input-RP0.json",
             "inventory_file": "scenarios/debug/inventory-IP1.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "RP1IP1": {
             "request_file": "scenarios/debug/input-RP1.json",
             "inventory_file": "scenarios/debug/inventory-IP1.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "RP0IP0IP1": {
             "request_file": "scenarios/debug/input-RP0.json",
             "inventory_file": "scenarios/debug/inventory-IP0IP1.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "RP1IP0IP1": {
             "request_file": "scenarios/debug/input-RP1.json",
             "inventory_file": "scenarios/debug/inventory-IP0IP1.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "RP0IP0IP1-TwoDaus": {
             "request_file": "scenarios/debug/input-RP0.json",
             "inventory_file": "scenarios/debug/inventory-IP0IP1-twoDaus.json",
-            "success_expected": true
+            "expected_success_count": 2,
+            "max_daus": 2
         },
         "RP1IP0IP1-twoDaus": {
             "request_file": "scenarios/debug/input-RP1.json",
             "inventory_file": "scenarios/debug/inventory-IP0IP1-twoDaus.json",
-            "success_expected": true
+            "expected_success_count": 2,
+            "max_daus": 2
         },
         "RP0RP1IP0IP1": {
             "request_file": "scenarios/debug/input-RP0RP1.json",
             "inventory_file": "scenarios/debug/inventory-IP0IP1.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "RP0RP1IP0IP1-twoDaus": {
             "request_file": "scenarios/debug/input-RP0RP1.json",
             "inventory_file": "scenarios/debug/inventory-IP0IP1-twoDaus.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "DSLInterchangeFormat": {
             "request_file": "scenarios/debug/DSLInterchangeFormat-dsl-input.json",
             "inventory_file": "scenarios/debug/DSLInterchangeFormat-dsl-dauinventory.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "s5e2-bus-only": {
             "request_file": "scenarios/debug/s5e2/dsl-swap-request-bus.json",
             "inventory_file": "scenarios/debug/s5e2/dsl-swap-inventory.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "s5e2-no-signalconditioners": {
             "request_file": "scenarios/debug/s5e2/dsl-swap-request-nosignalconditioners.json",
             "inventory_file": "scenarios/debug/s5e2/dsl-swap-inventory.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "s5e2-signalconditioners": {
             "request_file": "scenarios/debug/s5e2/dsl-swap-request-signalconditioners.json",
             "inventory_file": "scenarios/debug/s5e2/dsl-swap-inventory.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
         },
         "freeze": {
             "request_file": "scenarios/debug/freeze/dsl-swap-request.json",
             "inventory_file": "scenarios/debug/freeze/dsl-swap-inventory.json",
-            "success_expected": true
+            "expected_success_count": 1,
+            "max_daus": 2
+        },
+        "s5e01i01-two-dau-along-modules-adaptation": {
+            "request_file": "scenarios/s5e01i01-two-dau-along-modules-adaptation/s5e01i01-two-dau-along-modules-adaptation-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e01i01-two-dau-along-modules-adaptation/s5e01i01-two-dau-along-modules-adaptation-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2,
+            "backup_hash": "2eb58a060503e123994572634905724d964e226114b3805871193a7d0bb04524"
+        },
+        "s5e01i01-two-dau-split-modules-adaptation": {
+            "request_file": "scenarios/s5e01i01-two-dau-split-modules-adaptation/s5e01i01-two-dau-split-modules-adaptation-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e01i01-two-dau-split-modules-adaptation/s5e01i01-two-dau-split-modules-adaptation-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 2,
+            "backup_hash": "39bd3cb1efc39a376c4199be5c62a450c2fa09c43e6c529a91177bf8e35d4ad4"
+        },
+        "s5e01i01-four-dau-solution-adaptation": {
+            "request_file": "scenarios/s5e01i01-four-dau-solution-adaptation/s5e01i01-four-dau-solution-adaptation-dsl-swap-request.json",
+            "inventory_file": "scenarios/s5e01i01-four-dau-solution-adaptation/s5e01i01-four-dau-solution-adaptation-dsl-swap-inventory.json",
+            "expected_success_count": 1,
+            "max_daus": 4,
+            "backup_hash": "e7ed5e716e182afc547a6af6cac4b9ef7df56bce2d08dd9fd7df0d499a0128ef"
         }
     }
 }
